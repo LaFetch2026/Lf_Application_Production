@@ -7,11 +7,13 @@ class Cartbottom extends StatelessWidget {
   final Function? onPressedQuality;
   final Function? onPressedLocationBase;
   final Function? onPressedExchange;
+  final Color backgroundColor;
   const Cartbottom({
     Key? key,
     this.onPressedQuality,
     this.onPressedLocationBase,
     this.onPressedExchange,
+    required this.backgroundColor,
   }) : super(key: key);
 
   @override
@@ -34,7 +36,9 @@ class Cartbottom extends StatelessWidget {
                       text: "100% Quality assured",
                       fontFamily: "Franklin Gothic Regular",
                       fontWeight: FontWeight.w400,
-                      color: subtitleColor,
+                      color: backgroundColor == whiteColor
+                          ? subtitleColor
+                          : productSubtitleColor,
                       maxLines: 1,
                       textAlign: TextAlign.center,
                       fontSize: 10,
@@ -52,7 +56,9 @@ class Cartbottom extends StatelessWidget {
                       text: "Priority Deliveries",
                       fontFamily: "Franklin Gothic Regular",
                       fontWeight: FontWeight.w400,
-                      color: subtitleColor,
+                      color: backgroundColor == whiteColor
+                          ? subtitleColor
+                          : productSubtitleColor,
                       maxLines: 1,
                       textAlign: TextAlign.center,
                       fontSize: 10,
@@ -70,7 +76,9 @@ class Cartbottom extends StatelessWidget {
                       text: "2 exchanges in 2 days",
                       fontFamily: "Franklin Gothic Regular",
                       fontWeight: FontWeight.w400,
-                      color: subtitleColor,
+                      color: backgroundColor == whiteColor
+                          ? subtitleColor
+                          : productSubtitleColor,
                       maxLines: 1,
                       textAlign: TextAlign.center,
                       fontSize: 10,

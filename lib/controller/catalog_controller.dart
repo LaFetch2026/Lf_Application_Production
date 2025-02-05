@@ -28,8 +28,8 @@ class CatalogController extends BaseController {
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData != null) {
-          catalogList = responseData;
+        if (responseData["data"] != null) {
+          catalogList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

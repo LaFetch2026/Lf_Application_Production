@@ -16,6 +16,7 @@ import 'package:lafetch/commonwidget/homewidget/dummy_product_list.dart';
 import 'package:lafetch/commonwidget/homewidget/homelist.dart';
 //import 'package:lafetch/commonwidget/homewidget/question_card.dart';
 import 'package:lafetch/controller/cart_controller.dart';
+import 'package:lafetch/controller/catalog_controller.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
@@ -57,6 +58,7 @@ class HomeScreenState extends State<HomeScreen> {
   final wishlistController = Get.put(WishlistController());
   final searchController = Get.put(SearchScreenController());
   final cartController = Get.put(CartController());
+  final catalogController = Get.put(CatalogController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final PageController _pageController = PageController(
     initialPage: 0,
@@ -105,7 +107,7 @@ class HomeScreenState extends State<HomeScreen> {
       homeController.getBannar2Data();
     }); */
     WidgetsBinding.instance
-        .addPostFrameCallback((_) => homeController.getCategoryData(2));
+        .addPostFrameCallback((_) => catalogController.getCatalogData(2));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => productController.getHomeProduct(2));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -405,7 +407,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   productController.productCategory = [];
                                   productController.productTags = [];
                                   // productController.getTagsData(2);
-                                  homeController.getCategoryData(2);
+                                  catalogController.getCatalogData(2);
                                   homeController.getBannar1Data();
                                   productController.getHomeProduct(2);
                                 },
@@ -458,7 +460,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   productController.productCategory = [];
                                   productController.productTags = [];
                                   //  productController.getTagsData(3);
-                                  homeController.getCategoryData(3);
+                                  catalogController.getCatalogData(3);
                                   productController.getHomeProduct(3);
                                 },
                                 child: SizedBox(
@@ -511,7 +513,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   productController.productCategory = [];
                                   productController.productTags = [];
                                   // productController.getTagsData(1);
-                                  homeController.getCategoryData(1);
+                                  catalogController.getCatalogData(1);
                                   productController.getHomeProduct(1);
                                 },
                                 child: SizedBox(
@@ -1219,11 +1221,11 @@ class HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           )),
-                      Obx(() => homeController.isCategory.value
+                      Obx(() => catalogController.isCatalog.value
                           ? const DummyGridMostSearch(
                               text: "",
                             )
-                          : homeController.categoryList.isNotEmpty
+                          : catalogController.catalogList.isNotEmpty
                               ? Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -1259,33 +1261,49 @@ class HomeScreenState extends State<HomeScreen> {
                                           crossAxisSpacing: 12.sp,
                                           mainAxisSpacing: 0.sp,
                                           children: List.generate(
-                                            homeController.categoryList.length,
+                                            catalogController
+                                                .catalogList.length,
                                             (index) {
                                               return Column(
                                                 children: [
                                                   GestureDetector(
                                                     onTap: () async {
+                                                      List categoryList = [];
+                                                      for (var i = 0;
+                                                          i <
+                                                              catalogController
+                                                                  .catalogList[
+                                                                      index][
+                                                                      "categories"]
+                                                                  .length;
+                                                          i++) {
+                                                        categoryList.add(
+                                                            catalogController
+                                                                            .catalogList[
+                                                                        index][
+                                                                    "categories"]
+                                                                [i]["id"]);
+                                                      }
                                                       Navigator.push(
                                                           context,
                                                           scaleIn(CategoryProductScreen(
                                                               categoryName:
-                                                                  homeController
-                                                                              .categoryList[
+                                                                  catalogController
+                                                                              .catalogList[
                                                                           index]
                                                                       ["name"],
                                                               genderName:
                                                                   homeController
                                                                       .genderText
                                                                       .value,
-                                                              categoryId: homeController
-                                                                      .categoryList[
-                                                                  index]["id"],
+                                                              categoryId: 0,
                                                               brandId: 0,
                                                               genderType:
                                                                   homeController
                                                                       .homeGenderValue
                                                                       .value,
-                                                              categoryList: [],
+                                                              categoryList:
+                                                                  categoryList,
                                                               tagIds: const [])));
                                                       await analytics.logEvent(
                                                         name:
@@ -1302,16 +1320,10 @@ class HomeScreenState extends State<HomeScreen> {
                                                           CrossAxisAlignment
                                                               .center,
                                                       children: [
-                                                        homeController
-                                                                    .categoryList[
-                                                                        index][
-                                                                        "thumbnail"]
-                                                                    .isNotEmpty &&
-                                                                homeController.categoryList[
-                                                                            index]
-                                                                        [
-                                                                        "thumbnail"] !=
-                                                                    null
+                                                        catalogController.catalogList[
+                                                                        index]
+                                                                    ["image"] !=
+                                                                null
                                                             ? SizedBox(
                                                                 width: 104.sp,
                                                                 height: 130.sp,
@@ -1327,17 +1339,17 @@ class HomeScreenState extends State<HomeScreen> {
                                                                   fit: BoxFit
                                                                       .cover,
                                                                   imageUrl: isImage(
-                                                                          homeController.categoryList[index]
+                                                                          catalogController.catalogList[index]
                                                                               [
-                                                                              "thumbnail"])
-                                                                      ? homeController
-                                                                              .categoryList[index]
+                                                                              "image"])
+                                                                      ? catalogController
+                                                                              .catalogList[index]
                                                                           [
-                                                                          "thumbnail"]
-                                                                      : homeController
-                                                                              .categoryList[index]
+                                                                          "image"]
+                                                                      : catalogController
+                                                                              .catalogList[index]
                                                                           [
-                                                                          "thumbnail"],
+                                                                          "image"],
                                                                   errorWidget: (context,
                                                                           url,
                                                                           error) =>
@@ -1371,8 +1383,8 @@ class HomeScreenState extends State<HomeScreen> {
                                                                   vertical:
                                                                       6.sp),
                                                           child: AppText(
-                                                            text: homeController
-                                                                .categoryList[
+                                                            text: catalogController
+                                                                .catalogList[
                                                                     index]
                                                                     ["name"]
                                                                 .toUpperCase(),
@@ -1403,7 +1415,7 @@ class HomeScreenState extends State<HomeScreen> {
                                       },
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(
-                                            horizontal: 16.sp),
+                                            vertical: 10.sp, horizontal: 16.sp),
                                         child: Container(
                                           height: 42.sp,
                                           color: homeAppBarColor,

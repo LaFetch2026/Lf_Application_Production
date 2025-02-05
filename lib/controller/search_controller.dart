@@ -85,8 +85,8 @@ class SearchScreenController extends BaseController {
           });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData != null) {
-          suggestedList = responseData;
+        if (responseData["data"] != null) {
+          suggestedList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");

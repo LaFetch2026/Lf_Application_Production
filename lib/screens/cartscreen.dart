@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, deprecated_member_use
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -18,6 +18,7 @@ import 'package:lafetch/commonwidget/cartwidgets/cartbottom.dart';
 import 'package:lafetch/commonwidget/cartwidgets/cartwidgets.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_order_list.dart';
+import 'package:lafetch/commonwidget/homewidget/dummyblack_orderlist.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/loginscreen.dart';
@@ -224,9 +225,13 @@ class CartScreenState extends State<CartScreen> {
                                 child:
                                     Center(child: CircularProgressIndicator()))
                             : controller.isOrder.value
-                                ? const DummyOrderList(
-                                    size: 3,
-                                  )
+                                ? widget.backgroundcolor == whiteColor
+                                    ? const DummyOrderList(
+                                        size: 3,
+                                      )
+                                    : DummyBlackOrderList(
+                                        size: 3,
+                                      )
                                 : controller.orderList.isEmpty
                                     ? Padding(
                                         padding: EdgeInsets.only(top: 60.sp),
@@ -544,7 +549,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                 fontFamily: "Franklin Gothic",
                                                                                                 fontWeight: FontWeight.w500,
                                                                                                 fontSize: 16,
-                                                                                                color: blackColor,
+                                                                                                color: widget.backgroundcolor == whiteColor ? blackColor : whiteColor,
                                                                                               ),
                                                                                             ),
                                                                                           ),
@@ -574,7 +579,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                 padding: EdgeInsets.symmetric(vertical: 5.sp),
                                                                                                 child: AppText(
                                                                                                   text: Bidi.stripHtmlIfNeeded(value.orderList[index]["product"]["name"] ?? ""),
-                                                                                                  color: subtitleColor,
+                                                                                                  color: widget.backgroundcolor == whiteColor ? subtitleColor : productSubtitleColor,
                                                                                                   maxLines: 1,
                                                                                                   fontSize: 14,
                                                                                                   fontFamily: "Franklin Gothic Regular",
@@ -619,7 +624,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                               value.orderList[index]["estimated_delivery_by"]["message"] != null
                                                                                                                   ? AppText(
                                                                                                                       text: value.orderList[index]["estimated_delivery_by"]["message"],
-                                                                                                                      color: subtitleColor,
+                                                                                                                      color: widget.backgroundcolor == whiteColor ? subtitleColor : productSubtitleColor,
                                                                                                                       fontSize: 12,
                                                                                                                       fontFamily: "Franklin Gothic Regular",
                                                                                                                       fontWeight: FontWeight.w400,
@@ -631,7 +636,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                                 padding: EdgeInsets.only(top: 5.sp),
                                                                                                                 child: AppText(
                                                                                                                   text: "Shipping Cost: \u{20B9} ${value.orderList[index]["estimated_delivery_by"]["shipping_cost"]}",
-                                                                                                                  color: subtitleColor,
+                                                                                                                  color: widget.backgroundcolor == whiteColor ? subtitleColor : productSubtitleColor,
                                                                                                                   fontSize: 12,
                                                                                                                   fontFamily: "Franklin Gothic Regular",
                                                                                                                   fontWeight: FontWeight.w400,
@@ -654,7 +659,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                         children: [
                                                                                                           AppText(
                                                                                                             text: value.orderList[index]["estimated_delivery_by"]["message"],
-                                                                                                            color: subtitleColor,
+                                                                                                            color: widget.backgroundcolor == whiteColor ? subtitleColor : productSubtitleColor,
                                                                                                             fontSize: 12,
                                                                                                             fontFamily: "Franklin Gothic Regular",
                                                                                                             fontWeight: FontWeight.w400,
@@ -684,7 +689,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                         text: 'Express Delivery',
                                                                                                         fontFamily: "Franklin Gothic Regular",
                                                                                                         fontWeight: FontWeight.w500,
-                                                                                                        color: blackColor,
+                                                                                                        color: widget.backgroundcolor == whiteColor ? blackColor : whiteColor,
                                                                                                         fontSize: 12,
                                                                                                       ),
                                                                                                       /*  value.selected[index]
@@ -895,7 +900,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                     child: Text(
                                                                                                       "\u{20B9} ${value.orderList[index]["product"]["mrp"] ?? "0"}",
                                                                                                       style: TextStyle(
-                                                                                                        color: lightText,
+                                                                                                        color: widget.backgroundcolor == whiteColor ? lightText : searchTextColor,
                                                                                                         fontSize: 12.sp,
                                                                                                         decoration: TextDecoration.lineThrough,
                                                                                                         fontFamily: "Franklin Gothic",
@@ -909,7 +914,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                   child: Text(
                                                                                                     "\u{20B9} ${value.orderList[index]["product"]["price"] ?? "0"}",
                                                                                                     style: TextStyle(
-                                                                                                      color: nameText,
+                                                                                                      color: widget.backgroundcolor == whiteColor ? nameText : whiteColor,
                                                                                                       fontSize: 12.sp,
                                                                                                       fontFamily: "Franklin Gothic",
                                                                                                       fontWeight: FontWeight.w500,
@@ -990,10 +995,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                       },
                                                                                       child: Container(
                                                                                         color: Colors.transparent,
-                                                                                        child: Padding(
-                                                                                          padding: EdgeInsets.symmetric(horizontal: 4.sp, vertical: 4.sp),
-                                                                                          child: Image.asset(blackCrossImage, height: 14.sp, width: 14.sp, fit: BoxFit.cover),
-                                                                                        ),
+                                                                                        child: Padding(padding: EdgeInsets.symmetric(horizontal: 4.sp, vertical: 4.sp), child: SvgPicture.asset(crossSearchImage, color: widget.backgroundcolor == whiteColor ? homeAppBarColor : whiteColor, height: 9.sp, width: 9.sp, fit: BoxFit.cover)),
                                                                                       ),
                                                                                     ),
                                                                                   ],
@@ -1002,7 +1004,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                   padding: EdgeInsets.symmetric(vertical: 8.sp),
                                                                                   child: Container(
                                                                                     width: double.infinity,
-                                                                                    color: colorSecondary,
+                                                                                    color: widget.backgroundcolor == whiteColor ? colorSecondary : titleColor,
                                                                                     height: 1.sp,
                                                                                   ),
                                                                                 ),
@@ -1273,7 +1275,7 @@ class CartScreenState extends State<CartScreen> {
                                                                               visible: controller.couponText.value == "Apply Coupon" ? true : false,
                                                                               child: ImageIcon(
                                                                                 AssetImage(coupanImage),
-                                                                                color: titleColor,
+                                                                                color: widget.backgroundcolor == whiteColor ? titleColor : productSubtitleColor,
                                                                                 size: 22.sp,
                                                                               ),
                                                                             ),
@@ -1284,7 +1286,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                       text: controller.couponText.value,
                                                                                       fontFamily: "Franklin Gothic",
                                                                                       fontWeight: FontWeight.w500,
-                                                                                      color: titleColor,
+                                                                                      color: widget.backgroundcolor == whiteColor ? titleColor : productSubtitleColor,
                                                                                       fontSize: 14,
                                                                                     ),
                                                                                   )
@@ -1520,8 +1522,11 @@ class CartScreenState extends State<CartScreen> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w500,
-                                                                color:
-                                                                    homeAppBarColor,
+                                                                color: widget
+                                                                            .backgroundcolor ==
+                                                                        whiteColor
+                                                                    ? homeAppBarColor
+                                                                    : whiteColor,
                                                                 fontSize: 14,
                                                               ),
                                                             ),
@@ -1564,8 +1569,10 @@ class CartScreenState extends State<CartScreen> {
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w400,
-                                                                      color:
-                                                                          subtitleColor,
+                                                                      color: widget.backgroundcolor ==
+                                                                              whiteColor
+                                                                          ? subtitleColor
+                                                                          : productSubtitleColor,
                                                                       fontSize:
                                                                           12,
                                                                     ),
@@ -1584,8 +1591,10 @@ class CartScreenState extends State<CartScreen> {
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w400,
-                                                                    color:
-                                                                        homeAppBarColor,
+                                                                    color: widget.backgroundcolor ==
+                                                                            whiteColor
+                                                                        ? homeAppBarColor
+                                                                        : whiteColor,
                                                                     fontSize:
                                                                         12,
                                                                   ),
@@ -1678,8 +1687,10 @@ class CartScreenState extends State<CartScreen> {
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w400,
-                                                                      color:
-                                                                          subtitleColor,
+                                                                      color: widget.backgroundcolor ==
+                                                                              whiteColor
+                                                                          ? subtitleColor
+                                                                          : productSubtitleColor,
                                                                       fontSize:
                                                                           12,
                                                                     ),
@@ -1698,8 +1709,10 @@ class CartScreenState extends State<CartScreen> {
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w400,
-                                                                    color:
-                                                                        homeAppBarColor,
+                                                                    color: widget.backgroundcolor ==
+                                                                            whiteColor
+                                                                        ? homeAppBarColor
+                                                                        : whiteColor,
                                                                     fontSize:
                                                                         12,
                                                                   ),
@@ -1786,8 +1799,9 @@ class CartScreenState extends State<CartScreen> {
                                                                                 "Franklin Gothic Regular",
                                                                             fontWeight:
                                                                                 FontWeight.w400,
-                                                                            color:
-                                                                                subtitleColor,
+                                                                            color: widget.backgroundcolor == whiteColor
+                                                                                ? subtitleColor
+                                                                                : productSubtitleColor,
                                                                             fontSize:
                                                                                 12,
                                                                           ),
@@ -1820,7 +1834,9 @@ class CartScreenState extends State<CartScreen> {
                                                                             fontWeight:
                                                                                 FontWeight.w500,
                                                                             color: controller.cartDetails["discount"] != null
-                                                                                ? homeAppBarColor
+                                                                                ? widget.backgroundcolor == whiteColor
+                                                                                    ? homeAppBarColor
+                                                                                    : whiteColor
                                                                                 : Color(0xff7A6ECC),
                                                                             fontSize:
                                                                                 10,
@@ -1901,8 +1917,9 @@ class CartScreenState extends State<CartScreen> {
                                                                               "Franklin Gothic Regular",
                                                                           fontWeight:
                                                                               FontWeight.w400,
-                                                                          color:
-                                                                              subtitleColor,
+                                                                          color: widget.backgroundcolor == whiteColor
+                                                                              ? subtitleColor
+                                                                              : productSubtitleColor,
                                                                           fontSize:
                                                                               12,
                                                                         ),
@@ -1952,8 +1969,10 @@ class CartScreenState extends State<CartScreen> {
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w400,
-                                                                    color:
-                                                                        homeAppBarColor,
+                                                                    color: widget.backgroundcolor ==
+                                                                            whiteColor
+                                                                        ? homeAppBarColor
+                                                                        : whiteColor,
                                                                     fontSize:
                                                                         12,
                                                                   ),
@@ -1986,8 +2005,9 @@ class CartScreenState extends State<CartScreen> {
                                                                               "Franklin Gothic Regular",
                                                                           fontWeight:
                                                                               FontWeight.w400,
-                                                                          color:
-                                                                              subtitleColor,
+                                                                          color: widget.backgroundcolor == whiteColor
+                                                                              ? subtitleColor
+                                                                              : productSubtitleColor,
                                                                           fontSize:
                                                                               12,
                                                                         ),
@@ -2037,8 +2057,10 @@ class CartScreenState extends State<CartScreen> {
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w400,
-                                                                    color:
-                                                                        homeAppBarColor,
+                                                                    color: widget.backgroundcolor ==
+                                                                            whiteColor
+                                                                        ? homeAppBarColor
+                                                                        : whiteColor,
                                                                     fontSize:
                                                                         12,
                                                                   ),
@@ -2084,8 +2106,10 @@ class CartScreenState extends State<CartScreen> {
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w500,
-                                                                      color:
-                                                                          colorPrimary,
+                                                                      color: widget.backgroundcolor ==
+                                                                              whiteColor
+                                                                          ? colorPrimary
+                                                                          : whiteColor,
                                                                       fontSize:
                                                                           15,
                                                                     ),
@@ -2104,8 +2128,10 @@ class CartScreenState extends State<CartScreen> {
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w500,
-                                                                    color:
-                                                                        colorPrimary,
+                                                                    color: widget.backgroundcolor ==
+                                                                            whiteColor
+                                                                        ? colorPrimary
+                                                                        : whiteColor,
                                                                     fontSize:
                                                                         12,
                                                                   ),
@@ -2115,7 +2141,11 @@ class CartScreenState extends State<CartScreen> {
                                                             SizedBox(
                                                               height: 30.sp,
                                                             ),
-                                                            const Cartbottom(),
+                                                            Cartbottom(
+                                                              backgroundColor:
+                                                                  widget
+                                                                      .backgroundcolor,
+                                                            ),
                                                             SizedBox(
                                                               height: 40.sp,
                                                             ),
@@ -2452,7 +2482,9 @@ class CartScreenState extends State<CartScreen> {
                                 }
                               },
                               child: Container(
-                                color: lightgreyColor,
+                                color: widget.backgroundcolor == whiteColor
+                                    ? lightgreyColor
+                                    : homeAppBarColor,
                                 margin: EdgeInsets.only(top: 10.sp),
                                 height: 40.sp,
                                 child: Padding(
@@ -2475,7 +2507,10 @@ class CartScreenState extends State<CartScreen> {
                                               style: TextStyle(
                                                 fontFamily: "Franklin Gothic",
                                                 fontWeight: FontWeight.w500,
-                                                color: titleColor,
+                                                color: widget.backgroundcolor ==
+                                                        whiteColor
+                                                    ? titleColor
+                                                    : lightgreyColor,
                                                 fontSize: 14.sp,
                                               ),
                                             )),
@@ -2488,7 +2523,10 @@ class CartScreenState extends State<CartScreen> {
                                         padding: EdgeInsets.only(
                                             left: 2.sp, right: 5.sp),
                                         child: Image.asset(rightArrowImage,
-                                            color: titleColor,
+                                            color: widget.backgroundcolor ==
+                                                    whiteColor
+                                                ? titleColor
+                                                : lightgreyColor,
                                             height: 16.sp,
                                             width: 16.sp,
                                             fit: BoxFit.cover),
@@ -2540,7 +2578,9 @@ class CartScreenState extends State<CartScreen> {
                               child: Container(
                                 width: double.infinity,
                                 height: 70.sp,
-                                color: homeAppBarColor,
+                                color: widget.backgroundcolor == whiteColor
+                                    ? homeAppBarColor
+                                    : lightPurpleColor,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [

@@ -1,0 +1,171 @@
+// ignore_for_file: deprecated_member_use
+
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lafetch/utils/constants.dart';
+
+class DummyBlackOrderList extends StatelessWidget {
+  final int size;
+  const DummyBlackOrderList({Key? key, this.size = 5}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(bottom: 10.sp),
+            child: ListView.builder(
+                primary: false,
+                shrinkWrap: true,
+                physics: const ScrollPhysics(),
+                itemCount: size,
+                padding: EdgeInsets.zero,
+                scrollDirection: Axis.vertical,
+                itemBuilder: (ctx, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 10.sp),
+                    child: Column(
+                      children: [
+                        Container(
+                          color: homeAppBarColor,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 10.sp),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 16.sp),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                            flex: 1,
+                                            child: Container(
+                                              height: 130,
+                                              width: 100,
+                                              color: cardBg,
+                                            )),
+                                        Expanded(
+                                          flex: 3,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: 5.sp, left: 12.sp),
+                                                child: Container(
+                                                  height: 10,
+                                                  width: 70,
+                                                  color: cardBg,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: 5.sp,
+                                                    left: 12.sp,
+                                                    top: 5.sp),
+                                                child: Container(
+                                                  height: 10,
+                                                  width: 70,
+                                                  color: cardBg,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: 5.sp,
+                                                    left: 12.sp,
+                                                    top: 5.sp,
+                                                    bottom: 5.sp),
+                                                child: Container(
+                                                  height: 10,
+                                                  width: 70,
+                                                  color: cardBg,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: 5.sp,
+                                                    left: 12.sp,
+                                                    top: 5.sp,
+                                                    bottom: 5.sp),
+                                                child: Row(
+                                                  children: [
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          right: 10.sp),
+                                                      child: Container(
+                                                        height: 10,
+                                                        width: 50,
+                                                        color: cardBg,
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 10.sp),
+                                                        child: Container(
+                                                          height: 10,
+                                                          color: cardBg,
+                                                          width: 50,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      height: 10,
+                                                      width: 50,
+                                                      color: cardBg,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20.sp, vertical: 5.sp),
+                                    child: Container(
+                                      height: 10,
+                                      width: 50,
+                                      color: cardBg,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10.sp, horizontal: 16.sp),
+                                    child: AnimatedContainer(
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      margin: EdgeInsets.only(right: 5.sp),
+                                      height: 30.sp,
+                                      decoration: BoxDecoration(
+                                        color: cardBg,
+                                        borderRadius:
+                                            BorderRadius.circular(20.sp),
+                                      ),
+                                    ),
+                                  ),
+                                ]),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                }),
+          )
+        ],
+      ),
+    );
+  }
+}
