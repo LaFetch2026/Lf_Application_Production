@@ -12,7 +12,8 @@ import '../utils/constants.dart';
 import 'cartscreen.dart';
 
 class CatalogScreen extends StatefulWidget {
-  const CatalogScreen({super.key});
+  final int initialIndex;
+  const CatalogScreen({super.key, required this.initialIndex});
 
   @override
   State<CatalogScreen> createState() => CatalogScreenState();
@@ -32,7 +33,7 @@ class CatalogScreenState extends State<CatalogScreen> {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
-      initialIndex: 0,
+      initialIndex: widget.initialIndex,
       child: Scaffold(
         backgroundColor: whiteColor,
         body: Column(

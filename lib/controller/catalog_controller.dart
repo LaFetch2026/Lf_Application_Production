@@ -83,4 +83,32 @@ class CatalogController extends BaseController {
     }
     isCategory.value = false;
   }
+
+  callAddProductToWishlist(
+    int wishlistId,
+    int id,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.put(
+        Uri.parse("${ApiConstants.baseUrl}/products/$id/wishlist/$wishlistId"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
+      );
+      // var responseData = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("item add failed");
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }

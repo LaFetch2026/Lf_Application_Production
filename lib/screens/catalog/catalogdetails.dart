@@ -1,14 +1,17 @@
-// ignore_for_file: avoid_print
-
-import 'package:cached_network_image/cached_network_image.dart';
+// ignore_for_file: avoid_print, deprecated_member_use
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/productlist_appbar.dart';
-import 'package:lafetch/commonwidget/dummy_container.dart';
+import 'package:lafetch/commonwidget/brandwidgits/horizontal_category_list.dart';
+import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/cart_controller.dart';
+import 'package:lafetch/controller/wishlist_controller.dart';
+import 'package:lafetch/screens/Brands/categoryproduct.dart';
+import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../controller/catalog_controller.dart';
@@ -41,14 +44,20 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
   final controller = Get.put(CatalogController());
   final productController = Get.put(ProductController());
   final cartController = Get.put(CartController());
+  final wishlistController = Get.put(WishlistController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => controller.getCategoryData(widget.genderType, widget.catalogId));
+    /* WidgetsBinding.instance
+        .addPostFrameCallback((_) => productController.id.value = 0); */
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getHandPickedProduct("", false, false, 0));
     WidgetsBinding.instance
-        .addPostFrameCallback((_) => productController.id.value = 0);
+        .addPostFrameCallback((_) => wishlistController.getWishlistData());
     super.initState();
   }
 
@@ -56,6 +65,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whiteColor,
+      key: scaffoldKey,
       body: Column(
         children: [
           /*  CatalogAppbar(
@@ -68,6 +78,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
             },
           ), */
           ProductAppbar(
+              backColor: whiteColor,
               text: widget.title,
               onPressedSearch: () async {
                 Get.to(const SearchScreen())?.then((value) => setState(
@@ -113,7 +124,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  widget.catalogImage.isNotEmpty
+                  /*  widget.catalogImage.isNotEmpty
                       ? SizedBox(
                           height: 100.sp,
                           width: double.infinity,
@@ -297,6 +308,310 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                         fontFamily: "Franklin Gothic Regular")),
                               ),
                             ))
+               */
+                  Padding(
+                    padding: EdgeInsets.only(top: 16.sp),
+                    child: ListView.builder(
+                        primary: false,
+                        shrinkWrap: true,
+                        physics: const ScrollPhysics(),
+                        itemCount: controller.catalogList.length,
+                        padding: EdgeInsets.zero,
+                        scrollDirection: Axis.vertical,
+                        itemBuilder: (ctx, index) {
+                          return Padding(
+                            padding: EdgeInsets.only(top: 16.sp),
+                            child: Column(
+                              children: [
+                                InkWell(
+                                  onTap: () async {
+                                    Navigator.push(
+                                        context,
+                                        scaleIn(CategoryProductScreen(
+                                            categoryName: controller
+                                                .catalogList[index]["name"],
+                                            genderName: widget.catalogText,
+                                            categoryId: controller
+                                                .catalogList[index]["id"],
+                                            brandId: 0,
+                                            genderType: widget.genderType,
+                                            categoryList: [],
+                                            tagIds: const [])));
+                                    await analytics.logEvent(
+                                      name: 'categories_home_page',
+                                      parameters: <String, Object>{
+                                        'page_name': 'categories_home_page',
+                                      },
+                                    );
+                                  },
+                                  child: Container(
+                                    // color: blue,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 16.sp,
+                                        right: 16.sp,
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          AppText(
+                                            text: controller.catalogList[index]
+                                                    ["name"]
+                                                .toUpperCase(),
+                                            color: blackColor,
+                                            fontSize: 20,
+                                            fontFamily:
+                                                "Franklin Gothic Semibold",
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                          Expanded(
+                                              child: SizedBox(
+                                            width: 0,
+                                          )),
+                                          SvgPicture.asset(
+                                            color: homeAppBarColor,
+                                            rightArrowSvgImage,
+                                            height: 11.sp,
+                                            width: 7.sp,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Obx(() => productController.isHandPicked.value
+                                    ? Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 16.sp),
+                                        child: SizedBox(
+                                          height: 250.sp,
+                                          width: double.infinity,
+                                          child: ListView.builder(
+                                              shrinkWrap: true,
+                                              primary: false,
+                                              physics:
+                                                  const BouncingScrollPhysics(),
+                                              itemCount: 5,
+                                              scrollDirection: Axis.horizontal,
+                                              itemBuilder: (ctx, index) {
+                                                return Column(
+                                                  children: [
+                                                    Container(
+                                                      width: 122.sp,
+                                                      height: 250.sp,
+                                                      margin: EdgeInsets.only(
+                                                          right: 5.sp),
+                                                      color: Colors.white,
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            height: 150.sp,
+                                                            width: 122.sp,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Colors
+                                                                  .black
+                                                                  .withOpacity(
+                                                                      0.04),
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        10.sp,
+                                                                    vertical:
+                                                                        5.sp),
+                                                            child: Container(
+                                                              height: 10.sp,
+                                                              width: 102.sp,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .black
+                                                                    .withOpacity(
+                                                                        0.04),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 10.sp,
+                                                                    left: 10.sp,
+                                                                    right:
+                                                                        1.sp),
+                                                            child: Row(
+                                                              children: [
+                                                                Container(
+                                                                  height: 10.sp,
+                                                                  width: 50.sp,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            0.04),
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          left:
+                                                                              5.sp),
+                                                                  child:
+                                                                      Container(
+                                                                    height:
+                                                                        10.sp,
+                                                                    width:
+                                                                        50.sp,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: Colors
+                                                                          .black
+                                                                          .withOpacity(
+                                                                              0.04),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 10.sp,
+                                                                    left: 10.sp,
+                                                                    right:
+                                                                        10.sp),
+                                                            child: Row(
+                                                              children: [
+                                                                Container(
+                                                                  height: 14.sp,
+                                                                  width: 14.sp,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: Colors
+                                                                        .black
+                                                                        .withOpacity(
+                                                                            0.04),
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                  padding: EdgeInsets
+                                                                      .symmetric(
+                                                                          horizontal:
+                                                                              5.sp),
+                                                                  child:
+                                                                      Container(
+                                                                    height:
+                                                                        10.sp,
+                                                                    width:
+                                                                        50.sp,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: Colors
+                                                                          .black
+                                                                          .withOpacity(
+                                                                              0.04),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              }),
+                                        ),
+                                      )
+                                    : Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 16.sp),
+                                        child: HorizontalCategoryList(
+                                          onPressed: (p0, p1) async {
+                                            Get.to(ProductDetailsScreen(
+                                                    expresshour: "",
+                                                    brandName: p1,
+                                                    productId: p0,
+                                                    type: "add"))
+                                                ?.then((value) => setState(
+                                                      () {},
+                                                    ));
+                                            await analytics.logEvent(
+                                              name: 'category_product_details',
+                                              parameters: <String, Object>{
+                                                'page_name':
+                                                    'category_product_details',
+                                              },
+                                            );
+                                          },
+                                          list: productController
+                                              .handPickedProductList,
+                                          onPressedHeart:
+                                              (productId, p1) async {
+                                            if (productController
+                                                    .handPickedProductList[p1]
+                                                ["wishlisted"]) {
+                                              productController
+                                                      .handPickedProductList[p1]
+                                                  ["wishlisted"] = false;
+                                              setState(() {});
+                                              controller.callAddProductToWishlist(
+                                                  productController
+                                                          .handPickedProductList[
+                                                      p1]["wishlist_id"],
+                                                  productId);
+                                            } else {
+                                              scaffoldKey.currentState
+                                                  ?.showBottomSheet((context) =>
+                                                      BottomWishlist(
+                                                          controller:
+                                                              wishlistController,
+                                                          onPressed: (p0) {
+                                                            productController
+                                                                    .handPickedProductList[p1]
+                                                                [
+                                                                "wishlisted"] = true;
+                                                            setState(() {});
+                                                            controller
+                                                                .callAddProductToWishlist(
+                                                                    p0,
+                                                                    productId);
+                                                          },
+                                                          wishlistList:
+                                                              wishlistController
+                                                                  .wishlistList));
+                                              await analytics.logEvent(
+                                                name:
+                                                    'allbrand_bestseller_wishlist',
+                                                parameters: <String, Object>{
+                                                  'page_name':
+                                                      'allbrand_bestseller_wishlist',
+                                                },
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      )),
+                                Container(
+                                  color: lightgreyColor,
+                                  height: 16.sp,
+                                )
+                              ],
+                            ),
+                          );
+                        }),
+                  )
                 ],
               ),
             ),

@@ -244,6 +244,8 @@ const circlesBack = 'assets/images/circles.png';
 const circleBack = 'assets/images/circle.png';
 const bagLogoImage = 'assets/images/bag_logo.png';
 const bagLogoSvgImage = 'assets/images/bag_logo_svg.png';
+const rightArrowSvgImage = 'assets/images/right_arrow_svg.svg';
+const redHeartSvgImage = 'assets/images/heart_red_svg.svg';
 
 class ApiConstants {
   ApiConstants._();

@@ -13,6 +13,7 @@ class ProductAppbar extends StatefulWidget {
   final bool isHandPicked;
   final bool isWishlist;
   final String text;
+  final Color backColor;
 
   const ProductAppbar(
       {Key? key,
@@ -20,6 +21,7 @@ class ProductAppbar extends StatefulWidget {
       this.isWishlist = true,
       this.onPressedCart,
       this.onPressedHeart,
+      this.backColor = statusBarColor,
       this.text = "",
       this.isHandPicked = false})
       : super(key: key);
@@ -35,7 +37,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
     return Container(
       height: 80.sp,
       width: MediaQuery.of(context).size.width,
-      color: statusBarColor,
+      color: widget.backColor,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
           padding: EdgeInsets.only(left: 6.sp, right: 16.sp, top: 30.sp),

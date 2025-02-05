@@ -36,7 +36,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
     const BrandsScreen(
       screen: "home",
     ),
-    const CatalogScreen(),
+    const CatalogScreen(
+      initialIndex: 0,
+    ),
     const AccountScreen(),
     const QuickScreen(),
   ];
@@ -53,7 +55,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
       const BrandsScreen(
         screen: "home",
       ),
-      CatalogScreen(),
+      CatalogScreen(
+        initialIndex: 0,
+      ),
       AccountScreen(onPressed: () {
         changeTab(2);
       }),
