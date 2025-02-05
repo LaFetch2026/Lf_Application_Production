@@ -159,7 +159,7 @@ class BrandController extends BaseController {
     }
   }
 
-  getCategoryData(int id) async {
+  /*  getCategoryData(int id) async {
     isCategory.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -190,5 +190,5 @@ class BrandController extends BaseController {
       print("error$e");
     }
     isCategory.value = false;
-  }
+  } */
 }

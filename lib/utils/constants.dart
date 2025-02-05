@@ -243,6 +243,7 @@ const upDropDownSvgImage = 'assets/images/up_dropdown.svg';
 const circlesBack = 'assets/images/circles.png';
 const circleBack = 'assets/images/circle.png';
 const bagLogoImage = 'assets/images/bag_logo.png';
+const bagLogoSvgImage = 'assets/images/bag_logo_svg.png';
 
 class ApiConstants {
   ApiConstants._();
