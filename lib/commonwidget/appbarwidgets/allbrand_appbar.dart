@@ -30,25 +30,31 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80.sp,
+      // height: 80.sp,
       width: MediaQuery.of(context).size.width,
       color: homeAppBarColor,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
-          padding: EdgeInsets.only(left: 6.sp, right: 16.sp, top: 30.sp),
+          padding: EdgeInsets.only(right: 16.sp, top: 56.sp, bottom: 16.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              IconButton(
-                icon: SvgPicture.asset(arrowBack,
-                    color: whiteColor,
-                    height: 15.sp,
-                    width: 15.sp,
-                    fit: BoxFit.cover),
-                onPressed: () {
+              InkWell(
+                onTap: () {
                   widget.onPressedBack?.call();
                 },
+                child: Container(
+                  padding: EdgeInsets.only(
+                    left: 16.sp,
+                    right: 12.sp,
+                  ),
+                  child: SvgPicture.asset(arrowBack,
+                      color: whiteColor,
+                      height: 15.sp,
+                      width: 15.sp,
+                      fit: BoxFit.cover),
+                ),
               ),
               const Expanded(
                 child: SizedBox(

@@ -1,10 +1,11 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, deprecated_member_use
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
+import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/catalog/women_catalog.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import '../controller/product_controller.dart';
@@ -31,133 +32,141 @@ class CatalogScreenState extends State<CatalogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      initialIndex: widget.initialIndex,
-      child: Scaffold(
-        backgroundColor: whiteColor,
-        body: Column(
-          children: [
-            /*   CatalogAppbar(
-              text: "Catalog",
-              onPressedSearch: () async {
-                Get.to(const SearchScreen());
-                analytics
-                    .logEvent(name: "search_page", parameters: <String, Object>{
-                  "page_name": "search_page",
-                });
-              },
-              onPressedCart: () async {
-                Get.to(const CartScreen());
-                analytics
-                    .logEvent(name: "cart_page", parameters: <String, Object>{
-                  "page_name": "cart_page",
-                });
-              },
-            ), */
-            HomeAppbar(
-              showSearch: false,
-              title: "Category",
-              onPressedHeart: () async {
-                Get.to(const WishlistScreen());
-                await analytics.logEvent(
-                  name: 'wishlist_page',
-                  parameters: <String, Object>{
-                    'page_name': 'wishlist_page',
-                  },
-                );
-              },
-              onPressedCart: () async {
-                Get.to(const CartScreen());
-                await analytics.logEvent(
-                  name: 'cart_page',
-                  parameters: <String, Object>{
-                    'page_name': 'cart_page',
-                  },
-                );
-              },
-            ),
-            PreferredSize(
-              preferredSize: const Size.fromHeight(40),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: TabBar(
-                    isScrollable: false,
-                    physics: const NeverScrollableScrollPhysics(),
-                    indicatorColor: btnTextColor,
-                    dividerColor: Colors.transparent,
-                    unselectedLabelColor: textHintColor,
-                    labelColor: btnTextColor,
-                    onTap: (value) async {
-                      String type;
-                      if (value == 0) {
-                        type = "Women_catalog_page";
-                      } else if (value == 1) {
-                        type = "Men_catalog_page";
-                      } else {
-                        type = "Kids_catalog_page";
-                      }
-                      await analytics.logEvent(
-                        name: type,
-                        parameters: <String, Object>{
-                          'page_name': type,
-                        },
-                      );
+    return WillPopScope(
+      onWillPop: () async {
+        Get.offAll(const BottomNavScreen(
+          index: 0,
+        ));
+        return false;
+      },
+      child: DefaultTabController(
+        length: 3,
+        initialIndex: widget.initialIndex,
+        child: Scaffold(
+          backgroundColor: whiteColor,
+          body: Column(
+            children: [
+              /*   CatalogAppbar(
+                text: "Catalog",
+                onPressedSearch: () async {
+                  Get.to(const SearchScreen());
+                  analytics
+                      .logEvent(name: "search_page", parameters: <String, Object>{
+                    "page_name": "search_page",
+                  });
+                },
+                onPressedCart: () async {
+                  Get.to(const CartScreen());
+                  analytics
+                      .logEvent(name: "cart_page", parameters: <String, Object>{
+                    "page_name": "cart_page",
+                  });
+                },
+              ), */
+              HomeAppbar(
+                showSearch: false,
+                title: "Category",
+                onPressedHeart: () async {
+                  Get.to(const WishlistScreen());
+                  await analytics.logEvent(
+                    name: 'wishlist_page',
+                    parameters: <String, Object>{
+                      'page_name': 'wishlist_page',
                     },
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    indicatorWeight: 3,
-                    tabs: [
-                      Tab(
-                          child: Text(
-                        "Women",
-                        style: TextStyle(
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w400),
-                      )),
-                      Tab(
-                          child: Text(
-                        "Men",
-                        style: TextStyle(
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w400),
-                      )),
-                      Tab(
-                          child: Text(
-                        "Accessories",
-                        style: TextStyle(
-                            fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w400),
-                      ))
+                  );
+                },
+                onPressedCart: () async {
+                  Get.to(const CartScreen());
+                  await analytics.logEvent(
+                    name: 'cart_page',
+                    parameters: <String, Object>{
+                      'page_name': 'cart_page',
+                    },
+                  );
+                },
+              ),
+              PreferredSize(
+                preferredSize: const Size.fromHeight(40),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: TabBar(
+                      isScrollable: false,
+                      physics: const NeverScrollableScrollPhysics(),
+                      indicatorColor: btnTextColor,
+                      dividerColor: Colors.transparent,
+                      unselectedLabelColor: textHintColor,
+                      labelColor: btnTextColor,
+                      onTap: (value) async {
+                        String type;
+                        if (value == 0) {
+                          type = "Women_catalog_page";
+                        } else if (value == 1) {
+                          type = "Men_catalog_page";
+                        } else {
+                          type = "Kids_catalog_page";
+                        }
+                        await analytics.logEvent(
+                          name: type,
+                          parameters: <String, Object>{
+                            'page_name': type,
+                          },
+                        );
+                      },
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      indicatorWeight: 3,
+                      tabs: [
+                        Tab(
+                            child: Text(
+                          "Women",
+                          style: TextStyle(
+                              fontSize: 14.sp,
+                              fontFamily: "Franklin Gothic",
+                              fontWeight: FontWeight.w400),
+                        )),
+                        Tab(
+                            child: Text(
+                          "Men",
+                          style: TextStyle(
+                              fontSize: 14.sp,
+                              fontFamily: "Franklin Gothic",
+                              fontWeight: FontWeight.w400),
+                        )),
+                        Tab(
+                            child: Text(
+                          "Accessories",
+                          style: TextStyle(
+                              fontSize: 14.sp,
+                              fontFamily: "Franklin Gothic",
+                              fontWeight: FontWeight.w400),
+                        ))
+                      ]),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                color: whiteColor,
+                height: 1.sp,
+              ),
+              const Expanded(
+                child: TabBarView(
+                    physics: NeverScrollableScrollPhysics(),
+                    children: [
+                      WomenCatalogScreen(
+                        categorytext: "women",
+                        type: 3,
+                      ),
+                      WomenCatalogScreen(
+                        categorytext: "men",
+                        type: 2,
+                      ),
+                      WomenCatalogScreen(
+                        categorytext: "accessories",
+                        type: 1,
+                      ),
                     ]),
               ),
-            ),
-            Container(
-              width: double.infinity,
-              color: whiteColor,
-              height: 1.sp,
-            ),
-            const Expanded(
-              child: TabBarView(
-                  physics: NeverScrollableScrollPhysics(),
-                  children: [
-                    WomenCatalogScreen(
-                      categorytext: "women",
-                      type: 3,
-                    ),
-                    WomenCatalogScreen(
-                      categorytext: "men",
-                      type: 2,
-                    ),
-                    WomenCatalogScreen(
-                      categorytext: "accessories",
-                      type: 1,
-                    ),
-                  ]),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

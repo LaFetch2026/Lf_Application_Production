@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -27,25 +26,29 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: Platform.isAndroid ? 80.sp : 90.sp,
+      //  height: Platform.isAndroid ? 80.sp : 90.sp,
       width: MediaQuery.of(context).size.width,
       color: statusBarColor,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
           padding: EdgeInsets.only(
-              left: 6.sp,
-              right: 16.sp,
-              top: Platform.isAndroid ? 30.sp : 40.sp),
+              left: 6.sp, right: 16.sp, top: 56.sp, bottom: 16.sp
+              // top: Platform.isAndroid ? 30.sp : 40.sp
+              ),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              IconButton(
-                icon: SvgPicture.asset(arrowBack,
-                    height: 15.sp, width: 15.sp, fit: BoxFit.cover),
-                onPressed: () {
+              InkWell(
+                onTap: () {
                   Get.back();
                 },
+                child: Container(
+                  padding:
+                      EdgeInsets.only(left: 16.sp, right: 12.sp, bottom: 6.sp),
+                  child: SvgPicture.asset(arrowBack,
+                      height: 15.sp, width: 15.sp, fit: BoxFit.cover),
+                ),
               ),
               const Expanded(
                 child: SizedBox(

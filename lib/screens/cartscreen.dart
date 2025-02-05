@@ -2577,7 +2577,7 @@ class CartScreenState extends State<CartScreen> {
                               },
                               child: Container(
                                 width: double.infinity,
-                                height: 70.sp,
+                                height: 50.sp,
                                 color: widget.backgroundcolor == whiteColor
                                     ? homeAppBarColor
                                     : lightPurpleColor,
