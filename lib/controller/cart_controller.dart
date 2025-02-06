@@ -99,6 +99,56 @@ class CartController extends BaseController {
     isOrder.value = false;
   }
 
+  getExpressCartData() async {
+    isOrder.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/orders/cart?latitude=${lat.value}&longitude=${lng.value}&type=express"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      cartTotalValue.value = orderList.length;
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {
+          cartDetails = responseData;
+          orderList = responseData["order_lines"];
+          print(orderList);
+          cartId.value = responseData["id"];
+          qtyProductId.value = 0;
+          qtyText.value = "";
+          cartTotalValue.value = orderList.length;
+          if (responseData["discount"] != null) {
+            couponText.value = responseData["discount"]["code"];
+            couponSave.value =
+                responseData["discount"]["saved_total"].toString();
+          } else {
+            couponText.value = "Apply Coupon";
+            couponSave.value = "";
+          }
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server Error");
+      } else if (response.statusCode == 401) {
+        /*  Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed"); */
+        print(response.statusCode);
+      } else {
+        getSnackBar("get order failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isOrder.value = false;
+  }
+
   getCouponData() async {
     isCoupan.value = true;
     final prefs = await SharedPreferences.getInstance();

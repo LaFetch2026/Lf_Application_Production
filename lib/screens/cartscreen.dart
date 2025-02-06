@@ -90,8 +90,10 @@ class CartScreenState extends State<CartScreen> {
         ),
       );
     } else {
-      WidgetsBinding.instance
-          .addPostFrameCallback((_) => controller.getCartData());
+      WidgetsBinding.instance.addPostFrameCallback((_) =>
+          widget.backgroundcolor == whiteColor
+              ? controller.getCartData()
+              : controller.getExpressCartData());
     }
   }
 
@@ -435,8 +437,12 @@ class CartScreenState extends State<CartScreen> {
                                                                       seconds:
                                                                           1),
                                                                   () {
-                                                                value
-                                                                    .getCartData();
+                                                                widget.backgroundcolor ==
+                                                                        whiteColor
+                                                                    ? controller
+                                                                        .getCartData()
+                                                                    : controller
+                                                                        .getExpressCartData();
                                                               });
                                                             },
                                                             child: ListView
@@ -484,7 +490,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                 productController.isProduct.value = false;
                                                                                                 productController.page.value = 1;
                                                                                                 productController.getProductData("relevant");
-                                                                                                controller.getCartData();
+                                                                                                widget.backgroundcolor == whiteColor ? controller.getCartData() : controller.getExpressCartData();
                                                                                                 controller.update();
                                                                                               },
                                                                                             ));
@@ -530,7 +536,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                       productController.isProduct.value = false;
                                                                                                       productController.page.value = 1;
                                                                                                       productController.getProductData("relevant");
-                                                                                                      controller.getCartData();
+                                                                                                      widget.backgroundcolor == whiteColor ? controller.getCartData() : controller.getExpressCartData();
                                                                                                       controller.update();
                                                                                                     },
                                                                                                   ));
@@ -543,6 +549,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                             },
                                                                                             child: Container(
                                                                                               width: MediaQuery.of(context).size.width - 165.sp,
+                                                                                              margin: EdgeInsets.only(top: 10.sp),
                                                                                               child: AppText(
                                                                                                 text: value.orderList[index]["product"]["brand_name"].toUpperCase() ?? "",
                                                                                                 maxLines: 1,
@@ -562,7 +569,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                       productController.isProduct.value = false;
                                                                                                       productController.page.value = 1;
                                                                                                       productController.getProductData("relevant");
-                                                                                                      controller.getCartData();
+                                                                                                      widget.backgroundcolor == whiteColor ? controller.getCartData() : controller.getExpressCartData();
                                                                                                       controller.update();
                                                                                                     },
                                                                                                   ));
@@ -576,7 +583,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                             child: Container(
                                                                                               width: MediaQuery.of(context).size.width - 165.sp,
                                                                                               child: Padding(
-                                                                                                padding: EdgeInsets.symmetric(vertical: 5.sp),
+                                                                                                padding: EdgeInsets.symmetric(vertical: 4.sp),
                                                                                                 child: AppText(
                                                                                                   text: Bidi.stripHtmlIfNeeded(value.orderList[index]["product"]["name"] ?? ""),
                                                                                                   color: widget.backgroundcolor == whiteColor ? subtitleColor : productSubtitleColor,
@@ -588,18 +595,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                               ),
                                                                                             ),
                                                                                           ),
-                                                                                          /*  Container(
-                                                                                    width: MediaQuery.of(context).size.width - 165.sp,
-                                                                                    child: AppText(
-                                                                                      text: Bidi.stripHtmlIfNeeded(value.orderList[index]["product"]["short_description"] ?? ""),
-                                                                                      color: subtitleColor,
-                                                                                      fontSize: 14,
-                                                                                      maxLines: 1,
-                                                                                      fontFamily: "Franklin Gothic Regular",
-                                                                                      fontWeight: FontWeight.w400,
-                                                                                    ),
-                                                                                  ), */
-                                                                                          value.orderList[index]["discount"] != "0.00"
+                                                                                          /*  value.orderList[index]["discount"] != "0.00"
                                                                                               ? Padding(
                                                                                                   padding: EdgeInsets.only(left: 1.sp),
                                                                                                   child: AppText(
@@ -734,9 +730,9 @@ class CartScreenState extends State<CartScreen> {
                                                                                                 )
                                                                                               : SizedBox(
                                                                                                   height: 0,
-                                                                                                ),
+                                                                                                ), */
                                                                                           Padding(
-                                                                                            padding: EdgeInsets.symmetric(vertical: 5.sp),
+                                                                                            padding: EdgeInsets.symmetric(vertical: 4.sp),
                                                                                             child: Row(
                                                                                               children: [
                                                                                                 value.orderList[index]["inventory"] != null
@@ -890,7 +886,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                   height: 0,
                                                                                                 ),
                                                                                           Padding(
-                                                                                            padding: EdgeInsets.symmetric(vertical: 2.sp),
+                                                                                            padding: EdgeInsets.symmetric(vertical: 4.sp),
                                                                                             child: Row(
                                                                                               children: [
                                                                                                 Visibility(
@@ -2456,7 +2452,11 @@ class CartScreenState extends State<CartScreen> {
                                               )))
                                       .then((value) => setState(
                                             () {
-                                              controller.getCartData();
+                                              widget.backgroundcolor ==
+                                                      whiteColor
+                                                  ? controller.getCartData()
+                                                  : controller
+                                                      .getExpressCartData();
                                             },
                                           ));
                                 } else {
@@ -2469,7 +2469,11 @@ class CartScreenState extends State<CartScreen> {
                                               )))
                                       .then((value) => setState(
                                             () {
-                                              controller.getCartData();
+                                              widget.backgroundcolor ==
+                                                      whiteColor
+                                                  ? controller.getCartData()
+                                                  : controller
+                                                      .getExpressCartData();
                                             },
                                           ));
                                   await analytics.logEvent(
