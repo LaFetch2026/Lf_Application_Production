@@ -113,7 +113,7 @@ class _HomeAppbarState extends State<HomeAppbar> {
                   children: [
                     Visibility(
                       visible: widget.showSearch,
-                      child: GestureDetector(
+                      child: InkWell(
                         onTap: () {
                           widget.onPressedSearch?.call();
                         },
@@ -124,7 +124,7 @@ class _HomeAppbarState extends State<HomeAppbar> {
                         ),
                       ),
                     ),
-                    GestureDetector(
+                    InkWell(
                       onTap: () {
                         widget.onPressedHeart?.call();
                       },
@@ -134,7 +134,7 @@ class _HomeAppbarState extends State<HomeAppbar> {
                             height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                       ),
                     ),
-                    GestureDetector(
+                    InkWell(
                       onTap: () {
                         widget.onPressedCart?.call();
                       },

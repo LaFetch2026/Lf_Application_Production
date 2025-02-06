@@ -168,6 +168,7 @@ class ProductController extends BaseController {
   RxBool isBrandProduct = false.obs;
   RxBool isBrand = false.obs;
   RxInt id = 0.obs;
+  RxInt selectedTabCategory = 1.obs;
   RxBool showAddressList = false.obs;
   RxString addressText = "".obs;
   RxString addressTypeValue = "".obs;
@@ -642,7 +643,7 @@ class ProductController extends BaseController {
         if (filter) {
           response = await http.get(
               Uri.parse(
-                  "${ApiConstants.baseUrl}/products?type=all&sort_by=$sortBy&q=${branddetailsSearchController.text.toString().trim()}&brand_id=$brandId&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
+                  "${ApiConstants.baseUrl}/products?type=express&sort_by=$sortBy&q=${branddetailsSearchController.text.toString().trim()}&brand_id=$brandId&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
               headers: <String, String>{
                 'Accept': 'application/json; charset=UTF-8',
                 "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -650,7 +651,7 @@ class ProductController extends BaseController {
         } else {
           response = await http.get(
               Uri.parse(
-                  "${ApiConstants.baseUrl}/products?type=all&sort_by=$sortBy&q=${branddetailsSearchController.text.toString().trim()}&brand_id=$brandId&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
+                  "${ApiConstants.baseUrl}/products?type=express&sort_by=$sortBy&q=${branddetailsSearchController.text.toString().trim()}&brand_id=$brandId&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
               headers: <String, String>{
                 'Accept': 'application/json; charset=UTF-8',
                 "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -660,7 +661,7 @@ class ProductController extends BaseController {
         if (filter) {
           response = await http.get(
               Uri.parse(
-                  "${ApiConstants.baseUrl}/products?type=all&q=${branddetailsSearchController.text.toString().trim()}&brand_id=$brandId&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
+                  "${ApiConstants.baseUrl}/products?type=express&q=${branddetailsSearchController.text.toString().trim()}&brand_id=$brandId&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
               headers: <String, String>{
                 'Accept': 'application/json; charset=UTF-8',
                 "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -668,7 +669,7 @@ class ProductController extends BaseController {
         } else {
           response = await http.get(
               Uri.parse(
-                  "${ApiConstants.baseUrl}/products?type=all&brand_id=$brandId&q=${branddetailsSearchController.text.toString().trim()}&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
+                  "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&q=${branddetailsSearchController.text.toString().trim()}&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
               headers: <String, String>{
                 'Accept': 'application/json; charset=UTF-8',
                 "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -724,7 +725,7 @@ class ProductController extends BaseController {
           if (filter) {
             response = await http.get(
                 Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=all&page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&sort_by=$sortBy&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
+                    "${ApiConstants.baseUrl}/products?type=express&page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&sort_by=$sortBy&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
                 headers: <String, String>{
                   'Accept': 'application/json; charset=UTF-8',
                   "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -732,7 +733,7 @@ class ProductController extends BaseController {
           } else {
             response = await http.get(
                 Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=all&page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&sort_by=$sortBy&latitude=${lat.value}&longitude=${lng.value}"),
+                    "${ApiConstants.baseUrl}/products?type=express&page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&sort_by=$sortBy&latitude=${lat.value}&longitude=${lng.value}"),
                 headers: <String, String>{
                   'Accept': 'application/json; charset=UTF-8',
                   "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -742,7 +743,7 @@ class ProductController extends BaseController {
           if (filter) {
             response = await http.get(
                 Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=all&page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
+                    "${ApiConstants.baseUrl}/products?type=express&page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
                 headers: <String, String>{
                   'Accept': 'application/json; charset=UTF-8',
                   "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -750,7 +751,7 @@ class ProductController extends BaseController {
           } else {
             response = await http.get(
                 Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=all&page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
+                    "${ApiConstants.baseUrl}/products?type=express&page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
                 headers: <String, String>{
                   'Accept': 'application/json; charset=UTF-8',
                   "Authorization": "Bearer ${prefs.getString('token')} ",

@@ -75,7 +75,7 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
                   height: 0,
                 ),
               ),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   widget.onPressedShare?.call();
                 },
@@ -88,7 +88,7 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
                   ),
                 ),
               ),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   widget.onPressedHeart?.call();
                 },
@@ -101,7 +101,7 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
                   ),
                 ),
               ),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   widget.onPressedCart?.call();
                 },

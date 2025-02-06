@@ -95,7 +95,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   height: 0,
                 ),
               ),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   widget.onPressedSearch?.call();
                 },
@@ -110,7 +110,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
               ),
               Visibility(
                 visible: widget.isWishlist,
-                child: GestureDetector(
+                child: InkWell(
                   onTap: () {
                     widget.onPressedHeart?.call();
                   },
@@ -124,7 +124,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   ),
                 ),
               ),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   widget.onPressedCart?.call();
                 },

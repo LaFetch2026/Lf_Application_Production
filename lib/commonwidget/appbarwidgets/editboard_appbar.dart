@@ -32,7 +32,7 @@ class EditBoardAppbar extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   Get.back();
                 },
@@ -54,7 +54,7 @@ class EditBoardAppbar extends StatelessWidget {
                   height: 0,
                 ),
               ),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   onPressedDelete?.call();
                 },

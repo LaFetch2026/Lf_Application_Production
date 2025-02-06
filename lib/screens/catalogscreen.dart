@@ -13,8 +13,9 @@ import '../utils/constants.dart';
 import 'cartscreen.dart';
 
 class CatalogScreen extends StatefulWidget {
-  final int initialIndex;
-  const CatalogScreen({super.key, required this.initialIndex});
+  const CatalogScreen({
+    super.key,
+  });
 
   @override
   State<CatalogScreen> createState() => CatalogScreenState();
@@ -34,14 +35,14 @@ class CatalogScreenState extends State<CatalogScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Get.offAll(const BottomNavScreen(
+        Get.offAll(BottomNavScreen(
           index: 0,
         ));
         return false;
       },
       child: DefaultTabController(
         length: 3,
-        initialIndex: widget.initialIndex,
+        initialIndex: productController.selectedTabCategory.value,
         child: Scaffold(
           backgroundColor: whiteColor,
           body: Column(

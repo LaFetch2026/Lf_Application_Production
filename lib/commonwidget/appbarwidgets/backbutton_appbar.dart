@@ -36,7 +36,7 @@ class BackButtonAppbar extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   Get.back();
                 },
@@ -69,7 +69,7 @@ class BackButtonAppbar extends StatelessWidget {
                 padding: EdgeInsets.only(top: 40.sp),
                 child: Visibility(
                   visible: threeDot,
-                  child: GestureDetector(
+                  child: InkWell(
                     onTap: () {
                       onPressedThreeDot?.call();
                     },

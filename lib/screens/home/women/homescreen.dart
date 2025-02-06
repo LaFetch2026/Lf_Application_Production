@@ -75,13 +75,15 @@ class HomeScreenState extends State<HomeScreen> {
       productController.tagname.value = "We think you might also like";
       productController.productCategory = [];
       productController.productTags = [];
+      /*  homeController.homeGenderValue.value = 2;
+      productController.selectedTabCategory.value = 1; */
       productController.categoryFilter.value =
           homeController.homeGenderValue.value;
       checkUserConnection();
     });
     WidgetsBinding.instance
         .addPostFrameCallback((_) => cartController.getCartData());
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.tagsHasnextpage.value = true;
       productController.tagsLoadMore.value = false;
       productController.istagsProduct.value = false;
@@ -92,7 +94,7 @@ class HomeScreenState extends State<HomeScreen> {
       productController.handpickedLoadMore.value = false;
       productController.isHandPicked.value = false;
       productController.handpickedPage.value = 1;
-    });
+    }); */
     /*  WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getTagsData(homeController.homeGenderValue.value)); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -101,15 +103,15 @@ class HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBrandData();
     });
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getHandPickedProduct("", false, false, 0));
+    /*  WidgetsBinding.instance.addPostFrameCallback(
+        (_) => productController.getHandPickedProduct("", false, false, 0)); */
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar2Data();
     }); */
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => catalogController.getCatalogData(2));
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => productController.getHomeProduct(2));
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        catalogController.getCatalogData(homeController.homeGenderValue.value));
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        productController.getHomeProduct(homeController.homeGenderValue.value));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getConfigurationData();
     });
@@ -395,10 +397,12 @@ class HomeScreenState extends State<HomeScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              GestureDetector(
+                              InkWell(
                                 onTap: () {
                                   homeController.genderText.value = "Men";
                                   homeController.homeGenderValue.value = 2;
+                                  productController.selectedTabCategory.value =
+                                      1;
                                   homeController.currentPage.value = 0;
                                   productController.current.value = 50;
                                   productController.tagId.value = 0;
@@ -448,10 +452,12 @@ class HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                               ),
-                              GestureDetector(
+                              InkWell(
                                 onTap: () {
                                   homeController.genderText.value = "Women";
                                   homeController.homeGenderValue.value = 3;
+                                  productController.selectedTabCategory.value =
+                                      0;
                                   homeController.currentPage.value = 0;
                                   productController.current.value = 50;
                                   productController.tagId.value = 0;
@@ -500,11 +506,13 @@ class HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                               ),
-                              GestureDetector(
+                              InkWell(
                                 onTap: () {
                                   homeController.genderText.value =
                                       "Accessories";
                                   homeController.homeGenderValue.value = 1;
+                                  productController.selectedTabCategory.value =
+                                      2;
                                   homeController.currentPage.value = 0;
                                   productController.current.value = 50;
                                   productController.tagId.value = 0;

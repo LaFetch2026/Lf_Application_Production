@@ -30,7 +30,7 @@ class CatalogAppbar extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   Get.back();
                 },
@@ -56,7 +56,7 @@ class CatalogAppbar extends StatelessWidget {
                   height: 0,
                 ),
               ),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   onPressedSearch?.call();
                 },
@@ -69,7 +69,7 @@ class CatalogAppbar extends StatelessWidget {
                   ),
                 ),
               ),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   onPressedCart?.call();
                 },

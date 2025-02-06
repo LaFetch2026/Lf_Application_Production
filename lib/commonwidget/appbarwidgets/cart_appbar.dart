@@ -33,7 +33,7 @@ class _CartAppbarState extends State<CartAppbar> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            GestureDetector(
+            InkWell(
               onTap: () {
                 Get.back();
               },
@@ -84,7 +84,7 @@ class _CartAppbarState extends State<CartAppbar> {
                 height: 0,
               ),
             ),
-            GestureDetector(
+            InkWell(
               onTap: () {
                 widget.onPressedWishlist?.call();
               },

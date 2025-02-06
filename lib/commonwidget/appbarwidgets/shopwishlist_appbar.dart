@@ -62,7 +62,7 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
                   height: 0,
                 ),
               ),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   widget.onPressedheart?.call();
                 },
@@ -75,7 +75,7 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
                   ),
                 ),
               ),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   widget.onPressedCart?.call();
                 },

@@ -71,7 +71,7 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
                   height: 0,
                 ),
               ),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   widget.onPressedHeart?.call();
                 },
@@ -96,7 +96,7 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
                                 )),
                 ),
               ),
-              GestureDetector(
+              InkWell(
                 onTap: () {
                   widget.onPressedShare?.call();
                 },
