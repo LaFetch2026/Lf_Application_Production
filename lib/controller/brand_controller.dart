@@ -25,6 +25,8 @@ class BrandController extends BaseController {
   RxInt brandId = 0.obs;
   RxString text = "Expand All".obs;
   RxBool showAllBrand = false.obs;
+  RxBool isDetails = false.obs;
+  dynamic brandDetails = "".obs;
   RxBool isCategory = false.obs;
   List categoryList = [].obs;
   RxInt selectIndex = 0.obs;
@@ -159,21 +161,29 @@ class BrandController extends BaseController {
     }
   }
 
-  /*  getCategoryData(int id) async {
-    isCategory.value = true;
+  getBrandDetails(int id, String slug) async {
+    isDetails.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/categories?brand_id=$id"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
+      dynamic response;
+      if (id != 0) {
+        response = await http.get(
+            Uri.parse("${ApiConstants.baseUrl}/brand/$id"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      } else {
+        response = await http.get(
+            Uri.parse("${ApiConstants.baseUrl}/brand/$slug"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData != null) {
-          categoryList = responseData;
-        }
+        brandDetails = responseData;
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
@@ -184,11 +194,11 @@ class BrandController extends BaseController {
         );
         getSnackBar("Authentication failed");
       } else {
-        getSnackBar("get category failed");
+        getSnackBar("get brand details failed");
       }
     } catch (e) {
       print("error$e");
     }
-    isCategory.value = false;
-  } */
+    isDetails.value = false;
+  }
 }

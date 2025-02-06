@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/firebase_options.dart';
+import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/splash/splash.dart';
 import 'package:lafetch/utils/constants.dart';
@@ -28,14 +29,25 @@ Future main() async {
   appLinks.uriLinkStream.listen((uri) {
     // ignore: unnecessary_null_comparison
     if (uri != null) {
-      // Navigate to the specific screen based on the URI
+      String original = uri.toString();
+      String toRemove = "https://shop.la-fetch.com/ ";
+      String result = original.replaceAll(toRemove, "");
+      List<String> parts = result.split('/');
+      if (parts[0] == "products") {
+        Get.to(ProductDetailsScreen(
+          productId: 0,
+          type: "add",
+          brandName: "",
+          Slug: parts[1],
+        ));
+      } else {
+        Get.to(AllBrandScreen(
+          screen: "home",
+          id: 0,
+          slug: parts[1],
+        ));
+      }
       print('Received URI: $uri');
-      Get.to(ProductDetailsScreen(
-        productId: 0,
-        type: "add",
-        brandName: "",
-        Slug: "white-shaket",
-      ));
     }
   });
   runApp(MyApp());

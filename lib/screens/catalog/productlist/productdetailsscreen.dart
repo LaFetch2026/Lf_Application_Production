@@ -18,6 +18,7 @@ import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_productdetails.dart';
 //import 'package:lafetch/commonwidget/homewidget/dummy_review.dart';
 import 'package:lafetch/controller/product_controller.dart';
+import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productimage.dart';
 //import 'package:lafetch/screens/mapscreen.dart';
 import 'package:page_indicator_plus/page_indicator_plus.dart';
@@ -32,7 +33,6 @@ import '../../../commonwidget/homewidget/dummy_productImage.dart';
 import '../../../controller/wishlist_controller.dart';
 import '../../../utils/constants.dart';
 //import '../../account/saved_address.dart';
-import '../../brandsscreen.dart';
 import '../../cartscreen.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -1328,11 +1328,17 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         },
                                                       );
 
-                                                      Navigator.of(context).push(
-                                                          MaterialPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  BrandsScreen(
+                                                      Navigator.of(context).push(MaterialPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              AllBrandScreen(
+                                                                  id: productController
+                                                                          .brandDetails[
+                                                                      "id"],
+                                                                  screen:
+                                                                      "search",
+                                                                  slug: "")
+                                                          /*  BrandsScreen(
                                                                     screen:
                                                                         "search",
                                                                     logo: productController
@@ -1347,7 +1353,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                     brandId: productController
                                                                             .brandDetails[
                                                                         "id"],
-                                                                  )));
+                                                                  ) */
+                                                          ));
                                                     },
                                                     child: Container(
                                                       color: Color(0xFFDFDBFF),

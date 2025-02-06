@@ -22,18 +22,11 @@ import '../../utils/constants.dart';
 import '../cartscreen.dart';
 
 class AllBrandScreen extends StatefulWidget {
-  final String title;
-  final String brandbackground;
-  final String description;
   final String screen;
-  final String share_link;
+  final String slug;
+  final int id;
   const AllBrandScreen(
-      {required this.title,
-      required this.brandbackground,
-      required this.screen,
-      required this.description,
-      required this.share_link,
-      super.key});
+      {required this.id, required this.screen, super.key, required this.slug});
 
   @override
   State<AllBrandScreen> createState() => AllBrandScreenState();
@@ -105,6 +98,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     productController.filterProductEnable.value = false;
     productController.categoryFilter.value = 0;
     // getprefrenceData();
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => brandController.getBrandDetails(widget.id, widget.slug));
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getBrandDetailsProduct(
             "", false, false, brandController.brandId.value));
@@ -164,7 +159,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
               Get.close(1);
             },
             onPressedShare: () async {
-              Share.share(widget.share_link);
+              Share.share(brandController.brandDetails["share_link"]);
             },
             onPressedHeart: () {
               Get.to(const WishlistScreen());
@@ -194,103 +189,107 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           circleBack,
                         ),
                       ),
-                      widget.brandbackground == ""
-                          ? Image.asset(brandback,
-                              height: 112.sp,
-                              width: double.infinity,
-                              fit: BoxFit.cover)
-                          : /* SizedBox(
-                              height: 112,
-                              width: double.infinity,
-                              child: CachedNetworkImage(
-                                cacheManager: CacheManager(Config(
-                                    "customCacheKey",
-                                    stalePeriod: const Duration(days: 15),
-                                    maxNrOfCacheObjects: 100)),
-                                fit: BoxFit.cover,
-                                imageUrl:
-                                    brandController.brandbackground.value,
-                                errorWidget: (context, url, error) =>
-                                    Image.asset(
-                                  downloadImage,
-                                  fit: BoxFit.cover,
-                                  height: 112,
-                                  width: double.infinity,
+                      Obx(
+                        () => brandController.isDetails.value
+                            ? Container(
+                                height: 140.sp,
+                                width: double.infinity,
+                                color: cardBg,
+                              )
+                            : brandController
+                                        .brandDetails["background_image"] !=
+                                    null
+                                ? Image.asset(brandback,
+                                    height: 140.sp,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover)
+                                : Container(
+                                    height: 140.sp,
+                                    width: double.infinity,
+                                    child: FutureBuilder(
+                                      future: _initializeVideoPlayerFuture,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
+                                          return Stack(
+                                            fit: StackFit.expand,
+                                            children: [
+                                              AspectRatio(
+                                                aspectRatio: videoController
+                                                    .value.aspectRatio,
+                                                child: VideoPlayer(
+                                                    videoController),
+                                              ),
+                                            ],
+                                          );
+                                        } else {
+                                          return Center(
+                                            child: SizedBox(
+                                                height: 20.sp,
+                                                width: 20.sp,
+                                                child:
+                                                    CircularProgressIndicator()),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ),
+                      ),
+                      Obx(() => brandController.isDetails.value
+                          ? SizedBox(
+                              height: 0,
+                            )
+                          : Container(
+                              alignment: Alignment.bottomCenter,
+                              margin: EdgeInsets.only(top: 90.sp),
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: homeAppBarColor,
+                                    width: 4.0.sp,
+                                  ),
+                                  color: Colors.white,
+                                  shape: BoxShape.circle),
+                              child: ClipOval(
+                                child: SizedBox(
+                                  height: 80.sp,
+                                  width: 80.sp,
+                                  child: CachedNetworkImage(
+                                    cacheManager: CacheManager(Config(
+                                        "customCacheKey",
+                                        stalePeriod: const Duration(days: 15),
+                                        maxNrOfCacheObjects: 100)),
+                                    fit: BoxFit.cover,
+                                    imageUrl:
+                                        brandController.brandDetails["logo"],
+                                    errorWidget: (context, url, error) =>
+                                        Image.asset(
+                                      chanelLogoImage,
+                                      fit: BoxFit.cover,
+                                      height: 80.sp,
+                                      width: 80.sp,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ) */
-                          Container(
-                              height: 140.sp,
-                              width: double.infinity,
-                              child: FutureBuilder(
-                                future: _initializeVideoPlayerFuture,
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.done) {
-                                    return Stack(
-                                      fit: StackFit.expand,
-                                      children: [
-                                        AspectRatio(
-                                          aspectRatio:
-                                              videoController.value.aspectRatio,
-                                          child: VideoPlayer(videoController),
-                                        ),
-                                      ],
-                                    );
-                                  } else {
-                                    return Center(
-                                      child: SizedBox(
-                                          height: 20.sp,
-                                          width: 20.sp,
-                                          child: CircularProgressIndicator()),
-                                    );
-                                  }
-                                },
-                              ),
-                            ),
-                      Container(
-                        alignment: Alignment.bottomCenter,
-                        margin: EdgeInsets.only(top: 90.sp),
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                              color: homeAppBarColor,
-                              width: 4.0.sp,
-                            ),
-                            color: Colors.white,
-                            shape: BoxShape.circle),
-                        child: ClipOval(
-                          child: SizedBox(
-                            height: 80.sp,
-                            width: 80.sp,
-                            child: CachedNetworkImage(
-                              cacheManager: CacheManager(Config(
-                                  "customCacheKey",
-                                  stalePeriod: const Duration(days: 15),
-                                  maxNrOfCacheObjects: 100)),
-                              fit: BoxFit.cover,
-                              imageUrl: brandController.brandlogo.value,
-                              errorWidget: (context, url, error) => Image.asset(
-                                chanelLogoImage,
-                                fit: BoxFit.cover,
-                                height: 80.sp,
-                                width: 80.sp,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                            )),
                       Container(
                         margin: EdgeInsets.only(top: 190.sp),
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 8.sp),
                           child: Center(
-                            child: AppText(
-                              text: widget.title,
-                              color: whiteColor,
-                              fontSize: 16,
-                              fontFamily: "Franklin Gothic",
-                              fontWeight: FontWeight.w400,
-                            ),
+                            child: Obx(() => brandController.isDetails.value
+                                ? Container(
+                                    height: 20.sp,
+                                    width: 100.sp,
+                                    color: cardBg,
+                                  )
+                                : AppText(
+                                    text: brandController.brandDetails["name"],
+                                    color: whiteColor,
+                                    fontSize: 16,
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w400,
+                                  )),
                           ),
                         ),
                       ),
@@ -299,15 +298,22 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 8.sp),
                           child: Center(
-                            child: AppText(
-                              text: widget.description,
-                              color: productSubtitleColor,
-                              textAlign: TextAlign.center,
-                              fontSize: 14,
-                              maxLines: 2,
-                              fontFamily: "Franklin Gothic Regular",
-                              fontWeight: FontWeight.w400,
-                            ),
+                            child: Obx(() => brandController.isDetails.value
+                                ? Container(
+                                    height: 20.sp,
+                                    width: double.infinity,
+                                    color: cardBg,
+                                  )
+                                : AppText(
+                                    text: brandController
+                                        .brandDetails["description"],
+                                    color: productSubtitleColor,
+                                    textAlign: TextAlign.center,
+                                    fontSize: 14,
+                                    maxLines: 2,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                  )),
                           ),
                         ),
                       )
@@ -783,7 +789,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       Get.to(BrandViewProductScreen(
                               expresshour: homeController.expressHour.value,
                               brand_id: brandController.brandId.value,
-                              title: widget.title,
+                              title: brandController.brandDetails["name"],
                               screen: "brand",
                               genderName: ""))
                           ?.then((value) => setState(

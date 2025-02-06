@@ -409,11 +409,9 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                 brandController.brandId.value = val.brandList[a]["brands"][index]["id"];
                                                                                 brandController.update();
                                                                                 Get.to(AllBrandScreen(
-                                                                                  title: brandController.brandName.value,
-                                                                                  brandbackground: brandController.brandbackground.value,
+                                                                                  id: val.brandList[a]["brands"][index]["id"],
+                                                                                  slug: "",
                                                                                   screen: widget.screen!,
-                                                                                  description: val.brandList[a]["brands"][index]["description"],
-                                                                                  share_link: val.brandList[a]["brands"][index]["share_link"],
                                                                                 ));
                                                                                 await analytics.logEvent(
                                                                                   name: 'brand_details',
@@ -594,11 +592,9 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                               brandController.brandId.value = val.brandList[a]["brands"][index]["id"];
                                                                                               brandController.update();
                                                                                               Get.to(AllBrandScreen(
-                                                                                                title: brandController.brandName.value,
-                                                                                                brandbackground: brandController.brandbackground.value,
+                                                                                                id: val.brandList[a]["brands"][index]["id"],
+                                                                                                slug: "",
                                                                                                 screen: widget.screen!,
-                                                                                                description: val.brandList[a]["brands"][index]["description"],
-                                                                                                share_link: val.brandList[a]["brands"][index]["share_link"],
                                                                                               ));
                                                                                               await analytics.logEvent(
                                                                                                 name: 'brand_details',

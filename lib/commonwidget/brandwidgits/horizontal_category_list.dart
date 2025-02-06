@@ -51,7 +51,7 @@ class HorizontalCategoryList extends StatelessWidget {
                             children: [
                               Stack(
                                 children: [
-                                  /*  list[index]["images"].isNotEmpty &&
+                                  list[index]["images"].isNotEmpty &&
                                           list[index]["images"] != null
                                       ? SizedBox(
                                           width: 136.sp,
@@ -79,11 +79,10 @@ class HorizontalCategoryList extends StatelessWidget {
                                             ),
                                           ),
                                         )
-                                      : */
-                                  Image.asset(dummyWishlistImage,
-                                      width: 136.sp,
-                                      height: 170.sp,
-                                      fit: BoxFit.cover),
+                                      : Image.asset(dummyWishlistImage,
+                                          width: 136.sp,
+                                          height: 170.sp,
+                                          fit: BoxFit.cover),
                                   Visibility(
                                     visible:
                                         list[index]["aggregated_rating"] != 0

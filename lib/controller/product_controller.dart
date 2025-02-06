@@ -699,7 +699,7 @@ class ProductController extends BaseController {
         getSnackBar("Authentication failed"); */
         print(response.statusCode);
       } else {
-        getSnackBar("get brand details failed");
+        getSnackBar("get brand details product failed");
       }
     } catch (e) {
       print("error$e");
