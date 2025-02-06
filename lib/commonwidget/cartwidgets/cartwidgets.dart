@@ -12,6 +12,7 @@ class CartWidget extends StatelessWidget {
   final String? image;
   final bool visible;
   final Function? onPressed;
+  final Color backColor;
 
   const CartWidget({
     Key? key,
@@ -19,6 +20,7 @@ class CartWidget extends StatelessWidget {
     required this.text2,
     required this.btntext,
     required this.visible,
+    this.backColor = whiteColor,
     this.image,
     this.onPressed,
   }) : super(key: key);
@@ -42,7 +44,7 @@ class CartWidget extends StatelessWidget {
               text: text1,
               fontFamily: "Franklin Gothic Bold",
               fontWeight: FontWeight.w700,
-              color: blackColor,
+              color: backColor == whiteColor ? blackColor : whiteColor,
               fontSize: 18,
             ),
           ),
@@ -55,7 +57,7 @@ class CartWidget extends StatelessWidget {
             fontFamily: "Franklin Gothic Regular",
             fontWeight: FontWeight.w400,
             maxLines: 2,
-            color: blackColor,
+            color: backColor == whiteColor ? blackColor : whiteColor,
             fontSize: 14,
           ),
         ),
@@ -63,12 +65,14 @@ class CartWidget extends StatelessWidget {
           padding: EdgeInsets.only(top: 30.sp, left: 24.sp, right: 24.sp),
           child: SingleButton(
               label: btntext,
-              textColor: whiteBorderColor,
-              backgroundColor: colorPrimary,
+              textColor:
+                  backColor == whiteColor ? whiteBorderColor : homeAppBarColor,
+              backgroundColor:
+                  backColor == whiteColor ? colorPrimary : whiteColor,
               onPressed: () {
                 onPressed?.call();
               },
-              borderColor: colorPrimary),
+              borderColor: backColor == whiteColor ? colorPrimary : whiteColor),
         )
       ],
     );

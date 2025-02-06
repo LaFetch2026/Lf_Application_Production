@@ -239,6 +239,7 @@ class CartScreenState extends State<CartScreen> {
                                         padding: EdgeInsets.only(top: 60.sp),
                                         child: CartWidget(
                                             image: shopBagImage,
+                                            backColor: widget.backgroundcolor,
                                             text1:
                                                 "There is still room for more",
                                             onPressed: () {

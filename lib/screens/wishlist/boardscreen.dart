@@ -652,9 +652,14 @@ class BoardScreenState extends State<BoardScreen> {
                                         ),
                                       )
                                     : Padding(
-                                        padding: EdgeInsets.only(top: 40.sp),
+                                        padding: EdgeInsets.only(
+                                            top: 40.sp,
+                                            left: 12.sp,
+                                            right: 12.sp),
                                         child: Center(
-                                          child: Text("No items Found",
+                                          child: Text(
+                                              "oops! Seems like you haven't wishlisted any product.",
+                                              textAlign: TextAlign.center,
                                               style: TextStyle(
                                                   fontSize: 14.sp,
                                                   color: Colors.black,

@@ -614,12 +614,17 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                       ),
                     )
                   : Expanded(
-                      child: Center(
-                        child: Text("No items Found",
-                            style: TextStyle(
-                                fontSize: 14.sp,
-                                color: Colors.black,
-                                fontFamily: "Franklin Gothic Regular")),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                        child: Center(
+                          child: Text(
+                              "oops! Seems like you haven't wishlisted any product.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: Colors.black,
+                                  fontFamily: "Franklin Gothic Regular")),
+                        ),
                       ),
                     )),
           widget.btnText == ""

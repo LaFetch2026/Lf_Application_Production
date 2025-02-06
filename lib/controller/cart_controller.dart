@@ -61,8 +61,9 @@ class CartController extends BaseController {
             "Authorization": "Bearer ${prefs.getString('token')} ",
           });
       cartTotalValue.value = orderList.length;
-      var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
+        orderList.clear();
+        var responseData = json.decode(response.body);
         if (responseData != null) {
           cartDetails = responseData;
           orderList = responseData["order_lines"];
@@ -111,8 +112,9 @@ class CartController extends BaseController {
             "Authorization": "Bearer ${prefs.getString('token')} ",
           });
       cartTotalValue.value = orderList.length;
-      var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
+        orderList.clear();
+        var responseData = json.decode(response.body);
         if (responseData != null) {
           cartDetails = responseData;
           orderList = responseData["order_lines"];

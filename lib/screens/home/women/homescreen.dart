@@ -1520,7 +1520,7 @@ class HomeScreenState extends State<HomeScreen> {
                                             height: 0,
                                           ),
                                         ),
-                                        GestureDetector(
+                                        InkWell(
                                           onTap: () {
                                             widget.onPressed?.call(1);
                                           },
@@ -1529,7 +1529,7 @@ class HomeScreenState extends State<HomeScreen> {
                                               padding: EdgeInsets.only(
                                                   top: 48.sp,
                                                   right: 12.sp,
-                                                  left: 16.sp,
+                                                  left: 20.sp,
                                                   bottom: 2.sp),
                                               child: SvgPicture.asset(
                                                   arrowViewAllImage,

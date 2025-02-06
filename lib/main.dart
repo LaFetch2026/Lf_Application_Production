@@ -30,7 +30,7 @@ Future main() async {
     // ignore: unnecessary_null_comparison
     if (uri != null) {
       String original = uri.toString();
-      String toRemove = "https://shop.la-fetch.com/ ";
+      String toRemove = "https://shop.la-fetch.com/";
       String result = original.replaceAll(toRemove, "");
       List<String> parts = result.split('/');
       if (parts[0] == "products") {
