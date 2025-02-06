@@ -1,11 +1,13 @@
 import 'dart:ui';
 
+import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/firebase_options.dart';
+import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/splash/splash.dart';
 import 'package:lafetch/utils/constants.dart';
 
@@ -22,6 +24,20 @@ Future main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  final AppLinks appLinks = AppLinks();
+  appLinks.uriLinkStream.listen((uri) {
+    // ignore: unnecessary_null_comparison
+    if (uri != null) {
+      // Navigate to the specific screen based on the URI
+      print('Received URI: $uri');
+      Get.to(ProductDetailsScreen(
+        productId: 0,
+        type: "add",
+        brandName: "",
+        Slug: "white-shaket",
+      ));
+    }
+  });
   runApp(MyApp());
 }
 
