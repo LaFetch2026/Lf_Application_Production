@@ -49,7 +49,7 @@ class QuickScreenState extends State<QuickScreen> {
       homeController.getBannar2Data();
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      homeController.getBrandData();
+      homeController.getBrandData("express");
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.getBrandProductData();
@@ -634,13 +634,15 @@ class QuickScreenState extends State<QuickScreen> {
                                                             brandId: homeController
                                                                     .brandList[
                                                                 index]["id"],
-                                                          ))?.then((value) =>
-                                                              setState(
-                                                                () {
-                                                                  homeController
-                                                                      .getBrandData();
-                                                                },
-                                                              ));
+                                                          ))
+                                                              ?.then(
+                                                                  (value) =>
+                                                                      setState(
+                                                                        () {
+                                                                          homeController
+                                                                              .getBrandData("express");
+                                                                        },
+                                                                      ));
                                                         },
                                                         child: Padding(
                                                           padding:

@@ -118,7 +118,7 @@ class CatalogScreenState extends State<CatalogScreen> {
                       tabs: [
                         Tab(
                             child: Text(
-                          "Women",
+                          "Men",
                           style: TextStyle(
                               fontSize: 14.sp,
                               fontFamily: "Franklin Gothic",
@@ -126,7 +126,7 @@ class CatalogScreenState extends State<CatalogScreen> {
                         )),
                         Tab(
                             child: Text(
-                          "Men",
+                          "Women",
                           style: TextStyle(
                               fontSize: 14.sp,
                               fontFamily: "Franklin Gothic",
@@ -153,12 +153,12 @@ class CatalogScreenState extends State<CatalogScreen> {
                     physics: NeverScrollableScrollPhysics(),
                     children: [
                       WomenCatalogScreen(
-                        categorytext: "women",
-                        type: 3,
-                      ),
-                      WomenCatalogScreen(
                         categorytext: "men",
                         type: 2,
+                      ),
+                      WomenCatalogScreen(
+                        categorytext: "women",
+                        type: 3,
                       ),
                       WomenCatalogScreen(
                         categorytext: "accessories",

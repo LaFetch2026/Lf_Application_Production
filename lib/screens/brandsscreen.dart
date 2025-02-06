@@ -74,12 +74,12 @@ class BrandsScreenState extends State<BrandsScreen> {
       brandController.text.value = "Expand All";
       brandController.selectIndex.value = 0;
     });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /*   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       brandController.brandListController.addListener(() {
         brandController.fetchMoreData("brand");
         brandController.update();
       });
-    });
+    }); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       brandController.hasnextpage.value = true;
       brandController.loadMore.value = false;

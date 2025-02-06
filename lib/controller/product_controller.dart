@@ -168,7 +168,7 @@ class ProductController extends BaseController {
   RxBool isBrandProduct = false.obs;
   RxBool isBrand = false.obs;
   RxInt id = 0.obs;
-  RxInt selectedTabCategory = 1.obs;
+  RxInt selectedTabCategory = 0.obs;
   RxBool showAddressList = false.obs;
   RxString addressText = "".obs;
   RxString addressTypeValue = "".obs;

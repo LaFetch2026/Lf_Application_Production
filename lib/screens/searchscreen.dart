@@ -794,16 +794,29 @@ class SearchScreenState extends State<SearchScreen> {
                                                                     () async {
                                                                   if (isSearch) {
                                                                   } else {
+                                                                    List
+                                                                        categoryList =
+                                                                        [];
+                                                                    for (var i =
+                                                                            0;
+                                                                        i < controller.suggestedList[index]["categories"].length;
+                                                                        i++) {
+                                                                      categoryList.add(controller.suggestedList[index]["categories"]
+                                                                              [
+                                                                              i]
+                                                                          [
+                                                                          "id"]);
+                                                                    }
                                                                     Navigator.of(
                                                                             context)
                                                                         .push(MaterialPageRoute(
                                                                             builder: (BuildContext context) => CategoryProductScreen(
                                                                                 categoryName: controller.suggestedList[index]["name"],
-                                                                                categoryId: controller.suggestedList[index]["id"],
+                                                                                categoryId: 0,
                                                                                 brandId: 0,
                                                                                 genderName: "",
                                                                                 genderType: 0,
-                                                                                categoryList: [],
+                                                                                categoryList: categoryList,
                                                                                 tagIds: const [])))
                                                                         .then((value) => setState(
                                                                               () {

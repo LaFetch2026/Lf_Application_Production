@@ -101,7 +101,7 @@ class HomeScreenState extends State<HomeScreen> {
       homeController.getBannar1Data();
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      homeController.getBrandData();
+      homeController.getBrandData("home");
     });
     /*  WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getHandPickedProduct("", false, false, 0)); */
@@ -402,7 +402,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   homeController.genderText.value = "Men";
                                   homeController.homeGenderValue.value = 2;
                                   productController.selectedTabCategory.value =
-                                      1;
+                                      0;
                                   homeController.currentPage.value = 0;
                                   productController.current.value = 50;
                                   productController.tagId.value = 0;
@@ -457,7 +457,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   homeController.genderText.value = "Women";
                                   homeController.homeGenderValue.value = 3;
                                   productController.selectedTabCategory.value =
-                                      0;
+                                      1;
                                   homeController.currentPage.value = 0;
                                   productController.current.value = 50;
                                   productController.tagId.value = 0;
@@ -1584,21 +1584,19 @@ class HomeScreenState extends State<HomeScreen> {
                                                           brandId: homeController
                                                                   .brandList[
                                                               index]["id"],
-                                                        ))?.then(
-                                                            (value) => setState(
-                                                                  () {
-                                                                    homeController
-                                                                        .getBrandData();
-                                                                    productController.getTagsProductData(
-                                                                        productController
-                                                                            .tagId
-                                                                            .value,
+                                                        ))
+                                                            ?.then(
+                                                                (value) =>
+                                                                    setState(
+                                                                      () {
                                                                         homeController
-                                                                            .homeGenderValue
-                                                                            .value,
-                                                                        0);
-                                                                  },
-                                                                ));
+                                                                            .getBrandData("home");
+                                                                        productController.getTagsProductData(
+                                                                            productController.tagId.value,
+                                                                            homeController.homeGenderValue.value,
+                                                                            0);
+                                                                      },
+                                                                    ));
                                                       },
                                                       child: Padding(
                                                         padding:

@@ -1,4 +1,6 @@
 // ignore_for_file: avoid_print
+import 'dart:io';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
@@ -42,7 +44,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     otpController.otp.value = "";
-    callReceiveMsg();
+    if (Platform.isAndroid) {
+      callReceiveMsg();
+    }
     profileController.isEditNumber.value = true;
     profileController.isPhoneNumber.value = false;
     profileController.nameController.text = widget.name;

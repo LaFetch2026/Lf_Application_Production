@@ -120,6 +120,14 @@ class BrandController extends BaseController {
                 'Accept': 'application/json; charset=UTF-8',
                 "Authorization": "Bearer ${prefs.getString('token')} ",
               });
+        } else if (type == "brand") {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/brands?q=${queryText.value}&page=${page.value}&type=alphabet"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
         } else {
           response = await http.get(
               Uri.parse(
@@ -131,15 +139,23 @@ class BrandController extends BaseController {
         }
         var responseData = json.decode(response.body);
         if (response.statusCode == 200) {
-          if (responseData["data"] != null) {
-            if (responseData["data"].isNotEmpty) {
-              print(responseData);
-              brandList.addAll(responseData['data']);
-              print(brandList.length);
-              selected.clear();
-              selected = List.generate(brandList.length, (i) => false);
+          if (type == "brand") {
+            if (responseData.isNotEmpty) {
+              brandList.addAll(responseData);
             } else {
               hasnextpage.value = false;
+            }
+          } else {
+            if (responseData["data"] != null) {
+              if (responseData["data"].isNotEmpty) {
+                print(responseData);
+                brandList.addAll(responseData['data']);
+                print(brandList.length);
+                selected.clear();
+                selected = List.generate(brandList.length, (i) => false);
+              } else {
+                hasnextpage.value = false;
+              }
             }
           }
         } else if (response.statusCode == 500) {
