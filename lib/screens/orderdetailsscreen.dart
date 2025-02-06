@@ -3490,7 +3490,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                         Padding(
                                           padding: EdgeInsets.only(right: 4.sp),
                                           child: AppText(
-                                            text: "Total MRP",
+                                            text: "Total Price",
                                             fontFamily:
                                                 "Franklin Gothic Regular",
                                             fontWeight: FontWeight.w400,
@@ -3567,7 +3567,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                         Padding(
                                           padding: EdgeInsets.only(right: 4.sp),
                                           child: AppText(
-                                            text: "Discount on MRP",
+                                            text: "Discount",
                                             fontFamily:
                                                 "Franklin Gothic Regular",
                                             fontWeight: FontWeight.w400,
@@ -3675,7 +3675,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                       : SizedBox(
                                           height: 0,
                                         ),
-                                  Padding(
+                                  /*  Padding(
                                     padding: EdgeInsets.only(top: 10.sp),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
@@ -3708,7 +3708,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                         ),
                                       ],
                                     ),
-                                  ),
+                                  ), */
                                   Padding(
                                     padding: EdgeInsets.only(top: 10.sp),
                                     child: Row(
@@ -3852,7 +3852,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                         Padding(
                                           padding: EdgeInsets.only(right: 4.sp),
                                           child: AppText(
-                                            text: "Bill total",
+                                            text: "Bill Total",
                                             fontFamily: "Franklin Gothic",
                                             fontWeight: FontWeight.w500,
                                             color: colorPrimary,

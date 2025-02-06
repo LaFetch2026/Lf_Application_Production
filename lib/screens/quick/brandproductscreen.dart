@@ -189,7 +189,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                         height: 0,
                                       ),
                                     ),
-                                    GestureDetector(
+                                    InkWell(
                                       onTap: () async {
                                         Navigator.push(context,
                                             scaleIn(const SearchScreen()));
@@ -210,7 +210,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                         ),
                                       ),
                                     ),
-                                    GestureDetector(
+                                    InkWell(
                                       onTap: () async {
                                         Get.to(const WishlistScreen());
                                         await analytics.logEvent(
@@ -230,7 +230,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                         ),
                                       ),
                                     ),
-                                    GestureDetector(
+                                    InkWell(
                                       onTap: () async {
                                         Navigator.push(context,
                                             scaleIn(const CartScreen()));
@@ -638,7 +638,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      GestureDetector(
+                      InkWell(
                         onTap: () {
                           showModalBottomSheet(
                             context: context,
@@ -703,7 +703,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                           height: 40.sp,
                         ),
                       ),
-                      GestureDetector(
+                      InkWell(
                         onTap: () {
                           showModalBottomSheet(
                             context: context,
@@ -847,7 +847,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                           height: 40.sp,
                         ),
                       ),
-                      GestureDetector(
+                      InkWell(
                         onTap: () {
                           showModalBottomSheet(
                             context: context,

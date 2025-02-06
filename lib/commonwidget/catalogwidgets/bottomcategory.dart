@@ -97,7 +97,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                             ),
                           ),
                         ),
-                        GestureDetector(
+                        InkWell(
                           onTap: () {
                             widget.onPressedFilter.call();
                           },
@@ -136,7 +136,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                             prefs.setString("category", text1!);
                             setState(() {});
                           }),
-                      GestureDetector(
+                      InkWell(
                         onTap: () async {
                           text1 = "Men";
                           final prefs = await SharedPreferences.getInstance();
@@ -171,7 +171,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                             prefs.setString("category", text1!);
                             setState(() {});
                           }),
-                      GestureDetector(
+                      InkWell(
                         onTap: () async {
                           text1 = "Women";
                           final prefs = await SharedPreferences.getInstance();
@@ -207,7 +207,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                             prefs.setString("category", text1!);
                             setState(() {});
                           }),
-                      GestureDetector(
+                      InkWell(
                         onTap: () async {
                           text1 = "Accesories";
                           final prefs = await SharedPreferences.getInstance();

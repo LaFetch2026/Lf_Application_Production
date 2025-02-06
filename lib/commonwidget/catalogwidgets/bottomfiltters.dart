@@ -150,7 +150,7 @@ class BottomFiltersState extends State<BottomFilters> {
                             width: 0,
                           ),
                         ),
-                        GestureDetector(
+                        InkWell(
                           onTap: () {
                             brandSelected = List.generate(50, (i) => false);
                             sizeSelected = List.generate(50, (i) => false);
@@ -211,7 +211,7 @@ class BottomFiltersState extends State<BottomFilters> {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    GestureDetector(
+                                    InkWell(
                                         onTap: () {
                                           selected.clear();
                                           selected =

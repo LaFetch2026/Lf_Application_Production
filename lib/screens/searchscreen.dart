@@ -170,7 +170,7 @@ class SearchScreenState extends State<SearchScreen> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(
-                            top: 40.sp, left: 16.sp, bottom: 10.sp),
+                            top: 56.sp, left: 16.sp, bottom: 10.sp),
                         child: Row(
                           children: [
                             GestureDetector(
@@ -1393,7 +1393,7 @@ class SearchScreenState extends State<SearchScreen> {
                                       children: [
                                         Padding(
                                           padding: EdgeInsets.only(
-                                              top: 40.sp,
+                                              top: 56.sp,
                                               left: 16.sp,
                                               bottom: 10.sp),
                                           child: Row(

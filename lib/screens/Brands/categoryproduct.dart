@@ -835,7 +835,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  GestureDetector(
+                  InkWell(
                     onTap: () {
                       showModalBottomSheet(
                         context: context,
@@ -914,7 +914,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                       height: 40.sp,
                     ),
                   ),
-                  GestureDetector(
+                  InkWell(
                     onTap: () {
                       showModalBottomSheet(
                         context: context,
@@ -1112,7 +1112,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                       height: 40.sp,
                     ),
                   ),
-                  GestureDetector(
+                  InkWell(
                     onTap: () {
                       showModalBottomSheet(
                         context: context,
