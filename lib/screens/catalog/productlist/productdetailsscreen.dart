@@ -743,8 +743,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     }); */
     /*   WidgetsBinding.instance.addPostFrameCallback((_) => productController
         .getFrequentlyProductData("frequently-bought", widget.productId)); */
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => wishlistController.getWishlistProductDetails(widget.productId));
+    WidgetsBinding.instance.addPostFrameCallback((_) => wishlistController
+        .getWishlistProductDetails(widget.productId, widget.Slug));
     /* WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductReview(widget.productId));
     WidgetsBinding.instance.addPostFrameCallback(

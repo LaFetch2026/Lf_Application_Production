@@ -457,17 +457,34 @@ class WishlistController extends BaseController {
     hideLoading();
   } */
 
-  getWishlistProductDetails(int productId) async {
+  getWishlistProductDetails(int productId, String slug) async {
     isProductWishlist.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(
+      /*  var response = await http.get(
           Uri.parse(
               "${ApiConstants.baseUrl}/products/$productId?type=relevant"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
+          }); */
+      dynamic response;
+      if (productId != 0) {
+        response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/products/$productId?type=relevant"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      } else {
+        response = await http.get(
+            Uri.parse("${ApiConstants.baseUrl}/products/$slug?type=relevant"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData != null) {
@@ -511,7 +528,7 @@ class WishlistController extends BaseController {
         } else {
           //  getSnackBar("product removed from the wishlist");
         }
-        getWishlistProductDetails(responseData["id"]);
+        getWishlistProductDetails(responseData["id"], "");
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {

@@ -2298,7 +2298,6 @@ class ProductController extends BaseController {
               "Authorization": "Bearer ${prefs.getString('token')} ",
             });
       }
-
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData != null) {
