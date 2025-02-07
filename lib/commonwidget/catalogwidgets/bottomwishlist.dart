@@ -1,9 +1,14 @@
 // ignore_for_file: avoid_print
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../screens/bottomnavscreen.dart';
+import 'package:lafetch/commonwidget/app_text.dart';
+import 'package:lafetch/commonwidget/doublebutton_new.dart';
+import 'package:lafetch/screens/wishlist/newboardscreen.dart';
+import 'package:lafetch/screens/wishlistscreen.dart';
 import '../../utils/constants.dart';
 import '../common_widgets.dart';
 import '../smallbtn.dart';
@@ -27,186 +32,370 @@ class BottomWishlist extends StatefulWidget {
 class _BottomWishlistState extends State<BottomWishlist> {
   String text = "0";
   int id = 0;
+  List<bool> wishlistSelected = List.generate(50, (i) => false);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 420.sp,
+      height: 422.sp,
       width: double.infinity,
       decoration: BoxDecoration(
         color: whiteColor,
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.0.sp),
-            topRight: Radius.circular(16.0.sp)),
       ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 10.sp),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 10.sp),
-              child: Center(
-                child: Image.asset(
-                  handleImage,
-                  height: 7.sp,
-                  width: 80.sp,
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      "Select Wishlist",
-                      style: TextStyle(
-                        color: loginText,
-                        fontSize: 14.sp,
-                        fontFamily: "Franklin Gothic",
-                        fontWeight: FontWeight.w500,
+      child: Column(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding:
+                      EdgeInsets.only(left: 16.sp, top: 24.sp, right: 16.sp),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Text(
+                          "SELECT BOARDS",
+                          style: TextStyle(
+                            color: blackColor,
+                            fontSize: 12.sp,
+                            fontFamily: "Franklin Gothic Semibold",
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Get.back();
-                    },
-                    child: Container(
-                      color: Colors.transparent,
-                      child: Image.asset(blackCrossImage,
-                          height: 20.sp, width: 20.sp, fit: BoxFit.cover),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.sp, vertical: 10.sp),
-              child: widget.wishlistList.isNotEmpty
-                  ? SizedBox(
-                      width: double.infinity,
-                      height: 250.sp,
-                      child: ListView.builder(
-                          physics: const ScrollPhysics(),
-                          itemCount: widget.wishlistList.length,
-                          scrollDirection: Axis.vertical,
-                          itemBuilder: (ctx, index) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  const NewBoardScreen(
+                                    title: "New Board",
+                                    boardId: 0,
+                                    hintName: "Name of the Board",
+                                    boardName: "",
+                                    btnText: "Next",
+                                  )));
+                        },
+                        child: Container(
+                          color: Color(0xffDFC5FE),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12.sp, vertical: 10.sp),
+                            child: Row(
                               children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    text = widget.wishlistList[index]["name"];
-                                    id = widget.wishlistList[index]["id"];
-                                    print(text);
-                                    setState(() {});
-                                  },
-                                  child: Container(
-                                    width: double.infinity,
-                                    color: whiteColor,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        index == 0
-                                            ? const Divider(
-                                                color: colorSecondary,
-                                              )
-                                            : const SizedBox(
-                                                height: 0,
-                                              ),
-                                        Container(
-                                          width: double.infinity,
-                                          color: id ==
-                                                  widget.wishlistList[index]
-                                                      ["id"]
-                                              ? blackColor
-                                              : whiteColor,
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 10.sp,
-                                                horizontal: 10.sp),
-                                            child: Text(
-                                              widget.wishlistList[index]
-                                                  ["name"],
-                                              style: TextStyle(
-                                                fontSize: 14.sp,
-                                                color: id ==
-                                                        widget.wishlistList[
-                                                            index]["id"]
-                                                    ? whiteColor
-                                                    : nameText,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        const Divider(
-                                          color: colorSecondary,
-                                        ),
-                                      ],
-                                    ),
+                                Icon(
+                                  Icons.add,
+                                  color: blackColor,
+                                  size: 10.sp,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 5.sp),
+                                  child: AppText(
+                                    text: "New Board".toUpperCase(),
+                                    color: homeAppBarColor,
+                                    fontSize: 10,
+                                    fontFamily: "Franklin Gothic Medium",
+                                    fontWeight: FontWeight.w400,
                                   ),
                                 ),
                               ],
-                            );
-                          })
-                      /* const Padding(
-                          padding: EdgeInsets.all(40.0),
-                          child: Center(
-                            child: Text("No Wishlist Found",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.black,
-                                    fontFamily: "Franklin Gothic Regular")),
+                            ),
                           ),
-                        ) */
-                      )
-                  : Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 150.sp),
-                        child: SmallButton(
-                            width: 160.sp,
-                            label: "Create Wishlist",
-                            textColor: whiteBorderColor,
-                            backgroundColor: colorPrimary,
-                            onPressed: () {
-                              Get.offAll(
-                                () => const BottomNavScreen(
-                                  index: 2,
-                                ),
-                              );
-                            },
-                            borderColor: colorPrimary),
+                        ),
                       ),
-                    ),
-            ),
-            widget.wishlistList.isNotEmpty
-                ? Obx(() => Padding(
-                      padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
-                      child: getSingleButton(
-                          label: "Done",
-                          textColor: whiteBorderColor,
-                          backgroundColor: colorPrimary,
-                          controller: widget.controller,
-                          onPressed: () {
-                            if (id != 0) {
-                              widget.onPressed?.call(id);
-                            } else {
-                              getSnackBar("Select Wishlist");
-                            }
-                          },
-                          borderColor: colorPrimary),
-                    ))
-                : const SizedBox(
-                    height: 0,
+                    ],
                   ),
-          ],
-        ),
+                ),
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.sp, vertical: 12.sp),
+                  child: widget.wishlistList.isNotEmpty
+                      ? Container(
+                          //  color: blue,
+                          width: double.infinity,
+                          height: 250.sp,
+                          child: ListView.builder(
+                              physics: const ScrollPhysics(),
+                              itemCount: widget.wishlistList.length,
+                              scrollDirection: Axis.vertical,
+                              itemBuilder: (ctx, index) {
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        wishlistSelected.clear();
+                                        wishlistSelected =
+                                            List.generate(50, (i) => false);
+                                        wishlistSelected[index] =
+                                            !wishlistSelected[index];
+                                        text =
+                                            widget.wishlistList[index]["name"];
+                                        id = widget.wishlistList[index]["id"];
+
+                                        setState(() {});
+                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        color: whiteColor,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              width: double.infinity,
+                                              color: whiteColor,
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 10.sp,
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    widget
+                                                            .wishlistList[index]
+                                                                ["images"]
+                                                            .isNotEmpty
+                                                        ? SizedBox(
+                                                            height: 64.sp,
+                                                            width: 64.sp,
+                                                            child:
+                                                                CachedNetworkImage(
+                                                              cacheManager: CacheManager(Config(
+                                                                  "customCacheKey",
+                                                                  stalePeriod:
+                                                                      const Duration(
+                                                                          days:
+                                                                              15),
+                                                                  maxNrOfCacheObjects:
+                                                                      100)),
+                                                              fit: BoxFit.cover,
+                                                              imageUrl: widget
+                                                                          .wishlistList[
+                                                                      index]
+                                                                  ["images"][0],
+                                                              errorWidget: (context,
+                                                                      url,
+                                                                      error) =>
+                                                                  Image.asset(
+                                                                downloadImage,
+                                                                height: 64.sp,
+                                                                width: 64.sp,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                            ),
+                                                          )
+                                                        : Image.asset(
+                                                            dummyWishlistImage,
+                                                            height: 64.sp,
+                                                            width: 64.sp,
+                                                            fit: BoxFit.cover),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 12.sp),
+                                                      child: Column(
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 15.sp),
+                                                            child: Text(
+                                                              widget
+                                                                  .wishlistList[
+                                                                      index]
+                                                                      ["name"]
+                                                                  .toUpperCase(),
+                                                              style: TextStyle(
+                                                                fontSize: 16.sp,
+                                                                color:
+                                                                    blackColor,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Semibold",
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 2.sp,
+                                                                    bottom:
+                                                                        15.sp),
+                                                            child: Text(
+                                                              "${widget.wishlistList[index]["products_count"].toString()}ITEMS"
+                                                                  .toUpperCase(),
+                                                              style: TextStyle(
+                                                                fontSize: 10.sp,
+                                                                color:
+                                                                    subtitleColor,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: SizedBox(
+                                                        height: 0,
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              vertical: 15.sp),
+                                                      child: Material(
+                                                        color: whiteColor,
+                                                        child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: whiteColor,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          0),
+                                                              border: Border(
+                                                                top: BorderSide(
+                                                                    width:
+                                                                        2.0.sp,
+                                                                    color: wishlistSelected[
+                                                                            index]
+                                                                        ? titleColor
+                                                                        : searchTextColor),
+                                                                left: BorderSide(
+                                                                    width:
+                                                                        2.0.sp,
+                                                                    color: wishlistSelected[
+                                                                            index]
+                                                                        ? titleColor
+                                                                        : searchTextColor),
+                                                                right: BorderSide(
+                                                                    width:
+                                                                        2.0.sp,
+                                                                    color: wishlistSelected[
+                                                                            index]
+                                                                        ? titleColor
+                                                                        : searchTextColor),
+                                                                bottom: BorderSide(
+                                                                    width:
+                                                                        2.0.sp,
+                                                                    color: wishlistSelected[
+                                                                            index]
+                                                                        ? titleColor
+                                                                        : searchTextColor),
+                                                              ),
+                                                            ),
+                                                            width: 20,
+                                                            height: 20,
+                                                            child: Checkbox(
+                                                              value:
+                                                                  wishlistSelected[
+                                                                      index],
+                                                              checkColor:
+                                                                  wishlistSelected[
+                                                                          index]
+                                                                      ? whiteColor
+                                                                      : titleColor,
+                                                              activeColor:
+                                                                  wishlistSelected[
+                                                                          index]
+                                                                      ? titleColor
+                                                                      : whiteColor,
+                                                              side: BorderSide(
+                                                                  color: wishlistSelected[
+                                                                          index]
+                                                                      ? whiteColor
+                                                                      : titleColor,
+                                                                  width: 0),
+                                                              onChanged:
+                                                                  (value) {
+                                                                wishlistSelected
+                                                                    .clear();
+                                                                wishlistSelected =
+                                                                    List.generate(
+                                                                        50,
+                                                                        (i) =>
+                                                                            false);
+                                                                wishlistSelected[
+                                                                        index] =
+                                                                    !wishlistSelected[
+                                                                        index];
+                                                                text = widget
+                                                                        .wishlistList[
+                                                                    index]["name"];
+                                                                id = widget
+                                                                        .wishlistList[
+                                                                    index]["id"];
+
+                                                                setState(() {});
+                                                              },
+                                                            )),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              })
+                          /* const Padding(
+                              padding: EdgeInsets.all(40.0),
+                              child: Center(
+                                child: Text("No Wishlist Found",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontFamily: "Franklin Gothic Regular")),
+                              ),
+                            ) */
+                          )
+                      : Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 150.sp),
+                            child: SmallButton(
+                                width: 160.sp,
+                                label: "Create Wishlist",
+                                textColor: whiteBorderColor,
+                                backgroundColor: colorPrimary,
+                                onPressed: () {
+                                  Get.to(
+                                    () => const WishlistScreen(),
+                                  );
+                                },
+                                borderColor: colorPrimary),
+                          ),
+                        ),
+                ),
+              ],
+            ),
+          ),
+          widget.wishlistList.isNotEmpty
+              ? DoubleButtonNew(
+                  firstText: "CLOSE",
+                  secondText: "SAVE",
+                  lineColor: dividerColor,
+                  controller: widget.controller,
+                  onPressedFirst: () {
+                    Get.back();
+                  },
+                  onPressedSecond: () {
+                    if (id != 0) {
+                      widget.onPressed?.call(id);
+                    } else {
+                      getSnackBar("Select Wishlist");
+                    }
+                  },
+                )
+              : const SizedBox(
+                  height: 0,
+                ),
+        ],
       ),
     );
   }

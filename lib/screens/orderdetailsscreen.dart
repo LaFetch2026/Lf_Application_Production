@@ -1679,51 +1679,53 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                                 height: 0,
                                                                                               ),
                                                                                         orderController.orderDetails["orders"][index]["order_lines"][i]["exchange"]
-                                                                                            ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["has_exchange"]
-                                                                                                ? GestureDetector(
-                                                                                                    onTap: () async {
-                                                                                                      Get.to(ExchangeProductScreen(
-                                                                                                          productId: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["id"] : 0,
-                                                                                                          productName: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["name"] : "",
-                                                                                                          productimage: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null
-                                                                                                              ? isImage(orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["images"][0]["name"])
-                                                                                                                  ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["images"][0]["name"]
-                                                                                                                  : orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["images"][1]["name"]
-                                                                                                              : "",
-                                                                                                          orderId: orderController.orderDetails["orders"][index]["id"],
-                                                                                                          sizeId: orderController.orderDetails["orders"][index]["order_lines"][i]["inventory"]["id"] ?? 0,
-                                                                                                          productDescription: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["brand_name"] : ""));
-                                                                                                      await analytics.logEvent(
-                                                                                                        name: 'order_exchangeClick',
-                                                                                                        parameters: <String, Object>{
-                                                                                                          'page_name': 'order_exchangeClick',
-                                                                                                        },
-                                                                                                      );
+                                                                                            ? /*  orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["has_exchange"]
+                                                                                                ? */
+                                                                                            GestureDetector(
+                                                                                                onTap: () async {
+                                                                                                  Get.to(ExchangeProductScreen(
+                                                                                                      productId: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["id"] : 0,
+                                                                                                      productName: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["name"] : "",
+                                                                                                      productimage: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null
+                                                                                                          ? isImage(orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["images"][0]["name"])
+                                                                                                              ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["images"][0]["name"]
+                                                                                                              : orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["images"][1]["name"]
+                                                                                                          : "",
+                                                                                                      orderId: orderController.orderDetails["orders"][index]["id"],
+                                                                                                      sizeId: orderController.orderDetails["orders"][index]["order_lines"][i]["inventory"]["id"] ?? 0,
+                                                                                                      productDescription: orderController.orderDetails["orders"][index]["order_lines"][i]["product"] != null ? orderController.orderDetails["orders"][index]["order_lines"][i]["product"]["brand_name"] : ""));
+                                                                                                  await analytics.logEvent(
+                                                                                                    name: 'order_exchangeClick',
+                                                                                                    parameters: <String, Object>{
+                                                                                                      'page_name': 'order_exchangeClick',
                                                                                                     },
-                                                                                                    child: Padding(
-                                                                                                      padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
-                                                                                                      child: AppText(
-                                                                                                        text: "Exchange",
-                                                                                                        color: blue,
-                                                                                                        fontSize: 11,
-                                                                                                        fontFamily: "Franklin Gothic Regular",
-                                                                                                        fontWeight: FontWeight.w400,
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  )
-                                                                                                : Padding(
-                                                                                                    padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
-                                                                                                    child: AppText(
-                                                                                                      text: "No Exchange",
-                                                                                                      color: greyTextColor,
-                                                                                                      fontSize: 11,
-                                                                                                      fontFamily: "Franklin Gothic Regular",
-                                                                                                      fontWeight: FontWeight.w400,
-                                                                                                    ),
-                                                                                                  )
-                                                                                            : SizedBox(
+                                                                                                  );
+                                                                                                },
+                                                                                                child: Padding(
+                                                                                                  padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                                                                                                  child: AppText(
+                                                                                                    text: "Exchange",
+                                                                                                    color: blue,
+                                                                                                    fontSize: 11,
+                                                                                                    fontFamily: "Franklin Gothic Regular",
+                                                                                                    fontWeight: FontWeight.w400,
+                                                                                                  ),
+                                                                                                ),
+                                                                                              )
+                                                                                            : Padding(
+                                                                                                padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                                                                                                child: AppText(
+                                                                                                  text: "No Exchange",
+                                                                                                  color: greyTextColor,
+                                                                                                  fontSize: 11,
+                                                                                                  fontFamily: "Franklin Gothic Regular",
+                                                                                                  fontWeight: FontWeight.w400,
+                                                                                                ),
+                                                                                              )
+                                                                                        /*  : SizedBox(
                                                                                                 height: 0,
-                                                                                              ),
+                                                                                              ) */
+                                                                                        ,
                                                                                         orderController.orderDetails["orders"][index]["order_lines"][i]["reorder"]
                                                                                             ? GestureDetector(
                                                                                                 onTap: () {
@@ -2599,56 +2601,53 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                                       height: 0,
                                                                                                     ),
                                                                                               orderController.orderDetails["order_lines"][index]["exchange"]
-                                                                                                  ? orderController.orderDetails["order_lines"][index]["product"]["has_exchange"]
-                                                                                                      ? GestureDetector(
-                                                                                                          onTap: () async {
-                                                                                                            Get.to(ExchangeProductScreen(
-                                                                                                                productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
-                                                                                                                productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
-                                                                                                                productimage: orderController.orderDetails["order_lines"][index]["product"] != null
-                                                                                                                    ? isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"])
-                                                                                                                        ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]
-                                                                                                                        : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"]
-                                                                                                                    : "",
-                                                                                                                orderId: orderController.orderDetails["id"],
-                                                                                                                sizeId: orderController.orderDetails["order_lines"][index]["inventory"]["id"] ?? 0,
-                                                                                                                productDescription: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["brand_name"] : ""));
-                                                                                                            await analytics.logEvent(
-                                                                                                              name: 'order_exchangeClick',
-                                                                                                              parameters: <String, Object>{
-                                                                                                                'page_name': 'order_exchangeClick',
-                                                                                                              },
-                                                                                                            );
+                                                                                                  ? /* orderController.orderDetails["order_lines"][index]["product"]["has_exchange"]
+                                                                                                      ? */
+                                                                                                  GestureDetector(
+                                                                                                      onTap: () async {
+                                                                                                        Get.to(ExchangeProductScreen(
+                                                                                                            productId: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["id"] : 0,
+                                                                                                            productName: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["name"] : "",
+                                                                                                            productimage: orderController.orderDetails["order_lines"][index]["product"] != null
+                                                                                                                ? isImage(orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"])
+                                                                                                                    ? orderController.orderDetails["order_lines"][index]["product"]["images"][0]["name"]
+                                                                                                                    : orderController.orderDetails["order_lines"][index]["product"]["images"][1]["name"]
+                                                                                                                : "",
+                                                                                                            orderId: orderController.orderDetails["id"],
+                                                                                                            sizeId: orderController.orderDetails["order_lines"][index]["inventory"]["id"] ?? 0,
+                                                                                                            productDescription: orderController.orderDetails["order_lines"][index]["product"] != null ? orderController.orderDetails["order_lines"][index]["product"]["brand_name"] : ""));
+                                                                                                        await analytics.logEvent(
+                                                                                                          name: 'order_exchangeClick',
+                                                                                                          parameters: <String, Object>{
+                                                                                                            'page_name': 'order_exchangeClick',
                                                                                                           },
-                                                                                                          child: Padding(
-                                                                                                            padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
-                                                                                                            child: AppText(
-                                                                                                              text: "Exchange",
-                                                                                                              color: blue,
-                                                                                                              fontSize: 11,
-                                                                                                              fontFamily: "Franklin Gothic Regular",
-                                                                                                              fontWeight: FontWeight.w400,
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                        )
-                                                                                                      : Padding(
-                                                                                                          padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
-                                                                                                          child: AppText(
-                                                                                                            text: "No Exchange",
-                                                                                                            color: greyTextColor,
-                                                                                                            fontSize: 11,
-                                                                                                            fontFamily: "Franklin Gothic Regular",
-                                                                                                            fontWeight: FontWeight.w400,
-                                                                                                          ),
-                                                                                                        )
-                                                                                                  : SizedBox(
-                                                                                                      height: 0,
-                                                                                                    ),
-                                                                                              /*     ],
-                                                                                    ) */
+                                                                                                        );
+                                                                                                      },
+                                                                                                      child: Padding(
+                                                                                                        padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                                                                                                        child: AppText(
+                                                                                                          text: "Exchange",
+                                                                                                          color: blue,
+                                                                                                          fontSize: 11,
+                                                                                                          fontFamily: "Franklin Gothic Regular",
+                                                                                                          fontWeight: FontWeight.w400,
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    )
+                                                                                                  : Padding(
+                                                                                                      padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                                                                                                      child: AppText(
+                                                                                                        text: "No Exchange",
+                                                                                                        color: greyTextColor,
+                                                                                                        fontSize: 11,
+                                                                                                        fontFamily: "Franklin Gothic Regular",
+                                                                                                        fontWeight: FontWeight.w400,
+                                                                                                      ),
+                                                                                                    )
                                                                                               /*  : SizedBox(
-                                                                                            height: 0,
-                                                                                          ) */
+                                                                                                      height: 0,
+                                                                                                    ) */
+                                                                                              ,
                                                                                               orderController.orderDetails["order_lines"][index]["reorder"]
                                                                                                   ? GestureDetector(
                                                                                                       onTap: () {
