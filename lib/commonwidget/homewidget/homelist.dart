@@ -33,7 +33,7 @@ class HomeList extends StatelessWidget {
                       padding: EdgeInsets.only(
                           top: 24.sp, left: 16.sp, right: 16.sp),
                       child: AppText(
-                        text: list[index]["title"] ?? "",
+                        text: list[index]["title"].toUpperCase() ?? "",
                         fontFamily: "Franklin Gothic Semibold",
                         color: index % 2 == 0 ? whiteColor : blackColor,
                         fontSize: 20,

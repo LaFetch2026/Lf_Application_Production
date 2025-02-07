@@ -171,6 +171,7 @@ class ProductController extends BaseController {
   RxInt selectedTabCategory = 0.obs;
   RxBool showAddressList = false.obs;
   RxString addressText = "".obs;
+  RxString selectedCategoryGender = "".obs;
   RxString addressTypeValue = "".obs;
   List<bool> reorderSelected = List.generate(50, (i) => false).obs;
   TextEditingController brandController = TextEditingController();

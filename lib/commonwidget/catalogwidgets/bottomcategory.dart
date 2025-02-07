@@ -209,13 +209,13 @@ class _BottomCategoryState extends State<BottomCategory> {
                           }),
                       InkWell(
                         onTap: () async {
-                          text1 = "Accesories";
+                          text1 = "Accessories";
                           final prefs = await SharedPreferences.getInstance();
                           prefs.setString("category", text1!);
                           setState(() {});
                         },
                         child: Text(
-                          "Accesories",
+                          "Accessories",
                           style: TextStyle(
                             color: widget.backgroundColor == whiteColor
                                 ? subtitleColor

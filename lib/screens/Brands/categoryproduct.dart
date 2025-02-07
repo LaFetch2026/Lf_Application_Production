@@ -61,6 +61,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.selectedCategoryGender.value = widget.genderName;
       productController.categoryProductHasnextpage.value = true;
       productController.categoryProductLoadMore.value = false;
       productController.categoryProductPage.value = 1;
@@ -960,6 +961,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                     productController.filterEnable.value,
                                     false);
                               }
+                              productController.selectedCategoryGender.value =
+                                  p0;
+                              //setState(() {});
                             },
                             onPressedFilter: () {
                               Get.back();
@@ -1082,23 +1086,29 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                 ),
                               ),
                             ),
-                            Visibility(
-                              visible: widget.genderName == "" ? false : true,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: 5.sp, right: 5.sp, top: 1.sp),
-                                child: Text(
-                                  widget.genderName.toUpperCase(),
-                                  style: TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: appBarColor,
-                                    fontSize: 10.sp,
+                            Obx(() => Visibility(
+                                  visible: productController
+                                              .selectedCategoryGender.value ==
+                                          ""
+                                      ? false
+                                      : true,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 5.sp, right: 5.sp, top: 1.sp),
+                                    child: Text(
+                                      productController
+                                          .selectedCategoryGender.value
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                        decoration: TextDecoration.underline,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: appBarColor,
+                                        fontSize: 10.sp,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
+                                )),
                           ],
                         ),
                       ),

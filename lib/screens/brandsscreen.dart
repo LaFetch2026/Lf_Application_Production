@@ -532,7 +532,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                       Get.to(CategoryProductScreen(
                                                                                                         categoryName: val.brandList[a]["brands"][index]["categories"][i]["name"],
                                                                                                         categoryId: val.brandList[a]["brands"][index]["categories"][i]["id"],
-                                                                                                        brandId: val.brandList[a]["brands"][index]["id"],
+                                                                                                        brandId: 0,
                                                                                                         genderType: 0,
                                                                                                         genderName: "",
                                                                                                         tagIds: const [],

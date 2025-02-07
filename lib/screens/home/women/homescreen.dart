@@ -382,6 +382,166 @@ class HomeScreenState extends State<HomeScreen> {
               setState(() {});
             },
           ),
+          Obx(
+            () => SizedBox(
+              height: 40.sp,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      homeController.genderText.value = "Men";
+                      homeController.homeGenderValue.value = 2;
+                      productController.selectedTabCategory.value = 0;
+                      homeController.currentPage.value = 0;
+                      productController.current.value = 50;
+                      productController.tagId.value = 0;
+                      /*  productController.tagname.value =
+                                      "We think you might also like"; */
+                      productController.productCategory = [];
+                      productController.productTags = [];
+                      // productController.getTagsData(2);
+                      catalogController.getCatalogData(2);
+                      homeController.getBannar1Data();
+                      productController.getHomeProduct(2);
+                    },
+                    child: SizedBox(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          AppText(
+                            text: "Men".toUpperCase(),
+                            color: homeController.homeGenderValue.value == 2
+                                ? homeAppBarColor
+                                : searchTextColor,
+                            fontSize: 13,
+                            fontFamily:
+                                homeController.homeGenderValue.value == 2
+                                    ? "Franklin Gothic Semibold"
+                                    : "Franklin Gothic",
+                            fontWeight: FontWeight.w500,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 10.sp),
+                            child: Container(
+                              color: homeController.homeGenderValue.value == 2
+                                  ? homeAppBarColor
+                                  : Colors.transparent,
+                              width: 110.sp,
+                              height: 2.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      homeController.genderText.value = "Women";
+                      homeController.homeGenderValue.value = 3;
+                      productController.selectedTabCategory.value = 1;
+                      homeController.currentPage.value = 0;
+                      productController.current.value = 50;
+                      productController.tagId.value = 0;
+                      /* productController.tagname.value =
+                                      "We think you might also like"; */
+                      productController.productCategory = [];
+                      productController.productTags = [];
+                      //  productController.getTagsData(3);
+                      catalogController.getCatalogData(3);
+                      productController.getHomeProduct(3);
+                    },
+                    child: SizedBox(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          AppText(
+                            text: "WOMEN".toUpperCase(),
+                            color: homeController.homeGenderValue.value == 3
+                                ? homeAppBarColor
+                                : searchTextColor,
+                            fontSize: 13,
+                            fontFamily:
+                                homeController.homeGenderValue.value == 3
+                                    ? "Franklin Gothic Semibold"
+                                    : "Franklin Gothic",
+                            fontWeight: FontWeight.w500,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 10.sp),
+                            child: Container(
+                              color: homeController.homeGenderValue.value == 3
+                                  ? homeAppBarColor
+                                  : Colors.transparent,
+                              width: 110.sp,
+                              height: 2.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      homeController.genderText.value = "Accessories";
+                      homeController.homeGenderValue.value = 1;
+                      productController.selectedTabCategory.value = 2;
+                      homeController.currentPage.value = 0;
+                      productController.current.value = 50;
+                      productController.tagId.value = 0;
+                      /*  productController.tagname.value =
+                                      "We think you might also like"; */
+                      productController.productCategory = [];
+                      productController.productTags = [];
+                      // productController.getTagsData(1);
+                      catalogController.getCatalogData(1);
+                      productController.getHomeProduct(1);
+                    },
+                    child: SizedBox(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          AppText(
+                            text: "Accessories".toUpperCase(),
+                            color: homeController.homeGenderValue.value == 1
+                                ? homeAppBarColor
+                                : searchTextColor,
+                            fontSize: 13,
+                            fontFamily:
+                                homeController.homeGenderValue.value == 1
+                                    ? "Franklin Gothic Semibold"
+                                    : "Franklin Gothic",
+                            fontWeight: FontWeight.w500,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 10.sp),
+                            child: Container(
+                              color: homeController.homeGenderValue.value == 1
+                                  ? homeAppBarColor
+                                  : Colors.transparent,
+                              width: 110.sp,
+                              height: 2.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            color: lightgreyColor,
+            height: 2.sp,
+          ),
+          SizedBox(
+            height: 16.sp,
+          ),
           Expanded(
             child: Stack(
               children: [
@@ -391,185 +551,6 @@ class HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // const SaleCardWidget(),
-                      Obx(
-                        () => SizedBox(
-                          height: 40.sp,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  homeController.genderText.value = "Men";
-                                  homeController.homeGenderValue.value = 2;
-                                  productController.selectedTabCategory.value =
-                                      0;
-                                  homeController.currentPage.value = 0;
-                                  productController.current.value = 50;
-                                  productController.tagId.value = 0;
-                                  /*  productController.tagname.value =
-                                      "We think you might also like"; */
-                                  productController.productCategory = [];
-                                  productController.productTags = [];
-                                  // productController.getTagsData(2);
-                                  catalogController.getCatalogData(2);
-                                  homeController.getBannar1Data();
-                                  productController.getHomeProduct(2);
-                                },
-                                child: SizedBox(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      AppText(
-                                        text: "Men".toUpperCase(),
-                                        color: homeController
-                                                    .homeGenderValue.value ==
-                                                2
-                                            ? homeAppBarColor
-                                            : searchTextColor,
-                                        fontSize: 13,
-                                        fontFamily: homeController
-                                                    .homeGenderValue.value ==
-                                                2
-                                            ? "Franklin Gothic Semibold"
-                                            : "Franklin Gothic",
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 10.sp),
-                                        child: Container(
-                                          color: homeController
-                                                      .homeGenderValue.value ==
-                                                  2
-                                              ? homeAppBarColor
-                                              : Colors.transparent,
-                                          width: 110.sp,
-                                          height: 2.sp,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  homeController.genderText.value = "Women";
-                                  homeController.homeGenderValue.value = 3;
-                                  productController.selectedTabCategory.value =
-                                      1;
-                                  homeController.currentPage.value = 0;
-                                  productController.current.value = 50;
-                                  productController.tagId.value = 0;
-                                  /* productController.tagname.value =
-                                      "We think you might also like"; */
-                                  productController.productCategory = [];
-                                  productController.productTags = [];
-                                  //  productController.getTagsData(3);
-                                  catalogController.getCatalogData(3);
-                                  productController.getHomeProduct(3);
-                                },
-                                child: SizedBox(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      AppText(
-                                        text: "WOMEN".toUpperCase(),
-                                        color: homeController
-                                                    .homeGenderValue.value ==
-                                                3
-                                            ? homeAppBarColor
-                                            : searchTextColor,
-                                        fontSize: 13,
-                                        fontFamily: homeController
-                                                    .homeGenderValue.value ==
-                                                3
-                                            ? "Franklin Gothic Semibold"
-                                            : "Franklin Gothic",
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 10.sp),
-                                        child: Container(
-                                          color: homeController
-                                                      .homeGenderValue.value ==
-                                                  3
-                                              ? homeAppBarColor
-                                              : Colors.transparent,
-                                          width: 110.sp,
-                                          height: 2.sp,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  homeController.genderText.value =
-                                      "Accessories";
-                                  homeController.homeGenderValue.value = 1;
-                                  productController.selectedTabCategory.value =
-                                      2;
-                                  homeController.currentPage.value = 0;
-                                  productController.current.value = 50;
-                                  productController.tagId.value = 0;
-                                  /*  productController.tagname.value =
-                                      "We think you might also like"; */
-                                  productController.productCategory = [];
-                                  productController.productTags = [];
-                                  // productController.getTagsData(1);
-                                  catalogController.getCatalogData(1);
-                                  productController.getHomeProduct(1);
-                                },
-                                child: SizedBox(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      AppText(
-                                        text: "Accessories".toUpperCase(),
-                                        color: homeController
-                                                    .homeGenderValue.value ==
-                                                1
-                                            ? homeAppBarColor
-                                            : searchTextColor,
-                                        fontSize: 13,
-                                        fontFamily: homeController
-                                                    .homeGenderValue.value ==
-                                                1
-                                            ? "Franklin Gothic Semibold"
-                                            : "Franklin Gothic",
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 10.sp),
-                                        child: Container(
-                                          color: homeController
-                                                      .homeGenderValue.value ==
-                                                  1
-                                              ? homeAppBarColor
-                                              : Colors.transparent,
-                                          width: 110.sp,
-                                          height: 2.sp,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: double.infinity,
-                        color: lightgreyColor,
-                        height: 2.sp,
-                      ),
                       /*   Obx(() => productController.istags.value
                           ? Padding(
                               padding: EdgeInsets.only(
@@ -1001,10 +982,10 @@ class HomeScreenState extends State<HomeScreen> {
                       Obx(() => homeController.isBanner1.value
                           ? Padding(
                               padding: EdgeInsets.only(
-                                  left: 16.sp,
-                                  bottom: 12.sp,
-                                  right: 16.sp,
-                                  top: 16.sp),
+                                left: 16.sp,
+                                bottom: 12.sp,
+                                right: 16.sp,
+                              ),
                               child: SizedBox(
                                 height: 210.sp,
                                 width: double.infinity,
@@ -1030,10 +1011,10 @@ class HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     Padding(
                                         padding: EdgeInsets.only(
-                                            left: 16.sp,
-                                            bottom: 12.sp,
-                                            right: 16.sp,
-                                            top: 16.sp),
+                                          left: 16.sp,
+                                          bottom: 12.sp,
+                                          right: 16.sp,
+                                        ),
                                         child: /*  CarouselSlider.builder(
                                         itemCount:
                                             homeController.banner1List.length,
@@ -1234,234 +1215,248 @@ class HomeScreenState extends State<HomeScreen> {
                               text: "",
                             )
                           : catalogController.catalogList.isNotEmpty
-                              ? Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 24.sp, left: 16.sp),
-                                      child: Center(
-                                        child: AppText(
-                                          text:
-                                              "SHOP BY CATEGORY".toUpperCase(),
-                                          fontFamily:
-                                              "Franklin Gothic Semibold",
-                                          fontWeight: FontWeight.w400,
-                                          color: blackColor,
-                                          fontSize: 20,
+                              ? Container(
+                                  color: statusBarColor,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          top: 24.sp,
+                                          left: 16.sp,
+                                        ),
+                                        child: Center(
+                                          child: AppText(
+                                            text: "SHOP BY CATEGORY"
+                                                .toUpperCase(),
+                                            fontFamily:
+                                                "Franklin Gothic Semibold",
+                                            fontWeight: FontWeight.w400,
+                                            color: blackColor,
+                                            fontSize: 20,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 16.sp,
-                                        top: 16.sp,
-                                        right: 16.sp,
-                                      ),
-                                      child: Center(
-                                        child: GridView.count(
-                                          shrinkWrap: true,
-                                          crossAxisCount: 3,
-                                          scrollDirection: Axis.vertical,
-                                          padding: EdgeInsets.zero,
-                                          childAspectRatio: 0.55,
-                                          physics: const ScrollPhysics(),
-                                          crossAxisSpacing: 12.sp,
-                                          mainAxisSpacing: 0.sp,
-                                          children: List.generate(
-                                            catalogController
-                                                .catalogList.length,
-                                            (index) {
-                                              return Column(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () async {
-                                                      List categoryList = [];
-                                                      for (var i = 0;
-                                                          i <
-                                                              catalogController
-                                                                  .catalogList[
-                                                                      index][
-                                                                      "categories"]
-                                                                  .length;
-                                                          i++) {
-                                                        categoryList.add(
-                                                            catalogController
-                                                                            .catalogList[
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 16.sp,
+                                          top: 16.sp,
+                                          right: 16.sp,
+                                        ),
+                                        child: Center(
+                                          child: GridView.count(
+                                            shrinkWrap: true,
+                                            crossAxisCount: 3,
+                                            scrollDirection: Axis.vertical,
+                                            padding: EdgeInsets.zero,
+                                            childAspectRatio: 0.55,
+                                            physics: const ScrollPhysics(),
+                                            crossAxisSpacing: 12.sp,
+                                            mainAxisSpacing: 0.sp,
+                                            children: List.generate(
+                                              catalogController
+                                                  .catalogList.length,
+                                              (index) {
+                                                return Column(
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () async {
+                                                        List categoryList = [];
+                                                        for (var i = 0;
+                                                            i <
+                                                                catalogController
+                                                                    .catalogList[
                                                                         index][
-                                                                    "categories"]
-                                                                [i]["id"]);
-                                                      }
-                                                      Navigator.push(
-                                                          context,
-                                                          scaleIn(CategoryProductScreen(
-                                                              categoryName:
-                                                                  catalogController
+                                                                        "categories"]
+                                                                    .length;
+                                                            i++) {
+                                                          categoryList.add(
+                                                              catalogController
                                                                               .catalogList[
                                                                           index]
-                                                                      ["name"],
-                                                              genderName:
-                                                                  homeController
-                                                                      .genderText
-                                                                      .value,
-                                                              categoryId: 0,
-                                                              brandId: 0,
-                                                              genderType:
-                                                                  homeController
-                                                                      .homeGenderValue
-                                                                      .value,
-                                                              categoryList:
-                                                                  categoryList,
-                                                              tagIds: const [])));
-                                                      await analytics.logEvent(
-                                                        name:
-                                                            'categories_home_page',
-                                                        parameters: <String,
-                                                            Object>{
-                                                          'page_name':
+                                                                      [
+                                                                      "categories"]
+                                                                  [i]["id"]);
+                                                        }
+                                                        Navigator.push(
+                                                            context,
+                                                            scaleIn(CategoryProductScreen(
+                                                                categoryName:
+                                                                    catalogController.catalogList[index]
+                                                                        [
+                                                                        "name"],
+                                                                genderName:
+                                                                    homeController
+                                                                        .genderText
+                                                                        .value,
+                                                                categoryId: 0,
+                                                                brandId: 0,
+                                                                genderType:
+                                                                    homeController
+                                                                        .homeGenderValue
+                                                                        .value,
+                                                                categoryList:
+                                                                    categoryList,
+                                                                tagIds: const [])));
+                                                        await analytics
+                                                            .logEvent(
+                                                          name:
                                                               'categories_home_page',
-                                                        },
-                                                      );
-                                                    },
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        catalogController.catalogList[
-                                                                        index]
-                                                                    ["image"] !=
-                                                                null
-                                                            ? SizedBox(
-                                                                width: 104.sp,
-                                                                height: 130.sp,
-                                                                child:
-                                                                    CachedNetworkImage(
-                                                                  cacheManager: CacheManager(Config(
-                                                                      "customCacheKey",
-                                                                      stalePeriod: const Duration(
-                                                                          days:
-                                                                              15),
-                                                                      maxNrOfCacheObjects:
-                                                                          100)),
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  imageUrl: isImage(
-                                                                          catalogController.catalogList[index]
-                                                                              [
-                                                                              "image"])
-                                                                      ? catalogController
-                                                                              .catalogList[index]
-                                                                          [
-                                                                          "image"]
-                                                                      : catalogController
-                                                                              .catalogList[index]
-                                                                          [
-                                                                          "image"],
-                                                                  errorWidget: (context,
-                                                                          url,
-                                                                          error) =>
-                                                                      Image
-                                                                          .asset(
-                                                                    downloadImage,
+                                                          parameters: <String,
+                                                              Object>{
+                                                            'page_name':
+                                                                'categories_home_page',
+                                                          },
+                                                        );
+                                                      },
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          catalogController.catalogList[
+                                                                          index]
+                                                                      [
+                                                                      "image"] !=
+                                                                  null
+                                                              ? SizedBox(
+                                                                  width: 104.sp,
+                                                                  height:
+                                                                      130.sp,
+                                                                  child:
+                                                                      CachedNetworkImage(
+                                                                    cacheManager: CacheManager(Config(
+                                                                        "customCacheKey",
+                                                                        stalePeriod: const Duration(
+                                                                            days:
+                                                                                15),
+                                                                        maxNrOfCacheObjects:
+                                                                            100)),
                                                                     fit: BoxFit
                                                                         .cover,
-                                                                    width:
-                                                                        104.sp,
-                                                                    height:
-                                                                        130.sp,
+                                                                    imageUrl: isImage(catalogController
+                                                                                .catalogList[index]
+                                                                            [
+                                                                            "image"])
+                                                                        ? catalogController.catalogList[index]
+                                                                            [
+                                                                            "image"]
+                                                                        : catalogController.catalogList[index]
+                                                                            [
+                                                                            "image"],
+                                                                    errorWidget: (context,
+                                                                            url,
+                                                                            error) =>
+                                                                        Image
+                                                                            .asset(
+                                                                      downloadImage,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      width: 104
+                                                                          .sp,
+                                                                      height:
+                                                                          130.sp,
+                                                                    ),
                                                                   ),
+                                                                )
+                                                              : Center(
+                                                                  child: Image.asset(
+                                                                      dummyWishlistImage,
+                                                                      width: 104
+                                                                          .sp,
+                                                                      height: 130
+                                                                          .sp,
+                                                                      fit: BoxFit
+                                                                          .cover),
                                                                 ),
-                                                              )
-                                                            : Center(
-                                                                child: Image.asset(
-                                                                    dummyWishlistImage,
-                                                                    width:
-                                                                        104.sp,
-                                                                    height:
-                                                                        130.sp,
-                                                                    fit: BoxFit
-                                                                        .cover),
-                                                              ),
-                                                        Padding(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      5.sp,
-                                                                  vertical:
-                                                                      6.sp),
-                                                          child: AppText(
-                                                            text: catalogController
-                                                                .catalogList[
-                                                                    index]
-                                                                    ["name"]
-                                                                .toUpperCase(),
-                                                            color: blackColor,
-                                                            fontSize: 13,
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            maxLines: 2,
-                                                            fontFamily:
-                                                                "Franklin Gothic",
-                                                            fontWeight:
-                                                                FontWeight.w400,
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        5.sp,
+                                                                    vertical:
+                                                                        6.sp),
+                                                            child: AppText(
+                                                              text: catalogController
+                                                                  .catalogList[
+                                                                      index]
+                                                                      ["name"]
+                                                                  .toUpperCase(),
+                                                              color: blackColor,
+                                                              fontSize: 13,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              maxLines: 2,
+                                                              fontFamily:
+                                                                  "Franklin Gothic",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ],
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
+                                                  ],
+                                                );
+                                              },
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        widget.onPressed?.call(2);
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 10.sp, horizontal: 16.sp),
-                                        child: Container(
-                                          height: 42.sp,
-                                          color: homeAppBarColor,
-                                          width: double.infinity,
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 8.sp),
-                                                child: AppText(
-                                                  text:
-                                                      "VIEW ALL".toUpperCase(),
-                                                  fontFamily: "Franklin Gothic",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: whiteColor,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 8.sp),
-                                                child: SvgPicture.asset(
-                                                    arrowSearchImage,
+                                      GestureDetector(
+                                        onTap: () {
+                                          widget.onPressed?.call(2);
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10.sp,
+                                              horizontal: 16.sp),
+                                          child: Container(
+                                            height: 42.sp,
+                                            color: homeAppBarColor,
+                                            width: double.infinity,
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 8.sp),
+                                                  child: AppText(
+                                                    text: "VIEW ALL"
+                                                        .toUpperCase(),
+                                                    fontFamily:
+                                                        "Franklin Gothic",
+                                                    fontWeight: FontWeight.w400,
                                                     color: whiteColor,
-                                                    height: 7.sp,
-                                                    width: 7.sp,
-                                                    fit: BoxFit.cover),
-                                              )
-                                            ],
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 8.sp),
+                                                  child: SvgPicture.asset(
+                                                      arrowSearchImage,
+                                                      color: whiteColor,
+                                                      height: 7.sp,
+                                                      width: 7.sp,
+                                                      fit: BoxFit.cover),
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    )
-                                  ],
+                                      SizedBox(
+                                        height: 24.sp,
+                                      )
+                                    ],
+                                  ),
                                 )
                               : SizedBox(
                                   height: 0.sp,
@@ -1513,7 +1508,7 @@ class HomeScreenState extends State<HomeScreen> {
                                       children: [
                                         Padding(
                                           padding: EdgeInsets.only(
-                                              top: 48.sp, left: 16.sp),
+                                              top: 24.sp, left: 16.sp),
                                           child: AppText(
                                             text:
                                                 "Featured brands".toUpperCase(),
@@ -1535,7 +1530,7 @@ class HomeScreenState extends State<HomeScreen> {
                                           child: Container(
                                             child: Padding(
                                               padding: EdgeInsets.only(
-                                                  top: 48.sp,
+                                                  top: 24.sp,
                                                   right: 12.sp,
                                                   left: 20.sp,
                                                   bottom: 2.sp),
@@ -1551,10 +1546,10 @@ class HomeScreenState extends State<HomeScreen> {
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(
-                                        top: 4.sp,
+                                        top: 16.sp,
                                       ),
                                       child: SizedBox(
-                                        height: 100.sp,
+                                        height: 80.sp,
                                         child: ListView.builder(
                                             physics:
                                                 const BouncingScrollPhysics(),
