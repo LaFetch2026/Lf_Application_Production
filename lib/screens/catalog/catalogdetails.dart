@@ -559,26 +559,31 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                                       ["wishlist_id"],
                                                   productId);
                                             } else {
-                                              scaffoldKey.currentState
-                                                  ?.showBottomSheet((context) =>
-                                                      BottomWishlist(
-                                                          controller:
-                                                              wishlistController,
-                                                          onPressed: (p0) {
-                                                            controller.categoryProductList[
-                                                                        index][
-                                                                    "products"][p1]
-                                                                [
-                                                                "wishlisted"] = true;
-                                                            setState(() {});
-                                                            controller
-                                                                .callAddProductToWishlist(
-                                                                    p0,
-                                                                    productId);
-                                                          },
-                                                          wishlistList:
-                                                              wishlistController
-                                                                  .wishlistList));
+                                              scaffoldKey.currentState?.showBottomSheet(
+                                                  (context) => BottomWishlist(
+                                                      controller:
+                                                          wishlistController,
+                                                      productImage:
+                                                          controller.categoryProductList[
+                                                                          index]
+                                                                      [
+                                                                      "products"]
+                                                                  [p1]["images"]
+                                                              [0]["name"],
+                                                      onPressed: (p0) {
+                                                        controller.categoryProductList[
+                                                                    index]
+                                                                ["products"][p1]
+                                                            [
+                                                            "wishlisted"] = true;
+                                                        setState(() {});
+                                                        controller
+                                                            .callAddProductToWishlist(
+                                                                p0, productId);
+                                                      },
+                                                      wishlistList:
+                                                          wishlistController
+                                                              .wishlistList));
                                               await analytics.logEvent(
                                                 name:
                                                     'allbrand_bestseller_wishlist',

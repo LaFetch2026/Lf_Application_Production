@@ -1,9 +1,10 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, deprecated_member_use
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/commonwidget/doublebutton_new.dart';
@@ -17,12 +18,14 @@ class BottomWishlist extends StatefulWidget {
   final Function(int)? onPressed;
   final GetxController controller;
   final List wishlistList;
+  final String productImage;
 
   const BottomWishlist({
     Key? key,
     this.onPressed,
     required this.controller,
     required this.wishlistList,
+    this.productImage = "",
   }) : super(key: key);
 
   @override
@@ -37,7 +40,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 422.sp,
+      height: 500.sp,
       width: double.infinity,
       decoration: BoxDecoration(
         color: whiteColor,
@@ -50,7 +53,77 @@ class _BottomWishlistState extends State<BottomWishlist> {
               children: [
                 Padding(
                   padding:
-                      EdgeInsets.only(left: 16.sp, top: 24.sp, right: 16.sp),
+                      EdgeInsets.only(left: 16.sp, top: 16.sp, right: 16.sp),
+                  child: Row(
+                    children: [
+                      widget.productImage.isNotEmpty
+                          ? SizedBox(
+                              height: 85.sp,
+                              width: 68.sp,
+                              child: CachedNetworkImage(
+                                cacheManager: CacheManager(Config(
+                                    "customCacheKey",
+                                    stalePeriod: const Duration(days: 15),
+                                    maxNrOfCacheObjects: 100)),
+                                fit: BoxFit.cover,
+                                imageUrl: widget.productImage,
+                                errorWidget: (context, url, error) =>
+                                    Image.asset(
+                                  downloadImage,
+                                  height: 85.sp,
+                                  width: 68.sp,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            )
+                          : Image.asset(dummyWishlistImage,
+                              height: 85.sp, width: 68.sp, fit: BoxFit.cover),
+                      Padding(
+                        padding: EdgeInsets.only(left: 12.sp),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 24.sp),
+                              child: Text(
+                                "SAVED",
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  color: blackColor,
+                                  fontFamily: "Franklin Gothic Semibold",
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(top: 4.sp, bottom: 24.sp),
+                              child: Text(
+                                "All ITEMS".toUpperCase(),
+                                style: TextStyle(
+                                  fontSize: 10.sp,
+                                  color: subtitleColor,
+                                  fontFamily: "Franklin Gothic Regular",
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: SizedBox(
+                          height: 0,
+                        ),
+                      ),
+                      SvgPicture.asset(redHeartSvgImage,
+                          color: redColor,
+                          height: 18.sp,
+                          width: 18.sp,
+                          fit: BoxFit.cover)
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding:
+                      EdgeInsets.only(left: 16.sp, top: 30.sp, right: 16.sp),
                   child: Row(
                     children: [
                       Expanded(

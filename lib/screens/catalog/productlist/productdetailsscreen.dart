@@ -823,6 +823,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             scaffoldKey.currentState?.showBottomSheet(
                                 (context) => BottomWishlist(
                                     controller: wishlistController,
+                                    productImage: wishlistController
+                                        .wishListDetails["images"][0]["name"],
                                     onPressed: (p0) {
                                       wishlistController
                                           .callAddProductToWishlist(
