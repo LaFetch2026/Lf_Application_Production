@@ -101,8 +101,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => brandController.getBrandDetails(widget.id, widget.slug));
     WidgetsBinding.instance.addPostFrameCallback((_) =>
-        productController.getBrandDetailsProduct(
-            "", false, false, brandController.brandId.value));
+        productController.getBrandDetailsProduct("", false, false, widget.id));
     /* WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback(

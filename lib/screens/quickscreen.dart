@@ -15,9 +15,9 @@ import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/quickwidgets/brand_product_list.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
+import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
-import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/quick/brandproductscreen.dart';
@@ -618,7 +618,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                         null
                                                     ? GestureDetector(
                                                         onTap: () {
-                                                          Get.to(BrandsScreen(
+                                                          /*  Get.to(BrandsScreen(
                                                             screen: "search",
                                                             logo: homeController
                                                                     .brandList[
@@ -634,7 +634,15 @@ class QuickScreenState extends State<QuickScreen> {
                                                             brandId: homeController
                                                                     .brandList[
                                                                 index]["id"],
-                                                          ))
+                                                          ) */
+                                                          Get.to(AllBrandScreen(
+                                                                  id: homeController
+                                                                              .brandList[
+                                                                          index]
+                                                                      ["id"],
+                                                                  screen:
+                                                                      "home",
+                                                                  slug: ""))
                                                               ?.then(
                                                                   (value) =>
                                                                       setState(

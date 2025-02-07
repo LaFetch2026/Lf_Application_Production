@@ -19,8 +19,8 @@ import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/controller/catalog_controller.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
+import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
-import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 //import 'package:lafetch/screens/home/women/productviewscreen.dart';
@@ -1563,7 +1563,7 @@ class HomeScreenState extends State<HomeScreen> {
                                                       null
                                                   ? GestureDetector(
                                                       onTap: () {
-                                                        Get.to(BrandsScreen(
+                                                        /*  Get.to(BrandsScreen(
                                                           screen: "search",
                                                           logo: homeController
                                                                   .brandList[
@@ -1579,7 +1579,14 @@ class HomeScreenState extends State<HomeScreen> {
                                                           brandId: homeController
                                                                   .brandList[
                                                               index]["id"],
-                                                        ))
+                                                        ) */
+                                                        Get.to(AllBrandScreen(
+                                                                id: homeController
+                                                                            .brandList[
+                                                                        index]
+                                                                    ["id"],
+                                                                screen: "home",
+                                                                slug: ""))
                                                             ?.then(
                                                                 (value) =>
                                                                     setState(
