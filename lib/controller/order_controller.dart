@@ -367,6 +367,11 @@ class OrderController extends BaseController {
         Get.close(2);
         getOrderDetails(orderId);
         getOrderData();
+      } else if (response.statusCode == 200) {
+        getSnackBar("Request send");
+        Get.close(2);
+        getOrderDetails(orderId);
+        getOrderData();
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
       } else if (response.statusCode == 401) {
