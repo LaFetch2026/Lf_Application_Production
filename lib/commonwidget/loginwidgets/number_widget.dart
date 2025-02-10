@@ -43,10 +43,10 @@ class NumberWidget extends StatelessWidget {
             isDense: true,
             fillColor: fillColor,
             focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: borderColor)),
+                borderSide: BorderSide(color: productSubtitleColor)),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(1.sp),
-              borderSide: const BorderSide(color: borderColor),
+              borderRadius: BorderRadius.circular(0.sp),
+              borderSide: const BorderSide(color: productSubtitleColor),
             ),
             /*   errorText: isValidate
                                                       ? 'Please enter number'
@@ -61,14 +61,14 @@ class NumberWidget extends StatelessWidget {
                       text: "+91",
                       fontFamily: "Franklin Gothic",
                       fontWeight: FontWeight.w500,
-                      color: greyTextColor,
+                      color: subtitleColor,
                       fontSize: 14,
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 10.sp),
                       child: Container(
                         width: 1.sp,
-                        color: textHintColor,
+                        color: subtitleColor,
                         height: 20.sp,
                       ),
                     ),
@@ -81,7 +81,7 @@ class NumberWidget extends StatelessWidget {
             hintText: "Mobile Number",
             hintStyle: TextStyle(
               fontSize: 14.sp,
-              color: textHintColor,
+              color: searchTextColor,
               fontFamily: "Franklin Gothic Regular",
             ),
           ),

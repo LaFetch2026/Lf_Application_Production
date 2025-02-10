@@ -25,21 +25,21 @@ class LoginWidget extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(top: 20.sp, left: 16.sp),
           child: AppText(
-            text: text1,
-            fontFamily: fontfamily,
+            text: text1.toUpperCase(),
+            fontFamily: "Franklin Gothic Semibold",
             fontWeight: FontWeight.w500,
-            color: btnTextColor,
-            fontSize: 25,
+            color: appBarColor,
+            fontSize: 16,
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(top: 10.sp, left: 16.sp),
+          padding: EdgeInsets.only(top: 8.sp, left: 16.sp, right: 16.sp),
           child: AppText(
             text: text2,
             maxLines: 2,
             fontFamily: "Franklin Gothic Regular",
             fontWeight: FontWeight.w400,
-            color: textColor,
+            color: searchTextColor,
             fontSize: 14,
           ),
         ),

@@ -28,10 +28,10 @@ class MultipleTextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),
+      padding: EdgeInsets.symmetric(horizontal: 16.sp),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
+        //crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             text1,
@@ -39,7 +39,7 @@ class MultipleTextWidget extends StatelessWidget {
               fontSize: fontSize,
               fontFamily: "Franklin Gothic Regular",
               fontWeight: FontWeight.w400,
-              color: greyTextColor,
+              color: subtitleColor,
             ),
           ),
           GestureDetector(
@@ -49,10 +49,11 @@ class MultipleTextWidget extends StatelessWidget {
             child: Text(
               text2,
               style: TextStyle(
+                decoration: TextDecoration.underline,
+                fontFamily: "Franklin Gothic Semibold",
+                fontWeight: FontWeight.w400,
+                color: subtitleColor,
                 fontSize: fontSize,
-                fontFamily: "Franklin Gothic",
-                fontWeight: FontWeight.w500,
-                color: deepGreytextColor,
               ),
             ),
           ),
@@ -62,7 +63,7 @@ class MultipleTextWidget extends StatelessWidget {
               fontSize: fontSize,
               fontFamily: "Franklin Gothic Regular",
               fontWeight: FontWeight.w400,
-              color: greyTextColor,
+              color: subtitleColor,
             ),
           ),
           visible
@@ -77,10 +78,11 @@ class MultipleTextWidget extends StatelessWidget {
                       maxLines: 1,
                       style: TextStyle(
                         fontSize: fontSize,
+                        decoration: TextDecoration.underline,
                         overflow: TextOverflow.ellipsis,
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Franklin Gothic Semibold",
                         fontWeight: FontWeight.w500,
-                        color: deepGreytextColor,
+                        color: subtitleColor,
                       ),
                     ),
                   ),
