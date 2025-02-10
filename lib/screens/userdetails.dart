@@ -1,11 +1,14 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, deprecated_member_use
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/login_appbar.dart';
+import 'package:lafetch/commonwidget/loginwidgets/login_widget.dart';
 import 'package:lafetch/commonwidget/text_field.dart';
-import '../commonwidget/app_text.dart';
+import 'package:lafetch/controller/login_controller.dart';
 import '../commonwidget/common_widgets.dart';
 import '../controller/profile_controller.dart';
 import '../utils/constants.dart';
@@ -19,6 +22,7 @@ class UserDetailsScreen extends StatefulWidget {
 
 class UserDetailsScreenState extends State<UserDetailsScreen> {
   final userController = Get.put(ProfileController());
+  final loginController = Get.put(LoginController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
@@ -31,15 +35,19 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
         });
       },
       child: Scaffold(
-        backgroundColor: whiteTextColor,
+        backgroundColor: whiteColor,
         body: Column(
           children: [
+            LoginAppbar(
+              controller: loginController,
+              isSkip: false,
+            ),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
+                    /* Padding(
                       padding: EdgeInsets.only(
                           top: 70.sp, left: 16.sp, right: 16.sp),
                       child: AppText(
@@ -50,7 +58,14 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                         color: blackColor,
                         fontSize: 28,
                       ),
+                    ), */
+                    SizedBox(
+                      height: 40.sp,
                     ),
+                    const LoginWidget(
+                        text1: "ONE LAST STEP!",
+                        fontfamily: "Franklin Gothic",
+                        text2: "Let’s get to know you a bit more"),
                     Padding(
                       padding: EdgeInsets.only(top: 40.sp),
                       child: TextFieldWidget(
@@ -59,7 +74,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 20.sp),
+                      padding: EdgeInsets.only(top: 24.sp),
                       child: TextFieldWidget(
                         hint: "Email Address",
                         controller: userController.emailController,
@@ -67,7 +82,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(
-                          left: 16.sp, top: 20.sp, right: 16.sp),
+                          left: 16.sp, top: 24.sp, right: 16.sp),
                       child: SizedBox(
                         height: 44.sp,
                         child: TextField(
@@ -89,24 +104,39 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
                             filled: true,
-                            suffixIcon: ImageIcon(
-                              AssetImage(dropdownImage),
-                              color: nameText,
-                              size: 30.sp,
+                            suffixIconConstraints: BoxConstraints(
+                              minWidth: 2,
+                              minHeight: 2,
+                            ),
+                            suffixIcon: Padding(
+                              padding: EdgeInsets.only(right: 20.sp),
+                              child: SizedBox(
+                                height: 7.sp,
+                                width: 7.sp,
+                                child: SvgPicture.asset(
+                                  dropdownSvgImage,
+                                  height: 7.sp,
+                                  width: 7.sp,
+                                  color: homeAppBarColor,
+                                ),
+                              ),
                             ),
                             fillColor: whiteColor,
                             focusedBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(color: borderColor)),
+                                borderSide:
+                                    BorderSide(color: productSubtitleColor)),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(1),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(1),
-                              borderSide: const BorderSide(color: borderColor),
+                              borderSide:
+                                  const BorderSide(color: productSubtitleColor),
                             ),
                             counterText: "",
                             hintText: "Gender",
-                            hintStyle: TextStyle(fontSize: 14.sp),
+                            hintStyle: TextStyle(
+                                fontSize: 14.sp, color: searchTextColor),
                           ),
                         ),
                       ),
@@ -127,7 +157,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                                     return Column(
                                       children: [
                                         Container(
-                                          color: whiteTextColor,
+                                          color: whiteColor,
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
@@ -214,7 +244,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
               () => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: getSingleButton(
-                    label: "Continue",
+                    label: "Continue".toUpperCase(),
                     textColor: greyTextColor,
                     controller: userController,
                     backgroundColor: colorSecondary,

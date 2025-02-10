@@ -63,6 +63,7 @@ const splashGif = 'assets/splash.gif';
 const placedGif = 'assets/placed.gif';
 const shippedGif = 'assets/shipped.gif';
 const truckGif = 'assets/truck.gif';
+const video = 'assets/images/video.mp4';
 const backImage = 'assets/images/back_image.png';
 const appNameImage = 'assets/images/app_name_image.png';
 const googleImage = 'assets/images/google.png';

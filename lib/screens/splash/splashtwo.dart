@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/home_controller.dart';
-import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../bottomnavscreen.dart';
@@ -55,9 +54,7 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
       } else {
         if (phone == null) {
           Get.off(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
+            () => const WelcomeScreen(),
           );
         } else {
           Get.off(

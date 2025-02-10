@@ -37,18 +37,18 @@ class TextFieldWidget extends StatelessWidget {
                   filled: true,
                   fillColor: whiteColor,
                   focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: borderColor)),
+                      borderSide: BorderSide(color: productSubtitleColor)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(1),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(1),
-                    borderSide: const BorderSide(color: borderColor),
+                    borderSide: const BorderSide(color: productSubtitleColor),
                   ),
                   counterText: "",
                   contentPadding: EdgeInsets.symmetric(horizontal: 10.sp),
                   hintText: hint,
-                  hintStyle: TextStyle(fontSize: 14.sp, color: subtitleColor),
+                  hintStyle: TextStyle(fontSize: 14.sp, color: searchTextColor),
                 ),
               ),
             ),
@@ -71,17 +71,17 @@ class TextFieldWidget extends StatelessWidget {
                   filled: true,
                   fillColor: whiteColor,
                   focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: borderColor)),
+                      borderSide: BorderSide(color: productSubtitleColor)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(1),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(1),
-                    borderSide: const BorderSide(color: borderColor),
+                    borderSide: const BorderSide(color: productSubtitleColor),
                   ),
                   counterText: "",
                   hintText: hint,
-                  hintStyle: TextStyle(fontSize: 14.sp, color: subtitleColor),
+                  hintStyle: TextStyle(fontSize: 14.sp, color: searchTextColor),
                 ),
               ),
             ),
