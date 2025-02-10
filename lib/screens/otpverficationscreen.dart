@@ -211,7 +211,9 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                     ), */
                     Obx(
                       () => Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.sp,
+                        ),
                         child: Center(
                           child: OTPTextFieldV2(
                               controller: otpController.controller.value,
@@ -226,12 +228,19 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                               outlineBorderRadius: 1.sp,
                               otpFieldStyle: OtpFieldStyle(
                                   focusBorderColor: homeAppBarColor,
-                                  enabledBorderColor: borderColor),
+                                  enabledBorderColor:
+                                      otpController.otp.value.length == 4
+                                          ? otpController.otpError.value != ""
+                                              ? redColor
+                                              : homeAppBarColor
+                                          : borderColor),
                               style: TextStyle(
                                 color: blackColor,
                                 fontSize: 20.sp,
                                 fontFamily: "Franklin Gothic Regular",
                               ),
+                              contentPadding:
+                                  EdgeInsets.symmetric(vertical: 20.sp),
                               onChanged: (code) {
                                 otpController.otp.value = code;
                                 print("Changed: " + code);
