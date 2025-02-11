@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
+import 'package:lafetch/controller/search_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/catalog/women_catalog.dart';
+import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import '../controller/product_controller.dart';
 import '../utils/constants.dart';
@@ -23,6 +26,7 @@ class CatalogScreen extends StatefulWidget {
 
 class CatalogScreenState extends State<CatalogScreen> {
   final productController = Get.put(ProductController());
+  final searchController = Get.put(SearchScreenController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   @override
   void initState() {
@@ -65,8 +69,21 @@ class CatalogScreenState extends State<CatalogScreen> {
                 },
               ), */
               HomeAppbar(
-                showSearch: false,
-                title: "Category",
+                showSearch: true,
+                title: "Categories",
+                onPressedSearch: () async {
+                  searchController.searchController.clear();
+                  Navigator.push(context, scaleIn(const SearchScreen()))
+                      .then((value) => setState(
+                            () {},
+                          ));
+                  await analytics.logEvent(
+                    name: 'search_page',
+                    parameters: <String, Object>{
+                      'page_name': 'search_page',
+                    },
+                  );
+                },
                 onPressedHeart: () async {
                   Get.to(const WishlistScreen());
                   await analytics.logEvent(
@@ -118,25 +135,25 @@ class CatalogScreenState extends State<CatalogScreen> {
                       tabs: [
                         Tab(
                             child: Text(
-                          "Men",
+                          "Men".toUpperCase(),
                           style: TextStyle(
-                              fontSize: 14.sp,
+                              fontSize: 12.sp,
                               fontFamily: "Franklin Gothic",
                               fontWeight: FontWeight.w400),
                         )),
                         Tab(
                             child: Text(
-                          "Women",
+                          "Women".toUpperCase(),
                           style: TextStyle(
-                              fontSize: 14.sp,
+                              fontSize: 12.sp,
                               fontFamily: "Franklin Gothic",
                               fontWeight: FontWeight.w400),
                         )),
                         Tab(
                             child: Text(
-                          "Accessories",
+                          "Accessories".toUpperCase(),
                           style: TextStyle(
-                              fontSize: 14.sp,
+                              fontSize: 12.sp,
                               fontFamily: "Franklin Gothic",
                               fontWeight: FontWeight.w400),
                         ))

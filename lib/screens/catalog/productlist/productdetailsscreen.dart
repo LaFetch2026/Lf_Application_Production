@@ -2933,8 +2933,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       productController.productDetails[
-                                                  'description'] !=
-                                              null
+                                                      'description'] !=
+                                                  null &&
+                                              productController.productDetails[
+                                                      'description'] !=
+                                                  ""
                                           ? Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,

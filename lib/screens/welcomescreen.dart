@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, deprecated_member_use
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -50,13 +50,51 @@ class WelcomeScreenState extends State<WelcomeScreen>
         child: Container(
             child: Stack(
           children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: AspectRatio(
-                aspectRatio: videoController.value.aspectRatio,
-                child: VideoPlayer(videoController),
+            FittedBox(
+              fit: BoxFit.cover,
+              child: Container(
+                width: MediaQuery.of(context).size.width.sp,
+                height: MediaQuery.of(context).size.height.sp,
+                child: AspectRatio(
+                  aspectRatio: videoController.value.aspectRatio,
+                  child: VideoPlayer(videoController),
+                ),
               ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width.sp,
+              height: MediaQuery.of(context).size.height.sp,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.1)],
+                  stops: [0.535, 0.8978],
+                ),
+              ),
+            ),
+            Transform.scale(
+              scaleY: 1.8,
+              child: Container(
+                width: MediaQuery.of(context).size.width.sp,
+                height: MediaQuery.of(context).size.height.sp,
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment.center,
+                    radius: 0.5,
+                    colors: [
+                      Color(0x00000000),
+                      Color(0XCC000000),
+                    ],
+                    stops: [0.5, 1.0],
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width.sp,
+              height: MediaQuery.of(context).size.height.sp,
+              color: Colors.white.withOpacity(0),
             ),
             Center(
                 child: Padding(

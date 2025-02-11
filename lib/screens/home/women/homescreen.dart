@@ -1188,7 +1188,7 @@ class HomeScreenState extends State<HomeScreen> {
                                 padding: EdgeInsets.symmetric(vertical: 5.sp),
                                 child: Marquee(
                                   text:
-                                      'MORE THAN 50 HOMEGROWN BRANDS ✦ DELIVERED WITHIN ${homeController.expressHour.value} HRS ✦ MORE THAN 50 HOMEGROWN BRANDS',
+                                      '✦  MORE THAN 50 HOMEGROWN BRANDS  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 12.sp,
@@ -1726,9 +1726,9 @@ class HomeScreenState extends State<HomeScreen> {
                               : const SizedBox(
                                   height: 0,
                                 )),
-                      SizedBox(
-                        height: 40.sp,
-                      )
+                      /*  SizedBox(
+                        height: 20.sp,
+                      ) */
                       /*  Obx(() => productController.isHandPicked.value
                           ? Padding(
                               padding: EdgeInsets.only(top: 6.sp),

@@ -17,7 +17,7 @@ class HomeList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 340 * list.length.sp,
+      height: 350 * list.length.sp,
       child: ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
           itemCount: list.length,

@@ -416,6 +416,9 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                         type: "add"))
                                                     ?.then((value) => setState(
                                                           () {
+                                                            FocusScope.of(
+                                                                    context)
+                                                                .unfocus();
                                                             productController
                                                                 .brandProductHasnextpage
                                                                 .value = true;
@@ -459,13 +462,19 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                                         null
                                                                 ? ClipRRect(
                                                                     borderRadius: BorderRadius.only(
-                                                                        topLeft: Radius.circular(widget.screen ==
-                                                                                "brand"
+                                                                        topLeft: Radius.circular(widget.screen == "brand"
                                                                             ? 0
                                                                             : 8
                                                                                 .sp),
-                                                                        topRight: Radius.circular(widget.screen ==
-                                                                                "brand"
+                                                                        bottomLeft: Radius.circular(widget.screen == "brand"
+                                                                            ? 0
+                                                                            : 8
+                                                                                .sp),
+                                                                        bottomRight: Radius.circular(widget.screen == "brand"
+                                                                            ? 0
+                                                                            : 8
+                                                                                .sp),
+                                                                        topRight: Radius.circular(widget.screen == "brand"
                                                                             ? 0
                                                                             : 8.sp)),
                                                                     child:
@@ -828,7 +837,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                         decoration: TextDecoration.underline,
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
-                                        color: whiteColor,
+                                        color: lightgreyColor,
                                         fontSize: 10.sp,
                                       ),
                                     ),

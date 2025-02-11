@@ -43,7 +43,9 @@ class HomeProductList extends StatelessWidget {
                           },
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
-                            margin: EdgeInsets.only(left: 16.sp),
+                            margin: EdgeInsets.only(
+                                left: 16.sp,
+                                right: index == list.length - 1 ? 16.sp : 0.sp),
                             width: 136.sp,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

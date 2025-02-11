@@ -175,13 +175,6 @@ class SearchScreenState extends State<SearchScreen> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                /*  setState(() {
-                                  isSearch = false;
-                                  controller.searchList.clear();
-                                  controller.searchController.clear();
-                                  controller.searchText.value =
-                                      "Search for products";
-                                }); */
                                 Get.back();
                               },
                               child: SvgPicture.asset(arrowBack,
@@ -219,7 +212,8 @@ class SearchScreenState extends State<SearchScreen> {
                                             maxLines: 1,
                                             style: TextStyle(
                                                 color: homeAppBarColor,
-                                                fontFamily: "Franklin Gothic",
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
                                                 fontSize: 14.sp),
                                             controller:
                                                 controller.searchController,
@@ -239,6 +233,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                 onPressed: () {
                                                   controller.searchController
                                                       .clear();
+                                                  setState(() {});
                                                   controller
                                                       .getSearchData(context);
                                                   controller.searchText.value =
@@ -307,7 +302,8 @@ class SearchScreenState extends State<SearchScreen> {
                                             maxLines: 1,
                                             style: TextStyle(
                                                 color: homeAppBarColor,
-                                                fontFamily: "Franklin Gothic",
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
                                                 fontSize: 14.sp),
                                             controller:
                                                 controller.searchController,
@@ -379,673 +375,171 @@ class SearchScreenState extends State<SearchScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Obx(
-                          () => controller.isRecentSearch.value
-                              ? Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 20.sp, left: 16.sp),
-                                      child: AppText(
-                                        text: "".toUpperCase(),
-                                        fontFamily: "Franklin Gothic Semibold",
-                                        fontWeight: FontWeight.w400,
-                                        color: blackColor,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 10.sp),
-                                      child: ListView.builder(
-                                          primary: false,
-                                          shrinkWrap: true,
-                                          physics: const ScrollPhysics(),
-                                          itemCount: 2,
-                                          padding: EdgeInsets.zero,
-                                          scrollDirection: Axis.vertical,
-                                          itemBuilder: (ctx, i) {
-                                            return Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 4.sp),
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 0.sp,
-                                                    vertical: 1.sp),
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 3,
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                left: 16.sp),
-                                                        child: DummyContainer(
-                                                            height: 20,
-                                                            width: 60),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: SizedBox(
-                                                        height: 0,
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal:
-                                                                  16.sp),
-                                                      child: DummyContainer(
-                                                          height: 15,
-                                                          width: 15),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          }),
-                                    ),
-                                  ],
-                                )
-                              : controller.recentSearchList.isNotEmpty
-                                  ? Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 16.sp, left: 16.sp),
-                                          child: AppText(
-                                            text:
-                                                "Recent Searches".toUpperCase(),
-                                            fontFamily:
-                                                "Franklin Gothic Semibold",
-                                            fontWeight: FontWeight.w400,
-                                            color: blackColor,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 10.sp),
-                                          child: ListView.builder(
-                                              primary: false,
-                                              shrinkWrap: true,
-                                              physics: const ScrollPhysics(),
-                                              itemCount: controller
-                                                  .recentSearchList.length,
-                                              padding: EdgeInsets.zero,
-                                              scrollDirection: Axis.vertical,
-                                              itemBuilder: (ctx, i) {
-                                                return Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 4.sp),
-                                                  child: GestureDetector(
-                                                    onTap: () async {
-                                                      /*  if (isSearch) {
-                                                      } else { */
-                                                      Navigator.of(context)
-                                                          .push(MaterialPageRoute(
-                                                              builder: (BuildContext context) => ProductDetailsScreen(
-                                                                  brandName: controller
-                                                                              .recentSearchList[i]
-                                                                          ["product"]
-                                                                      [
-                                                                      "brand_name"],
-                                                                  productId: controller
-                                                                              .recentSearchList[i]
-                                                                          ["product"]
-                                                                      ["id"],
-                                                                  type: "add")))
-                                                          .then((value) =>
-                                                              setState(
-                                                                () {
-                                                                  controller
-                                                                      .isRecentSearch
-                                                                      .value = false;
-                                                                  productController;
-                                                                  controller
-                                                                      .getRecentSearchData();
-                                                                },
-                                                              ));
-                                                      //   }
-                                                      await analytics.logEvent(
-                                                        name:
-                                                            "search_page_recentsearch_details",
-                                                        parameters: <String,
-                                                            Object>{
-                                                          'page_name':
-                                                              'search_page_recentsearch_details',
-                                                        },
-                                                      );
-                                                    },
-                                                    child: Container(
-                                                      height: 35.sp,
-                                                      child: Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal:
-                                                                    0.sp,
-                                                                vertical: 1.sp),
-                                                        child: Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.max,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 3,
-                                                              child: Padding(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        left: 16
-                                                                            .sp),
-                                                                child: AppText(
-                                                                  text: controller
-                                                                          .recentSearchList[i]
-                                                                      [
-                                                                      "search_string"],
-                                                                  maxLines: 1,
-                                                                  color:
-                                                                      appBarColor,
-                                                                  fontSize:
-                                                                      14.sp,
-                                                                  fontFamily:
-                                                                      "Franklin Gothic Regular",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: SizedBox(
-                                                                height: 0,
-                                                              ),
-                                                            ),
-                                                            controller
-                                                                    .selected[i]
-                                                                ? Padding(
-                                                                    padding: EdgeInsets.only(
-                                                                        right: 16
-                                                                            .sp),
-                                                                    child:
-                                                                        SizedBox(
-                                                                      height:
-                                                                          13.sp,
-                                                                      width:
-                                                                          13.sp,
-                                                                      child: Center(
-                                                                          child:
-                                                                              CircularProgressIndicator()),
-                                                                    ),
-                                                                  )
-                                                                : IconButton(
-                                                                    icon: SvgPicture.asset(
-                                                                        crossSearchImage,
-                                                                        color:
-                                                                            subtitleColor,
-                                                                        height: 13
-                                                                            .sp,
-                                                                        width: 13
-                                                                            .sp,
-                                                                        fit: BoxFit
-                                                                            .cover),
-                                                                    onPressed:
-                                                                        () {
-                                                                      controller
-                                                                              .selected[
-                                                                          i] = !controller
-                                                                              .selected[
-                                                                          i];
-                                                                      setState(
-                                                                          () {});
-                                                                      controller.callDeleteRecent(
-                                                                          controller.recentSearchList[i]
-                                                                              [
-                                                                              "id"]);
-                                                                    },
-                                                                  )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }),
-                                        ),
-                                        /* Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 16.sp,
-                                              right: 16.sp,
-                                              top: 20.sp),
-                                          child: Wrap(
-                                            // direction: Axis.vertical,
-                                            spacing: 5.0.sp,
-                                            runSpacing: 9.0.sp,
-                                            runAlignment:
-                                                WrapAlignment.spaceEvenly,
-                                            children: [
-                                              for (var product in controller
-                                                  .recentSearchList)
-                                                GestureDetector(
-                                                  onTap: () async {
-                                                    if (isSearch) {
-                                                    } else {
-                                                      Navigator.of(context)
-                                                          .push(MaterialPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  ProductDetailsScreen(
-                                                                      brandName:
-                                                                          product[
-                                                                                  "product"]
-                                                                              [
-                                                                              "brand_name"],
-                                                                      productId:
-                                                                          product["product"]
-                                                                              [
-                                                                              "id"],
-                                                                      type:
-                                                                          "add")))
-                                                          .then((value) =>
-                                                              setState(
-                                                                () {
-                                                                  controller
-                                                                      .isRecentSearch
-                                                                      .value = false;
-                                                                  productController;
-                                                                  controller
-                                                                      .getRecentSearchData();
-                                                                },
-                                                              ));
-                                                    }
-                                                    await analytics.logEvent(
-                                                      name:
-                                                          "search_page_recentsearch_details",
-                                                      parameters: <String,
-                                                          Object>{
-                                                        'page_name':
-                                                            'search_page_recentsearch_details',
-                                                      },
-                                                    );
-                                                  },
-                                                  child: Container(
-                                                    height: 30.sp,
-                                                    width: double.infinity,
-                                                    margin: EdgeInsets.only(
-                                                        right: 5.sp),
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: 20.sp,
+                            ),
+                            Obx(() => Visibility(
+                                  visible: controller
+                                          .searchController.text.isNotEmpty
+                                      ? true
+                                      : false,
+                                  child: controller.isSearchItem.value
+                                      ? SizedBox(
+                                          //  height: 260.sp,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                bottom: 5.sp,
+                                                top: 5.sp,
+                                                left: 16.sp),
+                                            child: ListView.builder(
+                                                primary: false,
+                                                shrinkWrap: true,
+                                                physics:
+                                                    const NeverScrollableScrollPhysics(),
+                                                itemCount: 5,
+                                                padding: EdgeInsets.zero,
+                                                scrollDirection: Axis.vertical,
+                                                itemBuilder: (ctx, index) {
+                                                  return Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 4.sp),
                                                     child: Padding(
                                                       padding:
                                                           EdgeInsets.symmetric(
-                                                              horizontal: 10.sp,
-                                                              vertical: 7.sp),
+                                                              vertical: 6.sp),
                                                       child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
                                                         crossAxisAlignment:
                                                             CrossAxisAlignment
+                                                                .center,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
                                                                 .start,
                                                         children: [
                                                           Expanded(
                                                             flex: 1,
-                                                            child: Text(
-                                                              product[
-                                                                  "search_string"],
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style: TextStyle(
-                                                                color:
-                                                                    blackColor,
-                                                                fontSize: 12.sp,
-                                                                fontFamily:
-                                                                    "Franklin Gothic Regular",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                              ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          0.sp),
+                                                              child:
+                                                                  DummyContainer(
+                                                                      height:
+                                                                          16,
+                                                                      width:
+                                                                          100),
                                                             ),
                                                           ),
-                                                          IconButton(
-                                                            icon: SvgPicture.asset(
-                                                                crossSearchImage,
-                                                                // ignore: deprecated_member_use
-                                                                color:
-                                                                    homeAppBarColor,
-                                                                height: 13.sp,
-                                                                width: 13.sp,
-                                                                fit: BoxFit
-                                                                    .cover),
-                                                            onPressed: () {},
-                                                          )
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        16.sp),
+                                                            child:
+                                                                DummyContainer(
+                                                                    height: 14,
+                                                                    width: 14),
+                                                          ),
                                                         ],
                                                       ),
                                                     ),
-                                                  ),
-                                                ),
-                                            ],
+                                                  );
+                                                }),
                                           ),
-                                        ), */
-                                      ],
-                                    )
-                                  : Obx(() => controller.isCatalog.value
-                                      ? const DummyGridMostSearch(
-                                          text: "Suggested",
                                         )
-                                      : controller.suggestedList.isNotEmpty
-                                          ? Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      top: 16.sp, left: 16.sp),
-                                                  child: AppText(
-                                                    text: "Suggested"
-                                                        .toUpperCase(),
-                                                    fontFamily:
-                                                        "Franklin Gothic Semibold",
-                                                    fontWeight: FontWeight.w400,
-                                                    color: blackColor,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 16.sp,
-                                                      top: 12.sp,
-                                                      right: 16.sp,
-                                                      bottom: 10.sp),
-                                                  child: Center(
-                                                    child: GridView.count(
-                                                      shrinkWrap: true,
-                                                      crossAxisCount: 3,
-                                                      scrollDirection:
-                                                          Axis.vertical,
-                                                      padding: EdgeInsets.zero,
-                                                      childAspectRatio: 0.6,
-                                                      physics:
-                                                          const ScrollPhysics(),
-                                                      crossAxisSpacing: 12.sp,
-                                                      mainAxisSpacing: 0.sp,
-                                                      children: List.generate(
-                                                        controller.suggestedList
+                                      : controller.searchList.isNotEmpty
+                                          ? SizedBox(
+                                              child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 16.sp,
+                                                    bottom: 5.sp,
+                                                    top: 5.sp),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    ListView.builder(
+                                                        primary: false,
+                                                        shrinkWrap: true,
+                                                        physics:
+                                                            const NeverScrollableScrollPhysics(),
+                                                        itemCount: controller
+                                                            .categoryList
                                                             .length,
-                                                        (index) {
-                                                          return Column(
-                                                            children: [
-                                                              GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  if (isSearch) {
-                                                                  } else {
-                                                                    List
-                                                                        categoryList =
-                                                                        [];
-                                                                    for (var i =
-                                                                            0;
-                                                                        i < controller.suggestedList[index]["categories"].length;
-                                                                        i++) {
-                                                                      categoryList.add(controller.suggestedList[index]["categories"]
-                                                                              [
-                                                                              i]
-                                                                          [
-                                                                          "id"]);
-                                                                    }
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .push(MaterialPageRoute(
-                                                                            builder: (BuildContext context) => CategoryProductScreen(
-                                                                                categoryName: controller.suggestedList[index]["name"],
-                                                                                categoryId: 0,
-                                                                                brandId: 0,
-                                                                                genderName: "",
-                                                                                genderType: 0,
-                                                                                categoryList: categoryList,
-                                                                                tagIds: const [])))
-                                                                        .then((value) => setState(
-                                                                              () {
-                                                                                controller.getCatalogData();
-                                                                              },
-                                                                            ));
-                                                                    await analytics
-                                                                        .logEvent(
-                                                                      name:
-                                                                          'categories_searchpage',
-                                                                      parameters: <String,
-                                                                          Object>{
-                                                                        'page_name':
-                                                                            'categories_searchpage',
-                                                                      },
-                                                                    );
-                                                                  }
-                                                                  await analytics
-                                                                      .logEvent(
-                                                                    name:
-                                                                        "search_page_mostsearch_details",
-                                                                    parameters: <String,
-                                                                        Object>{
-                                                                      'page_name':
-                                                                          'search_page_mostsearch_details',
-                                                                    },
-                                                                  );
-                                                                },
-                                                                child: Column(
+                                                        padding:
+                                                            EdgeInsets.zero,
+                                                        //  scrollDirection: Axis.vertical,
+                                                        itemBuilder: (ctx, i) {
+                                                          return Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    vertical:
+                                                                        4.sp),
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () async {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .push(
+                                                                        MaterialPageRoute(
+                                                                            builder: (BuildContext context) =>
+                                                                                CategoryProductScreen(
+                                                                                  categoryName: controller.categoryList[i]["name"],
+                                                                                  categoryId: controller.categoryList[i]["id"],
+                                                                                  brandId: 0,
+                                                                                  genderType: 0,
+                                                                                  genderName: "",
+                                                                                  tagIds: const [],
+                                                                                  categoryList: [],
+                                                                                )))
+                                                                    .then((value) =>
+                                                                        setState(
+                                                                          () {
+                                                                            controller.searchController.clear();
+                                                                            controller.getSearchData(context);
+                                                                            isSearch =
+                                                                                false;
+                                                                            controller.searchText.value =
+                                                                                "Search for products";
+                                                                          },
+                                                                        ));
+
+                                                                /*  setState(() {
+                                                              isSearch = false;
+                                                              controller.searchText
+                                                                      .value =
+                                                                  "Search for products";
+                                                            }); */
+                                                                await analytics
+                                                                    .logEvent(
+                                                                  name:
+                                                                      "search_page_searchcategory",
+                                                                  parameters: <String,
+                                                                      Object>{
+                                                                    'page_name':
+                                                                        'search_page_searchcategory',
+                                                                  },
+                                                                );
+                                                              },
+                                                              child: Padding(
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        vertical:
+                                                                            6.sp),
+                                                                child: Row(
                                                                   crossAxisAlignment:
                                                                       CrossAxisAlignment
                                                                           .center,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
                                                                   children: [
-                                                                    controller.suggestedList[index]["thumbnail"].isNotEmpty &&
-                                                                            controller.suggestedList[index]["thumbnail"] !=
-                                                                                null
-                                                                        ? SizedBox(
-                                                                            width:
-                                                                                104.sp,
-                                                                            height:
-                                                                                130.sp,
-                                                                            child:
-                                                                                CachedNetworkImage(
-                                                                              cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-                                                                              fit: BoxFit.cover,
-                                                                              imageUrl: isImage(controller.suggestedList[index]["thumbnail"]) ? controller.suggestedList[index]["thumbnail"] : controller.suggestedList[index]["thumbnail"],
-                                                                              errorWidget: (context, url, error) => Image.asset(
-                                                                                downloadImage,
-                                                                                fit: BoxFit.cover,
-                                                                                width: 104.sp,
-                                                                                height: 130.sp,
-                                                                              ),
-                                                                            ),
-                                                                          )
-                                                                        : Center(
-                                                                            child: Image.asset(dummyWishlistImage,
-                                                                                width: 104.sp,
-                                                                                height: 130.sp,
-                                                                                fit: BoxFit.cover),
-                                                                          ),
-                                                                    Padding(
-                                                                      padding: EdgeInsets.symmetric(
-                                                                          horizontal: 5
-                                                                              .sp,
-                                                                          vertical:
-                                                                              6.sp),
-                                                                      child:
-                                                                          AppText(
-                                                                        text: controller
-                                                                            .suggestedList[index]["name"]
-                                                                            .toUpperCase(),
-                                                                        color:
-                                                                            blackColor,
-                                                                        fontSize:
-                                                                            13,
-                                                                        textAlign:
-                                                                            TextAlign.center,
-                                                                        maxLines:
-                                                                            1,
-                                                                        fontFamily:
-                                                                            "Franklin Gothic",
-                                                                        fontWeight:
-                                                                            FontWeight.w400,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          );
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            )
-                                          : SizedBox(
-                                              height: 0.sp,
-                                            )),
-                        ),
-                        Obx(() => productController.isMostSearch.value
-                            ? const DummyGridMostSearch(
-                                text: "Most Searched",
-                              )
-                            : productController.mostSeachList.isNotEmpty
-                                ? Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 20.sp, left: 16.sp),
-                                        child: AppText(
-                                          text: "Most Searched".toUpperCase(),
-                                          fontFamily:
-                                              "Franklin Gothic Semibold",
-                                          fontWeight: FontWeight.w400,
-                                          color: blackColor,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 16.sp,
-                                            top: 12.sp,
-                                            right: 16.sp,
-                                            bottom: 10.sp),
-                                        child: Center(
-                                          child: GridView.count(
-                                            shrinkWrap: true,
-                                            crossAxisCount: 3,
-                                            scrollDirection: Axis.vertical,
-                                            padding: EdgeInsets.zero,
-                                            childAspectRatio: 0.6,
-                                            physics: const ScrollPhysics(),
-                                            crossAxisSpacing: 12.sp,
-                                            mainAxisSpacing: 0.sp,
-                                            children: List.generate(
-                                              productController
-                                                  .mostSeachList.length,
-                                              (index) {
-                                                return Column(
-                                                  children: [
-                                                    GestureDetector(
-                                                      onTap: () async {
-                                                        if (isSearch) {
-                                                        } else {
-                                                          Navigator.of(context)
-                                                              .push(MaterialPageRoute(
-                                                                  builder: (BuildContext context) => CategoryProductScreen(
-                                                                      categoryName:
-                                                                          productController.mostSeachList[index]
-                                                                              [
-                                                                              "name"],
-                                                                      categoryId:
-                                                                          productController.mostSeachList[index]
-                                                                              [
-                                                                              "id"],
-                                                                      brandId:
-                                                                          0,
-                                                                      genderName:
-                                                                          "",
-                                                                      genderType:
-                                                                          0,
-                                                                      categoryList: [],
-                                                                      tagIds: const [])))
-                                                              .then((value) =>
-                                                                  setState(
-                                                                    () {
-                                                                      productController
-                                                                          .mostViewHasnextpage
-                                                                          .value = true;
-                                                                      productController
-                                                                          .mostViewLoadMore
-                                                                          .value = false;
-                                                                      productController
-                                                                          .isMostSearch
-                                                                          .value = false;
-                                                                      productController
-                                                                          .mostViewPage
-                                                                          .value = 1;
-                                                                      productController;
-                                                                      productController
-                                                                          .getMostViewProductData();
-                                                                    },
-                                                                  ));
-                                                          await analytics
-                                                              .logEvent(
-                                                            name:
-                                                                'categories_searchpage',
-                                                            parameters: <String,
-                                                                Object>{
-                                                              'page_name':
-                                                                  'categories_searchpage',
-                                                            },
-                                                          );
-                                                        }
-                                                        await analytics
-                                                            .logEvent(
-                                                          name:
-                                                              "search_page_mostsearch_details",
-                                                          parameters: <String,
-                                                              Object>{
-                                                            'page_name':
-                                                                'search_page_mostsearch_details',
-                                                          },
-                                                        );
-                                                      },
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          productController
-                                                                      .mostSeachList[
-                                                                          index]
-                                                                          [
-                                                                          "thumbnail"]
-                                                                      .isNotEmpty &&
-                                                                  productController
-                                                                              .mostSeachList[index]
-                                                                          [
-                                                                          "thumbnail"] !=
-                                                                      null
-                                                              ? SizedBox(
-                                                                  width: 104.sp,
-                                                                  height:
-                                                                      130.sp,
+                                                                    /*  SizedBox(
+                                                                  height: 20.sp,
+                                                                  width: 20.sp,
                                                                   child:
                                                                       CachedNetworkImage(
                                                                     cacheManager: CacheManager(Config(
@@ -1057,82 +551,1078 @@ class SearchScreenState extends State<SearchScreen> {
                                                                             100)),
                                                                     fit: BoxFit
                                                                         .cover,
-                                                                    imageUrl: isImage(productController
-                                                                                .mostSeachList[index]
-                                                                            [
-                                                                            "thumbnail"])
-                                                                        ? productController.mostSeachList[index]
-                                                                            [
-                                                                            "thumbnail"]
-                                                                        : productController.mostSeachList[index]
-                                                                            [
-                                                                            "thumbnail"],
+                                                                    imageUrl: controller
+                                                                            .categoryList[i]
+                                                                        [
+                                                                        "thumbnail"],
                                                                     errorWidget: (context,
                                                                             url,
                                                                             error) =>
                                                                         Image
                                                                             .asset(
                                                                       downloadImage,
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                      width: 104
-                                                                          .sp,
                                                                       height:
-                                                                          130.sp,
+                                                                          20.sp,
+                                                                      width:
+                                                                          20.sp,
                                                                     ),
                                                                   ),
-                                                                )
-                                                              : Center(
-                                                                  child: Image.asset(
-                                                                      dummyWishlistImage,
-                                                                      width: 104
-                                                                          .sp,
-                                                                      height: 130
-                                                                          .sp,
-                                                                      fit: BoxFit
-                                                                          .cover),
+                                                                ), */
+                                                                    Expanded(
+                                                                      flex: 1,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            EdgeInsets.symmetric(horizontal: 0.sp),
+                                                                        child:
+                                                                            AppText(
+                                                                          text: controller.categoryList[i]["name"] ??
+                                                                              "",
+                                                                          maxLines:
+                                                                              1,
+                                                                          fontFamily:
+                                                                              "Franklin Gothic Regular",
+                                                                          fontWeight:
+                                                                              FontWeight.w400,
+                                                                          fontSize:
+                                                                              14,
+                                                                          color:
+                                                                              homeAppBarColor,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    AppText(
+                                                                      text: controller
+                                                                          .categoryList[
+                                                                              i]
+                                                                              [
+                                                                              "product_count"]
+                                                                          .toString(),
+                                                                      maxLines:
+                                                                          1,
+                                                                      fontFamily:
+                                                                          "Franklin Gothic Regular",
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                      fontSize:
+                                                                          14,
+                                                                      color:
+                                                                          homeAppBarColor,
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                          left: 8
+                                                                              .sp,
+                                                                          right:
+                                                                              16.sp),
+                                                                      child: SvgPicture.asset(
+                                                                          searchSvgImage,
+                                                                          height: 16
+                                                                              .sp,
+                                                                          width: 16
+                                                                              .sp,
+                                                                          fit: BoxFit
+                                                                              .cover),
+                                                                    ),
+                                                                  ],
                                                                 ),
-                                                          Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        5.sp,
-                                                                    vertical:
-                                                                        6.sp),
-                                                            child: AppText(
-                                                              text: productController
-                                                                  .mostSeachList[
-                                                                      index]
-                                                                      ["name"]
-                                                                  .toUpperCase(),
-                                                              color: blackColor,
-                                                              fontSize: 13,
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              maxLines: 1,
-                                                              fontFamily:
-                                                                  "Franklin Gothic",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
+                                                              ),
                                                             ),
-                                                          ),
-                                                        ],
+                                                          );
+                                                        }),
+                                                    Visibility(
+                                                      visible: controller
+                                                              .categoryList
+                                                              .isNotEmpty
+                                                          ? true
+                                                          : false,
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 16.sp,
+                                                                bottom: 10.sp,
+                                                                top: 10.sp),
+                                                        child: Container(
+                                                          height: 1.sp,
+                                                          color: dividerColor,
+                                                        ),
                                                       ),
                                                     ),
+                                                    ListView.builder(
+                                                        primary: false,
+                                                        shrinkWrap: true,
+                                                        physics:
+                                                            const NeverScrollableScrollPhysics(),
+                                                        itemCount: controller
+                                                            .searchList.length,
+                                                        padding:
+                                                            EdgeInsets.zero,
+                                                        itemBuilder:
+                                                            (ctx, index) {
+                                                          return Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    vertical:
+                                                                        4.sp),
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () async {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .push(MaterialPageRoute(
+                                                                        builder: (BuildContext context) => ProductDetailsScreen(
+                                                                            brandName: controller.searchList[index][
+                                                                                "brand_name"],
+                                                                            productId: controller.searchList[index][
+                                                                                "id"],
+                                                                            type:
+                                                                                "add")))
+                                                                    .then((value) =>
+                                                                        setState(
+                                                                          () {
+                                                                            controller.isRecentSearch.value =
+                                                                                false;
+                                                                            controller.getRecentSearchData();
+                                                                            controller.searchController.clear();
+                                                                            controller.getSearchData(context);
+                                                                          },
+                                                                        ));
+                                                                controller.callRecentSearch(
+                                                                    controller.searchList[
+                                                                            index]
+                                                                        ["id"],
+                                                                    controller.searchList[
+                                                                            index]
+                                                                        [
+                                                                        "name"]);
+                                                                setState(() {
+                                                                  isSearch =
+                                                                      false;
+                                                                  controller
+                                                                          .searchText
+                                                                          .value =
+                                                                      "Search for products";
+                                                                });
+                                                                await analytics
+                                                                    .logEvent(
+                                                                  name:
+                                                                      "search_page_searchproductdetails",
+                                                                  parameters: <String,
+                                                                      Object>{
+                                                                    'page_name':
+                                                                        'search_page_searchproductdetails',
+                                                                  },
+                                                                );
+                                                              },
+                                                              child: Padding(
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        vertical:
+                                                                            6.sp),
+                                                                child: Row(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    /*   Icon(Icons.search,
+                                                                    size: 20.sp,
+                                                                    color: Colors
+                                                                        .grey), */
+                                                                    Expanded(
+                                                                      flex: 1,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            EdgeInsets.symmetric(horizontal: 0.sp),
+                                                                        child:
+                                                                            AppText(
+                                                                          text: controller.searchList[index]["name"] ??
+                                                                              "",
+                                                                          maxLines:
+                                                                              1,
+                                                                          fontFamily:
+                                                                              "Franklin Gothic Regular",
+                                                                          fontWeight:
+                                                                              FontWeight.w400,
+                                                                          fontSize:
+                                                                              14,
+                                                                          color:
+                                                                              homeAppBarColor,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    /*  Padding(
+                                                                  padding: EdgeInsets
+                                                                      .symmetric(
+                                                                          horizontal:
+                                                                              8.sp),
+                                                                  child: AppText(
+                                                                    text: controller
+                                                                        .searchList[
+                                                                            index]
+                                                                            [
+                                                                            "hits"]
+                                                                        .toString(),
+                                                                    maxLines: 1,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic Regular",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    fontSize: 14,
+                                                                    color:
+                                                                        greyTextColor,
+                                                                  ),
+                                                                ), */
+                                                                    Padding(
+                                                                      padding: EdgeInsets.symmetric(
+                                                                          horizontal:
+                                                                              16.sp),
+                                                                      child: SvgPicture.asset(
+                                                                          arrowSearchImage,
+                                                                          color:
+                                                                              homeAppBarColor,
+                                                                          height: 13
+                                                                              .sp,
+                                                                          width: 13
+                                                                              .sp,
+                                                                          fit: BoxFit
+                                                                              .cover),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }),
                                                   ],
-                                                );
-                                              },
+                                                ),
+                                              ),
+                                            )
+                                          : Container(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(
+                                                    height: 50.sp,
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 10.sp,
+                                                        left: 16.sp),
+                                                    child: Row(
+                                                      children: [
+                                                        AppText(
+                                                          text:
+                                                              "No results found for",
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          color: subtitleColor,
+                                                          fontSize: 16,
+                                                        ),
+                                                        AppText(
+                                                          text:
+                                                              " '${controller.searchController.text.toString()}'",
+                                                          fontFamily:
+                                                              "Franklin Gothic Semibold",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          color: subtitleColor,
+                                                          fontSize: 16,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 2.sp, left: 16.sp),
+                                                    child: AppText(
+                                                      text: "0 items",
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: subtitleColor,
+                                                      fontSize: 10,
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 80.sp),
+                                                    child: Center(
+                                                      child: Image.asset(
+                                                          errorImage,
+                                                          height: 200.sp,
+                                                          width: 220.sp,
+                                                          fit: BoxFit.cover),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 20.sp),
+                                                    child: getSingleButton(
+                                                        width: double.infinity,
+                                                        label: "Back to home"
+                                                            .toUpperCase(),
+                                                        textColor: whiteColor,
+                                                        fontSize: 13,
+                                                        backgroundColor:
+                                                            homeAppBarColor,
+                                                        onPressed: () {
+                                                          Get.off(
+                                                              BottomNavScreen());
+                                                        },
+                                                        borderColor:
+                                                            colorPrimary),
+                                                  )
+                                                ],
+                                              ),
                                             ),
-                                          ),
+                                )),
+                          ],
+                        ),
+                        Obx(
+                          () => Visibility(
+                            visible: controller.searchController.text.isEmpty
+                                ? true
+                                : false,
+                            child: controller.isRecentSearch.value
+                                ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 20.sp, left: 16.sp),
+                                        child: AppText(
+                                          text: "".toUpperCase(),
+                                          fontFamily:
+                                              "Franklin Gothic Semibold",
+                                          fontWeight: FontWeight.w400,
+                                          color: blackColor,
+                                          fontSize: 16,
                                         ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 10.sp),
+                                        child: ListView.builder(
+                                            primary: false,
+                                            shrinkWrap: true,
+                                            physics: const ScrollPhysics(),
+                                            itemCount: 2,
+                                            padding: EdgeInsets.zero,
+                                            scrollDirection: Axis.vertical,
+                                            itemBuilder: (ctx, i) {
+                                              return Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 4.sp),
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 0.sp,
+                                                      vertical: 1.sp),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Expanded(
+                                                        flex: 3,
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 16.sp),
+                                                          child: DummyContainer(
+                                                              height: 20,
+                                                              width: 60),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: SizedBox(
+                                                          height: 0,
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal:
+                                                                    16.sp),
+                                                        child: DummyContainer(
+                                                            height: 15,
+                                                            width: 15),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            }),
                                       ),
                                     ],
                                   )
-                                : SizedBox(
-                                    height: 0.sp,
-                                  )),
+                                : controller.recentSearchList.isNotEmpty
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 16.sp, left: 16.sp),
+                                            child: AppText(
+                                              text: "Recent Searches"
+                                                  .toUpperCase(),
+                                              fontFamily:
+                                                  "Franklin Gothic Semibold",
+                                              fontWeight: FontWeight.w400,
+                                              color: blackColor,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 10.sp),
+                                            child: ListView.builder(
+                                                primary: false,
+                                                shrinkWrap: true,
+                                                physics: const ScrollPhysics(),
+                                                itemCount: controller
+                                                    .recentSearchList.length,
+                                                padding: EdgeInsets.zero,
+                                                scrollDirection: Axis.vertical,
+                                                itemBuilder: (ctx, i) {
+                                                  return Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 4.sp),
+                                                    child: GestureDetector(
+                                                      onTap: () async {
+                                                        /*  if (isSearch) {
+                                                        } else { */
+                                                        Navigator.of(context)
+                                                            .push(MaterialPageRoute(
+                                                                builder: (BuildContext context) => ProductDetailsScreen(
+                                                                    brandName: controller.recentSearchList[i]
+                                                                            ["product"]
+                                                                        [
+                                                                        "brand_name"],
+                                                                    productId: controller.recentSearchList[i]
+                                                                            ["product"]
+                                                                        ["id"],
+                                                                    type:
+                                                                        "add")))
+                                                            .then((value) =>
+                                                                setState(
+                                                                  () {
+                                                                    controller
+                                                                        .isRecentSearch
+                                                                        .value = false;
+                                                                    productController;
+                                                                    controller
+                                                                        .getRecentSearchData();
+                                                                  },
+                                                                ));
+                                                        //   }
+                                                        await analytics
+                                                            .logEvent(
+                                                          name:
+                                                              "search_page_recentsearch_details",
+                                                          parameters: <String,
+                                                              Object>{
+                                                            'page_name':
+                                                                'search_page_recentsearch_details',
+                                                          },
+                                                        );
+                                                      },
+                                                      child: Container(
+                                                        height: 35.sp,
+                                                        child: Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      0.sp,
+                                                                  vertical:
+                                                                      1.sp),
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Expanded(
+                                                                flex: 3,
+                                                                child: Padding(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          left:
+                                                                              16.sp),
+                                                                  child:
+                                                                      AppText(
+                                                                    text: controller
+                                                                            .recentSearchList[i]
+                                                                        [
+                                                                        "search_string"],
+                                                                    maxLines: 1,
+                                                                    color:
+                                                                        appBarColor,
+                                                                    fontSize:
+                                                                        14.sp,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic Regular",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                flex: 1,
+                                                                child: SizedBox(
+                                                                  height: 0,
+                                                                ),
+                                                              ),
+                                                              controller
+                                                                      .selected[i]
+                                                                  ? Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                          right:
+                                                                              16.sp),
+                                                                      child:
+                                                                          SizedBox(
+                                                                        height:
+                                                                            13.sp,
+                                                                        width: 13
+                                                                            .sp,
+                                                                        child: Center(
+                                                                            child:
+                                                                                CircularProgressIndicator()),
+                                                                      ),
+                                                                    )
+                                                                  : IconButton(
+                                                                      icon: SvgPicture.asset(
+                                                                          crossSearchImage,
+                                                                          color:
+                                                                              subtitleColor,
+                                                                          height: 13
+                                                                              .sp,
+                                                                          width: 13
+                                                                              .sp,
+                                                                          fit: BoxFit
+                                                                              .cover),
+                                                                      onPressed:
+                                                                          () {
+                                                                        controller
+                                                                            .selected[i] = !controller
+                                                                                .selected[
+                                                                            i];
+                                                                        setState(
+                                                                            () {});
+                                                                        controller.callDeleteRecent(controller.recentSearchList[i]
+                                                                            [
+                                                                            "id"]);
+                                                                      },
+                                                                    )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }),
+                                          ),
+                                          /* Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 16.sp,
+                                                right: 16.sp,
+                                                top: 20.sp),
+                                            child: Wrap(
+                                              // direction: Axis.vertical,
+                                              spacing: 5.0.sp,
+                                              runSpacing: 9.0.sp,
+                                              runAlignment:
+                                                  WrapAlignment.spaceEvenly,
+                                              children: [
+                                                for (var product in controller
+                                                    .recentSearchList)
+                                                  GestureDetector(
+                                                    onTap: () async {
+                                                      if (isSearch) {
+                                                      } else {
+                                                        Navigator.of(context)
+                                                            .push(MaterialPageRoute(
+                                                                builder: (BuildContext
+                                                                        context) =>
+                                                                    ProductDetailsScreen(
+                                                                        brandName:
+                                                                            product[
+                                                                                    "product"]
+                                                                                [
+                                                                                "brand_name"],
+                                                                        productId:
+                                                                            product["product"]
+                                                                                [
+                                                                                "id"],
+                                                                        type:
+                                                                            "add")))
+                                                            .then((value) =>
+                                                                setState(
+                                                                  () {
+                                                                    controller
+                                                                        .isRecentSearch
+                                                                        .value = false;
+                                                                    productController;
+                                                                    controller
+                                                                        .getRecentSearchData();
+                                                                  },
+                                                                ));
+                                                      }
+                                                      await analytics.logEvent(
+                                                        name:
+                                                            "search_page_recentsearch_details",
+                                                        parameters: <String,
+                                                            Object>{
+                                                          'page_name':
+                                                              'search_page_recentsearch_details',
+                                                        },
+                                                      );
+                                                    },
+                                                    child: Container(
+                                                      height: 30.sp,
+                                                      width: double.infinity,
+                                                      margin: EdgeInsets.only(
+                                                          right: 5.sp),
+                                                      child: Padding(
+                                                        padding:
+                                                            EdgeInsets.symmetric(
+                                                                horizontal: 10.sp,
+                                                                vertical: 7.sp),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Expanded(
+                                                              flex: 1,
+                                                              child: Text(
+                                                                product[
+                                                                    "search_string"],
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style: TextStyle(
+                                                                  color:
+                                                                      blackColor,
+                                                                  fontSize: 12.sp,
+                                                                  fontFamily:
+                                                                      "Franklin Gothic Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            IconButton(
+                                                              icon: SvgPicture.asset(
+                                                                  crossSearchImage,
+                                                                  // ignore: deprecated_member_use
+                                                                  color:
+                                                                      homeAppBarColor,
+                                                                  height: 13.sp,
+                                                                  width: 13.sp,
+                                                                  fit: BoxFit
+                                                                      .cover),
+                                                              onPressed: () {},
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                          ), */
+                                        ],
+                                      )
+                                    : Obx(() => controller.isCatalog.value
+                                        ? const DummyGridMostSearch(
+                                            text: "Suggested",
+                                          )
+                                        : controller.suggestedList.isNotEmpty
+                                            ? Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 16.sp,
+                                                        left: 16.sp),
+                                                    child: AppText(
+                                                      text: "Suggested"
+                                                          .toUpperCase(),
+                                                      fontFamily:
+                                                          "Franklin Gothic Semibold",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: blackColor,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 16.sp,
+                                                        top: 12.sp,
+                                                        right: 16.sp,
+                                                        bottom: 10.sp),
+                                                    child: Center(
+                                                      child: GridView.count(
+                                                        shrinkWrap: true,
+                                                        crossAxisCount: 3,
+                                                        scrollDirection:
+                                                            Axis.vertical,
+                                                        padding:
+                                                            EdgeInsets.zero,
+                                                        childAspectRatio: 0.6,
+                                                        physics:
+                                                            const ScrollPhysics(),
+                                                        crossAxisSpacing: 12.sp,
+                                                        mainAxisSpacing: 0.sp,
+                                                        children: List.generate(
+                                                          controller
+                                                              .suggestedList
+                                                              .length,
+                                                          (index) {
+                                                            return Column(
+                                                              children: [
+                                                                GestureDetector(
+                                                                  onTap:
+                                                                      () async {
+                                                                    if (isSearch) {
+                                                                    } else {
+                                                                      List
+                                                                          categoryList =
+                                                                          [];
+                                                                      for (var i =
+                                                                              0;
+                                                                          i < controller.suggestedList[index]["categories"].length;
+                                                                          i++) {
+                                                                        categoryList.add(controller.suggestedList[index]["categories"][i]
+                                                                            [
+                                                                            "id"]);
+                                                                      }
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .push(
+                                                                              MaterialPageRoute(builder: (BuildContext context) => CategoryProductScreen(categoryName: controller.suggestedList[index]["name"], categoryId: 0, brandId: 0, genderName: "", genderType: 0, categoryList: categoryList, tagIds: const [])))
+                                                                          .then((value) => setState(
+                                                                                () {
+                                                                                  controller.getCatalogData();
+                                                                                },
+                                                                              ));
+                                                                      await analytics
+                                                                          .logEvent(
+                                                                        name:
+                                                                            'categories_searchpage',
+                                                                        parameters: <String,
+                                                                            Object>{
+                                                                          'page_name':
+                                                                              'categories_searchpage',
+                                                                        },
+                                                                      );
+                                                                    }
+                                                                    await analytics
+                                                                        .logEvent(
+                                                                      name:
+                                                                          "search_page_mostsearch_details",
+                                                                      parameters: <String,
+                                                                          Object>{
+                                                                        'page_name':
+                                                                            'search_page_mostsearch_details',
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      controller.suggestedList[index]["thumbnail"].isNotEmpty &&
+                                                                              controller.suggestedList[index]["thumbnail"] != null
+                                                                          ? SizedBox(
+                                                                              width: 104.sp,
+                                                                              height: 130.sp,
+                                                                              child: CachedNetworkImage(
+                                                                                cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                                fit: BoxFit.cover,
+                                                                                imageUrl: isImage(controller.suggestedList[index]["thumbnail"]) ? controller.suggestedList[index]["thumbnail"] : controller.suggestedList[index]["thumbnail"],
+                                                                                errorWidget: (context, url, error) => Image.asset(
+                                                                                  downloadImage,
+                                                                                  fit: BoxFit.cover,
+                                                                                  width: 104.sp,
+                                                                                  height: 130.sp,
+                                                                                ),
+                                                                              ),
+                                                                            )
+                                                                          : Center(
+                                                                              child: Image.asset(dummyWishlistImage, width: 104.sp, height: 130.sp, fit: BoxFit.cover),
+                                                                            ),
+                                                                      Padding(
+                                                                        padding: EdgeInsets.symmetric(
+                                                                            horizontal:
+                                                                                5.sp,
+                                                                            vertical: 6.sp),
+                                                                        child:
+                                                                            AppText(
+                                                                          text: controller
+                                                                              .suggestedList[index]["name"]
+                                                                              .toUpperCase(),
+                                                                          color:
+                                                                              blackColor,
+                                                                          fontSize:
+                                                                              13,
+                                                                          textAlign:
+                                                                              TextAlign.center,
+                                                                          maxLines:
+                                                                              1,
+                                                                          fontFamily:
+                                                                              "Franklin Gothic",
+                                                                          fontWeight:
+                                                                              FontWeight.w400,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            : SizedBox(
+                                                height: 0.sp,
+                                              )),
+                          ),
+                        ),
+                        Obx(() => Visibility(
+                              visible: controller.searchController.text.isEmpty
+                                  ? true
+                                  : false,
+                              child: productController.isMostSearch.value
+                                  ? const DummyGridMostSearch(
+                                      text: "Most Searched",
+                                    )
+                                  : productController.mostSeachList.isNotEmpty
+                                      ? Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 20.sp, left: 16.sp),
+                                              child: AppText(
+                                                text: "Most Searched"
+                                                    .toUpperCase(),
+                                                fontFamily:
+                                                    "Franklin Gothic Semibold",
+                                                fontWeight: FontWeight.w400,
+                                                color: blackColor,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: 16.sp,
+                                                  top: 12.sp,
+                                                  right: 16.sp,
+                                                  bottom: 10.sp),
+                                              child: Center(
+                                                child: GridView.count(
+                                                  shrinkWrap: true,
+                                                  crossAxisCount: 3,
+                                                  scrollDirection:
+                                                      Axis.vertical,
+                                                  padding: EdgeInsets.zero,
+                                                  childAspectRatio: 0.6,
+                                                  physics:
+                                                      const ScrollPhysics(),
+                                                  crossAxisSpacing: 12.sp,
+                                                  mainAxisSpacing: 0.sp,
+                                                  children: List.generate(
+                                                    productController
+                                                        .mostSeachList.length,
+                                                    (index) {
+                                                      return Column(
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap: () async {
+                                                              if (isSearch) {
+                                                              } else {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .push(MaterialPageRoute(
+                                                                        builder: (BuildContext context) => CategoryProductScreen(
+                                                                            categoryName: productController.mostSeachList[index][
+                                                                                "name"],
+                                                                            categoryId: productController.mostSeachList[index][
+                                                                                "id"],
+                                                                            brandId:
+                                                                                0,
+                                                                            genderName:
+                                                                                "",
+                                                                            genderType:
+                                                                                0,
+                                                                            categoryList: [],
+                                                                            tagIds: const [])))
+                                                                    .then((value) =>
+                                                                        setState(
+                                                                          () {
+                                                                            productController.mostViewHasnextpage.value =
+                                                                                true;
+                                                                            productController.mostViewLoadMore.value =
+                                                                                false;
+                                                                            productController.isMostSearch.value =
+                                                                                false;
+                                                                            productController.mostViewPage.value =
+                                                                                1;
+                                                                            productController;
+                                                                            productController.getMostViewProductData();
+                                                                          },
+                                                                        ));
+                                                                await analytics
+                                                                    .logEvent(
+                                                                  name:
+                                                                      'categories_searchpage',
+                                                                  parameters: <String,
+                                                                      Object>{
+                                                                    'page_name':
+                                                                        'categories_searchpage',
+                                                                  },
+                                                                );
+                                                              }
+                                                              await analytics
+                                                                  .logEvent(
+                                                                name:
+                                                                    "search_page_mostsearch_details",
+                                                                parameters: <String,
+                                                                    Object>{
+                                                                  'page_name':
+                                                                      'search_page_mostsearch_details',
+                                                                },
+                                                              );
+                                                            },
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                productController
+                                                                            .mostSeachList[index][
+                                                                                "thumbnail"]
+                                                                            .isNotEmpty &&
+                                                                        productController.mostSeachList[index]["thumbnail"] !=
+                                                                            null
+                                                                    ? SizedBox(
+                                                                        width: 104
+                                                                            .sp,
+                                                                        height:
+                                                                            130.sp,
+                                                                        child:
+                                                                            CachedNetworkImage(
+                                                                          cacheManager: CacheManager(Config(
+                                                                              "customCacheKey",
+                                                                              stalePeriod: const Duration(days: 15),
+                                                                              maxNrOfCacheObjects: 100)),
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                          imageUrl: isImage(productController.mostSeachList[index]["thumbnail"])
+                                                                              ? productController.mostSeachList[index]["thumbnail"]
+                                                                              : productController.mostSeachList[index]["thumbnail"],
+                                                                          errorWidget: (context, url, error) =>
+                                                                              Image.asset(
+                                                                            downloadImage,
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                            width:
+                                                                                104.sp,
+                                                                            height:
+                                                                                130.sp,
+                                                                          ),
+                                                                        ),
+                                                                      )
+                                                                    : Center(
+                                                                        child: Image.asset(
+                                                                            dummyWishlistImage,
+                                                                            width:
+                                                                                104.sp,
+                                                                            height: 130.sp,
+                                                                            fit: BoxFit.cover),
+                                                                      ),
+                                                                Padding(
+                                                                  padding: EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          5.sp,
+                                                                      vertical:
+                                                                          6.sp),
+                                                                  child:
+                                                                      AppText(
+                                                                    text: productController
+                                                                        .mostSeachList[
+                                                                            index]
+                                                                            [
+                                                                            "name"]
+                                                                        .toUpperCase(),
+                                                                    color:
+                                                                        blackColor,
+                                                                    fontSize:
+                                                                        13,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                    maxLines: 1,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      : SizedBox(
+                                          height: 0.sp,
+                                        ),
+                            )),
                         /*  Obx(
                           () => brandController.isBrand.value
                               ? const DummyProductList(
@@ -1389,7 +1879,7 @@ class SearchScreenState extends State<SearchScreen> {
                 ),
               ],
             ),
-            controller.searchController.text.isNotEmpty
+            /* controller.searchController.text.isNotEmpty
                 ? Container(
                     color: whiteColor,
                     height: MediaQuery.of(context).size.height,
@@ -1413,13 +1903,6 @@ class SearchScreenState extends State<SearchScreen> {
                                             children: [
                                               GestureDetector(
                                                 onTap: () {
-                                                  /*  setState(() {
-                                          isSearch = false;
-                                          controller.searchList.clear();
-                                          controller.searchController.clear();
-                                          controller.searchText.value =
-                                              "Search for products";
-                                        }); */
                                                   Get.back();
                                                 },
                                                 child: SvgPicture.asset(
@@ -2195,7 +2678,7 @@ class SearchScreenState extends State<SearchScreen> {
                   )
                 : const SizedBox(
                     height: 0,
-                  )
+                  ) */
           ],
         ),
       ),

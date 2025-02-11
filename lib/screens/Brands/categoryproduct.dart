@@ -201,15 +201,19 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 16.sp),
-                            child: AppText(
-                              text: "'${widget.categoryName.toUpperCase()}'",
-                              color: Color(0xFF4B5563),
-                              fontSize: 16,
-                              fontFamily: "Franklin Gothic Semibold",
-                              textAlign: TextAlign.center,
-                              fontWeight: FontWeight.w500,
+                          Container(
+                            width: MediaQuery.sizeOf(context).width / 2.sp,
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 16.sp),
+                              child: AppText(
+                                text: "'${widget.categoryName.toUpperCase()}'",
+                                color: Color(0xFF4B5563),
+                                fontSize: 16,
+                                maxLines: 1,
+                                fontFamily: "Franklin Gothic Semibold",
+                                textAlign: TextAlign.center,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ],

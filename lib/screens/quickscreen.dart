@@ -303,7 +303,7 @@ class QuickScreenState extends State<QuickScreen> {
                             : false,
                         child: homeController.isBanner2.value
                             ? Padding(
-                                padding: EdgeInsets.symmetric(vertical: 24.sp),
+                                padding: EdgeInsets.only(top: 24.sp),
                                 child: SizedBox(
                                   height: 128.sp,
                                   width: double.infinity,
@@ -328,8 +328,7 @@ class QuickScreenState extends State<QuickScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 24.sp),
+                                        padding: EdgeInsets.only(top: 24.sp),
                                         child: CarouselSlider.builder(
                                           itemCount:
                                               homeController.banner2List.length,
@@ -474,7 +473,7 @@ class QuickScreenState extends State<QuickScreen> {
                             ? true
                             : false,
                         child: Padding(
-                          padding: EdgeInsets.only(bottom: 24.sp),
+                          padding: EdgeInsets.symmetric(vertical: 24.sp),
                           child: Container(
                             height: 30.sp,
                             color: expressDeliveryBanner,
@@ -483,7 +482,7 @@ class QuickScreenState extends State<QuickScreen> {
                               padding: EdgeInsets.symmetric(vertical: 5.sp),
                               child: Marquee(
                                 text:
-                                    'MORE THAN 50 HOMEGROWN BRANDS ✦ DELIVERED WITHIN ${homeController.expressHour.value} HRS ✦ MORE THAN 50 HOMEGROWN BRANDS',
+                                    '✦  MORE THAN 50 HOMEGROWN BRANDS  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12.sp,
@@ -870,363 +869,381 @@ class QuickScreenState extends State<QuickScreen> {
                                 );
                               }),
                         )
-                      : Padding(
-                          padding: EdgeInsets.only(
-                              left: 16.sp,
-                              right: 16.sp,
-                              bottom: 10.sp,
-                              top: 10.sp),
-                          child: GetBuilder<ProductController>(
-                            builder: (value) => ListView.builder(
-                                primary: false,
-                                shrinkWrap: true,
-                                // controller: value.brandListController,
-                                physics: const ScrollPhysics(),
-                                itemCount: value.brandProductList.length,
-                                padding: EdgeInsets.zero,
-                                scrollDirection: Axis.vertical,
-                                itemBuilder: (ctx, index) {
-                                  return Column(
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 24.sp),
-                                        child: Container(
-                                          width: double.infinity,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.sp),
-                                              color: cardBg),
-                                          child: Column(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () async {},
-                                                child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 12.sp,
-                                                      vertical: 12.sp),
-                                                  child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      value.brandProductList[
-                                                                      index]
-                                                                  ["logo"] !=
-                                                              null
-                                                          ? SizedBox(
-                                                              height: 32.sp,
-                                                              width: 32.sp,
-                                                              child:
-                                                                  CircleAvatar(
-                                                                backgroundColor:
-                                                                    whiteColor,
-                                                                child:
-                                                                    Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                    border: Border.all(
-                                                                        width: 1
-                                                                            .sp,
-                                                                        color:
-                                                                            lightgreyColor),
-                                                                  ),
+                      : productController.brandProductList.isNotEmpty
+                          ? Padding(
+                              padding: EdgeInsets.only(
+                                  left: 16.sp,
+                                  right: 16.sp,
+                                  bottom: 10.sp,
+                                  top: 10.sp),
+                              child: GetBuilder<ProductController>(
+                                builder: (value) => ListView.builder(
+                                    primary: false,
+                                    shrinkWrap: true,
+                                    // controller: value.brandListController,
+                                    physics: const ScrollPhysics(),
+                                    itemCount: value.brandProductList.length,
+                                    padding: EdgeInsets.zero,
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder: (ctx, index) {
+                                      return Column(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 24.sp),
+                                            child: Container(
+                                              width: double.infinity,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.sp),
+                                                  color: cardBg),
+                                              child: Column(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () async {},
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 12.sp,
+                                                              vertical: 12.sp),
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          value.brandProductList[
+                                                                          index]
+                                                                      [
+                                                                      "logo"] !=
+                                                                  null
+                                                              ? SizedBox(
+                                                                  height: 32.sp,
+                                                                  width: 32.sp,
                                                                   child:
-                                                                      Padding(
-                                                                    padding: EdgeInsets
-                                                                        .all(8.0
-                                                                            .sp),
+                                                                      CircleAvatar(
+                                                                    backgroundColor:
+                                                                        whiteColor,
                                                                     child:
-                                                                        CachedNetworkImage(
-                                                                      height:
-                                                                          32.sp,
-                                                                      width:
-                                                                          32.sp,
-                                                                      cacheManager: CacheManager(Config(
-                                                                          "customCacheKey",
-                                                                          stalePeriod: const Duration(
-                                                                              days:
-                                                                                  15),
-                                                                          maxNrOfCacheObjects:
-                                                                              100)),
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                      imageUrl:
-                                                                          value.brandProductList[index]
-                                                                              [
-                                                                              "logo"],
-                                                                      errorWidget: (context,
-                                                                              url,
-                                                                              error) =>
-                                                                          Image
-                                                                              .asset(
-                                                                        downloadImage,
-                                                                        height:
-                                                                            32.sp,
-                                                                        width: 32
-                                                                            .sp,
+                                                                        Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        shape: BoxShape
+                                                                            .circle,
+                                                                        border: Border.all(
+                                                                            width:
+                                                                                1.sp,
+                                                                            color: lightgreyColor),
+                                                                      ),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            EdgeInsets.all(8.0.sp),
+                                                                        child:
+                                                                            CachedNetworkImage(
+                                                                          height:
+                                                                              32.sp,
+                                                                          width:
+                                                                              32.sp,
+                                                                          cacheManager: CacheManager(Config(
+                                                                              "customCacheKey",
+                                                                              stalePeriod: const Duration(days: 15),
+                                                                              maxNrOfCacheObjects: 100)),
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                          imageUrl:
+                                                                              value.brandProductList[index]["logo"],
+                                                                          errorWidget: (context, url, error) =>
+                                                                              Image.asset(
+                                                                            downloadImage,
+                                                                            height:
+                                                                                32.sp,
+                                                                            width:
+                                                                                32.sp,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                              : Container(
+                                                                  height: 32.sp,
+                                                                  width: 32.sp,
+                                                                  child:
+                                                                      CircleAvatar(
+                                                                    backgroundColor:
+                                                                        whiteColor,
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        shape: BoxShape
+                                                                            .circle,
+                                                                      ),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            EdgeInsets.all(8.0.sp),
+                                                                        child: Image.asset(
+                                                                            dummyWishlistImage,
+                                                                            height:
+                                                                                32.sp,
+                                                                            width: 32.sp,
+                                                                            fit: BoxFit.cover),
                                                                       ),
                                                                     ),
                                                                   ),
                                                                 ),
-                                                              ),
-                                                            )
-                                                          : Container(
-                                                              height: 32.sp,
-                                                              width: 32.sp,
-                                                              child:
-                                                                  CircleAvatar(
-                                                                backgroundColor:
+                                                          InkWell(
+                                                            onTap: () {
+                                                              Get.to(AllBrandScreen(
+                                                                      id: value.brandProductList[
+                                                                              index]
+                                                                          [
+                                                                          "id"],
+                                                                      screen:
+                                                                          "home",
+                                                                      slug: ""))
+                                                                  ?.then(
+                                                                      (value) =>
+                                                                          setState(
+                                                                            () {
+                                                                              FocusScope.of(context).unfocus();
+                                                                            },
+                                                                          ));
+                                                            },
+                                                            child: Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          8.sp),
+                                                              child: AppText(
+                                                                text: value
+                                                                        .brandProductList[
+                                                                            index]
+                                                                            [
+                                                                            "name"]
+                                                                        .toUpperCase() ??
+                                                                    "",
+                                                                color:
                                                                     whiteColor,
-                                                                child:
-                                                                    Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                  ),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: EdgeInsets
-                                                                        .all(8.0
-                                                                            .sp),
-                                                                    child: Image.asset(
-                                                                        dummyWishlistImage,
-                                                                        height: 32
-                                                                            .sp,
-                                                                        width: 32
-                                                                            .sp,
-                                                                        fit: BoxFit
-                                                                            .cover),
-                                                                  ),
-                                                                ),
+                                                                fontSize: 16,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Semibold",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
                                                               ),
                                                             ),
-                                                      Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal:
-                                                                    8.sp),
-                                                        child: AppText(
-                                                          text:
-                                                              value.brandProductList[
-                                                                          index]
-                                                                      [
-                                                                      "name"] ??
-                                                                  "",
-                                                          color: whiteColor,
-                                                          fontSize: 16,
-                                                          fontFamily:
-                                                              "Franklin Gothic Semibold",
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                      const Expanded(
-                                                        child: SizedBox(
-                                                          width: 0,
-                                                        ),
-                                                      ),
-                                                      InkWell(
-                                                        onTap: () async {
-                                                          final prefs =
-                                                              await SharedPreferences
-                                                                  .getInstance();
-                                                          prefs.remove(
-                                                              "brandList");
-                                                          prefs.remove(
-                                                              "colorList");
-                                                          prefs.remove(
-                                                              "sizeList");
-                                                          prefs.remove("upper");
-                                                          prefs.remove("lower");
-                                                          prefs
-                                                              .remove("sortby");
-                                                          prefs.remove(
-                                                              "category");
-                                                          productController
-                                                              .productSortBy
-                                                              .value = "";
-                                                          productController
-                                                              .filterProductEnable
-                                                              .value = false;
-                                                          productController
-                                                              .categoryFilter
-                                                              .value = 0;
-                                                          Get.to(BrandViewProductScreen(
-                                                                  screen:
-                                                                      "quick",
-                                                                  expresshour:
-                                                                      homeController
-                                                                          .expressHour
-                                                                          .value,
-                                                                  brand_id: value
-                                                                              .brandProductList[
-                                                                          index]
-                                                                      ["id"],
-                                                                  title: value.brandProductList[
-                                                                          index]
-                                                                      ["name"],
-                                                                  genderName:
-                                                                      ""))
-                                                              ?.then((value) =>
-                                                                  setState(
-                                                                    () {
-                                                                      productController
-                                                                          .productSortBy
-                                                                          .value = "";
-                                                                      productController
-                                                                          .filterProductEnable
-                                                                          .value = false;
-                                                                      productController
-                                                                          .categoryFilter
-                                                                          .value = 0;
-                                                                      productController.getBrandDetailsProduct(
-                                                                          "",
-                                                                          false,
-                                                                          false,
-                                                                          0);
-                                                                    },
-                                                                  ));
-                                                        },
-                                                        child: Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 8.sp),
-                                                          child: AppText(
-                                                            text: "VIEW ALL"
-                                                                .toUpperCase(),
-                                                            fontFamily:
-                                                                "Franklin Gothic",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            color: whiteColor,
-                                                            fontSize: 10,
                                                           ),
-                                                        ),
-                                                      ),
-                                                      InkWell(
-                                                        onTap: () async {
-                                                          final prefs =
-                                                              await SharedPreferences
-                                                                  .getInstance();
-                                                          prefs.remove(
-                                                              "brandList");
-                                                          prefs.remove(
-                                                              "colorList");
-                                                          prefs.remove(
-                                                              "sizeList");
-                                                          prefs.remove("upper");
-                                                          prefs.remove("lower");
-                                                          prefs
-                                                              .remove("sortby");
-                                                          prefs.remove(
-                                                              "category");
-                                                          productController
-                                                              .productSortBy
-                                                              .value = "";
-                                                          productController
-                                                              .filterProductEnable
-                                                              .value = false;
-                                                          productController
-                                                              .categoryFilter
-                                                              .value = 0;
-                                                          Get.to(BrandViewProductScreen(
-                                                                  screen:
-                                                                      "quick",
-                                                                  expresshour:
-                                                                      homeController
+                                                          const Expanded(
+                                                            child: SizedBox(
+                                                              width: 0,
+                                                            ),
+                                                          ),
+                                                          InkWell(
+                                                            onTap: () async {
+                                                              final prefs =
+                                                                  await SharedPreferences
+                                                                      .getInstance();
+                                                              prefs.remove(
+                                                                  "brandList");
+                                                              prefs.remove(
+                                                                  "colorList");
+                                                              prefs.remove(
+                                                                  "sizeList");
+                                                              prefs.remove(
+                                                                  "upper");
+                                                              prefs.remove(
+                                                                  "lower");
+                                                              prefs.remove(
+                                                                  "sortby");
+                                                              prefs.remove(
+                                                                  "category");
+                                                              productController
+                                                                  .productSortBy
+                                                                  .value = "";
+                                                              productController
+                                                                  .filterProductEnable
+                                                                  .value = false;
+                                                              productController
+                                                                  .categoryFilter
+                                                                  .value = 0;
+                                                              Get.to(BrandViewProductScreen(
+                                                                      screen:
+                                                                          "quick",
+                                                                      expresshour: homeController
                                                                           .expressHour
                                                                           .value,
-                                                                  brand_id: value
-                                                                              .brandProductList[
-                                                                          index]
-                                                                      ["id"],
-                                                                  title: value.brandProductList[
-                                                                          index]
-                                                                      ["name"],
-                                                                  genderName:
-                                                                      ""))
-                                                              ?.then((value) =>
-                                                                  setState(
-                                                                    () {
-                                                                      productController
-                                                                          .productSortBy
-                                                                          .value = "";
-                                                                      productController
-                                                                          .filterProductEnable
-                                                                          .value = false;
-                                                                      productController
-                                                                          .categoryFilter
-                                                                          .value = 0;
-                                                                      productController.getBrandDetailsProduct(
-                                                                          "",
-                                                                          false,
-                                                                          false,
-                                                                          0);
-                                                                    },
-                                                                  ));
-                                                        },
-                                                        child: Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 8.sp),
-                                                          child: SvgPicture.asset(
-                                                              arrowSearchImage,
-                                                              color: whiteColor,
-                                                              height: 7.sp,
-                                                              width: 7.sp,
-                                                              fit:
-                                                                  BoxFit.cover),
-                                                        ),
-                                                      )
-                                                    ],
+                                                                      brand_id:
+                                                                          value.brandProductList[index]
+                                                                              [
+                                                                              "id"],
+                                                                      title: value
+                                                                              .brandProductList[index]
+                                                                          [
+                                                                          "name"],
+                                                                      genderName:
+                                                                          ""))
+                                                                  ?.then(
+                                                                      (value) =>
+                                                                          setState(
+                                                                            () {
+                                                                              productController.productSortBy.value = "";
+                                                                              productController.filterProductEnable.value = false;
+                                                                              productController.categoryFilter.value = 0;
+                                                                              productController.getBrandDetailsProduct("", false, false, 0);
+                                                                            },
+                                                                          ));
+                                                            },
+                                                            child: Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left:
+                                                                          8.sp),
+                                                              child: AppText(
+                                                                text: "VIEW ALL"
+                                                                    .toUpperCase(),
+                                                                fontFamily:
+                                                                    "Franklin Gothic",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                color:
+                                                                    whiteColor,
+                                                                fontSize: 10,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          InkWell(
+                                                            onTap: () async {
+                                                              final prefs =
+                                                                  await SharedPreferences
+                                                                      .getInstance();
+                                                              prefs.remove(
+                                                                  "brandList");
+                                                              prefs.remove(
+                                                                  "colorList");
+                                                              prefs.remove(
+                                                                  "sizeList");
+                                                              prefs.remove(
+                                                                  "upper");
+                                                              prefs.remove(
+                                                                  "lower");
+                                                              prefs.remove(
+                                                                  "sortby");
+                                                              prefs.remove(
+                                                                  "category");
+                                                              productController
+                                                                  .productSortBy
+                                                                  .value = "";
+                                                              productController
+                                                                  .filterProductEnable
+                                                                  .value = false;
+                                                              productController
+                                                                  .categoryFilter
+                                                                  .value = 0;
+                                                              Get.to(BrandViewProductScreen(
+                                                                      screen:
+                                                                          "quick",
+                                                                      expresshour: homeController
+                                                                          .expressHour
+                                                                          .value,
+                                                                      brand_id:
+                                                                          value.brandProductList[index]
+                                                                              [
+                                                                              "id"],
+                                                                      title: value
+                                                                              .brandProductList[index]
+                                                                          [
+                                                                          "name"],
+                                                                      genderName:
+                                                                          ""))
+                                                                  ?.then(
+                                                                      (value) =>
+                                                                          setState(
+                                                                            () {
+                                                                              productController.productSortBy.value = "";
+                                                                              productController.filterProductEnable.value = false;
+                                                                              productController.categoryFilter.value = 0;
+                                                                              productController.getBrandDetailsProduct("", false, false, 0);
+                                                                            },
+                                                                          ));
+                                                            },
+                                                            child: Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left:
+                                                                          8.sp),
+                                                              child: SvgPicture.asset(
+                                                                  arrowSearchImage,
+                                                                  color:
+                                                                      whiteColor,
+                                                                  height: 7.sp,
+                                                                  width: 7.sp,
+                                                                  fit: BoxFit
+                                                                      .cover),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                              BrandProductList(
-                                                  onPressed: (p0) async {
-                                                    Get.to(ProductDetailsScreen(
-                                                            expresshour:
-                                                                homeController
-                                                                    .expressHour
-                                                                    .value,
-                                                            backgroundcolor:
-                                                                homeAppBarColor,
-                                                            brandName: "",
-                                                            productId: p0,
-                                                            type: "add"))
-                                                        ?.then(
-                                                            (value) => setState(
+                                                  BrandProductList(
+                                                      onPressed: (p0) async {
+                                                        Get.to(ProductDetailsScreen(
+                                                                expresshour:
+                                                                    homeController
+                                                                        .expressHour
+                                                                        .value,
+                                                                backgroundcolor:
+                                                                    homeAppBarColor,
+                                                                brandName: "",
+                                                                productId: p0,
+                                                                type: "add"))
+                                                            ?.then((value) =>
+                                                                setState(
                                                                   () {
                                                                     productController
                                                                         .getBrandProductData();
                                                                   },
                                                                 ));
-                                                    await analytics.logEvent(
-                                                      name:
-                                                          'category_product_details',
-                                                      parameters: <String,
-                                                          Object>{
-                                                        'page_name':
-                                                            'category_product_details',
+                                                        await analytics
+                                                            .logEvent(
+                                                          name:
+                                                              'category_product_details',
+                                                          parameters: <String,
+                                                              Object>{
+                                                            'page_name':
+                                                                'category_product_details',
+                                                          },
+                                                        );
                                                       },
-                                                    );
-                                                  },
-                                                  list: value.brandProductList[
-                                                      index]["products"])
-                                            ],
+                                                      list: value
+                                                              .brandProductList[
+                                                          index]["products"])
+                                                ],
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                }),
-                          ),
-                        )),
+                                        ],
+                                      );
+                                    }),
+                              ),
+                            )
+                          : Padding(
+                              padding: EdgeInsets.only(top: 50.sp),
+                              child: Center(
+                                child: Text("${"NO BRAND FOUND"}",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: whiteColor,
+                                        fontFamily: "Franklin Gothic")),
+                              ),
+                            )),
                 ],
               ),
             ),
