@@ -247,6 +247,7 @@ const bagLogoImage = 'assets/images/bag_logo.png';
 const bagLogoSvgImage = 'assets/images/bag_logo_svg.png';
 const rightArrowSvgImage = 'assets/images/right_arrow_svg.svg';
 const redHeartSvgImage = 'assets/images/heart_red_svg.svg';
+const quickLottie = 'assets/images/quick_lottie.json';
 
 class ApiConstants {
   ApiConstants._();

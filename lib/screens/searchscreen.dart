@@ -38,7 +38,7 @@ class SearchScreenState extends State<SearchScreen> {
 
   onSearchChanged(String query) {
     if (debounce?.isActive ?? false) debounce?.cancel();
-    debounce = Timer(const Duration(milliseconds: 500), () {
+    debounce = Timer(const Duration(milliseconds: 1000), () {
       controller.getSearchData(context);
       setState(() {});
     });

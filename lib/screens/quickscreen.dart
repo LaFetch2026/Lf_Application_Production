@@ -2,7 +2,7 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider_plus/carousel_slider_plus.dart';
+//import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,16 +11,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
-import 'package:lafetch/commonwidget/common_widgets.dart';
+//import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/quickwidgets/brand_product_list.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
-import 'package:lafetch/screens/Brands/categoryproduct.dart';
+//import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/quick/brandproductscreen.dart';
+import 'package:lottie/lottie.dart';
 import 'package:marquee/marquee.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/constants.dart';
@@ -294,7 +295,7 @@ class QuickScreenState extends State<QuickScreen> {
                       ),
                     ),
                   ),
-                  Obx(() => Visibility(
+                  /*  Obx(() => Visibility(
                         visible: productController.brandController.text
                                 .toString()
                                 .trim()
@@ -464,7 +465,13 @@ class QuickScreenState extends State<QuickScreen> {
                                 : const SizedBox(
                                     height: 0,
                                   ),
-                      )),
+                      )), */
+                  Padding(
+                    padding: EdgeInsets.only(top: 24.sp),
+                    child: Lottie.asset(
+                      quickLottie,
+                    ),
+                  ),
                   Obx(() => Visibility(
                         visible: productController.brandController.text
                                 .toString()

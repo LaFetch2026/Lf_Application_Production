@@ -168,7 +168,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                                     text: "New Board".toUpperCase(),
                                     color: homeAppBarColor,
                                     fontSize: 10,
-                                    fontFamily: "Franklin Gothic Medium",
+                                    fontFamily: "Franklin Gothic",
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
@@ -268,6 +268,9 @@ class _BottomWishlistState extends State<BottomWishlist> {
                                                       padding: EdgeInsets.only(
                                                           left: 12.sp),
                                                       child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
                                                         children: [
                                                           Padding(
                                                             padding:
@@ -295,7 +298,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                                                                     bottom:
                                                                         15.sp),
                                                             child: Text(
-                                                              "${widget.wishlistList[index]["products_count"].toString()}ITEMS"
+                                                              "${widget.wishlistList[index]["products_count"].toString()} ITEMS"
                                                                   .toUpperCase(),
                                                               style: TextStyle(
                                                                 fontSize: 10.sp,

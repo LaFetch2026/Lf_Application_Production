@@ -590,7 +590,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 text: '${i['name'].toString()}'.toUpperCase(),
                                 fontFamily: "Franklin Gothic",
                                 fontWeight: FontWeight.w500,
-                                color: blackColor,
+                                color: widget.backgroundcolor == whiteColor
+                                    ? blackColor
+                                    : whiteColor,
                                 fontSize: 11,
                               ),
                             )

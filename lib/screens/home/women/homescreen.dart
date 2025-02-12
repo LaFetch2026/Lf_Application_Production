@@ -1283,26 +1283,25 @@ class HomeScreenState extends State<HomeScreen> {
                                                                       "categories"]
                                                                   [i]["id"]);
                                                         }
-                                                        Navigator.push(
-                                                            context,
-                                                            scaleIn(CategoryProductScreen(
-                                                                categoryName:
-                                                                    catalogController.catalogList[index]
-                                                                        [
-                                                                        "name"],
-                                                                genderName:
-                                                                    homeController
-                                                                        .genderText
-                                                                        .value,
-                                                                categoryId: 0,
-                                                                brandId: 0,
-                                                                genderType:
-                                                                    homeController
-                                                                        .homeGenderValue
-                                                                        .value,
-                                                                categoryList:
-                                                                    categoryList,
-                                                                tagIds: const [])));
+                                                        Get.to(CategoryProductScreen(
+                                                            categoryName:
+                                                                catalogController
+                                                                            .catalogList[
+                                                                        index]
+                                                                    ["name"],
+                                                            genderName:
+                                                                homeController
+                                                                    .genderText
+                                                                    .value,
+                                                            categoryId: 0,
+                                                            brandId: 0,
+                                                            genderType:
+                                                                homeController
+                                                                    .homeGenderValue
+                                                                    .value,
+                                                            categoryList:
+                                                                categoryList,
+                                                            tagIds: const []));
                                                         await analytics
                                                             .logEvent(
                                                           name:
