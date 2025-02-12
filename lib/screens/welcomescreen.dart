@@ -108,7 +108,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
                 Padding(
                   padding: EdgeInsets.only(top: 510.sp, left: 16.sp),
                   child: AppText(
-                    text: "Welcome to Lafetch!",
+                    text: "Welcome to Lafetch!".toUpperCase(),
                     fontFamily: "Franklin Gothic",
                     fontWeight: FontWeight.w500,
                     color: whiteBack,
