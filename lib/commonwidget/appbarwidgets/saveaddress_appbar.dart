@@ -30,7 +30,7 @@ class SaveAddressAppbar extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            InkWell(
+            GestureDetector(
               onTap: () {
                 Get.back();
               },
@@ -64,7 +64,7 @@ class SaveAddressAppbar extends StatelessWidget {
               ),
             ),
             showWishlist
-                ? InkWell(
+                ? GestureDetector(
                     onTap: () {
                       onPressedWishlist?.call();
                     },
