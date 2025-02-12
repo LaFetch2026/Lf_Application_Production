@@ -420,215 +420,221 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                   },
                                                                                 );
                                                                               },
-                                                                              child: Padding(
-                                                                                padding: EdgeInsets.symmetric(horizontal: 8.sp, vertical: 10.sp),
-                                                                                child: Row(
-                                                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                                                  children: [
-                                                                                    val.brandList[a]["brands"][index]["logo"] != null
-                                                                                        ? Container(
-                                                                                            height: 48.sp,
-                                                                                            width: 48.sp,
-                                                                                            child: CircleAvatar(
-                                                                                              backgroundColor: whiteColor,
-                                                                                              child: Container(
-                                                                                                decoration: BoxDecoration(
-                                                                                                  shape: BoxShape.circle,
-                                                                                                  border: Border.all(width: 1.sp, color: lightgreyColor),
-                                                                                                ),
-                                                                                                child: Padding(
-                                                                                                  padding: EdgeInsets.all(16.0.sp),
-                                                                                                  child: CachedNetworkImage(
-                                                                                                    height: 48.sp,
-                                                                                                    width: 48.sp,
-                                                                                                    cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-                                                                                                    fit: BoxFit.contain,
-                                                                                                    imageUrl: val.brandList[a]["brands"][index]["logo"],
-                                                                                                    errorWidget: (context, url, error) => Image.asset(
-                                                                                                      downloadImage,
-                                                                                                      fit: BoxFit.contain,
+                                                                              child: Container(
+                                                                                color: statusBarColor,
+                                                                                child: Padding(
+                                                                                  padding: EdgeInsets.symmetric(horizontal: 8.sp, vertical: 10.sp),
+                                                                                  child: Row(
+                                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                                    children: [
+                                                                                      val.brandList[a]["brands"][index]["logo"] != null
+                                                                                          ? Container(
+                                                                                              height: 48.sp,
+                                                                                              width: 48.sp,
+                                                                                              child: CircleAvatar(
+                                                                                                backgroundColor: whiteColor,
+                                                                                                child: Container(
+                                                                                                  decoration: BoxDecoration(
+                                                                                                    shape: BoxShape.circle,
+                                                                                                    border: Border.all(width: 1.sp, color: lightgreyColor),
+                                                                                                  ),
+                                                                                                  child: Padding(
+                                                                                                    padding: EdgeInsets.all(16.0.sp),
+                                                                                                    child: CachedNetworkImage(
                                                                                                       height: 48.sp,
                                                                                                       width: 48.sp,
+                                                                                                      cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                                                      fit: BoxFit.contain,
+                                                                                                      imageUrl: val.brandList[a]["brands"][index]["logo"],
+                                                                                                      errorWidget: (context, url, error) => Image.asset(
+                                                                                                        downloadImage,
+                                                                                                        fit: BoxFit.contain,
+                                                                                                        height: 48.sp,
+                                                                                                        width: 48.sp,
+                                                                                                      ),
                                                                                                     ),
                                                                                                   ),
                                                                                                 ),
                                                                                               ),
+                                                                                            )
+                                                                                          : Padding(
+                                                                                              padding: EdgeInsets.only(right: 12.sp),
+                                                                                              child: CircleAvatar(
+                                                                                                child: Image.asset(dummyWishlistImage, height: 48.sp, width: 48.sp, fit: BoxFit.cover),
+                                                                                              ),
                                                                                             ),
-                                                                                          )
-                                                                                        : Padding(
-                                                                                            padding: EdgeInsets.only(right: 12.sp),
-                                                                                            child: CircleAvatar(
-                                                                                              child: Image.asset(dummyWishlistImage, height: 48.sp, width: 48.sp, fit: BoxFit.cover),
+                                                                                      Padding(
+                                                                                        padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                                                                                        child: AppText(
+                                                                                          text: val.brandList[a]["brands"][index]["name"] ?? "",
+                                                                                          color: colorPrimary,
+                                                                                          fontSize: 16,
+                                                                                          fontFamily: "Franklin Gothic Regular",
+                                                                                          fontWeight: FontWeight.w400,
+                                                                                        ),
+                                                                                      ),
+                                                                                      const Expanded(
+                                                                                        child: SizedBox(
+                                                                                          width: 0,
+                                                                                        ),
+                                                                                      ),
+                                                                                      InkWell(
+                                                                                        onTap: () {
+                                                                                          if (val.selectIndex.value == val.brandList[a]["brands"][index]["id"]) {
+                                                                                            val.selectIndex.value = 0;
+                                                                                          } else {
+                                                                                            val.selectIndex.value = 0;
+                                                                                            val.selectIndex.value = val.brandList[a]["brands"][index]["id"];
+                                                                                          }
+                                                                                          value.update();
+                                                                                        },
+                                                                                        child: Container(
+                                                                                          child: Padding(
+                                                                                            padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 8.sp),
+                                                                                            child: SvgPicture.asset(
+                                                                                              val.selectIndex.value == val.brandList[a]["brands"][index]["id"] ? upDropDownSvgImage : dropdownSvgImage,
+                                                                                              color: colorPrimary,
+                                                                                              height: 7.sp,
+                                                                                              width: 11.sp,
                                                                                             ),
-                                                                                          ),
-                                                                                    Padding(
-                                                                                      padding: EdgeInsets.symmetric(horizontal: 8.sp),
-                                                                                      child: AppText(
-                                                                                        text: val.brandList[a]["brands"][index]["name"] ?? "",
-                                                                                        color: colorPrimary,
-                                                                                        fontSize: 16,
-                                                                                        fontFamily: "Franklin Gothic Regular",
-                                                                                        fontWeight: FontWeight.w400,
-                                                                                      ),
-                                                                                    ),
-                                                                                    const Expanded(
-                                                                                      child: SizedBox(
-                                                                                        width: 0,
-                                                                                      ),
-                                                                                    ),
-                                                                                    InkWell(
-                                                                                      onTap: () {
-                                                                                        if (val.selectIndex.value == val.brandList[a]["brands"][index]["id"]) {
-                                                                                          val.selectIndex.value = 0;
-                                                                                        } else {
-                                                                                          val.selectIndex.value = 0;
-                                                                                          val.selectIndex.value = val.brandList[a]["brands"][index]["id"];
-                                                                                        }
-                                                                                        value.update();
-                                                                                      },
-                                                                                      child: Container(
-                                                                                        child: Padding(
-                                                                                          padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 8.sp),
-                                                                                          child: SvgPicture.asset(
-                                                                                            val.selectIndex.value == val.brandList[a]["brands"][index]["id"] ? upDropDownSvgImage : dropdownSvgImage,
-                                                                                            color: colorPrimary,
-                                                                                            height: 7.sp,
-                                                                                            width: 11.sp,
                                                                                           ),
                                                                                         ),
                                                                                       ),
-                                                                                    ),
-                                                                                  ],
+                                                                                    ],
+                                                                                  ),
                                                                                 ),
                                                                               ),
                                                                             ),
                                                                             val.selectIndex.value == val.brandList[a]["brands"][index]["id"]
                                                                                 ? val.brandList[a]["brands"][index]["categories"].isNotEmpty
-                                                                                    ? Column(
-                                                                                        children: [
-                                                                                          SizedBox(
-                                                                                            height: 10.sp,
-                                                                                          ),
-                                                                                          Padding(
-                                                                                            padding: EdgeInsets.only(left: 16.sp, right: 16.sp),
-                                                                                            child:
-                                                                                                /*   GetBuilder<BrandController>(
-                                                                                    builder: (val) => */
-                                                                                                GridView.count(
-                                                                                              shrinkWrap: true,
-                                                                                              crossAxisCount: 3,
-                                                                                              scrollDirection: Axis.vertical,
-                                                                                              padding: EdgeInsets.zero,
-                                                                                              childAspectRatio: 0.7,
-                                                                                              physics: const ScrollPhysics(),
-                                                                                              crossAxisSpacing: 10.sp,
-                                                                                              mainAxisSpacing: 0,
-                                                                                              children: List.generate(
-                                                                                                val.brandList[a]["brands"][index]["categories"].length,
-                                                                                                (i) {
-                                                                                                  return GestureDetector(
-                                                                                                    onTap: () async {
-                                                                                                      Get.to(CategoryProductScreen(
-                                                                                                        categoryName: val.brandList[a]["brands"][index]["categories"][i]["name"],
-                                                                                                        categoryId: val.brandList[a]["brands"][index]["categories"][i]["id"],
-                                                                                                        brandId: 0,
-                                                                                                        genderType: 0,
-                                                                                                        genderName: "",
-                                                                                                        tagIds: const [],
-                                                                                                        categoryList: [],
-                                                                                                      ));
-                                                                                                      await analytics.logEvent(
-                                                                                                        name: 'brand_category_click',
-                                                                                                        parameters: <String, Object>{
-                                                                                                          'page_name': 'brand_category_click',
-                                                                                                        },
-                                                                                                      );
-                                                                                                    },
-                                                                                                    child: Column(
-                                                                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                                      children: [
-                                                                                                        val.brandList[a]["brands"][index]["categories"][i]["thumbnail"] != null
-                                                                                                            ? SizedBox(
-                                                                                                                height: 123.sp,
-                                                                                                                width: 97.sp,
-                                                                                                                child: CachedNetworkImage(
-                                                                                                                  cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-                                                                                                                  fit: BoxFit.cover,
-                                                                                                                  imageUrl: val.brandList[a]["brands"][index]["categories"][i]["thumbnail"],
-                                                                                                                  errorWidget: (context, url, error) => Image.asset(
-                                                                                                                    downloadImage,
-                                                                                                                    height: 123.sp,
-                                                                                                                    width: 97.sp,
+                                                                                    ? Container(
+                                                                                        color: statusBarColor,
+                                                                                        child: Column(
+                                                                                          children: [
+                                                                                            SizedBox(
+                                                                                              height: 10.sp,
+                                                                                            ),
+                                                                                            Padding(
+                                                                                              padding: EdgeInsets.only(left: 16.sp, right: 16.sp),
+                                                                                              child:
+                                                                                                  /*   GetBuilder<BrandController>(
+                                                                                      builder: (val) => */
+                                                                                                  GridView.count(
+                                                                                                shrinkWrap: true,
+                                                                                                crossAxisCount: 3,
+                                                                                                scrollDirection: Axis.vertical,
+                                                                                                padding: EdgeInsets.zero,
+                                                                                                childAspectRatio: 0.7,
+                                                                                                physics: const ScrollPhysics(),
+                                                                                                crossAxisSpacing: 10.sp,
+                                                                                                mainAxisSpacing: 0,
+                                                                                                children: List.generate(
+                                                                                                  val.brandList[a]["brands"][index]["categories"].length,
+                                                                                                  (i) {
+                                                                                                    return GestureDetector(
+                                                                                                      onTap: () async {
+                                                                                                        Get.to(CategoryProductScreen(
+                                                                                                          categoryName: val.brandList[a]["brands"][index]["categories"][i]["name"],
+                                                                                                          categoryId: val.brandList[a]["brands"][index]["categories"][i]["id"],
+                                                                                                          brandId: 0,
+                                                                                                          genderType: 0,
+                                                                                                          genderName: "",
+                                                                                                          tagIds: const [],
+                                                                                                          categoryList: [],
+                                                                                                        ));
+                                                                                                        await analytics.logEvent(
+                                                                                                          name: 'brand_category_click',
+                                                                                                          parameters: <String, Object>{
+                                                                                                            'page_name': 'brand_category_click',
+                                                                                                          },
+                                                                                                        );
+                                                                                                      },
+                                                                                                      child: Column(
+                                                                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                                        children: [
+                                                                                                          val.brandList[a]["brands"][index]["categories"][i]["thumbnail"] != null
+                                                                                                              ? SizedBox(
+                                                                                                                  height: 123.sp,
+                                                                                                                  width: 97.sp,
+                                                                                                                  child: CachedNetworkImage(
+                                                                                                                    cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                                                                    fit: BoxFit.cover,
+                                                                                                                    imageUrl: val.brandList[a]["brands"][index]["categories"][i]["thumbnail"],
+                                                                                                                    errorWidget: (context, url, error) => Image.asset(
+                                                                                                                      downloadImage,
+                                                                                                                      height: 123.sp,
+                                                                                                                      width: 97.sp,
+                                                                                                                    ),
                                                                                                                   ),
-                                                                                                                ),
-                                                                                                              )
-                                                                                                            : Image.asset(dummyWishlistImage, height: 123.sp, width: 97.sp, fit: BoxFit.cover),
-                                                                                                        /* Padding(
-                                                                                            padding: EdgeInsets.symmetric(vertical: 5.sp),
-                                                                                            child: AppText(
-                                                                                              text: "${value.brandList[index]["categories"][i]["catalog"]["type_detail"]} ${value.brandList[index]["categories"][i]["name"]}",
-                                                                                              color: greyTextColor,
-                                                                                              fontSize: 8,
-                                                                                              maxLines: 2,
-                                                                                              fontFamily: "Franklin Gothic Regular",
-                                                                                              fontWeight: FontWeight.w400,
-                                                                                            ),
-                                                                                          ), */
-                                                                                                      ],
-                                                                                                    ),
-                                                                                                  );
-                                                                                                },
+                                                                                                                )
+                                                                                                              : Image.asset(dummyWishlistImage, height: 123.sp, width: 97.sp, fit: BoxFit.cover),
+                                                                                                          /* Padding(
+                                                                                              padding: EdgeInsets.symmetric(vertical: 5.sp),
+                                                                                              child: AppText(
+                                                                                                text: "${value.brandList[index]["categories"][i]["catalog"]["type_detail"]} ${value.brandList[index]["categories"][i]["name"]}",
+                                                                                                color: greyTextColor,
+                                                                                                fontSize: 8,
+                                                                                                maxLines: 2,
+                                                                                                fontFamily: "Franklin Gothic Regular",
+                                                                                                fontWeight: FontWeight.w400,
                                                                                               ),
-                                                                                            ),
-                                                                                          ),
-                                                                                          //  ),
-                                                                                          InkWell(
-                                                                                            onTap: () async {
-                                                                                              brandController.brandlogo.value = val.brandList[a]["brands"][index]["logo"];
-                                                                                              brandController.brandbackground.value = val.brandList[a]["brands"][index]["background_image"] ?? "";
-                                                                                              brandController.brandName.value = val.brandList[a]["brands"][index]["name"];
-                                                                                              brandController.showAllBrand.value = true;
-                                                                                              brandController.brandId.value = val.brandList[a]["brands"][index]["id"];
-                                                                                              brandController.update();
-                                                                                              Get.to(AllBrandScreen(
-                                                                                                id: val.brandList[a]["brands"][index]["id"],
-                                                                                                slug: "",
-                                                                                                screen: widget.screen!,
-                                                                                              ));
-                                                                                              await analytics.logEvent(
-                                                                                                name: 'brand_details',
-                                                                                                parameters: <String, Object>{
-                                                                                                  'page_name': 'brand_details',
-                                                                                                },
-                                                                                              );
-                                                                                            },
-                                                                                            child: Padding(
-                                                                                              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
-                                                                                              child: Container(
-                                                                                                height: 42.sp,
-                                                                                                color: homeAppBarColor,
-                                                                                                width: double.infinity,
-                                                                                                child: Row(
-                                                                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                                                  children: [
-                                                                                                    Padding(
-                                                                                                      padding: EdgeInsets.only(left: 8.sp),
-                                                                                                      child: AppText(
-                                                                                                        text: "Explore brand".toUpperCase(),
-                                                                                                        fontFamily: "Franklin Gothic",
-                                                                                                        fontWeight: FontWeight.w400,
-                                                                                                        color: whiteColor,
-                                                                                                        fontSize: 12,
+                                                                                            ), */
+                                                                                                        ],
                                                                                                       ),
-                                                                                                    ),
-                                                                                                  ],
+                                                                                                    );
+                                                                                                  },
                                                                                                 ),
                                                                                               ),
                                                                                             ),
-                                                                                          )
-                                                                                        ],
+                                                                                            //  ),
+                                                                                            InkWell(
+                                                                                              onTap: () async {
+                                                                                                brandController.brandlogo.value = val.brandList[a]["brands"][index]["logo"];
+                                                                                                brandController.brandbackground.value = val.brandList[a]["brands"][index]["background_image"] ?? "";
+                                                                                                brandController.brandName.value = val.brandList[a]["brands"][index]["name"];
+                                                                                                brandController.showAllBrand.value = true;
+                                                                                                brandController.brandId.value = val.brandList[a]["brands"][index]["id"];
+                                                                                                brandController.update();
+                                                                                                Get.to(AllBrandScreen(
+                                                                                                  id: val.brandList[a]["brands"][index]["id"],
+                                                                                                  slug: "",
+                                                                                                  screen: widget.screen!,
+                                                                                                ));
+                                                                                                await analytics.logEvent(
+                                                                                                  name: 'brand_details',
+                                                                                                  parameters: <String, Object>{
+                                                                                                    'page_name': 'brand_details',
+                                                                                                  },
+                                                                                                );
+                                                                                              },
+                                                                                              child: Padding(
+                                                                                                padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
+                                                                                                child: Container(
+                                                                                                  height: 42.sp,
+                                                                                                  color: homeAppBarColor,
+                                                                                                  width: double.infinity,
+                                                                                                  child: Row(
+                                                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                                                    children: [
+                                                                                                      Padding(
+                                                                                                        padding: EdgeInsets.only(left: 8.sp),
+                                                                                                        child: AppText(
+                                                                                                          text: "Explore brand".toUpperCase(),
+                                                                                                          fontFamily: "Franklin Gothic",
+                                                                                                          fontWeight: FontWeight.w400,
+                                                                                                          color: whiteColor,
+                                                                                                          fontSize: 12,
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ],
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                            )
+                                                                                          ],
+                                                                                        ),
                                                                                       )
                                                                                     : SizedBox(
                                                                                         height: 50.sp,
@@ -657,7 +663,8 @@ class BrandsScreenState extends State<BrandsScreen> {
                                           margin: EdgeInsets.only(
                                               top: 48.sp, left: 16.sp),
                                           width: double.infinity,
-                                          child: Text("${"NO BRAND FOUND"}",
+                                          child: Text(
+                                              "${'"'}${"NO BRAND FOUND"}${'"'}",
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: Color(0xff6B7280),

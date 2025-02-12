@@ -9,9 +9,13 @@ import '../app_text.dart';
 class SaveAddressAppbar extends StatelessWidget {
   final String text;
   final Function? onPressedWishlist;
+  final bool showWishlist;
 
   const SaveAddressAppbar(
-      {Key? key, required this.text, this.onPressedWishlist})
+      {Key? key,
+      required this.text,
+      this.onPressedWishlist,
+      this.showWishlist = true})
       : super(key: key);
 
   @override
@@ -59,22 +63,29 @@ class SaveAddressAppbar extends StatelessWidget {
                 height: 0,
               ),
             ),
-            InkWell(
-              onTap: () {
-                onPressedWishlist?.call();
-              },
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      top: 45.sp, left: 16.sp, right: 16.sp, bottom: 5.sp),
-                  child: ImageIcon(
-                    AssetImage(wishlistBottomIcon),
-                    color: homeAppBarColor,
-                    size: 18.sp,
+            showWishlist
+                ? InkWell(
+                    onTap: () {
+                      onPressedWishlist?.call();
+                    },
+                    child: Container(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            top: 45.sp,
+                            left: 16.sp,
+                            right: 16.sp,
+                            bottom: 5.sp),
+                        child: ImageIcon(
+                          AssetImage(wishlistBottomIcon),
+                          color: homeAppBarColor,
+                          size: 18.sp,
+                        ),
+                      ),
+                    ),
+                  )
+                : SizedBox(
+                    width: 20.sp,
                   ),
-                ),
-              ),
-            ),
           ],
         ),
       ]),

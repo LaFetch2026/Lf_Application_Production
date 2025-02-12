@@ -223,26 +223,30 @@ class HomeScreenState extends State<HomeScreen> {
             productController.productCategory =
                 homeController.bannerCategory1Id;
             productController.productTags = homeController.bannerTag1Id;
-            Navigator.push(
-                context,
-                scaleIn(
-                  CategoryProductScreen(
-                    categoryName: homeController.banner1List[itemIndex]["name"],
-                    categoryId: 0,
-                    genderName: homeController.genderText.value,
-                    brandId: 0,
-                    genderType: homeController.homeGenderValue.value,
-                    tagIds: homeController.bannerTag1Id,
-                    categoryList: homeController.bannerCategory1Id,
-                  ),
-                ));
-            await analytics.logEvent(
-              name: 'banner_home_page',
-              parameters: <String, Object>{
-                'page_name': 'banner_home_page',
-              },
-            );
-            //   }
+            if (homeController.banner1List[itemIndex]["tags"].isNotEmpty &&
+                homeController
+                    .banner1List[itemIndex]["categories"].isNotEmpty) {
+              Navigator.push(
+                  context,
+                  scaleIn(
+                    CategoryProductScreen(
+                      categoryName: homeController.banner1List[itemIndex]
+                          ["name"],
+                      categoryId: 0,
+                      genderName: homeController.genderText.value,
+                      brandId: 0,
+                      genderType: homeController.homeGenderValue.value,
+                      tagIds: homeController.bannerTag1Id,
+                      categoryList: homeController.bannerCategory1Id,
+                    ),
+                  ));
+              await analytics.logEvent(
+                name: 'banner_home_page',
+                parameters: <String, Object>{
+                  'page_name': 'banner_home_page',
+                },
+              );
+            }
           },
           child: CachedNetworkImage(
             cacheManager: CacheManager(Config("customCacheKey",
@@ -1188,7 +1192,7 @@ class HomeScreenState extends State<HomeScreen> {
                                 padding: EdgeInsets.symmetric(vertical: 5.sp),
                                 child: Marquee(
                                   text:
-                                      '✦  MORE THAN 50 HOMEGROWN BRANDS  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
+                                      '  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 12.sp,
@@ -1197,10 +1201,10 @@ class HomeScreenState extends State<HomeScreen> {
                                   ),
                                   scrollAxis: Axis.horizontal,
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  blankSpace: 20.0,
+                                  //   blankSpace: 20.0,
                                   velocity: 100.0,
                                   pauseAfterRound: Duration(seconds: 1),
-                                  startPadding: 10.0,
+                                  // startPadding: 10.0,
                                   accelerationDuration: Duration(seconds: 1),
                                   accelerationCurve: Curves.linear,
                                   decelerationDuration:

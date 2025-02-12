@@ -36,6 +36,7 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
         children: [
           SaveAddressAppbar(
             text: "Account Deletion",
+            showWishlist: false,
             onPressedWishlist: () {
               Get.to(WishlistScreen());
             },
@@ -53,7 +54,8 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
                           horizontal: 16.sp, vertical: 30.sp),
                       child: AppText(
                         text:
-                            "Your account is scheduled to be deleted at ${widget.date}. If you don't want this to be deleted, please reach out to support@la-fetch.com",
+                            //  "Your account is scheduled to be deleted at ${widget.date}. If you don't want this to be deleted, please reach out to support@la-fetch.com",
+                            "Your account is scheduled to be deleted within 7 days. If you don't want this to be deleted, please reach out to support@la-fetch.com",
                         fontFamily: "Franklin Gothic Regular",
                         fontWeight: FontWeight.w400,
                         color: redColor,
@@ -72,7 +74,7 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.sp),
                       child: AppText(
-                        text: "Are you dure you want to delete your account?",
+                        text: "Are you sure you want to delete your account?",
                         fontFamily: "Franklin Gothic Semibold",
                         fontWeight: FontWeight.w400,
                         color: appbarText,

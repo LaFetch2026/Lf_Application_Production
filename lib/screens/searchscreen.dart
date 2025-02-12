@@ -378,7 +378,7 @@ class SearchScreenState extends State<SearchScreen> {
                         Column(
                           children: [
                             SizedBox(
-                              height: 20.sp,
+                              height: 16.sp,
                             ),
                             Obx(() => Visibility(
                                   visible: controller
@@ -808,12 +808,8 @@ class SearchScreenState extends State<SearchScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  SizedBox(
-                                                    height: 50.sp,
-                                                  ),
                                                   Padding(
                                                     padding: EdgeInsets.only(
-                                                        top: 10.sp,
                                                         left: 16.sp),
                                                     child: Row(
                                                       children: [

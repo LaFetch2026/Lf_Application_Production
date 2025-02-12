@@ -44,14 +44,14 @@ class SearchScreenController extends BaseController {
         } else {
           searchText.value = "No product found";
           searchList.clear();
-          FocusScope.of(context).unfocus();
+          // FocusScope.of(context).unfocus();
         }
         if (responseData["categories"] != null &&
             responseData["categories"].isNotEmpty) {
           categoryList = responseData["categories"];
           searchText.value = "Search for products";
         } else {
-          FocusScope.of(context).unfocus();
+          // FocusScope.of(context).unfocus();
           searchText.value = "No product found";
           categoryList.clear();
         }
