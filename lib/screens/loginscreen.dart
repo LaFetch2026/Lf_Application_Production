@@ -299,7 +299,7 @@ class LoginScreenState extends State<LoginScreen> {
                             SizedBox(
                               height: 40.sp,
                             ),
-                            const LoginWidget(
+                            LoginWidget(
                                 text1: "Welcome Back!",
                                 fontfamily: "Franklin Gothic",
                                 text2:

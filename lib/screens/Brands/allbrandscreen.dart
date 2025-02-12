@@ -93,6 +93,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     );
     _initializeVideoPlayerFuture = videoController.initialize();
     videoController.play();
+    videoController.setVolume(0.05);
     videoController.setLooping(true);
     productController.productSortBy.value = "";
     productController.filterProductEnable.value = false;
@@ -196,7 +197,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 color: cardBg,
                               )
                             : brandController
-                                        .brandDetails["background_image"] !=
+                                        .brandDetails["background_image"] ==
                                     null
                                 ? Image.asset(brandback,
                                     height: 140.sp,

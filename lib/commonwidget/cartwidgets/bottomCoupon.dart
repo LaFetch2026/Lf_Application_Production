@@ -362,25 +362,41 @@ class BottomCouponState extends State<BottomCoupon> {
                                                                 color: selected[
                                                                         index]
                                                                     ? titleColor
-                                                                    : greyTextColor),
+                                                                    : widget.list[index]
+                                                                            [
+                                                                            "applicable"]
+                                                                        ? greyTextColor
+                                                                        : dividerColor),
                                                             left: BorderSide(
                                                                 width: 2.0.sp,
                                                                 color: selected[
                                                                         index]
                                                                     ? titleColor
-                                                                    : greyTextColor),
+                                                                    : widget.list[index]
+                                                                            [
+                                                                            "applicable"]
+                                                                        ? greyTextColor
+                                                                        : dividerColor),
                                                             right: BorderSide(
                                                                 width: 2.0.sp,
                                                                 color: selected[
                                                                         index]
                                                                     ? titleColor
-                                                                    : greyTextColor),
+                                                                    : widget.list[index]
+                                                                            [
+                                                                            "applicable"]
+                                                                        ? greyTextColor
+                                                                        : dividerColor),
                                                             bottom: BorderSide(
                                                                 width: 2.0.sp,
                                                                 color: selected[
                                                                         index]
                                                                     ? titleColor
-                                                                    : greyTextColor),
+                                                                    : widget.list[index]
+                                                                            [
+                                                                            "applicable"]
+                                                                        ? greyTextColor
+                                                                        : dividerColor),
                                                           ),
                                                         ),
                                                         width: 20,
@@ -400,35 +416,48 @@ class BottomCouponState extends State<BottomCoupon> {
                                                               color: selected[
                                                                       index]
                                                                   ? titleColor
-                                                                  : greyTextColor,
+                                                                  : widget.list[
+                                                                              index]
+                                                                          [
+                                                                          "applicable"]
+                                                                      ? greyTextColor
+                                                                      : dividerColor,
                                                               width: 0),
                                                           onChanged: (value) {
-                                                            if (selected[
-                                                                index]) {
-                                                              selected.clear();
-                                                              selected =
-                                                                  List.generate(
-                                                                      50,
-                                                                      (i) =>
-                                                                          false);
-                                                              i = null;
-                                                            } else {
-                                                              selected.clear();
-                                                              selected =
-                                                                  List.generate(
-                                                                      50,
-                                                                      (i) =>
-                                                                          false);
-                                                              selected[index] =
-                                                                  !selected[
-                                                                      index];
-                                                              print(widget.list[
-                                                                      index]
-                                                                  ["code"]);
-                                                              i = index;
-                                                            }
+                                                            if (widget
+                                                                    .list[index]
+                                                                [
+                                                                "applicable"]) {
+                                                              if (selected[
+                                                                  index]) {
+                                                                selected
+                                                                    .clear();
+                                                                selected = List
+                                                                    .generate(
+                                                                        50,
+                                                                        (i) =>
+                                                                            false);
+                                                                i = null;
+                                                              } else {
+                                                                selected
+                                                                    .clear();
+                                                                selected = List
+                                                                    .generate(
+                                                                        50,
+                                                                        (i) =>
+                                                                            false);
+                                                                selected[
+                                                                        index] =
+                                                                    !selected[
+                                                                        index];
+                                                                print(widget.list[
+                                                                        index]
+                                                                    ["code"]);
+                                                                i = index;
+                                                              }
 
-                                                            setState(() {});
+                                                              setState(() {});
+                                                            }
                                                           },
                                                         )),
                                                   ),
@@ -446,8 +475,11 @@ class BottomCouponState extends State<BottomCoupon> {
                                                           borderType:
                                                               BorderType.RRect,
                                                           dashPattern: [5, 5],
-                                                          color:
-                                                              homeAppBarColor,
+                                                          color: widget.list[
+                                                                      index]
+                                                                  ["applicable"]
+                                                              ? homeAppBarColor
+                                                              : dividerColor,
                                                           strokeWidth: 1,
                                                           child: Padding(
                                                             padding: EdgeInsets
@@ -461,8 +493,12 @@ class BottomCouponState extends State<BottomCoupon> {
                                                                   .list[index]
                                                                       ["code"]
                                                                   .toUpperCase(),
-                                                              color:
-                                                                  homeAppBarColor,
+                                                              color: widget.list[
+                                                                          index]
+                                                                      [
+                                                                      "applicable"]
+                                                                  ? homeAppBarColor
+                                                                  : dividerColor,
                                                               fontSize: 14,
                                                               fontFamily:
                                                                   "Franklin Gothic",
@@ -570,7 +606,10 @@ class BottomCouponState extends State<BottomCoupon> {
                                                   children: [
                                                     AppText(
                                                       text: "Save",
-                                                      color: subtitleColor,
+                                                      color: widget.list[index]
+                                                              ["applicable"]
+                                                          ? subtitleColor
+                                                          : dividerColor,
                                                       fontSize: 12,
                                                       fontFamily:
                                                           "Franklin Gothic Semibold",
@@ -584,8 +623,11 @@ class BottomCouponState extends State<BottomCoupon> {
                                                       child: AppText(
                                                         text:
                                                             "\u{20B9}${widget.list[index]["saved_total"].toString()}",
-                                                        color:
-                                                            color5StartReview,
+                                                        color: widget
+                                                                    .list[index]
+                                                                ["applicable"]
+                                                            ? color5StartReview
+                                                            : dividerColor,
                                                         fontSize: 12,
                                                         fontFamily:
                                                             "Franklin Gothic Semibold",
@@ -607,7 +649,10 @@ class BottomCouponState extends State<BottomCoupon> {
                                                           1
                                                       ? "${widget.list[index]["type_label"].toString()}${widget.list[index]["value"].toString()} off on orders above Rs.${widget.list[index]["minimum_purchase_amount"].toString()}"
                                                       : "${widget.list[index]["value"].toString()}${widget.list[index]["type_label"].toString()} off on orders above Rs.${widget.list[index]["minimum_purchase_amount"].toString()}",
-                                                  color: subtitleColor,
+                                                  color: widget.list[index]
+                                                          ["applicable"]
+                                                      ? subtitleColor
+                                                      : dividerColor,
                                                   fontSize: 12,
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
@@ -622,7 +667,10 @@ class BottomCouponState extends State<BottomCoupon> {
                                                 child: AppText(
                                                   text:
                                                       "Valid until: ${widget.list[index]["ends_at"]}",
-                                                  color: subtitleColor,
+                                                  color: widget.list[index]
+                                                          ["applicable"]
+                                                      ? subtitleColor
+                                                      : dividerColor,
                                                   fontSize: 12,
                                                   fontFamily:
                                                       "Franklin Gothic Regular",
@@ -662,7 +710,10 @@ class BottomCouponState extends State<BottomCoupon> {
                                                     text: widget.list[index][
                                                             "add_items_worth"] ??
                                                         "",
-                                                    color: titleColor,
+                                                    color: widget.list[index]
+                                                            ["applicable"]
+                                                        ? titleColor
+                                                        : dividerColor,
                                                     fontSize: 12,
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
@@ -732,8 +783,11 @@ class BottomCouponState extends State<BottomCoupon> {
                                                               "Franklin Gothic Regular",
                                                           fontWeight:
                                                               FontWeight.w400,
-                                                          color:
-                                                              homeAppBarColor,
+                                                          color: widget.list[
+                                                                      index]
+                                                                  ["applicable"]
+                                                              ? homeAppBarColor
+                                                              : dividerColor,
                                                           fontSize: 12.sp,
                                                         ),
                                                       ),
@@ -744,8 +798,11 @@ class BottomCouponState extends State<BottomCoupon> {
                                                                 right: 5.sp),
                                                         child: Image.asset(
                                                             rightArrowImage,
-                                                            color:
-                                                                homeAppBarColor,
+                                                            color: widget.list[
+                                                                        index][
+                                                                    "applicable"]
+                                                                ? homeAppBarColor
+                                                                : dividerColor,
                                                             height: 10.sp,
                                                             width: 10.sp,
                                                             fit: BoxFit.cover),
