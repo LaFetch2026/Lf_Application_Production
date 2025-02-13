@@ -466,10 +466,18 @@ class QuickScreenState extends State<QuickScreen> {
                                     height: 0,
                                   ),
                       )), */
-                  Padding(
-                    padding: EdgeInsets.only(top: 24.sp),
-                    child: Lottie.asset(
-                      quickLottie,
+                  Visibility(
+                    visible: productController.brandController.text
+                            .toString()
+                            .trim()
+                            .isEmpty
+                        ? true
+                        : false,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 24.sp),
+                      child: Lottie.asset(
+                        quickLottie,
+                      ),
                     ),
                   ),
                   Obx(() => Visibility(

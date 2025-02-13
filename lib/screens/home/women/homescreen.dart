@@ -69,7 +69,7 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
+    timer = Timer.periodic(Duration(seconds: 10), (Timer timer) {
       if (homeController.currentPage.value <
           homeController.banner1List.length - 1) {
         homeController.currentPage.value++;
