@@ -256,6 +256,10 @@ class CartController extends BaseController {
           Get.close(1);
           orderList.clear();
           getCartData();
+        } else if (page == "wishlist") {
+          print("wishlist");
+          orderList.clear();
+          getCartData();
         } else if (page == "quantity") {
           //getSnackBar("Quantity updated");
           Get.close(1);
@@ -279,6 +283,10 @@ class CartController extends BaseController {
         } else if (page == "remove") {
           print("remove");
           Get.close(1);
+          getCartData();
+        } else if (page == "wishlist") {
+          print("wishlist");
+          orderList.clear();
           getCartData();
         } else if (page == "express") {
           getCartData();

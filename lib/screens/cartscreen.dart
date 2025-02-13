@@ -16,9 +16,12 @@ import 'package:lafetch/commonwidget/cartwidgets/bottomquantity.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomsize.dart';
 import 'package:lafetch/commonwidget/cartwidgets/cartbottom.dart';
 import 'package:lafetch/commonwidget/cartwidgets/cartwidgets.dart';
+import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
+import 'package:lafetch/commonwidget/doubleiconbtn.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_order_list.dart';
 import 'package:lafetch/commonwidget/homewidget/dummyblack_orderlist.dart';
+import 'package:lafetch/controller/wishlist_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/loginscreen.dart';
@@ -50,6 +53,7 @@ class CartScreenState extends State<CartScreen> {
   List qtyList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final Razorpay razorpay = Razorpay();
+  final wishlistController = Get.put(WishlistController());
 
   @override
   void initState() {
@@ -61,6 +65,8 @@ class CartScreenState extends State<CartScreen> {
       controller.selected = List.generate(50, (i) => false).obs;
     });
     getPrefrenceValue();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => wishlistController.getWishlistData());
     /*  WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductData("relevant")); */
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -996,6 +1002,88 @@ class CartScreenState extends State<CartScreen> {
                                                                                       ),
                                                                                     ),
                                                                                   ],
+                                                                                ),
+                                                                                Visibility(
+                                                                                  // visible: value.orderList[index]["product"]["total_stock_count"] == 0 ? true : false,
+                                                                                  child: Padding(
+                                                                                    padding: EdgeInsets.symmetric(vertical: 8.sp, horizontal: 16.sp),
+                                                                                    child: AppText(
+                                                                                      text: "Out of Stock".toUpperCase(),
+                                                                                      color: redColor,
+                                                                                      fontSize: 10,
+                                                                                      maxLines: 1,
+                                                                                      fontFamily: "Franklin Gothic",
+                                                                                      fontWeight: FontWeight.w400,
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                                Visibility(
+                                                                                  //  visible: value.orderList[index]["product"]["total_stock_count"] == 0 ? true : false,
+                                                                                  child: DoubleIconButton(
+                                                                                    firstText: "REMOVE",
+                                                                                    secondText: "WISHLIST",
+                                                                                    firstTextColor: homeAppBarColor,
+                                                                                    secondTextColor: whiteColor,
+                                                                                    firstBackgroundColor: whiteColor,
+                                                                                    secondBackgroundColor: homeAppBarColor,
+                                                                                    firstBorderColor: homeAppBarColor,
+                                                                                    secondBorderColor: widget.backgroundcolor == whiteColor ? homeAppBarColor : lightPurpleColor,
+                                                                                    firstIcon: crossSearchImage,
+                                                                                    secondIcon: value.orderList[index]["product"]["wishlisted"] ? redHeartSvgImage : heartSvgImage,
+                                                                                    onPressedFirst: () async {
+                                                                                      showDialog(
+                                                                                        barrierColor: Colors.black26,
+                                                                                        context: context,
+                                                                                        builder: (context) {
+                                                                                          return showDoubleBtnDailog(
+                                                                                              click1: () {
+                                                                                                Get.back();
+                                                                                              },
+                                                                                              click2: () {
+                                                                                                value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1);
+                                                                                              },
+                                                                                              btncolor: colorPrimary,
+                                                                                              text: "Are you sure you want to remove this item?",
+                                                                                              btn1Text: "Cancel",
+                                                                                              btn2Text: "Remove");
+                                                                                        },
+                                                                                      );
+
+                                                                                      await analytics.logEvent(
+                                                                                        name: 'cart_product_removeClick',
+                                                                                        parameters: <String, Object>{
+                                                                                          'page_name': 'cart_product_removeClick',
+                                                                                        },
+                                                                                      );
+                                                                                    },
+                                                                                    onPressedSecond: () async {
+                                                                                      if (value.orderList[index]["product"]["wishlisted"]) {
+                                                                                        wishlistController.callAddProductToWishlist(value.orderList[index]["product"]["wishlist_id"], value.orderList[index]["product"]["id"]);
+                                                                                        controller.getCartData();
+                                                                                        await analytics.logEvent(
+                                                                                          name: 'cart_wishlist_remove',
+                                                                                          parameters: <String, Object>{
+                                                                                            'page_name': 'productdetails_wishlist_remove',
+                                                                                          },
+                                                                                        );
+                                                                                      } else {
+                                                                                        scaffoldKey.currentState?.showBottomSheet((context) => BottomWishlist(
+                                                                                            controller: wishlistController,
+                                                                                            productImage: value.orderList[index]["product"]["images"][0]["name"],
+                                                                                            onPressed: (p0) {
+                                                                                              wishlistController.callAddProductToWishlist(p0, value.orderList[index]["product"]["id"]);
+                                                                                              value.callAddtoCart(0, "wishlist", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1);
+                                                                                            },
+                                                                                            wishlistList: wishlistController.wishlistList));
+                                                                                        await analytics.logEvent(
+                                                                                          name: 'cart_wishlist_add',
+                                                                                          parameters: <String, Object>{
+                                                                                            'page_name': 'productdetails_wishlist_add',
+                                                                                          },
+                                                                                        );
+                                                                                      }
+                                                                                    },
+                                                                                  ),
                                                                                 ),
                                                                                 Padding(
                                                                                   padding: EdgeInsets.symmetric(vertical: 8.sp),

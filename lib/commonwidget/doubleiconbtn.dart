@@ -1,5 +1,9 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:lafetch/utils/constants.dart';
 
 class DoubleIconButton extends StatelessWidget {
   final String firstText;
@@ -30,8 +34,8 @@ class DoubleIconButton extends StatelessWidget {
       required this.secondBorderColor,
       required this.firstIcon,
       required this.secondIcon,
-      this.firstFontSize = 14,
-      this.secondFontSize = 14,
+      this.firstFontSize = 13,
+      this.secondFontSize = 13,
       this.fontFamily = "Franklin Gothic",
       this.onPressedFirst,
       this.onPressedSecond})
@@ -40,7 +44,7 @@ class DoubleIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 10.sp, bottom: 10.sp),
+      padding: EdgeInsets.only(top: 8.sp, bottom: 8.sp),
       child: Row(
         children: [
           Expanded(
@@ -49,12 +53,15 @@ class DoubleIconButton extends StatelessWidget {
               child: Center(
                 child: SizedBox(
                     width: (MediaQuery.of(context).size.width / 2) - 4,
-                    height: 40.sp,
+                    height: 48.sp,
                     child: ElevatedButton.icon(
-                        icon: ImageIcon(
-                          AssetImage(firstIcon),
-                          color: firstTextColor,
-                          size: 16.sp,
+                        icon: Padding(
+                          padding: EdgeInsets.only(right: 4.sp),
+                          child: SvgPicture.asset(firstIcon,
+                              height: 13.sp,
+                              color: homeAppBarColor,
+                              width: 13.sp,
+                              fit: BoxFit.cover),
                         ),
                         style: ButtonStyle(
                             shape: MaterialStateProperty.all(
@@ -92,12 +99,17 @@ class DoubleIconButton extends StatelessWidget {
               child: Center(
                 child: SizedBox(
                     width: (MediaQuery.of(context).size.width / 2) - 4,
-                    height: 40.sp,
+                    height: 48.sp,
                     child: ElevatedButton.icon(
-                        icon: ImageIcon(
-                          AssetImage(secondIcon),
-                          color: secondTextColor,
-                          size: 16.sp,
+                        icon: Padding(
+                          padding: EdgeInsets.only(right: 4.sp),
+                          child: SvgPicture.asset(secondIcon,
+                              height: 18.sp,
+                              color: secondIcon == heartSvgImage
+                                  ? whiteColor
+                                  : redColor,
+                              width: 18.sp,
+                              fit: BoxFit.cover),
                         ),
                         style: ButtonStyle(
                             shape: MaterialStateProperty.all(
