@@ -1457,7 +1457,7 @@ class CartScreenState extends State<CartScreen> {
                                                                               padding: EdgeInsets.symmetric(horizontal: 8.sp),
                                                                               child: AppText(
                                                                                 text: controller.couponText.value,
-                                                                                fontFamily: "Franklin Gothic",
+                                                                                fontFamily: "Franklin Gothic Regular",
                                                                                 fontWeight: FontWeight.w500,
                                                                                 color: widget.backgroundcolor == whiteColor ? titleColor : productSubtitleColor,
                                                                                 fontSize: 14,
@@ -2794,7 +2794,9 @@ class CartScreenState extends State<CartScreen> {
                               },
                               child: Container(
                                 width: double.infinity,
-                                height: 50.sp,
+                                height: widget.backgroundcolor == whiteColor
+                                    ? 70.sp
+                                    : 50.sp,
                                 color: widget.backgroundcolor == whiteColor
                                     ? homeAppBarColor
                                     : lightPurpleColor,

@@ -27,7 +27,7 @@ class LoginAppbarState extends State<LoginAppbar> {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      color: whiteColor,
+      color: statusBarColor,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
           padding: EdgeInsets.only(right: 16.sp, top: 56.sp, bottom: 16.sp),

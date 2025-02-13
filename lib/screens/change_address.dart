@@ -86,7 +86,8 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
           Visibility(
             visible: widget.cartId == 0 ? true : false,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
+              padding: EdgeInsets.only(
+                  left: 16.sp, top: 20.sp, right: 16.sp, bottom: 16.sp),
               child: Row(
                 children: [
                   Expanded(

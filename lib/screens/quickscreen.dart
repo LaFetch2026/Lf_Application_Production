@@ -684,8 +684,8 @@ class QuickScreenState extends State<QuickScreen> {
                                                                   border: Border.all(
                                                                       width:
                                                                           1.sp,
-                                                                      color:
-                                                                          lightgreyColor),
+                                                                      color: Color(
+                                                                          0x59897CE6)),
                                                                 ),
                                                                 child: Padding(
                                                                   padding: EdgeInsets
@@ -751,10 +751,25 @@ class QuickScreenState extends State<QuickScreen> {
                                             left: 16.sp,
                                             right: 16.sp,
                                             bottom: 24.sp),
-                                        child: SvgPicture.asset(
-                                          fullLineSvgImage,
-                                          width:
-                                              MediaQuery.of(context).size.width,
+                                        child: Row(
+                                          children: [
+                                            SvgPicture.asset(
+                                              leftLineSvgImage,
+                                              width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      2 -
+                                                  16.sp,
+                                            ),
+                                            SvgPicture.asset(
+                                              rightLineSvgImage,
+                                              width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      2 -
+                                                  16.sp,
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
