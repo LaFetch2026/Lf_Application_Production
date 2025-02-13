@@ -1,4 +1,5 @@
 // ignore_for_file: avoid_print, deprecated_member_use
+import 'dart:async';
 import 'dart:io';
 
 //import 'package:carousel_slider_plus/carousel_slider_plus.dart';
@@ -63,10 +64,25 @@ class HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController(
     initialPage: 0,
   );
+  Timer? timer;
 
   @override
   void initState() {
     super.initState();
+    timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
+      if (homeController.currentPage.value <
+          homeController.banner1List.length - 1) {
+        homeController.currentPage.value++;
+      } else {
+        homeController.currentPage.value = 0;
+      }
+
+      _pageController.animateToPage(
+        homeController.currentPage.value,
+        duration: Duration(milliseconds: 350),
+        curve: Curves.easeIn,
+      );
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.showGenderList.value = false;
       homeController.currentPage.value = 0;
@@ -191,6 +207,12 @@ class HomeScreenState extends State<HomeScreen> {
       cartController.lat.value = prefs.getDouble('latitude')!;
       cartController.lng.value = prefs.getDouble('longitude')!;
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer?.cancel();
   }
 
   List<Widget> widgitBannerList() {
