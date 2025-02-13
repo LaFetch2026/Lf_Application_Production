@@ -27,6 +27,7 @@ import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/mapscreen.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
+import 'package:lafetch/screens/wishlist/newboardscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1069,6 +1070,22 @@ class CartScreenState extends State<CartScreen> {
                                                                                       } else {
                                                                                         scaffoldKey.currentState?.showBottomSheet((context) => BottomWishlist(
                                                                                             controller: wishlistController,
+                                                                                            onPressedBoard: () {
+                                                                                              Navigator.of(context)
+                                                                                                  .push(MaterialPageRoute(
+                                                                                                      builder: (BuildContext context) => NewBoardScreen(
+                                                                                                            title: "New Board",
+                                                                                                            boardId: 0,
+                                                                                                            screen: "Bag",
+                                                                                                            productId: value.orderList[index]["product"]["id"],
+                                                                                                            hintName: "Name of the Board",
+                                                                                                            boardName: "",
+                                                                                                            btnText: "Next",
+                                                                                                          )))
+                                                                                                  .then(
+                                                                                                    (value) {},
+                                                                                                  );
+                                                                                            },
                                                                                             productImage: value.orderList[index]["product"]["images"][0]["name"],
                                                                                             onPressed: (p0) {
                                                                                               wishlistController.callAddProductToWishlist(p0, value.orderList[index]["product"]["id"]);

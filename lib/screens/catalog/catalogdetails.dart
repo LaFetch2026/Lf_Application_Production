@@ -13,6 +13,7 @@ import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/controller/wishlist_controller.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/wishlist/newboardscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import '../../commonwidget/app_text.dart';
 import '../../controller/catalog_controller.dart';
@@ -563,13 +564,36 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                                   (context) => BottomWishlist(
                                                       controller:
                                                           wishlistController,
-                                                      productImage:
-                                                          controller.categoryProductList[
-                                                                          index]
-                                                                      [
-                                                                      "products"]
-                                                                  [p1]["images"]
-                                                              [0]["name"],
+                                                      onPressedBoard: () {
+                                                        Navigator.of(context)
+                                                            .push(
+                                                                MaterialPageRoute(
+                                                                    builder: (BuildContext
+                                                                            context) =>
+                                                                        NewBoardScreen(
+                                                                          title:
+                                                                              "New Board",
+                                                                          boardId:
+                                                                              0,
+                                                                          productId:
+                                                                              controller.categoryProductList[index]["products"][p1]["id"],
+                                                                          hintName:
+                                                                              "Name of the Board",
+                                                                          boardName:
+                                                                              "",
+                                                                          btnText:
+                                                                              "Next",
+                                                                          categoryId:
+                                                                              widget.catalogId,
+                                                                        )))
+                                                            .then(
+                                                              (value) {},
+                                                            );
+                                                      },
+                                                      productImage: controller
+                                                                  .categoryProductList[
+                                                              index]["products"][p1]
+                                                          ["images"][0]["name"],
                                                       onPressed: (p0) {
                                                         controller.categoryProductList[
                                                                     index]

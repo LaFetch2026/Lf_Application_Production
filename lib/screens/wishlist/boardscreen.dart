@@ -158,6 +158,7 @@ class BoardScreenState extends State<BoardScreen> {
                                       NewBoardScreen(
                                         title: "Edit Board Name",
                                         hintName: "",
+                                        productId: 0,
                                         boardId: widget.boardId,
                                         boardName: widget.boardName,
                                         btnText: "Save changes",

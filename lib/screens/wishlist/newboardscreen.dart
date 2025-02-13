@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,6 +9,8 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/text_field.dart';
+import 'package:lafetch/controller/cart_controller.dart';
+import 'package:lafetch/controller/catalog_controller.dart';
 import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
 import '../../controller/wishlist_controller.dart';
 import '../../utils/constants.dart';
@@ -17,12 +21,18 @@ class NewBoardScreen extends StatefulWidget {
   final String hintName;
   final int boardId;
   final String btnText;
+  final int productId;
+  final int categoryId;
+  final String screen;
   const NewBoardScreen(
       {required this.title,
       required this.boardName,
       required this.hintName,
       required this.boardId,
       required this.btnText,
+      required this.productId,
+      this.categoryId = 0,
+      this.screen = "",
       super.key});
 
   @override
@@ -31,6 +41,8 @@ class NewBoardScreen extends StatefulWidget {
 
 class NewBoardScreenState extends State<NewBoardScreen> {
   final wishlistController = Get.put(WishlistController());
+  final catalogControler = Get.put(CatalogController());
+  final cartControler = Get.put(CartController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
@@ -96,9 +108,22 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                             wishlistController.boardNameController.text
                                 .toString())) {
                           wishlistController.callCreateWishlist(
-                            wishlistController.boardNameController.text
-                                .toString(),
-                          );
+                              wishlistController.boardNameController.text
+                                  .toString(),
+                              widget.productId);
+                          Timer(Duration(seconds: 1), () {
+                            if (widget.categoryId != 0) {
+                              catalogControler
+                                  .getCategoryProductData(widget.categoryId);
+                            }
+                            if (widget.screen == "ProductDetails") {
+                              wishlistController.getWishlistProductDetails(
+                                  widget.productId, "");
+                            }
+                            if (widget.screen == "Bag") {
+                              cartControler.getCartData();
+                            }
+                          });
                           await analytics.logEvent(
                             name: 'create_board_btnClick',
                             parameters: <String, Object>{

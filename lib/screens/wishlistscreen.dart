@@ -122,6 +122,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                   const NewBoardScreen(
                                                     title: "New Board",
                                                     boardId: 0,
+                                                    productId: 0,
                                                     hintName:
                                                         "Name of the Board",
                                                     boardName: "",
@@ -244,6 +245,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                   const NewBoardScreen(
                                                     title: "New Board",
                                                     boardId: 0,
+                                                    productId: 0,
                                                     hintName:
                                                         "Name of the Board",
                                                     boardName: "",

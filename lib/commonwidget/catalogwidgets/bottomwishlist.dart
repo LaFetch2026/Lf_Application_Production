@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_print, deprecated_member_use
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -8,7 +7,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/commonwidget/doublebutton_new.dart';
-import 'package:lafetch/screens/wishlist/newboardscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import '../../utils/constants.dart';
 import '../common_widgets.dart';
@@ -16,6 +14,7 @@ import '../smallbtn.dart';
 
 class BottomWishlist extends StatefulWidget {
   final Function(int)? onPressed;
+  final Function? onPressedBoard;
   final GetxController controller;
   final List wishlistList;
   final String productImage;
@@ -24,6 +23,7 @@ class BottomWishlist extends StatefulWidget {
     Key? key,
     this.onPressed,
     required this.controller,
+    this.onPressedBoard,
     required this.wishlistList,
     this.productImage = "",
   }) : super(key: key);
@@ -140,15 +140,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                       ),
                       InkWell(
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const NewBoardScreen(
-                                    title: "New Board",
-                                    boardId: 0,
-                                    hintName: "Name of the Board",
-                                    boardName: "",
-                                    btnText: "Next",
-                                  )));
+                          widget.onPressedBoard?.call();
                         },
                         child: Container(
                           color: Color(0xffDFC5FE),

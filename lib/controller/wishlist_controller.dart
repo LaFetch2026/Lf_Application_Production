@@ -295,7 +295,7 @@ class WishlistController extends BaseController {
     isDetails.value = false;
   }
 
-  callCreateWishlist(String name) async {
+  callCreateWishlist(String name, int productId) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -310,15 +310,19 @@ class WishlistController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 201) {
         print(responseData);
-        // getSnackBar("Board Created");
-        boardError.value = "";
-        Get.off(
-          () => CreateBoardScreen(
-            btnText: "Add",
-            wishlistId: responseData["id"],
-            type: "add",
-          ),
-        );
+        if (productId == 0) {
+          boardError.value = "";
+          Get.off(
+            () => CreateBoardScreen(
+              btnText: "Add",
+              wishlistId: responseData["id"],
+              type: "add",
+            ),
+          );
+        } else {
+          boardError.value = "";
+          callAddProductBoard(responseData["id"], productId);
+        }
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
@@ -429,7 +433,7 @@ class WishlistController extends BaseController {
     }
   } */
 
-  /*  callAddProductWishlist(int wishlistId, int id) async {
+  callAddProductBoard(int wishlistId, int id) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -442,7 +446,6 @@ class WishlistController extends BaseController {
         },
       );
       if (response.statusCode == 200) {
-        getSnackBar("item added");
         Get.close(2);
       } else if (response.statusCode == 500) {
         getSnackBar("Server Error");
@@ -455,7 +458,7 @@ class WishlistController extends BaseController {
       print(e.toString());
     }
     hideLoading();
-  } */
+  }
 
   getWishlistProductDetails(int productId, String slug) async {
     isProductWishlist.value = true;

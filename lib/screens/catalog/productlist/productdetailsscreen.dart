@@ -20,6 +20,7 @@ import 'package:lafetch/commonwidget/homewidget/dummy_productdetails.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productimage.dart';
+import 'package:lafetch/screens/wishlist/newboardscreen.dart';
 //import 'package:lafetch/screens/mapscreen.dart';
 import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:share_plus/share_plus.dart';
@@ -825,6 +826,25 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             scaffoldKey.currentState?.showBottomSheet(
                                 (context) => BottomWishlist(
                                     controller: wishlistController,
+                                    onPressedBoard: () {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  NewBoardScreen(
+                                                    title: "New Board",
+                                                    boardId: 0,
+                                                    screen: "ProductDetails",
+                                                    productId: wishlistController
+                                                        .wishListDetails["id"],
+                                                    hintName:
+                                                        "Name of the Board",
+                                                    boardName: "",
+                                                    btnText: "Next",
+                                                  )))
+                                          .then(
+                                            (value) {},
+                                          );
+                                    },
                                     productImage: wishlistController
                                         .wishListDetails["images"][0]["name"],
                                     onPressed: (p0) {
