@@ -326,7 +326,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       color: whiteColor,
                       fontSize: 20,
                       maxLines: 1,
-                      fontFamily: "Franklin Gothic",
+                      fontFamily: "Playfair Display Medium",
                       fontWeight: FontWeight.w400,
                     ),
                   ),

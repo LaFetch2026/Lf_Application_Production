@@ -240,8 +240,8 @@ class QuickScreenState extends State<QuickScreen> {
                     ),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsets.only(left: 16.sp, top: 24.sp, right: 16.sp),
+                    padding: EdgeInsets.only(
+                        left: 16.sp, top: 24.sp, right: 16.sp, bottom: 24.sp),
                     child: Container(
                       color: loginText,
                       // height: 50.sp,
@@ -473,11 +473,8 @@ class QuickScreenState extends State<QuickScreen> {
                             .isEmpty
                         ? true
                         : false,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 24.sp),
-                      child: Lottie.asset(
-                        quickLottie,
-                      ),
+                    child: Lottie.asset(
+                      quickLottie,
                     ),
                   ),
                   Obx(() => Visibility(
@@ -781,10 +778,10 @@ class QuickScreenState extends State<QuickScreen> {
                   Obx(() => productController.isBrand.value
                       ? Padding(
                           padding: EdgeInsets.only(
-                              left: 16.sp,
-                              right: 16.sp,
-                              bottom: 10.sp,
-                              top: 10.sp),
+                            left: 16.sp,
+                            right: 16.sp,
+                            bottom: 10.sp,
+                          ),
                           child: ListView.builder(
                               primary: false,
                               shrinkWrap: true,

@@ -166,5 +166,9 @@ flutter:
       fonts:
         - asset: fonts/LibreFranklin-Regular.otf
           weight: 400
+    - family: Playfair Display Medium
+      fonts:
+        - asset: fonts/PlayfairDisplay-MediumItalic.ttf
+          weight: 400      
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
