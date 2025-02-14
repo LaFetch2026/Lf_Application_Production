@@ -26,7 +26,7 @@ class _WomenScreenState extends State<WomenScreen>
         (_) => productController.getTagsData(widget.genderType));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (widget.genderType == 3) {
-        homeController.getBannar1Data();
+        homeController.getBannar1Data(widget.genderType);
       }
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

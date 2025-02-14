@@ -39,6 +39,7 @@ class CartController extends BaseController {
   RxInt cartTotalValue = 0.obs;
   RxDouble lng = 0.0.obs;
   RxString qtyText = "".obs;
+  RxString stockErrorText = "".obs;
   RxInt qtyProductId = 0.obs;
   List categoryList = [].obs;
   List tagsList = [].obs;
@@ -72,6 +73,13 @@ class CartController extends BaseController {
           qtyProductId.value = 0;
           qtyText.value = "";
           cartTotalValue.value = orderList.length;
+          orderList.forEach((i) {
+            if (i["inventory"]['stocks'] == 0) {
+              stockErrorText.value = "Few items are unavailable for checkout";
+            } else {
+              stockErrorText.value = "";
+            }
+          });
           if (responseData["discount"] != null) {
             couponText.value = responseData["discount"]["code"];
             couponSave.value =
@@ -123,6 +131,13 @@ class CartController extends BaseController {
           qtyProductId.value = 0;
           qtyText.value = "";
           cartTotalValue.value = orderList.length;
+          orderList.forEach((i) {
+            if (i["inventory"]['stocks'] == 0) {
+              stockErrorText.value = "Few items are unavailable for checkout";
+            } else {
+              stockErrorText.value = "";
+            }
+          });
           if (responseData["discount"] != null) {
             couponText.value = responseData["discount"]["code"];
             couponSave.value =
@@ -151,7 +166,7 @@ class CartController extends BaseController {
     isOrder.value = false;
   }
 
-  getCouponData() async {
+  getCouponData(Color backColor) async {
     isCoupan.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -167,9 +182,10 @@ class CartController extends BaseController {
           couponList = responseData;
           Get.to(BottomCoupon(
             list: couponList,
+            backColor: backColor,
             onPressed: (p0) {
               couponText.value = p0;
-              callAddCoupon(p0, "cart");
+              callAddCoupon(p0, "cart", backColor);
             },
           ));
         }
@@ -192,7 +208,7 @@ class CartController extends BaseController {
     isCoupan.value = false;
   }
 
-  callDeleteCart() async {
+  callDeleteCart(Color backgroundColor) async {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.delete(
@@ -207,7 +223,11 @@ class CartController extends BaseController {
         Get.close(1);
         // getSnackBar("Cart cleared");
         orderList.clear();
-        getCartData();
+        if (backgroundColor == whiteColor) {
+          getCartData();
+        } else {
+          getExpressCartData();
+        }
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
@@ -223,7 +243,7 @@ class CartController extends BaseController {
   }
 
   callAddtoCart(int quantity, String page, int inventoryId, int productId,
-      int expressValue, int type) async {
+      int expressValue, int type, Color backColor) async {
     if (page == "quantity" || page == "size") {
       showLoading();
     }
@@ -250,26 +270,50 @@ class CartController extends BaseController {
         if (page == "addproduct") {
           print("addproduct");
           // getSnackBar("Product added to bag");
-          getCartData();
+          if (backColor == whiteColor) {
+            getCartData();
+          } else {
+            getExpressCartData();
+          }
         } else if (page == "remove") {
           print("remove");
           Get.close(1);
           orderList.clear();
-          getCartData();
+          if (backColor == whiteColor) {
+            getCartData();
+          } else {
+            getExpressCartData();
+          }
         } else if (page == "wishlist") {
           print("wishlist");
           orderList.clear();
-          getCartData();
+          if (backColor == whiteColor) {
+            getCartData();
+          } else {
+            getExpressCartData();
+          }
         } else if (page == "quantity") {
           //getSnackBar("Quantity updated");
           Get.close(1);
-          getCartData();
+          if (backColor == whiteColor) {
+            getCartData();
+          } else {
+            getExpressCartData();
+          }
         } else if (page == "size") {
           //  getSnackBar("Size updated");
           Get.close(1);
-          getCartData();
+          if (backColor == whiteColor) {
+            getCartData();
+          } else {
+            getExpressCartData();
+          }
         } else if (page == "express") {
-          getCartData();
+          if (backColor == whiteColor) {
+            getCartData();
+          } else {
+            getExpressCartData();
+          }
           selected.clear();
           selected = List.generate(50, (i) => false).obs;
         } else {
@@ -279,17 +323,33 @@ class CartController extends BaseController {
         if (page == "addproduct") {
           print("addproduct");
           getSnackBar("Product added to bag");
-          getCartData();
+          if (backColor == whiteColor) {
+            getCartData();
+          } else {
+            getExpressCartData();
+          }
         } else if (page == "remove") {
           print("remove");
           Get.close(1);
-          getCartData();
+          if (backColor == whiteColor) {
+            getCartData();
+          } else {
+            getExpressCartData();
+          }
         } else if (page == "wishlist") {
           print("wishlist");
           orderList.clear();
-          getCartData();
+          if (backColor == whiteColor) {
+            getCartData();
+          } else {
+            getExpressCartData();
+          }
         } else if (page == "express") {
-          getCartData();
+          if (backColor == whiteColor) {
+            getCartData();
+          } else {
+            getExpressCartData();
+          }
         } else {
           Get.close(1);
         }
@@ -380,7 +440,7 @@ class CartController extends BaseController {
     hideLoading();
   }
 
-  callAddCoupon(String code, String type) async {
+  callAddCoupon(String code, String type, Color backColor) async {
     if (type == "cart") {
       showLoading();
     }
@@ -400,10 +460,18 @@ class CartController extends BaseController {
       if (response.statusCode == 200) {
         if (type == "cart") {
           Get.back();
-          getCartData();
+          if (backColor == whiteColor) {
+            getCartData();
+          } else {
+            getExpressCartData();
+          }
         } else {
           Get.back();
-          getCartData();
+          if (backColor == whiteColor) {
+            getCartData();
+          } else {
+            getExpressCartData();
+          }
         }
         couponError.value = "";
       } else if (response.statusCode == 400) {
@@ -424,7 +492,7 @@ class CartController extends BaseController {
     }
   }
 
-  callRemoveCoupon() async {
+  callRemoveCoupon(Color backColor) async {
     isRemoveCoupan.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -441,7 +509,11 @@ class CartController extends BaseController {
               body: json.encode(sendData));
       if (response.statusCode == 200) {
         couponText.value = "Apply Coupon";
-        getCartData();
+        if (backColor == whiteColor) {
+          getCartData();
+        } else {
+          getExpressCartData();
+        }
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
@@ -503,7 +575,7 @@ class CartController extends BaseController {
     isPayment.value = false;
   }
 
-  callEnableExpressDelivery() async {
+  callEnableExpressDelivery(Color backColor) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -522,7 +594,11 @@ class CartController extends BaseController {
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
-        getCartData();
+        if (backColor == whiteColor) {
+          getCartData();
+        } else {
+          getExpressCartData();
+        }
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {

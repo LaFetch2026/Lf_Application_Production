@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/screens/accountscreen.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
@@ -29,6 +30,7 @@ class BottomNavScreen extends StatefulWidget {
 class BottomNavScreenState extends State<BottomNavScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final productController = Get.put(ProductController());
+  final carttController = Get.put(CartController());
   int _currentIndex = 0;
   bool? skipValue;
   var screen = [
@@ -199,6 +201,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                   Expanded(
                     child: InkWell(
                       onTap: () async {
+                        carttController.orderList.clear();
                         setState(() {
                           _currentIndex = 5;
                         });

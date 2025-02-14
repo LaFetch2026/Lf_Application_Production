@@ -18,11 +18,13 @@ import '../app_text.dart';
 
 class BottomCoupon extends StatefulWidget {
   final List list;
+  final Color backColor;
   final Function(String) onPressed;
 
   const BottomCoupon({
     Key? key,
     required this.list,
+    required this.backColor,
     required this.onPressed,
   }) : super(key: key);
 
@@ -110,7 +112,8 @@ class BottomCouponState extends State<BottomCoupon> {
                                                 controller.couponController.text
                                                     .toString()
                                                     .trim(),
-                                                "coupon");
+                                                "coupon",
+                                                widget.backColor);
                                           },
                                           child: Padding(
                                             padding: EdgeInsets.symmetric(
@@ -213,7 +216,8 @@ class BottomCouponState extends State<BottomCoupon> {
                                                 controller.couponController.text
                                                     .toString()
                                                     .trim(),
-                                                "coupon");
+                                                "coupon",
+                                                widget.backColor);
                                           },
                                           child: Padding(
                                             padding: EdgeInsets.symmetric(

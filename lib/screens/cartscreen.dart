@@ -61,6 +61,7 @@ class CartScreenState extends State<CartScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       controller.qtyProductId.value = 0;
       controller.qtyText.value = "";
+      controller.stockErrorText.value = "";
       controller.couponList.clear();
       controller.selected.clear();
       controller.selected = List.generate(50, (i) => false).obs;
@@ -781,7 +782,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                               sizeList: value.orderList[index]["product"]["new_inventories"],
                                                                                                               controller: controller,
                                                                                                               onPressed: (p0) {
-                                                                                                                controller.callAddtoCart(value.orderList[index]["quantity"] ?? 1, "size", p0, value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1);
+                                                                                                                controller.callAddtoCart(value.orderList[index]["quantity"] ?? 1, "size", p0, value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor);
                                                                                                               },
                                                                                                               selectedSizeId: value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["id"] : 0,
                                                                                                             );
@@ -849,7 +850,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                       controller: controller,
                                                                                                       stock: value.orderList[index]["inventory"]["stocks"] > 10 ? qtyList.length : value.orderList[index]["inventory"]["stocks"],
                                                                                                       onPressed: (p0) {
-                                                                                                        controller.callAddtoCart(p0, "quantity", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1);
+                                                                                                        controller.callAddtoCart(p0, "quantity", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor);
                                                                                                       },
                                                                                                     );
                                                                                                   },
@@ -1008,7 +1009,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                         Get.back();
                                                                                       },
                                                                                       click2: () {
-                                                                                        value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1);
+                                                                                        value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor);
                                                                                       },
                                                                                       btncolor: colorPrimary,
                                                                                       text: "Are you sure you want to remove this item?",
@@ -1099,7 +1100,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                       Get.back();
                                                                                     },
                                                                                     click2: () {
-                                                                                      value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1);
+                                                                                      value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor);
                                                                                     },
                                                                                     btncolor: colorPrimary,
                                                                                     text: "Are you sure you want to remove this item?",
@@ -1148,7 +1149,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                   productImage: value.orderList[index]["product"]["images"][0]["name"],
                                                                                   onPressed: (p0) {
                                                                                     wishlistController.callAddProductToWishlist(p0, value.orderList[index]["product"]["id"]);
-                                                                                    value.callAddtoCart(0, "wishlist", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1);
+                                                                                    value.callAddtoCart(0, "wishlist", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor);
                                                                                   },
                                                                                   wishlistList: wishlistController.wishlistList));
                                                                               await analytics.logEvent(
@@ -1536,10 +1537,12 @@ class CartScreenState extends State<CartScreen> {
                                                                             .cartDetails["discount"] !=
                                                                         null) {
                                                                       controller
-                                                                          .callRemoveCoupon();
+                                                                          .callRemoveCoupon(
+                                                                              widget.backgroundcolor);
                                                                     } else {
                                                                       controller
-                                                                          .getCouponData();
+                                                                          .getCouponData(
+                                                                              widget.backgroundcolor);
                                                                     }
                                                                   },
                                                                   child: controller
@@ -2010,6 +2013,8 @@ class CartScreenState extends State<CartScreen> {
                                                                           BottomCoupon(
                                                                         list: controller
                                                                             .couponList,
+                                                                        backColor:
+                                                                            widget.backgroundcolor,
                                                                         onPressed:
                                                                             (p0) {
                                                                           controller
@@ -2017,7 +2022,8 @@ class CartScreenState extends State<CartScreen> {
                                                                               .value = p0;
                                                                           controller.callAddCoupon(
                                                                               p0,
-                                                                              "cart");
+                                                                              "cart",
+                                                                              widget.backgroundcolor);
                                                                         },
                                                                       ));
                                                                     },
@@ -2753,64 +2759,86 @@ class CartScreenState extends State<CartScreen> {
                                 ),
                               ),
                             ),
-                            GestureDetector(
-                              onTap: () async {
-                                if (controller.cartDetails["address"] == null) {
-                                  getSnackBar("Add Delivery Address");
-                                } else {
-                                  /*  controller.orderList.forEach((i) {
-                                    if (i["inventory"]['stocks'] != 0) {
-                                      print(true);
-                                    } else {
-                                      print(false);
-                                    }
-                                  }); */
-                                  controller.callInitiatePayment(
-                                      controller.cartDetails["address"]["id"],
-                                      razorpay);
-                                }
-                                await analytics.logEvent(
-                                  name: 'proceed_checkout_btnclick',
-                                  parameters: <String, Object>{
-                                    'page_name': 'proceed_checkout_btnclick',
-                                  },
-                                );
-                              },
-                              child: Container(
-                                width: double.infinity,
-                                height: widget.backgroundcolor == whiteColor
-                                    ? 70.sp
-                                    : 50.sp,
-                                color: widget.backgroundcolor == whiteColor
-                                    ? homeAppBarColor
-                                    : lightPurpleColor,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 16.sp),
-                                      child: Obx(() => controller.isOrder.value
-                                          ? SizedBox(
-                                              height: 0,
-                                            )
-                                          : Text(
-                                              controller.cartDetails[
-                                                          "address"] ==
-                                                      null
-                                                  ? "Proceed to checkout"
-                                                      .toUpperCase()
-                                                  : "Proceed to pay"
-                                                      .toUpperCase(),
-                                              style: TextStyle(
-                                                  fontSize: 13.sp,
-                                                  color: Colors.white,
-                                                  fontFamily:
-                                                      'Franklin Gothic'))),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                            Obx(() => /* controller.isOrder.value
+                                ? SizedBox(
+                                    height: 0,
+                                  )
+                                : */
+                                controller.stockErrorText.value == ""
+                                    ? GestureDetector(
+                                        onTap: () async {
+                                          if (controller
+                                                  .cartDetails["address"] ==
+                                              null) {
+                                            getSnackBar("Add Delivery Address");
+                                          } else {
+                                            if (controller
+                                                    .stockErrorText.value ==
+                                                "") {
+                                              controller.callInitiatePayment(
+                                                  controller.cartDetails[
+                                                      "address"]["id"],
+                                                  razorpay);
+                                            }
+                                          }
+                                          await analytics.logEvent(
+                                            name: 'proceed_checkout_btnclick',
+                                            parameters: <String, Object>{
+                                              'page_name':
+                                                  'proceed_checkout_btnclick',
+                                            },
+                                          );
+                                        },
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: widget.backgroundcolor ==
+                                                  whiteColor
+                                              ? 70.sp
+                                              : 50.sp,
+                                          color: widget.backgroundcolor ==
+                                                  whiteColor
+                                              ? homeAppBarColor
+                                              : lightPurpleColor,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 16.sp),
+                                                child: Obx(() => controller
+                                                        .isOrder.value
+                                                    ? SizedBox(
+                                                        height: 0,
+                                                      )
+                                                    : Text(
+                                                        controller.cartDetails[
+                                                                    "address"] ==
+                                                                null
+                                                            ? "Proceed to checkout"
+                                                                .toUpperCase()
+                                                            : "Proceed to pay"
+                                                                .toUpperCase(),
+                                                        style: TextStyle(
+                                                            fontSize: 13.sp,
+                                                            color: Colors.white,
+                                                            fontFamily:
+                                                                'Franklin Gothic'))),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    : Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 20.sp, bottom: 30.sp),
+                                        child: Text(
+                                            controller.stockErrorText.value,
+                                            style: TextStyle(
+                                                fontSize: 13.sp,
+                                                color: redColor,
+                                                fontFamily: 'Franklin Gothic')),
+                                      )),
                           ],
                         )
                       : const SizedBox(height: 0))
