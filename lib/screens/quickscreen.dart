@@ -243,7 +243,9 @@ class QuickScreenState extends State<QuickScreen> {
                     padding: EdgeInsets.only(
                         left: 16.sp, top: 24.sp, right: 16.sp, bottom: 24.sp),
                     child: Container(
-                      color: loginText,
+                      decoration: BoxDecoration(
+                          color: loginText,
+                          borderRadius: BorderRadius.circular(8.sp)),
                       // height: 50.sp,
                       child: RawKeyboardListener(
                         focusNode: FocusNode(),
@@ -474,6 +476,7 @@ class QuickScreenState extends State<QuickScreen> {
                         ? true
                         : false,
                     child: Lottie.asset(
+                      width: MediaQuery.of(context).size.width.sp,
                       quickLottie,
                     ),
                   ),

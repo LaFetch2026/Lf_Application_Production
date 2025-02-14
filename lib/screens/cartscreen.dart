@@ -797,7 +797,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                       }
                                                                                                     },
                                                                                                     child: Container(
-                                                                                                      decoration: BoxDecoration(color: Color(0xffF3F4F6), border: Border.all(width: 1, color: Color(0xFFE5E7EB))),
+                                                                                                      decoration: BoxDecoration(color: widget.backgroundcolor == whiteColor ? Color(0xffF3F4F6) : Color(0xFFDFDBFF), border: Border.all(width: 1, color: widget.backgroundcolor == whiteColor ? Color(0xFFE5E7EB) : titleColor)),
                                                                                                       height: 30.sp,
                                                                                                       width: 85.sp,
                                                                                                       child: Row(
@@ -870,7 +870,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                           child: Padding(
                                                                                             padding: EdgeInsets.only(left: 10.sp, top: 5.sp, bottom: 5.sp),
                                                                                             child: Container(
-                                                                                              decoration: BoxDecoration(color: Color(0xffF3F4F6), border: Border.all(width: 1, color: Color(0xFFE5E7EB))),
+                                                                                              decoration: BoxDecoration(color: widget.backgroundcolor == whiteColor ? Color(0xffF3F4F6) : Color(0xFFDFDBFF), border: Border.all(width: 1, color: widget.backgroundcolor == whiteColor ? Color(0xFFE5E7EB) : titleColor)),
                                                                                               height: 30.sp,
                                                                                               width: 85.sp,
                                                                                               child: Row(

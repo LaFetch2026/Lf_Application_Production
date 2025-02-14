@@ -1253,7 +1253,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 count: productController
                                                     .imageList.length,
                                                 size: 6.0.sp,
-                                                activeColor: Colors.black,
+                                                activeColor:
+                                                    widget.backgroundcolor ==
+                                                            whiteColor
+                                                        ? Colors.black
+                                                        : productSubtitleColor,
                                                 color: Color(0xffE5E7EB),
                                                 layout:
                                                     PageIndicatorLayout.WARM,
