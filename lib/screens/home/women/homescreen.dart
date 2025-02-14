@@ -114,7 +114,7 @@ class HomeScreenState extends State<HomeScreen> {
     /*  WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getTagsData(homeController.homeGenderValue.value)); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      homeController.getBannar1Data();
+      homeController.getBannar1Data(homeController.homeGenderValue.value);
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBrandData("home");
@@ -427,8 +427,8 @@ class HomeScreenState extends State<HomeScreen> {
                       productController.productCategory = [];
                       productController.productTags = [];
                       // productController.getTagsData(2);
+                      homeController.getBannar1Data(2);
                       catalogController.getCatalogData(2);
-                      homeController.getBannar1Data();
                       productController.getHomeProduct(2);
                     },
                     child: SizedBox(
@@ -475,6 +475,7 @@ class HomeScreenState extends State<HomeScreen> {
                       productController.productCategory = [];
                       productController.productTags = [];
                       //  productController.getTagsData(3);
+                      homeController.getBannar1Data(3);
                       catalogController.getCatalogData(3);
                       productController.getHomeProduct(3);
                     },
@@ -522,6 +523,7 @@ class HomeScreenState extends State<HomeScreen> {
                       productController.productCategory = [];
                       productController.productTags = [];
                       // productController.getTagsData(1);
+                      homeController.getBannar1Data(1);
                       catalogController.getCatalogData(1);
                       productController.getHomeProduct(1);
                     },
@@ -1311,6 +1313,7 @@ class HomeScreenState extends State<HomeScreen> {
                                                                             .catalogList[
                                                                         index]
                                                                     ["name"],
+                                                            screen: "category",
                                                             genderName:
                                                                 homeController
                                                                     .genderText

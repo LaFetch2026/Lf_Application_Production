@@ -515,7 +515,7 @@ class CartScreenState extends State<CartScreen> {
                                                                             child: value.orderList[index]["product"] != null
                                                                                 ? value.orderList[index]["product"]["images"].isNotEmpty && value.orderList[index]["product"]["images"] != null
                                                                                     ? Opacity(
-                                                                                        opacity: value.orderList[index]["product"]["total_stock_count"] == 0 ? 0.5 : 1,
+                                                                                        opacity: value.orderList[index]["inventory"]["stocks"] == 0 ? 0.5 : 1,
                                                                                         child: SizedBox(
                                                                                           height: 130.sp,
                                                                                           width: 100.sp,
@@ -573,7 +573,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                       fontWeight: FontWeight.w500,
                                                                                       fontSize: 16,
                                                                                       color: widget.backgroundcolor == whiteColor
-                                                                                          ? value.orderList[index]["product"]["total_stock_count"] == 0
+                                                                                          ? value.orderList[index]["inventory"]["stocks"] == 0
                                                                                               ? blackColor.withOpacity(0.3)
                                                                                               : blackColor
                                                                                           : whiteColor,
@@ -607,7 +607,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                       child: AppText(
                                                                                         text: Bidi.stripHtmlIfNeeded(value.orderList[index]["product"]["name"] ?? ""),
                                                                                         color: widget.backgroundcolor == whiteColor
-                                                                                            ? value.orderList[index]["product"]["total_stock_count"] == 0
+                                                                                            ? value.orderList[index]["inventory"]["stocks"] == 0
                                                                                                 ? subtitleColor.withOpacity(0.5)
                                                                                                 : subtitleColor
                                                                                             : productSubtitleColor,
@@ -756,7 +756,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                   height: 0,
                                                                                                 ), */
                                                                                 Opacity(
-                                                                                  opacity: value.orderList[index]["product"]["total_stock_count"] == 0 ? 0.5 : 1,
+                                                                                  opacity: value.orderList[index]["inventory"]["stocks"] == 0 ? 0.5 : 1,
                                                                                   child: Padding(
                                                                                     padding: EdgeInsets.symmetric(vertical: 4.sp),
                                                                                     child: Row(
@@ -765,7 +765,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                             ? value.orderList[index]["inventory"]["product_matrix_name_size"] != ""
                                                                                                 ? GestureDetector(
                                                                                                     onTap: () async {
-                                                                                                      if (value.orderList[index]["product"]["total_stock_count"] != 0) {
+                                                                                                      if (value.orderList[index]["inventory"]["stocks"] != 0) {
                                                                                                         showModalBottomSheet(
                                                                                                           context: context,
                                                                                                           isScrollControlled: true,
@@ -829,7 +829,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                               ),
                                                                                         GestureDetector(
                                                                                           onTap: () async {
-                                                                                            if (value.orderList[index]["product"]["total_stock_count"] != 0) {
+                                                                                            if (value.orderList[index]["inventory"]["stocks"] != 0) {
                                                                                               if (value.orderList[index]["product"]["express_delivery"]) {
                                                                                                 value.qtyProductId.value = value.orderList[index]["product"]["id"];
                                                                                                 value.qtyText.value = "For express delivery product, quantity cant be updated.";
@@ -917,7 +917,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                         height: 0,
                                                                                       ),
                                                                                 Opacity(
-                                                                                  opacity: value.orderList[index]["product"]["total_stock_count"] == 0 ? 0.5 : 1,
+                                                                                  opacity: value.orderList[index]["inventory"]["stocks"] == 0 ? 0.5 : 1,
                                                                                   child: Padding(
                                                                                     padding: EdgeInsets.symmetric(vertical: 4.sp),
                                                                                     child: Row(
@@ -1033,7 +1033,7 @@ class CartScreenState extends State<CartScreen> {
                                                                         ],
                                                                       ),
                                                                       Visibility(
-                                                                        visible: value.orderList[index]["product"]["total_stock_count"] ==
+                                                                        visible: value.orderList[index]["inventory"]["stocks"] ==
                                                                                 0
                                                                             ? true
                                                                             : false,
@@ -1060,7 +1060,7 @@ class CartScreenState extends State<CartScreen> {
                                                                         ),
                                                                       ),
                                                                       Visibility(
-                                                                        visible: value.orderList[index]["product"]["total_stock_count"] ==
+                                                                        visible: value.orderList[index]["inventory"]["stocks"] ==
                                                                                 0
                                                                             ? true
                                                                             : false,
@@ -2755,32 +2755,16 @@ class CartScreenState extends State<CartScreen> {
                             ),
                             GestureDetector(
                               onTap: () async {
-                                /*  controller.mrp.value =
-                                    controller.cartDetails["total_mrp"] ?? "";
-                                controller.expressDelivery.value = controller
-                                        .cartDetails["express_delivery_charges"] ??
-                                    "";
-                                controller.discount.value = controller
-                                    .cartDetails["discount_on_mrp"]
-                                    .toString();
-                                controller.coupanDiscount.value =
-                                    controller.cartDetails["coupon_discount"] ?? "";
-                                controller.convenienceFee.value = controller
-                                    .cartDetails["convenience_fee"]
-                                    .toString();
-                                controller.tax.value =
-                                    controller.cartDetails["total_tax"].toString();
-                                controller.total.value =
-                                    controller.cartDetails["total"].toString(); */
                                 if (controller.cartDetails["address"] == null) {
                                   getSnackBar("Add Delivery Address");
                                 } else {
-                                  /*  controller.callInitiatePayment(
-                                      0,
-                                      context,
-                                      controller.cartDetails["shipping_cost"],
-                                      controller.cartDetails["lafetch_service_tax"]
-                                          .toString()); */
+                                  /*  controller.orderList.forEach((i) {
+                                    if (i["inventory"]['stocks'] != 0) {
+                                      print(true);
+                                    } else {
+                                      print(false);
+                                    }
+                                  }); */
                                   controller.callInitiatePayment(
                                       controller.cartDetails["address"]["id"],
                                       razorpay);

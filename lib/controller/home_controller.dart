@@ -261,12 +261,13 @@ class HomeController extends BaseController {
     isCategory.value = false;
   }
 
-  getBannar1Data() async {
+  getBannar1Data(int gender) async {
     isBanner1.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/banners?type=1"),
+          Uri.parse(
+              "${ApiConstants.baseUrl}/banners?type=1&gender_type=$gender"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",

@@ -182,6 +182,7 @@ class HorizontalCategoryList extends StatelessWidget {
                                             .toUpperCase(),
                                         color: homeAppBarColor,
                                         maxLines: 1,
+                                        textAlign: TextAlign.center,
                                         fontSize: 13,
                                         fontFamily: "Franklin Gothic",
                                         fontWeight: FontWeight.w400,
@@ -214,13 +215,15 @@ class HorizontalCategoryList extends StatelessWidget {
                               Padding(
                                 padding: EdgeInsets.only(
                                     top: 4.sp, left: 1.sp, right: 1.sp),
-                                child: AppText(
-                                  text: "${list[index]["name"]}",
-                                  color: appBarColor,
-                                  maxLines: 1,
-                                  fontSize: 11,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
+                                child: Center(
+                                  child: AppText(
+                                    text: "${list[index]["name"]}",
+                                    color: appBarColor,
+                                    maxLines: 1,
+                                    fontSize: 11,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                  ),
                                 ),
                               ),
                               Padding(

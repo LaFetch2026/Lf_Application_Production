@@ -1326,7 +1326,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                                       Navigator.of(
                                                                               context)
                                                                           .push(
-                                                                              MaterialPageRoute(builder: (BuildContext context) => CategoryProductScreen(categoryName: controller.suggestedList[index]["name"], categoryId: 0, brandId: 0, genderName: "", genderType: 0, categoryList: categoryList, tagIds: const [])))
+                                                                              MaterialPageRoute(builder: (BuildContext context) => CategoryProductScreen(categoryName: controller.suggestedList[index]["name"], screen: "category", categoryId: 0, brandId: 0, genderName: "", genderType: 0, categoryList: categoryList, tagIds: const [])))
                                                                           .then((value) => setState(
                                                                                 () {
                                                                                   controller.getCatalogData();
@@ -1482,6 +1482,8 @@ class SearchScreenState extends State<SearchScreen> {
                                                                                 "name"],
                                                                             categoryId: productController.mostSeachList[index][
                                                                                 "id"],
+                                                                            screen:
+                                                                                "category",
                                                                             brandId:
                                                                                 0,
                                                                             genderName:
@@ -1490,21 +1492,18 @@ class SearchScreenState extends State<SearchScreen> {
                                                                                 0,
                                                                             categoryList: [],
                                                                             tagIds: const [])))
-                                                                    .then((value) =>
-                                                                        setState(
-                                                                          () {
-                                                                            productController.mostViewHasnextpage.value =
-                                                                                true;
-                                                                            productController.mostViewLoadMore.value =
-                                                                                false;
-                                                                            productController.isMostSearch.value =
-                                                                                false;
-                                                                            productController.mostViewPage.value =
-                                                                                1;
-                                                                            productController;
-                                                                            productController.getMostViewProductData();
-                                                                          },
-                                                                        ));
+                                                                    .then(
+                                                                        (value) =>
+                                                                            setState(
+                                                                              () {
+                                                                                productController.mostViewHasnextpage.value = true;
+                                                                                productController.mostViewLoadMore.value = false;
+                                                                                productController.isMostSearch.value = false;
+                                                                                productController.mostViewPage.value = 1;
+                                                                                productController;
+                                                                                productController.getMostViewProductData();
+                                                                              },
+                                                                            ));
                                                                 await analytics
                                                                     .logEvent(
                                                                   name:

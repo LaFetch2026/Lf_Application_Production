@@ -34,6 +34,7 @@ class CategoryProductScreen extends StatefulWidget {
   final List tagIds;
   final List categoryList;
   final String genderName;
+  final String screen;
   const CategoryProductScreen(
       {super.key,
       required this.categoryName,
@@ -42,6 +43,7 @@ class CategoryProductScreen extends StatefulWidget {
       required this.genderType,
       required this.tagIds,
       required this.genderName,
+      this.screen = "",
       required this.categoryList});
 
   @override
@@ -149,107 +151,128 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ProductAppbar(onPressedSearch: () async {
-              Get.to(const SearchScreen());
-              analytics
-                  .logEvent(name: "search_page", parameters: <String, Object>{
-                "page_name": "search_page",
-              });
-            }, onPressedHeart: () async {
-              Get.to(WishlistScreen())?.then((value) => setState(
-                    () {
-                      controller.getCartData();
-                    },
-                  ));
-              analytics
-                  .logEvent(name: "wishlist_page", parameters: <String, Object>{
-                "page_name": "wishlist_page",
-              });
-            }, onPressedCart: () async {
-              Get.to(const CartScreen())?.then((value) => setState(
-                    () {
-                      controller.getCartData();
-                    },
-                  ));
-              analytics
-                  .logEvent(name: "cart_page", parameters: <String, Object>{
-                "page_name": "cart_page",
-              });
-            }),
-            Obx(() => productController.isCategoryProduct.value
-                ? const DummyContainer(
-                    height: 10,
-                    width: 60,
-                  )
-                : Visibility(
-                    visible: productController.productCategoryList.isNotEmpty
-                        ? true
-                        : false,
-                    child: Padding(
+            ProductAppbar(
+                onPressedSearch: () async {
+                  Get.to(const SearchScreen());
+                  analytics.logEvent(
+                      name: "search_page",
+                      parameters: <String, Object>{
+                        "page_name": "search_page",
+                      });
+                },
+                onPressedHeart: () async {
+                  Get.to(WishlistScreen())?.then((value) => setState(
+                        () {
+                          controller.getCartData();
+                        },
+                      ));
+                  analytics.logEvent(
+                      name: "wishlist_page",
+                      parameters: <String, Object>{
+                        "page_name": "wishlist_page",
+                      });
+                },
+                isHandPicked: widget.screen != "" ? true : false,
+                text: widget.categoryName.toUpperCase(),
+                onPressedCart: () async {
+                  Get.to(const CartScreen())?.then((value) => setState(
+                        () {
+                          controller.getCartData();
+                        },
+                      ));
+                  analytics
+                      .logEvent(name: "cart_page", parameters: <String, Object>{
+                    "page_name": "cart_page",
+                  });
+                }),
+            Visibility(
+              visible: widget.screen == "" ? true : false,
+              child: Obx(() => productController.isCategoryProduct.value
+                  ? Padding(
                       padding: EdgeInsets.only(left: 16.sp),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 16.sp),
+                      child: const DummyContainer(
+                        height: 10,
+                        width: 60,
+                      ),
+                    )
+                  : Visibility(
+                      visible: productController.productCategoryList.isNotEmpty
+                          ? true
+                          : false,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 16.sp),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 16.sp),
+                              child: AppText(
+                                text: "Showing result for  ",
+                                color: Color(0xFF4B5563),
+                                fontSize: 16,
+                                fontFamily: "Franklin Gothic Regular",
+                                textAlign: TextAlign.center,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.sizeOf(context).width / 2.sp,
+                              alignment: Alignment.topLeft,
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 16.sp),
+                                child: AppText(
+                                  text:
+                                      "'${widget.categoryName.toUpperCase()}'",
+                                  color: Color(0xFF4B5563),
+                                  fontSize: 16,
+                                  maxLines: 1,
+                                  fontFamily: "Franklin Gothic Semibold",
+                                  textAlign: TextAlign.start,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )),
+            ),
+            Visibility(
+              visible: widget.screen == "" ? true : false,
+              child: Obx(() => Padding(
+                    padding: EdgeInsets.only(left: 20.sp, top: 5.sp),
+                    child: productController.isCategoryProduct.value
+                        ? const DummyContainer(
+                            height: 10,
+                            width: 60,
+                          )
+                        : Visibility(
+                            visible:
+                                productController.productCategoryList.isNotEmpty
+                                    ? true
+                                    : false,
                             child: AppText(
-                              text: "Showing result for  ",
+                              text: productController.total.value == 1 ||
+                                      productController.total.value == 0
+                                  ? "${productController.total.value} item"
+                                  : "${productController.total.value} items",
                               color: Color(0xFF4B5563),
-                              fontSize: 16,
+                              fontSize: 10,
                               fontFamily: "Franklin Gothic Regular",
                               textAlign: TextAlign.center,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          Container(
-                            width: MediaQuery.sizeOf(context).width / 2.sp,
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 16.sp),
-                              child: AppText(
-                                text: "'${widget.categoryName.toUpperCase()}'",
-                                color: Color(0xFF4B5563),
-                                fontSize: 16,
-                                maxLines: 1,
-                                fontFamily: "Franklin Gothic Semibold",
-                                textAlign: TextAlign.center,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   )),
-            Obx(() => Padding(
-                  padding: EdgeInsets.only(left: 20.sp, top: 5.sp),
-                  child: productController.isCategoryProduct.value
-                      ? const DummyContainer(
-                          height: 10,
-                          width: 60,
-                        )
-                      : Visibility(
-                          visible:
-                              productController.productCategoryList.isNotEmpty
-                                  ? true
-                                  : false,
-                          child: AppText(
-                            text: productController.total.value == 1 ||
-                                    productController.total.value == 0
-                                ? "${productController.total.value} item"
-                                : "${productController.total.value} items",
-                            color: Color(0xFF4B5563),
-                            fontSize: 10,
-                            fontFamily: "Franklin Gothic Regular",
-                            textAlign: TextAlign.center,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                )),
+            ),
             Obx(
               () => productController.isCategoryProduct.value
                   ? Expanded(
-                      child: const DummyGridList(
-                        size: 2,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 10.sp),
+                        child: const DummyGridList(
+                          size: 2,
+                        ),
                       ),
                     )
                   : productController.productCategoryList.isNotEmpty
@@ -835,407 +858,447 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           ),
                         ),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 5.sp),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+            Container(
+              color: statusBarColor,
+              child: Column(
                 children: [
-                  InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        constraints: BoxConstraints(
-                          maxWidth: double.infinity,
-                          maxHeight: 360.sp,
-                        ),
-                        builder: (ctx) {
-                          return BottomSortBy(
-                            onPressedButton: (p0) {
-                              productController.sortBy.value = p0;
-                              if (widget.categoryId != 0) {
-                                productController.getProductByCategoryData(
-                                    widget.categoryId,
-                                    widget.brandId,
-                                    "",
-                                    [],
-                                    productController.sortBy.value,
-                                    productController
-                                        .categoryProductGender.value,
-                                    productController.filterEnable.value,
-                                    0,
-                                    false,
-                                    "");
-                              } else {
-                                productController.getTagsBannerData(
-                                    widget.tagIds,
-                                    widget.categoryList,
-                                    productController
-                                        .categoryProductGender.value,
-                                    productController.sortBy.value,
-                                    productController.filterEnable.value,
-                                    false);
-                              }
-                            },
-                          );
-                        },
-                      );
-                    },
-                    child: Container(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.sp, horizontal: 5.sp),
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              sortbyIcon,
-                              height: 20.sp,
-                              width: 20.sp,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                              child: Text(
-                                "SORT BY",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFF374151),
-                                  decoration: TextDecoration.none,
-                                  fontSize: 13.sp,
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                  Container(
+                    height: 1.sp,
+                    color: dividerColor,
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 0.sp),
-                    child: Container(
-                      width: 1.sp,
-                      color: borderColor,
-                      height: 40.sp,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        constraints: BoxConstraints(
-                          maxWidth: double.infinity,
-                          maxHeight: 270.sp,
-                        ),
-                        builder: (ctx) {
-                          return BottomCategory(
-                            gender: widget.genderName,
-                            onPressedButton: (p0) {
-                              if (p0 == "Women") {
-                                productController.categoryProductGender.value =
-                                    3;
-                              } else if (p0 == "Men") {
-                                productController.categoryProductGender.value =
-                                    2;
-                              } else {
-                                productController.categoryProductGender.value =
-                                    1;
-                              }
-                              if (widget.categoryId != 0) {
-                                productController.getProductByCategoryData(
-                                    widget.categoryId,
-                                    widget.brandId,
-                                    "",
-                                    [],
-                                    productController.sortBy.value,
-                                    productController
-                                        .categoryProductGender.value,
-                                    productController.filterEnable.value,
-                                    0,
-                                    false,
-                                    "");
-                              } else {
-                                productController.getTagsBannerData(
-                                    widget.tagIds,
-                                    widget.categoryList,
-                                    productController
-                                        .categoryProductGender.value,
-                                    productController.sortBy.value,
-                                    productController.filterEnable.value,
-                                    false);
-                              }
-                              productController.selectedCategoryGender.value =
-                                  p0;
-                              //setState(() {});
-                            },
-                            onPressedFilter: () {
-                              Get.back();
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                constraints: BoxConstraints(
-                                  maxWidth: double.infinity,
-                                  maxHeight: 500.sp,
-                                ),
-                                builder: (ctx) {
-                                  return BottomFilters(
-                                    btnclearAll: () async {
-                                      productController.brand_ids.clear();
-                                      productController.color_ids.clear();
-                                      productController.size_ids.clear();
-                                      productController.sortBy.value = "";
-                                      productController.filterEnable.value =
-                                          false;
-                                      final prefs =
-                                          await SharedPreferences.getInstance();
-                                      prefs.remove("brandList");
-                                      prefs.remove("colorList");
-                                      prefs.remove("sizeList");
-                                      prefs.remove("upper");
-                                      prefs.remove("lower");
-                                      prefs.remove("sortby");
-                                      prefs.remove("category");
-                                      if (widget.categoryId != 0) {
-                                        productController
-                                            .getProductByCategoryData(
-                                                widget.categoryId,
-                                                widget.brandId,
-                                                "",
-                                                [],
-                                                productController.sortBy.value,
-                                                productController
-                                                    .categoryProductGender
-                                                    .value,
-                                                productController
-                                                    .filterEnable.value,
-                                                0,
-                                                false,
-                                                "");
-                                      } else {
-                                        productController.getTagsBannerData(
-                                            widget.tagIds,
-                                            widget.categoryList,
-                                            productController
-                                                .categoryProductGender.value,
-                                            productController.sortBy.value,
-                                            productController
-                                                .filterEnable.value,
-                                            false);
-                                      }
-                                    },
-                                    onClick: (p0, p1) {
-                                      productController.filterEnable.value =
-                                          true;
-                                      productController.lowPrice.value = p0;
-                                      productController.highPrice.value = p1;
-                                      if (widget.categoryId != 0) {
-                                        productController
-                                            .getProductByCategoryData(
-                                                widget.categoryId,
-                                                widget.brandId,
-                                                "",
-                                                [],
-                                                productController.sortBy.value,
-                                                productController
-                                                    .categoryProductGender
-                                                    .value,
-                                                productController
-                                                    .filterEnable.value,
-                                                0,
-                                                true,
-                                                "");
-                                      } else {
-                                        productController.getTagsBannerData(
-                                            widget.tagIds,
-                                            widget.categoryList,
-                                            productController
-                                                .categoryProductGender.value,
-                                            productController.sortBy.value,
-                                            productController
-                                                .filterEnable.value,
-                                            true);
-                                      }
-                                    },
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        },
-                      );
-                    },
-                    child: Container(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.sp, horizontal: 5.sp),
-                        child: Column(
-                          children: [
-                            /*  Image.asset(
-                              categoryIcon,
-                              height: 20.sp,
-                              width: 20.sp,
-                            ), */
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                              child: Text(
-                                "CATEGORY",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFF374151),
-                                  decoration: TextDecoration.none,
-                                  fontSize: 13.sp,
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w500,
-                                ),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.sp, vertical: 5.sp),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              constraints: BoxConstraints(
+                                maxWidth: double.infinity,
+                                maxHeight: 360.sp,
                               ),
-                            ),
-                            Obx(() => Visibility(
-                                  visible: productController
-                                              .selectedCategoryGender.value ==
-                                          ""
-                                      ? false
-                                      : true,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 5.sp, right: 5.sp, top: 1.sp),
-                                    child: Text(
+                              builder: (ctx) {
+                                return BottomSortBy(
+                                  onPressedButton: (p0) {
+                                    productController.sortBy.value = p0;
+                                    if (widget.categoryId != 0) {
                                       productController
-                                          .selectedCategoryGender.value
-                                          .toUpperCase(),
+                                          .getProductByCategoryData(
+                                              widget.categoryId,
+                                              widget.brandId,
+                                              "",
+                                              [],
+                                              productController.sortBy.value,
+                                              productController
+                                                  .categoryProductGender.value,
+                                              productController
+                                                  .filterEnable.value,
+                                              0,
+                                              false,
+                                              "");
+                                    } else {
+                                      productController.getTagsBannerData(
+                                          widget.tagIds,
+                                          widget.categoryList,
+                                          productController
+                                              .categoryProductGender.value,
+                                          productController.sortBy.value,
+                                          productController.filterEnable.value,
+                                          false);
+                                    }
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          child: Container(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10.sp, horizontal: 5.sp),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    sortbyIcon,
+                                    height: 20.sp,
+                                    width: 20.sp,
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 5.sp),
+                                    child: Text(
+                                      "SORT BY",
+                                      textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        decoration: TextDecoration.underline,
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        color: appBarColor,
-                                        fontSize: 10.sp,
+                                        color: Color(0xFF374151),
+                                        decoration: TextDecoration.none,
+                                        fontSize: 13.sp,
+                                        fontFamily: "Franklin Gothic",
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ),
-                                )),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 0.sp),
-                    child: Container(
-                      width: 1.sp,
-                      color: borderColor,
-                      height: 40.sp,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        constraints: BoxConstraints(
-                          maxWidth: double.infinity,
-                          maxHeight: 500.sp,
-                        ),
-                        builder: (ctx) {
-                          return BottomFilters(
-                            btnclearAll: () async {
-                              productController.brand_ids.clear();
-                              productController.color_ids.clear();
-                              productController.size_ids.clear();
-                              productController.sortBy.value = "";
-                              productController.filterEnable.value = false;
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              prefs.remove("brandList");
-                              prefs.remove("colorList");
-                              prefs.remove("sizeList");
-                              prefs.remove("upper");
-                              prefs.remove("lower");
-                              prefs.remove("sortby");
-                              prefs.remove("category");
-                              if (widget.categoryId != 0) {
-                                productController.getProductByCategoryData(
-                                    widget.categoryId,
-                                    widget.brandId,
-                                    "",
-                                    [],
-                                    productController.sortBy.value,
-                                    productController
-                                        .categoryProductGender.value,
-                                    productController.filterEnable.value,
-                                    0,
-                                    false,
-                                    "");
-                              } else {
-                                productController.getTagsBannerData(
-                                    widget.tagIds,
-                                    widget.categoryList,
-                                    productController
-                                        .categoryProductGender.value,
-                                    productController.sortBy.value,
-                                    productController.filterEnable.value,
-                                    false);
-                              }
-                            },
-                            onClick: (p0, p1) {
-                              productController.filterEnable.value = true;
-                              productController.lowPrice.value = p0;
-                              productController.highPrice.value = p1;
-                              if (widget.categoryId != 0) {
-                                productController.getProductByCategoryData(
-                                    widget.categoryId,
-                                    widget.brandId,
-                                    "",
-                                    [],
-                                    productController.sortBy.value,
-                                    productController
-                                        .categoryProductGender.value,
-                                    productController.filterEnable.value,
-                                    0,
-                                    true,
-                                    "");
-                              } else {
-                                productController.getTagsBannerData(
-                                    widget.tagIds,
-                                    widget.categoryList,
-                                    productController
-                                        .categoryProductGender.value,
-                                    productController.sortBy.value,
-                                    productController.filterEnable.value,
-                                    true);
-                              }
-                            },
-                          );
-                        },
-                      );
-                    },
-                    child: Container(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.sp, horizontal: 5.sp),
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              filterIcon,
-                              height: 20.sp,
-                              width: 20.sp,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                              child: Text(
-                                "FILTERS",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFF374151),
-                                  decoration: TextDecoration.none,
-                                  fontSize: 13.sp,
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 0.sp),
+                          child: Container(
+                            width: 1.sp,
+                            color: dividerColor,
+                            height: 40.sp,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              constraints: BoxConstraints(
+                                maxWidth: double.infinity,
+                                maxHeight: 270.sp,
+                              ),
+                              builder: (ctx) {
+                                return BottomCategory(
+                                  gender: widget.genderName,
+                                  onPressedButton: (p0) {
+                                    if (p0 == "Women") {
+                                      productController
+                                          .categoryProductGender.value = 3;
+                                    } else if (p0 == "Men") {
+                                      productController
+                                          .categoryProductGender.value = 2;
+                                    } else {
+                                      productController
+                                          .categoryProductGender.value = 1;
+                                    }
+                                    if (widget.categoryId != 0) {
+                                      productController
+                                          .getProductByCategoryData(
+                                              widget.categoryId,
+                                              widget.brandId,
+                                              "",
+                                              [],
+                                              productController.sortBy.value,
+                                              productController
+                                                  .categoryProductGender.value,
+                                              productController
+                                                  .filterEnable.value,
+                                              0,
+                                              false,
+                                              "");
+                                    } else {
+                                      productController.getTagsBannerData(
+                                          widget.tagIds,
+                                          widget.categoryList,
+                                          productController
+                                              .categoryProductGender.value,
+                                          productController.sortBy.value,
+                                          productController.filterEnable.value,
+                                          false);
+                                    }
+                                    productController
+                                        .selectedCategoryGender.value = p0;
+                                    //setState(() {});
+                                  },
+                                  onPressedFilter: () {
+                                    Get.back();
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      constraints: BoxConstraints(
+                                        maxWidth: double.infinity,
+                                        maxHeight: 500.sp,
+                                      ),
+                                      builder: (ctx) {
+                                        return BottomFilters(
+                                          btnclearAll: () async {
+                                            productController.brand_ids.clear();
+                                            productController.color_ids.clear();
+                                            productController.size_ids.clear();
+                                            productController.sortBy.value = "";
+                                            productController
+                                                .filterEnable.value = false;
+                                            final prefs =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            prefs.remove("brandList");
+                                            prefs.remove("colorList");
+                                            prefs.remove("sizeList");
+                                            prefs.remove("upper");
+                                            prefs.remove("lower");
+                                            prefs.remove("sortby");
+                                            prefs.remove("category");
+                                            if (widget.categoryId != 0) {
+                                              productController
+                                                  .getProductByCategoryData(
+                                                      widget.categoryId,
+                                                      widget.brandId,
+                                                      "",
+                                                      [],
+                                                      productController
+                                                          .sortBy.value,
+                                                      productController
+                                                          .categoryProductGender
+                                                          .value,
+                                                      productController
+                                                          .filterEnable.value,
+                                                      0,
+                                                      false,
+                                                      "");
+                                            } else {
+                                              productController
+                                                  .getTagsBannerData(
+                                                      widget.tagIds,
+                                                      widget.categoryList,
+                                                      productController
+                                                          .categoryProductGender
+                                                          .value,
+                                                      productController
+                                                          .sortBy.value,
+                                                      productController
+                                                          .filterEnable.value,
+                                                      false);
+                                            }
+                                          },
+                                          onClick: (p0, p1) {
+                                            productController
+                                                .filterEnable.value = true;
+                                            productController.lowPrice.value =
+                                                p0;
+                                            productController.highPrice.value =
+                                                p1;
+                                            if (widget.categoryId != 0) {
+                                              productController
+                                                  .getProductByCategoryData(
+                                                      widget.categoryId,
+                                                      widget.brandId,
+                                                      "",
+                                                      [],
+                                                      productController
+                                                          .sortBy.value,
+                                                      productController
+                                                          .categoryProductGender
+                                                          .value,
+                                                      productController
+                                                          .filterEnable.value,
+                                                      0,
+                                                      true,
+                                                      "");
+                                            } else {
+                                              productController
+                                                  .getTagsBannerData(
+                                                      widget.tagIds,
+                                                      widget.categoryList,
+                                                      productController
+                                                          .categoryProductGender
+                                                          .value,
+                                                      productController
+                                                          .sortBy.value,
+                                                      productController
+                                                          .filterEnable.value,
+                                                      true);
+                                            }
+                                          },
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          child: Container(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10.sp, horizontal: 5.sp),
+                              child: Column(
+                                children: [
+                                  /*  Image.asset(
+                                    categoryIcon,
+                                    height: 20.sp,
+                                    width: 20.sp,
+                                  ), */
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 5.sp),
+                                    child: Text(
+                                      "CATEGORY",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Color(0xFF374151),
+                                        decoration: TextDecoration.none,
+                                        fontSize: 13.sp,
+                                        fontFamily: "Franklin Gothic",
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  Obx(() => Visibility(
+                                        visible: productController
+                                                    .selectedCategoryGender
+                                                    .value ==
+                                                ""
+                                            ? false
+                                            : true,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 5.sp,
+                                              right: 5.sp,
+                                              top: 1.sp),
+                                          child: Text(
+                                            productController
+                                                .selectedCategoryGender.value
+                                                .toUpperCase(),
+                                            style: TextStyle(
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w400,
+                                              color: appBarColor,
+                                              fontSize: 10.sp,
+                                            ),
+                                          ),
+                                        ),
+                                      )),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 0.sp),
+                          child: Container(
+                            width: 1.sp,
+                            color: dividerColor,
+                            height: 40.sp,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              constraints: BoxConstraints(
+                                maxWidth: double.infinity,
+                                maxHeight: 500.sp,
+                              ),
+                              builder: (ctx) {
+                                return BottomFilters(
+                                  btnclearAll: () async {
+                                    productController.brand_ids.clear();
+                                    productController.color_ids.clear();
+                                    productController.size_ids.clear();
+                                    productController.sortBy.value = "";
+                                    productController.filterEnable.value =
+                                        false;
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+                                    prefs.remove("brandList");
+                                    prefs.remove("colorList");
+                                    prefs.remove("sizeList");
+                                    prefs.remove("upper");
+                                    prefs.remove("lower");
+                                    prefs.remove("sortby");
+                                    prefs.remove("category");
+                                    if (widget.categoryId != 0) {
+                                      productController
+                                          .getProductByCategoryData(
+                                              widget.categoryId,
+                                              widget.brandId,
+                                              "",
+                                              [],
+                                              productController.sortBy.value,
+                                              productController
+                                                  .categoryProductGender.value,
+                                              productController
+                                                  .filterEnable.value,
+                                              0,
+                                              false,
+                                              "");
+                                    } else {
+                                      productController.getTagsBannerData(
+                                          widget.tagIds,
+                                          widget.categoryList,
+                                          productController
+                                              .categoryProductGender.value,
+                                          productController.sortBy.value,
+                                          productController.filterEnable.value,
+                                          false);
+                                    }
+                                  },
+                                  onClick: (p0, p1) {
+                                    productController.filterEnable.value = true;
+                                    productController.lowPrice.value = p0;
+                                    productController.highPrice.value = p1;
+                                    if (widget.categoryId != 0) {
+                                      productController
+                                          .getProductByCategoryData(
+                                              widget.categoryId,
+                                              widget.brandId,
+                                              "",
+                                              [],
+                                              productController.sortBy.value,
+                                              productController
+                                                  .categoryProductGender.value,
+                                              productController
+                                                  .filterEnable.value,
+                                              0,
+                                              true,
+                                              "");
+                                    } else {
+                                      productController.getTagsBannerData(
+                                          widget.tagIds,
+                                          widget.categoryList,
+                                          productController
+                                              .categoryProductGender.value,
+                                          productController.sortBy.value,
+                                          productController.filterEnable.value,
+                                          true);
+                                    }
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          child: Container(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10.sp, horizontal: 5.sp),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    filterIcon,
+                                    height: 20.sp,
+                                    width: 20.sp,
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 5.sp),
+                                    child: Text(
+                                      "FILTERS",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Color(0xFF374151),
+                                        decoration: TextDecoration.none,
+                                        fontSize: 13.sp,
+                                        fontFamily: "Franklin Gothic",
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

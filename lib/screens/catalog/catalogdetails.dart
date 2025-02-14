@@ -77,7 +77,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
           ), */
           ProductAppbar(
               backColor: whiteColor,
-              text: widget.title,
+              text: widget.title.toUpperCase(),
               onPressedSearch: () async {
                 Get.to(const SearchScreen())?.then((value) => setState(
                       () {},
@@ -472,6 +472,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                                           .categoryProductList[
                                                       index]["id"],
                                                   brandId: 0,
+                                                  screen: "category",
                                                   genderType: widget.genderType,
                                                   categoryList: [],
                                                   tagIds: const [])));

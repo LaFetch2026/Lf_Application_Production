@@ -170,15 +170,15 @@ class CatalogScreenState extends State<CatalogScreen> {
                     physics: NeverScrollableScrollPhysics(),
                     children: [
                       WomenCatalogScreen(
-                        categorytext: "men",
+                        categorytext: "Men",
                         type: 2,
                       ),
                       WomenCatalogScreen(
-                        categorytext: "women",
+                        categorytext: "Women",
                         type: 3,
                       ),
                       WomenCatalogScreen(
-                        categorytext: "accessories",
+                        categorytext: "Accessories",
                         type: 1,
                       ),
                     ]),
