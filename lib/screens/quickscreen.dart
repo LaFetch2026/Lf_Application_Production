@@ -244,7 +244,7 @@ class QuickScreenState extends State<QuickScreen> {
                         left: 16.sp, top: 24.sp, right: 16.sp, bottom: 24.sp),
                     child: Container(
                       decoration: BoxDecoration(
-                          color: loginText,
+                          color: Colors.transparent.withOpacity(0.3),
                           borderRadius: BorderRadius.circular(8.sp)),
                       // height: 50.sp,
                       child: RawKeyboardListener(
@@ -269,7 +269,7 @@ class QuickScreenState extends State<QuickScreen> {
                           decoration: InputDecoration(
                             filled: true,
                             isDense: true,
-                            fillColor: homeAppBarColor,
+                            fillColor: Colors.transparent.withOpacity(0.3),
                             prefixIcon: IconButton(
                               icon: SvgPicture.asset(searchSvgImage,
                                   color: searchTextColor,
@@ -278,8 +278,9 @@ class QuickScreenState extends State<QuickScreen> {
                                   fit: BoxFit.cover),
                               onPressed: () {},
                             ),
-                            focusedBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(color: searchTextColor)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: searchTextColor.withOpacity(0.5))),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.sp),
                             ),
@@ -1076,6 +1077,9 @@ class QuickScreenState extends State<QuickScreen> {
                                                           ),
                                                           InkWell(
                                                             onTap: () async {
+                                                              FocusScope.of(
+                                                                      context)
+                                                                  .unfocus();
                                                               final prefs =
                                                                   await SharedPreferences
                                                                       .getInstance();

@@ -312,7 +312,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                       left: 16.sp, top: 35.sp, right: 16.sp, bottom: 30.sp),
                   child: Container(
                     decoration: BoxDecoration(
-                        color: loginText,
+                        color: Colors.transparent.withOpacity(0.3),
                         borderRadius: BorderRadius.circular(8.sp)),
                     // height: 50.sp,
                     child: RawKeyboardListener(
@@ -340,7 +340,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                         decoration: InputDecoration(
                           filled: true,
                           isDense: true,
-                          fillColor: homeAppBarColor,
+                          fillColor: Colors.transparent.withOpacity(0.3),
                           prefixIcon: IconButton(
                             icon: SvgPicture.asset(searchSvgImage,
                                 color: searchTextColor,
@@ -349,8 +349,9 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                 fit: BoxFit.cover),
                             onPressed: () {},
                           ),
-                          focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(color: searchTextColor)),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: searchTextColor.withOpacity(0.5))),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.sp),
                           ),
