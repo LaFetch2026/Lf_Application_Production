@@ -867,8 +867,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                     color: dividerColor,
                   ),
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10.sp, vertical: 5.sp),
+                    padding: EdgeInsets.symmetric(horizontal: 10.sp),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -951,7 +950,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           child: Container(
                             width: 1.sp,
                             color: dividerColor,
-                            height: 40.sp,
+                            height: 46.sp,
                           ),
                         ),
                         InkWell(
@@ -1177,7 +1176,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           child: Container(
                             width: 1.sp,
                             color: dividerColor,
-                            height: 40.sp,
+                            height: 46.sp,
                           ),
                         ),
                         InkWell(

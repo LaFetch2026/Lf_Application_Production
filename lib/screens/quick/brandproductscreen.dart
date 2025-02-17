@@ -663,8 +663,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                   color: titleColor,
                 ),
                 Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
+                  padding: EdgeInsets.symmetric(horizontal: 5.sp),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -737,7 +736,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                         child: Container(
                           width: 1.sp,
                           color: titleColor,
-                          height: 42.sp,
+                          height: 46.sp,
                         ),
                       ),
                       InkWell(
@@ -895,7 +894,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                         child: Container(
                           width: 1.sp,
                           color: titleColor,
-                          height: 42.sp,
+                          height: 46.sp,
                         ),
                       ),
                       InkWell(

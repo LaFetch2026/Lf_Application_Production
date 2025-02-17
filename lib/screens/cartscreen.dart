@@ -221,7 +221,7 @@ class CartScreenState extends State<CartScreen> {
                                               : "${controller.orderList.length} Products",
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w600,
-                                          color: whiteColor,
+                                          color: productSubtitleColor,
                                           fontSize: 10,
                                         ),
                                 )),
@@ -2753,6 +2753,24 @@ class CartScreenState extends State<CartScreen> {
                                   child: Row(
                                     children: [
                                       Obx(() => controller.isOrder.value
+                                          ? SizedBox(
+                                              width: 0,
+                                            )
+                                          : Text(
+                                              controller.cartDetails[
+                                                          "address"] ==
+                                                      null
+                                                  ? ""
+                                                  : "delivering in "
+                                                      .toUpperCase(),
+                                              style: TextStyle(
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w500,
+                                                color: searchTextColor,
+                                                fontSize: 14.sp,
+                                              ),
+                                            )),
+                                      Obx(() => controller.isOrder.value
                                           ? DummyContainer(
                                               height: 10,
                                               width: 100,
@@ -2762,7 +2780,7 @@ class CartScreenState extends State<CartScreen> {
                                                           "address"] ==
                                                       null
                                                   ? "Select Shipping Address"
-                                                  : "delivering in, ${controller.cartDetails["address"]["type"].toString()} ${controller.cartDetails["address"]["zip"].toString()}"
+                                                  : "${controller.cartDetails["address"]["type"].toString()} ${controller.cartDetails["address"]["zip"].toString()}"
                                                       .toUpperCase(),
                                               style: TextStyle(
                                                 fontFamily: "Franklin Gothic",
