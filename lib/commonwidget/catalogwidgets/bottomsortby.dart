@@ -53,7 +53,7 @@ class _BottomSortByState extends State<BottomSortBy> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 360.sp,
+      height: 370.sp,
       width: double.infinity,
       decoration: BoxDecoration(
         color: widget.backgroundColor,
@@ -112,6 +112,16 @@ class _BottomSortByState extends State<BottomSortBy> {
                           activeColor: widget.backgroundColor == whiteColor
                               ? appBarColor
                               : dividerColor,
+                          fillColor: MaterialStateProperty.resolveWith(
+                            (states) {
+                              if (states.contains(MaterialState.selected)) {
+                                return widget.backgroundColor == whiteColor
+                                    ? homeAppBarColor
+                                    : dividerColor;
+                              }
+                              return searchTextColor;
+                            },
+                          ),
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -148,6 +158,16 @@ class _BottomSortByState extends State<BottomSortBy> {
                           activeColor: widget.backgroundColor == whiteColor
                               ? appBarColor
                               : dividerColor,
+                          fillColor: MaterialStateProperty.resolveWith(
+                            (states) {
+                              if (states.contains(MaterialState.selected)) {
+                                return widget.backgroundColor == whiteColor
+                                    ? homeAppBarColor
+                                    : dividerColor;
+                              }
+                              return searchTextColor;
+                            },
+                          ),
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -183,6 +203,16 @@ class _BottomSortByState extends State<BottomSortBy> {
                           activeColor: widget.backgroundColor == whiteColor
                               ? appBarColor
                               : dividerColor,
+                          fillColor: MaterialStateProperty.resolveWith(
+                            (states) {
+                              if (states.contains(MaterialState.selected)) {
+                                return widget.backgroundColor == whiteColor
+                                    ? homeAppBarColor
+                                    : dividerColor;
+                              }
+                              return searchTextColor;
+                            },
+                          ),
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -218,6 +248,16 @@ class _BottomSortByState extends State<BottomSortBy> {
                           activeColor: widget.backgroundColor == whiteColor
                               ? appBarColor
                               : dividerColor,
+                          fillColor: MaterialStateProperty.resolveWith(
+                            (states) {
+                              if (states.contains(MaterialState.selected)) {
+                                return widget.backgroundColor == whiteColor
+                                    ? homeAppBarColor
+                                    : dividerColor;
+                              }
+                              return searchTextColor;
+                            },
+                          ),
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -253,6 +293,16 @@ class _BottomSortByState extends State<BottomSortBy> {
                           activeColor: widget.backgroundColor == whiteColor
                               ? appBarColor
                               : dividerColor,
+                          fillColor: MaterialStateProperty.resolveWith(
+                            (states) {
+                              if (states.contains(MaterialState.selected)) {
+                                return widget.backgroundColor == whiteColor
+                                    ? homeAppBarColor
+                                    : dividerColor;
+                              }
+                              return searchTextColor;
+                            },
+                          ),
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
@@ -285,20 +335,23 @@ class _BottomSortByState extends State<BottomSortBy> {
               ),
             ),
           ),
-          DoubleButtonNew(
-            firstText: "CLOSE",
-            secondText: "APPLY",
-            lineColor: widget.backgroundColor == whiteColor
-                ? dividerColor
-                : homeAppBarColor,
-            controller: controller,
-            onPressedFirst: () {
-              Get.back();
-            },
-            onPressedSecond: () {
-              widget.onPressedButton.call(text1!);
-              closeSheet();
-            },
+          Padding(
+            padding: EdgeInsets.only(top: 10.sp),
+            child: DoubleButtonNew(
+              firstText: "CLOSE",
+              secondText: "APPLY",
+              lineColor: widget.backgroundColor == whiteColor
+                  ? dividerColor
+                  : homeAppBarColor,
+              controller: controller,
+              onPressedFirst: () {
+                Get.back();
+              },
+              onPressedSecond: () {
+                widget.onPressedButton.call(text1!);
+                closeSheet();
+              },
+            ),
           )
         ],
       ),

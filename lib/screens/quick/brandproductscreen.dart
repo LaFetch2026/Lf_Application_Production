@@ -53,6 +53,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   Timer? debounce;
   String categoryName = "";
+  bool isBottomSheet = false;
+  PersistentBottomSheetController? bottomController;
 
   @override
   void initState() {
@@ -119,7 +121,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
               children: [
                 widget.screen == "quick"
                     ? Padding(
-                        padding: EdgeInsets.only(left: 2.sp, top: 30.sp),
+                        padding: EdgeInsets.only(left: 2.sp, top: 56.sp),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -134,12 +136,15 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                 Get.back();
                               },
                             ),
-                            AppText(
-                              text: widget.title,
-                              color: whiteColor,
-                              fontSize: 16,
-                              fontFamily: "Franklin Gothic Semibold",
-                              fontWeight: FontWeight.w500,
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 2.sp,
+                              child: AppText(
+                                text: widget.title.toUpperCase(),
+                                color: whiteColor,
+                                fontSize: 16,
+                                fontFamily: "Franklin Gothic Semibold",
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ],
                         ),
@@ -361,7 +366,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                 const BorderSide(color: searchTextColor),
                           ),
                           counterText: "",
-                          hintText: "Search for 'Product'",
+                          hintText:
+                              "Search for products for ${widget.title.toUpperCase()}",
                           hintStyle: TextStyle(
                               fontSize: 14.sp, color: searchTextColor),
                         ),
@@ -481,36 +487,39 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                                             ? 0
                                                                             : 8.sp)),
                                                                     child:
-                                                                        SizedBox(
-                                                                      height: (MediaQuery.of(context).size.width /
-                                                                              2) +
-                                                                          10.sp,
-                                                                      width: (MediaQuery.of(context).size.width /
-                                                                              2) -
-                                                                          24.sp,
+                                                                        Opacity(
+                                                                      opacity: isBottomSheet
+                                                                          ? 0.5
+                                                                          : 1,
                                                                       child:
-                                                                          CachedNetworkImage(
-                                                                        cacheManager: CacheManager(Config(
-                                                                            "customCacheKey",
-                                                                            stalePeriod:
-                                                                                const Duration(days: 15),
-                                                                            maxNrOfCacheObjects: 100)),
-                                                                        fit: BoxFit
-                                                                            .cover,
-                                                                        imageUrl: isImage(productController.brandProductDetailsList[index]["images"][0]["name"])
-                                                                            ? productController.brandProductDetailsList[index]["images"][0]["name"]
-                                                                            : productController.brandProductDetailsList[index]["images"][1]["name"],
-                                                                        errorWidget: (context,
-                                                                                url,
-                                                                                error) =>
-                                                                            Image.asset(
-                                                                          downloadImage,
+                                                                          SizedBox(
+                                                                        height: (MediaQuery.of(context).size.width /
+                                                                                2) +
+                                                                            10.sp,
+                                                                        width: (MediaQuery.of(context).size.width /
+                                                                                2) -
+                                                                            24.sp,
+                                                                        child:
+                                                                            CachedNetworkImage(
+                                                                          cacheManager: CacheManager(Config(
+                                                                              "customCacheKey",
+                                                                              stalePeriod: const Duration(days: 15),
+                                                                              maxNrOfCacheObjects: 100)),
                                                                           fit: BoxFit
                                                                               .cover,
-                                                                          height:
-                                                                              (MediaQuery.of(context).size.width / 2) + 10.sp,
-                                                                          width:
-                                                                              (MediaQuery.of(context).size.width / 2) - 24.sp,
+                                                                          imageUrl: isImage(productController.brandProductDetailsList[index]["images"][0]["name"])
+                                                                              ? productController.brandProductDetailsList[index]["images"][0]["name"]
+                                                                              : productController.brandProductDetailsList[index]["images"][1]["name"],
+                                                                          errorWidget: (context, url, error) =>
+                                                                              Image.asset(
+                                                                            downloadImage,
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                            height:
+                                                                                (MediaQuery.of(context).size.width / 2) + 10.sp,
+                                                                            width:
+                                                                                (MediaQuery.of(context).size.width / 2) - 24.sp,
+                                                                          ),
                                                                         ),
                                                                       ),
                                                                     ),
@@ -584,7 +593,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                         AppText(
                                                           text:
                                                               "\u{20B9} ${productController.brandProductDetailsList[index]["price"] ?? ""}",
-                                                          color: whiteColor,
+                                                          color: isBottomSheet
+                                                              ? whiteColor
+                                                                  .withOpacity(
+                                                                      0.5)
+                                                              : whiteColor,
                                                           maxLines: 2,
                                                           fontSize: 11,
                                                           fontFamily:
@@ -644,6 +657,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                               ),
                             ),
                 ),
+                Container(
+                  height: 1.sp,
+                  width: MediaQuery.of(context).size.width,
+                  color: titleColor,
+                ),
                 Padding(
                   padding:
                       EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
@@ -652,12 +670,15 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                     children: [
                       InkWell(
                         onTap: () {
+                          setState(() {
+                            isBottomSheet = true;
+                          });
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
                             constraints: BoxConstraints(
                               maxWidth: double.infinity,
-                              maxHeight: 360.sp,
+                              maxHeight: 370.sp,
                             ),
                             builder: (ctx) {
                               return BottomSortBy(
@@ -673,7 +694,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                 },
                               );
                             },
-                          );
+                          ).whenComplete(() {
+                            setState(() {
+                              isBottomSheet = false;
+                            });
+                          });
                         },
                         child: Container(
                           child: Padding(
@@ -711,12 +736,15 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                         padding: EdgeInsets.symmetric(horizontal: 0.sp),
                         child: Container(
                           width: 1.sp,
-                          color: borderColor,
-                          height: 40.sp,
+                          color: titleColor,
+                          height: 42.sp,
                         ),
                       ),
                       InkWell(
                         onTap: () {
+                          setState(() {
+                            isBottomSheet = true;
+                          });
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
@@ -747,6 +775,9 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                 },
                                 onPressedFilter: () {
                                   Get.back();
+                                  setState(() {
+                                    isBottomSheet = true;
+                                  });
                                   showModalBottomSheet(
                                     context: context,
                                     isScrollControlled: true,
@@ -802,11 +833,19 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                         },
                                       );
                                     },
-                                  );
+                                  ).whenComplete(() {
+                                    setState(() {
+                                      isBottomSheet = false;
+                                    });
+                                  });
                                 },
                               );
                             },
-                          );
+                          ).whenComplete(() {
+                            setState(() {
+                              isBottomSheet = false;
+                            });
+                          });
                         },
                         child: Container(
                           child: Padding(
@@ -855,12 +894,15 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                         padding: EdgeInsets.symmetric(horizontal: 0.sp),
                         child: Container(
                           width: 1.sp,
-                          color: borderColor,
-                          height: 40.sp,
+                          color: titleColor,
+                          height: 42.sp,
                         ),
                       ),
                       InkWell(
                         onTap: () {
+                          setState(() {
+                            isBottomSheet = true;
+                          });
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
@@ -908,7 +950,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                 },
                               );
                             },
-                          );
+                          ).whenComplete(() {
+                            setState(() {
+                              isBottomSheet = false;
+                            });
+                          });
                         },
                         child: Container(
                           child: Padding(
@@ -944,7 +990,12 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                       ),
                     ],
                   ),
-                )
+                ),
+                Container(
+                  height: 1.sp,
+                  width: MediaQuery.of(context).size.width,
+                  color: titleColor,
+                ),
               ],
             ),
           ],

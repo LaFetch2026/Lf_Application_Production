@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -130,6 +132,16 @@ class _BottomCategoryState extends State<BottomCategory> {
                               ? homeAppBarColor
                               : dividerColor,
                           groupValue: text1,
+                          fillColor: MaterialStateProperty.resolveWith(
+                            (states) {
+                              if (states.contains(MaterialState.selected)) {
+                                return widget.backgroundColor == whiteColor
+                                    ? homeAppBarColor
+                                    : dividerColor;
+                              }
+                              return searchTextColor;
+                            },
+                          ),
                           onChanged: (value) async {
                             text1 = value.toString();
                             final prefs = await SharedPreferences.getInstance();
@@ -165,6 +177,16 @@ class _BottomCategoryState extends State<BottomCategory> {
                               ? homeAppBarColor
                               : dividerColor,
                           groupValue: text1,
+                          fillColor: MaterialStateProperty.resolveWith(
+                            (states) {
+                              if (states.contains(MaterialState.selected)) {
+                                return widget.backgroundColor == whiteColor
+                                    ? homeAppBarColor
+                                    : dividerColor;
+                              }
+                              return searchTextColor;
+                            },
+                          ),
                           onChanged: (value) async {
                             text1 = value.toString();
                             final prefs = await SharedPreferences.getInstance();
@@ -200,6 +222,16 @@ class _BottomCategoryState extends State<BottomCategory> {
                           activeColor: widget.backgroundColor == whiteColor
                               ? homeAppBarColor
                               : dividerColor,
+                          fillColor: MaterialStateProperty.resolveWith(
+                            (states) {
+                              if (states.contains(MaterialState.selected)) {
+                                return widget.backgroundColor == whiteColor
+                                    ? homeAppBarColor
+                                    : dividerColor;
+                              }
+                              return searchTextColor;
+                            },
+                          ),
                           groupValue: text1,
                           onChanged: (value) async {
                             text1 = value.toString();
