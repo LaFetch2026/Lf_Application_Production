@@ -212,8 +212,7 @@ class SearchScreenState extends State<SearchScreen> {
                                             maxLines: 1,
                                             style: TextStyle(
                                                 color: homeAppBarColor,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
+                                                fontFamily: "Franklin Gothic",
                                                 fontSize: 14.sp),
                                             controller:
                                                 controller.searchController,

@@ -456,9 +456,11 @@ class BottomCouponState extends State<BottomCoupon> {
                                     padding:
                                         EdgeInsets.only(top: 5.sp, left: 2.sp),
                                     child: AppText(
-                                      text: widget.list.length == 1
-                                          ? "${widget.list.length} coupon"
-                                          : "${widget.list.length} coupons",
+                                      text: controller.couponlength.value ==
+                                                  1 ||
+                                              controller.couponlength.value == 0
+                                          ? "${controller.couponlength.value} coupon"
+                                          : "${controller.couponlength.value} coupons",
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
                                       color: widget.backColor == whiteColor

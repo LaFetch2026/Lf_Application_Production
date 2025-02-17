@@ -35,6 +35,7 @@ class CartController extends BaseController {
   List couponList = [].obs;
   RxBool isExpress = false.obs;
   RxInt expressValue = 0.obs;
+  RxInt couponlength = 0.obs;
   RxDouble lat = 0.0.obs;
   RxInt cartTotalValue = 0.obs;
   RxDouble lng = 0.0.obs;
@@ -180,6 +181,12 @@ class CartController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData != null) {
           couponList = responseData;
+          couponlength.value = 0;
+          for (var i = 0; i < couponList.length; i++) {
+            if (couponList[i]["applicable"]) {
+              couponlength = couponlength++;
+            }
+          }
           Get.to(BottomCoupon(
             list: couponList,
             backColor: backColor,

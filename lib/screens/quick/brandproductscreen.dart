@@ -176,7 +176,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                     Padding(
                                       padding: EdgeInsets.only(left: 0.sp),
                                       child: AppText(
-                                        text: widget.title,
+                                        text: widget.title.toUpperCase(),
                                         color: whiteColor,
                                         fontSize: 16,
                                         fontFamily: "Franklin Gothic Semibold",
@@ -315,62 +315,54 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                 Padding(
                   padding: EdgeInsets.only(
                       left: 16.sp, top: 35.sp, right: 16.sp, bottom: 30.sp),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.transparent.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(8.sp)),
-                    // height: 50.sp,
-                    child: RawKeyboardListener(
-                      focusNode: FocusNode(),
-                      onKey: (value) {
-                        print(value);
-                        if (value is RawKeyDownEvent) {
-                          productController.getBrandDetailsProduct(
-                              productController.productSortBy.value,
-                              productController.filterProductEnable.value,
-                              false,
-                              widget.brand_id);
-                        }
-                      },
-                      child: TextField(
-                        textCapitalization: TextCapitalization.words,
-                        style: TextStyle(
-                            color: colorSecondary,
-                            fontFamily: "Franklin Gothic Regular",
-                            fontSize: 14.sp),
-                        controller:
-                            productController.branddetailsSearchController,
-                        onChanged: onSearchChanged,
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          filled: true,
-                          isDense: true,
-                          fillColor: Colors.transparent.withOpacity(0.3),
-                          prefixIcon: IconButton(
-                            icon: SvgPicture.asset(searchSvgImage,
-                                color: searchTextColor,
-                                height: 17.sp,
-                                width: 17.sp,
-                                fit: BoxFit.cover),
-                            onPressed: () {},
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: searchTextColor.withOpacity(0.5))),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.sp),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.sp),
-                            borderSide:
-                                const BorderSide(color: searchTextColor),
-                          ),
-                          counterText: "",
-                          hintText:
-                              "Search for products for ${widget.title.toUpperCase()}",
-                          hintStyle: TextStyle(
-                              fontSize: 14.sp, color: searchTextColor),
+                  child: RawKeyboardListener(
+                    focusNode: FocusNode(),
+                    onKey: (value) {
+                      print(value);
+                      if (value is RawKeyDownEvent) {
+                        productController.getBrandDetailsProduct(
+                            productController.productSortBy.value,
+                            productController.filterProductEnable.value,
+                            false,
+                            widget.brand_id);
+                      }
+                    },
+                    child: TextField(
+                      textCapitalization: TextCapitalization.words,
+                      style: TextStyle(
+                          color: colorSecondary,
+                          fontFamily: "Franklin Gothic Regular",
+                          fontSize: 14.sp),
+                      controller:
+                          productController.branddetailsSearchController,
+                      onChanged: onSearchChanged,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        filled: true,
+                        isDense: true,
+                        fillColor: appBarColor.withOpacity(0.1),
+                        prefixIcon: IconButton(
+                          icon: SvgPicture.asset(searchSvgImage,
+                              color: searchTextColor,
+                              height: 17.sp,
+                              width: 17.sp,
+                              fit: BoxFit.cover),
+                          onPressed: () {},
                         ),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: appBarColor)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.sp),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.sp),
+                          borderSide: const BorderSide(color: appBarColor),
+                        ),
+                        counterText: "",
+                        hintText:
+                            "Search for products for ${widget.title.toUpperCase()}",
+                        hintStyle:
+                            TextStyle(fontSize: 14.sp, color: searchTextColor),
                       ),
                     ),
                   ),
@@ -643,12 +635,18 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                       padding: EdgeInsets.only(top: 20.sp),
                                       child: getSingleButton(
                                           width: double.infinity,
-                                          label: "Back to Quick".toUpperCase(),
+                                          label: widget.screen == "quick"
+                                              ? "Back to Quick".toUpperCase()
+                                              : "Back to Brands".toUpperCase(),
                                           textColor: whiteColor,
                                           fontSize: 13,
                                           backgroundColor: homeAppBarColor,
                                           onPressed: () {
-                                            Get.back();
+                                            if (widget.screen == "quick") {
+                                              Get.back();
+                                            } else {
+                                              Get.close(2);
+                                            }
                                           },
                                           borderColor: whiteColor),
                                     )
