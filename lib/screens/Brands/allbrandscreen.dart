@@ -394,12 +394,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         )
                       : BrandProductList(
                           radius: 0,
-                          onPressed: (p0) async {
+                          onPressed: (p0, p1) async {
                             Get.to(ProductDetailsScreen(
                                     expresshour:
                                         homeController.expressHour.value,
                                     backgroundcolor: homeAppBarColor,
-                                    brandName: "",
+                                    brandName: p1,
                                     productId: p0,
                                     type: "add"))
                                 ?.then((value) => setState(

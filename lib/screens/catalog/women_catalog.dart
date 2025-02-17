@@ -135,7 +135,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                         ),
                                                       ),
                                                     ),
-                                                    Align(
+                                                    /*      Align(
                                                       alignment: Alignment
                                                           .bottomCenter,
                                                       child: Container(
@@ -238,6 +238,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                         ),
                                                       ),
                                                     ),
+                                                 */
                                                   ],
                                                 )
                                               : SizedBox(

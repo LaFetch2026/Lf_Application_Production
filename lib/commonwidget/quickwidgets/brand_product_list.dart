@@ -10,7 +10,7 @@ import '../common_widgets.dart';
 
 class BrandProductList extends StatelessWidget {
   final List list;
-  final Function(int)? onPressed;
+  final Function(int, String)? onPressed;
   final double radius;
 
   const BrandProductList({
@@ -42,7 +42,8 @@ class BrandProductList extends StatelessWidget {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            onPressed?.call(list[index]["id"]);
+                            onPressed?.call(
+                                list[index]["id"], list[index]["name"]);
                           },
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 300),

@@ -57,7 +57,7 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
               Visibility(
                 visible: true,
                 child: Padding(
-                  padding: EdgeInsets.only(left: 25.sp, right: 10.sp),
+                  padding: EdgeInsets.only(left: 32.sp, right: 10.sp),
                   child: Image.asset(
                     lafetchLogoImage,
                     color: homeAppBarColor,

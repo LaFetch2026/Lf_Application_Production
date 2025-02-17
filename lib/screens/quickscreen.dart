@@ -84,19 +84,19 @@ class QuickScreenState extends State<QuickScreen> {
       },
       child: Scaffold(
         backgroundColor: homeAppBarColor,
-        body: Stack(
-          children: [
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Image.asset(
-                quickBack,
-                height: 250.sp,
-                width: 300.sp,
+        body: SingleChildScrollView(
+          child: Stack(
+            children: [
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Image.asset(
+                  quickBack,
+                  height: 250.sp,
+                  width: 300.sp,
+                ),
               ),
-            ),
-            SingleChildScrollView(
-              child: Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
@@ -242,58 +242,52 @@ class QuickScreenState extends State<QuickScreen> {
                   Padding(
                     padding: EdgeInsets.only(
                         left: 16.sp, top: 24.sp, right: 16.sp, bottom: 24.sp),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.transparent.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(8.sp)),
-                      // height: 50.sp,
-                      child: RawKeyboardListener(
-                        focusNode: FocusNode(),
-                        onKey: (value) {
-                          print(value);
-                          if (value is RawKeyDownEvent) {
-                            productController.getBrandProductData();
-                            productController.brandController.clear();
-                            setState(() {});
-                          }
-                        },
-                        child: TextField(
-                          textCapitalization: TextCapitalization.words,
-                          style: TextStyle(
-                              color: colorSecondary,
-                              fontFamily: "Franklin Gothic Regular",
-                              fontSize: 14.sp),
-                          controller: productController.brandController,
-                          onChanged: onSearchChanged,
-                          keyboardType: TextInputType.text,
-                          decoration: InputDecoration(
-                            filled: true,
-                            isDense: true,
-                            fillColor: Colors.transparent.withOpacity(0.3),
-                            prefixIcon: IconButton(
-                              icon: SvgPicture.asset(searchSvgImage,
-                                  color: searchTextColor,
-                                  height: 17.sp,
-                                  width: 17.sp,
-                                  fit: BoxFit.cover),
-                              onPressed: () {},
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: searchTextColor.withOpacity(0.5))),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.sp),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.sp),
-                              borderSide:
-                                  const BorderSide(color: searchTextColor),
-                            ),
-                            counterText: "",
-                            hintText: "Search for 'Brands'",
-                            hintStyle: TextStyle(
-                                fontSize: 14.sp, color: searchTextColor),
+                    child: RawKeyboardListener(
+                      focusNode: FocusNode(),
+                      onKey: (value) {
+                        print(value);
+                        if (value is RawKeyDownEvent) {
+                          productController.getBrandProductData();
+                          productController.brandController.clear();
+                          setState(() {});
+                        }
+                      },
+                      child: TextField(
+                        textCapitalization: TextCapitalization.words,
+                        style: TextStyle(
+                            color: colorSecondary,
+                            fontFamily: "Franklin Gothic Regular",
+                            fontSize: 14.sp),
+                        controller: productController.brandController,
+                        onChanged: onSearchChanged,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          filled: true,
+                          isDense: true,
+                          fillColor: Color(0xff443e73).withOpacity(0.1),
+                          prefixIcon: IconButton(
+                            icon: SvgPicture.asset(searchSvgImage,
+                                color: searchTextColor,
+                                height: 17.sp,
+                                width: 17.sp,
+                                fit: BoxFit.cover),
+                            onPressed: () {},
                           ),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: appBarColor.withOpacity(0.5))),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.sp),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.sp),
+                            borderSide:
+                                BorderSide(color: appBarColor.withOpacity(0.5)),
+                          ),
+                          counterText: "",
+                          hintText: "Search for 'Brands'",
+                          hintStyle: TextStyle(
+                              fontSize: 14.sp, color: searchTextColor),
                         ),
                       ),
                     ),
@@ -363,7 +357,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                   .clear();
                                               productController.productTags
                                                   .clear();
-
+                      
                                               for (var i = 0;
                                                   i <
                                                       homeController
@@ -489,7 +483,9 @@ class QuickScreenState extends State<QuickScreen> {
                             ? true
                             : false,
                         child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 24.sp),
+                          padding: EdgeInsets.only(
+                            top: 24.sp,
+                          ),
                           child: Container(
                             height: 30.sp,
                             color: expressDeliveryBanner,
@@ -1227,7 +1223,8 @@ class QuickScreenState extends State<QuickScreen> {
                                                     ),
                                                   ),
                                                   BrandProductList(
-                                                      onPressed: (p0) async {
+                                                      onPressed:
+                                                          (p0, p1) async {
                                                         Get.to(ProductDetailsScreen(
                                                                 expresshour:
                                                                     homeController
@@ -1235,7 +1232,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                                         .value,
                                                                 backgroundcolor:
                                                                     homeAppBarColor,
-                                                                brandName: "",
+                                                                brandName: p1,
                                                                 productId: p0,
                                                                 type: "add"))
                                                             ?.then((value) =>
@@ -1280,8 +1277,8 @@ class QuickScreenState extends State<QuickScreen> {
                             )),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -62,7 +62,7 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 48.sp, right: 10.sp),
+                padding: EdgeInsets.only(left: 58.sp, right: 10.sp),
                 child: Image.asset(
                   lafetchLogoImage,
                   color: whiteColor,

@@ -51,12 +51,15 @@ class LoginAppbarState extends State<LoginAppbar> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(right: widget.isSkip ? 0 : 16.sp),
-                child: Image.asset(
-                  lafetchLogoImage,
-                  color: homeAppBarColor,
-                  height: 25.sp,
-                  width: 20.sp,
+                padding: EdgeInsets.only(
+                    right: widget.isSkip ? 0 : 16.sp, left: 6.sp),
+                child: Container(
+                  child: Image.asset(
+                    lafetchLogoImage,
+                    color: homeAppBarColor,
+                    height: 25.sp,
+                    width: 20.sp,
+                  ),
                 ),
               ),
               const Expanded(

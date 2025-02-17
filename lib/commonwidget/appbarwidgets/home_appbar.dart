@@ -87,11 +87,13 @@ class _HomeAppbarState extends State<HomeAppbar> {
               Visibility(
                 visible: widget.title == "" ? false : true,
                 child: Container(
+                  alignment: Alignment.bottomCenter,
                   height: 28.sp,
                   child: AppText(
                     text: widget.title.toUpperCase(),
                     color: homeAppBarColor,
                     fontSize: 16,
+                    textAlign: TextAlign.end,
                     fontFamily: "Franklin Gothic Semibold",
                     fontWeight: FontWeight.w500,
                   ),

@@ -242,7 +242,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                               borderSide: const BorderSide(color: borderColor),
                             ),
                             counterText: "",
-                            hintText: "Try chandni chowk",
+                            hintText: "Search for 'Brands'",
                             hintStyle: TextStyle(
                                 fontSize: 14.sp,
                                 color: searchTextColor,

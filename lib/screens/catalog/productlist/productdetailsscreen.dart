@@ -789,136 +789,137 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: widget.backgroundcolor,
-        body: Stack(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Visibility(
-              visible: widget.backgroundcolor == whiteColor ? false : true,
-              child: Positioned(
-                top: 0,
-                right: 0,
-                child: Image.asset(
-                  quickBackCircle,
-                  height: 250.sp,
-                  width: 300.sp,
-                ),
+              visible: widget.backgroundcolor == whiteColor ? true : false,
+              child: ProductdetailsAppbar(
+                onPressedHeart: () async {
+                  if (wishlistController.wishListDetails["wishlisted"]) {
+                    wishlistController.callAddProductToWishlist(
+                        wishlistController.wishListDetails["wishlist_id"],
+                        productController.productDetails["id"]);
+                    await analytics.logEvent(
+                      name: 'productdetails_wishlist_remove',
+                      parameters: <String, Object>{
+                        'page_name': 'productdetails_wishlist_remove',
+                      },
+                    );
+                  } else {
+                    scaffoldKey.currentState?.showBottomSheet((context) =>
+                        BottomWishlist(
+                            controller: wishlistController,
+                            onPressedBoard: () {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          NewBoardScreen(
+                                            title: "New Board",
+                                            boardId: 0,
+                                            screen: "ProductDetails",
+                                            productId: wishlistController
+                                                .wishListDetails["id"],
+                                            hintName: "Name of the Board",
+                                            boardName: "",
+                                            btnText: "Next",
+                                          )))
+                                  .then(
+                                    (value) {},
+                                  );
+                            },
+                            productImage: wishlistController
+                                .wishListDetails["images"][0]["name"],
+                            onPressed: (p0) {
+                              wishlistController.callAddProductToWishlist(
+                                  p0, productController.productDetails["id"]);
+                            },
+                            wishlistList: wishlistController.wishlistList));
+                    await analytics.logEvent(
+                      name: 'productdetails_wishlist_add',
+                      parameters: <String, Object>{
+                        'page_name': 'productdetails_wishlist_add',
+                      },
+                    );
+                  }
+                },
+                onPressedShare: () async {
+                  Share.share(productController.productDetails["share_link"]);
+                  await analytics.logEvent(
+                    name: 'share_product',
+                    parameters: <String, Object>{
+                      'page_name': 'share_product',
+                    },
+                  );
+                },
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                widget.backgroundcolor == whiteColor
-                    ? ProductdetailsAppbar(
-                        onPressedHeart: () async {
-                          if (wishlistController
-                              .wishListDetails["wishlisted"]) {
-                            wishlistController.callAddProductToWishlist(
-                                wishlistController
-                                    .wishListDetails["wishlist_id"],
-                                productController.productDetails["id"]);
-                            await analytics.logEvent(
-                              name: 'productdetails_wishlist_remove',
-                              parameters: <String, Object>{
-                                'page_name': 'productdetails_wishlist_remove',
-                              },
-                            );
-                          } else {
-                            scaffoldKey.currentState?.showBottomSheet(
-                                (context) => BottomWishlist(
-                                    controller: wishlistController,
-                                    onPressedBoard: () {
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  NewBoardScreen(
-                                                    title: "New Board",
-                                                    boardId: 0,
-                                                    screen: "ProductDetails",
-                                                    productId: wishlistController
-                                                        .wishListDetails["id"],
-                                                    hintName:
-                                                        "Name of the Board",
-                                                    boardName: "",
-                                                    btnText: "Next",
-                                                  )))
-                                          .then(
-                                            (value) {},
-                                          );
-                                    },
-                                    productImage: wishlistController
-                                        .wishListDetails["images"][0]["name"],
-                                    onPressed: (p0) {
-                                      wishlistController
-                                          .callAddProductToWishlist(
-                                              p0,
-                                              productController
-                                                  .productDetails["id"]);
-                                    },
-                                    wishlistList:
-                                        wishlistController.wishlistList));
-                            await analytics.logEvent(
-                              name: 'productdetails_wishlist_add',
-                              parameters: <String, Object>{
-                                'page_name': 'productdetails_wishlist_add',
-                              },
-                            );
-                          }
-                        },
-                        onPressedShare: () async {
-                          Share.share(
-                              productController.productDetails["share_link"]);
-                          await analytics.logEvent(
-                            name: 'share_product',
-                            parameters: <String, Object>{
-                              'page_name': 'share_product',
-                            },
-                          );
-                        },
-                      )
-                    : Padding(
-                        padding: EdgeInsets.only(left: 2.sp, top: 30.sp),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            IconButton(
-                              icon: SvgPicture.asset(arrowBack,
-                                  color: whiteColor,
-                                  height: 15.sp,
-                                  width: 15.sp,
-                                  fit: BoxFit.cover),
-                              onPressed: () {
-                                Get.back();
-                              },
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width - 80.sp,
-                              child: AppText(
-                                text: widget.brandName.toUpperCase(),
-                                color: whiteColor,
-                                fontSize: 16,
-                                maxLines: 1,
-                                fontFamily: "Franklin Gothic Semibold",
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+            Visibility(
+              visible: widget.backgroundcolor == whiteColor ? true : false,
+              child: Container(
+                height: 1.sp,
+                color: dividerColor,
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Stack(
+                  children: [
+                    Visibility(
+                      visible:
+                          widget.backgroundcolor == whiteColor ? false : true,
+                      child: Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Image.asset(
+                          quickBackCircle,
+                          height: 250.sp,
+                          width: 300.sp,
                         ),
                       ),
-                Visibility(
-                  visible: widget.backgroundcolor == whiteColor ? true : false,
-                  child: Container(
-                    height: 1.sp,
-                    color: dividerColor,
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
+                    ),
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Visibility(
+                          visible: widget.backgroundcolor == whiteColor
+                              ? false
+                              : true,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 2.sp, top: 30.sp),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                IconButton(
+                                  icon: SvgPicture.asset(arrowBack,
+                                      color: whiteColor,
+                                      height: 15.sp,
+                                      width: 15.sp,
+                                      fit: BoxFit.cover),
+                                  onPressed: () {
+                                    Get.back();
+                                  },
+                                ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width - 80.sp,
+                                  child: AppText(
+                                    text: widget.brandName.toUpperCase(),
+                                    color: whiteColor,
+                                    fontSize: 16,
+                                    maxLines: 1,
+                                    fontFamily: "Franklin Gothic Semibold",
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                         Obx(
                           () => productController.isColorimage.value ||
                                   productController.isDetails.value
@@ -1257,8 +1258,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     widget.backgroundcolor ==
                                                             whiteColor
                                                         ? Colors.black
-                                                        : productSubtitleColor,
-                                                color: Color(0xffE5E7EB),
+                                                        : whiteColor,
+                                                color: widget.backgroundcolor ==
+                                                        whiteColor
+                                                    ? Color(0xffE5E7EB)
+                                                    : subtitleColor,
                                                 layout:
                                                     PageIndicatorLayout.WARM,
                                                 scale: 0.65,
@@ -2186,7 +2190,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                       widget.Slug);
                                                             },
                                                           ));
-            
+                            
                                                   await analytics.logEvent(
                                                     name: 'addresslist_page',
                                                     parameters: <String, Object>{
@@ -2290,7 +2294,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                 context);
                                                       },
                                                     ));
-            
+                            
                                             await analytics.logEvent(
                                               name: 'mapscreen_page',
                                               parameters: <String, Object>{
@@ -4274,316 +4278,308 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ) */
                       ],
                     ),
-                  ),
+                  ],
                 ),
-                /*    SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: 80.sp,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      /*   Obx(
-                        () => wishlistController.isProductWishlist.value
-                            ? Padding(
-                                padding: EdgeInsets.all(10.0.sp),
-                                child:
-                                    // Center(child: CircularProgressIndicator()),
-                                    DummyContainer(
-                                  height: 46.sp,
-                                  width: 44.sp,
-                                ))
-                            : wishlistController.wishListDetails["wishlisted"]
-                                ? Container(
-                                    height: 46.sp,
-                                    width: 44.sp,
-                                    margin: EdgeInsets.only(left: 10.0.sp),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: btnTextColor, width: 1.sp),
-                                    ),
-                                    child: IconButton(
-                                        onPressed: () async {
-                                          wishlistController
-                                              .callAddProductToWishlist(
-                                                  wishlistController
-                                                          .wishListDetails[
-                                                      "wishlist_id"],
-                                                  productController
-                                                      .productDetails["id"]);
-                                          await analytics.logEvent(
-                                            name: 'productdetails_wishlist_remove',
-                                            parameters: <String, Object>{
-                                              'page_name':
-                                                  'productdetails_wishlist_remove',
-                                            },
-                                          );
+              ),
+            ),
+            /*    SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: 80.sp,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  /*   Obx(
+                    () => wishlistController.isProductWishlist.value
+                        ? Padding(
+                            padding: EdgeInsets.all(10.0.sp),
+                            child:
+                                // Center(child: CircularProgressIndicator()),
+                                DummyContainer(
+                              height: 46.sp,
+                              width: 44.sp,
+                            ))
+                        : wishlistController.wishListDetails["wishlisted"]
+                            ? Container(
+                                height: 46.sp,
+                                width: 44.sp,
+                                margin: EdgeInsets.only(left: 10.0.sp),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: btnTextColor, width: 1.sp),
+                                ),
+                                child: IconButton(
+                                    onPressed: () async {
+                                      wishlistController
+                                          .callAddProductToWishlist(
+                                              wishlistController
+                                                      .wishListDetails[
+                                                  "wishlist_id"],
+                                              productController
+                                                  .productDetails["id"]);
+                                      await analytics.logEvent(
+                                        name: 'productdetails_wishlist_remove',
+                                        parameters: <String, Object>{
+                                          'page_name':
+                                              'productdetails_wishlist_remove',
                                         },
-                                        icon: Image.asset(wishlistSelectImage)))
-                                : Container(
-                                    height: 46.sp,
-                                    width: 44.sp,
-                                    margin: EdgeInsets.only(left: 10.0.sp),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: btnTextColor, width: 1.sp),
-                                    ),
-                                    child: IconButton(
-                                        onPressed: () async {
-                                          scaffoldKey.currentState?.showBottomSheet(
-                                              (context) => BottomWishlist(
-                                                  controller: wishlistController,
-                                                  onPressed: (p0) {
-                                                    wishlistController
-                                                        .callAddProductToWishlist(
-                                                            p0,
-                                                            productController
-                                                                    .productDetails[
-                                                                "id"]);
-                                                  },
-                                                  wishlistList: wishlistController
-                                                      .wishlistList));
-                                          await analytics.logEvent(
-                                            name: 'productdetails_wishlist_add',
-                                            parameters: <String, Object>{
-                                              'page_name':
-                                                  'productdetails_wishlist_add',
-                                            },
-                                          );
+                                      );
+                                    },
+                                    icon: Image.asset(wishlistSelectImage)))
+                            : Container(
+                                height: 46.sp,
+                                width: 44.sp,
+                                margin: EdgeInsets.only(left: 10.0.sp),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: btnTextColor, width: 1.sp),
+                                ),
+                                child: IconButton(
+                                    onPressed: () async {
+                                      scaffoldKey.currentState?.showBottomSheet(
+                                          (context) => BottomWishlist(
+                                              controller: wishlistController,
+                                              onPressed: (p0) {
+                                                wishlistController
+                                                    .callAddProductToWishlist(
+                                                        p0,
+                                                        productController
+                                                                .productDetails[
+                                                            "id"]);
+                                              },
+                                              wishlistList: wishlistController
+                                                  .wishlistList));
+                                      await analytics.logEvent(
+                                        name: 'productdetails_wishlist_add',
+                                        parameters: <String, Object>{
+                                          'page_name':
+                                              'productdetails_wishlist_add',
                                         },
-                                        icon: Image.asset(
-                                          heartIcon24,
-                                          height: 30.sp,
-                                          width: 30.sp,
-                                        ))),
-                      ),
-                     */
-                      Obx(
-                        () => productController.isDetails.value
-                            ? const SizedBox(
-                                height: 0,
-                              )
-                            : Expanded(
+                                      );
+                                    },
+                                    icon: Image.asset(
+                                      heartIcon24,
+                                      height: 30.sp,
+                                      width: 30.sp,
+                                    ))),
+                  ),
+                 */
+                  Obx(
+                    () => productController.isDetails.value
+                        ? const SizedBox(
+                            height: 0,
+                          )
+                        : Expanded(
+                            flex: 1,
+                            child: productController
+                                        .productDetails["total_stock_count"] ==
+                                    0
+                                ? getSingleButton(
+                                    label: "Out of Stock",
+                                    textColor: whiteBorderColor,
+                                    right: 12,
+                                    left: 12,
+                                    backgroundColor: colorPrimary,
+                                    controller: productController,
+                                    borderColor: colorPrimary)
+                                : getSingleButton(
+                                    label: widget.type == "add"
+                                        ? "Add to bag"
+                                        : "Move to bag",
+                                    textColor: whiteBorderColor,
+                                    fontSize: 13,
+                                    right: productController
+                                            .productDetails["added_to_cart"]
+                                        ? 8
+                                        : 16,
+                                    left: 8,
+                                    backgroundColor: colorPrimary,
+                                    controller: productController,
+                                    onPressed: () async {
+                                      if (widget.type == "add") {
+                                        if (productController
+                                            .checkDetailsValidation()) {
+                                          productController.callAddtoCart(
+                                              1, "");
+                                          //  listClick(widgetKey);
+                                        }
+                                      } else {
+                                        if (productController
+                                            .checkDetailsValidation()) {
+                                          wishlistController.callMovetoCart(
+                                              widget.boardId,
+                                              widget.wishlistProductId,
+                                              productController
+                                                  .sizeInventoryId.value,
+                                              1);
+                                          productController.addToCart.value =
+                                              true;
+                                          //  listClick(widgetKey);
+                                        }
+                                      }
+                                      await analytics.logEvent(
+                                        name: 'productDetails_btnaddtocart',
+                                        parameters: <String, Object>{
+                                          'page_name':
+                                              'productDetails_btnaddtocart',
+                                        },
+                                      );
+                                    },
+                                    borderColor: colorPrimary),
+                          ),
+                  ),
+                  Obx(
+                    () => productController.isDetails.value
+                        ? const SizedBox(
+                            height: 0,
+                          )
+                        : productController.productDetails["added_to_cart"] ||
+                                productController.addToCart.value
+                            ? Expanded(
                                 flex: 1,
-                                child: productController
-                                            .productDetails["total_stock_count"] ==
-                                        0
-                                    ? getSingleButton(
-                                        label: "Out of Stock",
-                                        textColor: whiteBorderColor,
-                                        right: 12,
-                                        left: 12,
-                                        backgroundColor: colorPrimary,
-                                        controller: productController,
-                                        borderColor: colorPrimary)
-                                    : getSingleButton(
-                                        label: widget.type == "add"
-                                            ? "Add to bag"
-                                            : "Move to bag",
-                                        textColor: whiteBorderColor,
+                                child: Stack(
+                                  children: [
+                                    getSingleButton(
+                                        label: "Go to bag",
+                                        left: 0,
+                                        right: 16,
                                         fontSize: 13,
-                                        right: productController
-                                                .productDetails["added_to_cart"]
-                                            ? 8
-                                            : 16,
-                                        left: 8,
+                                        textColor: whiteBorderColor,
                                         backgroundColor: colorPrimary,
-                                        controller: productController,
+                                        //  controller: productController,
                                         onPressed: () async {
-                                          if (widget.type == "add") {
-                                            if (productController
-                                                .checkDetailsValidation()) {
-                                              productController.callAddtoCart(
-                                                  1, "");
-                                              //  listClick(widgetKey);
-                                            }
-                                          } else {
-                                            if (productController
-                                                .checkDetailsValidation()) {
-                                              wishlistController.callMovetoCart(
-                                                  widget.boardId,
-                                                  widget.wishlistProductId,
-                                                  productController
-                                                      .sizeInventoryId.value,
-                                                  1);
-                                              productController.addToCart.value =
-                                                  true;
-                                              //  listClick(widgetKey);
-                                            }
-                                          }
+                                          Get.to(CartScreen());
                                           await analytics.logEvent(
-                                            name: 'productDetails_btnaddtocart',
+                                            name: 'productDetails_btnGotocart',
                                             parameters: <String, Object>{
                                               'page_name':
-                                                  'productDetails_btnaddtocart',
+                                                  'productDetails_btnGotocart',
                                             },
                                           );
+                                          productController.addToCart.value =
+                                              false;
                                         },
                                         borderColor: colorPrimary),
-                              ),
-                      ),
-                      Obx(
-                        () => productController.isDetails.value
-                            ? const SizedBox(
-                                height: 0,
+                                  ],
+                                ),
                               )
-                            : productController.productDetails["added_to_cart"] ||
-                                    productController.addToCart.value
-                                ? Expanded(
-                                    flex: 1,
-                                    child: Stack(
-                                      children: [
-                                        getSingleButton(
-                                            label: "Go to bag",
-                                            left: 0,
-                                            right: 16,
-                                            fontSize: 13,
-                                            textColor: whiteBorderColor,
-                                            backgroundColor: colorPrimary,
-                                            //  controller: productController,
-                                            onPressed: () async {
-                                              Get.to(CartScreen());
-                                              await analytics.logEvent(
-                                                name: 'productDetails_btnGotocart',
-                                                parameters: <String, Object>{
-                                                  'page_name':
-                                                      'productDetails_btnGotocart',
-                                                },
-                                              );
-                                              productController.addToCart.value =
-                                                  false;
-                                            },
-                                            borderColor: colorPrimary),
-                                      ],
-                                    ),
-                                  )
-                                : SizedBox(
-                                    height: 0,
-                                  ),
-                      )
-                    ],
-                  ),
-                ),
-               */
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(top: 2.sp),
-                  child: Obx(() => productController.isDetails.value
-                      ? const SizedBox(
-                          height: 0,
-                        )
-                      : productController.productDetails["total_stock_count"] ==
-                              0
-                          ? SizedBox(
-                              height: 50.sp,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(right: 8.0.sp),
-                                    child: Image.asset(
-                                      cartNewImage,
-                                      color:
-                                          widget.backgroundcolor == whiteColor
-                                              ? homeAppBarColor
-                                              : productSubtitleColor,
-                                      height: 18.sp,
-                                      width: 18.sp,
-                                    ),
-                                  ),
-                                  AppText(
-                                    text: "Out of stock".toUpperCase(),
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w500,
-                                    color: widget.backgroundcolor == whiteColor
-                                        ? homeAppBarColor
-                                        : productSubtitleColor,
-                                    maxLines: 2,
-                                    fontSize: 13,
-                                  )
-                                ],
+                            : SizedBox(
+                                height: 0,
                               ),
-                            )
-                          : productController.productDetails["added_to_cart"] ||
-                                  productController.addToCart.value
-                              ? DoubleButtonIconNew(
-                                  lineColor:
-                                      widget.backgroundcolor == whiteColor
-                                          ? dividerColor
-                                          : titleColor,
-                                  firstText: "Go to BAG".toUpperCase(),
-                                  secondText: "Buy Now".toUpperCase(),
-                                  onPressedFirst: () async {
-                                    Get.to(CartScreen(
-                                      backgroundcolor: widget.backgroundcolor,
-                                    ));
-                                    await analytics.logEvent(
-                                      name: 'productDetails_btnGotocart',
-                                      parameters: <String, Object>{
-                                        'page_name':
-                                            'productDetails_btnGotocart',
-                                      },
-                                    );
-                                    productController.addToCart.value = false;
+                  )
+                ],
+              ),
+            ),
+           */
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.only(top: 2.sp),
+              child: Obx(() => productController.isDetails.value
+                  ? const SizedBox(
+                      height: 0,
+                    )
+                  : productController.productDetails["total_stock_count"] == 0
+                      ? SizedBox(
+                          height: 50.sp,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(right: 8.0.sp),
+                                child: Image.asset(
+                                  cartNewImage,
+                                  color: widget.backgroundcolor == whiteColor
+                                      ? homeAppBarColor
+                                      : productSubtitleColor,
+                                  height: 18.sp,
+                                  width: 18.sp,
+                                ),
+                              ),
+                              AppText(
+                                text: "Out of stock".toUpperCase(),
+                                fontFamily: "Franklin Gothic",
+                                fontWeight: FontWeight.w500,
+                                color: widget.backgroundcolor == whiteColor
+                                    ? homeAppBarColor
+                                    : productSubtitleColor,
+                                maxLines: 2,
+                                fontSize: 13,
+                              )
+                            ],
+                          ),
+                        )
+                      : productController.productDetails["added_to_cart"] ||
+                              productController.addToCart.value
+                          ? DoubleButtonIconNew(
+                              lineColor: widget.backgroundcolor == whiteColor
+                                  ? dividerColor
+                                  : titleColor,
+                              firstText: "Go to BAG".toUpperCase(),
+                              secondText: "Buy Now".toUpperCase(),
+                              onPressedFirst: () async {
+                                Get.to(CartScreen(
+                                  backgroundcolor: widget.backgroundcolor,
+                                ));
+                                await analytics.logEvent(
+                                  name: 'productDetails_btnGotocart',
+                                  parameters: <String, Object>{
+                                    'page_name': 'productDetails_btnGotocart',
                                   },
-                                  onPressedSecond: () {
-                                    if (productController
-                                        .checkDetailsValidation()) {
-                                      productController.callAddtoCart(
-                                          1, "buy now", widget.backgroundcolor);
-                                    }
+                                );
+                                productController.addToCart.value = false;
+                              },
+                              onPressedSecond: () {
+                                if (productController
+                                    .checkDetailsValidation()) {
+                                  productController.callAddtoCart(
+                                      1, "buy now", widget.backgroundcolor);
+                                }
+                              },
+                              controller: productController)
+                          : DoubleButtonIconNew(
+                              lineColor: widget.backgroundcolor == whiteColor
+                                  ? dividerColor
+                                  : titleColor,
+                              firstText: widget.type == "add"
+                                  ? "Add to bag".toUpperCase()
+                                  : "Move to bag".toUpperCase(),
+                              secondText: "Buy Now".toUpperCase(),
+                              onPressedFirst: () async {
+                                if (widget.type == "add") {
+                                  if (productController
+                                      .checkDetailsValidation()) {
+                                    productController.callAddtoCart(
+                                        1, "", widget.backgroundcolor);
+                                  }
+                                } else {
+                                  if (productController
+                                      .checkDetailsValidation()) {
+                                    wishlistController.callMovetoCart(
+                                        widget.boardId,
+                                        widget.wishlistProductId,
+                                        productController.sizeInventoryId.value,
+                                        1);
+                                    productController.addToCart.value = true;
+                                    //  listClick(widgetKey);
+                                  }
+                                }
+                                await analytics.logEvent(
+                                  name: 'productDetails_btnaddtocart',
+                                  parameters: <String, Object>{
+                                    'page_name': 'productDetails_btnaddtocart',
                                   },
-                                  controller: productController)
-                              : DoubleButtonIconNew(
-                                  lineColor:
-                                      widget.backgroundcolor == whiteColor
-                                          ? dividerColor
-                                          : titleColor,
-                                  firstText: widget.type == "add"
-                                      ? "Add to bag".toUpperCase()
-                                      : "Move to bag".toUpperCase(),
-                                  secondText: "Buy Now".toUpperCase(),
-                                  onPressedFirst: () async {
-                                    if (widget.type == "add") {
-                                      if (productController
-                                          .checkDetailsValidation()) {
-                                        productController.callAddtoCart(
-                                            1, "", widget.backgroundcolor);
-                                      }
-                                    } else {
-                                      if (productController
-                                          .checkDetailsValidation()) {
-                                        wishlistController.callMovetoCart(
-                                            widget.boardId,
-                                            widget.wishlistProductId,
-                                            productController
-                                                .sizeInventoryId.value,
-                                            1);
-                                        productController.addToCart.value =
-                                            true;
-                                        //  listClick(widgetKey);
-                                      }
-                                    }
-                                    await analytics.logEvent(
-                                      name: 'productDetails_btnaddtocart',
-                                      parameters: <String, Object>{
-                                        'page_name':
-                                            'productDetails_btnaddtocart',
-                                      },
-                                    );
-                                  },
-                                  onPressedSecond: () {
-                                    if (productController
-                                        .checkDetailsValidation()) {
-                                      productController.callAddtoCart(
-                                          1, "buy now", widget.backgroundcolor);
-                                    }
-                                  },
-                                  controller: productController)),
-                ),
-              ],
+                                );
+                              },
+                              onPressedSecond: () {
+                                if (productController
+                                    .checkDetailsValidation()) {
+                                  productController.callAddtoCart(
+                                      1, "buy now", widget.backgroundcolor);
+                                }
+                              },
+                              controller: productController)),
             ),
           ],
         ),

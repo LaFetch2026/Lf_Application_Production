@@ -297,7 +297,7 @@ class LoginScreenState extends State<LoginScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(
-                              height: 40.sp,
+                              height: 16.sp,
                             ),
                             LoginWidget(
                                 text1: "Welcome Back!",
@@ -383,8 +383,7 @@ class LoginScreenState extends State<LoginScreen> {
                                 )),
                             Obx(
                               () => Padding(
-                                padding:
-                                    EdgeInsets.only(top: 14.sp, bottom: 16.sp),
+                                padding: EdgeInsets.only(bottom: 16.sp),
                                 child: getSingleButton(
                                     label: "Continue".toUpperCase(),
                                     textColor: whiteTextColor,
@@ -447,7 +446,7 @@ class LoginScreenState extends State<LoginScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(
-                              height: 40.sp,
+                              height: 16.sp,
                             ),
                             const LoginWidget(
                                 fontfamily: "Franklin Gothic Regular",
@@ -533,8 +532,7 @@ class LoginScreenState extends State<LoginScreen> {
                                 )),
                             Obx(
                               () => Padding(
-                                padding:
-                                    EdgeInsets.only(top: 14.sp, bottom: 16.sp),
+                                padding: EdgeInsets.only(bottom: 16.sp),
                                 child: getSingleButton(
                                     label: "Continue".toUpperCase(),
                                     textColor: whiteTextColor,
