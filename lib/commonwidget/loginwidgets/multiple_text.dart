@@ -8,7 +8,6 @@ class MultipleTextWidget extends StatelessWidget {
   final String text2;
   final String text3;
   final String text4;
-  final bool visible;
   final Function? onPressedTerm;
   final Function? onPressedPolicy;
   final double fontSize;
@@ -20,7 +19,6 @@ class MultipleTextWidget extends StatelessWidget {
     required this.text3,
     required this.text4,
     required this.fontSize,
-    required this.visible,
     this.onPressedPolicy,
     this.onPressedTerm,
   }) : super(key: key);
@@ -31,7 +29,6 @@ class MultipleTextWidget extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16.sp),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        //crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             text1,
@@ -66,30 +63,24 @@ class MultipleTextWidget extends StatelessWidget {
               color: subtitleColor,
             ),
           ),
-          visible
-              ? Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      onPressedPolicy?.call();
-                    },
-                    child: Text(
-                      text4,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: TextStyle(
-                        fontSize: fontSize,
-                        decoration: TextDecoration.underline,
-                        overflow: TextOverflow.ellipsis,
-                        fontFamily: "Franklin Gothic Semibold",
-                        fontWeight: FontWeight.w500,
-                        color: subtitleColor,
-                      ),
-                    ),
-                  ),
-                )
-              : const SizedBox(
-                  width: 0,
-                )
+          GestureDetector(
+            onTap: () {
+              onPressedPolicy?.call();
+            },
+            child: Text(
+              text4,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: TextStyle(
+                fontSize: fontSize,
+                decoration: TextDecoration.underline,
+                overflow: TextOverflow.ellipsis,
+                fontFamily: "Franklin Gothic Semibold",
+                fontWeight: FontWeight.w500,
+                color: subtitleColor,
+              ),
+            ),
+          )
         ],
       ),
     );

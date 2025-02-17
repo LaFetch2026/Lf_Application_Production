@@ -294,7 +294,7 @@ class LoginScreenState extends State<LoginScreen> {
                       color: whiteColor,
                       child: SingleChildScrollView(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SizedBox(
                               height: 16.sp,
@@ -371,8 +371,8 @@ class LoginScreenState extends State<LoginScreen> {
                                   controller: loginController.phoneNumberLogin),
                             ),
                             Obx(() => Padding(
-                                  padding:
-                                      EdgeInsets.only(left: 16.sp, right: 5.sp),
+                                  padding: EdgeInsets.only(
+                                      left: 16.sp, right: 5.sp, bottom: 10.sp),
                                   child: AppText(
                                     text: loginController.loginError.value,
                                     fontFamily: "Franklin Gothic Regular",
@@ -387,37 +387,58 @@ class LoginScreenState extends State<LoginScreen> {
                                 child: getSingleButton(
                                     label: "Continue".toUpperCase(),
                                     textColor: whiteTextColor,
-                                    borderColor: homeAppBarColor,
+                                    borderColor: loginController
+                                                .phoneNumberLogin.text
+                                                .toString()
+                                                .trim()
+                                                .length ==
+                                            10
+                                        ? homeAppBarColor
+                                        : colorSecondary,
                                     controller: loginController,
                                     onPressed: () async {
-                                      if (loginController.checkNumbervalidation(
-                                          loginController.phoneNumberLogin.text
+                                      if (loginController.phoneNumberLogin.text
                                               .toString()
-                                              .trim())) {
-                                        loginController.number.value =
-                                            "+91${loginController.phoneNumberLogin.text.toString().trim()}";
-                                        loginController.callRegisterAccount();
-                                        await analytics.logEvent(
-                                          name: 'signin_phonelogin',
-                                          parameters: <String, Object>{
-                                            'page_name': 'signin_phonelogin',
-                                          },
-                                        );
+                                              .trim()
+                                              .length ==
+                                          10) {
+                                        if (loginController
+                                            .checkNumbervalidation(
+                                                loginController
+                                                    .phoneNumberLogin.text
+                                                    .toString()
+                                                    .trim())) {
+                                          loginController.number.value =
+                                              "+91${loginController.phoneNumberLogin.text.toString().trim()}";
+                                          loginController.callRegisterAccount();
+                                          await analytics.logEvent(
+                                            name: 'signin_phonelogin',
+                                            parameters: <String, Object>{
+                                              'page_name': 'signin_phonelogin',
+                                            },
+                                          );
+                                        }
                                       }
                                     },
                                     fontSize: 14,
-                                    backgroundColor: colorPrimary),
+                                    backgroundColor: loginController
+                                                .phoneNumberLogin.text
+                                                .toString()
+                                                .trim()
+                                                .length ==
+                                            10
+                                        ? homeAppBarColor
+                                        : colorSecondary),
                               ),
                             ),
                             Padding(
                               padding: EdgeInsets.only(bottom: 40.sp),
                               child: MultipleTextWidget(
                                 fontSize: 10.sp,
-                                text1: "By continuing, I agree to the",
-                                text2: " Terms of Use",
-                                text3: " and",
-                                visible: true,
-                                text4: " Privacy Policy",
+                                text1: "By continuing, I agree to the ",
+                                text2: "Terms of Use",
+                                text3: " and ",
+                                text4: "Privacy Policy",
                                 onPressedTerm: () {
                                   launchUrl(Uri.parse(
                                       "https://la-fetch.com/terms-and-conditions/"));
@@ -530,45 +551,65 @@ class LoginScreenState extends State<LoginScreen> {
                                     fontSize: 12,
                                   ),
                                 )),
-                            Obx(
-                              () => Padding(
-                                padding: EdgeInsets.only(bottom: 16.sp),
-                                child: getSingleButton(
-                                    label: "Continue".toUpperCase(),
-                                    textColor: whiteTextColor,
-                                    borderColor: homeAppBarColor,
-                                    controller: loginController,
-                                    onPressed: () async {
-                                      if (loginController
-                                          .checkRegistervalidation(
-                                              loginController
+                            Obx(() => Padding(
+                                  padding: EdgeInsets.only(bottom: 16.sp),
+                                  child: getSingleButton(
+                                      label: "Continue".toUpperCase(),
+                                      textColor: whiteTextColor,
+                                      borderColor: loginController
                                                   .phoneNumberRegister.text
                                                   .toString()
-                                                  .trim())) {
-                                        loginController.number.value =
-                                            "+91${loginController.phoneNumberRegister.text.toString().trim()}";
-                                        loginController.callRegisterAccount();
-                                        await analytics.logEvent(
-                                          name: 'signup_phonelogin',
-                                          parameters: <String, Object>{
-                                            'page_name': 'signup_phonelogin',
-                                          },
-                                        );
-                                      }
-                                    },
-                                    fontSize: 14,
-                                    backgroundColor: colorPrimary),
-                              ),
-                            ),
+                                                  .trim()
+                                                  .length ==
+                                              10
+                                          ? homeAppBarColor
+                                          : colorSecondary,
+                                      controller: loginController,
+                                      onPressed: () async {
+                                        if (loginController
+                                                .phoneNumberRegister.text
+                                                .toString()
+                                                .trim()
+                                                .length ==
+                                            10) {
+                                          if (loginController
+                                              .checkRegistervalidation(
+                                                  loginController
+                                                      .phoneNumberRegister.text
+                                                      .toString()
+                                                      .trim())) {
+                                            loginController.number.value =
+                                                "+91${loginController.phoneNumberRegister.text.toString().trim()}";
+                                            loginController
+                                                .callRegisterAccount();
+                                            await analytics.logEvent(
+                                              name: 'signup_phonelogin',
+                                              parameters: <String, Object>{
+                                                'page_name':
+                                                    'signup_phonelogin',
+                                              },
+                                            );
+                                          }
+                                        }
+                                      },
+                                      fontSize: 14,
+                                      backgroundColor: loginController
+                                                  .phoneNumberRegister.text
+                                                  .toString()
+                                                  .trim()
+                                                  .length ==
+                                              10
+                                          ? colorPrimary
+                                          : colorSecondary),
+                                )),
                             Padding(
                               padding: EdgeInsets.only(bottom: 40.sp),
                               child: MultipleTextWidget(
                                 fontSize: 10.sp,
-                                text1: "By continuing, I agree to the",
-                                text2: " Terms of Use",
-                                text3: " and",
-                                visible: true,
-                                text4: " Privacy Policy",
+                                text1: "By continuing, I agree to the ",
+                                text2: "Terms of Use",
+                                text3: " and ",
+                                text4: "Privacy Policy",
                                 onPressedTerm: () {
                                   launchUrl(Uri.parse(
                                       "https://la-fetch.com/terms-and-conditions/"));
