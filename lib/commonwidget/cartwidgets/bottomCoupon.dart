@@ -55,86 +55,89 @@ class BottomCouponState extends State<BottomCoupon> {
     return Scaffold(
       backgroundColor:
           widget.backColor == whiteColor ? whiteColor : homeAppBarColor,
-      body: Stack(
+      body: Column(
         children: [
           Visibility(
-            visible: widget.backColor == whiteColor ? false : true,
-            child: Positioned(
-              top: 0,
-              right: 0,
-              child: Image.asset(
-                quickBackCircle,
-                height: 250.sp,
-                width: 300.sp,
-              ),
+            visible: widget.backColor == whiteColor ? true : false,
+            child: SaveAddressAppbar(
+              text: "Apply Coupon",
+              onPressedWishlist: () {
+                Get.to(WishlistScreen());
+              },
             ),
           ),
-          Column(
-            children: [
-              Visibility(
-                visible: widget.backColor == whiteColor ? true : false,
-                child: SaveAddressAppbar(
-                  text: "Apply Coupon",
-                  onPressedWishlist: () {
-                    Get.to(WishlistScreen());
-                  },
-                ),
-              ),
-              Visibility(
-                visible: widget.backColor == whiteColor ? true : false,
-                child: Container(
-                  color: dividerColor,
-                  height: 1.sp,
-                ),
-              ),
-              Visibility(
-                visible: widget.backColor == whiteColor ? false : true,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 2.sp, top: 56.sp),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: SvgPicture.asset(arrowBack,
-                            color: whiteColor,
-                            height: 15.sp,
-                            width: 15.sp,
-                            fit: BoxFit.cover),
-                        onPressed: () {
-                          Get.back();
-                        },
-                      ),
-                      const Expanded(
-                        child: SizedBox(
-                          height: 0,
+          Visibility(
+            visible: widget.backColor == whiteColor ? true : false,
+            child: Container(
+              color: dividerColor,
+              height: 1.sp,
+            ),
+          ),
+          Expanded(
+            child: widget.list.isNotEmpty
+                ? SingleChildScrollView(
+                    child: Stack(
+                      children: [
+                        Visibility(
+                          visible:
+                              widget.backColor == whiteColor ? false : true,
+                          child: Positioned(
+                            top: 0,
+                            right: 0,
+                            child: Image.asset(
+                              quickBackCircle,
+                              height: 250.sp,
+                              width: 300.sp,
+                            ),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(right: 30.sp),
-                        child: AppText(
-                          text: "APPLY COUPON",
-                          color: whiteColor,
-                          fontSize: 16,
-                          maxLines: 1,
-                          fontFamily: "Franklin Gothic Semibold",
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const Expanded(
-                        child: SizedBox(
-                          height: 0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: widget.list.isNotEmpty
-                    ? SingleChildScrollView(
-                        child: Column(
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Visibility(
+                              visible:
+                                  widget.backColor == whiteColor ? false : true,
+                              child: Padding(
+                                padding:
+                                    EdgeInsets.only(left: 2.sp, top: 56.sp),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: SvgPicture.asset(arrowBack,
+                                          color: whiteColor,
+                                          height: 15.sp,
+                                          width: 15.sp,
+                                          fit: BoxFit.cover),
+                                      onPressed: () {
+                                        Get.back();
+                                      },
+                                    ),
+                                    const Expanded(
+                                      child: SizedBox(
+                                        height: 0,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(right: 30.sp),
+                                      child: AppText(
+                                        text: "APPLY COUPON",
+                                        color: whiteColor,
+                                        fontSize: 16,
+                                        maxLines: 1,
+                                        fontFamily: "Franklin Gothic Semibold",
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const Expanded(
+                                      child: SizedBox(
+                                        height: 0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                             SizedBox(
                               height: 20.sp,
                             ),
@@ -477,24 +480,45 @@ class BottomCouponState extends State<BottomCoupon> {
                                       padding: EdgeInsets.zero,
                                       scrollDirection: Axis.vertical,
                                       itemBuilder: (ctx, index) {
-                                        return GestureDetector(
-                                          onTap: () {},
-                                          child: Container(
-                                            color:
-                                                widget.backColor == whiteColor
-                                                    ? whiteColor
-                                                    : homeAppBarColor,
-                                            margin: EdgeInsets.only(
-                                                bottom: 10.sp, top: 20.sp),
-                                            child: Padding(
-                                              padding: EdgeInsets.only(
-                                                top: 10.sp,
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
+                                        return Container(
+                                          color: widget.backColor == whiteColor
+                                              ? whiteColor
+                                              : homeAppBarColor,
+                                          margin: EdgeInsets.only(
+                                              bottom: 10.sp, top: 20.sp),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                              top: 10.sp,
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                InkWell(
+                                                  onTap: () {
+                                                    if (widget.list[index]
+                                                        ["applicable"]) {
+                                                      if (selected[index]) {
+                                                        selected.clear();
+                                                        selected =
+                                                            List.generate(50,
+                                                                (i) => false);
+                                                        i = null;
+                                                      } else {
+                                                        selected.clear();
+                                                        selected =
+                                                            List.generate(50,
+                                                                (i) => false);
+                                                        selected[index] =
+                                                            !selected[index];
+                                                        print(widget.list[index]
+                                                            ["code"]);
+                                                        i = index;
+                                                      }
+                                                      setState(() {});
+                                                    }
+                                                  },
+                                                  child: Row(
                                                     children: [
                                                       Material(
                                                         color: widget
@@ -522,37 +546,37 @@ class BottomCouponState extends State<BottomCoupon> {
                                                                             index]
                                                                         ? titleColor
                                                                         : widget.list[index]["applicable"]
-                                                                            ? greyTextColor
+                                                                            ? greyBorder
                                                                             : widget.backColor == whiteColor
                                                                                 ? dividerColor
-                                                                                : homeAppBarColor),
+                                                                                : productSubtitleColor.withOpacity(0.2)),
                                                                 left: BorderSide(
                                                                     width: 2.0.sp,
                                                                     color: selected[index]
                                                                         ? titleColor
                                                                         : widget.list[index]["applicable"]
-                                                                            ? greyTextColor
+                                                                            ? greyBorder
                                                                             : widget.backColor == whiteColor
                                                                                 ? dividerColor
-                                                                                : homeAppBarColor),
+                                                                                : productSubtitleColor.withOpacity(0.2)),
                                                                 right: BorderSide(
                                                                     width: 2.0.sp,
                                                                     color: selected[index]
                                                                         ? titleColor
                                                                         : widget.list[index]["applicable"]
-                                                                            ? greyTextColor
+                                                                            ? greyBorder
                                                                             : widget.backColor == whiteColor
                                                                                 ? dividerColor
-                                                                                : homeAppBarColor),
+                                                                                : productSubtitleColor.withOpacity(0.2)),
                                                                 bottom: BorderSide(
                                                                     width: 2.0.sp,
                                                                     color: selected[index]
                                                                         ? titleColor
                                                                         : widget.list[index]["applicable"]
-                                                                            ? greyTextColor
+                                                                            ? greyBorder
                                                                             : widget.backColor == whiteColor
                                                                                 ? dividerColor
-                                                                                : homeAppBarColor),
+                                                                                : productSubtitleColor.withOpacity(0.2)),
                                                               ),
                                                             ),
                                                             width: 20,
@@ -566,17 +590,25 @@ class BottomCouponState extends State<BottomCoupon> {
                                                                   : titleColor,
                                                               activeColor: selected[
                                                                       index]
-                                                                  ? titleColor
+                                                                  ? widget.backColor ==
+                                                                          whiteColor
+                                                                      ? titleColor
+                                                                      : color5StartReview
                                                                   : whiteColor,
                                                               side: BorderSide(
                                                                   color: selected[
                                                                           index]
-                                                                      ? titleColor
+                                                                      ? widget.backColor ==
+                                                                              whiteColor
+                                                                          ? titleColor
+                                                                          : color5StartReview
                                                                       : widget.list[index]
                                                                               [
                                                                               "applicable"]
                                                                           ? greyTextColor
-                                                                          : dividerColor,
+                                                                          : widget.backColor == whiteColor
+                                                                              ? dividerColor
+                                                                              : productSubtitleColor.withOpacity(0.2),
                                                                   width: 0),
                                                               onChanged:
                                                                   (value) {
@@ -776,22 +808,47 @@ class BottomCouponState extends State<BottomCoupon> {
                                                     */
                                                     ],
                                                   ),
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 30.sp,
-                                                        top: 20.sp,
-                                                        right: 16.sp),
-                                                    child: Row(
-                                                      children: [
-                                                        AppText(
-                                                          text: "Save",
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 30.sp,
+                                                      top: 20.sp,
+                                                      right: 16.sp),
+                                                  child: Row(
+                                                    children: [
+                                                      AppText(
+                                                        text: "Save",
+                                                        color: widget
+                                                                    .list[index]
+                                                                ["applicable"]
+                                                            ? widget.backColor ==
+                                                                    whiteColor
+                                                                ? subtitleColor
+                                                                : productSubtitleColor
+                                                            : widget.backColor ==
+                                                                    whiteColor
+                                                                ? dividerColor
+                                                                : productSubtitleColor
+                                                                    .withOpacity(
+                                                                        0.2),
+                                                        fontSize: 12,
+                                                        fontFamily:
+                                                            "Franklin Gothic Semibold",
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                      Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal:
+                                                                    5.sp),
+                                                        child: AppText(
+                                                          text:
+                                                              "\u{20B9}${widget.list[index]["saved_total"].toString()}",
                                                           color: widget.list[
                                                                       index]
                                                                   ["applicable"]
-                                                              ? widget.backColor ==
-                                                                      whiteColor
-                                                                  ? subtitleColor
-                                                                  : productSubtitleColor
+                                                              ? color5StartReview
                                                               : widget.backColor ==
                                                                       whiteColor
                                                                   ? dividerColor
@@ -804,224 +861,217 @@ class BottomCouponState extends State<BottomCoupon> {
                                                           fontWeight:
                                                               FontWeight.w600,
                                                         ),
-                                                        Padding(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      5.sp),
-                                                          child: AppText(
-                                                            text:
-                                                                "\u{20B9}${widget.list[index]["saved_total"].toString()}",
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 30.sp,
+                                                      top: 5.sp,
+                                                      right: 16.sp),
+                                                  child: AppText(
+                                                    text: widget.list[index]
+                                                                ["type"] ==
+                                                            1
+                                                        ? "${widget.list[index]["type_label"].toString()}${widget.list[index]["value"].toString()} off on orders above Rs.${widget.list[index]["minimum_purchase_amount"].toString()}"
+                                                        : "${widget.list[index]["value"].toString()}${widget.list[index]["type_label"].toString()} off on orders above Rs.${widget.list[index]["minimum_purchase_amount"].toString()}",
+                                                    color: widget.list[index]
+                                                            ["applicable"]
+                                                        ? widget.backColor ==
+                                                                whiteColor
+                                                            ? subtitleColor
+                                                            : productSubtitleColor
+                                                        : widget.backColor ==
+                                                                whiteColor
+                                                            ? dividerColor
+                                                            : productSubtitleColor
+                                                                .withOpacity(
+                                                                    0.2),
+                                                    fontSize: 12,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 30.sp,
+                                                      top: 5.sp,
+                                                      right: 16.sp),
+                                                  child: AppText(
+                                                    text:
+                                                        "Valid until: ${widget.list[index]["ends_at"]}",
+                                                    color: widget.list[index]
+                                                            ["applicable"]
+                                                        ? widget.backColor ==
+                                                                whiteColor
+                                                            ? subtitleColor
+                                                            : productSubtitleColor
+                                                        : widget.backColor ==
+                                                                whiteColor
+                                                            ? dividerColor
+                                                            : productSubtitleColor
+                                                                .withOpacity(
+                                                                    0.2),
+                                                    fontSize: 12,
+                                                    fontFamily:
+                                                        "Franklin Gothic Regular",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: 10.sp, left: 32.sp),
+                                                  child: DottedLine(
+                                                    direction: Axis.horizontal,
+                                                    alignment:
+                                                        WrapAlignment.center,
+                                                    lineLength: double.infinity,
+                                                    lineThickness: 1.0,
+                                                    dashLength: 5.0,
+                                                    dashColor: widget
+                                                                .backColor ==
+                                                            whiteColor
+                                                        ? dividerColor
+                                                        : widget.backColor ==
+                                                                whiteColor
+                                                            ? dividerColor
+                                                            : productSubtitleColor
+                                                                .withOpacity(
+                                                                    0.2),
+                                                    dashRadius: 0.0,
+                                                    dashGapLength: 4.0,
+                                                    dashGapColor:
+                                                        Colors.transparent,
+                                                    dashGapRadius: 0.0,
+                                                  ),
+                                                ),
+                                                Visibility(
+                                                  visible: widget.list[index][
+                                                              "add_items_worth"] !=
+                                                          null
+                                                      ? true
+                                                      : false,
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 30.sp,
+                                                        top: 30.sp,
+                                                        right: 16.sp),
+                                                    child: AppText(
+                                                      text: widget.list[index][
+                                                              "add_items_worth"] ??
+                                                          "",
+                                                      color: widget.list[index]
+                                                              ["applicable"]
+                                                          ? widget.backColor ==
+                                                                  whiteColor
+                                                              ? titleColor
+                                                              : productSubtitleColor
+                                                          : widget.backColor ==
+                                                                  whiteColor
+                                                              ? dividerColor
+                                                              : productSubtitleColor
+                                                                  .withOpacity(
+                                                                      0.2),
+                                                      fontSize: 12,
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                ),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    controller.categoryList
+                                                        .clear();
+                                                    controller.tagsList.clear();
+                                                    for (var i = 0;
+                                                        i <
+                                                            widget
+                                                                .list[index]
+                                                                    ["tags"]
+                                                                .length;
+                                                        i++) {
+                                                      controller.tagsList.add(
+                                                          widget.list[index]
+                                                                  ["tags"][i]
+                                                              ["id"]);
+                                                    }
+                                                    for (var i = 0;
+                                                        i <
+                                                            widget
+                                                                .list[index][
+                                                                    "categories"]
+                                                                .length;
+                                                        i++) {
+                                                      controller.categoryList
+                                                          .add(widget.list[
+                                                                      index]
+                                                                  ["categories"]
+                                                              [i]["id"]);
+                                                    }
+                                                    Navigator.push(
+                                                        context,
+                                                        scaleIn(
+                                                          CategoryProductScreen(
+                                                            categoryName: widget
+                                                                    .list[index]
+                                                                ["code"],
+                                                            categoryId: 0,
+                                                            brandId: 0,
+                                                            genderName: "",
+                                                            genderType: 0,
+                                                            screen: "category",
+                                                            tagIds: controller
+                                                                .tagsList,
+                                                            categoryList:
+                                                                controller
+                                                                    .categoryList,
+                                                          ),
+                                                        ));
+                                                  },
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 30.sp,
+                                                        top: 5.sp,
+                                                        right: 16.sp),
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          "Browse Collection",
+                                                          style: TextStyle(
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .underline,
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
                                                             color: widget.list[
                                                                         index][
                                                                     "applicable"]
-                                                                ? color5StartReview
+                                                                ? widget.backColor ==
+                                                                        whiteColor
+                                                                    ? homeAppBarColor
+                                                                    : whiteColor
                                                                 : widget.backColor ==
                                                                         whiteColor
                                                                     ? dividerColor
                                                                     : productSubtitleColor
                                                                         .withOpacity(
                                                                             0.2),
-                                                            fontSize: 12,
-                                                            fontFamily:
-                                                                "Franklin Gothic Semibold",
-                                                            fontWeight:
-                                                                FontWeight.w600,
+                                                            fontSize: 12.sp,
                                                           ),
                                                         ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 30.sp,
-                                                        top: 5.sp,
-                                                        right: 16.sp),
-                                                    child: AppText(
-                                                      text: widget.list[index]
-                                                                  ["type"] ==
-                                                              1
-                                                          ? "${widget.list[index]["type_label"].toString()}${widget.list[index]["value"].toString()} off on orders above Rs.${widget.list[index]["minimum_purchase_amount"].toString()}"
-                                                          : "${widget.list[index]["value"].toString()}${widget.list[index]["type_label"].toString()} off on orders above Rs.${widget.list[index]["minimum_purchase_amount"].toString()}",
-                                                      color: widget.list[index]
-                                                              ["applicable"]
-                                                          ? widget.backColor ==
-                                                                  whiteColor
-                                                              ? subtitleColor
-                                                              : productSubtitleColor
-                                                          : widget.backColor ==
-                                                                  whiteColor
-                                                              ? dividerColor
-                                                              : productSubtitleColor
-                                                                  .withOpacity(
-                                                                      0.2),
-                                                      fontSize: 12,
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 30.sp,
-                                                        top: 5.sp,
-                                                        right: 16.sp),
-                                                    child: AppText(
-                                                      text:
-                                                          "Valid until: ${widget.list[index]["ends_at"]}",
-                                                      color: widget.list[index]
-                                                              ["applicable"]
-                                                          ? widget.backColor ==
-                                                                  whiteColor
-                                                              ? subtitleColor
-                                                              : productSubtitleColor
-                                                          : widget.backColor ==
-                                                                  whiteColor
-                                                              ? dividerColor
-                                                              : productSubtitleColor
-                                                                  .withOpacity(
-                                                                      0.2),
-                                                      fontSize: 12,
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        top: 10.sp,
-                                                        left: 32.sp),
-                                                    child: DottedLine(
-                                                      direction:
-                                                          Axis.horizontal,
-                                                      alignment:
-                                                          WrapAlignment.center,
-                                                      lineLength:
-                                                          double.infinity,
-                                                      lineThickness: 1.0,
-                                                      dashLength: 5.0,
-                                                      dashColor: widget
-                                                                  .backColor ==
-                                                              whiteColor
-                                                          ? dividerColor
-                                                          : widget.backColor ==
-                                                                  whiteColor
-                                                              ? dividerColor
-                                                              : productSubtitleColor
-                                                                  .withOpacity(
-                                                                      0.2),
-                                                      dashRadius: 0.0,
-                                                      dashGapLength: 4.0,
-                                                      dashGapColor:
-                                                          Colors.transparent,
-                                                      dashGapRadius: 0.0,
-                                                    ),
-                                                  ),
-                                                  Visibility(
-                                                    visible: widget.list[index][
-                                                                "add_items_worth"] !=
-                                                            null
-                                                        ? true
-                                                        : false,
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 30.sp,
-                                                          top: 30.sp,
-                                                          right: 16.sp),
-                                                      child: AppText(
-                                                        text: widget.list[index]
-                                                                [
-                                                                "add_items_worth"] ??
-                                                            "",
-                                                        color: widget
-                                                                    .list[index]
-                                                                ["applicable"]
-                                                            ? widget.backColor ==
-                                                                    whiteColor
-                                                                ? titleColor
-                                                                : productSubtitleColor
-                                                            : widget.backColor ==
-                                                                    whiteColor
-                                                                ? dividerColor
-                                                                : productSubtitleColor
-                                                                    .withOpacity(
-                                                                        0.2),
-                                                        fontSize: 12,
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      controller.categoryList
-                                                          .clear();
-                                                      controller.tagsList
-                                                          .clear();
-                                                      for (var i = 0;
-                                                          i <
-                                                              widget
-                                                                  .list[index]
-                                                                      ["tags"]
-                                                                  .length;
-                                                          i++) {
-                                                        controller.tagsList.add(
-                                                            widget.list[index]
-                                                                    ["tags"][i]
-                                                                ["id"]);
-                                                      }
-                                                      for (var i = 0;
-                                                          i <
-                                                              widget
-                                                                  .list[index][
-                                                                      "categories"]
-                                                                  .length;
-                                                          i++) {
-                                                        controller.categoryList
-                                                            .add(widget.list[
-                                                                        index][
-                                                                    "categories"]
-                                                                [i]["id"]);
-                                                      }
-                                                      Navigator.push(
-                                                          context,
-                                                          scaleIn(
-                                                            CategoryProductScreen(
-                                                              categoryName: "",
-                                                              categoryId: 0,
-                                                              brandId: 0,
-                                                              genderName: "",
-                                                              genderType: 0,
-                                                              tagIds: controller
-                                                                  .tagsList,
-                                                              categoryList:
-                                                                  controller
-                                                                      .categoryList,
-                                                            ),
-                                                          ));
-                                                    },
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 30.sp,
-                                                          top: 5.sp,
-                                                          right: 16.sp),
-                                                      child: Row(
-                                                        children: [
-                                                          Text(
-                                                            "Browse Collection",
-                                                            style: TextStyle(
-                                                              decoration:
-                                                                  TextDecoration
-                                                                      .underline,
-                                                              fontFamily:
-                                                                  "Franklin Gothic Regular",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 2.sp,
+                                                                  right: 5.sp),
+                                                          child: Image.asset(
+                                                              rightArrowImage,
                                                               color: widget.list[
                                                                           index]
                                                                       [
@@ -1036,41 +1086,16 @@ class BottomCouponState extends State<BottomCoupon> {
                                                                       : productSubtitleColor
                                                                           .withOpacity(
                                                                               0.2),
-                                                              fontSize: 12.sp,
-                                                            ),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 2.sp,
-                                                                    right:
-                                                                        5.sp),
-                                                            child: Image.asset(
-                                                                rightArrowImage,
-                                                                color: widget.list[
-                                                                            index]
-                                                                        [
-                                                                        "applicable"]
-                                                                    ? widget.backColor ==
-                                                                            whiteColor
-                                                                        ? homeAppBarColor
-                                                                        : whiteColor
-                                                                    : widget.backColor ==
-                                                                            whiteColor
-                                                                        ? dividerColor
-                                                                        : productSubtitleColor.withOpacity(
-                                                                            0.2),
-                                                                height: 10.sp,
-                                                                width: 10.sp,
-                                                                fit: BoxFit
-                                                                    .cover),
-                                                          )
-                                                        ],
-                                                      ),
+                                                              height: 10.sp,
+                                                              width: 10.sp,
+                                                              fit:
+                                                                  BoxFit.cover),
+                                                        )
+                                                      ],
                                                     ),
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         );
@@ -1080,104 +1105,104 @@ class BottomCouponState extends State<BottomCoupon> {
                             ),
                           ],
                         ),
-                      )
-                    : SizedBox(
-                        height: MediaQuery.of(context).size.height - 200.sp,
-                        width: MediaQuery.of(context).size.width,
-                        child: Center(
-                          child: Text("No Coupon Found",
-                              style: TextStyle(
-                                  fontSize: 14.sp,
-                                  decoration: TextDecoration.none,
-                                  color: widget.backColor == whiteColor
-                                      ? Colors.black
-                                      : whiteColor,
-                                  fontFamily: "Franklin Gothic Regular")),
-                        ),
-                      ),
-              ),
-              widget.list.isNotEmpty && i != null
-                  ? Container(
-                      color: widget.backColor == whiteColor
-                          ? Color(0xffF3F4F6)
-                          : homeAppBarColor,
-                      height: 110.sp,
-                      child: Column(
+                      ],
+                    ),
+                  )
+                : SizedBox(
+                    height: MediaQuery.of(context).size.height - 200.sp,
+                    width: MediaQuery.of(context).size.width,
+                    child: Center(
+                      child: Text("No Coupon Found",
+                          style: TextStyle(
+                              fontSize: 14.sp,
+                              decoration: TextDecoration.none,
+                              color: widget.backColor == whiteColor
+                                  ? Colors.black
+                                  : whiteColor,
+                              fontFamily: "Franklin Gothic Regular")),
+                    ),
+                  ),
+          ),
+          widget.list.isNotEmpty && i != null
+              ? Container(
+                  color: widget.backColor == whiteColor
+                      ? Color(0xffF3F4F6)
+                      : homeAppBarColor,
+                  height: 110.sp,
+                  child: Column(
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    top: 24.sp,
-                                    left: 20.sp,
-                                    right: 8.sp,
-                                    bottom: 16.sp),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    AppText(
-                                      text: "Maximum savings:",
-                                      textAlign: TextAlign.center,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: widget.backColor == whiteColor
-                                          ? appBarColor
-                                          : productSubtitleColor,
-                                      fontSize: 12,
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 2.sp),
-                                      child: AppText(
-                                        text:
-                                            "\u{20B9} ${widget.list[i!]["saved_total"]}",
-                                        textAlign: TextAlign.center,
-                                        fontFamily: "Franklin Gothic",
-                                        fontWeight: FontWeight.w500,
-                                        color: widget.backColor == whiteColor
-                                            ? titleColor
-                                            : whiteColor,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
+                          Padding(
+                            padding: EdgeInsets.only(
+                                top: 24.sp,
+                                left: 20.sp,
+                                right: 8.sp,
+                                bottom: 16.sp),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AppText(
+                                  text: "Maximum savings:",
+                                  textAlign: TextAlign.center,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: widget.backColor == whiteColor
+                                      ? appBarColor
+                                      : productSubtitleColor,
+                                  fontSize: 12,
                                 ),
-                              ),
-                              Obx(() => Expanded(
-                                    flex: 1,
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 20.sp, bottom: 16.sp),
-                                      child: getSingleButton(
-                                          label: "Apply".toUpperCase(),
-                                          textColor: whiteColor,
-                                          backgroundColor:
-                                              widget.backColor == whiteColor
-                                                  ? homeAppBarColor
-                                                  : lightPurpleColor,
-                                          controller: controller,
-                                          onPressed: () async {
-                                            if (i != null) {
-                                              widget.onPressed.call(
-                                                  widget.list[i!]["code"]);
-                                            }
-                                          },
-                                          borderColor:
-                                              widget.backColor == whiteColor
-                                                  ? homeAppBarColor
-                                                  : lightPurpleColor),
-                                    ),
-                                  )),
-                            ],
+                                Padding(
+                                  padding: EdgeInsets.only(top: 2.sp),
+                                  child: AppText(
+                                    text:
+                                        "\u{20B9} ${widget.list[i!]["saved_total"]}",
+                                    textAlign: TextAlign.center,
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                    color: widget.backColor == whiteColor
+                                        ? titleColor
+                                        : whiteColor,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
+                          Obx(() => Expanded(
+                                flex: 1,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 20.sp, bottom: 16.sp),
+                                  child: getSingleButton(
+                                      label: "Apply".toUpperCase(),
+                                      textColor: whiteColor,
+                                      backgroundColor:
+                                          widget.backColor == whiteColor
+                                              ? homeAppBarColor
+                                              : lightPurpleColor,
+                                      controller: controller,
+                                      onPressed: () async {
+                                        if (i != null) {
+                                          widget.onPressed
+                                              .call(widget.list[i!]["code"]);
+                                        }
+                                      },
+                                      borderColor:
+                                          widget.backColor == whiteColor
+                                              ? homeAppBarColor
+                                              : lightPurpleColor),
+                                ),
+                              )),
                         ],
                       ),
-                    )
-                  : SizedBox(
-                      height: 0,
-                    )
-            ],
-          ),
+                    ],
+                  ),
+                )
+              : SizedBox(
+                  height: 0,
+                )
         ],
       ),
     );

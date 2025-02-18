@@ -50,8 +50,9 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   Get.back();
                 },
                 child: Container(
+                  alignment: Alignment.bottomCenter,
                   padding:
-                      EdgeInsets.only(left: 16.sp, right: 12.sp, bottom: 6.sp),
+                      EdgeInsets.only(left: 16.sp, right: 12.sp, top: 4.sp),
                   child: SvgPicture.asset(arrowBack,
                       height: 15.sp, width: 15.sp, fit: BoxFit.cover),
                 ),
@@ -60,6 +61,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                 visible: widget.isHandPicked,
                 child: Container(
                   height: 28.sp,
+                  alignment: Alignment.bottomCenter,
                   child: Padding(
                     padding: EdgeInsets.only(left: 0),
                     child: AppText(
