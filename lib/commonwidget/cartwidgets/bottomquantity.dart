@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../utils/constants.dart';
@@ -63,7 +64,7 @@ class BottomQuantityState extends State<BottomQuantity> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
+              padding: EdgeInsets.only(left: 16.sp),
               child: Row(
                 children: [
                   Expanded(
@@ -84,8 +85,16 @@ class BottomQuantityState extends State<BottomQuantity> {
                     },
                     child: Container(
                       color: Colors.transparent,
-                      child: Image.asset(blackCrossImage,
-                          height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.sp, vertical: 10.sp),
+                        child: SvgPicture.asset(crossSearchImage,
+                            // ignore: deprecated_member_use
+                            color: loginText,
+                            height: 13.sp,
+                            width: 13.sp,
+                            fit: BoxFit.cover),
+                      ),
                     ),
                   ),
                 ],

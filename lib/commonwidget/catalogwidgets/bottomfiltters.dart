@@ -490,371 +490,477 @@ class BottomFiltersState extends State<BottomFilters> {
                                                 Padding(
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 10.sp),
-                                                  child: Row(
-                                                    children: [
-                                                      if (type == "brands") ...[
-                                                        Padding(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      5),
-                                                          child: Material(
-                                                            color:
-                                                                widget.backgroundColor ==
-                                                                        whiteColor
-                                                                    ? whiteColor
-                                                                    : cardBg,
-                                                            child: Container(
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: widget
-                                                                              .backgroundColor ==
-                                                                          whiteColor
-                                                                      ? whiteColor
-                                                                      : cardBg,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              3),
-                                                                  border:
-                                                                      Border(
-                                                                    top: BorderSide(
-                                                                        width: 2.0
-                                                                            .sp,
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? titleColor
-                                                                            : cardBg),
-                                                                    left: BorderSide(
-                                                                        width: 2.0
-                                                                            .sp,
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? titleColor
-                                                                            : cardBg),
-                                                                    right: BorderSide(
-                                                                        width: 2.0
-                                                                            .sp,
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? titleColor
-                                                                            : cardBg),
-                                                                    bottom: BorderSide(
-                                                                        width: 2.0
-                                                                            .sp,
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? titleColor
-                                                                            : cardBg),
+                                                  child: GestureDetector(
+                                                    onTap: () {
+                                                      if (type == "brands") {
+                                                        setState(() {
+                                                          brandSelectAll =
+                                                              !brandSelectAll;
+                                                        });
+                                                        if (brandSelectAll ==
+                                                            true) {
+                                                          for (int i = 0;
+                                                              i <
+                                                                  productController
+                                                                      .filterList
+                                                                      .length;
+                                                              i++) {
+                                                            productController
+                                                                .brand_ids
+                                                                .add(productController
+                                                                        .filterList[
+                                                                    i]["id"]);
+                                                          }
+                                                          brandSelected =
+                                                              List.generate(
+                                                                  productController
+                                                                      .filterList
+                                                                      .length,
+                                                                  (i) => true);
+                                                        } else {
+                                                          brandSelected =
+                                                              List.generate(
+                                                                  productController
+                                                                      .filterList
+                                                                      .length,
+                                                                  (i) => false);
+                                                          productController
+                                                              .brand_ids
+                                                              .clear();
+                                                        }
+                                                        print(productController
+                                                            .brand_ids);
+                                                      }
+                                                      if (type == "color") {
+                                                        setState(() {
+                                                          colorSelectAll =
+                                                              !colorSelectAll;
+                                                        });
+                                                        if (colorSelectAll ==
+                                                            true) {
+                                                          for (int i = 0;
+                                                              i <
+                                                                  productController
+                                                                      .filterList
+                                                                      .length;
+                                                              i++) {
+                                                            productController
+                                                                .color_ids
+                                                                .add(productController
+                                                                        .filterList[
+                                                                    i]["id"]);
+                                                          }
+                                                          colorSelected =
+                                                              List.generate(
+                                                                  productController
+                                                                      .filterList
+                                                                      .length,
+                                                                  (i) => true);
+                                                        } else {
+                                                          colorSelected =
+                                                              List.generate(
+                                                                  productController
+                                                                      .filterList
+                                                                      .length,
+                                                                  (i) => false);
+                                                          productController
+                                                              .color_ids
+                                                              .clear();
+                                                        }
+                                                        print(productController
+                                                            .color_ids);
+                                                      }
+                                                      if (type == "size") {
+                                                        setState(() {
+                                                          sizeSelectAll =
+                                                              !sizeSelectAll;
+                                                        });
+                                                        if (sizeSelectAll ==
+                                                            true) {
+                                                          sizeSelected =
+                                                              List.generate(
+                                                                  productController
+                                                                      .filterList
+                                                                      .length,
+                                                                  (i) => true);
+                                                          for (int i = 0;
+                                                              i <
+                                                                  productController
+                                                                      .filterList
+                                                                      .length;
+                                                              i++) {
+                                                            productController
+                                                                .size_ids
+                                                                .add(productController
+                                                                        .filterList[
+                                                                    i]["id"]);
+                                                          }
+                                                        } else {
+                                                          sizeSelected =
+                                                              List.generate(
+                                                                  productController
+                                                                      .filterList
+                                                                      .length,
+                                                                  (i) => false);
+                                                          productController
+                                                              .size_ids
+                                                              .clear();
+                                                        }
+                                                        print(productController
+                                                            .size_ids);
+                                                      }
+                                                    },
+                                                    child: Row(
+                                                      children: [
+                                                        if (type ==
+                                                            "brands") ...[
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        5),
+                                                            child: Material(
+                                                              color: widget
+                                                                          .backgroundColor ==
+                                                                      whiteColor
+                                                                  ? whiteColor
+                                                                  : cardBg,
+                                                              child: Container(
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: widget.backgroundColor ==
+                                                                            whiteColor
+                                                                        ? whiteColor
+                                                                        : cardBg,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(3),
+                                                                    border:
+                                                                        Border(
+                                                                      top: BorderSide(
+                                                                          width: 2.0
+                                                                              .sp,
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? titleColor
+                                                                              : cardBg),
+                                                                      left: BorderSide(
+                                                                          width: 2.0
+                                                                              .sp,
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? titleColor
+                                                                              : cardBg),
+                                                                      right: BorderSide(
+                                                                          width: 2.0
+                                                                              .sp,
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? titleColor
+                                                                              : cardBg),
+                                                                      bottom: BorderSide(
+                                                                          width: 2.0
+                                                                              .sp,
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? titleColor
+                                                                              : cardBg),
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                                width: 20,
-                                                                height: 20,
-                                                                child: Checkbox(
-                                                                  value:
-                                                                      brandSelectAll,
-                                                                  checkColor: brandSelectAll
-                                                                      ? whiteColor
-                                                                      : titleColor,
-                                                                  activeColor:
-                                                                      brandSelectAll
-                                                                          ? titleColor
-                                                                          : whiteColor,
-                                                                  side: const BorderSide(
-                                                                      color:
-                                                                          titleColor,
-                                                                      width: 0),
-                                                                  onChanged:
-                                                                      (value) {
-                                                                    setState(
-                                                                        () {
-                                                                      brandSelectAll =
-                                                                          !brandSelectAll;
-                                                                    });
-                                                                    if (brandSelectAll ==
-                                                                        true) {
-                                                                      for (int i =
-                                                                              0;
-                                                                          i < productController.filterList.length;
-                                                                          i++) {
+                                                                  width: 20,
+                                                                  height: 20,
+                                                                  child:
+                                                                      Checkbox(
+                                                                    value:
+                                                                        brandSelectAll,
+                                                                    checkColor: brandSelectAll
+                                                                        ? whiteColor
+                                                                        : titleColor,
+                                                                    activeColor:
+                                                                        brandSelectAll
+                                                                            ? titleColor
+                                                                            : whiteColor,
+                                                                    side: const BorderSide(
+                                                                        color:
+                                                                            titleColor,
+                                                                        width:
+                                                                            0),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(
+                                                                          () {
+                                                                        brandSelectAll =
+                                                                            !brandSelectAll;
+                                                                      });
+                                                                      if (brandSelectAll ==
+                                                                          true) {
+                                                                        for (int i =
+                                                                                0;
+                                                                            i < productController.filterList.length;
+                                                                            i++) {
+                                                                          productController
+                                                                              .brand_ids
+                                                                              .add(productController.filterList[i]["id"]);
+                                                                        }
+                                                                        brandSelected = List.generate(
+                                                                            productController
+                                                                                .filterList.length,
+                                                                            (i) =>
+                                                                                true);
+                                                                      } else {
+                                                                        brandSelected = List.generate(
+                                                                            productController
+                                                                                .filterList.length,
+                                                                            (i) =>
+                                                                                false);
                                                                         productController
                                                                             .brand_ids
-                                                                            .add(productController.filterList[i]["id"]);
+                                                                            .clear();
                                                                       }
-                                                                      brandSelected = List.generate(
-                                                                          productController
-                                                                              .filterList
-                                                                              .length,
-                                                                          (i) =>
-                                                                              true);
-                                                                    } else {
-                                                                      brandSelected = List.generate(
-                                                                          productController
-                                                                              .filterList
-                                                                              .length,
-                                                                          (i) =>
-                                                                              false);
-                                                                      productController
-                                                                          .brand_ids
-                                                                          .clear();
-                                                                    }
-                                                                    print(productController
-                                                                        .brand_ids);
-                                                                  },
-                                                                )),
+                                                                      print(productController
+                                                                          .brand_ids);
+                                                                    },
+                                                                  )),
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ],
-                                                      if (type == "color") ...[
-                                                        Padding(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      5.sp),
-                                                          child: Material(
-                                                            color:
-                                                                widget.backgroundColor ==
-                                                                        whiteColor
-                                                                    ? whiteColor
-                                                                    : cardBg,
-                                                            child: Container(
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: widget
-                                                                              .backgroundColor ==
-                                                                          whiteColor
-                                                                      ? whiteColor
-                                                                      : cardBg,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              3),
-                                                                  border:
-                                                                      Border(
-                                                                    top: BorderSide(
-                                                                        width: 2.0
-                                                                            .sp,
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? titleColor
-                                                                            : cardBg),
-                                                                    left: BorderSide(
-                                                                        width: 2.0
-                                                                            .sp,
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? titleColor
-                                                                            : cardBg),
-                                                                    right: BorderSide(
-                                                                        width: 2.0
-                                                                            .sp,
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? titleColor
-                                                                            : cardBg),
-                                                                    bottom: BorderSide(
-                                                                        width: 2.0
-                                                                            .sp,
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? titleColor
-                                                                            : cardBg),
+                                                        ],
+                                                        if (type ==
+                                                            "color") ...[
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        5.sp),
+                                                            child: Material(
+                                                              color: widget
+                                                                          .backgroundColor ==
+                                                                      whiteColor
+                                                                  ? whiteColor
+                                                                  : cardBg,
+                                                              child: Container(
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: widget.backgroundColor ==
+                                                                            whiteColor
+                                                                        ? whiteColor
+                                                                        : cardBg,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(3),
+                                                                    border:
+                                                                        Border(
+                                                                      top: BorderSide(
+                                                                          width: 2.0
+                                                                              .sp,
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? titleColor
+                                                                              : cardBg),
+                                                                      left: BorderSide(
+                                                                          width: 2.0
+                                                                              .sp,
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? titleColor
+                                                                              : cardBg),
+                                                                      right: BorderSide(
+                                                                          width: 2.0
+                                                                              .sp,
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? titleColor
+                                                                              : cardBg),
+                                                                      bottom: BorderSide(
+                                                                          width: 2.0
+                                                                              .sp,
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? titleColor
+                                                                              : cardBg),
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                                width: 20,
-                                                                height: 20,
-                                                                child: Checkbox(
-                                                                  value:
-                                                                      colorSelectAll,
-                                                                  checkColor: colorSelectAll
-                                                                      ? whiteColor
-                                                                      : titleColor,
-                                                                  activeColor:
-                                                                      colorSelectAll
-                                                                          ? titleColor
-                                                                          : whiteColor,
-                                                                  side: const BorderSide(
-                                                                      color:
-                                                                          btnTextColor,
-                                                                      width: 0),
-                                                                  onChanged:
-                                                                      (value) {
-                                                                    setState(
-                                                                        () {
-                                                                      colorSelectAll =
-                                                                          !colorSelectAll;
-                                                                    });
-                                                                    if (colorSelectAll ==
-                                                                        true) {
-                                                                      for (int i =
-                                                                              0;
-                                                                          i < productController.filterList.length;
-                                                                          i++) {
+                                                                  width: 20,
+                                                                  height: 20,
+                                                                  child:
+                                                                      Checkbox(
+                                                                    value:
+                                                                        colorSelectAll,
+                                                                    checkColor: colorSelectAll
+                                                                        ? whiteColor
+                                                                        : titleColor,
+                                                                    activeColor:
+                                                                        colorSelectAll
+                                                                            ? titleColor
+                                                                            : whiteColor,
+                                                                    side: const BorderSide(
+                                                                        color:
+                                                                            btnTextColor,
+                                                                        width:
+                                                                            0),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(
+                                                                          () {
+                                                                        colorSelectAll =
+                                                                            !colorSelectAll;
+                                                                      });
+                                                                      if (colorSelectAll ==
+                                                                          true) {
+                                                                        for (int i =
+                                                                                0;
+                                                                            i < productController.filterList.length;
+                                                                            i++) {
+                                                                          productController
+                                                                              .color_ids
+                                                                              .add(productController.filterList[i]["id"]);
+                                                                        }
+                                                                        colorSelected = List.generate(
+                                                                            productController
+                                                                                .filterList.length,
+                                                                            (i) =>
+                                                                                true);
+                                                                      } else {
+                                                                        colorSelected = List.generate(
+                                                                            productController
+                                                                                .filterList.length,
+                                                                            (i) =>
+                                                                                false);
                                                                         productController
                                                                             .color_ids
-                                                                            .add(productController.filterList[i]["id"]);
+                                                                            .clear();
                                                                       }
-                                                                      colorSelected = List.generate(
-                                                                          productController
-                                                                              .filterList
-                                                                              .length,
-                                                                          (i) =>
-                                                                              true);
-                                                                    } else {
-                                                                      colorSelected = List.generate(
-                                                                          productController
-                                                                              .filterList
-                                                                              .length,
-                                                                          (i) =>
-                                                                              false);
-                                                                      productController
-                                                                          .color_ids
-                                                                          .clear();
-                                                                    }
-                                                                    print(productController
-                                                                        .color_ids);
-                                                                  },
-                                                                )),
+                                                                      print(productController
+                                                                          .color_ids);
+                                                                    },
+                                                                  )),
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ],
-                                                      if (type == "size") ...[
-                                                        Padding(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  horizontal:
-                                                                      5.sp),
-                                                          child: Material(
-                                                            color:
-                                                                widget.backgroundColor ==
-                                                                        whiteColor
-                                                                    ? whiteColor
-                                                                    : cardBg,
-                                                            child: Container(
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: widget
-                                                                              .backgroundColor ==
-                                                                          whiteColor
-                                                                      ? whiteColor
-                                                                      : cardBg,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              3),
-                                                                  border:
-                                                                      Border(
-                                                                    top: BorderSide(
-                                                                        width: 2.0
-                                                                            .sp,
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? titleColor
-                                                                            : cardBg),
-                                                                    left: BorderSide(
-                                                                        width: 2.0
-                                                                            .sp,
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? titleColor
-                                                                            : cardBg),
-                                                                    right: BorderSide(
-                                                                        width: 2.0
-                                                                            .sp,
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? titleColor
-                                                                            : cardBg),
-                                                                    bottom: BorderSide(
-                                                                        width: 2.0
-                                                                            .sp,
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? titleColor
-                                                                            : cardBg),
+                                                        ],
+                                                        if (type == "size") ...[
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        5.sp),
+                                                            child: Material(
+                                                              color: widget
+                                                                          .backgroundColor ==
+                                                                      whiteColor
+                                                                  ? whiteColor
+                                                                  : cardBg,
+                                                              child: Container(
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: widget.backgroundColor ==
+                                                                            whiteColor
+                                                                        ? whiteColor
+                                                                        : cardBg,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(3),
+                                                                    border:
+                                                                        Border(
+                                                                      top: BorderSide(
+                                                                          width: 2.0
+                                                                              .sp,
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? titleColor
+                                                                              : cardBg),
+                                                                      left: BorderSide(
+                                                                          width: 2.0
+                                                                              .sp,
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? titleColor
+                                                                              : cardBg),
+                                                                      right: BorderSide(
+                                                                          width: 2.0
+                                                                              .sp,
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? titleColor
+                                                                              : cardBg),
+                                                                      bottom: BorderSide(
+                                                                          width: 2.0
+                                                                              .sp,
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? titleColor
+                                                                              : cardBg),
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                                width: 20,
-                                                                height: 20,
-                                                                child: Checkbox(
-                                                                  value:
-                                                                      sizeSelectAll,
-                                                                  checkColor: sizeSelectAll
-                                                                      ? whiteColor
-                                                                      : titleColor,
-                                                                  activeColor:
-                                                                      sizeSelectAll
-                                                                          ? titleColor
-                                                                          : whiteColor,
-                                                                  side: const BorderSide(
-                                                                      color:
-                                                                          btnTextColor,
-                                                                      width: 0),
-                                                                  onChanged:
-                                                                      (value) {
-                                                                    setState(
-                                                                        () {
-                                                                      sizeSelectAll =
-                                                                          !sizeSelectAll;
-                                                                    });
-                                                                    if (sizeSelectAll ==
-                                                                        true) {
-                                                                      sizeSelected = List.generate(
+                                                                  width: 20,
+                                                                  height: 20,
+                                                                  child:
+                                                                      Checkbox(
+                                                                    value:
+                                                                        sizeSelectAll,
+                                                                    checkColor: sizeSelectAll
+                                                                        ? whiteColor
+                                                                        : titleColor,
+                                                                    activeColor:
+                                                                        sizeSelectAll
+                                                                            ? titleColor
+                                                                            : whiteColor,
+                                                                    side: const BorderSide(
+                                                                        color:
+                                                                            btnTextColor,
+                                                                        width:
+                                                                            0),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      setState(
+                                                                          () {
+                                                                        sizeSelectAll =
+                                                                            !sizeSelectAll;
+                                                                      });
+                                                                      if (sizeSelectAll ==
+                                                                          true) {
+                                                                        sizeSelected = List.generate(
+                                                                            productController
+                                                                                .filterList.length,
+                                                                            (i) =>
+                                                                                true);
+                                                                        for (int i =
+                                                                                0;
+                                                                            i < productController.filterList.length;
+                                                                            i++) {
                                                                           productController
-                                                                              .filterList
-                                                                              .length,
-                                                                          (i) =>
-                                                                              true);
-                                                                      for (int i =
-                                                                              0;
-                                                                          i < productController.filterList.length;
-                                                                          i++) {
+                                                                              .size_ids
+                                                                              .add(productController.filterList[i]["id"]);
+                                                                        }
+                                                                      } else {
+                                                                        sizeSelected = List.generate(
+                                                                            productController
+                                                                                .filterList.length,
+                                                                            (i) =>
+                                                                                false);
                                                                         productController
                                                                             .size_ids
-                                                                            .add(productController.filterList[i]["id"]);
+                                                                            .clear();
                                                                       }
-                                                                    } else {
-                                                                      sizeSelected = List.generate(
-                                                                          productController
-                                                                              .filterList
-                                                                              .length,
-                                                                          (i) =>
-                                                                              false);
-                                                                      productController
-                                                                          .size_ids
-                                                                          .clear();
-                                                                    }
-                                                                    print(productController
-                                                                        .size_ids);
-                                                                  },
-                                                                )),
+                                                                      print(productController
+                                                                          .size_ids);
+                                                                    },
+                                                                  )),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 2.sp),
+                                                          child: Text(
+                                                            "Select All",
+                                                            style: TextStyle(
+                                                              color: widget
+                                                                          .backgroundColor ==
+                                                                      whiteColor
+                                                                  ? titleColor
+                                                                  : dividerColor,
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .none,
+                                                              fontSize: 12.sp,
+                                                              fontFamily:
+                                                                  "Franklin Gothic Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
                                                           ),
                                                         ),
                                                       ],
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                left: 2.sp),
-                                                        child: Text(
-                                                          "Select All",
-                                                          style: TextStyle(
-                                                            color: widget
-                                                                        .backgroundColor ==
-                                                                    whiteColor
-                                                                ? titleColor
-                                                                : dividerColor,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .none,
-                                                            fontSize: 12.sp,
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
+                                                    ),
                                                   ),
                                                 ),
                                                 SizedBox(
@@ -878,170 +984,249 @@ class BottomFiltersState extends State<BottomFilters> {
                                                                   .symmetric(
                                                                       vertical:
                                                                           10.sp),
-                                                              child: Row(
-                                                                children: [
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap: () {
                                                                   if (type ==
-                                                                      "brands") ...[
-                                                                    Padding(
-                                                                      padding: EdgeInsets.symmetric(
-                                                                          horizontal:
-                                                                              5),
-                                                                      child:
-                                                                          Material(
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? whiteColor
-                                                                            : cardBg,
-                                                                        child: Container(
-                                                                            decoration: BoxDecoration(
-                                                                              color: widget.backgroundColor == whiteColor ? whiteColor : cardBg,
-                                                                              borderRadius: BorderRadius.circular(3),
-                                                                              border: Border(
-                                                                                top: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
-                                                                                left: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
-                                                                                right: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
-                                                                                bottom: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
-                                                                              ),
-                                                                            ),
-                                                                            width: 20,
-                                                                            height: 20,
-                                                                            child: Checkbox(
-                                                                              value: brandSelected[index],
-                                                                              checkColor: brandSelected[index] ? whiteColor : titleColor,
-                                                                              activeColor: brandSelected[index] ? titleColor : whiteColor,
-                                                                              side: const BorderSide(color: titleColor, width: 0),
-                                                                              onChanged: (value) {
-                                                                                setState(() {
-                                                                                  brandSelected[index] = !brandSelected[index];
-                                                                                });
-                                                                                if (brandSelected[index] == true) {
-                                                                                  productController.brand_ids.add(productController.filterList[index]["id"]);
-                                                                                } else {
-                                                                                  productController.brand_ids.removeWhere((item) => item == productController.filterList[index]["id"]);
-                                                                                }
-                                                                                print(productController.brand_ids);
-                                                                              },
-                                                                            )),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                  if (type ==
-                                                                      "color") ...[
-                                                                    Padding(
-                                                                      padding: EdgeInsets.symmetric(
-                                                                          horizontal:
-                                                                              5.sp),
-                                                                      child:
-                                                                          Material(
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? whiteColor
-                                                                            : cardBg,
-                                                                        child: Container(
-                                                                            decoration: BoxDecoration(
-                                                                              color: widget.backgroundColor == whiteColor ? whiteColor : cardBg,
-                                                                              borderRadius: BorderRadius.circular(3),
-                                                                              border: Border(
-                                                                                top: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
-                                                                                left: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
-                                                                                right: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
-                                                                                bottom: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
-                                                                              ),
-                                                                            ),
-                                                                            width: 20,
-                                                                            height: 20,
-                                                                            child: Checkbox(
-                                                                              value: colorSelected[index],
-                                                                              checkColor: colorSelected[index] ? whiteColor : titleColor,
-                                                                              activeColor: colorSelected[index] ? titleColor : whiteColor,
-                                                                              side: const BorderSide(color: btnTextColor, width: 0),
-                                                                              onChanged: (value) {
-                                                                                setState(() {
-                                                                                  colorSelected[index] = !colorSelected[index];
-                                                                                });
-                                                                                if (colorSelected[index] == true) {
-                                                                                  productController.color_ids.add(productController.filterList[index]["id"]);
-                                                                                } else {
-                                                                                  productController.color_ids.removeWhere((item) => item == productController.filterList[index]["id"]);
-                                                                                }
-                                                                                print(productController.color_ids);
-                                                                              },
-                                                                            )),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                  if (type ==
-                                                                      "size") ...[
-                                                                    Padding(
-                                                                      padding: EdgeInsets.symmetric(
-                                                                          horizontal:
-                                                                              5.sp),
-                                                                      child:
-                                                                          Material(
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? whiteColor
-                                                                            : cardBg,
-                                                                        child: Container(
-                                                                            decoration: BoxDecoration(
-                                                                              color: widget.backgroundColor == whiteColor ? whiteColor : cardBg,
-                                                                              borderRadius: BorderRadius.circular(3),
-                                                                              border: Border(
-                                                                                top: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
-                                                                                left: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
-                                                                                right: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
-                                                                                bottom: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
-                                                                              ),
-                                                                            ),
-                                                                            width: 20,
-                                                                            height: 20,
-                                                                            child: Checkbox(
-                                                                              value: sizeSelected[index],
-                                                                              checkColor: sizeSelected[index] ? whiteColor : titleColor,
-                                                                              activeColor: sizeSelected[index] ? titleColor : whiteColor,
-                                                                              side: const BorderSide(color: btnTextColor, width: 0),
-                                                                              onChanged: (value) {
-                                                                                setState(() {
-                                                                                  sizeSelected[index] = !sizeSelected[index];
-                                                                                });
-                                                                                if (sizeSelected[index] == true) {
-                                                                                  productController.size_ids.add(productController.filterList[index]["id"]);
-                                                                                } else {
-                                                                                  productController.size_ids.removeWhere((item) => item == productController.filterList[index]["id"]);
-                                                                                }
-                                                                                print(productController.size_ids);
-                                                                              },
-                                                                            )),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                  Padding(
-                                                                    padding: EdgeInsets.only(
-                                                                        left: 2
-                                                                            .sp),
-                                                                    child: Text(
+                                                                      "brands") {
+                                                                    setState(
+                                                                        () {
+                                                                      brandSelected[
+                                                                              index] =
+                                                                          !brandSelected[
+                                                                              index];
+                                                                    });
+                                                                    if (brandSelected[
+                                                                            index] ==
+                                                                        true) {
                                                                       productController
-                                                                              .filterList[index]
-                                                                          [
-                                                                          "name"],
-                                                                      style:
-                                                                          TextStyle(
-                                                                        color: widget.backgroundColor ==
-                                                                                whiteColor
-                                                                            ? titleColor
-                                                                            : dividerColor,
-                                                                        decoration:
-                                                                            TextDecoration.none,
-                                                                        fontSize:
-                                                                            12.sp,
-                                                                        fontFamily:
-                                                                            "Franklin Gothic Regular",
-                                                                        fontWeight:
-                                                                            FontWeight.w400,
+                                                                          .brand_ids
+                                                                          .add(productController.filterList[index]
+                                                                              [
+                                                                              "id"]);
+                                                                    } else {
+                                                                      productController
+                                                                          .brand_ids
+                                                                          .removeWhere((item) =>
+                                                                              item ==
+                                                                              productController.filterList[index]["id"]);
+                                                                    }
+                                                                    print(productController
+                                                                        .brand_ids);
+                                                                  }
+                                                                  if (type ==
+                                                                      "color") {
+                                                                    setState(
+                                                                        () {
+                                                                      colorSelected[
+                                                                              index] =
+                                                                          !colorSelected[
+                                                                              index];
+                                                                    });
+                                                                    if (colorSelected[
+                                                                            index] ==
+                                                                        true) {
+                                                                      productController
+                                                                          .color_ids
+                                                                          .add(productController.filterList[index]
+                                                                              [
+                                                                              "id"]);
+                                                                    } else {
+                                                                      productController
+                                                                          .color_ids
+                                                                          .removeWhere((item) =>
+                                                                              item ==
+                                                                              productController.filterList[index]["id"]);
+                                                                    }
+                                                                    print(productController
+                                                                        .color_ids);
+                                                                  }
+                                                                  if (type ==
+                                                                      "size") {
+                                                                    setState(
+                                                                        () {
+                                                                      sizeSelected[
+                                                                              index] =
+                                                                          !sizeSelected[
+                                                                              index];
+                                                                    });
+                                                                    if (sizeSelected[
+                                                                            index] ==
+                                                                        true) {
+                                                                      productController
+                                                                          .size_ids
+                                                                          .add(productController.filterList[index]
+                                                                              [
+                                                                              "id"]);
+                                                                    } else {
+                                                                      productController
+                                                                          .size_ids
+                                                                          .removeWhere((item) =>
+                                                                              item ==
+                                                                              productController.filterList[index]["id"]);
+                                                                    }
+                                                                    print(productController
+                                                                        .size_ids);
+                                                                  }
+                                                                },
+                                                                child: Row(
+                                                                  children: [
+                                                                    if (type ==
+                                                                        "brands") ...[
+                                                                      Padding(
+                                                                        padding:
+                                                                            EdgeInsets.symmetric(horizontal: 5),
+                                                                        child:
+                                                                            Material(
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? whiteColor
+                                                                              : cardBg,
+                                                                          child: Container(
+                                                                              decoration: BoxDecoration(
+                                                                                color: widget.backgroundColor == whiteColor ? whiteColor : cardBg,
+                                                                                borderRadius: BorderRadius.circular(3),
+                                                                                border: Border(
+                                                                                  top: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                  left: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                  right: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                  bottom: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                ),
+                                                                              ),
+                                                                              width: 20,
+                                                                              height: 20,
+                                                                              child: Checkbox(
+                                                                                value: brandSelected[index],
+                                                                                checkColor: brandSelected[index] ? whiteColor : titleColor,
+                                                                                activeColor: brandSelected[index] ? titleColor : whiteColor,
+                                                                                side: const BorderSide(color: titleColor, width: 0),
+                                                                                onChanged: (value) {
+                                                                                  setState(() {
+                                                                                    brandSelected[index] = !brandSelected[index];
+                                                                                  });
+                                                                                  if (brandSelected[index] == true) {
+                                                                                    productController.brand_ids.add(productController.filterList[index]["id"]);
+                                                                                  } else {
+                                                                                    productController.brand_ids.removeWhere((item) => item == productController.filterList[index]["id"]);
+                                                                                  }
+                                                                                  print(productController.brand_ids);
+                                                                                },
+                                                                              )),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                    if (type ==
+                                                                        "color") ...[
+                                                                      Padding(
+                                                                        padding:
+                                                                            EdgeInsets.symmetric(horizontal: 5.sp),
+                                                                        child:
+                                                                            Material(
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? whiteColor
+                                                                              : cardBg,
+                                                                          child: Container(
+                                                                              decoration: BoxDecoration(
+                                                                                color: widget.backgroundColor == whiteColor ? whiteColor : cardBg,
+                                                                                borderRadius: BorderRadius.circular(3),
+                                                                                border: Border(
+                                                                                  top: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                  left: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                  right: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                  bottom: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                ),
+                                                                              ),
+                                                                              width: 20,
+                                                                              height: 20,
+                                                                              child: Checkbox(
+                                                                                value: colorSelected[index],
+                                                                                checkColor: colorSelected[index] ? whiteColor : titleColor,
+                                                                                activeColor: colorSelected[index] ? titleColor : whiteColor,
+                                                                                side: const BorderSide(color: btnTextColor, width: 0),
+                                                                                onChanged: (value) {
+                                                                                  setState(() {
+                                                                                    colorSelected[index] = !colorSelected[index];
+                                                                                  });
+                                                                                  if (colorSelected[index] == true) {
+                                                                                    productController.color_ids.add(productController.filterList[index]["id"]);
+                                                                                  } else {
+                                                                                    productController.color_ids.removeWhere((item) => item == productController.filterList[index]["id"]);
+                                                                                  }
+                                                                                  print(productController.color_ids);
+                                                                                },
+                                                                              )),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                    if (type ==
+                                                                        "size") ...[
+                                                                      Padding(
+                                                                        padding:
+                                                                            EdgeInsets.symmetric(horizontal: 5.sp),
+                                                                        child:
+                                                                            Material(
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? whiteColor
+                                                                              : cardBg,
+                                                                          child: Container(
+                                                                              decoration: BoxDecoration(
+                                                                                color: widget.backgroundColor == whiteColor ? whiteColor : cardBg,
+                                                                                borderRadius: BorderRadius.circular(3),
+                                                                                border: Border(
+                                                                                  top: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                  left: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                  right: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                  bottom: BorderSide(width: 2.0.sp, color: widget.backgroundColor == whiteColor ? titleColor : cardBg),
+                                                                                ),
+                                                                              ),
+                                                                              width: 20,
+                                                                              height: 20,
+                                                                              child: Checkbox(
+                                                                                value: sizeSelected[index],
+                                                                                checkColor: sizeSelected[index] ? whiteColor : titleColor,
+                                                                                activeColor: sizeSelected[index] ? titleColor : whiteColor,
+                                                                                side: const BorderSide(color: btnTextColor, width: 0),
+                                                                                onChanged: (value) {
+                                                                                  setState(() {
+                                                                                    sizeSelected[index] = !sizeSelected[index];
+                                                                                  });
+                                                                                  if (sizeSelected[index] == true) {
+                                                                                    productController.size_ids.add(productController.filterList[index]["id"]);
+                                                                                  } else {
+                                                                                    productController.size_ids.removeWhere((item) => item == productController.filterList[index]["id"]);
+                                                                                  }
+                                                                                  print(productController.size_ids);
+                                                                                },
+                                                                              )),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                    Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                          left:
+                                                                              2.sp),
+                                                                      child:
+                                                                          Text(
+                                                                        productController.filterList[index]
+                                                                            [
+                                                                            "name"],
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color: widget.backgroundColor == whiteColor
+                                                                              ? titleColor
+                                                                              : dividerColor,
+                                                                          decoration:
+                                                                              TextDecoration.none,
+                                                                          fontSize:
+                                                                              12.sp,
+                                                                          fontFamily:
+                                                                              "Franklin Gothic Regular",
+                                                                          fontWeight:
+                                                                              FontWeight.w400,
+                                                                        ),
                                                                       ),
                                                                     ),
-                                                                  ),
-                                                                ],
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
                                                           ],

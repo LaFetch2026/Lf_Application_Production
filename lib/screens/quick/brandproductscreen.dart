@@ -358,10 +358,12 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                           focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: appBarColor)),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.sp),
+                            borderRadius: BorderRadius.circular(
+                                widget.screen == "quick" ? 8.sp : 0.sp),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.sp),
+                            borderRadius: BorderRadius.circular(
+                                widget.screen == "quick" ? 8.sp : 0.sp),
                             borderSide: const BorderSide(color: appBarColor),
                           ),
                           counterText: "",

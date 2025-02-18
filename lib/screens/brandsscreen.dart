@@ -491,7 +491,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                         },
                                                                                         child: Container(
                                                                                           child: Padding(
-                                                                                            padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 8.sp),
+                                                                                            padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 10.sp),
                                                                                             child: SvgPicture.asset(
                                                                                               val.selectIndex.value == val.brandList[a]["brands"][index]["id"] ? upDropDownSvgImage : dropdownSvgImage,
                                                                                               color: colorPrimary,

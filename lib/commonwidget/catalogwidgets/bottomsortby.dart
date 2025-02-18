@@ -69,8 +69,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 16.sp, vertical: 10.sp),
+                    padding: EdgeInsets.symmetric(horizontal: 16.sp),
                     child: Row(
                       children: [
                         Expanded(
@@ -87,19 +86,23 @@ class _BottomSortByState extends State<BottomSortBy> {
                             ),
                           ),
                         ),
-                        GestureDetector(
+                        InkWell(
                           onTap: () {
                             Get.back();
                           },
                           child: Container(
                             color: Colors.transparent,
-                            child: SvgPicture.asset(crossSearchImage,
-                                color: widget.backgroundColor == whiteColor
-                                    ? appBarColor
-                                    : dividerColor,
-                                height: 13.sp,
-                                width: 13.sp,
-                                fit: BoxFit.cover),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10.sp, horizontal: 10.sp),
+                              child: SvgPicture.asset(crossSearchImage,
+                                  color: widget.backgroundColor == whiteColor
+                                      ? appBarColor
+                                      : dividerColor,
+                                  height: 13.sp,
+                                  width: 13.sp,
+                                  fit: BoxFit.cover),
+                            ),
                           ),
                         ),
                       ],

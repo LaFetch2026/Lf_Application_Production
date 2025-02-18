@@ -69,7 +69,7 @@ class _BottomCategoryState extends State<BottomCategory> {
         children: [
           Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
+              padding: EdgeInsets.symmetric(horizontal: 11.sp, vertical: 10.sp),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -105,7 +105,8 @@ class _BottomCategoryState extends State<BottomCategory> {
                           },
                           child: Container(
                             child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 5.sp),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 5.sp, horizontal: 5.sp),
                               child: Text(
                                 "View All Filters".toUpperCase(),
                                 style: TextStyle(

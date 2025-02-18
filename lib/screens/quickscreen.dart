@@ -1012,10 +1012,8 @@ class QuickScreenState extends State<QuickScreen> {
                                                       child: Padding(
                                                         padding: EdgeInsets
                                                             .symmetric(
-                                                                horizontal:
-                                                                    12.sp,
-                                                                vertical:
-                                                                    12.sp),
+                                                          horizontal: 12.sp,
+                                                        ),
                                                         child: Row(
                                                           crossAxisAlignment:
                                                               CrossAxisAlignment
@@ -1029,78 +1027,85 @@ class QuickScreenState extends State<QuickScreen> {
                                                                         [
                                                                         "logo"] !=
                                                                     null
-                                                                ? SizedBox(
-                                                                    height:
-                                                                        32.sp,
-                                                                    width:
-                                                                        32.sp,
+                                                                ? Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        top: 10
+                                                                            .sp,
+                                                                        bottom:
+                                                                            10.sp),
                                                                     child:
-                                                                        CircleAvatar(
-                                                                      backgroundColor:
-                                                                          whiteColor,
+                                                                        SizedBox(
+                                                                      height:
+                                                                          32.sp,
+                                                                      width:
+                                                                          32.sp,
                                                                       child:
-                                                                          Container(
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          shape:
-                                                                              BoxShape.circle,
-                                                                          border: Border.all(
-                                                                              width: 1.sp,
-                                                                              color: lightgreyColor),
-                                                                        ),
+                                                                          CircleAvatar(
+                                                                        backgroundColor:
+                                                                            whiteColor,
                                                                         child:
-                                                                            Padding(
-                                                                          padding:
-                                                                              EdgeInsets.all(8.0.sp),
+                                                                            Container(
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            shape:
+                                                                                BoxShape.circle,
+                                                                            border:
+                                                                                Border.all(width: 1.sp, color: lightgreyColor),
+                                                                          ),
                                                                           child:
-                                                                              CachedNetworkImage(
-                                                                            height:
-                                                                                32.sp,
-                                                                            width:
-                                                                                32.sp,
-                                                                            cacheManager: CacheManager(Config("customCacheKey",
-                                                                                stalePeriod: const Duration(days: 15),
-                                                                                maxNrOfCacheObjects: 100)),
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                            imageUrl:
-                                                                                value.brandProductList[index]["logo"],
-                                                                            errorWidget: (context, url, error) =>
-                                                                                Image.asset(
-                                                                              downloadImage,
+                                                                              Padding(
+                                                                            padding:
+                                                                                EdgeInsets.all(8.0.sp),
+                                                                            child:
+                                                                                CachedNetworkImage(
                                                                               height: 32.sp,
                                                                               width: 32.sp,
+                                                                              cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                              fit: BoxFit.cover,
+                                                                              imageUrl: value.brandProductList[index]["logo"],
+                                                                              errorWidget: (context, url, error) => Image.asset(
+                                                                                downloadImage,
+                                                                                height: 32.sp,
+                                                                                width: 32.sp,
+                                                                              ),
                                                                             ),
                                                                           ),
                                                                         ),
                                                                       ),
                                                                     ),
                                                                   )
-                                                                : Container(
-                                                                    height:
-                                                                        32.sp,
-                                                                    width:
-                                                                        32.sp,
+                                                                : Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        top: 10
+                                                                            .sp,
+                                                                        bottom:
+                                                                            10.sp),
                                                                     child:
-                                                                        CircleAvatar(
-                                                                      backgroundColor:
-                                                                          whiteColor,
+                                                                        Container(
+                                                                      height:
+                                                                          32.sp,
+                                                                      width:
+                                                                          32.sp,
                                                                       child:
-                                                                          Container(
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          shape:
-                                                                              BoxShape.circle,
-                                                                        ),
+                                                                          CircleAvatar(
+                                                                        backgroundColor:
+                                                                            whiteColor,
                                                                         child:
-                                                                            Padding(
-                                                                          padding:
-                                                                              EdgeInsets.all(8.0.sp),
-                                                                          child: Image.asset(
-                                                                              dummyWishlistImage,
-                                                                              height: 32.sp,
-                                                                              width: 32.sp,
-                                                                              fit: BoxFit.cover),
+                                                                            Container(
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            shape:
+                                                                                BoxShape.circle,
+                                                                          ),
+                                                                          child:
+                                                                              Padding(
+                                                                            padding:
+                                                                                EdgeInsets.all(8.0.sp),
+                                                                            child: Image.asset(dummyWishlistImage,
+                                                                                height: 32.sp,
+                                                                                width: 32.sp,
+                                                                                fit: BoxFit.cover),
+                                                                          ),
                                                                         ),
                                                                       ),
                                                                     ),
@@ -1125,8 +1130,10 @@ class QuickScreenState extends State<QuickScreen> {
                                                               child: Padding(
                                                                 padding: EdgeInsets
                                                                     .symmetric(
-                                                                        horizontal:
-                                                                            8.sp),
+                                                                        horizontal: 8
+                                                                            .sp,
+                                                                        vertical:
+                                                                            12.sp),
                                                                 child: AppText(
                                                                   text: value
                                                                           .brandProductList[
@@ -1217,7 +1224,11 @@ class QuickScreenState extends State<QuickScreen> {
                                                                 padding: EdgeInsets
                                                                     .only(
                                                                         left: 8
-                                                                            .sp),
+                                                                            .sp,
+                                                                        top: 10
+                                                                            .sp,
+                                                                        bottom:
+                                                                            10.sp),
                                                                 child: AppText(
                                                                   text: "VIEW ALL"
                                                                       .toUpperCase(),
@@ -1295,7 +1306,11 @@ class QuickScreenState extends State<QuickScreen> {
                                                                 padding: EdgeInsets
                                                                     .only(
                                                                         left: 8
-                                                                            .sp),
+                                                                            .sp,
+                                                                        top: 10
+                                                                            .sp,
+                                                                        bottom:
+                                                                            10.sp),
                                                                 child: SvgPicture.asset(
                                                                     arrowSearchImage,
                                                                     color:

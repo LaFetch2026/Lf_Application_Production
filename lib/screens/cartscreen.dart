@@ -1035,7 +1035,7 @@ class CartScreenState extends State<CartScreen> {
                                                                             .transparent,
                                                                         child: Padding(
                                                                             padding:
-                                                                                EdgeInsets.symmetric(horizontal: 4.sp, vertical: 4.sp),
+                                                                                EdgeInsets.symmetric(horizontal: 6.sp, vertical: 6.sp),
                                                                             child: SvgPicture.asset(crossSearchImage, color: widget.backgroundcolor == whiteColor ? homeAppBarColor : whiteColor, height: 9.sp, width: 9.sp, fit: BoxFit.cover)),
                                                                       ),
                                                                     ),
