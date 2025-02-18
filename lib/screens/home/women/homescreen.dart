@@ -1635,6 +1635,14 @@ class HomeScreenState extends State<HomeScreen> {
                                                         child: Container(
                                                           height: 80.sp,
                                                           width: 80.sp,
+                                                          margin: EdgeInsets.only(
+                                                              right: index ==
+                                                                      homeController
+                                                                              .brandList
+                                                                              .length -
+                                                                          1
+                                                                  ? 16.sp
+                                                                  : 0.sp),
                                                           child: CircleAvatar(
                                                             backgroundColor:
                                                                 whiteColor,
