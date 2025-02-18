@@ -95,7 +95,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                             color: Colors.transparent,
                             child: SvgPicture.asset(crossSearchImage,
                                 color: widget.backgroundColor == whiteColor
-                                    ? subtitleColor
+                                    ? appBarColor
                                     : dividerColor,
                                 height: 13.sp,
                                 width: 13.sp,
