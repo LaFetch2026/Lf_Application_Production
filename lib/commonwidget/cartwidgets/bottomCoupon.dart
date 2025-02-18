@@ -219,7 +219,8 @@ class BottomCouponState extends State<BottomCoupon> {
                                                             horizontal: 5.sp),
                                                     child: Center(
                                                       child: AppText(
-                                                        text: "Apply",
+                                                        text: "Apply"
+                                                            .toUpperCase(),
                                                         color: widget
                                                                     .backColor ==
                                                                 whiteColor
@@ -359,7 +360,8 @@ class BottomCouponState extends State<BottomCoupon> {
                                                             horizontal: 5.sp),
                                                     child: Center(
                                                       child: AppText(
-                                                        text: "Apply",
+                                                        text: "Apply"
+                                                            .toUpperCase(),
                                                         color: widget
                                                                     .backColor ==
                                                                 whiteColor
@@ -1027,6 +1029,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                                               brandId: 0,
                                                               genderName: "",
                                                               genderType: 0,
+                                                              type: "express",
                                                               screen:
                                                                   "category",
                                                               tagIds: controller

@@ -35,6 +35,7 @@ class CategoryProductScreen extends StatefulWidget {
   final List categoryList;
   final String genderName;
   final String screen;
+  final String type;
   const CategoryProductScreen(
       {super.key,
       required this.categoryName,
@@ -43,6 +44,7 @@ class CategoryProductScreen extends StatefulWidget {
       required this.genderType,
       required this.tagIds,
       required this.genderName,
+      this.type = "category",
       this.screen = "",
       required this.categoryList});
 
@@ -79,8 +81,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       productController.color_ids.clear();
       productController.brand_ids.clear();
     });
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => controller.getCartData());
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        widget.type == "category"
+            ? controller.getCartData()
+            : print("express product"));
     if (widget.categoryId != 0) {
       productController.category_id.value = widget.categoryId;
       WidgetsBinding.instance.addPostFrameCallback((_) =>

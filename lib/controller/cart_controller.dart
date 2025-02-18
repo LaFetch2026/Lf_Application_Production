@@ -192,7 +192,11 @@ class CartController extends BaseController {
             backColor: backColor,
             onPressed: (p0) {
               couponText.value = p0;
-              callAddCoupon(p0, "cart", backColor);
+              callAddCoupon(
+                p0,
+                "cart",
+                backColor,
+              );
             },
           ));
         }
@@ -456,14 +460,27 @@ class CartController extends BaseController {
       final Map<String, dynamic> sendData = {
         "code": code,
       };
-      var response =
-          await http.post(Uri.parse("${ApiConstants.baseUrl}/discounts/apply"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                'Content-Type': 'application/json;charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              },
-              body: json.encode(sendData));
+      dynamic response;
+      if (backColor == whiteColor) {
+        response = await http.post(
+            Uri.parse("${ApiConstants.baseUrl}/discounts/apply"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              'Content-Type': 'application/json;charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            },
+            body: json.encode(sendData));
+      } else {
+        response = await http.post(
+            Uri.parse("${ApiConstants.baseUrl}/discounts/apply?type=express"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              'Content-Type': 'application/json;charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            },
+            body: json.encode(sendData));
+      }
+
       if (response.statusCode == 200) {
         if (type == "cart") {
           Get.back();
