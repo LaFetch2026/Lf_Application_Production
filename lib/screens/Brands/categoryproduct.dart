@@ -60,10 +60,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
   @override
   void initState() {
-    productController.productCategoryList.clear();
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.productCategoryList.clear();
       productController.selectedCategoryGender.value = widget.genderName;
       productController.categoryProductHasnextpage.value = true;
       productController.categoryProductLoadMore.value = false;

@@ -56,7 +56,7 @@ class SearchScreenController extends BaseController {
           categoryList.clear();
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -89,7 +89,7 @@ class SearchScreenController extends BaseController {
           suggestedList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -123,7 +123,7 @@ class SearchScreenController extends BaseController {
           recentSearchList = responseData;
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -159,7 +159,7 @@ class SearchScreenController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -193,7 +193,7 @@ class SearchScreenController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {

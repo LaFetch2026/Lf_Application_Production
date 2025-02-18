@@ -57,7 +57,7 @@ import '../utils/constants.dart';
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {

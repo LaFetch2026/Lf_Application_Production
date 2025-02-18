@@ -173,7 +173,7 @@ class ShipAddressController extends BaseController {
           getSnackBar(responseData["errors"]["zip"][0]);
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -233,7 +233,7 @@ class ShipAddressController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -303,7 +303,7 @@ class ShipAddressController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -337,7 +337,7 @@ class ShipAddressController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -416,7 +416,7 @@ class ShipAddressController extends BaseController {
           }
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -448,7 +448,7 @@ class ShipAddressController extends BaseController {
       if (response.statusCode == 200) {
         estimateDeliveryList = responseData;
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -480,7 +480,7 @@ class ShipAddressController extends BaseController {
         print("Search location $responseData");
         locationList = responseData["predictions"];
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(

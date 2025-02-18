@@ -140,7 +140,7 @@ class LoginController extends BaseController {
           registerError.value = responseData['errors']['otp'];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -185,7 +185,7 @@ class LoginController extends BaseController {
           otpError.value = responseData['errors']['otp'];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -266,7 +266,7 @@ class LoginController extends BaseController {
           googleSignIn.signOut();
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -310,7 +310,7 @@ class LoginController extends BaseController {
           print(responseData);
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         // getSnackBar("Authentication failed");
       } else {
@@ -406,7 +406,7 @@ class LoginController extends BaseController {
           otpError.value = responseData['errors']['otp'];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -466,7 +466,7 @@ class LoginController extends BaseController {
           getSnackBar(responseData['errors']['phone'][0]);
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {

@@ -30,7 +30,7 @@ class ExchangeController extends BaseController {
           productDetails = responseData;
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(

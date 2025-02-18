@@ -91,7 +91,7 @@ class CartController extends BaseController {
           }
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         /*  Get.offAll(
           () => const LoginScreen(
@@ -149,7 +149,7 @@ class CartController extends BaseController {
           }
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         /*  Get.offAll(
           () => const LoginScreen(
@@ -197,7 +197,7 @@ class CartController extends BaseController {
           ));
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.to(
           () => const LoginScreen(
@@ -238,7 +238,7 @@ class CartController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -363,7 +363,7 @@ class CartController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
         print(response.body);
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
@@ -435,7 +435,7 @@ class CartController extends BaseController {
           getSnackBar(responseData["errors"][0]);
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -485,7 +485,7 @@ class CartController extends BaseController {
         couponError.value = "Coupon doesn't exits!";
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -524,7 +524,7 @@ class CartController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -569,7 +569,7 @@ class CartController extends BaseController {
             text2: "",
             image: paymentFailImage));
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -609,7 +609,7 @@ class CartController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {

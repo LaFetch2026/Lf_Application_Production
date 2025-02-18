@@ -91,7 +91,7 @@ class WishlistController extends BaseController {
           totalBoard.value = responseData["meta"]["total"];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         /*  Get.to(
           () => const LoginScreen(
@@ -136,7 +136,7 @@ class WishlistController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -174,7 +174,7 @@ class WishlistController extends BaseController {
           selected = List.generate(responseData['meta']["total"], (i) => false);
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -221,7 +221,7 @@ class WishlistController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -278,7 +278,7 @@ class WishlistController extends BaseController {
           }
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -326,7 +326,7 @@ class WishlistController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -359,7 +359,7 @@ class WishlistController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -389,7 +389,7 @@ class WishlistController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -422,7 +422,7 @@ class WishlistController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -448,7 +448,7 @@ class WishlistController extends BaseController {
       if (response.statusCode == 200) {
         Get.close(2);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -494,7 +494,7 @@ class WishlistController extends BaseController {
           wishListDetails = responseData;
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         /*  Get.offAll(
           () => const LoginScreen(
@@ -533,7 +533,7 @@ class WishlistController extends BaseController {
         }
         getWishlistProductDetails(responseData["id"], "");
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         // getSnackBar("Authentication failed");
       } else {
@@ -570,7 +570,7 @@ class WishlistController extends BaseController {
           Get.close(2);
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -614,7 +614,7 @@ class WishlistController extends BaseController {
         // getSnackBar("Product deleted");
         Get.close(3);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -659,7 +659,7 @@ class WishlistController extends BaseController {
         Get.close(1);
         getWishlistDetails(wishlistId, 1);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -704,7 +704,7 @@ class WishlistController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {

@@ -84,7 +84,7 @@ class BrandController extends BaseController {
           }
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         /*  Get.to(
           () => const LoginScreen(
@@ -159,7 +159,7 @@ class BrandController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -201,7 +201,7 @@ class BrandController extends BaseController {
       if (response.statusCode == 200) {
         brandDetails = responseData;
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(

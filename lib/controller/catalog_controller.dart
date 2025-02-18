@@ -32,7 +32,7 @@ class CatalogController extends BaseController {
           catalogList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -66,7 +66,7 @@ class CatalogController extends BaseController {
           categoryProductList = responseData["categories"];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -103,7 +103,7 @@ class CatalogController extends BaseController {
           Get.close(1);
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {

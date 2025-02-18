@@ -234,7 +234,7 @@ class ProductController extends BaseController {
           homeProductList = [];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         /* Get.offAll(
           () => const LoginScreen(
@@ -272,7 +272,7 @@ class ProductController extends BaseController {
           brandProductList = responseData;
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         /*  Get.to(
           () => const LoginScreen(
@@ -311,7 +311,7 @@ class ProductController extends BaseController {
           page.value = 1;
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -355,7 +355,7 @@ class ProductController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -390,7 +390,7 @@ class ProductController extends BaseController {
           frequentlyProductList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -434,7 +434,7 @@ class ProductController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -523,7 +523,7 @@ class ProductController extends BaseController {
           }
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         /* Get.offAll(
           () => const LoginScreen(
@@ -603,7 +603,7 @@ class ProductController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -691,7 +691,7 @@ class ProductController extends BaseController {
           }
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         /* Get.offAll(
           () => const LoginScreen(
@@ -770,7 +770,7 @@ class ProductController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -819,7 +819,7 @@ class ProductController extends BaseController {
           tagProductList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         /*  Get.offAll(
           () => const LoginScreen(
@@ -876,7 +876,7 @@ class ProductController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -1021,7 +1021,7 @@ class ProductController extends BaseController {
           }
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -1161,7 +1161,7 @@ class ProductController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -1209,7 +1209,7 @@ class ProductController extends BaseController {
           totalExpress.value = responseData["meta"]["total"];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -1265,7 +1265,7 @@ class ProductController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.to(
             () => const LoginScreen(
@@ -1300,7 +1300,7 @@ class ProductController extends BaseController {
           bestSellerList = responseData;
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -1344,7 +1344,7 @@ class ProductController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -1379,7 +1379,7 @@ class ProductController extends BaseController {
           filterList = responseData;
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -1496,7 +1496,7 @@ class ProductController extends BaseController {
           Get.back();
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         /*  Get.offAll(
           () => const LoginScreen(
@@ -1619,7 +1619,7 @@ class ProductController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           /*  Get.offAll(
             () => const LoginScreen(
@@ -1910,7 +1910,7 @@ class ProductController extends BaseController {
           }
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -2179,7 +2179,7 @@ class ProductController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -2215,7 +2215,7 @@ class ProductController extends BaseController {
           mostSeachList = responseData;
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -2259,7 +2259,7 @@ class ProductController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -2384,7 +2384,7 @@ class ProductController extends BaseController {
               .toList(); */
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         /*  Get.offAll(
           () => const LoginScreen(
@@ -2423,7 +2423,7 @@ class ProductController extends BaseController {
           getSnackBar("Invalid Pincode");
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -2499,7 +2499,7 @@ class ProductController extends BaseController {
           }
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         /*  Get.to(
           () => const LoginScreen(
@@ -2533,7 +2533,7 @@ class ProductController extends BaseController {
           reviewList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -2567,7 +2567,7 @@ class ProductController extends BaseController {
           imageList = responseData;
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -2601,7 +2601,7 @@ class ProductController extends BaseController {
           recommendedList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -2645,7 +2645,7 @@ class ProductController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -2686,7 +2686,7 @@ class ProductController extends BaseController {
       } else if (response.statusCode == 404) {
         getSnackBar(responseData["message"]);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -2740,7 +2740,7 @@ class ProductController extends BaseController {
         var responseData = json.decode(response.body);
         errorMsg.value = responseData["message"];
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -2815,7 +2815,7 @@ class ProductController extends BaseController {
           getFrequentlyProductData("frequently-bought", existId);
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -2848,7 +2848,7 @@ class ProductController extends BaseController {
         }
         getProductReview(productId);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
         Get.offAll(
@@ -2888,7 +2888,7 @@ class ProductController extends BaseController {
           }
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -2932,7 +2932,7 @@ class ProductController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -3023,7 +3023,7 @@ class ProductController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         // getSnackBar("Authentication failed");
       } else {

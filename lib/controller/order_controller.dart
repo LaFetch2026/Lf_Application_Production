@@ -106,7 +106,7 @@ class OrderController extends BaseController {
           orderList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -162,7 +162,7 @@ class OrderController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -200,7 +200,7 @@ class OrderController extends BaseController {
           }
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -234,7 +234,7 @@ class OrderController extends BaseController {
           shipmentDetails = responseData;
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -297,7 +297,7 @@ class OrderController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -326,7 +326,7 @@ class OrderController extends BaseController {
         selected = List.generate(50, (i) => false);
         update();
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
         selected.clear();
         selected = List.generate(50, (i) => false);
         update();
@@ -373,7 +373,7 @@ class OrderController extends BaseController {
         getOrderDetails(orderId);
         getOrderData();
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
         Get.offAll(
@@ -417,7 +417,7 @@ class OrderController extends BaseController {
         downloadSuccess.value = responseData["message"];
         // getSnackBar(responseData["message"]);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
         Get.offAll(
@@ -452,7 +452,7 @@ class OrderController extends BaseController {
         lng.value = double.parse(responseData["delivery_partner"]["longitude"]);
         deliveryPatnerLatLng.value = LatLng(lat.value, lng.value);
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(

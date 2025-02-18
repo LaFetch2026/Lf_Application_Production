@@ -99,7 +99,7 @@ class HomeController extends BaseController {
           }
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -134,7 +134,7 @@ class HomeController extends BaseController {
           expressHour.value = responseData['quick_delivery_estimated_hours'];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -177,7 +177,7 @@ class HomeController extends BaseController {
             }
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Server Error");
+          getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
             () => const LoginScreen(
@@ -210,7 +210,7 @@ class HomeController extends BaseController {
           cityList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -244,7 +244,7 @@ class HomeController extends BaseController {
           categoryList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -278,7 +278,7 @@ class HomeController extends BaseController {
           banner1List = responseData;
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -311,7 +311,7 @@ class HomeController extends BaseController {
           banner2List = responseData;
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -353,7 +353,7 @@ class HomeController extends BaseController {
       if (response.statusCode == 201) {
         print("device token sent");
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
         Get.offAll(
@@ -384,7 +384,7 @@ class HomeController extends BaseController {
           FaqsList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -428,7 +428,7 @@ class HomeController extends BaseController {
           brandList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Server Error");
+        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
