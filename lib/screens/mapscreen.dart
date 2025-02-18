@@ -544,7 +544,7 @@ class MapScreenState extends State<MapScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: 16.sp, top: 20.sp),
+          padding: EdgeInsets.only(left: 16.sp, top: 24.sp),
           child: Row(
             children: [
               Image.asset(
@@ -610,8 +610,7 @@ class MapScreenState extends State<MapScreen> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(
-              left: 48.sp, right: 10.sp, top: 5.sp, bottom: 10.sp),
+          padding: EdgeInsets.only(left: 50.sp, right: 10.sp, bottom: 16.sp),
           child: Row(
             children: [
               Flexible(
@@ -622,17 +621,21 @@ class MapScreenState extends State<MapScreen> {
                       baseColor: subtitleColor,
                       highlightColor: subtitleColor,
                       child: showAddress
-                          ? DummyContainer(height: 20, width: double.infinity)
-                          : Text(draggedAddress,
-                              maxLines: 2,
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                color: subtitleColor,
-                                overflow: TextOverflow.ellipsis,
-                                fontFamily: 'Franklin Gothic Regular',
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w500,
-                              )),
+                          ? DummyContainer(height: 20, width: 150)
+                          : SizedBox(
+                              width: MediaQuery.of(context).size.width - 150.sp,
+                              child: Text(draggedAddress,
+                                  maxLines: 2,
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    height: 1.5.sp,
+                                    color: subtitleColor,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontFamily: 'Franklin Gothic Regular',
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w500,
+                                  )),
+                            ),
                     ),
                   ],
                 ),

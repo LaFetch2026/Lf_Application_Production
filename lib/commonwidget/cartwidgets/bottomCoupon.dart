@@ -984,53 +984,59 @@ class BottomCouponState extends State<BottomCoupon> {
                                                 ),
                                                 GestureDetector(
                                                   onTap: () {
-                                                    controller.categoryList
-                                                        .clear();
-                                                    controller.tagsList.clear();
-                                                    for (var i = 0;
-                                                        i <
-                                                            widget
-                                                                .list[index]
-                                                                    ["tags"]
-                                                                .length;
-                                                        i++) {
-                                                      controller.tagsList.add(
-                                                          widget.list[index]
-                                                                  ["tags"][i]
-                                                              ["id"]);
-                                                    }
-                                                    for (var i = 0;
-                                                        i <
-                                                            widget
-                                                                .list[index][
-                                                                    "categories"]
-                                                                .length;
-                                                        i++) {
+                                                    if (widget.list[index]
+                                                        ["applicable"]) {
                                                       controller.categoryList
-                                                          .add(widget.list[
-                                                                      index]
-                                                                  ["categories"]
-                                                              [i]["id"]);
+                                                          .clear();
+                                                      controller.tagsList
+                                                          .clear();
+                                                      for (var i = 0;
+                                                          i <
+                                                              widget
+                                                                  .list[index]
+                                                                      ["tags"]
+                                                                  .length;
+                                                          i++) {
+                                                        controller.tagsList.add(
+                                                            widget.list[index]
+                                                                    ["tags"][i]
+                                                                ["id"]);
+                                                      }
+                                                      for (var i = 0;
+                                                          i <
+                                                              widget
+                                                                  .list[index][
+                                                                      "categories"]
+                                                                  .length;
+                                                          i++) {
+                                                        controller.categoryList
+                                                            .add(widget.list[
+                                                                        index][
+                                                                    "categories"]
+                                                                [i]["id"]);
+                                                      }
+                                                      Navigator.push(
+                                                          context,
+                                                          scaleIn(
+                                                            CategoryProductScreen(
+                                                              categoryName:
+                                                                  widget.list[
+                                                                          index]
+                                                                      ["code"],
+                                                              categoryId: 0,
+                                                              brandId: 0,
+                                                              genderName: "",
+                                                              genderType: 0,
+                                                              screen:
+                                                                  "category",
+                                                              tagIds: controller
+                                                                  .tagsList,
+                                                              categoryList:
+                                                                  controller
+                                                                      .categoryList,
+                                                            ),
+                                                          ));
                                                     }
-                                                    Navigator.push(
-                                                        context,
-                                                        scaleIn(
-                                                          CategoryProductScreen(
-                                                            categoryName: widget
-                                                                    .list[index]
-                                                                ["code"],
-                                                            categoryId: 0,
-                                                            brandId: 0,
-                                                            genderName: "",
-                                                            genderType: 0,
-                                                            screen: "category",
-                                                            tagIds: controller
-                                                                .tagsList,
-                                                            categoryList:
-                                                                controller
-                                                                    .categoryList,
-                                                          ),
-                                                        ));
                                                   },
                                                   child: Padding(
                                                     padding: EdgeInsets.only(
@@ -1112,7 +1118,7 @@ class BottomCouponState extends State<BottomCoupon> {
                     height: MediaQuery.of(context).size.height - 200.sp,
                     width: MediaQuery.of(context).size.width,
                     child: Center(
-                      child: Text("No Coupon Found",
+                      child: Text("No Coupons Available",
                           style: TextStyle(
                               fontSize: 14.sp,
                               decoration: TextDecoration.none,

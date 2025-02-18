@@ -84,11 +84,11 @@ class QuickScreenState extends State<QuickScreen> {
         ));
         return false;
       },
-      child: Opacity(
-        opacity: isBottomSheet ? 0.7 : 1,
+      child: ImageFiltered(
+        imageFilter: ImageFilter.blur(
+            sigmaX: isBottomSheet ? 1 : 0, sigmaY: isBottomSheet ? 1 : 0),
         child: Scaffold(
-          backgroundColor: /* isBottomSheet ? Color(0xB3171717) : */
-              homeAppBarColor,
+          backgroundColor: homeAppBarColor,
           body: SingleChildScrollView(
             child: Stack(
               children: [

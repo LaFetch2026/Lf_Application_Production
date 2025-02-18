@@ -523,7 +523,7 @@ class CartScreenState extends State<CartScreen> {
                                                                     Padding(
                                                                       padding: EdgeInsets.only(
                                                                           left:
-                                                                              8.sp),
+                                                                              12.sp),
                                                                       child:
                                                                           Column(
                                                                         crossAxisAlignment:
