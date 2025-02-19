@@ -2605,6 +2605,7 @@ class ProductController extends BaseController {
                 addressText.value =
                     "${responseData[i]["zip"]}, ${responseData[i]["address"]}";
                 addressTypeValue.value = responseData[i]["type"];
+                pincodeController.text = responseData[i]["zip"].toString();
               }
             }
             if (id == 0 && addressText.value == "") {

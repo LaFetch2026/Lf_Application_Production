@@ -297,74 +297,77 @@ class QuickScreenState extends State<QuickScreen> {
                     Padding(
                       padding: EdgeInsets.only(
                           left: 16.sp, top: 24.sp, right: 16.sp, bottom: 24.sp),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(4.sp)),
-                        child: Stack(
-                          children: [
-                            BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                              child: Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(1.0),
+                        child: ClipRRect(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(12.sp)),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                            child: Container(
+                              decoration: BoxDecoration(
                                 color: Colors.black.withOpacity(0.1),
-                                child: RawKeyboardListener(
-                                  focusNode: FocusNode(),
-                                  onKey: (value) {
-                                    print(value);
-                                    if (value is RawKeyDownEvent) {
-                                      productController.getBrandProductData();
-                                      productController.brandController.clear();
-                                      setState(() {});
-                                    }
-                                  },
-                                  child: TextField(
-                                    textCapitalization:
-                                        TextCapitalization.words,
-                                    style: TextStyle(
-                                        color: colorSecondary,
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontSize: 14.sp),
-                                    controller:
-                                        productController.brandController,
-                                    onChanged: onSearchChanged,
-                                    keyboardType: TextInputType.text,
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      isDense: true,
-                                      fillColor:
-                                          Color(0xff443e73).withOpacity(0.1),
-                                      prefixIcon: IconButton(
-                                        icon: SvgPicture.asset(searchSvgImage,
-                                            color: searchTextColor,
-                                            height: 17.sp,
-                                            width: 17.sp,
-                                            fit: BoxFit.cover),
-                                        onPressed: () {},
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: appBarColor
-                                                  .withOpacity(0.5))),
-                                      border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(12.sp),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(12.sp)),
+                              ),
+                              child: RawKeyboardListener(
+                                focusNode: FocusNode(),
+                                onKey: (value) {
+                                  print(value);
+                                  if (value is RawKeyDownEvent) {
+                                    productController.getBrandProductData();
+                                    productController.brandController.clear();
+                                    setState(() {});
+                                  }
+                                },
+                                child: TextField(
+                                  textCapitalization: TextCapitalization.words,
+                                  style: TextStyle(
+                                      color: colorSecondary,
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontSize: 14.sp),
+                                  controller: productController.brandController,
+                                  onChanged: onSearchChanged,
+                                  keyboardType: TextInputType.text,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    isDense: true,
+                                    fillColor:
+                                        Color(0xff443e73).withOpacity(0.1),
+                                    prefixIcon: IconButton(
+                                      icon: SvgPicture.asset(searchSvgImage,
+                                          color: searchTextColor,
+                                          height: 17.sp,
+                                          width: 17.sp,
+                                          fit: BoxFit.cover),
+                                      onPressed: () {},
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(12.sp),
                                         borderSide: BorderSide(
                                             color:
-                                                appBarColor.withOpacity(0.5)),
-                                      ),
-                                      counterText: "",
-                                      hintText: "Search for 'Brands'",
-                                      hintStyle: TextStyle(
-                                          fontSize: 14.sp,
-                                          color: searchTextColor),
+                                                appBarColor.withOpacity(0.5))),
+                                    border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(12.sp),
                                     ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(12.sp),
+                                      borderSide: BorderSide(
+                                          color: appBarColor.withOpacity(0.5)),
+                                    ),
+                                    counterText: "",
+                                    hintText: "Search for 'Brands'",
+                                    hintStyle: TextStyle(
+                                        fontSize: 14.sp,
+                                        color: searchTextColor),
                                   ),
                                 ),
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ),

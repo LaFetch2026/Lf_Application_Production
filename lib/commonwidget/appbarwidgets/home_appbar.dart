@@ -41,7 +41,7 @@ class _HomeAppbarState extends State<HomeAppbar> {
       child: Column(children: [
         Padding(
           padding: EdgeInsets.only(
-              left: 16.sp, top: 56.sp, right: 10.sp, bottom: 16.sp),
+              left: 16.sp, top: 56.sp, right: 10.sp, bottom: 8.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -120,7 +120,8 @@ class _HomeAppbarState extends State<HomeAppbar> {
                           widget.onPressedSearch?.call();
                         },
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 8.sp, vertical: 8.sp),
                           child: SvgPicture.asset(searchSvgImage,
                               height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                         ),
@@ -130,61 +131,72 @@ class _HomeAppbarState extends State<HomeAppbar> {
                       onTap: () {
                         widget.onPressedHeart?.call();
                       },
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.sp),
-                        child: SvgPicture.asset(heartSvgImage,
-                            height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                      child: Container(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 8.sp, vertical: 8.sp),
+                          child: SvgPicture.asset(heartSvgImage,
+                              height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                        ),
                       ),
                     ),
                     InkWell(
                       onTap: () {
                         widget.onPressedCart?.call();
                       },
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 6.sp),
-                        child: Stack(
-                          children: [
-                            Padding(
-                                padding:
-                                    EdgeInsets.only(bottom: 3.sp, left: 5.sp),
-                                child: SvgPicture.asset(cartSvgImage,
-                                    height: 18.sp,
-                                    width: 18.sp,
-                                    fit: BoxFit.cover)),
-                            Obx(() => controller.cartTotalValue.value != 0
-                                ? Positioned(
-                                    right: 0,
-                                    bottom: 0,
-                                    child: Container(
-                                      width: 10.sp,
-                                      height: 10.sp,
-                                      child: Padding(
-                                        padding: EdgeInsets.all(0),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: homeAppBarColor,
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              controller.cartTotalValue.value
-                                                  .toString(),
-                                              style: TextStyle(
-                                                  fontSize: 8,
-                                                  color: whiteColor,
-                                                  fontFamily:
-                                                      "Libre Franklin Regular",
-                                                  fontWeight: FontWeight.w400),
+                      child: Container(
+                        // margin: EdgeInsets.only(left: 2.sp),
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              right: 10.sp,
+                              left: 5.sp,
+                              top: 8.sp,
+                              bottom: 5.sp),
+                          child: Stack(
+                            children: [
+                              Padding(
+                                  padding:
+                                      EdgeInsets.only(bottom: 3.sp, left: 5.sp),
+                                  child: SvgPicture.asset(cartSvgImage,
+                                      height: 18.sp,
+                                      width: 18.sp,
+                                      fit: BoxFit.cover)),
+                              Obx(() => controller.cartTotalValue.value != 0
+                                  ? Positioned(
+                                      right: 0,
+                                      bottom: 0,
+                                      child: Container(
+                                        width: 10.sp,
+                                        height: 10.sp,
+                                        child: Padding(
+                                          padding: EdgeInsets.all(0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: homeAppBarColor,
                                             ),
-                                          ), // inner content
+                                            child: Center(
+                                              child: Text(
+                                                controller.cartTotalValue.value
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontSize: 8,
+                                                    color: whiteColor,
+                                                    fontFamily:
+                                                        "Libre Franklin Regular",
+                                                    fontWeight:
+                                                        FontWeight.w400),
+                                              ),
+                                            ), // inner content
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  )
-                                : SizedBox(
-                                    height: 0,
-                                  ))
-                          ],
+                                    )
+                                  : SizedBox(
+                                      height: 0,
+                                    ))
+                            ],
+                          ),
                         ),
                       ),
                     ),
