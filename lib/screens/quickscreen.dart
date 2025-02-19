@@ -95,10 +95,21 @@ class QuickScreenState extends State<QuickScreen> {
                 Positioned(
                   top: 0,
                   right: 0,
-                  child: Image.asset(
-                    quickBack,
-                    height: 250.sp,
-                    width: 300.sp,
+                  child: ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.black, Colors.transparent],
+                        stops: [0.1, 1.0],
+                      ).createShader(bounds);
+                    },
+                    blendMode: BlendMode.dstIn,
+                    child: Image.asset(
+                      quickBack,
+                      height: 250.sp,
+                      width: 300.sp,
+                    ),
                   ),
                 ),
                 Column(
@@ -287,7 +298,7 @@ class QuickScreenState extends State<QuickScreen> {
                       padding: EdgeInsets.only(
                           left: 16.sp, top: 24.sp, right: 16.sp, bottom: 24.sp),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(12.sp)),
+                        borderRadius: BorderRadius.all(Radius.circular(4.sp)),
                         child: Stack(
                           children: [
                             BackdropFilter(

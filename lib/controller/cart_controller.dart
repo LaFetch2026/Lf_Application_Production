@@ -499,7 +499,7 @@ class CartController extends BaseController {
         }
         couponError.value = "";
       } else if (response.statusCode == 400) {
-        couponError.value = "Coupon doesn't exits!";
+        couponError.value = "Coupon does not exist";
         print(response.body);
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");

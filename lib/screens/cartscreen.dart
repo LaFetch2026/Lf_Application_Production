@@ -179,10 +179,21 @@ class CartScreenState extends State<CartScreen> {
                         child: Positioned(
                           top: 0,
                           right: 0,
-                          child: Image.asset(
-                            quickBackCircle,
-                            height: 250.sp,
-                            width: 300.sp,
+                          child: ShaderMask(
+                            shaderCallback: (Rect bounds) {
+                              return LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [Colors.black, Colors.transparent],
+                                stops: [0.1, 1.0],
+                              ).createShader(bounds);
+                            },
+                            blendMode: BlendMode.dstIn,
+                            child: Image.asset(
+                              quickBackCircle,
+                              height: 250.sp,
+                              width: 300.sp,
+                            ),
                           ),
                         ),
                       ),
@@ -1636,8 +1647,8 @@ class CartScreenState extends State<CartScreen> {
                                                                                 30.sp,
                                                                             decoration:
                                                                                 BoxDecoration(
-                                                                              color: homeAppBarColor,
-                                                                              border: Border.all(color: btnTextColor, width: 1.sp),
+                                                                              color: widget.backgroundcolor == whiteColor ? homeAppBarColor : Colors.transparent,
+                                                                              border: Border.all(color: widget.backgroundcolor == whiteColor ? btnTextColor : Colors.transparent, width: 1.sp),
                                                                             ),
                                                                             child:
                                                                                 Padding(

@@ -113,10 +113,21 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                 child: Positioned(
                   top: 0,
                   right: 0,
-                  child: Image.asset(
-                    quickBackCircle,
-                    height: 250.sp,
-                    width: 300.sp,
+                  child: ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.black, Colors.transparent],
+                        stops: [0.1, 1.0],
+                      ).createShader(bounds);
+                    },
+                    blendMode: BlendMode.dstIn,
+                    child: Image.asset(
+                      quickBackCircle,
+                      height: 250.sp,
+                      width: 300.sp,
+                    ),
                   ),
                 ),
               ),

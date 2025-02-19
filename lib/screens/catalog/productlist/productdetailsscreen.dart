@@ -2575,6 +2575,17 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         width: 22.sp,
                                       ),
                                     ),
+                                    /*  Text(
+                                      maxLines: 1,
+                                      "Pay on delivery available",
+                                      style: TextStyle(
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: titleColor,
+                                        letterSpacing: 0.5,
+                                        fontSize: 14.sp,
+                                      ),
+                                    ) */
                                     AppText(
                                       text: "Pay on delivery available",
                                       fontFamily: "Franklin Gothic Regular",

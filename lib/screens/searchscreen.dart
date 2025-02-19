@@ -173,7 +173,7 @@ class SearchScreenState extends State<SearchScreen> {
                             top: 56.sp, left: 16.sp, bottom: 10.sp),
                         child: Row(
                           children: [
-                            GestureDetector(
+                            InkWell(
                               onTap: () {
                                 Get.back();
                               },

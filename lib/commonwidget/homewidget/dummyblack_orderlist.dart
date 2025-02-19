@@ -29,7 +29,6 @@ class DummyBlackOrderList extends StatelessWidget {
                     child: Column(
                       children: [
                         Container(
-                          color: homeAppBarColor,
                           child: Padding(
                             padding: EdgeInsets.only(top: 10.sp),
                             child: Column(

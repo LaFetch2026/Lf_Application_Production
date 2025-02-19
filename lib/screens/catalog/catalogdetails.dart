@@ -511,11 +511,16 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                                     child: SizedBox(
                                                   width: 0,
                                                 )),
-                                                SvgPicture.asset(
-                                                  color: homeAppBarColor,
-                                                  rightArrowSvgImage,
-                                                  height: 11.sp,
-                                                  width: 7.sp,
+                                                Container(
+                                                  height: 20.sp,
+                                                  alignment:
+                                                      Alignment.bottomCenter,
+                                                  child: SvgPicture.asset(
+                                                    color: homeAppBarColor,
+                                                    rightArrowSvgImage,
+                                                    height: 11.sp,
+                                                    width: 7.sp,
+                                                  ),
                                                 ),
                                               ],
                                             ),
