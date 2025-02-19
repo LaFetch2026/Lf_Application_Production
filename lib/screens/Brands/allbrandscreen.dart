@@ -184,7 +184,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       Container(
                         // color: blue,
                         alignment: Alignment.bottomCenter,
-                        margin: EdgeInsets.only(top: 140.sp),
+                        margin: EdgeInsets.only(top: 210.sp),
                         child: Image.asset(
                           circleBack,
                         ),
@@ -192,7 +192,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       Obx(
                         () => brandController.isDetails.value
                             ? Container(
-                                height: 140.sp,
+                                height: 211.sp,
                                 width: double.infinity,
                                 color: cardBg,
                               )
@@ -200,11 +200,11 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         .brandDetails["background_image"] ==
                                     null
                                 ? Image.asset(brandback,
-                                    height: 140.sp,
+                                    height: 211.sp,
                                     width: double.infinity,
                                     fit: BoxFit.cover)
                                 : Container(
-                                    height: 140.sp,
+                                    height: 211.sp,
                                     width: double.infinity,
                                     child: FutureBuilder(
                                       future: _initializeVideoPlayerFuture,
@@ -241,7 +241,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                             )
                           : Container(
                               alignment: Alignment.bottomCenter,
-                              margin: EdgeInsets.only(top: 90.sp),
+                              margin: EdgeInsets.only(top: 160.sp),
                               decoration: BoxDecoration(
                                   border: Border.all(
                                     color: homeAppBarColor,
@@ -273,7 +273,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               ),
                             )),
                       Container(
-                        margin: EdgeInsets.only(top: 190.sp),
+                        margin: EdgeInsets.only(top: 260.sp),
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 8.sp),
                           child: Center(
@@ -284,7 +284,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                     color: cardBg,
                                   )
                                 : AppText(
-                                    text: brandController.brandDetails["name"],
+                                    text: brandController.brandDetails["name"]
+                                        .toUpperCase(),
                                     color: whiteColor,
                                     fontSize: 16,
                                     fontFamily: "Franklin Gothic",
@@ -294,32 +295,49 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(top: 220.sp),
+                        margin: EdgeInsets.only(top: 290.sp),
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 8.sp),
-                          child: Center(
-                            child: Obx(() => brandController.isDetails.value
-                                ? Container(
-                                    height: 20.sp,
-                                    width: double.infinity,
-                                    color: cardBg,
-                                  )
-                                : AppText(
-                                    text: brandController
-                                        .brandDetails["description"],
-                                    color: productSubtitleColor,
-                                    textAlign: TextAlign.center,
-                                    fontSize: 14,
-                                    maxLines: 2,
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                  )),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: Obx(() => brandController.isDetails.value
+                                    ? Container(
+                                        height: 20.sp,
+                                        width: double.infinity,
+                                        color: cardBg,
+                                      )
+                                    : AppText(
+                                        text: brandController
+                                            .brandDetails["description"],
+                                        color: productSubtitleColor,
+                                        textAlign: TextAlign.center,
+                                        fontSize: 14,
+                                        maxLines: 6,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                      )),
+                              ),
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(top: 24.sp, left: 16.sp),
+                                child: AppText(
+                                  text: "All Products",
+                                  color: whiteColor,
+                                  fontSize: 20,
+                                  maxLines: 1,
+                                  fontFamily: "Playfair Display Medium",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
-                  Padding(
+                  /*  Padding(
                     padding: EdgeInsets.only(top: 10.sp, left: 16.sp),
                     child: AppText(
                       text: "All Products",
@@ -329,7 +347,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       fontFamily: "Playfair Display Medium",
                       fontWeight: FontWeight.w400,
                     ),
-                  ),
+                  ), */
                   Obx(() => productController.isProductBrand.value
                       ? Padding(
                           padding: EdgeInsets.only(

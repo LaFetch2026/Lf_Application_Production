@@ -423,7 +423,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                               child: Container(
                                                                                 color: statusBarColor,
                                                                                 child: Padding(
-                                                                                  padding: EdgeInsets.symmetric(horizontal: 8.sp, vertical: 10.sp),
+                                                                                  padding: EdgeInsets.only(left: 8.sp, top: 10.sp, bottom: 10.sp),
                                                                                   child: Row(
                                                                                     crossAxisAlignment: CrossAxisAlignment.center,
                                                                                     mainAxisAlignment: MainAxisAlignment.start,
@@ -491,7 +491,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                         },
                                                                                         child: Container(
                                                                                           child: Padding(
-                                                                                            padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 10.sp),
+                                                                                            padding: EdgeInsets.only(right: 20.sp, top: 20.sp, bottom: 20.sp, left: 60.sp),
                                                                                             child: SvgPicture.asset(
                                                                                               val.selectIndex.value == val.brandList[a]["brands"][index]["id"] ? upDropDownSvgImage : dropdownSvgImage,
                                                                                               color: colorPrimary,

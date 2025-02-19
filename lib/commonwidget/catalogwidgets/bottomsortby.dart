@@ -53,7 +53,7 @@ class _BottomSortByState extends State<BottomSortBy> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 370.sp,
+      height: 340.sp, //370
       width: double.infinity,
       decoration: BoxDecoration(
         color: widget.backgroundColor,
@@ -289,7 +289,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                       ),
                     ],
                   ),
-                  Row(
+                  /* Row(
                     children: [
                       Radio(
                           value: "customer-rating",
@@ -333,7 +333,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                         ),
                       ),
                     ],
-                  ),
+                  ), */
                 ],
               ),
             ),
