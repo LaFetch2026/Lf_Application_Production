@@ -1380,15 +1380,30 @@ class QuickScreenState extends State<QuickScreen> {
                                       }),
                                 ),
                               )
-                            : Padding(
-                                padding: EdgeInsets.only(top: 50.sp),
-                                child: Center(
-                                  child: Text("${'"'}${"NO BRAND FOUND"}${'"'}",
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: whiteColor,
-                                          fontFamily: "Franklin Gothic")),
-                                ),
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 10.sp),
+                                    child: Center(
+                                      child: Image.asset(errorImage,
+                                          height: 200.sp,
+                                          width: 220.sp,
+                                          fit: BoxFit.cover),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 6.sp, bottom: 20.sp, right: 20.sp),
+                                    child: Text(
+                                        // "${'"'}${"NO BRAND FOUND"}${'"'}",
+                                        "Coming Soon to Your Area",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: whiteColor,
+                                            fontFamily: "Franklin Gothic")),
+                                  ),
+                                ],
                               )),
                   ],
                 ),

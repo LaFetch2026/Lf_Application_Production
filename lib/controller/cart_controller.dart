@@ -435,9 +435,9 @@ class CartController extends BaseController {
                 }); */
       } else if (response.statusCode == 400) {
         print(response.body);
-        if (responseData["errors"].isNotEmpty) {
+        /*   if (responseData["errors"].isNotEmpty) {
           getSnackBar(responseData["errors"][0]);
-        }
+        } */
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
