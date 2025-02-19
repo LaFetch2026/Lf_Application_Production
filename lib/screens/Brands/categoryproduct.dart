@@ -44,7 +44,7 @@ class CategoryProductScreen extends StatefulWidget {
       required this.genderType,
       required this.tagIds,
       required this.genderName,
-      this.type = "category",
+      this.type = "category products",
       this.screen = "",
       required this.categoryList});
 
@@ -82,7 +82,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       productController.brand_ids.clear();
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
-        widget.type == "category"
+        widget.type == "category products"
             ? controller.getCartData()
             : print("express product"));
     if (widget.categoryId != 0) {
@@ -118,16 +118,17 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               widget.genderType,
               productController.sortBy.value,
               productController.filterEnable.value,
-              false));
+              false,
+              widget.type));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         productController.bannerTagController.addListener(() {
           productController.fetchMoreBannerTagProductData(
-            productController.productTags,
-            productController.productCategory,
-            productController.categoryProductGender.value,
-            productController.sortBy.value,
-            productController.filterEnable.value,
-          );
+              productController.productTags,
+              productController.productCategory,
+              productController.categoryProductGender.value,
+              productController.sortBy.value,
+              productController.filterEnable.value,
+              widget.type);
           productController.update();
         });
       });
@@ -926,7 +927,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                             productController.sortBy.value,
                                             productController
                                                 .filterEnable.value,
-                                            false);
+                                            false,
+                                            widget.type);
                                       }
                                     },
                                   );
@@ -1027,7 +1029,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                             productController.sortBy.value,
                                             productController
                                                 .filterEnable.value,
-                                            false);
+                                            false,
+                                            widget.type);
                                       }
                                       productController
                                           .selectedCategoryGender.value = p0;
@@ -1086,18 +1089,18 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                         false,
                                                         "");
                                               } else {
-                                                productController
-                                                    .getTagsBannerData(
-                                                        widget.tagIds,
-                                                        widget.categoryList,
-                                                        productController
-                                                            .categoryProductGender
-                                                            .value,
-                                                        productController
-                                                            .sortBy.value,
-                                                        productController
-                                                            .filterEnable.value,
-                                                        false);
+                                                productController.getTagsBannerData(
+                                                    widget.tagIds,
+                                                    widget.categoryList,
+                                                    productController
+                                                        .categoryProductGender
+                                                        .value,
+                                                    productController
+                                                        .sortBy.value,
+                                                    productController
+                                                        .filterEnable.value,
+                                                    false,
+                                                    widget.type);
                                               }
                                             },
                                             onClick: (p0, p1) {
@@ -1125,18 +1128,18 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                         true,
                                                         "");
                                               } else {
-                                                productController
-                                                    .getTagsBannerData(
-                                                        widget.tagIds,
-                                                        widget.categoryList,
-                                                        productController
-                                                            .categoryProductGender
-                                                            .value,
-                                                        productController
-                                                            .sortBy.value,
-                                                        productController
-                                                            .filterEnable.value,
-                                                        true);
+                                                productController.getTagsBannerData(
+                                                    widget.tagIds,
+                                                    widget.categoryList,
+                                                    productController
+                                                        .categoryProductGender
+                                                        .value,
+                                                    productController
+                                                        .sortBy.value,
+                                                    productController
+                                                        .filterEnable.value,
+                                                    true,
+                                                    widget.type);
                                               }
                                             },
                                           );
@@ -1277,7 +1280,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                             productController.sortBy.value,
                                             productController
                                                 .filterEnable.value,
-                                            false);
+                                            false,
+                                            widget.type);
                                       }
                                     },
                                     onClick: (p0, p1) {
@@ -1310,7 +1314,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                             productController.sortBy.value,
                                             productController
                                                 .filterEnable.value,
-                                            true);
+                                            true,
+                                            widget.type);
                                       }
                                     },
                                   );
