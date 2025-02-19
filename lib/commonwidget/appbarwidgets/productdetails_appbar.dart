@@ -31,7 +31,7 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
       color: statusBarColor,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
-          padding: EdgeInsets.only(right: 16.sp, top: 56.sp, bottom: 16.sp
+          padding: EdgeInsets.only(right: 10.sp, top: 56.sp, bottom: 8.sp
               // top: Platform.isAndroid ? 30.sp : 40.sp
               ),
           child: Row(
@@ -44,7 +44,7 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
                 },
                 child: Container(
                   padding:
-                      EdgeInsets.only(left: 16.sp, right: 12.sp, bottom: 6.sp),
+                      EdgeInsets.only(left: 16.sp, right: 12.sp, bottom: 4.sp),
                   child: SvgPicture.asset(arrowBack,
                       height: 15.sp, width: 15.sp, fit: BoxFit.cover),
                 ),
@@ -77,7 +77,8 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
                 },
                 child: Obx(
                   () => Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 5),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 8.sp, vertical: 8.sp),
                       child: wishlistController.isProductWishlist.value
                           ? DummyContainer(
                               height: 18,
@@ -101,7 +102,8 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
                   widget.onPressedShare?.call();
                 },
                 child: Padding(
-                  padding: EdgeInsets.only(left: 5.sp),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
                   child: Stack(
                     children: [
                       Padding(

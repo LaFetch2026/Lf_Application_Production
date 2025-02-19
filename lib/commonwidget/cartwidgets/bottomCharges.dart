@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../utils/constants.dart';
 import '../app_text.dart';
@@ -39,18 +40,23 @@ class BottomChargesState extends State<BottomCharges> {
           children: [
             Padding(
               padding: EdgeInsets.only(
-                  left: 16.sp, right: 16.sp, top: 20.sp, bottom: 5.sp),
+                left: 16.sp,
+                right: 16.sp,
+              ),
               child: Row(
                 children: [
                   Expanded(
                     flex: 1,
-                    child: Text(
-                      widget.title,
-                      style: TextStyle(
-                        color: loginText,
-                        fontSize: 16.sp,
-                        fontFamily: "Franklin Gothic",
-                        fontWeight: FontWeight.w500,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 20.sp, bottom: 5.sp),
+                      child: Text(
+                        widget.title,
+                        style: TextStyle(
+                          color: loginText,
+                          fontSize: 16.sp,
+                          fontFamily: "Franklin Gothic",
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
@@ -60,8 +66,19 @@ class BottomChargesState extends State<BottomCharges> {
                     },
                     child: Container(
                       color: Colors.transparent,
-                      child: Image.asset(blackCrossImage,
-                          height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            left: 10.sp,
+                            right: 16.sp,
+                            top: 20.sp,
+                            bottom: 5.sp),
+                        child: SvgPicture.asset(crossSearchImage,
+                            // ignore: deprecated_member_use
+                            color: loginText,
+                            height: 13.sp,
+                            width: 13.sp,
+                            fit: BoxFit.cover),
+                      ),
                     ),
                   ),
                 ],

@@ -35,7 +35,7 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
       color: homeAppBarColor,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
-          padding: EdgeInsets.only(right: 16.sp, top: 56.sp, bottom: 16.sp),
+          padding: EdgeInsets.only(right: 10.sp, top: 56.sp, bottom: 16.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -80,7 +80,9 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
                   widget.onPressedShare?.call();
                 },
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 8.sp,
+                  ),
                   child: ImageIcon(
                     AssetImage(shareNewimage),
                     color: whiteColor,
@@ -93,7 +95,9 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
                   widget.onPressedHeart?.call();
                 },
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 8.sp,
+                  ),
                   child: ImageIcon(
                     AssetImage(wishlistBottomIcon),
                     color: whiteColor,
@@ -106,7 +110,10 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
                   widget.onPressedCart?.call();
                 },
                 child: Padding(
-                  padding: EdgeInsets.only(left: 5.sp),
+                  padding: EdgeInsets.only(
+                    right: 10.sp,
+                    left: 8.sp,
+                  ),
                   child: Stack(
                     children: [
                       Padding(

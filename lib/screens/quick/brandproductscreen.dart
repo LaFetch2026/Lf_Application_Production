@@ -165,7 +165,6 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                           ),
                         )
                       : Container(
-                          height: 80.sp,
                           width: MediaQuery.of(context).size.width,
                           color: homeAppBarColor,
                           child: Column(
@@ -173,31 +172,42 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                               children: [
                                 Padding(
                                   padding: EdgeInsets.only(
-                                      left: 6.sp, right: 16.sp, top: 30.sp),
+                                      right: 10.sp, top: 56.sp, bottom: 16.sp),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      IconButton(
-                                        icon: SvgPicture.asset(arrowBack,
-                                            color: whiteColor,
-                                            height: 15.sp,
-                                            width: 15.sp,
-                                            fit: BoxFit.cover),
-                                        onPressed: () {
+                                      InkWell(
+                                        onTap: () {
                                           Get.back();
                                         },
+                                        child: Container(
+                                          alignment: Alignment.bottomCenter,
+                                          padding: EdgeInsets.only(
+                                              left: 16.sp,
+                                              right: 12.sp,
+                                              top: 4.sp),
+                                          child: SvgPicture.asset(arrowBack,
+                                              color: whiteColor,
+                                              height: 15.sp,
+                                              width: 15.sp,
+                                              fit: BoxFit.cover),
+                                        ),
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 0.sp),
-                                        child: AppText(
-                                          text: widget.title.toUpperCase(),
-                                          color: whiteColor,
-                                          fontSize: 16,
-                                          fontFamily:
-                                              "Franklin Gothic Semibold",
-                                          textAlign: TextAlign.center,
-                                          fontWeight: FontWeight.w500,
+                                      Container(
+                                        height: 28.sp,
+                                        alignment: Alignment.bottomCenter,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(left: 0.sp),
+                                          child: AppText(
+                                            text: widget.title.toUpperCase(),
+                                            color: whiteColor,
+                                            fontSize: 16,
+                                            fontFamily:
+                                                "Franklin Gothic Semibold",
+                                            textAlign: TextAlign.center,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       ),
                                       const Expanded(
@@ -223,7 +233,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                         },
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: 5),
+                                              horizontal: 8.sp),
                                           child: ImageIcon(
                                             AssetImage(searchNewImage),
                                             color: whiteColor,
@@ -243,7 +253,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                         },
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: 5),
+                                              horizontal: 8.sp),
                                           child: ImageIcon(
                                             AssetImage(wishlistBottomIcon),
                                             color: whiteColor,
@@ -263,7 +273,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                           );
                                         },
                                         child: Padding(
-                                          padding: EdgeInsets.only(left: 5.sp),
+                                          padding: EdgeInsets.only(
+                                              left: 8.sp, right: 8.sp),
                                           child: Stack(
                                             children: [
                                               Padding(

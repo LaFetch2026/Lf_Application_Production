@@ -23,22 +23,22 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80.sp,
       width: MediaQuery.of(context).size.width,
       color: statusBarColor,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
-          padding: EdgeInsets.only(left: 6.sp, right: 16.sp, top: 30.sp),
+          padding: EdgeInsets.only(
+              left: 16.sp, right: 10.sp, top: 56.sp, bottom: 16.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
                 padding: EdgeInsets.only(right: 10),
-                child: IconButton(
-                  icon: SvgPicture.asset(arrowBack,
+                child: InkWell(
+                  child: SvgPicture.asset(arrowBack,
                       height: 15.sp, width: 15.sp, fit: BoxFit.cover),
-                  onPressed: () {
+                  onTap: () {
                     widget.onPressedBackButton?.call();
                   },
                 ),
@@ -67,7 +67,7 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
                   widget.onPressedheart?.call();
                 },
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 8.sp),
                   child: ImageIcon(
                     AssetImage(wishlistBottomIcon),
                     color: homeAppBarColor,
@@ -80,7 +80,7 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
                   widget.onPressedCart?.call();
                 },
                 child: Padding(
-                  padding: EdgeInsets.only(left: 5.sp),
+                  padding: EdgeInsets.symmetric(horizontal: 8.sp),
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 3.sp),
                     child: Image.asset(

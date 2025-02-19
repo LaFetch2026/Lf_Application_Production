@@ -40,7 +40,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
       color: widget.backColor,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Padding(
-          padding: EdgeInsets.only(right: 16.sp, top: 56.sp, bottom: 16.sp),
+          padding: EdgeInsets.only(right: 10.sp, top: 56.sp, bottom: 8.sp),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -102,7 +102,8 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   widget.onPressedSearch?.call();
                 },
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
                   child: ImageIcon(
                     AssetImage(searchNewImage),
                     color: homeAppBarColor,
@@ -117,7 +118,8 @@ class _ProductAppbarState extends State<ProductAppbar> {
                     widget.onPressedHeart?.call();
                   },
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 5),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
                     child: ImageIcon(
                       AssetImage(wishlistBottomIcon),
                       color: homeAppBarColor,
@@ -131,7 +133,8 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   widget.onPressedCart?.call();
                 },
                 child: Padding(
-                  padding: EdgeInsets.only(left: 5.sp),
+                  padding: EdgeInsets.only(
+                      right: 10.sp, left: 8.sp, top: 8.sp, bottom: 5.sp),
                   child: Stack(
                     children: [
                       Padding(
