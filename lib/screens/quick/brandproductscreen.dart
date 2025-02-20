@@ -32,6 +32,7 @@ class BrandViewProductScreen extends StatefulWidget {
   final String genderName;
   final int brand_id;
   final String expresshour;
+  final List categoryList;
   final String screen;
 
   const BrandViewProductScreen(
@@ -39,6 +40,7 @@ class BrandViewProductScreen extends StatefulWidget {
       required this.title,
       required this.genderName,
       required this.expresshour,
+      this.categoryList = const [],
       required this.screen,
       required this.brand_id});
 

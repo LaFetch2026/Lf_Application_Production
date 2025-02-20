@@ -28,7 +28,10 @@ class BrandController extends BaseController {
   RxBool isDetails = false.obs;
   dynamic brandDetails = "".obs;
   RxBool isCategory = false.obs;
+  RxBool isProductBrand = false.obs;
   List categoryList = [].obs;
+  List brand_category_List = [].obs;
+  List brandProductDetailsList = [].obs;
   RxInt selectIndex = 0.obs;
   List<bool> selected = List.generate(50, (i) => false).obs;
 
@@ -199,7 +202,12 @@ class BrandController extends BaseController {
       }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
+        brand_category_List.clear();
         brandDetails = responseData;
+        for (var i = 0; i < responseData["categories"].length; i++) {
+          brand_category_List.add(responseData["categories"][i]["id"]);
+        }
+        getBrandDetailsProduct(responseData["id"], brand_category_List);
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
@@ -216,5 +224,35 @@ class BrandController extends BaseController {
       print("error$e");
     }
     isDetails.value = false;
+  }
+
+  getBrandDetailsProduct(int brandId, List categoryList) async {
+    isProductBrand.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      dynamic response;
+      response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products?brand_id=$brandId&categories_ids[]=${categoryList.join(',')}"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          brandProductDetailsList = responseData["data"];
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Please try again");
+      } else if (response.statusCode == 401) {
+        print(response.statusCode);
+      } else {
+        getSnackBar("get brand details product failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isProductBrand.value = false;
   }
 }

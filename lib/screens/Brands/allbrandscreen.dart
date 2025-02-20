@@ -101,8 +101,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     // getprefrenceData();
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => brandController.getBrandDetails(widget.id, widget.slug));
-    WidgetsBinding.instance.addPostFrameCallback((_) => productController
-        .getBrandDetailsProduct("", false, false, widget.id, "brand"));
+    /*  WidgetsBinding.instance.addPostFrameCallback((_) => productController
+        .getBrandDetailsProduct("", false, false, widget.id, "brand")); */
     /* WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback(
@@ -348,7 +348,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       fontWeight: FontWeight.w400,
                     ),
                   ), */
-                  Obx(() => productController.isProductBrand.value
+                  Obx(() => brandController.isProductBrand.value
                       ? Padding(
                           padding: EdgeInsets.only(
                             top: 16.sp,
@@ -432,7 +432,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               },
                             );
                           },
-                          list: productController.brandProductDetailsList)),
+                          list: brandController.brandProductDetailsList)),
                   /*   Obx(
                     () => brandController.isCategory.value
                         ? const DummybrandAll()
@@ -807,6 +807,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       Get.to(BrandViewProductScreen(
                               expresshour: homeController.expressHour.value,
                               brand_id: brandController.brandId.value,
+                              categoryList: brandController.brand_category_List,
                               title: brandController.brandDetails["name"],
                               screen: "brand",
                               genderName: ""))
@@ -816,12 +817,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                   productController.filterProductEnable.value =
                                       false;
                                   productController.categoryFilter.value = 0;
-                                  productController.getBrandDetailsProduct(
+                                  /*  productController.getBrandDetailsProduct(
                                       "",
                                       false,
                                       false,
                                       brandController.brandId.value,
-                                      "brand");
+                                      "brand"); */
                                 },
                               ));
                     },
