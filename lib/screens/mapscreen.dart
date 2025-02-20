@@ -722,19 +722,69 @@ class MapScreenState extends State<MapScreen> {
 
   Widget _getCustomPin() {
     return Center(
-      child: SizedBox(
-        width: 150.sp,
-        child: /*  Lottie.asset(
-          locationAnim,
-          width: 100.sp,
-          height: 100.sp,
-        ) */
-            Image.asset(
-          locationPinImage,
-          width: 50.sp,
-          height: 50.sp,
-          color: colorPrimary,
-        ),
+      child: Stack(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+                top: 64.sp, left: MediaQuery.of(context).size.width / 2 - 4.sp),
+            child: ClipRRect(
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: redColor,
+                ),
+                height: 10.sp,
+                width: 10.sp,
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(
+                top: 25.sp,
+                left: MediaQuery.of(context).size.width / 2 - 24.sp),
+            child: Image.asset(
+              locationPinImage,
+              width: 50.sp,
+              height: 50.sp,
+              color: colorPrimary,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 40.sp),
+            child: Container(
+              width: MediaQuery.of(context).size.width.sp,
+              height: 58.sp,
+              decoration: BoxDecoration(
+                  color: homeAppBarColor,
+                  borderRadius: BorderRadius.circular(8.sp)),
+              child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 24.sp, vertical: 8.sp),
+                child: Column(
+                  children: [
+                    AppText(
+                      text: "Order will be delivered here",
+                      fontFamily: "Franklin Gothic",
+                      fontWeight: FontWeight.w500,
+                      color: whiteColor,
+                      fontSize: 16,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 4.sp),
+                      child: AppText(
+                        text: "Move the pin to  change location",
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w500,
+                        color: whiteColor,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
