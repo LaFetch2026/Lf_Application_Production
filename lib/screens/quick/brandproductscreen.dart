@@ -59,20 +59,23 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
 
   @override
   void initState() {
-    productController.brandProductDetailsList.clear();
-    productController.branddetailsSearchController.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.brandProductDetailsList.clear();
+      productController.branddetailsSearchController.clear();
       productController.brandProductHasnextpage.value = true;
       productController.brandProductLoadMore.value = false;
       productController.isProductBrand.value = false;
       productController.brandProductPage.value = 1;
+      productController.brandDetailsId.value = widget.brand_id;
+      productController.brandDetailsScreen.value = widget.screen;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getBrandDetailsProduct(
             productController.productSortBy.value,
             productController.filterProductEnable.value,
             false,
-            widget.brand_id));
+            widget.brand_id,
+            widget.screen));
     WidgetsBinding.instance
         .addPostFrameCallback((_) => controller.getCartData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -80,7 +83,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
         productController.fetchMoreBrandDetails(
             productController.productSortBy.value,
             productController.filterProductEnable.value,
-            widget.brand_id);
+            productController.brandDetailsId.value,
+            productController.brandDetailsScreen.value);
         productController.update();
       });
     });
@@ -94,7 +98,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
           productController.productSortBy.value,
           productController.filterProductEnable.value,
           false,
-          widget.brand_id);
+          widget.brand_id,
+          widget.screen);
     });
   }
 
@@ -367,7 +372,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                     productController.productSortBy.value,
                                     productController.filterProductEnable.value,
                                     false,
-                                    widget.brand_id);
+                                    widget.brand_id,
+                                    widget.screen);
                               }
                             },
                             child: TextField(
@@ -751,7 +757,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                         productController
                                             .filterProductEnable.value,
                                         false,
-                                        widget.brand_id);
+                                        widget.brand_id,
+                                        widget.screen);
                                   },
                                 );
                               },
@@ -833,7 +840,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                         productController
                                             .filterProductEnable.value,
                                         false,
-                                        widget.brand_id);
+                                        widget.brand_id,
+                                        widget.screen);
                                     categoryName = p0;
                                     setState(() {});
                                   },
@@ -879,7 +887,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                         .filterProductEnable
                                                         .value,
                                                     false,
-                                                    widget.brand_id);
+                                                    widget.brand_id,
+                                                    widget.screen);
                                           },
                                           onClick: (p0, p1) {
                                             productController
@@ -897,7 +906,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                         .filterProductEnable
                                                         .value,
                                                     true,
-                                                    widget.brand_id);
+                                                    widget.brand_id,
+                                                    widget.screen);
                                           },
                                         );
                                       },
@@ -1003,7 +1013,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                         productController
                                             .filterProductEnable.value,
                                         false,
-                                        widget.brand_id);
+                                        widget.brand_id,
+                                        widget.screen);
                                   },
                                   onClick: (p0, p1) {
                                     productController
@@ -1015,7 +1026,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                         productController
                                             .filterProductEnable.value,
                                         true,
-                                        widget.brand_id);
+                                        widget.brand_id,
+                                        widget.screen);
                                   },
                                 );
                               },

@@ -101,8 +101,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     // getprefrenceData();
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => brandController.getBrandDetails(widget.id, widget.slug));
-    WidgetsBinding.instance.addPostFrameCallback((_) =>
-        productController.getBrandDetailsProduct("", false, false, widget.id));
+    WidgetsBinding.instance.addPostFrameCallback((_) => productController
+        .getBrandDetailsProduct("", false, false, widget.id, "brand"));
     /* WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback(
@@ -820,7 +820,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       "",
                                       false,
                                       false,
-                                      brandController.brandId.value);
+                                      brandController.brandId.value,
+                                      "brand");
                                 },
                               ));
                     },

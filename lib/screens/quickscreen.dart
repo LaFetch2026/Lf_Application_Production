@@ -1230,7 +1230,8 @@ class QuickScreenState extends State<QuickScreen> {
                                                                                 "",
                                                                                 false,
                                                                                 false,
-                                                                                0);
+                                                                                0,
+                                                                                "quick");
                                                                           },
                                                                         ));
                                                               },
@@ -1312,7 +1313,8 @@ class QuickScreenState extends State<QuickScreen> {
                                                                                 "",
                                                                                 false,
                                                                                 false,
-                                                                                0);
+                                                                                0,
+                                                                                "quick");
                                                                           },
                                                                         ));
                                                               },
