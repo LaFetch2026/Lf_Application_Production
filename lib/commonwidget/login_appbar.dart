@@ -52,7 +52,8 @@ class LoginAppbarState extends State<LoginAppbar> {
               ),
               Padding(
                 padding: EdgeInsets.only(
-                    right: widget.isSkip ? 0 : 16.sp, left: 6.sp),
+                    right: widget.isSkip ? 0 : 16.sp,
+                    left: widget.isSkip ? 10 : 0.sp),
                 child: Container(
                   child: Image.asset(
                     lafetchLogoImage,

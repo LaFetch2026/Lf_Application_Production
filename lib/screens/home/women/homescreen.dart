@@ -21,13 +21,13 @@ import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/controller/catalog_controller.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
-import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 //import 'package:lafetch/screens/home/women/productviewscreen.dart';
 //import 'package:lafetch/screens/home/faqscreen.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
+import 'package:lafetch/screens/quick/brandproductscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:marquee/marquee.dart';
@@ -1593,34 +1593,34 @@ class HomeScreenState extends State<HomeScreen> {
                                                       null
                                                   ? GestureDetector(
                                                       onTap: () {
-                                                        /*  Get.to(BrandsScreen(
-                                                          screen: "search",
-                                                          logo: homeController
-                                                                  .brandList[
-                                                              index]["logo"],
-                                                          backImage: homeController
-                                                                          .brandList[
-                                                                      index][
-                                                                  "background_image"] ??
-                                                              "",
-                                                          name: homeController
-                                                                  .brandList[
-                                                              index]["name"],
-                                                          brandId: homeController
-                                                                  .brandList[
-                                                              index]["id"],
-                                                        ) */
-                                                        brandController
-                                                            .brandProductDetailsList
-                                                            .clear();
-                                                        Get.to(AllBrandScreen(
-                                                                id: homeController
-                                                                            .brandList[
-                                                                        index]
-                                                                    ["id"],
-                                                                screen: "home",
-                                                                slug: ""))
-                                                            ?.then(
+                                                        /*   Get.to(AllBrandScreen(
+                                                            id: homeController
+                                                                    .brandList[
+                                                                index]["id"],
+                                                            screen: "home",
+                                                            slug: "")); */
+                                                        Navigator.push(
+                                                                context,
+                                                                scaleIn(
+                                                                  BrandViewProductScreen(
+                                                                      expresshour: homeController
+                                                                          .expressHour
+                                                                          .value,
+                                                                      brand_id:
+                                                                          homeController.brandList[index]
+                                                                              [
+                                                                              "id"],
+                                                                      title: homeController.brandList[
+                                                                              index]
+                                                                          [
+                                                                          "name"],
+                                                                      screen:
+                                                                          "brand",
+                                                                      genderName: homeController
+                                                                          .genderText
+                                                                          .value),
+                                                                ))
+                                                            .then(
                                                                 (value) =>
                                                                     setState(
                                                                       () {

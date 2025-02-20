@@ -689,18 +689,32 @@ class BrandsScreenState extends State<BrandsScreen> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: 6.sp,
-                                                  bottom: 20.sp,
-                                                  right: 20.sp),
-                                              child: Text(
-                                                  "Coming Soon to Your Area",
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: homeAppBarColor,
-                                                      fontFamily:
-                                                          "Franklin Gothic")),
-                                            ),
+                                                padding: EdgeInsets.only(
+                                                    top: 6.sp,
+                                                    bottom: 20.sp,
+                                                    right: 20.sp),
+                                                child: brandController
+                                                        .searchController.text
+                                                        .toString()
+                                                        .trim()
+                                                        .isNotEmpty
+                                                    ? Text(
+                                                        "No ${brandController.searchController.text.toString().trim()} found"
+                                                            .toUpperCase(),
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            color:
+                                                                homeAppBarColor,
+                                                            fontFamily:
+                                                                "Franklin Gothic"))
+                                                    : Text(
+                                                        "Coming Soon to Your Area",
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            color:
+                                                                homeAppBarColor,
+                                                            fontFamily:
+                                                                "Franklin Gothic"))),
                                           ],
                                         ),
                               brandController.loadMore.value

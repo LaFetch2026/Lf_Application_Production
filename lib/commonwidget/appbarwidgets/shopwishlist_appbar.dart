@@ -49,7 +49,7 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 10.sp),
+                padding: EdgeInsets.only(left: 30.sp),
                 child: Image.asset(
                   lafetchLogoImage,
                   color: homeAppBarColor,

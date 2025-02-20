@@ -16,7 +16,6 @@ import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/commonwidget/quickwidgets/brand_product_list.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
-import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 //import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
@@ -710,25 +709,8 @@ class QuickScreenState extends State<QuickScreen> {
                                                               index]["logo"] !=
                                                           null
                                                       ? GestureDetector(
-                                                          onTap: () {
-                                                            /*  Get.to(BrandsScreen(
-                                                              screen: "search",
-                                                              logo: homeController
-                                                                      .brandList[
-                                                                  index]["logo"],
-                                                              backImage: homeController
-                                                                              .brandList[
-                                                                          index][
-                                                                      "background_image"] ??
-                                                                  "",
-                                                              name: homeController
-                                                                      .brandList[
-                                                                  index]["name"],
-                                                              brandId: homeController
-                                                                      .brandList[
-                                                                  index]["id"],
-                                                            ) */
-                                                            Get.to(AllBrandScreen(
+                                                          onTap: () async {
+                                                            /*  Get.to(AllBrandScreen(
                                                                     id: homeController
                                                                             .brandList[index]
                                                                         ["id"],
@@ -740,6 +722,70 @@ class QuickScreenState extends State<QuickScreen> {
                                                                         setState(
                                                                           () {
                                                                             homeController.getBrandData("express");
+                                                                          },
+                                                                          
+                                                                        )); */
+                                                            FocusScope.of(
+                                                                    context)
+                                                                .unfocus();
+                                                            final prefs =
+                                                                await SharedPreferences
+                                                                    .getInstance();
+                                                            prefs.remove(
+                                                                "brandList");
+                                                            prefs.remove(
+                                                                "colorList");
+                                                            prefs.remove(
+                                                                "sizeList");
+                                                            prefs.remove(
+                                                                "upper");
+                                                            prefs.remove(
+                                                                "lower");
+                                                            prefs.remove(
+                                                                "sortby");
+                                                            prefs.remove(
+                                                                "category");
+                                                            productController
+                                                                .productSortBy
+                                                                .value = "";
+                                                            productController
+                                                                .filterProductEnable
+                                                                .value = false;
+                                                            productController
+                                                                .categoryFilter
+                                                                .value = 0;
+                                                            Get.to(BrandViewProductScreen(
+                                                                    screen:
+                                                                        "quick",
+                                                                    expresshour:
+                                                                        homeController
+                                                                            .expressHour
+                                                                            .value,
+                                                                    brand_id:
+                                                                        homeController.brandList[index][
+                                                                            "id"],
+                                                                    title: homeController
+                                                                            .brandList[index]
+                                                                        [
+                                                                        "name"],
+                                                                    genderName:
+                                                                        ""))
+                                                                ?.then(
+                                                                    (value) =>
+                                                                        setState(
+                                                                          () {
+                                                                            productController.productSortBy.value =
+                                                                                "";
+                                                                            productController.filterProductEnable.value =
+                                                                                false;
+                                                                            productController.categoryFilter.value =
+                                                                                0;
+                                                                            productController.getBrandDetailsProduct(
+                                                                                "",
+                                                                                false,
+                                                                                false,
+                                                                                0,
+                                                                                "quick");
                                                                           },
                                                                         ));
                                                           },
@@ -1125,19 +1171,65 @@ class QuickScreenState extends State<QuickScreen> {
                                                                     ),
                                                                   ),
                                                             InkWell(
-                                                              onTap: () {
-                                                                Get.to(AllBrandScreen(
-                                                                        id: value.brandProductList[index]
+                                                              onTap: () async {
+                                                                FocusScope.of(
+                                                                        context)
+                                                                    .unfocus();
+                                                                final prefs =
+                                                                    await SharedPreferences
+                                                                        .getInstance();
+                                                                prefs.remove(
+                                                                    "brandList");
+                                                                prefs.remove(
+                                                                    "colorList");
+                                                                prefs.remove(
+                                                                    "sizeList");
+                                                                prefs.remove(
+                                                                    "upper");
+                                                                prefs.remove(
+                                                                    "lower");
+                                                                prefs.remove(
+                                                                    "sortby");
+                                                                prefs.remove(
+                                                                    "category");
+                                                                productController
+                                                                    .productSortBy
+                                                                    .value = "";
+                                                                productController
+                                                                    .filterProductEnable
+                                                                    .value = false;
+                                                                productController
+                                                                    .categoryFilter
+                                                                    .value = 0;
+                                                                Get.to(BrandViewProductScreen(
+                                                                        screen:
+                                                                            "quick",
+                                                                        expresshour: homeController
+                                                                            .expressHour
+                                                                            .value,
+                                                                        brand_id: value.brandProductList[index]
                                                                             [
                                                                             "id"],
-                                                                        screen:
-                                                                            "home",
-                                                                        slug:
+                                                                        title: value.brandProductList[index]
+                                                                            [
+                                                                            "name"],
+                                                                        genderName:
                                                                             ""))
                                                                     ?.then((value) =>
                                                                         setState(
                                                                           () {
-                                                                            FocusScope.of(context).unfocus();
+                                                                            productController.productSortBy.value =
+                                                                                "";
+                                                                            productController.filterProductEnable.value =
+                                                                                false;
+                                                                            productController.categoryFilter.value =
+                                                                                0;
+                                                                            productController.getBrandDetailsProduct(
+                                                                                "",
+                                                                                false,
+                                                                                false,
+                                                                                0,
+                                                                                "quick");
                                                                           },
                                                                         ));
                                                               },
@@ -1402,7 +1494,13 @@ class QuickScreenState extends State<QuickScreen> {
                                         top: 6.sp, bottom: 20.sp, right: 20.sp),
                                     child: Text(
                                         // "${'"'}${"NO BRAND FOUND"}${'"'}",
-                                        "Coming Soon to Your Area",
+                                        productController.brandController.text
+                                                .toString()
+                                                .trim()
+                                                .isNotEmpty
+                                            ? "No ${productController.brandController.text} found"
+                                                .toUpperCase()
+                                            : "Coming Soon to Your Area",
                                         style: TextStyle(
                                             fontSize: 12,
                                             color: whiteColor,

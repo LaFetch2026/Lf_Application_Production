@@ -11,7 +11,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/cart_appbar.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomCharges.dart';
-import 'package:lafetch/commonwidget/cartwidgets/bottomCoupon.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomquantity.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomsize.dart';
 import 'package:lafetch/commonwidget/cartwidgets/cartbottom.dart';
@@ -2051,7 +2050,7 @@ class CartScreenState extends State<CartScreen> {
                                                                   ),
                                                                   GestureDetector(
                                                                     onTap: () {
-                                                                      Get.to(
+                                                                      /*  Get.to(
                                                                           BottomCoupon(
                                                                         list: controller
                                                                             .couponList,
@@ -2067,7 +2066,18 @@ class CartScreenState extends State<CartScreen> {
                                                                               "cart",
                                                                               widget.backgroundcolor);
                                                                         },
-                                                                      ));
+                                                                      )); */
+                                                                      /*  if (controller
+                                                                            .cartDetails["discount"] !=
+                                                                        null) {
+                                                                      controller
+                                                                          .callRemoveCoupon(
+                                                                              widget.backgroundcolor);
+                                                                    } else { */
+                                                                      controller
+                                                                          .getCouponData(
+                                                                              widget.backgroundcolor);
+                                                                      //   }
                                                                     },
                                                                     child:
                                                                         AppText(

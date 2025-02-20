@@ -534,14 +534,26 @@ class CartController extends BaseController {
       final Map<String, dynamic> sendData = {
         "code": "",
       };
-      var response =
-          await http.post(Uri.parse("${ApiConstants.baseUrl}/discounts/apply"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                'Content-Type': 'application/json;charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              },
-              body: json.encode(sendData));
+      dynamic response;
+      if (backColor == whiteColor) {
+        response = await http.post(
+            Uri.parse("${ApiConstants.baseUrl}/discounts/apply"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              'Content-Type': 'application/json;charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            },
+            body: json.encode(sendData));
+      } else {
+        response = await http.post(
+            Uri.parse("${ApiConstants.baseUrl}/discounts/apply?type=express"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              'Content-Type': 'application/json;charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            },
+            body: json.encode(sendData));
+      }
       if (response.statusCode == 200) {
         couponText.value = "Apply Coupon";
         if (backColor == whiteColor) {

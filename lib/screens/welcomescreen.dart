@@ -56,7 +56,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
                 width: MediaQuery.of(context).size.width.sp,
                 height: MediaQuery.of(context).size.height.sp,
                 child: AspectRatio(
-                  aspectRatio: videoController.value.aspectRatio,
+                  aspectRatio: 9 / 16,
                   child: VideoPlayer(videoController),
                 ),
               ),
