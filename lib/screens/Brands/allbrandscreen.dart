@@ -5,6 +5,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/allbrand_appbar.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
@@ -40,6 +41,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   int tagId = 0;
+  RegExp regExp = RegExp("");
+  bool showDescription = false;
   late Future<void> _initializeVideoPlayerFuture;
   late VideoPlayerController videoController;
   List heightList = [
@@ -301,7 +304,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       Container(
                         margin: EdgeInsets.only(top: 290.sp),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                          padding: EdgeInsets.symmetric(horizontal: 16.sp),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -312,17 +315,73 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         width: double.infinity,
                                         color: cardBg,
                                       )
-                                    : AppText(
-                                        text: brandController
-                                            .brandDetails["description"],
-                                        color: productSubtitleColor,
-                                        textAlign: TextAlign.center,
-                                        fontSize: 14,
-                                        maxLines: 6,
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
+                                    : Expanded(
+                                        child: AppText(
+                                          text: brandController
+                                              .brandDetails["description"],
+                                          color: productSubtitleColor,
+                                          fontSize: 14,
+                                          maxLines: showDescription ? 12 : 2,
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                        ),
                                       )),
                               ),
+                              Obx(() => brandController.isDetails.value
+                                  ? SizedBox(
+                                      height: 0,
+                                    )
+                                  : Visibility(
+                                      visible: regExp
+                                                  .allMatches(brandController
+                                                          .brandDetails[
+                                                      "description"])
+                                                  .length >
+                                              50
+                                          ? true
+                                          : false,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(top: 4.sp),
+                                        child: InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              showDescription =
+                                                  !showDescription;
+                                            });
+                                          },
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              AppText(
+                                                text: showDescription
+                                                    ? "Show less"
+                                                    : "Show more",
+                                                color: productSubtitleColor,
+                                                fontSize: 12,
+                                                maxLines: 12,
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                              Container(
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 20.sp, left: 5.sp),
+                                                  child: SvgPicture.asset(
+                                                    showDescription
+                                                        ? upDropDownSvgImage
+                                                        : dropdownSvgImage,
+                                                    color: productSubtitleColor,
+                                                    height: 5.sp,
+                                                    width: 7.sp,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    )),
                               Padding(
                                 padding:
                                     EdgeInsets.only(top: 24.sp, left: 16.sp),

@@ -2476,7 +2476,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                         6),
                                                             child: AppText(
                                                               text:
-                                                                  "\u{20B9} ${productController.getItBy["shipping_cost"].toString()}",
+                                                                  "\u{20B9}${productController.getItBy["shipping_cost"].toString()}",
                                                               fontFamily:
                                                                   "Franklin Gothic Regular",
                                                               fontWeight:

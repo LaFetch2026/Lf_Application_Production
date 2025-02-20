@@ -528,7 +528,13 @@ class BottomCouponState extends State<BottomCoupon> {
                                                             ["code"]);
                                                         i = index;
                                                       }
+                                                      controller.couponError
+                                                          .value = "";
                                                       setState(() {});
+                                                    } else {
+                                                      controller.couponError
+                                                              .value =
+                                                          "Coupon does not exist";
                                                     }
                                                   },
                                                   child: Row(
@@ -656,9 +662,16 @@ class BottomCouponState extends State<BottomCoupon> {
                                                                         "code"]);
                                                                     i = index;
                                                                   }
-
+                                                                  controller
+                                                                      .couponError
+                                                                      .value = "";
                                                                   setState(
                                                                       () {});
+                                                                } else {
+                                                                  controller
+                                                                          .couponError
+                                                                          .value =
+                                                                      "Coupon does not exist";
                                                                 }
                                                               },
                                                             )),
@@ -997,60 +1010,57 @@ class BottomCouponState extends State<BottomCoupon> {
                                                 ),
                                                 GestureDetector(
                                                   onTap: () {
-                                                    if (widget.list[index]
-                                                        ["applicable"]) {
-                                                      controller.categoryList
-                                                          .clear();
-                                                      controller.tagsList
-                                                          .clear();
-                                                      for (var i = 0;
-                                                          i <
-                                                              widget
-                                                                  .list[index]
-                                                                      ["tags"]
-                                                                  .length;
-                                                          i++) {
-                                                        controller.tagsList.add(
-                                                            widget.list[index]
-                                                                    ["tags"][i]
-                                                                ["id"]);
-                                                      }
-                                                      for (var i = 0;
-                                                          i <
-                                                              widget
-                                                                  .list[index][
-                                                                      "categories"]
-                                                                  .length;
-                                                          i++) {
-                                                        controller.categoryList
-                                                            .add(widget.list[
-                                                                        index][
-                                                                    "categories"]
-                                                                [i]["id"]);
-                                                      }
-                                                      Navigator.push(
-                                                          context,
-                                                          scaleIn(
-                                                            CategoryProductScreen(
-                                                              categoryName:
-                                                                  widget.list[
-                                                                          index]
-                                                                      ["code"],
-                                                              categoryId: 0,
-                                                              brandId: 0,
-                                                              genderName: "",
-                                                              genderType: 0,
-                                                              type: "express",
-                                                              screen:
-                                                                  "category",
-                                                              tagIds: controller
-                                                                  .tagsList,
-                                                              categoryList:
-                                                                  controller
-                                                                      .categoryList,
-                                                            ),
-                                                          ));
+                                                    /*  if (widget.list[index] 
+                                                        ["applicable"]) {*/
+                                                    controller.categoryList
+                                                        .clear();
+                                                    controller.tagsList.clear();
+                                                    for (var i = 0;
+                                                        i <
+                                                            widget
+                                                                .list[index]
+                                                                    ["tags"]
+                                                                .length;
+                                                        i++) {
+                                                      controller.tagsList.add(
+                                                          widget.list[index]
+                                                                  ["tags"][i]
+                                                              ["id"]);
                                                     }
+                                                    for (var i = 0;
+                                                        i <
+                                                            widget
+                                                                .list[index][
+                                                                    "categories"]
+                                                                .length;
+                                                        i++) {
+                                                      controller.categoryList
+                                                          .add(widget.list[
+                                                                      index]
+                                                                  ["categories"]
+                                                              [i]["id"]);
+                                                    }
+                                                    Navigator.push(
+                                                        context,
+                                                        scaleIn(
+                                                          CategoryProductScreen(
+                                                            categoryName: widget
+                                                                    .list[index]
+                                                                ["code"],
+                                                            categoryId: 0,
+                                                            brandId: 0,
+                                                            genderName: "",
+                                                            genderType: 0,
+                                                            type: "express",
+                                                            screen: "category",
+                                                            tagIds: controller
+                                                                .tagsList,
+                                                            categoryList:
+                                                                controller
+                                                                    .categoryList,
+                                                          ),
+                                                        ));
+                                                    //  }
                                                   },
                                                   child: Padding(
                                                     padding: EdgeInsets.only(

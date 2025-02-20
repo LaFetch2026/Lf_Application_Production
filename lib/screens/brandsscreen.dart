@@ -661,7 +661,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                 }),
                                           ),
                                         )
-                                      : Container(
+                                      : /* Container(
                                           height: 400.sp,
                                           margin: EdgeInsets.only(
                                               top: 48.sp, left: 16.sp),
@@ -673,6 +673,35 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                   color: Color(0xff6B7280),
                                                   fontFamily:
                                                       "Franklin Gothic")),
+                                        ) */
+                                      Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(top: 80.sp),
+                                              child: Center(
+                                                child: Image.asset(errorImage,
+                                                    height: 200.sp,
+                                                    width: 220.sp,
+                                                    fit: BoxFit.cover),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 6.sp,
+                                                  bottom: 20.sp,
+                                                  right: 20.sp),
+                                              child: Text(
+                                                  "Coming Soon to Your Area",
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: homeAppBarColor,
+                                                      fontFamily:
+                                                          "Franklin Gothic")),
+                                            ),
+                                          ],
                                         ),
                               brandController.loadMore.value
                                   ? const DummybrandList()
