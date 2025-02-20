@@ -408,6 +408,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                 brandController.showAllBrand.value = true;
                                                                                 brandController.brandId.value = val.brandList[a]["brands"][index]["id"];
                                                                                 brandController.update();
+                                                                                brandController.brandProductDetailsList.clear();
                                                                                 Get.to(AllBrandScreen(
                                                                                   id: val.brandList[a]["brands"][index]["id"],
                                                                                   slug: "",
@@ -597,6 +598,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                 brandController.showAllBrand.value = true;
                                                                                                 brandController.brandId.value = val.brandList[a]["brands"][index]["id"];
                                                                                                 brandController.update();
+                                                                                                brandController.brandProductDetailsList.clear();
                                                                                                 Get.to(AllBrandScreen(
                                                                                                   id: val.brandList[a]["brands"][index]["id"],
                                                                                                   slug: "",

@@ -15,6 +15,7 @@ import 'package:lafetch/commonwidget/homewidget/dummy_grid_mostsearch.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_home_brand.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_product_list.dart';
 import 'package:lafetch/commonwidget/homewidget/homelist.dart';
+import 'package:lafetch/controller/brand_controller.dart';
 //import 'package:lafetch/commonwidget/homewidget/question_card.dart';
 import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/controller/catalog_controller.dart';
@@ -59,6 +60,7 @@ class HomeScreenState extends State<HomeScreen> {
   final wishlistController = Get.put(WishlistController());
   final searchController = Get.put(SearchScreenController());
   final cartController = Get.put(CartController());
+  final brandController = Get.put(BrandController());
   final catalogController = Get.put(CatalogController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final PageController _pageController = PageController(
@@ -1608,6 +1610,9 @@ class HomeScreenState extends State<HomeScreen> {
                                                                   .brandList[
                                                               index]["id"],
                                                         ) */
+                                                        brandController
+                                                            .brandProductDetailsList
+                                                            .clear();
                                                         Get.to(AllBrandScreen(
                                                                 id: homeController
                                                                             .brandList[

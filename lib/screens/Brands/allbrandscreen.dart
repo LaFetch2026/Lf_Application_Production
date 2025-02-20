@@ -7,6 +7,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/allbrand_appbar.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/quickwidgets/brand_product_list.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
@@ -95,9 +96,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     videoController.play();
     videoController.setVolume(0.05);
     videoController.setLooping(true);
-    productController.productSortBy.value = "";
-    productController.filterProductEnable.value = false;
-    productController.categoryFilter.value = 0;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      brandController.brandProductDetailsList.clear();
+      productController.productSortBy.value = "";
+      productController.filterProductEnable.value = false;
+      productController.categoryFilter.value = 0;
+    });
     // getprefrenceData();
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => brandController.getBrandDetails(widget.id, widget.slug));
@@ -416,7 +420,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                             Get.to(ProductDetailsScreen(
                                     expresshour:
                                         homeController.expressHour.value,
-                                    backgroundcolor: homeAppBarColor,
+                                    backgroundcolor: whiteColor,
                                     brandName: p1,
                                     productId: p0,
                                     type: "add"))
@@ -804,27 +808,29 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       productController.filterProductEnable.value = false;
                       productController.categoryFilter.value = 0;
                       videoController.pause();
-                      Get.to(BrandViewProductScreen(
-                              expresshour: homeController.expressHour.value,
-                              brand_id: brandController.brandId.value,
-                              categoryList: brandController.brand_category_List,
-                              title: brandController.brandDetails["name"],
-                              screen: "brand",
-                              genderName: ""))
-                          ?.then((value) => setState(
-                                () {
-                                  productController.productSortBy.value = "";
-                                  productController.filterProductEnable.value =
-                                      false;
-                                  productController.categoryFilter.value = 0;
-                                  /*  productController.getBrandDetailsProduct(
+                      Navigator.push(
+                          context,
+                          scaleIn(
+                            BrandViewProductScreen(
+                                expresshour: homeController.expressHour.value,
+                                brand_id: brandController.brandId.value,
+                                title: brandController.brandDetails["name"],
+                                screen: "brand",
+                                genderName: ""),
+                          )).then((value) => setState(
+                            () {
+                              productController.productSortBy.value = "";
+                              productController.filterProductEnable.value =
+                                  false;
+                              productController.categoryFilter.value = 0;
+                              /*  productController.getBrandDetailsProduct(
                                       "",
                                       false,
                                       false,
                                       brandController.brandId.value,
                                       "brand"); */
-                                },
-                              ));
+                            },
+                          ));
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(

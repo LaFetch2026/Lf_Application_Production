@@ -171,12 +171,23 @@ class CartController extends BaseController {
     isCoupan.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/discounts"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
+      dynamic response;
+      if (backColor == whiteColor) {
+        response = await http.get(
+            Uri.parse("${ApiConstants.baseUrl}/discounts"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      } else {
+        response = await http.get(
+            Uri.parse("${ApiConstants.baseUrl}/discounts?type=express"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+      }
+
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (responseData != null) {
