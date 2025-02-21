@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
@@ -392,61 +393,74 @@ class SearchScreenState extends State<SearchScreen> {
                                                 bottom: 5.sp,
                                                 top: 5.sp,
                                                 left: 16.sp),
-                                            child: ListView.builder(
-                                                primary: false,
-                                                shrinkWrap: true,
-                                                physics:
-                                                    const NeverScrollableScrollPhysics(),
-                                                itemCount: 5,
-                                                padding: EdgeInsets.zero,
-                                                scrollDirection: Axis.vertical,
-                                                itemBuilder: (ctx, index) {
-                                                  return Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 4.sp),
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              vertical: 6.sp),
-                                                      child: Row(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Expanded(
-                                                            flex: 1,
+                                            child: AnimationLimiter(
+                                              child: ListView.builder(
+                                                  primary: false,
+                                                  shrinkWrap: true,
+                                                  physics:
+                                                      const NeverScrollableScrollPhysics(),
+                                                  itemCount: 5,
+                                                  padding: EdgeInsets.zero,
+                                                  scrollDirection:
+                                                      Axis.vertical,
+                                                  itemBuilder: (ctx, index) {
+                                                    return AnimationConfiguration
+                                                        .staggeredList(
+                                                      position: index,
+                                                      child: SlideAnimation(
+                                                        verticalOffset: 50.0,
+                                                        child: FadeInAnimation(
+                                                          child: Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    vertical:
+                                                                        4.sp),
                                                             child: Padding(
                                                               padding: EdgeInsets
                                                                   .symmetric(
-                                                                      horizontal:
-                                                                          0.sp),
-                                                              child:
-                                                                  DummyContainer(
-                                                                      height:
-                                                                          16,
-                                                                      width:
-                                                                          100),
+                                                                      vertical:
+                                                                          6.sp),
+                                                              child: Row(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex: 1,
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: EdgeInsets.symmetric(
+                                                                          horizontal:
+                                                                              0.sp),
+                                                                      child: DummyContainer(
+                                                                          height:
+                                                                              16,
+                                                                          width:
+                                                                              100),
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            16.sp),
+                                                                    child: DummyContainer(
+                                                                        height:
+                                                                            14,
+                                                                        width:
+                                                                            14),
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
                                                           ),
-                                                          Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        16.sp),
-                                                            child:
-                                                                DummyContainer(
-                                                                    height: 14,
-                                                                    width: 14),
-                                                          ),
-                                                        ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                  );
-                                                }),
+                                                    );
+                                                  }),
+                                            ),
                                           ),
                                         )
                                       : controller.searchList.isNotEmpty
