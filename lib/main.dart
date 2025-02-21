@@ -74,9 +74,9 @@ class MyApp extends StatelessWidget {
               bodyMedium: TextStyle(letterSpacing: -.15),
               bodySmall: TextStyle(letterSpacing: -.15),
             ), */
-            /*  textTheme: Typography.englishLike2018.apply(
+            textTheme: Typography.englishLike2018.apply(
               fontSizeFactor: 1.sp,
-            ), */
+            ),
           ),
           /*  getPages: [
             GetPage(name: '/', page: () => SplashScreen()),
