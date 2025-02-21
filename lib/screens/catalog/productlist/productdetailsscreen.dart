@@ -2470,10 +2470,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                 EdgeInsets.only(
                                                                     right: 12.0
                                                                         .sp),
-                                                            child: Image.asset(
-                                                              walletBlack,
-                                                              height: 22.sp,
-                                                              width: 22.sp,
+                                                            child: SvgPicture
+                                                                .asset(
+                                                              walletSvgImage,
+                                                              height: 20.sp,
+                                                              width: 20.sp,
                                                             ),
                                                           ),
                                                           Container(
@@ -2563,10 +2564,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   Padding(
                                                     padding: EdgeInsets.only(
                                                         right: 12.0.sp),
-                                                    child: Image.asset(
-                                                      getItByIcon,
-                                                      height: 22.sp,
-                                                      width: 22.sp,
+                                                    child: SvgPicture.asset(
+                                                      GetBagSvgImage,
+                                                      height: 20.sp,
+                                                      width: 20.sp,
                                                     ),
                                                   ),
                                                   Expanded(
@@ -2607,10 +2608,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   children: [
                                     Padding(
                                       padding: EdgeInsets.only(right: 12.0.sp),
-                                      child: Image.asset(
-                                        walletBlack,
-                                        height: 22.sp,
-                                        width: 22.sp,
+                                      child: SvgPicture.asset(
+                                        walletSvgImage,
+                                        height: 20.sp,
+                                        width: 20.sp,
                                       ),
                                     ),
                                     Container(
@@ -2702,11 +2703,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 Padding(
                                                   padding: EdgeInsets.only(
                                                       right: 12.0.sp),
-                                                  child: Image.asset(
-                                                    exchangeItemImage,
+                                                  child: SvgPicture.asset(
+                                                    exchangeSvgImage,
                                                     height: 20.sp,
-                                                    color: titleColor,
-                                                    width: 20.sp,
+                                                    width: 16.sp,
                                                   ),
                                                 ),
                                                 Expanded(
@@ -4547,8 +4547,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(right: 8.0.sp),
-                                child: Image.asset(
-                                  cartNewImage,
+                                child: SvgPicture.asset(
+                                  cartSvgImage,
                                   color: widget.backgroundcolor == whiteColor
                                       ? homeAppBarColor
                                       : productSubtitleColor,
@@ -4556,15 +4556,20 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   width: 18.sp,
                                 ),
                               ),
-                              AppSpacingText(
-                                text: "Out of stock".toUpperCase(),
-                                fontFamily: "Franklin Gothic",
-                                fontWeight: FontWeight.w500,
-                                color: widget.backgroundcolor == whiteColor
-                                    ? homeAppBarColor
-                                    : productSubtitleColor,
-                                maxLines: 2,
-                                fontSize: 13,
+                              Container(
+                                alignment: Alignment.bottomCenter,
+                                height: 18.sp,
+                                child: AppSpacingText(
+                                  text: "Out of stock".toUpperCase(),
+                                  fontFamily: "Franklin Gothic",
+                                  fontWeight: FontWeight.w500,
+                                  color: widget.backgroundcolor == whiteColor
+                                      ? homeAppBarColor
+                                      : productSubtitleColor,
+                                  maxLines: 2,
+                                  textAlign: TextAlign.center,
+                                  fontSize: 13,
+                                ),
                               )
                             ],
                           ),

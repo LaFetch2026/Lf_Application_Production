@@ -6,6 +6,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/saveaddress_appbar.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
@@ -644,50 +645,55 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                         ? SizedBox(
                                                             height: 0,
                                                           )
-                                                        : GestureDetector(
-                                                            onTap: () {
-                                                              if (value
-                                                                      .dailogSelected[
-                                                                  index]) {
-                                                                value
-                                                                    .dailogSelected
-                                                                    .clear();
-                                                                value.dailogSelected =
-                                                                    List.generate(
-                                                                        50,
-                                                                        (i) =>
-                                                                            false);
-                                                              } else {
-                                                                value
-                                                                    .dailogSelected
-                                                                    .clear();
-                                                                value.dailogSelected =
-                                                                    List.generate(
-                                                                        50,
-                                                                        (i) =>
-                                                                            false);
-                                                                value.dailogSelected[
-                                                                        index] =
-                                                                    !value.dailogSelected[
-                                                                        index];
-                                                              }
-                                                              value.update();
-                                                            },
-                                                            child: Container(
-                                                              child: Padding(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        right: 16
-                                                                            .sp,
-                                                                        left: 10
-                                                                            .sp),
-                                                                child:
-                                                                    ImageIcon(
-                                                                  AssetImage(
-                                                                      threeDotImage),
-                                                                  color:
-                                                                      homeAppBarColor,
-                                                                  size: 20.sp,
+                                                        : Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right:
+                                                                        10.sp),
+                                                            child: InkWell(
+                                                              onTap: () {
+                                                                if (value
+                                                                        .dailogSelected[
+                                                                    index]) {
+                                                                  value
+                                                                      .dailogSelected
+                                                                      .clear();
+                                                                  value.dailogSelected =
+                                                                      List.generate(
+                                                                          50,
+                                                                          (i) =>
+                                                                              false);
+                                                                } else {
+                                                                  value
+                                                                      .dailogSelected
+                                                                      .clear();
+                                                                  value.dailogSelected =
+                                                                      List.generate(
+                                                                          50,
+                                                                          (i) =>
+                                                                              false);
+                                                                  value.dailogSelected[
+                                                                          index] =
+                                                                      !value.dailogSelected[
+                                                                          index];
+                                                                }
+                                                                value.update();
+                                                              },
+                                                              child: Container(
+                                                                child: Padding(
+                                                                  padding: EdgeInsets.only(
+                                                                      right:
+                                                                          16.sp,
+                                                                      left: 16
+                                                                          .sp),
+                                                                  child:
+                                                                      SvgPicture
+                                                                          .asset(
+                                                                    threeDotSvgImage,
+                                                                    height:
+                                                                        16.sp,
+                                                                    width: 4.sp,
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),

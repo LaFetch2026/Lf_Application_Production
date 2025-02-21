@@ -252,6 +252,10 @@ const quickLottie = 'assets/images/quick_lottie.json';
 const backimageSvg = 'assets/images/back_image.svg';
 const splashLottie = 'assets/images/splash_lottie.json';
 const shareSvgImage = 'assets/images/share_svg.svg';
+const GetBagSvgImage = 'assets/images/bag_svg.svg';
+const exchangeSvgImage = 'assets/images/exchange_svg.svg';
+const walletSvgImage = 'assets/images/wallet_svg.svg';
+const threeDotSvgImage = 'assets/images/three_dot_svg.svg';
 
 class ApiConstants {
   ApiConstants._();

@@ -66,17 +66,22 @@ class BackButtonAppbar extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 40.sp),
+                padding: EdgeInsets.only(
+                  top: 40.sp,
+                ),
                 child: Visibility(
                   visible: threeDot,
                   child: InkWell(
                     onTap: () {
                       onPressedThreeDot?.call();
                     },
-                    child: ImageIcon(
-                      AssetImage(icon),
-                      color: appbarText,
-                      size: 20.sp,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                      child: SvgPicture.asset(
+                        threeDotSvgImage,
+                        height: 16.sp,
+                        width: 4.sp,
+                      ),
                     ),
                   ),
                 ),
