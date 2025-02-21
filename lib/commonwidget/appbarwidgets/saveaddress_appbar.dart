@@ -75,11 +75,8 @@ class SaveAddressAppbar extends StatelessWidget {
                             left: 16.sp,
                             right: 16.sp,
                             bottom: 5.sp),
-                        child: ImageIcon(
-                          AssetImage(wishlistBottomIcon),
-                          color: homeAppBarColor,
-                          size: 18.sp,
-                        ),
+                        child: SvgPicture.asset(heartSvgImage,
+                            height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                       ),
                     ),
                   )

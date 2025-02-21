@@ -494,7 +494,7 @@ class CartScreenState extends State<CartScreen> {
                                                                       GestureDetector(
                                                                         onTap:
                                                                             () async {
-                                                                          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.orderList[index]["product"]["id"], brandName: value.orderList[index]["product"]["brand_name"], backgroundcolor: widget.backgroundcolor, type: "add"))).then((value) =>
+                                                                          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.orderList[index]["product"]["id"], brandName: value.orderList[index]["product"]["brand_name"] ?? "", backgroundcolor: widget.backgroundcolor, type: "add"))).then((value) =>
                                                                               setState(
                                                                                 () {
                                                                                   productController.hasnextpage.value = true;
@@ -552,7 +552,7 @@ class CartScreenState extends State<CartScreen> {
                                                                           children: [
                                                                             GestureDetector(
                                                                               onTap: () async {
-                                                                                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.orderList[index]["product"]["id"], backgroundcolor: widget.backgroundcolor, brandName: value.orderList[index]["product"]["brand_name"], type: "add"))).then((value) => setState(
+                                                                                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.orderList[index]["product"]["id"], backgroundcolor: widget.backgroundcolor, brandName: value.orderList[index]["product"]["brand_name"] ?? "", type: "add"))).then((value) => setState(
                                                                                       () {
                                                                                         productController.hasnextpage.value = true;
                                                                                         productController.loadMore.value = false;
@@ -574,7 +574,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                 width: MediaQuery.of(context).size.width - 165.sp,
                                                                                 margin: EdgeInsets.only(top: 10.sp),
                                                                                 child: AppText(
-                                                                                  text: value.orderList[index]["product"]["brand_name"].toUpperCase() ?? "",
+                                                                                  text: value.orderList[index]["product"]["brand_name"] != null ? value.orderList[index]["product"]["brand_name"].toUpperCase() : "",
                                                                                   maxLines: 1,
                                                                                   fontFamily: "Franklin Gothic",
                                                                                   fontWeight: FontWeight.w500,
@@ -589,7 +589,7 @@ class CartScreenState extends State<CartScreen> {
                                                                             ),
                                                                             GestureDetector(
                                                                               onTap: () async {
-                                                                                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.orderList[index]["product"]["id"], backgroundcolor: widget.backgroundcolor, brandName: value.orderList[index]["product"]["brand_name"], type: "add"))).then((value) => setState(
+                                                                                Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.orderList[index]["product"]["id"], backgroundcolor: widget.backgroundcolor, brandName: value.orderList[index]["product"]["brand_name"] ?? "", type: "add"))).then((value) => setState(
                                                                                       () {
                                                                                         productController.hasnextpage.value = true;
                                                                                         productController.loadMore.value = false;

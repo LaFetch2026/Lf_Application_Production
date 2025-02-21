@@ -10,6 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:lafetch/commonwidget/app_space_text.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/productdetails_appbar.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
 //import 'package:lafetch/commonwidget/common_widgets.dart';
@@ -26,7 +27,6 @@ import 'package:lafetch/screens/wishlist/newboardscreen.dart';
 import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
-import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/bottomsizechart.dart';
 import '../../../commonwidget/homewidget/dummy_productImage.dart';
 //import '../../../commonwidget/homewidget/dummy_product_list.dart';
@@ -428,7 +428,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       height: 48.sp,
                                       child: Align(
                                         alignment: Alignment.center,
-                                        child: AppText(
+                                        child: AppSpacingText(
                                           text: i['product_matrix_size_name']
                                               .toString(),
                                           fontFamily: "Franklin Gothic Regular",
@@ -454,7 +454,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ? const SizedBox()
                                   : Padding(
                                       padding: EdgeInsets.only(top: 8.0.sp),
-                                      child: AppText(
+                                      child: AppSpacingText(
                                         text: '${i['stocks'].toString()} left',
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
@@ -465,7 +465,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ],
                           ),
                       ])
-                : AppText(
+                : AppSpacingText(
                     text: 'N/A',
                     fontFamily: "Franklin Gothic Regular",
                     fontWeight: FontWeight.w400,
@@ -589,7 +589,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ),
                             Padding(
                               padding: EdgeInsets.only(top: 8.0.sp),
-                              child: AppText(
+                              child: AppSpacingText(
                                 text: '${i['name'].toString()}'.toUpperCase(),
                                 fontFamily: "Franklin Gothic",
                                 fontWeight: FontWeight.w500,
@@ -602,7 +602,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ],
                         ),
                     ])
-              : AppText(
+              : AppSpacingText(
                   text: 'N/A',
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
@@ -653,7 +653,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         : whiteColor),
                                 child: Padding(
                                   padding: EdgeInsets.all(4.0.sp),
-                                  child: AppText(
+                                  child: AppSpacingText(
                                     text:
                                         i['product_matrix']['name'].toString(),
                                     fontFamily: "Franklin Gothic Regular",
@@ -672,7 +672,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 ? const SizedBox()
                                 : Padding(
                                     padding: EdgeInsets.only(top: 8.0.sp),
-                                    child: AppText(
+                                    child: AppSpacingText(
                                       text: '${i['stocks'].toString()} left',
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
@@ -683,7 +683,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ],
                         ),
                     ])
-              : AppText(
+              : AppSpacingText(
                   text: 'N/A',
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
@@ -909,7 +909,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width - 80.sp,
-                                  child: AppText(
+                                  child: AppSpacingText(
                                     text: widget.brandName.toUpperCase(),
                                     color: whiteColor,
                                     fontSize: 16,
@@ -1099,7 +1099,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             EdgeInsets.only(
                                                                 top: 1.sp,
                                                                 left: 2.sp),
-                                                        child: AppText(
+                                                        child: AppSpacingText(
                                                           text:
                                                               "${widget.expresshour} HOUR",
                                                           fontFamily:
@@ -1162,7 +1162,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             EdgeInsets.only(
                                                                 top: 1.sp,
                                                                 left: 2.sp),
-                                                        child: AppText(
+                                                        child: AppSpacingText(
                                                           text: productController
                                                               .productDetails[
                                                                   "aggregated_rating"]
@@ -1185,7 +1185,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           height: 16.sp,
                                                         ),
                                                       ),
-                                                      AppText(
+                                                      AppSpacingText(
                                                         text: productController
                                                             .totalReview.value
                                                             .toString(),
@@ -1312,7 +1312,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     /*  Padding(
                                       padding: EdgeInsets.only(
                                           left: 12.0.sp, top: 12.sp),
-                                      child: AppText(
+                                      child: AppSpacingText(
                                         text: "New Season",
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
@@ -1331,10 +1331,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               CrossAxisAlignment.center,
                                           children: [
                                             Expanded(
-                                              child: AppText(
-                                                text:
-                                                    "${productController.productDetails["brand_name"]} \n"
-                                                        .toUpperCase(),
+                                              child: AppSpacingText(
+                                                text: productController
+                                                                .productDetails[
+                                                            "brand_name"] !=
+                                                        null
+                                                    ? "${productController.productDetails["brand_name"]} \n"
+                                                        .toUpperCase()
+                                                    : "",
                                                 fontFamily: "Franklin Gothic",
                                                 fontWeight: FontWeight.w500,
                                                 color: widget.backgroundcolor ==
@@ -1406,7 +1410,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                 right: 8.sp),
                                                         child: Row(
                                                           children: [
-                                                            AppText(
+                                                            AppSpacingText(
                                                               text: 'View Brand \n'
                                                                   .toUpperCase(),
                                                               fontFamily:
@@ -1449,7 +1453,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 12.sp, vertical: 14.sp),
-                                        child: AppText(
+                                        child: AppSpacingText(
                                           text: productController
                                                   .productDetails["name"] ??
                                               "",
@@ -1488,6 +1492,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 "\u{20B9} ${productController.productDetails["mrp"]}",
                                                 style: TextStyle(
                                                   color: searchTextColor,
+                                                  letterSpacing: 0.65,
                                                   fontSize: 16.sp,
                                                   decoration: TextDecoration
                                                       .lineThrough,
@@ -1501,7 +1506,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           Padding(
                                             padding:
                                                 EdgeInsets.only(right: 10.0.sp),
-                                            child: AppText(
+                                            child: AppSpacingText(
                                               text:
                                                   "\u{20B9} ${productController.productDetails["price"] ?? "0"}",
                                               color: widget.backgroundcolor ==
@@ -1532,7 +1537,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     bottom: 6.sp,
                                                     left: 8.sp,
                                                     right: 8.sp),
-                                                child: AppText(
+                                                child: AppSpacingText(
                                                   text:
                                                       "${productController.productDetails["discount_percentage"] != null ? productController.productDetails["discount_percentage"].toString() : "0"} OFF",
                                                   color:
@@ -1556,7 +1561,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           bottom: 6.sp,
                                           left: 16.sp,
                                           right: 16.sp),
-                                      child: AppText(
+                                      child: AppSpacingText(
                                         text: "Price inclusive of all taxes",
                                         color:
                                             widget.backgroundcolor == whiteColor
@@ -1601,7 +1606,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           CrossAxisAlignment
                                                               .center,
                                                       children: [
-                                                        AppText(
+                                                        AppSpacingText(
                                                           text: 'Select size'
                                                               .toUpperCase(),
                                                           fontFamily:
@@ -1638,6 +1643,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                     decoration:
                                                                         TextDecoration
                                                                             .underline,
+                                                                    letterSpacing:
+                                                                        0.65,
                                                                     fontFamily:
                                                                         "Franklin Gothic Regular",
                                                                     fontWeight:
@@ -1687,7 +1694,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                 alignment:
                                                                     Alignment
                                                                         .center,
-                                                                child: AppText(
+                                                                child:
+                                                                    AppSpacingText(
                                                                   text: "FS",
                                                                   fontFamily:
                                                                       "Franklin Gothic Regular",
@@ -1752,7 +1760,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           CrossAxisAlignment
                                                               .center,
                                                       children: [
-                                                        AppText(
+                                                        AppSpacingText(
                                                           text: 'Select color'
                                                               .toUpperCase(),
                                                           fontFamily:
@@ -1804,7 +1812,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment.center,
                                                     children: [
-                                                      AppText(
+                                                      AppSpacingText(
                                                         text: 'Select fabric',
                                                         fontFamily:
                                                             "Franklin Gothic Regular",
@@ -1841,7 +1849,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               Padding(
                                 padding:
                                     EdgeInsets.only(left: 12.sp, top: 24.sp),
-                                child: AppText(
+                                child: AppSpacingText(
                                   text: 'Delivery options'.toUpperCase(),
                                   fontFamily: "Franklin Gothic Regular",
                                   fontWeight: FontWeight.w400,
@@ -1916,43 +1924,45 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   child: Padding(
                                                     padding: EdgeInsets.only(
                                                         bottom: 0.sp),
-                                                    child: productController
-                                                            .isEstimateDate
-                                                            .value
-                                                        ? SizedBox(
-                                                            height: 10.sp,
-                                                            width: 10.sp,
-                                                            child: Center(
-                                                                child:
-                                                                    CircularProgressIndicator()),
-                                                          )
-                                                        : Container(
-                                                            color:
-                                                                homeAppBarColor,
-                                                            child: Padding(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
+                                                    child:
+                                                        productController
+                                                                .isEstimateDate
+                                                                .value
+                                                            ? SizedBox(
+                                                                height: 10.sp,
+                                                                width: 10.sp,
+                                                                child: Center(
+                                                                    child:
+                                                                        CircularProgressIndicator()),
+                                                              )
+                                                            : Container(
+                                                                color:
+                                                                    homeAppBarColor,
+                                                                child: Padding(
+                                                                  padding: EdgeInsets.symmetric(
                                                                       horizontal:
                                                                           10.sp,
                                                                       vertical:
                                                                           6.sp),
-                                                              child: AppText(
-                                                                text: "Check"
-                                                                    .toUpperCase(),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                fontFamily:
-                                                                    "Franklin Gothic",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color:
-                                                                    whiteColor,
-                                                                fontSize: 13,
+                                                                  child:
+                                                                      AppSpacingText(
+                                                                    text: "Check"
+                                                                        .toUpperCase(),
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    color:
+                                                                        whiteColor,
+                                                                    fontSize:
+                                                                        13,
+                                                                  ),
+                                                                ),
                                                               ),
-                                                            ),
-                                                          ),
                                                   ),
                                                 ),
                                                 focusedBorder:
@@ -2058,43 +2068,45 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   child: Padding(
                                                     padding: EdgeInsets.only(
                                                         bottom: 0.sp),
-                                                    child: productController
-                                                            .isEstimateDate
-                                                            .value
-                                                        ? SizedBox(
-                                                            height: 10.sp,
-                                                            width: 10.sp,
-                                                            child: Center(
-                                                                child:
-                                                                    CircularProgressIndicator()),
-                                                          )
-                                                        : Container(
-                                                            color:
-                                                                homeAppBarColor,
-                                                            child: Padding(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
+                                                    child:
+                                                        productController
+                                                                .isEstimateDate
+                                                                .value
+                                                            ? SizedBox(
+                                                                height: 10.sp,
+                                                                width: 10.sp,
+                                                                child: Center(
+                                                                    child:
+                                                                        CircularProgressIndicator()),
+                                                              )
+                                                            : Container(
+                                                                color:
+                                                                    homeAppBarColor,
+                                                                child: Padding(
+                                                                  padding: EdgeInsets.symmetric(
                                                                       horizontal:
                                                                           10.sp,
                                                                       vertical:
                                                                           6.sp),
-                                                              child: AppText(
-                                                                text: "Check"
-                                                                    .toUpperCase(),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                fontFamily:
-                                                                    "Franklin Gothic",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color:
-                                                                    whiteColor,
-                                                                fontSize: 13,
+                                                                  child:
+                                                                      AppSpacingText(
+                                                                    text: "Check"
+                                                                        .toUpperCase(),
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                    fontFamily:
+                                                                        "Franklin Gothic",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    color:
+                                                                        whiteColor,
+                                                                    fontSize:
+                                                                        13,
+                                                                  ),
+                                                                ),
                                                               ),
-                                                            ),
-                                                          ),
                                                   ),
                                                 ),
                                                 focusedBorder:
@@ -2156,7 +2168,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 padding: EdgeInsets.symmetric(
                                                     horizontal: 14.sp,
                                                     vertical: 5.sp),
-                                                child: AppText(
+                                                child: AppSpacingText(
                                                   text: productController
                                                               .defaultAddress[
                                                           "address"] ??
@@ -2226,7 +2238,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     padding: EdgeInsets.symmetric(
                                                         horizontal: 5.sp),
                                                     child: Center(
-                                                      child: AppText(
+                                                      child: AppSpacingText(
                                                         text: "Change",
                                                         color: btnTextColor,
                                                         fontSize: 12,
@@ -2244,7 +2256,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         Padding(
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 14.sp, vertical: 2.sp),
-                                          child: AppText(
+                                          child: AppSpacingText(
                                             text:
                                                 "${productController.defaultAddress["locality"] ?? ""} ,${productController.defaultAddress["city"] != null ? productController.defaultAddress["city"]["name"] : ""}",
                                             color: greyTextColor,
@@ -2256,7 +2268,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         Padding(
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 14.sp, vertical: 2.sp),
-                                          child: AppText(
+                                          child: AppSpacingText(
                                             text: productController
                                                 .defaultAddress["zip"]
                                                 .toString(),
@@ -2326,7 +2338,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 5.sp),
                                               child: Center(
-                                                child: AppText(
+                                                child: AppSpacingText(
                                                   text: "Add Address",
                                                   color: btnTextColor,
                                                   fontSize: 12,
@@ -2468,7 +2480,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             height: 22.sp,
                                                             alignment: Alignment
                                                                 .bottomCenter,
-                                                            child: AppText(
+                                                            child:
+                                                                AppSpacingText(
                                                               text:
                                                                   "Shipping Cost :",
                                                               fontFamily:
@@ -2491,7 +2504,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                               height: 22.sp,
                                                               alignment: Alignment
                                                                   .bottomCenter,
-                                                              child: AppText(
+                                                              child:
+                                                                  AppSpacingText(
                                                                 text:
                                                                     "\u{20B9}${productController.getItBy["shipping_cost"].toString()}",
                                                                 fontFamily:
@@ -2561,7 +2575,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       height: 22.sp,
                                                       alignment:
                                                           Alignment.bottomLeft,
-                                                      child: AppText(
+                                                      child: AppSpacingText(
                                                         text: productController
                                                                     .getItBy[
                                                                 "message"] ??
@@ -2614,7 +2628,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         ),
                                       ),
                                     ),
-                                    /*  AppText(
+                                    /*  AppSpacingText(
                                       text: "Pay on delivery available",
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
@@ -2662,7 +2676,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       width: 18.sp,
                                                     ),
                                                   ),
-                                                  AppText(
+                                                  AppSpacingText(
                                                     text:
                                                         'Pay on delivery available',
                                                     fontFamily:
@@ -2700,7 +2714,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     height: 20.sp,
                                                     alignment:
                                                         Alignment.bottomLeft,
-                                                    child: AppText(
+                                                    child: AppSpacingText(
                                                       text: productController
                                                                   .productDetails[
                                                               "has_exchange"]
@@ -2757,7 +2771,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   ),
                                                   Expanded(
                                                     flex: 1,
-                                                    child: AppText(
+                                                    child: AppSpacingText(
                                                       text: productController
                                                                   .productDetails[
                                                               "express_delivery_estimation"] ??
@@ -2823,7 +2837,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           .value = 1;
                                                     }
                                                   },
-                                                  child: AppText(
+                                                  child: AppSpacingText(
                                                     text: 'Express Delivery',
                                                     fontFamily:
                                                         "Franklin Gothic Regular",
@@ -2948,7 +2962,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                             width: 22.sp,
                                                           ),
                                                         ),
-                                                        AppText(
+                                                        AppSpacingText(
                                                           text:
                                                               "Express Delivery Cost :",
                                                           fontFamily:
@@ -2965,7 +2979,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                   .symmetric(
                                                                   horizontal:
                                                                       6),
-                                                          child: AppText(
+                                                          child: AppSpacingText(
                                                             text:
                                                                 "\u{20B9} ${productController.productDetails["express_delivery_fee"]}",
                                                             fontFamily:
@@ -3047,7 +3061,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                   whiteColor
                                                               ? appBarColor
                                                               : whiteColor,
-                                                      title: AppText(
+                                                      title: AppSpacingText(
                                                         text: 'More Details',
                                                         fontFamily:
                                                             "Franklin Gothic Regular",
@@ -3069,7 +3083,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         Align(
                                                           alignment:
                                                               Alignment.topLeft,
-                                                          child: AppText(
+                                                          child: AppSpacingText(
                                                             text: Bidi.stripHtmlIfNeeded(
                                                                 productController
                                                                             .productDetails[
@@ -3134,7 +3148,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                   whiteColor
                                                               ? appBarColor
                                                               : whiteColor,
-                                                      title: AppText(
+                                                      title: AppSpacingText(
                                                         text:
                                                             'Composition & Care',
                                                         fontFamily:
@@ -3157,7 +3171,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         Align(
                                                           alignment:
                                                               Alignment.topLeft,
-                                                          child: AppText(
+                                                          child: AppSpacingText(
                                                             text: Bidi.stripHtmlIfNeeded(
                                                                 productController
                                                                             .compositionDetails[
@@ -3221,7 +3235,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                   whiteColor
                                                               ? appBarColor
                                                               : whiteColor,
-                                                      title: AppText(
+                                                      title: AppSpacingText(
                                                         text:
                                                             'Delivery & Returns',
                                                         fontFamily:
@@ -3244,7 +3258,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         Align(
                                                           alignment:
                                                               Alignment.topLeft,
-                                                          child: AppText(
+                                                          child: AppSpacingText(
                                                             text: Bidi.stripHtmlIfNeeded(
                                                                 productController
                                                                     .returnPolicyDetails
@@ -3308,7 +3322,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                   whiteColor
                                                               ? appBarColor
                                                               : whiteColor,
-                                                      title: AppText(
+                                                      title: AppSpacingText(
                                                         text: 'About the Brand',
                                                         fontFamily:
                                                             "Franklin Gothic Regular",
@@ -3330,7 +3344,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         Align(
                                                           alignment:
                                                               Alignment.topLeft,
-                                                          child: AppText(
+                                                          child: AppSpacingText(
                                                             text: Bidi.stripHtmlIfNeeded(
                                                                 productController
                                                                             .brandDetails[
@@ -3378,7 +3392,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       right: 16.sp,
                                       top: 16.sp,
                                       bottom: 16.sp),
-                                  child: AppText(
+                                  child: AppSpacingText(
                                     text: productController.errorMsg.value,
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
@@ -3402,7 +3416,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                               AppText(
+                               AppSpacingText(
                                 text: 'Customer Reviews',
                                 fontFamily: "Franklin Gothic Regular",
                                 fontWeight: FontWeight.w500,
@@ -3431,7 +3445,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                AppText(
+                                                AppSpacingText(
                                                   text:
                                                       '${productController.productDetails["aggregated_rating"] ?? ""} \u{2605}',
                                                   fontFamily:
@@ -3440,7 +3454,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   color: blackColor,
                                                   fontSize: 24,
                                                 ),
-                                                AppText(
+                                                AppSpacingText(
                                                   text:
                                                       '${productController.productDetails["reviews_count"] ?? ""} verified buyers',
                                                   fontFamily:
@@ -3474,7 +3488,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                 CrossAxisAlignment
                                                                     .center,
                                                             children: [
-                                                              AppText(
+                                                              AppSpacingText(
                                                                 text:
                                                                     '${e['title']} \u{2605}  ',
                                                                 fontFamily:
@@ -3505,7 +3519,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                       e['title']),
                                                                 ),
                                                               ),
-                                                              AppText(
+                                                              AppSpacingText(
                                                                 text:
                                                                     '  ${e['count']}',
                                                                 fontFamily:
@@ -3569,7 +3583,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           ),
                                                         ),
                                                       ),
-                                                      AppText(
+                                                      AppSpacingText(
                                                         text:
                                                             '${productController.reviewList[index]['created'] ?? ""}',
                                                         fontFamily:
@@ -3583,7 +3597,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   Padding(
                                                     padding: EdgeInsets.symmetric(
                                                         vertical: 10.0.sp),
-                                                    child: AppText(
+                                                    child: AppSpacingText(
                                                       text:
                                                           '${productController.reviewList[index]['comment'] ?? ""}',
                                                       maxLines: commentId ==
@@ -3638,7 +3652,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                       setState(
                                                                           () {});
                                                                     },
-                                                                    child: AppText(
+                                                                    child: AppSpacingText(
                                                                       text: commentId ==
                                                                               productController.reviewList[index]
                                                                                   [
@@ -3754,7 +3768,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                                 .sp,
                                                                           ),
                                                                         ),
-                                                                        AppText(
+                                                                        AppSpacingText(
                                                                           text:
                                                                               "helpful",
                                                                           color:
@@ -3849,7 +3863,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                                 .sp,
                                                                           ),
                                                                         ),
-                                                                        AppText(
+                                                                        AppSpacingText(
                                                                           text:
                                                                               "helpful",
                                                                           color: reviewHelpfulId ==
@@ -3882,7 +3896,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment.start,
                                                       children: [
-                                                        AppText(
+                                                        AppSpacingText(
                                                           text:
                                                               '${productController.reviewList[index]['user']['name'] ?? ""}',
                                                           fontFamily:
@@ -3892,7 +3906,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           color: bottomnavBack,
                                                           fontSize: 11,
                                                         ),
-                                                        AppText(
+                                                        AppSpacingText(
                                                           text:
                                                               '${productController.reviewList[index]["upvotes"].toString()} found this helpful',
                                                           fontFamily:
@@ -3923,7 +3937,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           children: [
                                             /* Padding(
                                           padding: const EdgeInsets.only(top: 16.0),
-                                          child: AppText(
+                                          child: AppSpacingText(
                                             text: "Recommended for you",
                                             fontFamily: "Franklin Gothic",
                                             fontWeight: FontWeight.w500,
@@ -3992,7 +4006,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                             10,
                                                                         vertical:
                                                                             5),
-                                                                child: AppText(
+                                                                child: AppSpacingText(
                                                                   text: productController
                                                                                   .recommendedList[
                                                                               index]
@@ -4018,7 +4032,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                         right: 10),
                                                                 child: Row(
                                                                   children: [
-                                                                    AppText(
+                                                                    AppSpacingText(
                                                                       text:
                                                                           "\u{20B9} ${productController.recommendedList[index]["price"] ?? "0"}",
                                                                       color:
@@ -4080,7 +4094,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                           horizontal:
                                                                               5),
                                                                       child:
-                                                                          AppText(
+                                                                          AppSpacingText(
                                                                         text:
                                                                             "Express",
                                                                         color:
@@ -4542,7 +4556,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   width: 18.sp,
                                 ),
                               ),
-                              AppText(
+                              AppSpacingText(
                                 text: "Out of stock".toUpperCase(),
                                 fontFamily: "Franklin Gothic",
                                 fontWeight: FontWeight.w500,

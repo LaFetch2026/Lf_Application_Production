@@ -85,16 +85,14 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
                               width: 18,
                             )
                           : wishlistController.wishListDetails["wishlisted"]
-                              ? ImageIcon(
-                                  AssetImage(redHeartimage),
-                                  color: redColor,
-                                  size: 20.sp,
-                                )
-                              : ImageIcon(
-                                  AssetImage(wishlistBottomIcon),
-                                  color: homeAppBarColor,
-                                  size: 16.sp,
-                                )),
+                              ? SvgPicture.asset(redHeartSvgImage,
+                                  height: 18.sp,
+                                  width: 18.sp,
+                                  fit: BoxFit.cover)
+                              : SvgPicture.asset(heartSvgImage,
+                                  height: 18.sp,
+                                  width: 18.sp,
+                                  fit: BoxFit.cover)),
                 ),
               ),
               InkWell(
@@ -108,12 +106,8 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(bottom: 3.sp),
-                        child: Image.asset(
-                          shareNewimage,
-                          color: homeAppBarColor,
-                          height: 18.sp,
-                          width: 18.sp,
-                        ),
+                        child: SvgPicture.asset(shareSvgImage,
+                            height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                       ),
                     ],
                   ),

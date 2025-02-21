@@ -104,11 +104,8 @@ class _ProductAppbarState extends State<ProductAppbar> {
                 child: Padding(
                   padding:
                       EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
-                  child: ImageIcon(
-                    AssetImage(searchNewImage),
-                    color: homeAppBarColor,
-                    size: 22.sp,
-                  ),
+                  child: SvgPicture.asset(searchSvgImage,
+                      height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                 ),
               ),
               Visibility(
@@ -120,11 +117,8 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   child: Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
-                    child: ImageIcon(
-                      AssetImage(wishlistBottomIcon),
-                      color: homeAppBarColor,
-                      size: 18.sp,
-                    ),
+                    child: SvgPicture.asset(heartSvgImage,
+                        height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                   ),
                 ),
               ),
@@ -139,12 +133,8 @@ class _ProductAppbarState extends State<ProductAppbar> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(bottom: 3.sp),
-                        child: Image.asset(
-                          cartNewImage,
-                          color: homeAppBarColor,
-                          height: 18.sp,
-                          width: 18.sp,
-                        ),
+                        child: SvgPicture.asset(cartSvgImage,
+                            height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                       ),
                       Obx(() => controller.cartTotalValue.value != 0
                           ? Positioned(

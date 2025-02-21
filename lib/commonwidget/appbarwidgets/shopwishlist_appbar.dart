@@ -68,11 +68,8 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
                 },
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8.sp),
-                  child: ImageIcon(
-                    AssetImage(wishlistBottomIcon),
-                    color: homeAppBarColor,
-                    size: 16.sp,
-                  ),
+                  child: SvgPicture.asset(heartSvgImage,
+                      height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                 ),
               ),
               InkWell(
@@ -83,12 +80,8 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
                   padding: EdgeInsets.symmetric(horizontal: 8.sp),
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 3.sp),
-                    child: Image.asset(
-                      cartNewImage,
-                      color: homeAppBarColor,
-                      height: 16.sp,
-                      width: 16.sp,
-                    ),
+                    child: SvgPicture.asset(cartSvgImage,
+                        height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                   ),
                 ),
               ),

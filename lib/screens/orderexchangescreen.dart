@@ -498,7 +498,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                               Padding(
                                                                                 padding: EdgeInsets.only(right: 5.sp, left: 12.sp, top: 5.sp, bottom: 5.sp),
                                                                                 child: AppText(
-                                                                                  text: value.orderList[index]["order_lines"][0]["product"] != null ? value.orderList[index]["order_lines"][0]["product"]["brand_name"] : "",
+                                                                                  text: value.orderList[index]["order_lines"][0]["product"] != null ? value.orderList[index]["order_lines"][0]["product"]["brand_name"] ?? "" : "",
                                                                                   color: greyTextColor,
                                                                                   maxLines: 2,
                                                                                   fontSize: 12,

@@ -251,6 +251,7 @@ const redHeartSvgImage = 'assets/images/heart_red_svg.svg';
 const quickLottie = 'assets/images/quick_lottie.json';
 const backimageSvg = 'assets/images/back_image.svg';
 const splashLottie = 'assets/images/splash_lottie.json';
+const shareSvgImage = 'assets/images/share_svg.svg';
 
 class ApiConstants {
   ApiConstants._();

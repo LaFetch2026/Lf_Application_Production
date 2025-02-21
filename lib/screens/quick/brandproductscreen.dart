@@ -239,11 +239,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 8.sp),
-                                          child: ImageIcon(
-                                            AssetImage(searchNewImage),
-                                            color: whiteColor,
-                                            size: 22.sp,
-                                          ),
+                                          child: SvgPicture.asset(
+                                              searchSvgImage,
+                                              height: 18.sp,
+                                              width: 18.sp,
+                                              fit: BoxFit.cover),
                                         ),
                                       ),
                                       InkWell(
@@ -259,11 +259,10 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 8.sp),
-                                          child: ImageIcon(
-                                            AssetImage(wishlistBottomIcon),
-                                            color: whiteColor,
-                                            size: 18.sp,
-                                          ),
+                                          child: SvgPicture.asset(heartSvgImage,
+                                              height: 18.sp,
+                                              width: 18.sp,
+                                              fit: BoxFit.cover),
                                         ),
                                       ),
                                       InkWell(
@@ -285,12 +284,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                               Padding(
                                                 padding: EdgeInsets.only(
                                                     bottom: 3.sp),
-                                                child: Image.asset(
-                                                  cartNewImage,
-                                                  color: whiteColor,
-                                                  height: 18.sp,
-                                                  width: 18.sp,
-                                                ),
+                                                child: SvgPicture.asset(
+                                                    cartSvgImage,
+                                                    height: 18.sp,
+                                                    width: 18.sp,
+                                                    fit: BoxFit.cover),
                                               ),
                                               Obx(() => controller
                                                           .cartTotalValue

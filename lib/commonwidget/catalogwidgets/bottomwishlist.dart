@@ -174,7 +174,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                 ),
                 Padding(
                   padding:
-                      EdgeInsets.symmetric(horizontal: 16.sp, vertical: 12.sp),
+                      EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
                   child: widget.wishlistList.isNotEmpty
                       ? Container(
                           //  color: blue,

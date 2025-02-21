@@ -246,8 +246,10 @@ class BoardScreenState extends State<BoardScreen> {
                                                       Get.to(() => ProductDetailsScreen(
                                                           brandName:
                                                               value.wishListProduct[
-                                                                      index][
-                                                                  "brand_name"],
+                                                                          index]
+                                                                      [
+                                                                      "brand_name"] ??
+                                                                  "",
                                                           productId: value
                                                                   .wishListProduct[
                                                               index]["id"],
