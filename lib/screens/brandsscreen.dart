@@ -691,6 +691,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                             Padding(
                                                 padding: EdgeInsets.only(
                                                     top: 6.sp,
+                                                    left: 20.sp,
                                                     bottom: 20.sp,
                                                     right: 20.sp),
                                                 child: brandController
@@ -709,6 +710,8 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                 "Franklin Gothic"))
                                                     : Text(
                                                         "Coming Soon to Your Area",
+                                                        textAlign:
+                                                            TextAlign.center,
                                                         style: TextStyle(
                                                             fontSize: 12,
                                                             color:

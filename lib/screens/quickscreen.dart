@@ -1490,7 +1490,11 @@ class QuickScreenState extends State<QuickScreen> {
                                   ),
                                   Padding(
                                     padding: EdgeInsets.only(
-                                        top: 6.sp, bottom: 20.sp, right: 20.sp),
+                                      top: 6.sp,
+                                      bottom: 20.sp,
+                                      right: 20.sp,
+                                      left: 20.sp,
+                                    ),
                                     child: Text(
                                         // "${'"'}${"NO BRAND FOUND"}${'"'}",
                                         productController.brandController.text
