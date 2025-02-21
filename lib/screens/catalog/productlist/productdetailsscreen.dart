@@ -16,6 +16,7 @@ import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
 import 'package:lafetch/commonwidget/doublebutton_iconnew.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_productdetails.dart';
+import 'package:lafetch/controller/brand_controller.dart';
 //import 'package:lafetch/commonwidget/homewidget/dummy_review.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
@@ -64,6 +65,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final PageController controller = PageController();
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
+  final brandController = Get.put(BrandController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late VideoPlayerController videoController;
   late Future<void> _initializeVideoPlayerFuture;
@@ -1359,7 +1361,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                               'productdetails_explorebrand',
                                                         },
                                                       );
-
+                                                      brandController
+                                                              .brandbackground
+                                                              .value =
+                                                          productController
+                                                                  .brandDetails[
+                                                              "background_image"];
                                                       Navigator.of(context).push(MaterialPageRoute(
                                                           builder: (BuildContext
                                                                   context) =>

@@ -147,8 +147,43 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     productController.tagsPage.value = 1;
   } */
 
+  /*  Widget playvideo(String video) {
+    videoController = VideoPlayerController.networkUrl(
+      Uri.parse(
+        video,
+      ),
+    );
+    _initializeVideoPlayerFuture = videoController.initialize();
+    videoController.setLooping(true);
+    videoController.play();
+    videoController.setVolume(0.05);
+    return FutureBuilder(
+      future: _initializeVideoPlayerFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              AspectRatio(
+                aspectRatio: videoController.value.aspectRatio,
+                child: VideoPlayer(videoController),
+              ),
+            ],
+          );
+        } else {
+          return Container(
+            height: 211.sp,
+            width: double.infinity,
+            color: cardBg,
+          );
+        }
+      },
+    );
+  } */
+
   @override
   void dispose() {
+    videoController.pause();
     videoController.dispose();
     super.dispose();
   }
@@ -230,12 +265,10 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                             ],
                                           );
                                         } else {
-                                          return Center(
-                                            child: SizedBox(
-                                                height: 20.sp,
-                                                width: 20.sp,
-                                                child:
-                                                    CircularProgressIndicator()),
+                                          return Container(
+                                            height: 211.sp,
+                                            width: double.infinity,
+                                            color: cardBg,
                                           );
                                         }
                                       },

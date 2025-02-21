@@ -46,67 +46,72 @@ class WelcomeScreenState extends State<WelcomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: blackColor,
-      body: SingleChildScrollView(
-        child: Container(
-            child: Stack(
-          children: [
-            FittedBox(
-              fit: BoxFit.cover,
-              child: Container(
-                width: MediaQuery.of(context).size.width.sp,
-                height: MediaQuery.of(context).size.height.sp,
-                child: AspectRatio(
-                  aspectRatio: 9 / 16,
-                  child: VideoPlayer(videoController),
-                ),
+      body: Container(
+          child: Stack(
+        children: [
+          FittedBox(
+            fit: BoxFit.cover,
+            child: Container(
+              width: MediaQuery.of(context).size.width.sp,
+              height: MediaQuery.of(context).size.height.sp,
+              child: AspectRatio(
+                aspectRatio: 9 / 16,
+                child: VideoPlayer(videoController),
               ),
             ),
-            Container(
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width.sp,
+            height: MediaQuery.of(context).size.height.sp,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.transparent, Colors.black.withOpacity(0.1)],
+                stops: [0.535, 0.8978],
+              ),
+            ),
+          ),
+          Transform.scale(
+            scaleY: 1.8,
+            child: Container(
               width: MediaQuery.of(context).size.width.sp,
               height: MediaQuery.of(context).size.height.sp,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.black.withOpacity(0.1)],
-                  stops: [0.535, 0.8978],
+                gradient: RadialGradient(
+                  center: Alignment.center,
+                  radius: 0.5,
+                  colors: [
+                    Color(0x00000000),
+                    Color(0XCC000000),
+                  ],
+                  stops: [0.5, 1.0],
                 ),
               ),
             ),
-            Transform.scale(
-              scaleY: 1.8,
-              child: Container(
-                width: MediaQuery.of(context).size.width.sp,
-                height: MediaQuery.of(context).size.height.sp,
-                decoration: BoxDecoration(
-                  gradient: RadialGradient(
-                    center: Alignment.center,
-                    radius: 0.5,
-                    colors: [
-                      Color(0x00000000),
-                      Color(0XCC000000),
-                    ],
-                    stops: [0.5, 1.0],
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width.sp,
-              height: MediaQuery.of(context).size.height.sp,
-              color: Colors.white.withOpacity(0),
-            ),
-            Center(
-                child: Padding(
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width.sp,
+            height: MediaQuery.of(context).size.height.sp,
+            color: Colors.white.withOpacity(0),
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
               padding: EdgeInsets.only(top: 80.sp),
               child:
                   Image.asset(appNameImage, height: 41.sp, fit: BoxFit.cover),
-            )),
-            Column(
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: 510.sp, left: 16.sp),
+                  padding: EdgeInsets.only(top: 0, left: 16.sp),
                   child: AppText(
                     text: "Welcome to Lafetch!".toUpperCase(),
                     fontFamily: "Franklin Gothic",
@@ -255,9 +260,9 @@ class WelcomeScreenState extends State<WelcomeScreen>
                 ),
               ],
             ),
-          ],
-        )),
-      ),
+          ),
+        ],
+      )),
     );
   }
 }

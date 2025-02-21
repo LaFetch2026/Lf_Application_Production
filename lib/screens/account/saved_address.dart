@@ -354,7 +354,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                       padding: EdgeInsets.only(
                                                           right: 33.sp),
                                                       child: Container(
-                                                        height: 80.sp,
+                                                        //  height: 80.sp,
                                                         width: 130.sp,
                                                         decoration:
                                                             BoxDecoration(
@@ -421,12 +421,13 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                               child: Container(
                                                                 color:
                                                                     whiteColor,
-                                                                height: 35.sp,
+                                                                // height: 35.sp,
                                                                 child: Padding(
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              12.sp),
+                                                                  padding: EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          12.sp,
+                                                                      vertical:
+                                                                          8.sp),
                                                                   child: Row(
                                                                     children: [
                                                                       ImageIcon(
@@ -488,12 +489,13 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                               child: Container(
                                                                 color:
                                                                     whiteColor,
-                                                                height: 35.sp,
+                                                                // height: 35.sp,
                                                                 child: Padding(
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              12.sp),
+                                                                  padding: EdgeInsets.symmetric(
+                                                                      horizontal:
+                                                                          12.sp,
+                                                                      vertical:
+                                                                          8.sp),
                                                                   child: Row(
                                                                     children: [
                                                                       ImageIcon(

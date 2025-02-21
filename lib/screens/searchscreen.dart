@@ -1458,7 +1458,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                   scrollDirection:
                                                       Axis.vertical,
                                                   padding: EdgeInsets.zero,
-                                                  childAspectRatio: 0.6,
+                                                  childAspectRatio: 0.55,
                                                   physics:
                                                       const ScrollPhysics(),
                                                   crossAxisSpacing: 12.sp,
@@ -1593,7 +1593,7 @@ class SearchScreenState extends State<SearchScreen> {
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,
-                                                                    maxLines: 1,
+                                                                    maxLines: 2,
                                                                     fontFamily:
                                                                         "Franklin Gothic",
                                                                     fontWeight:

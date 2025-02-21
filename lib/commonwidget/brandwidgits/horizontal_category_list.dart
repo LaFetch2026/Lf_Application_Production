@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import '../../utils/constants.dart';
 import '../app_text.dart';
 import '../common_widgets.dart';
@@ -135,47 +134,13 @@ class HorizontalCategoryList extends StatelessWidget {
                                           ),
                                         )),
                                   ),
-
-                                  /*  GestureDetector(
-                                    onTap: () {
-                                      onPressedHeart?.call(
-                                          list[index]["id"], index);
-                                    },
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 8.sp, vertical: 10.sp),
-                                      child: Align(
-                                        alignment: Alignment.topRight,
-                                        child: InkWell(
-                                          child: SizedBox(
-                                            height: 24.sp,
-                                            width: 24.sp,
-                                            child: CircleAvatar(
-                                              backgroundColor: whiteColor,
-                                              child: list[index]["wishlisted"]
-                                                  ? Image.asset(
-                                                      wishlistSelectImage,
-                                                      height: 18.sp,
-                                                      width: 18.sp,
-                                                    )
-                                                  : Image.asset(
-                                                      heartImage,
-                                                      height: 18.sp,
-                                                      color: bottomnavBack,
-                                                      width: 18.sp,
-                                                    ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ), */
                                 ],
                               ),
                               Padding(
                                 padding: EdgeInsets.only(
                                     top: 8.sp, left: 1.sp, right: 1.sp),
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Container(
                                       width: 116.sp,
@@ -190,7 +155,7 @@ class HorizontalCategoryList extends StatelessWidget {
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
-                                    InkWell(
+                                    /*  InkWell(
                                       onTap: () {
                                         onPressedHeart?.call(
                                             list[index]["id"], index);
@@ -210,7 +175,7 @@ class HorizontalCategoryList extends StatelessWidget {
                                                 width: 12.sp,
                                                 fit: BoxFit.cover),
                                       ),
-                                    )
+                                    ) */
                                   ],
                                 ),
                               ),

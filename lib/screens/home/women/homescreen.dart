@@ -1253,9 +1253,9 @@ class HomeScreenState extends State<HomeScreen> {
                                     children: [
                                       Padding(
                                         padding: EdgeInsets.only(
-                                          top: 24.sp,
-                                          left: 16.sp,
-                                        ),
+                                            top: 24.sp,
+                                            left: 16.sp,
+                                            right: 16.sp),
                                         child: Center(
                                           child: AppText(
                                             text: "SHOP BY CATEGORY"
