@@ -1379,10 +1379,8 @@ class SearchScreenState extends State<SearchScreen> {
                                                                               child: Image.asset(dummyWishlistImage, width: 104.sp, height: 130.sp, fit: BoxFit.cover),
                                                                             ),
                                                                       Padding(
-                                                                        padding: EdgeInsets.symmetric(
-                                                                            horizontal:
-                                                                                5.sp,
-                                                                            vertical: 6.sp),
+                                                                        padding:
+                                                                            EdgeInsets.symmetric(vertical: 6.sp),
                                                                         child:
                                                                             AppText(
                                                                           text: controller
@@ -1573,11 +1571,10 @@ class SearchScreenState extends State<SearchScreen> {
                                                                             fit: BoxFit.cover),
                                                                       ),
                                                                 Padding(
-                                                                  padding: EdgeInsets.symmetric(
-                                                                      horizontal:
-                                                                          5.sp,
-                                                                      vertical:
-                                                                          6.sp),
+                                                                  padding: EdgeInsets
+                                                                      .symmetric(
+                                                                          vertical:
+                                                                              6.sp),
                                                                   child:
                                                                       AppText(
                                                                     text: productController

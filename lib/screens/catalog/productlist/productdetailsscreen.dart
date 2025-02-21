@@ -2464,26 +2464,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                               width: 22.sp,
                                                             ),
                                                           ),
-                                                          AppText(
-                                                            text:
-                                                                "Shipping Cost :",
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            color: titleColor,
-                                                            maxLines: 1,
-                                                            fontSize: 14,
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        6),
+                                                          Container(
+                                                            height: 22.sp,
+                                                            alignment: Alignment
+                                                                .bottomCenter,
                                                             child: AppText(
                                                               text:
-                                                                  "\u{20B9}${productController.getItBy["shipping_cost"].toString()}",
+                                                                  "Shipping Cost :",
                                                               fontFamily:
                                                                   "Franklin Gothic Regular",
                                                               fontWeight:
@@ -2491,10 +2478,35 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                       .w500,
                                                               color: titleColor,
                                                               maxLines: 1,
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
                                                               fontSize: 14,
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        6),
+                                                            child: Container(
+                                                              height: 22.sp,
+                                                              alignment: Alignment
+                                                                  .bottomCenter,
+                                                              child: AppText(
+                                                                text:
+                                                                    "\u{20B9}${productController.getItBy["shipping_cost"].toString()}",
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color:
+                                                                    titleColor,
+                                                                maxLines: 1,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                fontSize: 14,
+                                                              ),
                                                             ),
                                                           )
                                                         ],
@@ -2545,18 +2557,23 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   ),
                                                   Expanded(
                                                     flex: 1,
-                                                    child: AppText(
-                                                      text: productController
-                                                                  .getItBy[
-                                                              "message"] ??
-                                                          "Enter your pincode to get estimate delivery date",
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: titleColor,
-                                                      maxLines: 2,
-                                                      fontSize: 14,
+                                                    child: Container(
+                                                      height: 22.sp,
+                                                      alignment:
+                                                          Alignment.bottomLeft,
+                                                      child: AppText(
+                                                        text: productController
+                                                                    .getItBy[
+                                                                "message"] ??
+                                                            "Enter your pincode to get estimate delivery date",
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: titleColor,
+                                                        maxLines: 2,
+                                                        fontSize: 14,
+                                                      ),
                                                     ),
                                                   )
                                                 ],
@@ -2583,6 +2600,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       ),
                                     ),
                                     Container(
+                                      height: 22.sp,
                                       alignment: Alignment.bottomCenter,
                                       child: Text(
                                         maxLines: 1,
@@ -2678,18 +2696,24 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   ),
                                                 ),
                                                 Expanded(
-                                                  child: AppText(
-                                                    text: productController
-                                                                .productDetails[
-                                                            "has_exchange"]
-                                                        ? 'Easy ${productController.productDetails["exchange_days"]} day return & exchange available'
-                                                        : 'Exchange not available',
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w500,
-                                                    maxLines: 1,
-                                                    color: titleColor,
-                                                    fontSize: 14,
+                                                  child: Container(
+                                                    height: 20.sp,
+                                                    alignment:
+                                                        Alignment.bottomLeft,
+                                                    child: AppText(
+                                                      text: productController
+                                                                  .productDetails[
+                                                              "has_exchange"]
+                                                          ? 'Easy ${productController.productDetails["exchange_days"]} day return & exchange available'
+                                                          : 'Exchange not available',
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      maxLines: 1,
+                                                      color: titleColor,
+                                                      fontSize: 14,
+                                                    ),
                                                   ),
                                                 )
                                               ],

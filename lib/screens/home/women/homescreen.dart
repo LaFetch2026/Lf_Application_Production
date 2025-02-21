@@ -1403,8 +1403,6 @@ class HomeScreenState extends State<HomeScreen> {
                                                           Padding(
                                                             padding: EdgeInsets
                                                                 .symmetric(
-                                                                    horizontal:
-                                                                        5.sp,
                                                                     vertical:
                                                                         6.sp),
                                                             child: AppText(
