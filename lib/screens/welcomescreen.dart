@@ -49,15 +49,12 @@ class WelcomeScreenState extends State<WelcomeScreen>
       body: Container(
           child: Stack(
         children: [
-          FittedBox(
-            fit: BoxFit.cover,
-            child: Container(
-              width: MediaQuery.of(context).size.width.sp,
-              height: MediaQuery.of(context).size.height.sp,
-              child: AspectRatio(
-                aspectRatio: 9 / 16,
-                child: VideoPlayer(videoController),
-              ),
+          Container(
+            width: MediaQuery.of(context).size.width.sp,
+            height: MediaQuery.of(context).size.height.sp,
+            child: AspectRatio(
+              aspectRatio: 9 / 16,
+              child: VideoPlayer(videoController),
             ),
           ),
           Container(
@@ -67,7 +64,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Colors.black.withOpacity(0.1)],
+                colors: [Colors.transparent, Colors.black.withOpacity(0.05)],
                 stops: [0.535, 0.8978],
               ),
             ),
@@ -81,9 +78,13 @@ class WelcomeScreenState extends State<WelcomeScreen>
                 gradient: RadialGradient(
                   center: Alignment.center,
                   radius: 0.5,
-                  colors: [
+                  /*  colors: [
                     Color(0x00000000),
                     Color(0XCC000000),
+                  ], */
+                  colors: [
+                    Color(0x00000000),
+                    Color(0x88000000),
                   ],
                   stops: [0.5, 1.0],
                 ),

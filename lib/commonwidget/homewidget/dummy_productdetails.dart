@@ -107,16 +107,16 @@ class DummyProductDetails extends StatelessWidget {
                 )),
             Padding(
               padding: EdgeInsets.only(top: 12.0.sp, left: 12.sp, right: 12.sp),
-              child: DummyContainer(height: 40.sp, width: 50.sp),
+              child: DummyContainer(height: 40.sp, width: 40.sp),
             ),
-            Padding(
+            /*   Padding(
               padding: EdgeInsets.symmetric(vertical: 14.sp, horizontal: 12.sp),
               child: DummyContainer(
                 height: 2.sp,
                 width: MediaQuery.of(context).size.width,
               ),
             ),
-            Padding(
+               Padding(
               padding: EdgeInsets.only(top: 12.0.sp, left: 12.sp, right: 12.sp),
               child: DummyContainer(height: 40.sp, width: 50.sp),
             ),
@@ -133,7 +133,7 @@ class DummyProductDetails extends StatelessWidget {
                 width: 50,
                 height: 50.sp,
               ),
-            ),
+            ), */
           ],
         ),
       ],

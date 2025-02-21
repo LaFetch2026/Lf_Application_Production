@@ -60,6 +60,7 @@ const Color lightPurpleColor = Color(0xFF988AFF);
 const Color cardBg = Color(0xFF242331);
 
 const splashGif = 'assets/splash.gif';
+const splashNewGif = 'assets/images/splash_gif.gif';
 const placedGif = 'assets/placed.gif';
 const shippedGif = 'assets/shipped.gif';
 const truckGif = 'assets/truck.gif';
@@ -249,6 +250,7 @@ const rightArrowSvgImage = 'assets/images/right_arrow_svg.svg';
 const redHeartSvgImage = 'assets/images/heart_red_svg.svg';
 const quickLottie = 'assets/images/quick_lottie.json';
 const backimageSvg = 'assets/images/back_image.svg';
+const splashLottie = 'assets/images/splash_lottie.json';
 
 class ApiConstants {
   ApiConstants._();

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/utils/constants.dart';
+//import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../bottomnavscreen.dart';
 import '../userdetails.dart';
@@ -25,7 +26,7 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
   void initState() {
     super.initState();
     getPrefrenceValue();
-    Timer(const Duration(seconds: 1), () => navigateToScreen());
+    Timer(const Duration(milliseconds: 4400), () => navigateToScreen());
   }
 
   Future getPrefrenceValue() async {
@@ -73,13 +74,18 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height,
-      color: colorPrimary,
+      //color: colorPrimary,
       child: Image.asset(
-        splashGif,
+        splashNewGif,
         fit: BoxFit.cover,
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
       ),
+      /*  Lottie.asset(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          splashLottie,
+        ) */
     );
   }
 }

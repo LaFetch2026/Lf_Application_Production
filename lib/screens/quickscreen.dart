@@ -549,7 +549,6 @@ class QuickScreenState extends State<QuickScreen> {
                           ? true
                           : false,
                       child: Lottie.asset(
-                        width: MediaQuery.of(context).size.width.sp,
                         quickLottie,
                       ),
                     ),

@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/firebase_options.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
-import 'package:lafetch/screens/splash/splash.dart';
+import 'package:lafetch/screens/splash/splashtwo.dart';
 import 'package:lafetch/utils/constants.dart';
 
 Future main() async {
@@ -69,7 +69,14 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             fontFamily: 'Franklin Gothic',
             primarySwatch: Colors.grey,
-            textTheme: Typography.englishLike2018.apply(fontSizeFactor: 1.sp),
+            /*  textTheme: TextTheme(
+              bodyLarge: TextStyle(letterSpacing: -.15),
+              bodyMedium: TextStyle(letterSpacing: -.15),
+              bodySmall: TextStyle(letterSpacing: -.15),
+            ), */
+            /*  textTheme: Typography.englishLike2018.apply(
+              fontSizeFactor: 1.sp,
+            ), */
           ),
           /*  getPages: [
             GetPage(name: '/', page: () => SplashScreen()),
@@ -82,7 +89,7 @@ class MyApp extends StatelessWidget {
               ),
             ),
           ], */
-          home: const SplashScreen(),
+          home: const SplashTwoScreen(),
         );
       },
     );

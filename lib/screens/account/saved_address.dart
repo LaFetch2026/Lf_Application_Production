@@ -419,8 +419,18 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                                 );
                                                               },
                                                               child: Container(
-                                                                color:
-                                                                    whiteColor,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color:
+                                                                      whiteColor,
+                                                                  borderRadius: BorderRadius.only(
+                                                                      topLeft: Radius
+                                                                          .circular(4.0
+                                                                              .sp),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              4.0.sp)),
+                                                                ),
                                                                 // height: 35.sp,
                                                                 child: Padding(
                                                                   padding: EdgeInsets.symmetric(
@@ -487,8 +497,18 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                                 );
                                                               },
                                                               child: Container(
-                                                                color:
-                                                                    whiteColor,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color:
+                                                                      whiteColor,
+                                                                  borderRadius: BorderRadius.only(
+                                                                      bottomLeft:
+                                                                          Radius.circular(4.0
+                                                                              .sp),
+                                                                      bottomRight:
+                                                                          Radius.circular(
+                                                                              4.0.sp)),
+                                                                ),
                                                                 // height: 35.sp,
                                                                 child: Padding(
                                                                   padding: EdgeInsets.symmetric(

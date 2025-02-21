@@ -254,9 +254,8 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                               );
                             }),
                       )
-                    : SizedBox(
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
+                    : Container(
+                        margin: EdgeInsets.only(top: 100.sp),
                         child: Center(
                           child: Text("No Catolog Found",
                               style: TextStyle(
