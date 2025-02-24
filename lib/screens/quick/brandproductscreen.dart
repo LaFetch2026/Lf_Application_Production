@@ -772,11 +772,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                   vertical: 10.sp, horizontal: 5.sp),
                               child: Row(
                                 children: [
-                                  Image.asset(
-                                    sortbyIcon,
+                                  SvgPicture.asset(
                                     color: whiteColor,
-                                    height: 20.sp,
-                                    width: 20.sp,
+                                    sortBySvgImage,
+                                    height: 19.sp,
+                                    width: 15.sp,
                                   ),
                                   Padding(
                                     padding:
@@ -1041,11 +1041,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                   vertical: 10.sp, horizontal: 5.sp),
                               child: Row(
                                 children: [
-                                  Image.asset(
-                                    filterIcon,
+                                  SvgPicture.asset(
+                                    filterSvgImage,
                                     color: whiteColor,
-                                    height: 20.sp,
-                                    width: 20.sp,
+                                    height: 11.sp,
+                                    width: 17.sp,
                                   ),
                                   Padding(
                                     padding:

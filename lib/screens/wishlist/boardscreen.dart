@@ -416,7 +416,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                               ),
                                                             ),
                                                           ),
-                                                          Positioned(
+                                                          /*      Positioned(
                                                             bottom: 16.sp,
                                                             left: 16.sp,
                                                             child: Container(
@@ -493,6 +493,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                               ),
                                                             ),
                                                           ),
+                                                        */
                                                         ],
                                                       ),
                                                       Padding(
@@ -517,23 +518,31 @@ class BoardScreenState extends State<BoardScreen> {
                                                               FontWeight.w500,
                                                         ),
                                                       ),
-                                                      Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal:
-                                                                    10.sp),
-                                                        child: AppText(
-                                                          text: value.wishListProduct[
-                                                                      index][
-                                                                  "brand_name"] ??
-                                                              "",
-                                                          color: nameText,
-                                                          maxLines: 1,
-                                                          fontSize: 11,
-                                                          fontFamily:
-                                                              "Franklin Gothic Regular",
-                                                          fontWeight:
-                                                              FontWeight.w400,
+                                                      Visibility(
+                                                        visible: value.wishListProduct[
+                                                                        index][
+                                                                    "brand_name"] !=
+                                                                null
+                                                            ? true
+                                                            : false,
+                                                        child: Padding(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal:
+                                                                      10.sp),
+                                                          child: AppText(
+                                                            text: value.wishListProduct[
+                                                                        index][
+                                                                    "brand_name"] ??
+                                                                "",
+                                                            color: nameText,
+                                                            maxLines: 1,
+                                                            fontSize: 11,
+                                                            fontFamily:
+                                                                "Franklin Gothic Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
                                                         ),
                                                       ),
                                                       Padding(

@@ -260,6 +260,8 @@ const couponSvgImage = 'assets/images/coupon_svg.svg';
 const questionSvgImage = 'assets/images/question_svg.svg';
 const myLocationSvgImage = 'assets/images/my_location_svg.svg';
 const addNewSvgImage = 'assets/images/add_new_svg.svg';
+const filterSvgImage = 'assets/images/filter_svg.svg';
+const sortBySvgImage = 'assets/images/sortby_svg.svg';
 
 class ApiConstants {
   ApiConstants._();

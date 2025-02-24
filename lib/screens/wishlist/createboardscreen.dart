@@ -429,7 +429,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                                 ),
                                                               ),
                                                             ),
-                                                      Positioned(
+                                                      /*        Positioned(
                                                         bottom: 16.sp,
                                                         left: 16.sp,
                                                         child: Container(
@@ -506,6 +506,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                           ),
                                                         ),
                                                       ),
+                                                   */
                                                     ],
                                                   ),
                                                   Padding(

@@ -5,6 +5,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/productlist_appbar.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomcategory.dart';
@@ -700,10 +701,10 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                             vertical: 10.sp, horizontal: 5.sp),
                         child: Row(
                           children: [
-                            Image.asset(
-                              sortbyIcon,
-                              height: 20.sp,
-                              width: 20.sp,
+                            SvgPicture.asset(
+                              sortBySvgImage,
+                              height: 19.sp,
+                              width: 15.sp,
                             ),
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 5.sp),
@@ -922,10 +923,10 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                             vertical: 10.sp, horizontal: 5.sp),
                         child: Row(
                           children: [
-                            Image.asset(
-                              filterIcon,
-                              height: 20.sp,
-                              width: 20.sp,
+                            SvgPicture.asset(
+                              filterSvgImage,
+                              height: 11.sp,
+                              width: 17.sp,
                             ),
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 5.sp),
