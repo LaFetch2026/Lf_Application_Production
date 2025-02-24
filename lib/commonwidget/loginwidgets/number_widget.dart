@@ -45,7 +45,8 @@ class NumberWidget extends StatelessWidget {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(0.sp),
             ),
-            focusedBorder: const OutlineInputBorder(
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(0.sp),
                 borderSide: BorderSide(color: productSubtitleColor)),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(0.sp),

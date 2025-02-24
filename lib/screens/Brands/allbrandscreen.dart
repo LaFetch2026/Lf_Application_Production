@@ -46,6 +46,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   bool showDescription = false;
   late Future<void> _initializeVideoPlayerFuture;
   late VideoPlayerController videoController;
+  late VideoPlayerController slugVideoController;
   List heightList = [
     100.00.sp,
     180.00.sp,
@@ -153,16 +154,16 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     productController.tagsPage.value = 1;
   } */
 
-  /*  Widget playvideo(String video) {
-    videoController = VideoPlayerController.networkUrl(
+  Widget playvideo(String video) {
+    slugVideoController = VideoPlayerController.networkUrl(
       Uri.parse(
         video,
       ),
     );
-    _initializeVideoPlayerFuture = videoController.initialize();
-    videoController.setLooping(true);
-    videoController.play();
-    videoController.setVolume(0.05);
+    _initializeVideoPlayerFuture = slugVideoController.initialize();
+    slugVideoController.setLooping(true);
+    slugVideoController.play();
+    slugVideoController.setVolume(0.05);
     return FutureBuilder(
       future: _initializeVideoPlayerFuture,
       builder: (context, snapshot) {
@@ -171,8 +172,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
             fit: StackFit.expand,
             children: [
               AspectRatio(
-                aspectRatio: videoController.value.aspectRatio,
-                child: VideoPlayer(videoController),
+                aspectRatio: slugVideoController.value.aspectRatio,
+                child: VideoPlayer(slugVideoController),
               ),
             ],
           );
@@ -185,7 +186,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
         }
       },
     );
-  } */
+  }
 
   @override
   void dispose() {
@@ -268,32 +269,36 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 : Container(
                                     height: 211.sp,
                                     width: double.infinity,
-                                    child: FutureBuilder(
-                                      future: _initializeVideoPlayerFuture,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.done) {
-                                          return Stack(
-                                            fit: StackFit.expand,
-                                            children: [
-                                              AspectRatio(
-                                                aspectRatio: videoController
-                                                    .value.aspectRatio,
-                                                child: VideoPlayer(
-                                                    videoController),
-                                              ),
-                                            ],
-                                          );
-                                        } else {
-                                          return Container(
-                                            height: 211.sp,
-                                            width: double.infinity,
-                                            color: cardBg,
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ),
+                                    child: widget.id != 0
+                                        ? FutureBuilder(
+                                            future:
+                                                _initializeVideoPlayerFuture,
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.done) {
+                                                return Stack(
+                                                  fit: StackFit.expand,
+                                                  children: [
+                                                    AspectRatio(
+                                                      aspectRatio:
+                                                          videoController.value
+                                                              .aspectRatio,
+                                                      child: VideoPlayer(
+                                                          videoController),
+                                                    ),
+                                                  ],
+                                                );
+                                              } else {
+                                                return Container(
+                                                  height: 211.sp,
+                                                  width: double.infinity,
+                                                  color: cardBg,
+                                                );
+                                              }
+                                            },
+                                          )
+                                        : playvideo(brandController
+                                            .brandDetails["background_image"])),
                       ),
                       Obx(() => brandController.isDetails.value
                           ? SizedBox(

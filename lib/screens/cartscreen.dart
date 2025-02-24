@@ -1174,7 +1174,8 @@ class CartScreenState extends State<CartScreen> {
                                                                           "wishlisted"]) {
                                                                         wishlistController.callAddProductToWishlist(
                                                                             value.orderList[index]["product"]["wishlist_id"],
-                                                                            value.orderList[index]["product"]["id"]);
+                                                                            value.orderList[index]["product"]["id"],
+                                                                            widget.backgroundcolor);
                                                                         controller
                                                                             .getCartData();
                                                                         await analytics
@@ -1208,7 +1209,7 @@ class CartScreenState extends State<CartScreen> {
                                                                             },
                                                                             productImage: value.orderList[index]["product"]["images"][0]["name"],
                                                                             onPressed: (p0) {
-                                                                              wishlistController.callAddProductToWishlist(p0, value.orderList[index]["product"]["id"]);
+                                                                              wishlistController.callAddProductToWishlist(p0, value.orderList[index]["product"]["id"], widget.backgroundcolor);
                                                                               value.callAddtoCart(0, "wishlist", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor);
                                                                             },
                                                                             wishlistList: wishlistController.wishlistList));

@@ -460,7 +460,7 @@ class WishlistController extends BaseController {
     hideLoading();
   }
 
-  getWishlistProductDetails(int productId, String slug) async {
+  getWishlistProductDetails(int productId, String slug, Color backColor) async {
     isProductWishlist.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -481,12 +481,21 @@ class WishlistController extends BaseController {
               "Authorization": "Bearer ${prefs.getString('token')} ",
             });
       } else {
-        response = await http.get(
-            Uri.parse("${ApiConstants.baseUrl}/products/$slug?type=relevant"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
+        if (backColor == whiteColor) {
+          response = await http.get(
+              Uri.parse("${ApiConstants.baseUrl}/products/$slug?type=relevant"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
+              Uri.parse("${ApiConstants.baseUrl}/products/$slug?type=express"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        }
       }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
@@ -512,7 +521,7 @@ class WishlistController extends BaseController {
     isProductWishlist.value = false;
   }
 
-  callAddProductToWishlist(int wishlistId, int id) async {
+  callAddProductToWishlist(int wishlistId, int id, Color backColor) async {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.put(
@@ -531,7 +540,7 @@ class WishlistController extends BaseController {
         } else {
           //  getSnackBar("product removed from the wishlist");
         }
-        getWishlistProductDetails(responseData["id"], "");
+        getWishlistProductDetails(responseData["id"], "", backColor);
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {

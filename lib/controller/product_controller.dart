@@ -2492,7 +2492,7 @@ class ProductController extends BaseController {
     }
   }
 
-  getProductDetails(int productId, String slug) async {
+  getProductDetails(int productId, String slug, Color backColor) async {
     isDetails.value = true;
     isEstimateDate.value = true;
     final prefs = await SharedPreferences.getInstance();
@@ -2507,13 +2507,23 @@ class ProductController extends BaseController {
               "Authorization": "Bearer ${prefs.getString('token')} ",
             });
       } else {
-        response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/products/$slug?type=relevant&latitude=${lat.value}&longitude=${lng.value}&count=1"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
+        if (backColor == whiteColor) {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products/$slug?type=relevant&latitude=${lat.value}&longitude=${lng.value}&count=1"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        } else {
+          response = await http.get(
+              Uri.parse(
+                  "${ApiConstants.baseUrl}/products/$slug?type=express&latitude=${lat.value}&longitude=${lng.value}&count=1"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              });
+        }
       }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
@@ -2919,7 +2929,8 @@ class ProductController extends BaseController {
     isPincode.value = false;
   }
 
-  callAddtoCart(int quantity, String type, Color background) async {
+  callAddtoCart(
+      int quantity, String type, Color background, int productId) async {
     showLoading();
     isReorder.value = true;
     final prefs = await SharedPreferences.getInstance();
@@ -2949,7 +2960,12 @@ class ProductController extends BaseController {
         if (type == "buy now") {
           Get.to(CartScreen(
             backgroundcolor: background,
-          ));
+          ))?.then(
+            (value) {
+              getProductDetails(productId, "", background);
+              addToCart.value = false;
+            },
+          );
         }
       } else if (response.statusCode == 201) {
       } else if (response.statusCode == 400) {

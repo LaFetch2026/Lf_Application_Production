@@ -1025,12 +1025,12 @@ class SearchScreenState extends State<SearchScreen> {
                                                         Navigator.of(context)
                                                             .push(MaterialPageRoute(
                                                                 builder: (BuildContext context) => ProductDetailsScreen(
-                                                                    brandName: controller.recentSearchList[i]
-                                                                            ["product"]
-                                                                        [
-                                                                        "brand_name"],
+                                                                    brandName:
+                                                                        controller.recentSearchList[i]["product"]["brand_name"] ??
+                                                                            "",
                                                                     productId: controller.recentSearchList[i]
-                                                                            ["product"]
+                                                                            [
+                                                                            "product"]
                                                                         ["id"],
                                                                     type:
                                                                         "add")))

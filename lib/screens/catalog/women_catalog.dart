@@ -257,7 +257,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                     : Container(
                         margin: EdgeInsets.only(top: 100.sp),
                         child: Center(
-                          child: Text("No Catolog Found",
+                          child: Text("No Category Found",
                               style: TextStyle(
                                   fontSize: 14.sp,
                                   color: Colors.black,

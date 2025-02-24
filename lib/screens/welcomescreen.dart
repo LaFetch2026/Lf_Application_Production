@@ -28,7 +28,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
   @override
   void initState() {
     videoController = VideoPlayerController.asset(
-      video,
+      videoOnboard,
     );
     initializeVideoPlayerFuture = videoController.initialize();
     videoController.play();
@@ -50,8 +50,8 @@ class WelcomeScreenState extends State<WelcomeScreen>
           child: Stack(
         children: [
           Container(
-            width: MediaQuery.of(context).size.width.sp,
-            height: MediaQuery.of(context).size.height.sp,
+            width: double.infinity,
+            height: double.infinity,
             child: AspectRatio(
               aspectRatio: 9 / 16,
               child: VideoPlayer(videoController),
@@ -64,7 +64,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Colors.black.withOpacity(0.05)],
+                colors: [Colors.transparent, Colors.black.withOpacity(0.01)],
                 stops: [0.535, 0.8978],
               ),
             ),

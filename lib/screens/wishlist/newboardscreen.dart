@@ -118,7 +118,7 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                             }
                             if (widget.screen == "ProductDetails") {
                               wishlistController.getWishlistProductDetails(
-                                  widget.productId, "");
+                                  widget.productId, "", whiteColor);
                             }
                             if (widget.screen == "Bag") {
                               cartControler.getCartData();

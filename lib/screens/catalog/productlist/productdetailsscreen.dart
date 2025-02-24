@@ -721,7 +721,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       productController.expressValue.value = 0;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
-        productController.getProductDetails(widget.productId, widget.Slug));
+        productController.getProductDetails(
+            widget.productId, widget.Slug, widget.backgroundcolor));
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.frequentlyBoughtController.addListener(() {
         productController.fetchFrequentlyMoreData(
@@ -750,8 +751,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     }); */
     /*   WidgetsBinding.instance.addPostFrameCallback((_) => productController
         .getFrequentlyProductData("frequently-bought", widget.productId)); */
-    WidgetsBinding.instance.addPostFrameCallback((_) => wishlistController
-        .getWishlistProductDetails(widget.productId, widget.Slug));
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        wishlistController.getWishlistProductDetails(
+            widget.productId, widget.Slug, widget.backgroundcolor));
     /* WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getProductReview(widget.productId));
     WidgetsBinding.instance.addPostFrameCallback(
@@ -804,7 +806,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   if (wishlistController.wishListDetails["wishlisted"]) {
                     wishlistController.callAddProductToWishlist(
                         wishlistController.wishListDetails["wishlist_id"],
-                        productController.productDetails["id"]);
+                        productController.productDetails["id"],
+                        widget.backgroundcolor);
                     await analytics.logEvent(
                       name: 'productdetails_wishlist_remove',
                       parameters: <String, Object>{
@@ -837,7 +840,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 .wishListDetails["images"][0]["name"],
                             onPressed: (p0) {
                               wishlistController.callAddProductToWishlist(
-                                  p0, productController.productDetails["id"]);
+                                  p0,
+                                  productController.productDetails["id"],
+                                  widget.backgroundcolor);
                             },
                             wishlistList: wishlistController.wishlistList));
                     await analytics.logEvent(
@@ -4576,7 +4581,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ],
                           ),
                         )
-                      : productController.productDetails["added_to_cart"] ||
+                      : /*  productController.productDetails["added_to_cart"] ||
+                              productController.addToCart.value */
+                      productController.productDetails["cart_inventory_ids"]
+                                  .contains(productController
+                                      .sizeInventoryId.value) ||
                               productController.addToCart.value
                           ? DoubleButtonIconNew(
                               lineColor: widget.backgroundcolor == whiteColor
@@ -4587,7 +4596,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               onPressedFirst: () async {
                                 Get.to(CartScreen(
                                   backgroundcolor: widget.backgroundcolor,
-                                ));
+                                ))?.then(
+                                  (value) {
+                                    productController.getProductDetails(
+                                        widget.productId,
+                                        "",
+                                        widget.backgroundcolor);
+                                  },
+                                );
                                 await analytics.logEvent(
                                   name: 'productDetails_btnGotocart',
                                   parameters: <String, Object>{
@@ -4599,8 +4615,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               onPressedSecond: () {
                                 if (productController
                                     .checkDetailsValidation()) {
-                                  productController.callAddtoCart(
-                                      1, "buy now", widget.backgroundcolor);
+                                  productController.callAddtoCart(1, "buy now",
+                                      widget.backgroundcolor, widget.productId);
                                 }
                               },
                               controller: productController)
@@ -4617,7 +4633,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   if (productController
                                       .checkDetailsValidation()) {
                                     productController.callAddtoCart(
-                                        1, "", widget.backgroundcolor);
+                                        1,
+                                        "",
+                                        widget.backgroundcolor,
+                                        widget.productId);
                                   }
                                 } else {
                                   if (productController
@@ -4641,12 +4660,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               onPressedSecond: () {
                                 if (productController
                                     .checkDetailsValidation()) {
-                                  productController.callAddtoCart(
-                                      1, "buy now", widget.backgroundcolor);
+                                  productController.callAddtoCart(1, "buy now",
+                                      widget.backgroundcolor, widget.productId);
                                 }
                               },
                               controller: productController)),
-            ),
+            )
           ],
         ),
       ),
