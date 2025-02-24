@@ -107,8 +107,14 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                           filled: true,
                           isDense: true,
                           fillColor: whiteColor,
-                          prefixIcon: Icon(Icons.search,
-                              size: 24.sp, color: titleColor),
+                          prefixIcon: IconButton(
+                            icon: SvgPicture.asset(searchSvgImage,
+                                color: titleColor,
+                                height: 17.sp,
+                                width: 17.sp,
+                                fit: BoxFit.cover),
+                            onPressed: () {},
+                          ),
                           focusedBorder: const OutlineInputBorder(
                               borderSide: BorderSide(color: borderColor)),
                           border: OutlineInputBorder(
@@ -164,13 +170,13 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                             },
                             child: Row(
                               children: [
-                                ImageIcon(
-                                  AssetImage(currentLocationIcon),
-                                  color: homeAppBarColor,
-                                  size: 18.sp,
+                                SvgPicture.asset(
+                                  myLocationSvgImage,
+                                  height: 18.sp,
+                                  width: 18.sp,
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(left: 5.sp),
+                                  padding: EdgeInsets.only(left: 7.sp),
                                   child: AppText(
                                     text: "Use my current location",
                                     color: homeAppBarColor,
@@ -227,13 +233,13 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                             },
                             child: Row(
                               children: [
-                                ImageIcon(
-                                  AssetImage(addBoardImage),
-                                  color: homeAppBarColor,
-                                  size: 18.sp,
+                                SvgPicture.asset(
+                                  addNewSvgImage,
+                                  height: 14.sp,
+                                  width: 14.sp,
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(left: 5.sp),
+                                  padding: EdgeInsets.only(left: 7.sp),
                                   child: AppText(
                                     text: "Add new address",
                                     color: homeAppBarColor,

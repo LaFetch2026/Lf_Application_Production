@@ -5,6 +5,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
@@ -308,10 +309,19 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
                             filled: true,
-                            suffixIcon: ImageIcon(
-                              AssetImage(dropdownImage),
-                              color: nameText,
-                              size: 30.sp,
+                            suffixIcon: Padding(
+                              padding: EdgeInsets.only(right: 20.sp),
+                              child: SizedBox(
+                                height: 8.sp,
+                                width: 10.sp,
+                                child: SvgPicture.asset(
+                                  dropdownSvgImage,
+                                  height: 8.sp,
+                                  width: 10.sp,
+                                  // ignore: deprecated_member_use
+                                  color: homeAppBarColor,
+                                ),
+                              ),
                             ),
                             fillColor: whiteColor,
                             focusedBorder: const OutlineInputBorder(

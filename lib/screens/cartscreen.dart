@@ -806,12 +806,14 @@ class CartScreenState extends State<CartScreen> {
                                                                                                   decoration: BoxDecoration(color: widget.backgroundcolor == whiteColor ? Color(0xffF3F4F6) : Color(0xFFDFDBFF), border: Border.all(width: 1, color: widget.backgroundcolor == whiteColor ? Color(0xFFE5E7EB) : titleColor)),
                                                                                                   height: 30.sp,
                                                                                                   width: 85.sp,
+                                                                                                  alignment: Alignment.center,
                                                                                                   child: Row(
+                                                                                                    crossAxisAlignment: CrossAxisAlignment.center,
                                                                                                     children: [
                                                                                                       Padding(
                                                                                                         padding: EdgeInsets.only(left: 8.sp, right: 5.sp, top: 5.sp, bottom: 5.sp),
                                                                                                         child: AppText(
-                                                                                                          //  text: "Size : XXXL",
+                                                                                                          // text: "Size : XXXL",
                                                                                                           text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix_name_size"] : ""}",
                                                                                                           color: titleColor,
                                                                                                           fontSize: 10,
@@ -819,10 +821,14 @@ class CartScreenState extends State<CartScreen> {
                                                                                                           fontWeight: FontWeight.w400,
                                                                                                         ),
                                                                                                       ),
-                                                                                                      ImageIcon(
-                                                                                                        AssetImage(dropdownImage),
-                                                                                                        color: nameText,
-                                                                                                        size: 14.sp,
+                                                                                                      Padding(
+                                                                                                        padding: EdgeInsets.only(left: 2.sp, top: 2.sp, right: 2.sp),
+                                                                                                        child: SvgPicture.asset(
+                                                                                                          dropdownSvgImage,
+                                                                                                          color: titleColor,
+                                                                                                          height: 5.sp,
+                                                                                                          width: 8.sp,
+                                                                                                        ),
                                                                                                       ),
                                                                                                     ],
                                                                                                   ),
@@ -891,10 +897,14 @@ class CartScreenState extends State<CartScreen> {
                                                                                                   fontWeight: FontWeight.w400,
                                                                                                 ),
                                                                                               ),
-                                                                                              ImageIcon(
-                                                                                                AssetImage(dropdownImage),
-                                                                                                color: nameText,
-                                                                                                size: 14.sp,
+                                                                                              Padding(
+                                                                                                padding: EdgeInsets.only(left: 2.sp, top: 2.sp, right: 2.sp),
+                                                                                                child: SvgPicture.asset(
+                                                                                                  dropdownSvgImage,
+                                                                                                  color: titleColor,
+                                                                                                  height: 5.sp,
+                                                                                                  width: 8.sp,
+                                                                                                ),
                                                                                               ),
                                                                                             ],
                                                                                           ),
@@ -1483,7 +1493,7 @@ class CartScreenState extends State<CartScreen> {
                                                                             ? true
                                                                             : false,
                                                                         child:
-                                                                            ImageIcon(
+                                                                            /*  ImageIcon(
                                                                           AssetImage(
                                                                               coupanImage),
                                                                           color: widget.backgroundcolor == whiteColor
@@ -1491,6 +1501,16 @@ class CartScreenState extends State<CartScreen> {
                                                                               : productSubtitleColor,
                                                                           size:
                                                                               22.sp,
+                                                                        ) */
+                                                                            SvgPicture.asset(
+                                                                          couponSvgImage,
+                                                                          color: widget.backgroundcolor == whiteColor
+                                                                              ? titleColor
+                                                                              : productSubtitleColor,
+                                                                          height:
+                                                                              20.sp,
+                                                                          width:
+                                                                              20.sp,
                                                                         ),
                                                                       ),
                                                                       controller.couponText.value ==
@@ -2211,14 +2231,15 @@ class CartScreenState extends State<CartScreen> {
                                                                       },
                                                                     );
                                                                   },
-                                                                  child: Image.asset(
-                                                                      shipIcon,
-                                                                      height:
-                                                                          18.sp,
-                                                                      width:
-                                                                          18.sp,
-                                                                      fit: BoxFit
-                                                                          .contain),
+                                                                  child:
+                                                                      SvgPicture
+                                                                          .asset(
+                                                                    questionSvgImage,
+                                                                    height:
+                                                                        15.sp,
+                                                                    width:
+                                                                        15.sp,
+                                                                  ),
                                                                 )
                                                               ],
                                                             ),
@@ -2305,14 +2326,15 @@ class CartScreenState extends State<CartScreen> {
                                                                       },
                                                                     );
                                                                   },
-                                                                  child: Image.asset(
-                                                                      shipIcon,
-                                                                      height:
-                                                                          18.sp,
-                                                                      width:
-                                                                          18.sp,
-                                                                      fit: BoxFit
-                                                                          .cover),
+                                                                  child:
+                                                                      SvgPicture
+                                                                          .asset(
+                                                                    questionSvgImage,
+                                                                    height:
+                                                                        15.sp,
+                                                                    width:
+                                                                        15.sp,
+                                                                  ),
                                                                 )
                                                               ],
                                                             ),

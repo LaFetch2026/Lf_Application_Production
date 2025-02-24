@@ -6,6 +6,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -229,8 +230,15 @@ class MapScreenState extends State<MapScreen> {
                                             filled: true,
                                             isDense: true,
                                             fillColor: whiteColor,
-                                            prefixIcon: Icon(Icons.search,
-                                                size: 20.sp, color: titleColor),
+                                            prefixIcon: IconButton(
+                                              icon: SvgPicture.asset(
+                                                  searchSvgImage,
+                                                  color: titleColor,
+                                                  height: 17.sp,
+                                                  width: 17.sp,
+                                                  fit: BoxFit.cover),
+                                              onPressed: () {},
+                                            ),
                                             focusedBorder:
                                                 const OutlineInputBorder(
                                                     borderSide: BorderSide(
@@ -484,10 +492,10 @@ class MapScreenState extends State<MapScreen> {
                                               horizontal: 16.sp),
                                           child: Row(
                                             children: [
-                                              ImageIcon(
-                                                AssetImage(currentLocationIcon),
-                                                color: homeAppBarColor,
-                                                size: 20.sp,
+                                              SvgPicture.asset(
+                                                myLocationSvgImage,
+                                                height: 18.sp,
+                                                width: 18.sp,
                                               ),
                                               Padding(
                                                 padding: EdgeInsets.only(

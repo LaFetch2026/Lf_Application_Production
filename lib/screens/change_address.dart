@@ -193,13 +193,13 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                       },
                       child: Row(
                         children: [
-                          ImageIcon(
-                            AssetImage(currentLocationIcon),
-                            color: homeAppBarColor,
-                            size: 18.sp,
+                          SvgPicture.asset(
+                            myLocationSvgImage,
+                            height: 18.sp,
+                            width: 18.sp,
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 5.sp),
+                            padding: EdgeInsets.only(left: 7.sp),
                             child: AppText(
                               text: "Use my current location",
                               color: homeAppBarColor,
@@ -247,13 +247,13 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                       },
                       child: Row(
                         children: [
-                          ImageIcon(
-                            AssetImage(addBoardImage),
-                            color: homeAppBarColor,
-                            size: 18.sp,
+                          SvgPicture.asset(
+                            addNewSvgImage,
+                            height: 14.sp,
+                            width: 14.sp,
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 5.sp),
+                            padding: EdgeInsets.only(left: 7.sp),
                             child: AppText(
                               text: "Add new address",
                               color: homeAppBarColor,

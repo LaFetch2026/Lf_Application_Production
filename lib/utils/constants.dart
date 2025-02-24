@@ -256,6 +256,10 @@ const GetBagSvgImage = 'assets/images/bag_svg.svg';
 const exchangeSvgImage = 'assets/images/exchange_svg.svg';
 const walletSvgImage = 'assets/images/wallet_svg.svg';
 const threeDotSvgImage = 'assets/images/three_dot_svg.svg';
+const couponSvgImage = 'assets/images/coupon_svg.svg';
+const questionSvgImage = 'assets/images/question_svg.svg';
+const myLocationSvgImage = 'assets/images/my_location_svg.svg';
+const addNewSvgImage = 'assets/images/add_new_svg.svg';
 
 class ApiConstants {
   ApiConstants._();

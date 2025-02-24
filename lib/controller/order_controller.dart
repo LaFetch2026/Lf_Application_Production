@@ -40,7 +40,7 @@ class OrderController extends BaseController {
   final searchController = TextEditingController();
   final exchangeComment = TextEditingController();
   List<bool> selected = List.generate(50, (i) => false).obs;
-  final List filterList = [
+  /* final List filterList = [
     'All',
     'Pending',
     'Confirmed',
@@ -66,6 +66,21 @@ class OrderController extends BaseController {
     9,
     10,
     11,
+  ].obs; */
+  final List filterList = [
+    'All',
+    'Processing',
+    'Shipped',
+    'Delivered',
+    'Cancelled',
+  ].obs;
+
+  final List filterId = [
+    0,
+    4,
+    5,
+    6,
+    7,
   ].obs;
 
   bool checkExchangeValidation() {

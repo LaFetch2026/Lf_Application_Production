@@ -111,12 +111,12 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                             suffixIcon: Padding(
                               padding: EdgeInsets.only(right: 20.sp),
                               child: SizedBox(
-                                height: 7.sp,
-                                width: 7.sp,
+                                height: 8.sp,
+                                width: 10.sp,
                                 child: SvgPicture.asset(
                                   dropdownSvgImage,
-                                  height: 7.sp,
-                                  width: 7.sp,
+                                  height: 8.sp,
+                                  width: 10.sp,
                                   color: homeAppBarColor,
                                 ),
                               ),

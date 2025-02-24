@@ -230,8 +230,14 @@ class BrandsScreenState extends State<BrandsScreen> {
                             filled: true,
                             isDense: true,
                             fillColor: whiteColor,
-                            prefixIcon: Icon(Icons.search,
-                                size: 24.sp, color: titleColor),
+                            prefixIcon: IconButton(
+                              icon: SvgPicture.asset(searchSvgImage,
+                                  color: titleColor,
+                                  height: 17.sp,
+                                  width: 17.sp,
+                                  fit: BoxFit.cover),
+                              onPressed: () {},
+                            ),
                             focusedBorder: const OutlineInputBorder(
                                 borderSide: BorderSide(color: borderColor)),
                             border: OutlineInputBorder(
