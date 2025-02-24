@@ -247,10 +247,13 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                       },
                       child: Row(
                         children: [
-                          SvgPicture.asset(
-                            addNewSvgImage,
-                            height: 14.sp,
-                            width: 14.sp,
+                          Padding(
+                            padding: EdgeInsets.only(top: 2.sp),
+                            child: SvgPicture.asset(
+                              addNewSvgImage,
+                              height: 14.sp,
+                              width: 14.sp,
+                            ),
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 7.sp),

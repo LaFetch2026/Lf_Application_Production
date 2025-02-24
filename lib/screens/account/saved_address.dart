@@ -232,17 +232,22 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                               );
                             },
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                SvgPicture.asset(
-                                  addNewSvgImage,
-                                  height: 14.sp,
-                                  width: 14.sp,
+                                Padding(
+                                  padding: EdgeInsets.only(top: 2.sp),
+                                  child: SvgPicture.asset(
+                                    addNewSvgImage,
+                                    height: 14.sp,
+                                    width: 14.sp,
+                                  ),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.only(left: 7.sp),
                                   child: AppText(
                                     text: "Add new address",
                                     color: homeAppBarColor,
+                                    textAlign: TextAlign.center,
                                     fontSize: 16,
                                     fontFamily: "Franklin Gothic",
                                     fontWeight: FontWeight.w500,
