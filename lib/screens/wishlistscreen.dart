@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -38,6 +39,11 @@ class WishlistScreenState extends State<WishlistScreen> {
         wishlistController.fetchMoreData();
         wishlistController.update();
       });
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: statusBarColor,
+      ));
     });
     wishlistController.hasnextpage.value = true;
     wishlistController.loadMore.value = false;

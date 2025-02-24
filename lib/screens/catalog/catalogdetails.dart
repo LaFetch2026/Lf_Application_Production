@@ -496,16 +496,23 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
                                               children: [
-                                                AppText(
-                                                  text: controller
-                                                      .categoryProductList[
-                                                          index]["name"]
-                                                      .toUpperCase(),
-                                                  color: blackColor,
-                                                  fontSize: 20,
-                                                  fontFamily:
-                                                      "Franklin Gothic Semibold",
-                                                  fontWeight: FontWeight.w400,
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                              .size
+                                                              .width /
+                                                          2.sp +
+                                                      100,
+                                                  child: AppText(
+                                                    text: controller
+                                                        .categoryProductList[
+                                                            index]["name"]
+                                                        .toUpperCase(),
+                                                    color: blackColor,
+                                                    fontSize: 20,
+                                                    fontFamily:
+                                                        "Franklin Gothic Semibold",
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
                                                 ),
                                                 Expanded(
                                                     child: SizedBox(

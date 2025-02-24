@@ -59,6 +59,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
 
   @override
   void initState() {
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: homeAppBarColor,
+      ));
+    }); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.brandProductDetailsList.clear();
       productController.branddetailsSearchController.clear();
@@ -228,7 +233,16 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                       InkWell(
                                         onTap: () async {
                                           Navigator.push(context,
-                                              scaleIn(const SearchScreen()));
+                                                  scaleIn(const SearchScreen()))
+                                              .then(
+                                            (value) {
+                                              SystemChrome
+                                                  .setSystemUIOverlayStyle(
+                                                      const SystemUiOverlayStyle(
+                                                statusBarColor: homeAppBarColor,
+                                              ));
+                                            },
+                                          );
                                           await analytics.logEvent(
                                             name: 'search_page',
                                             parameters: <String, Object>{
@@ -241,6 +255,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                               horizontal: 8.sp),
                                           child: SvgPicture.asset(
                                               searchSvgImage,
+                                              color: whiteColor,
                                               height: 18.sp,
                                               width: 18.sp,
                                               fit: BoxFit.cover),
@@ -248,7 +263,15 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                       ),
                                       InkWell(
                                         onTap: () async {
-                                          Get.to(const WishlistScreen());
+                                          Get.to(const WishlistScreen())?.then(
+                                            (value) {
+                                              SystemChrome
+                                                  .setSystemUIOverlayStyle(
+                                                      const SystemUiOverlayStyle(
+                                                statusBarColor: homeAppBarColor,
+                                              ));
+                                            },
+                                          );
                                           await analytics.logEvent(
                                             name: 'wishlist_page',
                                             parameters: <String, Object>{
@@ -261,6 +284,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                               horizontal: 8.sp),
                                           child: SvgPicture.asset(heartSvgImage,
                                               height: 18.sp,
+                                              color: whiteColor,
                                               width: 18.sp,
                                               fit: BoxFit.cover),
                                         ),
@@ -268,7 +292,16 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                       InkWell(
                                         onTap: () async {
                                           Navigator.push(context,
-                                              scaleIn(const CartScreen()));
+                                                  scaleIn(const CartScreen()))
+                                              .then(
+                                            (value) {
+                                              SystemChrome
+                                                  .setSystemUIOverlayStyle(
+                                                      const SystemUiOverlayStyle(
+                                                statusBarColor: homeAppBarColor,
+                                              ));
+                                            },
+                                          );
                                           await analytics.logEvent(
                                             name: 'cart_page',
                                             parameters: <String, Object>{
@@ -286,6 +319,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                     bottom: 3.sp),
                                                 child: SvgPicture.asset(
                                                     cartSvgImage,
+                                                    color: whiteColor,
                                                     height: 18.sp,
                                                     width: 18.sp,
                                                     fit: BoxFit.cover),
@@ -471,8 +505,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                   Get.to(ProductDetailsScreen(
                                                           expresshour: widget
                                                               .expresshour,
-                                                          backgroundcolor:
-                                                              homeAppBarColor,
+                                                          backgroundcolor: widget
+                                                                      .screen ==
+                                                                  "quick"
+                                                              ? homeAppBarColor
+                                                              : whiteColor,
                                                           brandName: productController
                                                                   .brandProductDetailsList[
                                                               index]["name"],
@@ -481,28 +518,33 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                                       .brandProductDetailsList[
                                                                   index]["id"],
                                                           type: "add"))
-                                                      ?.then(
-                                                          (value) => setState(
-                                                                () {
-                                                                  FocusScope.of(
-                                                                          context)
-                                                                      .unfocus();
-                                                                  productController
-                                                                      .brandProductHasnextpage
-                                                                      .value = true;
-                                                                  productController
-                                                                      .brandProductLoadMore
-                                                                      .value = false;
-                                                                  productController
-                                                                      .isProductBrand
-                                                                      .value = false;
-                                                                  productController
-                                                                      .brandProductPage
-                                                                      .value = 1;
-                                                                  controller
-                                                                      .getCartData();
-                                                                },
+                                                      ?.then((value) => setState(
+                                                            () {
+                                                              FocusScope.of(
+                                                                      context)
+                                                                  .unfocus();
+                                                              productController
+                                                                  .brandProductHasnextpage
+                                                                  .value = true;
+                                                              productController
+                                                                  .brandProductLoadMore
+                                                                  .value = false;
+                                                              productController
+                                                                  .isProductBrand
+                                                                  .value = false;
+                                                              productController
+                                                                  .brandProductPage
+                                                                  .value = 1;
+                                                              controller
+                                                                  .getCartData();
+                                                              SystemChrome
+                                                                  .setSystemUIOverlayStyle(
+                                                                      const SystemUiOverlayStyle(
+                                                                statusBarColor:
+                                                                    homeAppBarColor,
                                                               ));
+                                                            },
+                                                          ));
                                                   await analytics.logEvent(
                                                     name:
                                                         'category_product_details',

@@ -2,6 +2,7 @@
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/accountwidgets/profilebottom.dart';
@@ -581,7 +582,16 @@ class AccountScreenState extends State<AccountScreen> {
                                           controller.isPermotion.value = true;
                                           controller.permotionValue.value = 1;
                                         }
-                                        Get.to(NotificationSettingScreen());
+                                        Get.to(NotificationSettingScreen())
+                                            ?.then(
+                                          (value) {
+                                            SystemChrome
+                                                .setSystemUIOverlayStyle(
+                                                    const SystemUiOverlayStyle(
+                                              statusBarColor: statusBarColor,
+                                            ));
+                                          },
+                                        );
                                       },
                                     ),
                                   ],

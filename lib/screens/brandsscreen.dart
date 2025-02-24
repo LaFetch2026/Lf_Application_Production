@@ -419,7 +419,11 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                   id: val.brandList[a]["brands"][index]["id"],
                                                                                   slug: "",
                                                                                   screen: widget.screen!,
-                                                                                ));
+                                                                                ))?.then((value) {
+                                                                                  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+                                                                                    statusBarColor: statusBarColor,
+                                                                                  ));
+                                                                                });
                                                                                 await analytics.logEvent(
                                                                                   name: 'brand_details',
                                                                                   parameters: <String, Object>{
@@ -609,7 +613,11 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                   id: val.brandList[a]["brands"][index]["id"],
                                                                                                   slug: "",
                                                                                                   screen: widget.screen!,
-                                                                                                ));
+                                                                                                ))?.then((value) {
+                                                                                                  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+                                                                                                    statusBarColor: statusBarColor,
+                                                                                                  ));
+                                                                                                });
                                                                                                 await analytics.logEvent(
                                                                                                   name: 'brand_details',
                                                                                                   parameters: <String, Object>{

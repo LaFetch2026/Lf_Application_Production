@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -64,6 +65,11 @@ class BottomNavScreenState extends State<BottomNavScreen> {
     if (widget.index != null) {
       _currentIndex = widget.index!;
     }
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: statusBarColor,
+      ));
+    });
     getPrefrenceValue();
     super.initState();
   }

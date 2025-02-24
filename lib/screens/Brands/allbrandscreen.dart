@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -99,6 +100,11 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     videoController.play();
     videoController.setVolume(0.05);
     videoController.setLooping(true);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: homeAppBarColor,
+      ));
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       brandController.brandProductDetailsList.clear();
       productController.productSortBy.value = "";
@@ -204,10 +210,24 @@ class AllBrandScreenState extends State<AllBrandScreen> {
               Share.share(brandController.brandDetails["share_link"]);
             },
             onPressedHeart: () {
-              Get.to(const WishlistScreen());
+              Get.to(const WishlistScreen())?.then(
+                (value) {
+                  SystemChrome.setSystemUIOverlayStyle(
+                      const SystemUiOverlayStyle(
+                    statusBarColor: homeAppBarColor,
+                  ));
+                },
+              );
             },
             onPressedCart: () async {
-              Get.to(const CartScreen());
+              Get.to(const CartScreen())?.then(
+                (value) {
+                  SystemChrome.setSystemUIOverlayStyle(
+                      const SystemUiOverlayStyle(
+                    statusBarColor: homeAppBarColor,
+                  ));
+                },
+              );
               await analytics.logEvent(
                 name: 'cart_page',
                 parameters: <String, Object>{
@@ -519,6 +539,10 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 ?.then((value) => setState(
                                       () {
                                         productController.getBrandProductData();
+                                        SystemChrome.setSystemUIOverlayStyle(
+                                            const SystemUiOverlayStyle(
+                                          statusBarColor: homeAppBarColor,
+                                        ));
                                       },
                                     ));
                             await analytics.logEvent(

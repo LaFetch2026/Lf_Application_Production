@@ -3,6 +3,7 @@
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -38,6 +39,9 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: statusBarColor,
+    ));
     if (widget.initialTab == 0) {
       appbarColor = colorPrimary;
       loginController.loginError.value = "";

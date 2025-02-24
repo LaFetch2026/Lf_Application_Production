@@ -60,7 +60,11 @@ class SearchScreenState extends State<SearchScreen> {
       controller.selected.clear();
       controller.selected = List.generate(50, (i) => false).obs;
     });
-
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: statusBarColor,
+      ));
+    });
     WidgetsBinding.instance
         .addPostFrameCallback((_) => controller.getRecentSearchData());
     WidgetsBinding.instance

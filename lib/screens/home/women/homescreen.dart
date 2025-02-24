@@ -5,6 +5,7 @@ import 'dart:io';
 //import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -78,12 +79,16 @@ class HomeScreenState extends State<HomeScreen> {
       } else {
         homeController.currentPage.value = 0;
       }
-
       _pageController.animateToPage(
         homeController.currentPage.value,
         duration: Duration(milliseconds: 350),
         curve: Curves.easeIn,
       );
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: statusBarColor,
+      ));
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.showGenderList.value = false;

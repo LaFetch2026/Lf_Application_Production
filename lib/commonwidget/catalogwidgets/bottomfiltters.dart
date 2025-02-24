@@ -54,13 +54,15 @@ class BottomFiltersState extends State<BottomFilters> {
 
   @override
   void initState() {
-    getPrefrenceValue();
-    selected[0] = !selected[0];
-    productController.isPrice.value = false;
-    /*  productController.size_ids.clear();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getPrefrenceValue();
+      selected[0] = !selected[0];
+      productController.isPrice.value = false;
+      /*  productController.size_ids.clear();
     productController.color_ids.clear();
     productController.brand_ids.clear(); */
-    productController.filterList.clear();
+      productController.filterList.clear();
+    });
     WidgetsBinding.instance
         .addPostFrameCallback((_) => productController.getFilterData("brands"));
     setState(() {});

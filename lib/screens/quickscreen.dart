@@ -42,8 +42,13 @@ class QuickScreenState extends State<QuickScreen> {
 
   @override
   void initState() {
-    productController.brandController.clear();
     // getPrefrenceValue();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: homeAppBarColor,
+      ));
+      productController.brandController.clear();
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.getDefaultAddressData(0, context);
     });

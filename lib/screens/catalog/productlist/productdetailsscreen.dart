@@ -695,13 +695,15 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   void setStatusBarColor() {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: statusBarColor,
+      statusBarColor: widget.backgroundcolor == whiteColor
+          ? statusBarColor
+          : homeAppBarColor,
     ));
   }
 
   @override
   void initState() {
-    // setStatusBarColor();
+    setStatusBarColor();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.errorMsg.value = "";
       productController.brandDetails = "";
