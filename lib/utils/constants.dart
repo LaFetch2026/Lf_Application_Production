@@ -262,6 +262,9 @@ const myLocationSvgImage = 'assets/images/my_location_svg.svg';
 const addNewSvgImage = 'assets/images/add_new_svg.svg';
 const filterSvgImage = 'assets/images/filter_svg.svg';
 const sortBySvgImage = 'assets/images/sortby_svg.svg';
+const confirmSvgImage = 'assets/images/confirm_svg.svg';
+const shipSvgImage = 'assets/images/ship_svg.svg';
+const deliverSvgImage = 'assets/images/deliver_svg.svg';
 
 class ApiConstants {
   ApiConstants._();

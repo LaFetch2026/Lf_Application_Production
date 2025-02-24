@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, deprecated_member_use
 
 import 'dart:async';
 
@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_order_list.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
@@ -608,10 +609,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 Row(children: [
                                                                               Padding(
                                                                                 padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: ImageIcon(
-                                                                                  AssetImage(checkImage),
-                                                                                  color: deepGreen,
-                                                                                  size: 14.sp,
+                                                                                child: SvgPicture.asset(
+                                                                                  deliverSvgImage,
+                                                                                  height: 8.sp,
+                                                                                  width: 11.sp,
                                                                                 ),
                                                                               ),
                                                                               Padding(
@@ -653,10 +654,10 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 Row(children: [
                                                                               Padding(
                                                                                 padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: ImageIcon(
-                                                                                  AssetImage(shippedImage),
-                                                                                  color: deeptYellow,
-                                                                                  size: 14.sp,
+                                                                                child: SvgPicture.asset(
+                                                                                  shipSvgImage,
+                                                                                  height: 16.sp,
+                                                                                  width: 16.sp,
                                                                                 ),
                                                                               ),
                                                                               Padding(
@@ -698,10 +699,11 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 Row(children: [
                                                                               Padding(
                                                                                 padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: ImageIcon(
-                                                                                  AssetImage(confirmOrderImage),
+                                                                                child: SvgPicture.asset(
+                                                                                  confirmSvgImage,
                                                                                   color: deepPurple,
-                                                                                  size: 14,
+                                                                                  height: 16.sp,
+                                                                                  width: 16.sp,
                                                                                 ),
                                                                               ),
                                                                               Padding(
@@ -788,10 +790,11 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 Row(children: [
                                                                               Padding(
                                                                                 padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: ImageIcon(
-                                                                                  AssetImage(confirmOrderImage),
+                                                                                child: SvgPicture.asset(
+                                                                                  confirmSvgImage,
                                                                                   color: deepPurple,
-                                                                                  size: 14.sp,
+                                                                                  height: 16.sp,
+                                                                                  width: 16.sp,
                                                                                 ),
                                                                               ),
                                                                               Padding(
@@ -880,10 +883,11 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                 Row(children: [
                                                                               Padding(
                                                                                 padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: ImageIcon(
-                                                                                  AssetImage(confirmOrderImage),
+                                                                                child: SvgPicture.asset(
+                                                                                  confirmSvgImage,
                                                                                   color: deepPurple,
-                                                                                  size: 14.sp,
+                                                                                  height: 16.sp,
+                                                                                  width: 16.sp,
                                                                                 ),
                                                                               ),
                                                                               Padding(

@@ -309,6 +309,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
                             filled: true,
+                            suffixIconConstraints: BoxConstraints(
+                              minWidth: 2,
+                              minHeight: 2,
+                            ),
                             suffixIcon: Padding(
                               padding: EdgeInsets.only(right: 20.sp),
                               child: SizedBox(
