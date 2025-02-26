@@ -1639,7 +1639,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                   ],
                                                                                 ),
                                                                               ),
-                                                                              orderController.orderDetails["orders"][index]["status_details"] == "DELIVERED" || orderController.orderDetails["orders"][index]["status_details"] == "COMPLETED" || orderController.orderDetails["orders"][index]["status_details"] == "EXCHANGE_REQUESTED"
+                                                                              orderController.orderDetails["orders"][index]["status_details"] == "DELIVERED" || orderController.orderDetails["orders"][index]["status_details"] == "COMPLETED" || orderController.orderDetails["orders"][index]["status_details"] == "EXCHANGE REQUESTED"
                                                                                   ? Row(
                                                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                       mainAxisSize: MainAxisSize.max,
@@ -2556,7 +2556,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                         ],
                                                                                       ),
                                                                                     ),
-                                                                                    orderController.orderDetails["status_details"] == "DELIVERED" || orderController.orderDetails["status_details"] == "COMPLETED" || orderController.orderDetails["status_details"] == "EXCHANGE_REQUESTED"
+                                                                                    orderController.orderDetails["status_details"] == "DELIVERED" || orderController.orderDetails["status_details"] == "COMPLETED" || orderController.orderDetails["status_details"] == "EXCHANGE REQUESTED"
                                                                                         ? Row(
                                                                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                             mainAxisSize: MainAxisSize.max,
