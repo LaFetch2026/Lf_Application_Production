@@ -373,16 +373,18 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         width: double.infinity,
                                         color: cardBg,
                                       )
-                                    : Expanded(
-                                        child: AppText(
-                                          text: brandController
-                                              .brandDetails["description"],
+                                    : Text(
+                                        brandController
+                                            .brandDetails["description"],
+                                        textAlign: TextAlign.justify,
+                                        style: TextStyle(
                                           color: productSubtitleColor,
-                                          fontSize: 14,
-                                          maxLines: showDescription ? 12 : 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          fontSize: 14.sp,
                                           fontFamily: "Franklin Gothic Regular",
                                           fontWeight: FontWeight.w400,
                                         ),
+                                        maxLines: showDescription ? 12 : 2,
                                       )),
                               ),
                               Obx(() => brandController.isDetails.value
@@ -441,11 +443,11 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       ),
                                     )),
                               Padding(
-                                padding:
-                                    EdgeInsets.only(top: 24.sp, left: 16.sp),
+                                padding: EdgeInsets.only(top: 24.sp),
                                 child: AppText(
                                   text: "All Products",
                                   color: whiteColor,
+                                  textAlign: TextAlign.start,
                                   fontSize: 20,
                                   maxLines: 1,
                                   fontFamily: "Playfair Display Medium",
