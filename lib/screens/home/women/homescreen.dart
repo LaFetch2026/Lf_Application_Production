@@ -1229,8 +1229,9 @@ class HomeScreenState extends State<HomeScreen> {
                               color: Color(0xff7A6ECC),
                               width: MediaQuery.of(context).size.width,
                               child: Padding(
-                                padding:
-                                    EdgeInsets.only(top: 6.sp, bottom: 6.sp),
+                                padding: EdgeInsets.only(
+                                    top: 6.sp,
+                                    bottom: Platform.isIOS ? 5.sp : 6.sp),
                                 child: Center(
                                   child: Marquee(
                                     text:

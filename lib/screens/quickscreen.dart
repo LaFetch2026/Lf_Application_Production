@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -573,8 +574,9 @@ class QuickScreenState extends State<QuickScreen> {
                               color: expressDeliveryBanner,
                               width: MediaQuery.of(context).size.width,
                               child: Padding(
-                                padding:
-                                    EdgeInsets.only(top: 6.sp, bottom: 8.sp),
+                                padding: EdgeInsets.only(
+                                    top: 6.sp,
+                                    bottom: Platform.isIOS ? 5.sp : 6.sp),
                                 child: Center(
                                   child: Marquee(
                                     text:
