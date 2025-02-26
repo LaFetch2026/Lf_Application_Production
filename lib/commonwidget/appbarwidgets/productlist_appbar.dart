@@ -62,7 +62,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                 child: Container(
                   height: 28.sp,
                   width: MediaQuery.of(context).size.width / 2.sp,
-                  alignment: Alignment.bottomCenter,
+                  alignment: Alignment.bottomLeft,
                   child: Padding(
                     padding: EdgeInsets.only(left: 0),
                     child: AppText(
