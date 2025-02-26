@@ -99,7 +99,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
         color: _currentIndex == 4 || _currentIndex == 5
             ? homeAppBarColor
             : whiteColor,
-        height: Platform.isIOS ? 40.sp : 60.sp,
+        height: 50.sp,
         child: _currentIndex == 4 || _currentIndex == 5
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -266,10 +266,11 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                         );
                       },
                       child: Container(
-                        height: 80.sp,
+                        // height: 80.sp,
+                        padding: EdgeInsets.only(top: 10.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             /*  Image.asset(
                         _currentIndex == 0 ? homeBottomIcon : homeBottomIcon,
@@ -317,10 +318,11 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                         );
                       },
                       child: Container(
-                        height: 80.sp,
+                        //  height: 80.sp,
+                        padding: EdgeInsets.only(top: 10.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             /*  Image.asset(
                         _currentIndex == 1 ? shopBottomIcon : shopBottomIcon,
@@ -376,10 +378,11 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                         );
                       },
                       child: Container(
-                        height: 80.sp,
+                        // height: 80.sp,
+                        padding: EdgeInsets.only(top: 10.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             /*  Image.asset(
                         _currentIndex == 4 ? expressImage : expressImage,
@@ -428,10 +431,11 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                         );
                       },
                       child: Container(
-                        height: 80.sp,
+                        // height: 80.sp,
+                        padding: EdgeInsets.only(top: 10.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             /*  Image.asset(
                         _currentIndex == 2
@@ -489,10 +493,11 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                         );
                       },
                       child: Container(
-                        height: 80.sp,
+                        //  height: 80.sp,
+                        padding: EdgeInsets.only(top: 10.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             /*  Image.asset(
                         _currentIndex == 3 ? shopBottomIcon : shopBottomIcon,
