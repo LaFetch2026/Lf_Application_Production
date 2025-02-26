@@ -94,9 +94,10 @@ class BottomNavScreenState extends State<BottomNavScreen> {
       backgroundColor: whiteColor,
       bottomNavigationBar: BottomAppBar(
         padding: EdgeInsets.zero,
-        color:
-            _currentIndex == 4 || _currentIndex == 5 ? homeAppBarColor : blue,
-        height: 80.sp,
+        color: _currentIndex == 4 || _currentIndex == 5
+            ? homeAppBarColor
+            : whiteColor,
+        height: 60.sp,
         child: _currentIndex == 4 || _currentIndex == 5
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
