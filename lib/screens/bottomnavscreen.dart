@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -97,7 +99,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
         color: _currentIndex == 4 || _currentIndex == 5
             ? homeAppBarColor
             : whiteColor,
-        height: 60.sp,
+        height: Platform.isIOS ? 40.sp : 60.sp,
         child: _currentIndex == 4 || _currentIndex == 5
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
