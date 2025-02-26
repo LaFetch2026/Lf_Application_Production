@@ -574,26 +574,33 @@ class QuickScreenState extends State<QuickScreen> {
                               width: MediaQuery.of(context).size.width,
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 5.sp),
-                                child: Marquee(
-                                  text:
-                                      '  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12.sp,
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
+                                child: Center(
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    child: Marquee(
+                                      text:
+                                          '  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12.sp,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      scrollAxis: Axis.horizontal,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      // blankSpace: 20.0,
+                                      velocity: 100.0,
+                                      pauseAfterRound: Duration(seconds: 1),
+                                      // startPadding: 10.0,
+                                      accelerationDuration:
+                                          Duration(seconds: 1),
+                                      accelerationCurve: Curves.linear,
+                                      decelerationDuration:
+                                          Duration(milliseconds: 500),
+                                      decelerationCurve: Curves.easeOut,
+                                    ),
                                   ),
-                                  scrollAxis: Axis.horizontal,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  // blankSpace: 20.0,
-                                  velocity: 100.0,
-                                  pauseAfterRound: Duration(seconds: 1),
-                                  // startPadding: 10.0,
-                                  accelerationDuration: Duration(seconds: 1),
-                                  accelerationCurve: Curves.linear,
-                                  decelerationDuration:
-                                      Duration(milliseconds: 500),
-                                  decelerationCurve: Curves.easeOut,
                                 ),
                               ),
                             ),

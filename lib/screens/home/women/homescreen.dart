@@ -72,7 +72,7 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
+    timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
       if (homeController.currentPage.value <
           homeController.banner1List.length - 1) {
         homeController.currentPage.value++;
@@ -1221,26 +1221,33 @@ class HomeScreenState extends State<HomeScreen> {
                               width: MediaQuery.of(context).size.width,
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 5.sp),
-                                child: Marquee(
-                                  text:
-                                      '  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12.sp,
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
+                                child: Center(
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    child: Marquee(
+                                      text:
+                                          '  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12.sp,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                      scrollAxis: Axis.horizontal,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      //   blankSpace: 20.0,
+                                      velocity: 100.0,
+                                      pauseAfterRound: Duration(seconds: 1),
+                                      // startPadding: 10.0,
+                                      accelerationDuration:
+                                          Duration(seconds: 1),
+                                      accelerationCurve: Curves.linear,
+                                      decelerationDuration:
+                                          Duration(milliseconds: 500),
+                                      decelerationCurve: Curves.easeOut,
+                                    ),
                                   ),
-                                  scrollAxis: Axis.horizontal,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  //   blankSpace: 20.0,
-                                  velocity: 100.0,
-                                  pauseAfterRound: Duration(seconds: 1),
-                                  // startPadding: 10.0,
-                                  accelerationDuration: Duration(seconds: 1),
-                                  accelerationCurve: Curves.linear,
-                                  decelerationDuration:
-                                      Duration(milliseconds: 500),
-                                  decelerationCurve: Curves.easeOut,
                                 ),
                               ),
                             ),
@@ -1258,9 +1265,8 @@ class HomeScreenState extends State<HomeScreen> {
                                     children: [
                                       Padding(
                                         padding: EdgeInsets.only(
-                                            top: 24.sp,
-                                            left: 16.sp,
-                                            right: 16.sp),
+                                          top: 24.sp,
+                                        ),
                                         child: Center(
                                           child: AppText(
                                             text: "SHOP BY CATEGORY"
