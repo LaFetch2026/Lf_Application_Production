@@ -499,7 +499,7 @@ class MapScreenState extends State<MapScreen> {
                                               ),
                                               Padding(
                                                 padding: EdgeInsets.only(
-                                                    left: 10.sp),
+                                                    left: 10.sp, top: 2.sp),
                                                 child: AppText(
                                                   text:
                                                       "Use my current location",

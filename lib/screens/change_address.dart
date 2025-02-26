@@ -192,6 +192,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                 ));
                       },
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           SvgPicture.asset(
                             myLocationSvgImage,
@@ -199,7 +200,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                             width: 18.sp,
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 7.sp),
+                            padding: EdgeInsets.only(left: 7.sp, top: 2.sp),
                             child: AppText(
                               text: "Use my current location",
                               color: homeAppBarColor,

@@ -169,14 +169,19 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                               );
                             },
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                SvgPicture.asset(
-                                  myLocationSvgImage,
-                                  height: 18.sp,
-                                  width: 18.sp,
+                                Padding(
+                                  padding: EdgeInsets.only(top: 0.sp),
+                                  child: SvgPicture.asset(
+                                    myLocationSvgImage,
+                                    height: 18.sp,
+                                    width: 18.sp,
+                                  ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(left: 7.sp),
+                                  padding:
+                                      EdgeInsets.only(left: 7.sp, top: 2.sp),
                                   child: AppText(
                                     text: "Use my current location",
                                     color: homeAppBarColor,
