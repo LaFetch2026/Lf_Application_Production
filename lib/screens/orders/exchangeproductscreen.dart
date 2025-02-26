@@ -215,7 +215,7 @@ class ExchangeProductScreenState extends State<ExchangeProductScreen> {
                                                     isScrollControlled: true,
                                                     constraints: BoxConstraints(
                                                       maxWidth: double.infinity,
-                                                      maxHeight: 230.sp,
+                                                      maxHeight: 300.sp,
                                                     ),
                                                     builder: (ctx) {
                                                       return BottomSize(

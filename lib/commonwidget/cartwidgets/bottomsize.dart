@@ -41,7 +41,7 @@ class BottomSizeState extends State<BottomSize> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 230.sp,
+        height: widget.sizeList.length > 6 ? 300.sp : 230.sp,
         width: double.infinity,
         decoration: BoxDecoration(
           color: whiteTextColor,
