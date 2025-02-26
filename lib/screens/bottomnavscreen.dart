@@ -99,7 +99,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
         color: _currentIndex == 4 || _currentIndex == 5
             ? homeAppBarColor
             : whiteColor,
-        height: 50.sp,
+        height: Platform.isIOS ? 50.sp : 60.sp,
         child: _currentIndex == 4 || _currentIndex == 5
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -120,7 +120,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                         );
                       },
                       child: Container(
-                        height: 80.sp,
+                        padding: EdgeInsets.only(
+                            top: 10.sp, bottom: Platform.isIOS ? 0 : 10.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -174,7 +175,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                         );
                       },
                       child: Container(
-                        height: 80.sp,
+                        // height: 80.sp,
+                        padding: EdgeInsets.only(
+                            top: 10.sp, bottom: Platform.isIOS ? 0 : 10.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -215,7 +218,9 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                         });
                       },
                       child: Container(
-                        height: 80.sp,
+                        // height: 80.sp,
+                        padding: EdgeInsets.only(
+                            top: 10.sp, bottom: Platform.isIOS ? 0 : 10.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -267,7 +272,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                       },
                       child: Container(
                         // height: 80.sp,
-                        padding: EdgeInsets.only(top: 10.sp),
+                        padding: EdgeInsets.only(
+                            top: 10.sp, bottom: Platform.isIOS ? 0 : 10.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -319,7 +325,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                       },
                       child: Container(
                         //  height: 80.sp,
-                        padding: EdgeInsets.only(top: 10.sp),
+                        padding: EdgeInsets.only(
+                            top: 10.sp, bottom: Platform.isIOS ? 0 : 10.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -379,7 +386,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                       },
                       child: Container(
                         // height: 80.sp,
-                        padding: EdgeInsets.only(top: 10.sp),
+                        padding: EdgeInsets.only(
+                            top: 10.sp, bottom: Platform.isIOS ? 0 : 10.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -432,7 +440,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                       },
                       child: Container(
                         // height: 80.sp,
-                        padding: EdgeInsets.only(top: 10.sp),
+                        padding: EdgeInsets.only(
+                            top: 10.sp, bottom: Platform.isIOS ? 0 : 10.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -494,7 +503,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                       },
                       child: Container(
                         //  height: 80.sp,
-                        padding: EdgeInsets.only(top: 10.sp),
+                        padding: EdgeInsets.only(
+                            top: 10.sp, bottom: Platform.isIOS ? 0 : 10.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.start,
