@@ -16,7 +16,7 @@ class DummyCatalogList extends StatelessWidget {
           primary: false,
           shrinkWrap: true,
           physics: const ScrollPhysics(),
-          itemCount: 5,
+          itemCount: 3,
           padding: EdgeInsets.zero,
           scrollDirection: Axis.vertical,
           itemBuilder: (ctx, index) {
@@ -27,14 +27,14 @@ class DummyCatalogList extends StatelessWidget {
                   child: Container(
                     color: whiteColor,
                     width: double.infinity,
-                    height: 145.sp,
+                    height: 100.sp,
                     child: Column(
                       children: [
                         DummyContainer(
                           height: 100,
                           width: double.infinity,
                         ),
-                        Padding(
+                        /*   Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: 16.sp, vertical: 10.sp),
                           child: Align(
@@ -59,7 +59,7 @@ class DummyCatalogList extends StatelessWidget {
                               ],
                             ),
                           ),
-                        ),
+                        ), */
                       ],
                     ),
                   ),

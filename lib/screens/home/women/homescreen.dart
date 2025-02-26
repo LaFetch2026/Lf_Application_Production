@@ -437,6 +437,9 @@ class HomeScreenState extends State<HomeScreen> {
                       homeController.getBannar1Data(2);
                       catalogController.getCatalogData(2);
                       productController.getHomeProduct(2);
+                      catalogController.selectCategoryGender.value = 2;
+                      catalogController.categoryName.value = "Men";
+                      catalogController.getCatagoryData(2);
                     },
                     child: SizedBox(
                       child: Column(
@@ -485,6 +488,9 @@ class HomeScreenState extends State<HomeScreen> {
                       homeController.getBannar1Data(3);
                       catalogController.getCatalogData(3);
                       productController.getHomeProduct(3);
+                      catalogController.selectCategoryGender.value = 3;
+                      catalogController.categoryName.value = "Women";
+                      catalogController.getCatagoryData(3);
                     },
                     child: SizedBox(
                       child: Column(
@@ -533,6 +539,9 @@ class HomeScreenState extends State<HomeScreen> {
                       homeController.getBannar1Data(1);
                       catalogController.getCatalogData(1);
                       productController.getHomeProduct(1);
+                      catalogController.selectCategoryGender.value = 1;
+                      catalogController.categoryName.value = "Accessories";
+                      catalogController.getCatagoryData(1);
                     },
                     child: SizedBox(
                       child: Column(

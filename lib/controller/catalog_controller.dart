@@ -12,8 +12,12 @@ import '../utils/constants.dart';
 
 class CatalogController extends BaseController {
   RxBool isCatalog = false.obs;
+  RxBool isCatalogCategory = false.obs;
   List catalogList = [].obs;
+  List catagoryList = [].obs;
   RxBool isCategory = false.obs;
+  RxString categoryName = "Men".obs;
+  RxInt selectCategoryGender = 2.obs;
   List categoryProductList = [].obs;
 
   getCatalogData(int type) async {
@@ -47,6 +51,39 @@ class CatalogController extends BaseController {
       print("error$e");
     }
     isCatalog.value = false;
+  }
+
+  getCatagoryData(int type) async {
+    isCatalogCategory.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/catalogs?gender_type=$type"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          catagoryList = responseData["data"];
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Please try again");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get catalog failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isCatalogCategory.value = false;
   }
 
   getCategoryProductData(int catalogId) async {

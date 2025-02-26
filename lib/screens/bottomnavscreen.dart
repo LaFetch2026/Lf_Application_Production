@@ -11,7 +11,7 @@ import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/screens/accountscreen.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
-import 'package:lafetch/screens/catalogscreen.dart';
+import 'package:lafetch/screens/catalog/women_catalog.dart';
 //import 'package:lafetch/screens/expressshopscreen.dart';
 import 'package:lafetch/screens/home/women/homescreen.dart';
 import 'package:lafetch/screens/loginscreen.dart';
@@ -41,7 +41,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
     const BrandsScreen(
       screen: "home",
     ),
-    const CatalogScreen(),
+    const WomenCatalogScreen(),
     const AccountScreen(),
     const QuickScreen(),
   ];
@@ -58,7 +58,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
       const BrandsScreen(
         screen: "home",
       ),
-      CatalogScreen(),
+      WomenCatalogScreen(),
       AccountScreen(onPressed: () {
         changeTab(2);
       }),
