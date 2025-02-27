@@ -49,7 +49,7 @@ class QuickScreenState extends State<QuickScreen> {
         statusBarColor: homeAppBarColor,
       ));
       productController.brandController.clear();
-      homeController.brandList.clear();
+      homeController.expressBrandList.clear();
       homeController.isBrand.value = false;
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -59,7 +59,7 @@ class QuickScreenState extends State<QuickScreen> {
       homeController.getBannar2Data();
     }); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      homeController.getBrandData("express");
+      homeController.getExpressBrandData();
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.getBrandProductData();
@@ -671,7 +671,7 @@ class QuickScreenState extends State<QuickScreen> {
                                     ],
                                   ),
                                 )
-                              : homeController.brandList.isNotEmpty
+                              : homeController.expressBrandList.isNotEmpty
                                   ? Column(
                                       children: [
                                         Padding(
@@ -717,12 +717,12 @@ class QuickScreenState extends State<QuickScreen> {
                                                 physics:
                                                     const BouncingScrollPhysics(),
                                                 itemCount: homeController
-                                                    .brandList.length,
+                                                    .expressBrandList.length,
                                                 scrollDirection:
                                                     Axis.horizontal,
                                                 itemBuilder: (ctx, index) {
                                                   return homeController
-                                                                  .brandList[
+                                                                  .expressBrandList[
                                                               index]["logo"] !=
                                                           null
                                                       ? GestureDetector(
@@ -779,10 +779,10 @@ class QuickScreenState extends State<QuickScreen> {
                                                                             .expressHour
                                                                             .value,
                                                                     brand_id:
-                                                                        homeController.brandList[index][
+                                                                        homeController.expressBrandList[index][
                                                                             "id"],
                                                                     title: homeController
-                                                                            .brandList[index]
+                                                                            .expressBrandList[index]
                                                                         [
                                                                         "name"],
                                                                     genderName:
@@ -825,7 +825,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                               ),
                                                               margin: EdgeInsets.only(
                                                                   right: index ==
-                                                                          homeController.brandList.length -
+                                                                          homeController.expressBrandList.length -
                                                                               1
                                                                       ? 16.sp
                                                                       : 0.sp),
@@ -844,7 +844,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                                   fit: BoxFit
                                                                       .contain,
                                                                   imageUrl: homeController
-                                                                              .brandList[
+                                                                              .expressBrandList[
                                                                           index]
                                                                       ["logo"],
                                                                   errorWidget: (context,
