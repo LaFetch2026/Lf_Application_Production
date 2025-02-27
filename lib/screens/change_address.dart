@@ -87,18 +87,22 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
             visible: widget.cartId == 0 ? true : false,
             child: Padding(
               padding: EdgeInsets.only(
-                  left: 16.sp, top: 20.sp, right: 16.sp, bottom: 16.sp),
+                left: 16.sp,
+              ),
               child: Row(
                 children: [
                   Expanded(
                     flex: 1,
-                    child: Text(
-                      "SELECT ADDRESS",
-                      style: TextStyle(
-                        color: blackColor,
-                        fontSize: 16.sp,
-                        fontFamily: "Franklin Gothic Semibold",
-                        fontWeight: FontWeight.w600,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 20.sp, bottom: 16.sp),
+                      child: Text(
+                        "SELECT ADDRESS",
+                        style: TextStyle(
+                          color: blackColor,
+                          fontSize: 16.sp,
+                          fontFamily: "Franklin Gothic Semibold",
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
@@ -108,11 +112,18 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                     },
                     child: Container(
                       color: Colors.transparent,
-                      child: SvgPicture.asset(crossSearchImage,
-                          color: subtitleColor,
-                          height: 13.sp,
-                          width: 13.sp,
-                          fit: BoxFit.cover),
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            left: 16.sp,
+                            right: 16.sp,
+                            top: 20.sp,
+                            bottom: 16.sp),
+                        child: SvgPicture.asset(crossSearchImage,
+                            color: subtitleColor,
+                            height: 13.sp,
+                            width: 13.sp,
+                            fit: BoxFit.cover),
+                      ),
                     ),
                   ),
                 ],

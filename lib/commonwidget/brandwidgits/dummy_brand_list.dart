@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -55,7 +57,15 @@ class DummybrandList extends StatelessWidget {
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         children: [
-                                          DummyContainer(height: 48, width: 48),
+                                          Container(
+                                            height: 48.sp,
+                                            width: 48.sp,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.black
+                                                  .withOpacity(0.04),
+                                            ),
+                                          ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: 10.sp),

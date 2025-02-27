@@ -49,6 +49,8 @@ class QuickScreenState extends State<QuickScreen> {
         statusBarColor: homeAppBarColor,
       ));
       productController.brandController.clear();
+      homeController.brandList.clear();
+      homeController.isBrand.value = false;
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.getDefaultAddressData(0, context);
@@ -640,11 +642,11 @@ class QuickScreenState extends State<QuickScreen> {
                                       ),
                                       Padding(
                                         padding: EdgeInsets.only(
-                                          top: 8.sp,
+                                          top: 16.sp,
                                           bottom: 16.sp,
                                         ),
                                         child: SizedBox(
-                                          height: 100.sp,
+                                          height: 80.sp,
                                           child: ListView.builder(
                                               physics:
                                                   const BouncingScrollPhysics(),
@@ -706,11 +708,11 @@ class QuickScreenState extends State<QuickScreen> {
                                         ),
                                         Padding(
                                           padding: EdgeInsets.only(
-                                            top: 8.sp,
+                                            top: 16.sp,
                                             bottom: 16.sp,
                                           ),
                                           child: SizedBox(
-                                            height: 100.sp,
+                                            height: 80.sp,
                                             child: ListView.builder(
                                                 physics:
                                                     const BouncingScrollPhysics(),
@@ -812,66 +814,51 @@ class QuickScreenState extends State<QuickScreen> {
                                                             child: Container(
                                                               height: 80.sp,
                                                               width: 80.sp,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                border: Border.all(
+                                                                    width: 1.sp,
+                                                                    color: Color(
+                                                                        0x59897CE6)),
+                                                              ),
                                                               margin: EdgeInsets.only(
                                                                   right: index ==
                                                                           homeController.brandList.length -
                                                                               1
                                                                       ? 16.sp
                                                                       : 0.sp),
-                                                              child:
-                                                                  CircleAvatar(
-                                                                backgroundColor:
-                                                                    whiteColor,
+                                                              child: ClipOval(
                                                                 child:
-                                                                    Container(
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                    border: Border.all(
-                                                                        width: 1
-                                                                            .sp,
-                                                                        color: Color(
-                                                                            0x59897CE6)),
-                                                                  ),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: EdgeInsets
-                                                                        .all(16.0
-                                                                            .sp),
-                                                                    child:
-                                                                        CachedNetworkImage(
-                                                                      height:
-                                                                          80.sp,
-                                                                      width:
-                                                                          80.sp,
-                                                                      cacheManager: CacheManager(Config(
-                                                                          "customCacheKey",
-                                                                          stalePeriod: const Duration(
-                                                                              days:
-                                                                                  15),
-                                                                          maxNrOfCacheObjects:
-                                                                              100)),
-                                                                      fit: BoxFit
-                                                                          .contain,
-                                                                      imageUrl:
-                                                                          homeController.brandList[index]
-                                                                              [
-                                                                              "logo"],
-                                                                      errorWidget: (context,
-                                                                              url,
-                                                                              error) =>
-                                                                          Image
-                                                                              .asset(
-                                                                        downloadImage,
-                                                                        fit: BoxFit
-                                                                            .contain,
-                                                                        height:
-                                                                            80.sp,
-                                                                        width: 80
-                                                                            .sp,
-                                                                      ),
-                                                                    ),
+                                                                    CachedNetworkImage(
+                                                                  height: 80.sp,
+                                                                  width: 80.sp,
+                                                                  cacheManager: CacheManager(Config(
+                                                                      "customCacheKey",
+                                                                      stalePeriod: const Duration(
+                                                                          days:
+                                                                              15),
+                                                                      maxNrOfCacheObjects:
+                                                                          100)),
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                  imageUrl: homeController
+                                                                              .brandList[
+                                                                          index]
+                                                                      ["logo"],
+                                                                  errorWidget: (context,
+                                                                          url,
+                                                                          error) =>
+                                                                      Image
+                                                                          .asset(
+                                                                    downloadImage,
+                                                                    fit: BoxFit
+                                                                        .contain,
+                                                                    height:
+                                                                        80.sp,
+                                                                    width:
+                                                                        80.sp,
                                                                   ),
                                                                 ),
                                                               ),

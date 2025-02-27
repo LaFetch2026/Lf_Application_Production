@@ -424,6 +424,7 @@ class HomeController extends BaseController {
       }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
+        brandList.clear();
         if (responseData["data"] != null) {
           brandList = responseData["data"];
         }

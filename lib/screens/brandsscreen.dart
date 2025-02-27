@@ -443,28 +443,22 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                           ? Container(
                                                                                               height: 48.sp,
                                                                                               width: 48.sp,
-                                                                                              child: CircleAvatar(
-                                                                                                backgroundColor: whiteColor,
-                                                                                                child: Container(
-                                                                                                  decoration: BoxDecoration(
-                                                                                                    shape: BoxShape.circle,
-                                                                                                    border: Border.all(width: 1.sp, color: lightgreyColor),
-                                                                                                  ),
-                                                                                                  child: Padding(
-                                                                                                    padding: EdgeInsets.all(16.0.sp),
-                                                                                                    child: CachedNetworkImage(
-                                                                                                      height: 48.sp,
-                                                                                                      width: 48.sp,
-                                                                                                      cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-                                                                                                      fit: BoxFit.contain,
-                                                                                                      imageUrl: val.brandList[a]["brands"][index]["logo"],
-                                                                                                      errorWidget: (context, url, error) => Image.asset(
-                                                                                                        downloadImage,
-                                                                                                        fit: BoxFit.contain,
-                                                                                                        height: 48.sp,
-                                                                                                        width: 48.sp,
-                                                                                                      ),
-                                                                                                    ),
+                                                                                              decoration: BoxDecoration(
+                                                                                                shape: BoxShape.circle,
+                                                                                                border: Border.all(width: 1.sp, color: lightgreyColor),
+                                                                                              ),
+                                                                                              child: ClipOval(
+                                                                                                child: CachedNetworkImage(
+                                                                                                  height: 48.sp,
+                                                                                                  width: 48.sp,
+                                                                                                  cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
+                                                                                                  fit: BoxFit.contain,
+                                                                                                  imageUrl: val.brandList[a]["brands"][index]["logo"],
+                                                                                                  errorWidget: (context, url, error) => Image.asset(
+                                                                                                    downloadImage,
+                                                                                                    fit: BoxFit.contain,
+                                                                                                    height: 48.sp,
+                                                                                                    width: 48.sp,
                                                                                                   ),
                                                                                                 ),
                                                                                               ),

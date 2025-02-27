@@ -1676,6 +1676,15 @@ class HomeScreenState extends State<HomeScreen> {
                                                         child: Container(
                                                           height: 80.sp,
                                                           width: 80.sp,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            border: Border.all(
+                                                                width: 1.sp,
+                                                                color:
+                                                                    dividerColor),
+                                                          ),
                                                           margin: EdgeInsets.only(
                                                               right: index ==
                                                                       homeController
@@ -1684,55 +1693,33 @@ class HomeScreenState extends State<HomeScreen> {
                                                                           1
                                                                   ? 16.sp
                                                                   : 0.sp),
-                                                          child: CircleAvatar(
-                                                            backgroundColor:
-                                                                whiteColor,
-                                                            child: Container(
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                border: Border.all(
-                                                                    width: 1.sp,
-                                                                    color:
-                                                                        lightgreyColor),
-                                                              ),
-                                                              child: Padding(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .all(16.0
-                                                                            .sp),
-                                                                child:
-                                                                    CachedNetworkImage(
-                                                                  height: 80.sp,
-                                                                  width: 80.sp,
-                                                                  cacheManager: CacheManager(Config(
-                                                                      "customCacheKey",
-                                                                      stalePeriod: const Duration(
+                                                          child: ClipOval(
+                                                            child:
+                                                                CachedNetworkImage(
+                                                              height: 80.sp,
+                                                              width: 80.sp,
+                                                              cacheManager: CacheManager(Config(
+                                                                  "customCacheKey",
+                                                                  stalePeriod:
+                                                                      const Duration(
                                                                           days:
                                                                               15),
-                                                                      maxNrOfCacheObjects:
-                                                                          100)),
-                                                                  fit: BoxFit
-                                                                      .contain,
-                                                                  imageUrl: homeController
-                                                                              .brandList[
-                                                                          index]
-                                                                      ["logo"],
-                                                                  errorWidget: (context,
-                                                                          url,
-                                                                          error) =>
-                                                                      Image
-                                                                          .asset(
-                                                                    downloadImage,
-                                                                    fit: BoxFit
-                                                                        .contain,
-                                                                    height:
-                                                                        80.sp,
-                                                                    width:
-                                                                        80.sp,
-                                                                  ),
-                                                                ),
+                                                                  maxNrOfCacheObjects:
+                                                                      100)),
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                              imageUrl: homeController
+                                                                      .brandList[
+                                                                  index]["logo"],
+                                                              errorWidget: (context,
+                                                                      url,
+                                                                      error) =>
+                                                                  Image.asset(
+                                                                downloadImage,
+                                                                fit: BoxFit
+                                                                    .contain,
+                                                                height: 80.sp,
+                                                                width: 80.sp,
                                                               ),
                                                             ),
                                                           ),
