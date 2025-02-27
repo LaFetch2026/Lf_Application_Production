@@ -610,6 +610,14 @@ class AccountScreenState extends State<AccountScreen> {
                                     launchUrl(Uri.parse(
                                         "https://la-fetch.com/privacy-policy/"));
                                   },
+                                  onPressedCancelation: () {
+                                    launchUrl(Uri.parse(
+                                        "https://www.la-fetch.com/cancellation-policy/"));
+                                  },
+                                  onPressedShiping: () {
+                                    launchUrl(Uri.parse(
+                                        "https://www.la-fetch.com/shipping-policy/"));
+                                  },
                                 ),
                                 /*   controller.profileDetails.isEmpty
                                 ? const SizedBox(
