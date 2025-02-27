@@ -186,6 +186,8 @@ class HomeScreenState extends State<HomeScreen> {
         productController.update();
       });
     }); */
+    WidgetsBinding.instance.addPostFrameCallback((_) => catalogController
+        .getCatagoryData(catalogController.selectCategoryGender.value));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       determinePosition();
     });
