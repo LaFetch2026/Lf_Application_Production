@@ -17,7 +17,6 @@ import 'package:lafetch/screens/wishlistscreen.dart';
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/home_appbar.dart';
 import '../utils/constants.dart';
-import 'Brands/categoryproduct.dart';
 import 'bottomnavscreen.dart';
 import 'cartscreen.dart';
 
@@ -533,7 +532,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                 ),
                                                                               ),
                                                                               val.selectIndex.value == val.brandList[a]["brands"][index]["id"]
-                                                                                  ? val.brandList[a]["brands"][index]["categories"].isNotEmpty
+                                                                                  ? val.brandList[a]["brands"][index]["products"].isNotEmpty
                                                                                       ? Container(
                                                                                           color: statusBarColor,
                                                                                           child: Column(
@@ -556,11 +555,11 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                   crossAxisSpacing: 10.sp,
                                                                                                   mainAxisSpacing: 0,
                                                                                                   children: List.generate(
-                                                                                                    val.brandList[a]["brands"][index]["categories"].length,
+                                                                                                    val.brandList[a]["brands"][index]["products"].length,
                                                                                                     (i) {
                                                                                                       return GestureDetector(
                                                                                                         onTap: () async {
-                                                                                                          Get.to(CategoryProductScreen(
+                                                                                                          /*   Get.to(CategoryProductScreen(
                                                                                                             categoryName: val.brandList[a]["brands"][index]["categories"][i]["name"],
                                                                                                             categoryId: val.brandList[a]["brands"][index]["categories"][i]["id"],
                                                                                                             brandId: val.brandList[a]["brands"][index]["id"],
@@ -575,27 +574,49 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                             parameters: <String, Object>{
                                                                                                               'page_name': 'brand_category_click',
                                                                                                             },
+                                                                                                          ); */
+                                                                                                          brandController.brandlogo.value = val.brandList[a]["brands"][index]["logo"];
+                                                                                                          brandController.brandbackground.value = val.brandList[a]["brands"][index]["background_image"] ?? "";
+                                                                                                          brandController.brandName.value = val.brandList[a]["brands"][index]["name"];
+                                                                                                          brandController.showAllBrand.value = true;
+                                                                                                          brandController.brandId.value = val.brandList[a]["brands"][index]["id"];
+                                                                                                          brandController.update();
+                                                                                                          brandController.brandProductDetailsList.clear();
+                                                                                                          Get.to(AllBrandScreen(
+                                                                                                            id: val.brandList[a]["brands"][index]["id"],
+                                                                                                            slug: "",
+                                                                                                            screen: widget.screen!,
+                                                                                                          ))?.then((value) {
+                                                                                                            SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+                                                                                                              statusBarColor: statusBarColor,
+                                                                                                            ));
+                                                                                                          });
+                                                                                                          await analytics.logEvent(
+                                                                                                            name: 'brand_details',
+                                                                                                            parameters: <String, Object>{
+                                                                                                              'page_name': 'brand_details',
+                                                                                                            },
                                                                                                           );
                                                                                                         },
                                                                                                         child: Column(
                                                                                                           crossAxisAlignment: CrossAxisAlignment.center,
                                                                                                           children: [
-                                                                                                            val.brandList[a]["brands"][index]["categories"][i]["thumbnail"] != null
+                                                                                                            val.brandList[a]["brands"][index]["products"][i]["image"] != null
                                                                                                                 ? SizedBox(
-                                                                                                                    height: 123.sp,
+                                                                                                                    height: 97.sp,
                                                                                                                     width: 97.sp,
                                                                                                                     child: CachedNetworkImage(
                                                                                                                       cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                                                       fit: BoxFit.cover,
-                                                                                                                      imageUrl: val.brandList[a]["brands"][index]["categories"][i]["thumbnail"],
+                                                                                                                      imageUrl: val.brandList[a]["brands"][index]["products"][i]["images"][0],
                                                                                                                       errorWidget: (context, url, error) => Image.asset(
                                                                                                                         downloadImage,
-                                                                                                                        height: 123.sp,
+                                                                                                                        height: 97.sp,
                                                                                                                         width: 97.sp,
                                                                                                                       ),
                                                                                                                     ),
                                                                                                                   )
-                                                                                                                : Image.asset(dummyWishlistImage, height: 123.sp, width: 97.sp, fit: BoxFit.cover),
+                                                                                                                : Image.asset(dummyWishlistImage, height: 97.sp, width: 97.sp, fit: BoxFit.cover),
                                                                                                             /* Padding(
                                                                                                 padding: EdgeInsets.symmetric(vertical: 5.sp),
                                                                                                 child: AppText(

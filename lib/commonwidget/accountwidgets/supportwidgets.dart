@@ -102,6 +102,32 @@ class SupportWidgets extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
+            onPressedPrivacy?.call();
+          },
+          child: Padding(
+            padding: EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
+            child: Row(
+              children: [
+                AppText(
+                  text: "Privacy Policy",
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                  color: nameText,
+                  fontSize: 14,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.sp),
+                  child: ImageIcon(
+                    AssetImage(linkArrowImage),
+                    size: 20.sp,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
             onPressedCancelation?.call();
           },
           child: Padding(
@@ -135,7 +161,7 @@ class SupportWidgets extends StatelessWidget {
             child: Row(
               children: [
                 AppText(
-                  text: "Shiping Policy",
+                  text: "Shipping Policy",
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
                   color: nameText,

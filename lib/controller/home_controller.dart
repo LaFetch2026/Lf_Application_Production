@@ -424,9 +424,10 @@ class HomeController extends BaseController {
       }
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        brandList.clear();
-        if (responseData["data"] != null) {
+        if (responseData["data"] != null || responseData["data"].isNotEmpty) {
           brandList = responseData["data"];
+        } else {
+          brandList.clear();
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");

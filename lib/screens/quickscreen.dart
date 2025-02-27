@@ -55,9 +55,9 @@ class QuickScreenState extends State<QuickScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.getDefaultAddressData(0, context);
     });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar2Data();
-    });
+    }); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBrandData("express");
     });
