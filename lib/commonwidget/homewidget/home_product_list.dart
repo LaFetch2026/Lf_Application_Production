@@ -1,3 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -12,9 +16,14 @@ class HomeProductList extends StatelessWidget {
   final List list;
   final int parentIndex;
   final Function(int)? onPressed;
+  final Function(int)? onPressedExplore;
 
   const HomeProductList(
-      {Key? key, required this.list, this.onPressed, required this.parentIndex})
+      {Key? key,
+      required this.list,
+      this.onPressed,
+      required this.parentIndex,
+      this.onPressedExplore})
       : super(key: key);
 
   @override
@@ -32,7 +41,7 @@ class HomeProductList extends StatelessWidget {
                   shrinkWrap: true,
                   primary: false,
                   physics: const BouncingScrollPhysics(),
-                  itemCount: list.length,
+                  itemCount: list.length >= 4 ? 4 : list.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (ctx, index) {
                     return Column(
@@ -50,39 +59,87 @@ class HomeProductList extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                list[index]["images"].isNotEmpty &&
-                                        list[index]["images"] != null
-                                    ? SizedBox(
-                                        height: 170.sp,
-                                        width: 136.sp,
-                                        child: CachedNetworkImage(
-                                          cacheManager: CacheManager(Config(
-                                              "customCacheKey",
-                                              stalePeriod:
-                                                  const Duration(days: 15),
-                                              maxNrOfCacheObjects: 100)),
-                                          fit: BoxFit.cover,
-                                          fadeOutCurve: Curves.ease,
-                                          fadeOutDuration:
-                                              Duration(milliseconds: 100),
-                                          imageUrl: isImage(list[index]
-                                                  ["images"][0]["name"])
-                                              ? list[index]["images"][0]["name"]
-                                              : list[index]["images"][1]
-                                                  ["name"],
-                                          errorWidget: (context, url, error) =>
-                                              Image.asset(
-                                            downloadImage,
-                                            fit: BoxFit.cover,
+                                Stack(
+                                  children: [
+                                    list[index]["images"].isNotEmpty &&
+                                            list[index]["images"] != null
+                                        ? ImageFiltered(
+                                            imageFilter: ImageFilter.blur(
+                                                sigmaX: 0.5, sigmaY: 0.5),
+                                            child: SizedBox(
+                                              height: 170.sp,
+                                              width: 136.sp,
+                                              child: CachedNetworkImage(
+                                                cacheManager: CacheManager(
+                                                    Config("customCacheKey",
+                                                        stalePeriod:
+                                                            const Duration(
+                                                                days: 15),
+                                                        maxNrOfCacheObjects:
+                                                            100)),
+                                                fit: BoxFit.cover,
+                                                fadeOutCurve: Curves.ease,
+                                                fadeOutDuration:
+                                                    Duration(milliseconds: 100),
+                                                imageUrl: isImage(list[index]
+                                                        ["images"][0]["name"])
+                                                    ? list[index]["images"][0]
+                                                        ["name"]
+                                                    : list[index]["images"][1]
+                                                        ["name"],
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Image.asset(
+                                                  downloadImage,
+                                                  fit: BoxFit.cover,
+                                                  height: 170.sp,
+                                                  width: 136.sp,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        : Image.asset(dummyWishlistImage,
                                             height: 170.sp,
                                             width: 136.sp,
+                                            fit: BoxFit.cover),
+                                    Visibility(
+                                      visible: list.length >= 4 && index == 3
+                                          ? true
+                                          : false,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(top: 60.sp),
+                                        child: InkWell(
+                                          onTap: () {
+                                            onPressedExplore
+                                                ?.call(list[index]["id"]);
+                                          },
+                                          child: Container(
+                                            height: 28.sp,
+                                            alignment: Alignment.center,
+                                            margin: EdgeInsets.all(12.sp),
+                                            decoration: BoxDecoration(
+                                                color:
+                                                    whiteColor.withOpacity(0.5),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(20.sp))),
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 12.sp),
+                                              child: AppText(
+                                                text:
+                                                    "Explore All".toUpperCase(),
+                                                color: homeAppBarColor,
+                                                fontSize: 13,
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                      )
-                                    : Image.asset(dummyWishlistImage,
-                                        height: 170.sp,
-                                        width: 136.sp,
-                                        fit: BoxFit.cover),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                 Padding(
                                   padding: EdgeInsets.only(top: 8.sp),
                                   child: Center(

@@ -7,10 +7,12 @@ import '../app_text.dart';
 class HomeList extends StatelessWidget {
   final List list;
   final Function(int)? onPressed;
+  final Function(int)? onPressedExplore;
 
   const HomeList({
     Key? key,
     this.onPressed,
+    this.onPressedExplore,
     required this.list,
   }) : super(key: key);
 
@@ -55,6 +57,9 @@ class HomeList extends StatelessWidget {
                       list: list[index]["products"],
                       onPressed: (p0) {
                         onPressed?.call(p0);
+                      },
+                      onPressedExplore: (p0) {
+                        onPressedExplore?.call(p0);
                       },
                       parentIndex: index,
                     ),

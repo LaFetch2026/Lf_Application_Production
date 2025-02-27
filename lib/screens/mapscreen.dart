@@ -491,6 +491,8 @@ class MapScreenState extends State<MapScreen> {
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 16.sp),
                                           child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
                                               SvgPicture.asset(
                                                 myLocationSvgImage,

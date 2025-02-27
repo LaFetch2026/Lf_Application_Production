@@ -554,8 +554,13 @@ class QuickScreenState extends State<QuickScreen> {
                               .isEmpty
                           ? true
                           : false,
-                      child: Lottie.asset(
-                        quickLottie,
+                      child: Container(
+                        width: double.infinity,
+                        child: Lottie.asset(
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          quickLottie,
+                        ),
                       ),
                     ),
                     Obx(() => Visibility(
