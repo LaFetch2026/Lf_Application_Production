@@ -137,7 +137,11 @@ class BottomSizeState extends State<BottomSize> {
                                               ? colorPrimary
                                               : whiteColor),
                                       child: SizedBox(
-                                        width: 40.sp,
+                                        width: i['product_matrix_size_name']
+                                                    .toString() ==
+                                                "Free Size"
+                                            ? 80.sp
+                                            : 40.sp,
                                         height: 40.sp,
                                         child: Align(
                                           alignment: Alignment.center,

@@ -23,7 +23,9 @@ import '../controller/login_controller.dart';
 
 class LoginScreen extends StatefulWidget {
   final int initialTab;
-  const LoginScreen({required this.initialTab, super.key});
+  final bool hideBack;
+  const LoginScreen(
+      {required this.initialTab, this.hideBack = false, super.key});
 
   @override
   State<LoginScreen> createState() => LoginScreenState();
@@ -242,6 +244,7 @@ class LoginScreenState extends State<LoginScreen> {
               children: [
                 LoginAppbar(
                   controller: loginController,
+                  hideBack: widget.hideBack,
                   onPressedSkip: () {
                     loginController.callGuestUser();
                   },

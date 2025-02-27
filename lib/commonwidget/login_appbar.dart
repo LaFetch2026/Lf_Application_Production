@@ -9,12 +9,14 @@ import '../../utils/constants.dart';
 class LoginAppbar extends StatefulWidget {
   final Function? onPressedSkip;
   final bool isSkip;
+  final bool hideBack;
   final LoginController controller;
 
   const LoginAppbar({
     Key? key,
     this.onPressedSkip,
     this.isSkip = true,
+    this.hideBack = false,
     required this.controller,
   }) : super(key: key);
 
@@ -35,16 +37,20 @@ class LoginAppbarState extends State<LoginAppbar> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              InkWell(
-                onTap: () {
-                  Get.back();
-                },
-                child: Container(
-                  padding: EdgeInsets.only(left: 16.sp, bottom: 6.sp),
-                  child: SvgPicture.asset(arrowBack,
-                      height: 15.sp, width: 15.sp, fit: BoxFit.cover),
-                ),
-              ),
+              !widget.hideBack
+                  ? InkWell(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: Container(
+                        padding: EdgeInsets.only(left: 16.sp, bottom: 6.sp),
+                        child: SvgPicture.asset(arrowBack,
+                            height: 15.sp, width: 15.sp, fit: BoxFit.cover),
+                      ),
+                    )
+                  : SizedBox(
+                      width: 24.sp,
+                    ),
               const Expanded(
                 child: SizedBox(
                   height: 0,

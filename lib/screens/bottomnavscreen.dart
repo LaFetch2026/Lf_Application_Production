@@ -160,6 +160,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                               builder: (BuildContext context) =>
                                   const LoginScreen(
                                     initialTab: 0,
+                                    hideBack: true,
                                   )));
                         } else {
                           setState(() {
@@ -370,6 +371,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                               builder: (BuildContext context) =>
                                   const LoginScreen(
                                     initialTab: 0,
+                                    hideBack: true,
                                   )));
                         } else {
                           setState(() {
@@ -486,6 +488,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                           Get.to(
                             () => const LoginScreen(
                               initialTab: 0,
+                              hideBack: true,
                             ),
                           );
                         } else {

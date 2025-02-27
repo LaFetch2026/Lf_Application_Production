@@ -103,6 +103,7 @@ class CartScreenState extends State<CartScreen> {
       Get.to(
         () => const LoginScreen(
           initialTab: 0,
+          hideBack: true,
         ),
       );
     } else {
@@ -813,7 +814,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                 child: Container(
                                                                                                   decoration: BoxDecoration(color: widget.backgroundcolor == whiteColor ? Color(0xffF3F4F6) : Color(0xFFDFDBFF), border: Border.all(width: 1, color: widget.backgroundcolor == whiteColor ? Color(0xFFE5E7EB) : titleColor)),
                                                                                                   height: 30.sp,
-                                                                                                  width: 85.sp,
+                                                                                                  width: value.orderList[index]["inventory"]["product_matrix_name_size"] == "Free Size" ? 100.sp : 85.sp,
                                                                                                   alignment: Alignment.center,
                                                                                                   child: Row(
                                                                                                     crossAxisAlignment: CrossAxisAlignment.center,

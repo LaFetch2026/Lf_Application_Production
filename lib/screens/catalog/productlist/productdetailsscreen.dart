@@ -424,7 +424,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 ? whiteColor
                                                 : homeAppBarColor),
                                     child: SizedBox(
-                                      width: 48.sp,
+                                      width: i['product_matrix_size_name']
+                                                  .toString() ==
+                                              "Free Size"
+                                          ? 80.sp
+                                          : 48.sp,
                                       height: 48.sp,
                                       child: Align(
                                         alignment: Alignment.center,
