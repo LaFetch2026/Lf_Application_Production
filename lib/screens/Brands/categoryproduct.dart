@@ -993,7 +993,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                 ),
                                 builder: (ctx) {
                                   return BottomCategory(
-                                    gender: widget.genderName,
+                                    gender: productController
+                                        .selectedCategoryGender.value,
                                     onPressedButton: (p0) {
                                       if (p0 == "Women") {
                                         productController

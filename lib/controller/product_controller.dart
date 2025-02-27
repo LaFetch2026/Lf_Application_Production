@@ -515,7 +515,7 @@ class ProductController extends BaseController {
         handPickedProductList.clear();
         if (responseData["data"] != null) {
           handPickedProductList = responseData["data"];
-          totalProductValue.value = responseData["meta"]["total"];
+          //  totalProductValue.value = responseData["meta"]["total"];
           handpickedHasnextpage.value = true;
           handpickedLoadMore.value = false;
           isHandPicked.value = false;

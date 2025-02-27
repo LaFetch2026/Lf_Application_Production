@@ -53,6 +53,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.selectedCategoryGender.value = widget.genderName;
       productController.handpickedHasnextpage.value = true;
       productController.handpickedLoadMore.value = false;
       productController.isHandPicked.value = false;
@@ -75,7 +76,20 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         productController.update();
       });
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) => clearPrefrenceValue());
     super.initState();
+  }
+
+  clearPrefrenceValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("brandList");
+    prefs.remove("colorList");
+    prefs.remove("sizeList");
+    prefs.remove("upper");
+    prefs.remove("lower");
+    prefs.remove("sortby");
+    prefs.remove("category");
+    print("abcdef");
   }
 
   @override
@@ -744,8 +758,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                           maxHeight: 270.sp,
                         ),
                         builder: (ctx) {
+                          print(
+                              'abc ${productController.selectedCategoryGender.value}');
                           return BottomCategory(
-                            gender: widget.genderName,
+                            gender:
+                                productController.selectedCategoryGender.value,
                             onPressedButton: (p0) {
                               if (p0 == "Women") {
                                 productController.categoryFilter.value = 3;
@@ -759,6 +776,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                   productController.filterProductEnable.value,
                                   false,
                                   productController.tagId.value);
+                              productController.selectedCategoryGender.value =
+                                  p0;
                             },
                             onPressedFilter: () {
                               Get.back();
@@ -840,23 +859,31 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                 ),
                               ),
                             ),
-                            Visibility(
-                              visible: widget.genderName == "" ? false : true,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: 5.sp, right: 5.sp, top: 1.sp),
-                                child: Text(
-                                  widget.genderName.toUpperCase(),
-                                  style: TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: appBarColor,
-                                    fontSize: 10.sp,
+                            Obx(
+                              () => Visibility(
+                                visible: productController
+                                            .selectedCategoryGender.value ==
+                                        ""
+                                    ? false
+                                    : true,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 5.sp, right: 5.sp, top: 1.sp),
+                                  child: Text(
+                                    productController
+                                        .selectedCategoryGender.value
+                                        .toUpperCase(),
+                                    style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: appBarColor,
+                                      fontSize: 10.sp,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
+                            )
                           ],
                         ),
                       ),
