@@ -73,7 +73,7 @@ class Cartbottom extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(top: 4.sp),
                     child: AppText(
-                      text: "2 exchanges in 2 days",
+                      text: "exchange available",
                       fontFamily: "Franklin Gothic Regular",
                       fontWeight: FontWeight.w400,
                       color: backgroundColor == whiteColor

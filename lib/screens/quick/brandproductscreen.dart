@@ -59,11 +59,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
 
   @override
   void initState() {
-    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: homeAppBarColor,
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: homeAppBarColor.withOpacity(0.5),
       ));
-    }); */
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.brandProductDetailsList.clear();
       productController.branddetailsSearchController.clear();
@@ -176,7 +176,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                         )
                       : Container(
                           width: MediaQuery.of(context).size.width,
-                          color: homeAppBarColor,
+                          color: homeAppBarColor.withOpacity(0.5),
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -238,8 +238,9 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                             (value) {
                                               SystemChrome
                                                   .setSystemUIOverlayStyle(
-                                                      const SystemUiOverlayStyle(
-                                                statusBarColor: homeAppBarColor,
+                                                      SystemUiOverlayStyle(
+                                                statusBarColor: homeAppBarColor
+                                                    .withOpacity(0.5),
                                               ));
                                             },
                                           );
@@ -267,8 +268,9 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                             (value) {
                                               SystemChrome
                                                   .setSystemUIOverlayStyle(
-                                                      const SystemUiOverlayStyle(
-                                                statusBarColor: homeAppBarColor,
+                                                      SystemUiOverlayStyle(
+                                                statusBarColor: homeAppBarColor
+                                                    .withOpacity(0.5),
                                               ));
                                             },
                                           );
@@ -297,8 +299,9 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                             (value) {
                                               SystemChrome
                                                   .setSystemUIOverlayStyle(
-                                                      const SystemUiOverlayStyle(
-                                                statusBarColor: homeAppBarColor,
+                                                      SystemUiOverlayStyle(
+                                                statusBarColor: homeAppBarColor
+                                                    .withOpacity(0.5),
                                               ));
                                             },
                                           );
@@ -518,33 +521,35 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                                       .brandProductDetailsList[
                                                                   index]["id"],
                                                           type: "add"))
-                                                      ?.then((value) => setState(
-                                                            () {
-                                                              FocusScope.of(
-                                                                      context)
-                                                                  .unfocus();
-                                                              productController
-                                                                  .brandProductHasnextpage
-                                                                  .value = true;
-                                                              productController
-                                                                  .brandProductLoadMore
-                                                                  .value = false;
-                                                              productController
-                                                                  .isProductBrand
-                                                                  .value = false;
-                                                              productController
-                                                                  .brandProductPage
-                                                                  .value = 1;
-                                                              controller
-                                                                  .getCartData();
-                                                              SystemChrome
-                                                                  .setSystemUIOverlayStyle(
-                                                                      const SystemUiOverlayStyle(
-                                                                statusBarColor:
-                                                                    homeAppBarColor,
+                                                      ?.then(
+                                                          (value) => setState(
+                                                                () {
+                                                                  FocusScope.of(
+                                                                          context)
+                                                                      .unfocus();
+                                                                  productController
+                                                                      .brandProductHasnextpage
+                                                                      .value = true;
+                                                                  productController
+                                                                      .brandProductLoadMore
+                                                                      .value = false;
+                                                                  productController
+                                                                      .isProductBrand
+                                                                      .value = false;
+                                                                  productController
+                                                                      .brandProductPage
+                                                                      .value = 1;
+                                                                  controller
+                                                                      .getCartData();
+                                                                  SystemChrome
+                                                                      .setSystemUIOverlayStyle(
+                                                                          SystemUiOverlayStyle(
+                                                                    statusBarColor:
+                                                                        homeAppBarColor
+                                                                            .withOpacity(0.5),
+                                                                  ));
+                                                                },
                                                               ));
-                                                            },
-                                                          ));
                                                   await analytics.logEvent(
                                                     name:
                                                         'category_product_details',

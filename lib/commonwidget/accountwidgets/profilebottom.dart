@@ -111,7 +111,7 @@ class ProfileBottom extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(top: 4.sp),
                     child: AppText(
-                      text: "2 exchanges\nwithin 2 days",
+                      text: "exchange\navailable",
                       fontFamily: "Franklin Gothic Regular",
                       fontWeight: FontWeight.w400,
                       color: greyTextColor,

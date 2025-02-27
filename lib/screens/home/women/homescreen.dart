@@ -1804,8 +1804,8 @@ class HomeScreenState extends State<HomeScreen> {
                                     );
                                   },
                                   list: productController.homeProductList)
-                              : const SizedBox(
-                                  height: 0,
+                              : SizedBox(
+                                  height: 20.sp,
                                 )),
                       /*  SizedBox(
                         height: 20.sp,
