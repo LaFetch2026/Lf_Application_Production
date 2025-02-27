@@ -59,7 +59,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
       productController.handpickedPage.value = 1;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
-        productController.getHandPickedProduct(
+        productController.getHomeExploreProduct(
             productController.productSortBy.value,
             productController.filterProductEnable.value,
             false,
@@ -68,7 +68,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         .addPostFrameCallback((_) => controller.getCartData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.handpickedController.addListener(() {
-        productController.fetchMoreHandPickedProduct(
+        productController.fetchMoreHomeProduct(
             productController.productSortBy.value,
             productController.filterProductEnable.value,
             productController.tagId.value);
@@ -87,10 +87,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ProductAppbar(
+                text: widget.title,
                 onPressedSearch: () async {
                   Get.to(const SearchScreen())?.then((value) => setState(
                         () {
-                          productController.getHandPickedProduct(
+                          productController.getHomeExploreProduct(
                               productController.productSortBy.value,
                               productController.filterProductEnable.value,
                               false,
@@ -685,7 +686,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                           return BottomSortBy(
                             onPressedButton: (p0) {
                               productController.productSortBy.value = p0;
-                              productController.getHandPickedProduct(
+                              productController.getHomeExploreProduct(
                                   productController.productSortBy.value,
                                   productController.filterProductEnable.value,
                                   false,
@@ -753,7 +754,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                               } else {
                                 productController.categoryFilter.value = 1;
                               }
-                              productController.getHandPickedProduct(
+                              productController.getHomeExploreProduct(
                                   productController.productSortBy.value,
                                   productController.filterProductEnable.value,
                                   false,
@@ -787,7 +788,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                       prefs.remove("lower");
                                       prefs.remove("sortby");
                                       prefs.remove("category");
-                                      productController.getHandPickedProduct(
+                                      productController.getHomeExploreProduct(
                                           productController.productSortBy.value,
                                           productController
                                               .filterProductEnable.value,
@@ -799,7 +800,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                           .filterProductEnable.value = true;
                                       productController.lowPrice.value = p0;
                                       productController.highPrice.value = p1;
-                                      productController.getHandPickedProduct(
+                                      productController.getHomeExploreProduct(
                                           productController.productSortBy.value,
                                           productController
                                               .filterProductEnable.value,
@@ -896,7 +897,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                               prefs.remove("lower");
                               prefs.remove("sortby");
                               prefs.remove("category");
-                              productController.getHandPickedProduct(
+                              productController.getHomeExploreProduct(
                                   productController.productSortBy.value,
                                   productController.filterProductEnable.value,
                                   false,
@@ -907,7 +908,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                   true;
                               productController.lowPrice.value = p0;
                               productController.highPrice.value = p1;
-                              productController.getHandPickedProduct(
+                              productController.getHomeExploreProduct(
                                   productController.productSortBy.value,
                                   productController.filterProductEnable.value,
                                   true,

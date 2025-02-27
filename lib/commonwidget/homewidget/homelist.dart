@@ -7,7 +7,7 @@ import '../app_text.dart';
 class HomeList extends StatelessWidget {
   final List list;
   final Function(int)? onPressed;
-  final Function(int)? onPressedExplore;
+  final Function(int, String)? onPressedExplore;
 
   const HomeList({
     Key? key,
@@ -58,8 +58,9 @@ class HomeList extends StatelessWidget {
                       onPressed: (p0) {
                         onPressed?.call(p0);
                       },
-                      onPressedExplore: (p0) {
-                        onPressedExplore?.call(p0);
+                      onPressedExplore: () {
+                        onPressedExplore?.call(list[index]["tag_id"],
+                            list[index]["title"].toUpperCase());
                       },
                       parentIndex: index,
                     ),

@@ -25,6 +25,7 @@ import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/home/women/productviewscreen.dart';
 //import 'package:lafetch/screens/home/women/productviewscreen.dart';
 //import 'package:lafetch/screens/home/faqscreen.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
@@ -1757,6 +1758,23 @@ class HomeScreenState extends State<HomeScreen> {
                             )
                           : productController.homeProductList.isNotEmpty
                               ? HomeList(
+                                  onPressedExplore: (p0, p1) {
+                                    productController.tagId.value = p0;
+                                    productController.productSortBy.value = "";
+                                    productController
+                                        .filterProductEnable.value = false;
+                                    productController.categoryFilter.value =
+                                        homeController.homeGenderValue.value;
+                                    Navigator.push(
+                                        context,
+                                        scaleIn(
+                                          ProductViewScreen(
+                                            title: p1,
+                                            genderName:
+                                                homeController.genderText.value,
+                                          ),
+                                        ));
+                                  },
                                   onPressed: (p0) async {
                                     Navigator.push(
                                         context,

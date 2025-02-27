@@ -16,7 +16,7 @@ class HomeProductList extends StatelessWidget {
   final List list;
   final int parentIndex;
   final Function(int)? onPressed;
-  final Function(int)? onPressedExplore;
+  final Function()? onPressedExplore;
 
   const HomeProductList(
       {Key? key,
@@ -110,8 +110,7 @@ class HomeProductList extends StatelessWidget {
                                         padding: EdgeInsets.only(top: 60.sp),
                                         child: InkWell(
                                           onTap: () {
-                                            onPressedExplore
-                                                ?.call(list[index]["id"]);
+                                            onPressedExplore?.call();
                                           },
                                           child: Container(
                                             height: 28.sp,
