@@ -403,13 +403,14 @@ class HomeController extends BaseController {
     isFaqs.value = false;
   }
 
-  getBrandData(String screen) async {
+  getBrandData(String screen, int type) async {
     isBrand.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       dynamic response;
       response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/brands?type=featured"),
+          Uri.parse(
+              "${ApiConstants.baseUrl}/brands?type=featured&gender_type=$type"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",

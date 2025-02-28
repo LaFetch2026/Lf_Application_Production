@@ -124,7 +124,7 @@ class HomeScreenState extends State<HomeScreen> {
       homeController.getBannar1Data(homeController.homeGenderValue.value);
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      homeController.getBrandData("home");
+      homeController.getBrandData("home", homeController.homeGenderValue.value);
     });
     /*  WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getHandPickedProduct("", false, false, 0)); */
@@ -456,6 +456,7 @@ class HomeScreenState extends State<HomeScreen> {
                       // productController.getTagsData(2);
                       homeController.getBannar1Data(2);
                       catalogController.getCatalogData(2);
+                      homeController.getBrandData("home", 2);
                       productController.getHomeProduct(2);
                       catalogController.selectCategoryGender.value = 2;
                       catalogController.categoryName.value = "Men";
@@ -500,6 +501,7 @@ class HomeScreenState extends State<HomeScreen> {
                       homeController.currentPage.value = 0;
                       productController.current.value = 50;
                       productController.tagId.value = 0;
+                      homeController.getBrandData("home", 3);
                       /* productController.tagname.value =
                                       "We think you might also like"; */
                       productController.productCategory = [];
@@ -551,6 +553,7 @@ class HomeScreenState extends State<HomeScreen> {
                       homeController.currentPage.value = 0;
                       productController.current.value = 50;
                       productController.tagId.value = 0;
+                      homeController.getBrandData("home", 1);
                       /*  productController.tagname.value =
                                       "We think you might also like"; */
                       productController.productCategory = [];
