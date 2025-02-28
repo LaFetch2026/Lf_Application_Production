@@ -19,6 +19,7 @@ class HomeController extends BaseController {
   RxBool showGenderList = false.obs;
   RxBool isCategory = false.obs;
   RxBool isBrand = false.obs;
+  RxBool isExpressBrand = false.obs;
   RxString playerId = "".obs;
   RxString genderText = "Men".obs;
   RxString fcmToken = "".obs;
@@ -442,7 +443,7 @@ class HomeController extends BaseController {
   }
 
   getExpressBrandData() async {
-    isBrand.value = true;
+    isExpressBrand.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
       dynamic response;
@@ -480,6 +481,6 @@ class HomeController extends BaseController {
     } catch (e) {
       print("error$e");
     }
-    isBrand.value = false;
+    isExpressBrand.value = false;
   }
 }

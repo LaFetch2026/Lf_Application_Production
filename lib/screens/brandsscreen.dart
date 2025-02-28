@@ -532,7 +532,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                 ),
                                                                               ),
                                                                               val.selectIndex.value == val.brandList[a]["brands"][index]["id"]
-                                                                                  ? val.brandList[a]["brands"][index]["categories"].isNotEmpty
+                                                                                  ? val.brandList[a]["brands"][index]["products"].isNotEmpty
                                                                                       ? Container(
                                                                                           color: statusBarColor,
                                                                                           child: Column(
@@ -550,12 +550,12 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                   crossAxisCount: 3,
                                                                                                   scrollDirection: Axis.vertical,
                                                                                                   padding: EdgeInsets.zero,
-                                                                                                  childAspectRatio: 0.7,
+                                                                                                  childAspectRatio: 0.85, //0.7
                                                                                                   physics: const ScrollPhysics(),
                                                                                                   crossAxisSpacing: 10.sp,
                                                                                                   mainAxisSpacing: 0,
                                                                                                   children: List.generate(
-                                                                                                    val.brandList[a]["brands"][index]["categories"].length,
+                                                                                                    val.brandList[a]["brands"][index]["products"].length,
                                                                                                     (i) {
                                                                                                       return GestureDetector(
                                                                                                         onTap: () async {
@@ -601,22 +601,22 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                         child: Column(
                                                                                                           crossAxisAlignment: CrossAxisAlignment.center,
                                                                                                           children: [
-                                                                                                            val.brandList[a]["brands"][index]["categories"][i]["thumbnail"] != null
+                                                                                                            val.brandList[a]["brands"][index]["products"][i]["images"] != null
                                                                                                                 ? SizedBox(
-                                                                                                                    height: 127.sp,
+                                                                                                                    height: 97.sp,
                                                                                                                     width: 97.sp,
                                                                                                                     child: CachedNetworkImage(
                                                                                                                       cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                                                       fit: BoxFit.cover,
-                                                                                                                      imageUrl: val.brandList[a]["brands"][index]["categories"][i]["thumbnail"],
+                                                                                                                      imageUrl: val.brandList[a]["brands"][index]["products"][i]["images"][0]["name"],
                                                                                                                       errorWidget: (context, url, error) => Image.asset(
                                                                                                                         downloadImage,
-                                                                                                                        height: 127.sp,
+                                                                                                                        height: 97.sp,
                                                                                                                         width: 97.sp,
                                                                                                                       ),
                                                                                                                     ),
                                                                                                                   )
-                                                                                                                : Image.asset(dummyWishlistImage, height: 127.sp, width: 97.sp, fit: BoxFit.cover),
+                                                                                                                : Image.asset(dummyWishlistImage, height: 97.sp, width: 97.sp, fit: BoxFit.cover),
                                                                                                             /* Padding(
                                                                                                 padding: EdgeInsets.symmetric(vertical: 5.sp),
                                                                                                 child: AppText(

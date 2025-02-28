@@ -1225,43 +1225,45 @@ class HomeScreenState extends State<HomeScreen> {
                               : const SizedBox(
                                   height: 0,
                                 )),
-                      Obx(() => Padding(
-                            padding: EdgeInsets.only(top: 16.sp),
-                            child: Container(
-                              height: 30.sp,
-                              color: Color(0xff7A6ECC),
-                              width: MediaQuery.of(context).size.width,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: Platform.isIOS ? 7.sp : 6.sp,
-                                    bottom: Platform.isIOS ? 5.sp : 6.sp),
-                                child: Center(
-                                  child: Marquee(
-                                    text:
-                                        '  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12.sp,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    scrollAxis: Axis.horizontal,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    //   blankSpace: 20.0,
-                                    velocity: 100.0,
-                                    pauseAfterRound: Duration(seconds: 1),
-                                    // startPadding: 10.0,
-                                    accelerationDuration: Duration(seconds: 1),
-                                    accelerationCurve: Curves.linear,
-                                    decelerationDuration:
-                                        Duration(milliseconds: 500),
-                                    decelerationCurve: Curves.easeOut,
-                                  ),
+                      /*  Obx(() => */ Padding(
+                        padding: EdgeInsets.only(top: 16.sp),
+                        child: Container(
+                          height: 30.sp,
+                          color: Color(0xff7A6ECC),
+                          width: MediaQuery.of(context).size.width,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                top: Platform.isIOS ? 7.sp : 6.sp,
+                                bottom: Platform.isIOS ? 5.sp : 6.sp),
+                            child: Center(
+                              child: Marquee(
+                                text:
+                                    '  More than 50+ Homegrown Brands -- Fast and Reliable -- Fashion for all occassions',
+                                //  text:
+                                //    '  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12.sp,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
                                 ),
+                                scrollAxis: Axis.horizontal,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                //   blankSpace: 20.0,
+                                velocity: 100.0,
+                                pauseAfterRound: Duration(seconds: 1),
+                                // startPadding: 10.0,
+                                accelerationDuration: Duration(seconds: 1),
+                                accelerationCurve: Curves.linear,
+                                decelerationDuration:
+                                    Duration(milliseconds: 500),
+                                decelerationCurve: Curves.easeOut,
                               ),
                             ),
-                          )),
+                          ),
+                        ),
+                        // )
+                      ),
                       Obx(() => catalogController.isCatalog.value
                           ? const DummyGridMostSearch(
                               text: "",

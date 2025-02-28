@@ -49,8 +49,6 @@ class QuickScreenState extends State<QuickScreen> {
         statusBarColor: homeAppBarColor,
       ));
       productController.brandController.clear();
-      homeController.expressBrandList.clear();
-      homeController.isBrand.value = false;
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.getDefaultAddressData(0, context);
@@ -565,53 +563,55 @@ class QuickScreenState extends State<QuickScreen> {
                         ),
                       ),
                     ),
-                    Obx(() => Visibility(
-                          visible: productController.brandController.text
-                                  .toString()
-                                  .trim()
-                                  .isEmpty
-                              ? true
-                              : false,
+                    /*  Obx(() => */ Visibility(
+                      visible: productController.brandController.text
+                              .toString()
+                              .trim()
+                              .isEmpty
+                          ? true
+                          : false,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          top: 24.sp,
+                        ),
+                        child: Container(
+                          height: 30.sp,
+                          color: expressDeliveryBanner,
+                          width: MediaQuery.of(context).size.width,
                           child: Padding(
                             padding: EdgeInsets.only(
-                              top: 24.sp,
-                            ),
-                            child: Container(
-                              height: 30.sp,
-                              color: expressDeliveryBanner,
-                              width: MediaQuery.of(context).size.width,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: Platform.isIOS ? 7.sp : 6.sp,
-                                    bottom: Platform.isIOS ? 5.sp : 6.sp),
-                                child: Center(
-                                  child: Marquee(
-                                    text:
-                                        '  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12.sp,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    scrollAxis: Axis.horizontal,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    // blankSpace: 20.0,
-                                    velocity: 100.0,
-                                    pauseAfterRound: Duration(seconds: 1),
-                                    // startPadding: 10.0,
-                                    accelerationDuration: Duration(seconds: 1),
-                                    accelerationCurve: Curves.linear,
-                                    decelerationDuration:
-                                        Duration(milliseconds: 500),
-                                    decelerationCurve: Curves.easeOut,
-                                  ),
+                                top: Platform.isIOS ? 7.sp : 6.sp,
+                                bottom: Platform.isIOS ? 5.sp : 6.sp),
+                            child: Center(
+                              child: Marquee(
+                                text:
+                                    '  More than 50+ Homegrown Brands -- Delivered in 30 mins',
+                                //text:
+                                //      '  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12.sp,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
                                 ),
+                                scrollAxis: Axis.horizontal,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                // blankSpace: 20.0,
+                                velocity: 100.0,
+                                pauseAfterRound: Duration(seconds: 1),
+                                // startPadding: 10.0,
+                                accelerationDuration: Duration(seconds: 1),
+                                accelerationCurve: Curves.linear,
+                                decelerationDuration:
+                                    Duration(milliseconds: 500),
+                                decelerationCurve: Curves.easeOut,
                               ),
                             ),
                           ),
-                        )),
+                        ),
+                      ),
+                      // )
+                    ),
                     Obx(() => Visibility(
                           visible: productController.brandController.text
                                   .toString()
@@ -619,7 +619,7 @@ class QuickScreenState extends State<QuickScreen> {
                                   .isEmpty
                               ? true
                               : false,
-                          child: homeController.isBrand.value
+                          child: homeController.isExpressBrand.value
                               ? Container(
                                   child: Column(
                                     crossAxisAlignment:
