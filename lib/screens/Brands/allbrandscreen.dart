@@ -103,8 +103,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     videoController.setLooping(true);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: homeAppBarColor,
-      ));
+          statusBarColor: homeAppBarColor,
+          systemNavigationBarColor: homeAppBarColor));
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       brandController.brandProductDetailsList.clear();

@@ -454,9 +454,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                     slug: "",
                                                                                     screen: widget.screen!,
                                                                                   ))?.then((value) {
-                                                                                    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-                                                                                      statusBarColor: whiteColor,
-                                                                                    ));
+                                                                                    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: whiteColor, systemNavigationBarColor: whiteColor));
                                                                                   });
                                                                                   await analytics.logEvent(
                                                                                     name: 'brand_details',
@@ -601,9 +599,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                             slug: "",
                                                                                                             screen: widget.screen!,
                                                                                                           ))?.then((value) {
-                                                                                                            SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-                                                                                                              statusBarColor: whiteColor,
-                                                                                                            ));
+                                                                                                            SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: whiteColor, systemNavigationBarColor: whiteColor));
                                                                                                           });
                                                                                                           await analytics.logEvent(
                                                                                                             name: 'brand_details',
@@ -664,9 +660,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                     slug: "",
                                                                                                     screen: widget.screen!,
                                                                                                   ))?.then((value) {
-                                                                                                    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-                                                                                                      statusBarColor: whiteColor,
-                                                                                                    ));
+                                                                                                    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: whiteColor, systemNavigationBarColor: whiteColor));
                                                                                                   });
                                                                                                   await analytics.logEvent(
                                                                                                     name: 'brand_details',

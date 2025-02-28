@@ -699,10 +699,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   void setStatusBarColor() {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: widget.backgroundcolor == whiteColor
-          ? statusBarColor
-          : homeAppBarColor,
-    ));
+        statusBarColor: widget.backgroundcolor == whiteColor
+            ? statusBarColor
+            : homeAppBarColor,
+        systemNavigationBarColor: widget.backgroundcolor == whiteColor
+            ? statusBarColor
+            : homeAppBarColor));
   }
 
   @override
@@ -1382,17 +1384,18 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                           productController
                                                                   .brandDetails[
                                                               "background_image"];
-                                                      Navigator.of(context).push(MaterialPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              AllBrandScreen(
-                                                                  id: productController
-                                                                          .brandDetails[
-                                                                      "id"],
-                                                                  screen:
-                                                                      "search",
-                                                                  slug: "")
-                                                          /*  BrandsScreen(
+                                                      Navigator.of(context)
+                                                          .push(MaterialPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  AllBrandScreen(
+                                                                      id: productController
+                                                                              .brandDetails[
+                                                                          "id"],
+                                                                      screen:
+                                                                          "search",
+                                                                      slug: "")
+                                                              /*  BrandsScreen(
                                                                     screen:
                                                                         "search",
                                                                     logo: productController
@@ -1408,7 +1411,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                             .brandDetails[
                                                                         "id"],
                                                                   ) */
-                                                          ));
+                                                              ))
+                                                          .then(
+                                                        (value) {
+                                                          setStatusBarColor();
+                                                        },
+                                                      );
                                                     },
                                                     child: Container(
                                                       color: Color(0xFFDFDBFF),

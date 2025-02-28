@@ -46,8 +46,8 @@ class QuickScreenState extends State<QuickScreen> {
     // getPrefrenceValue();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: homeAppBarColor,
-      ));
+          statusBarColor: homeAppBarColor,
+          systemNavigationBarColor: homeAppBarColor));
       productController.brandController.clear();
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

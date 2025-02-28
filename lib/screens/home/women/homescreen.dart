@@ -88,8 +88,7 @@ class HomeScreenState extends State<HomeScreen> {
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: whiteColor,
-      ));
+          statusBarColor: whiteColor, systemNavigationBarColor: whiteColor));
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.showGenderList.value = false;
@@ -382,8 +381,8 @@ class HomeScreenState extends State<HomeScreen> {
                               homeController.homeGenderValue.value;
                           SystemChrome.setSystemUIOverlayStyle(
                               const SystemUiOverlayStyle(
-                            statusBarColor: whiteColor,
-                          ));
+                                  statusBarColor: whiteColor,
+                                  systemNavigationBarColor: whiteColor));
                           /*   productController.getHandPickedProduct(
                               "", false, false, productController.tagId.value); */
                         },
@@ -400,8 +399,8 @@ class HomeScreenState extends State<HomeScreen> {
                 (value) {
                   SystemChrome.setSystemUIOverlayStyle(
                       const SystemUiOverlayStyle(
-                    statusBarColor: whiteColor,
-                  ));
+                          statusBarColor: whiteColor,
+                          systemNavigationBarColor: whiteColor));
                 },
               );
               await analytics.logEvent(
@@ -416,8 +415,8 @@ class HomeScreenState extends State<HomeScreen> {
                 (value) {
                   SystemChrome.setSystemUIOverlayStyle(
                       const SystemUiOverlayStyle(
-                    statusBarColor: whiteColor,
-                  ));
+                          statusBarColor: whiteColor,
+                          systemNavigationBarColor: whiteColor));
                 },
               );
               await analytics.logEvent(
@@ -1371,12 +1370,12 @@ class HomeScreenState extends State<HomeScreen> {
                                                                 categoryList,
                                                             tagIds: const []))?.then(
                                                           (value) {
-                                                            SystemChrome
-                                                                .setSystemUIOverlayStyle(
-                                                                    const SystemUiOverlayStyle(
-                                                              statusBarColor:
-                                                                  whiteColor,
-                                                            ));
+                                                            SystemChrome.setSystemUIOverlayStyle(
+                                                                const SystemUiOverlayStyle(
+                                                                    statusBarColor:
+                                                                        whiteColor,
+                                                                    systemNavigationBarColor:
+                                                                        whiteColor));
                                                           },
                                                         );
                                                         await analytics
@@ -1655,12 +1654,12 @@ class HomeScreenState extends State<HomeScreen> {
                                                                 slug: ""))
                                                             ?.then(
                                                           (value) {
-                                                            SystemChrome
-                                                                .setSystemUIOverlayStyle(
-                                                                    const SystemUiOverlayStyle(
-                                                              statusBarColor:
-                                                                  whiteColor,
-                                                            ));
+                                                            SystemChrome.setSystemUIOverlayStyle(
+                                                                const SystemUiOverlayStyle(
+                                                                    statusBarColor:
+                                                                        whiteColor,
+                                                                    systemNavigationBarColor:
+                                                                        whiteColor));
                                                           },
                                                         );
                                                         /*   Navigator.push(
@@ -1822,11 +1821,11 @@ class HomeScreenState extends State<HomeScreen> {
                                         )).then((value) => setState(
                                           () {
                                             cartController.getCartData();
-                                            SystemChrome
-                                                .setSystemUIOverlayStyle(
-                                                    const SystemUiOverlayStyle(
-                                              statusBarColor: whiteColor,
-                                            ));
+                                            SystemChrome.setSystemUIOverlayStyle(
+                                                const SystemUiOverlayStyle(
+                                                    statusBarColor: whiteColor,
+                                                    systemNavigationBarColor:
+                                                        whiteColor));
                                           },
                                         ));
                                     await analytics.logEvent(

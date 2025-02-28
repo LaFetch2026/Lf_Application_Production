@@ -61,8 +61,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: homeAppBarColor.withOpacity(0.5),
-      ));
+          statusBarColor: homeAppBarColor.withOpacity(0.5),
+          systemNavigationBarColor: homeAppBarColor.withOpacity(0.5)));
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.brandProductDetailsList.clear();
