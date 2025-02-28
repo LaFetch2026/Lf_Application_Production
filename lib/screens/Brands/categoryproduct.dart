@@ -86,6 +86,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: statusBarColor,
+        systemNavigationBarColor: homeAppBarColor,
       ));
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>

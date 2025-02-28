@@ -43,6 +43,7 @@ class LoginScreenState extends State<LoginScreen> {
   void initState() {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: statusBarColor,
+      systemNavigationBarColor: statusBarColor,
     ));
     if (widget.initialTab == 0) {
       appbarColor = colorPrimary;

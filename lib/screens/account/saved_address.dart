@@ -44,6 +44,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: statusBarColor,
+        systemNavigationBarColor: statusBarColor,
       ));
     });
     super.initState();

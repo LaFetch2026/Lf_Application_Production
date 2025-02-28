@@ -1140,11 +1140,6 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                               'color': '#070707',
                                             },
                                             'fullscreen': true,
-                                            'prefill': {
-                                              'contact': '9002973232',
-                                              'email':
-                                                  'sonamagrahari11@gmail.com'
-                                            }
                                           };
                                           razorpay.open(options);
                                         } else {

@@ -34,6 +34,7 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
     super.initState();
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: statusBarColor,
+      systemNavigationBarColor: statusBarColor,
     ));
   }
 

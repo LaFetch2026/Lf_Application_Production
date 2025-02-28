@@ -19,8 +19,8 @@ Future main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: homeAppBarColor,
-  ));
+      statusBarColor: homeAppBarColor,
+      systemNavigationBarColor: homeAppBarColor));
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

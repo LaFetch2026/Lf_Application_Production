@@ -115,8 +115,8 @@ class AccountScreenState extends State<AccountScreen> {
                   (value) {
                     SystemChrome.setSystemUIOverlayStyle(
                         const SystemUiOverlayStyle(
-                      statusBarColor: whiteColor,
-                    ));
+                            statusBarColor: whiteColor,
+                            systemNavigationBarColor: whiteColor));
                   },
                 );
                 await analytics.logEvent(
@@ -131,8 +131,8 @@ class AccountScreenState extends State<AccountScreen> {
                   (value) {
                     SystemChrome.setSystemUIOverlayStyle(
                         const SystemUiOverlayStyle(
-                      statusBarColor: whiteColor,
-                    ));
+                            statusBarColor: whiteColor,
+                            systemNavigationBarColor: whiteColor));
                   },
                 );
                 await analytics.logEvent(
@@ -465,8 +465,9 @@ class AccountScreenState extends State<AccountScreen> {
                                       (value) {
                                         SystemChrome.setSystemUIOverlayStyle(
                                             const SystemUiOverlayStyle(
-                                          statusBarColor: whiteColor,
-                                        ));
+                                                statusBarColor: whiteColor,
+                                                systemNavigationBarColor:
+                                                    whiteColor));
                                       },
                                     );
                                     await analytics.logEvent(

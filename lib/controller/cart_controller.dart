@@ -419,10 +419,6 @@ class CartController extends BaseController {
             'color': '#070707',
           },
           'fullscreen': true,
-          'prefill': {
-            'contact': '9002973232',
-            'email': 'sonamagrahari11@gmail.com'
-          }
         };
         razorpay.open(options);
         /*  Navigator.of(context)

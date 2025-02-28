@@ -216,6 +216,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                   SystemChrome.setSystemUIOverlayStyle(
                       const SystemUiOverlayStyle(
                     statusBarColor: homeAppBarColor,
+                    systemNavigationBarColor: homeAppBarColor,
                   ));
                 },
               );
@@ -226,6 +227,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                   SystemChrome.setSystemUIOverlayStyle(
                       const SystemUiOverlayStyle(
                     statusBarColor: homeAppBarColor,
+                    systemNavigationBarColor: homeAppBarColor,
                   ));
                 },
               );
@@ -549,6 +551,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         SystemChrome.setSystemUIOverlayStyle(
                                             const SystemUiOverlayStyle(
                                           statusBarColor: homeAppBarColor,
+                                          systemNavigationBarColor:
+                                              homeAppBarColor,
                                         ));
                                       },
                                     ));

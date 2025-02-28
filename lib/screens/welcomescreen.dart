@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
@@ -33,6 +34,11 @@ class WelcomeScreenState extends State<WelcomeScreen>
     initializeVideoPlayerFuture = videoController.initialize();
     videoController.play();
     videoController.setLooping(true);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Colors.transparent));
+    });
     super.initState();
   }
 

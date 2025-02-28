@@ -129,8 +129,8 @@ class BrandsScreenState extends State<BrandsScreen> {
                           (value) {
                             SystemChrome.setSystemUIOverlayStyle(
                                 const SystemUiOverlayStyle(
-                              statusBarColor: whiteColor,
-                            ));
+                                    statusBarColor: whiteColor,
+                                    systemNavigationBarColor: whiteColor));
                           },
                         );
                         await analytics.logEvent(
@@ -145,8 +145,8 @@ class BrandsScreenState extends State<BrandsScreen> {
                           (value) {
                             SystemChrome.setSystemUIOverlayStyle(
                                 const SystemUiOverlayStyle(
-                              statusBarColor: whiteColor,
-                            ));
+                                    statusBarColor: whiteColor,
+                                    systemNavigationBarColor: whiteColor));
                           },
                         );
                         await analytics.logEvent(

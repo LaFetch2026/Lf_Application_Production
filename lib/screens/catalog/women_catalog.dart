@@ -63,6 +63,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                             SystemChrome.setSystemUIOverlayStyle(
                                 const SystemUiOverlayStyle(
                               statusBarColor: whiteColor,
+                              systemNavigationBarColor: whiteColor,
                             ));
                           },
                         ));
@@ -79,6 +80,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                     SystemChrome.setSystemUIOverlayStyle(
                         const SystemUiOverlayStyle(
                       statusBarColor: whiteColor,
+                      systemNavigationBarColor: whiteColor,
                     ));
                   },
                 );
@@ -95,6 +97,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                     SystemChrome.setSystemUIOverlayStyle(
                         const SystemUiOverlayStyle(
                       statusBarColor: whiteColor,
+                      systemNavigationBarColor: whiteColor,
                     ));
                   },
                 );

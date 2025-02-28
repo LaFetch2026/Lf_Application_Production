@@ -43,6 +43,7 @@ class WishlistScreenState extends State<WishlistScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: statusBarColor,
+        systemNavigationBarColor: statusBarColor,
       ));
     });
     wishlistController.hasnextpage.value = true;

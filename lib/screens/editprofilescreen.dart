@@ -72,6 +72,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: whiteTextColor,
+        systemNavigationBarColor: whiteTextColor,
       ));
     });
     super.initState();

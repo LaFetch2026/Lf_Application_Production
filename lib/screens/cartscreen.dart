@@ -68,10 +68,12 @@ class CartScreenState extends State<CartScreen> {
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: widget.backgroundcolor == whiteColor
-            ? statusBarColor
-            : homeAppBarColor,
-      ));
+          statusBarColor: widget.backgroundcolor == whiteColor
+              ? statusBarColor
+              : homeAppBarColor,
+          systemNavigationBarColor: widget.backgroundcolor == whiteColor
+              ? statusBarColor
+              : homeAppBarColor));
     });
     getPrefrenceValue();
     WidgetsBinding.instance

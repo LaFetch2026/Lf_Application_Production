@@ -58,6 +58,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: statusBarColor,
+        systemNavigationBarColor: statusBarColor,
       ));
     });
     WidgetsBinding.instance
