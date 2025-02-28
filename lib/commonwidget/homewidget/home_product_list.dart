@@ -65,7 +65,14 @@ class HomeProductList extends StatelessWidget {
                                             list[index]["images"] != null
                                         ? ImageFiltered(
                                             imageFilter: ImageFilter.blur(
-                                                sigmaX: 0.5, sigmaY: 0.5),
+                                                sigmaX: list.length >= 4 &&
+                                                        index == 3
+                                                    ? 1
+                                                    : 0,
+                                                sigmaY: list.length >= 4 &&
+                                                        index == 3
+                                                    ? 1
+                                                    : 0),
                                             child: SizedBox(
                                               height: 170.sp,
                                               width: 136.sp,

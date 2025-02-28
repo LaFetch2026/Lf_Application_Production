@@ -29,7 +29,7 @@ class DummybrandList extends StatelessWidget {
             itemBuilder: (ctx, index) {
               return AnimationConfiguration.staggeredList(
                 position: index,
-                duration: const Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 100),
                 child: SlideAnimation(
                   verticalOffset: 50.0,
                   child: FadeInAnimation(
