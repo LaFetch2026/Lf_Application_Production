@@ -112,10 +112,10 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                                   .toString(),
                               widget.productId);
                           Timer(Duration(seconds: 1), () {
-                            if (widget.categoryId != 0) {
+/*                             if (widget.categoryId != 0) {
                               catalogControler
                                   .getCategoryProductData(widget.categoryId);
-                            }
+                            } */
                             if (widget.screen == "ProductDetails") {
                               wishlistController.getWishlistProductDetails(
                                   widget.productId, "", whiteColor);

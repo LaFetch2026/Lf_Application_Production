@@ -82,6 +82,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final PageController _pageController = PageController(
     initialPage: 0,
   );
+  ScrollController _scrollController = ScrollController();
   /* final List<Map<String, String>> reviewsCount = [
     {'id': '1', 'title': '5', 'count': '1121', 'total': '2015'},
     {'id': '2', 'title': '4', 'count': '406', 'total': '2015'},
@@ -454,12 +455,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       ),
                                     )),
                               ),
-                              int.parse(i['stocks'].toString()) > 10
+                              int.parse(i['stocks'].toString()) > 1
                                   ? const SizedBox()
                                   : Padding(
                                       padding: EdgeInsets.only(top: 8.0.sp),
                                       child: AppSpacingText(
-                                        text: '${i['stocks'].toString()} left',
+                                        text:
+                                            'Only ${i['stocks'].toString()} left',
                                         fontFamily: "Franklin Gothic Regular",
                                         fontWeight: FontWeight.w400,
                                         color: redColor,
@@ -725,6 +727,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       productController.selectedProductColor = "";
       productController.isExpressDelivery.value = false;
       productController.expressValue.value = 0;
+      productController.errorSizeMsg.value = "";
+      productController.errorColorMsg.value = "";
     });
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         productController.getProductDetails(
@@ -879,6 +883,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ),
             Expanded(
               child: SingleChildScrollView(
+                controller: _scrollController,
                 child: Stack(
                   children: [
                     Visibility(
@@ -1683,6 +1688,29 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                               )
                                                       ],
                                                     )),
+                                                Visibility(
+                                                  visible: productController
+                                                              .errorSizeMsg
+                                                              .value ==
+                                                          ""
+                                                      ? false
+                                                      : true,
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 10.0.sp,
+                                                        left: 12.sp),
+                                                    child: AppSpacingText(
+                                                      text: productController
+                                                          .errorSizeMsg.value,
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: redColor,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ),
                                                 productController
                                                         .showSizeList.value
                                                     ? getListForProductSize()
@@ -1795,6 +1823,29 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         ),
                                                       ],
                                                     )),
+                                                Visibility(
+                                                  visible: productController
+                                                              .errorColorMsg
+                                                              .value ==
+                                                          ""
+                                                      ? false
+                                                      : true,
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 10.0.sp,
+                                                        left: 12.sp),
+                                                    child: AppSpacingText(
+                                                      text: productController
+                                                          .errorColorMsg.value,
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: redColor,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                ),
                                                 getListForProductColor(),
                                               ],
                                             ),
@@ -4623,6 +4674,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   },
                                 );
                                 productController.addToCart.value = false;
+                                _scrollController.animateTo(
+                                  MediaQuery.of(context).size.height / 2.sp +
+                                      150.sp,
+                                  duration: Duration(seconds: 1),
+                                  curve: Curves.easeInOut,
+                                );
                               },
                               onPressedSecond: () {
                                 if (productController
@@ -4630,6 +4687,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   productController.callAddtoCart(1, "buy now",
                                       widget.backgroundcolor, widget.productId);
                                 }
+                                _scrollController.animateTo(
+                                  MediaQuery.of(context).size.height / 2.sp +
+                                      150.sp,
+                                  duration: Duration(seconds: 1),
+                                  curve: Curves.easeInOut,
+                                );
                               },
                               controller: productController)
                           : DoubleButtonIconNew(
@@ -4662,6 +4725,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     //  listClick(widgetKey);
                                   }
                                 }
+                                _scrollController.animateTo(
+                                  MediaQuery.of(context).size.height / 2.sp +
+                                      150.sp,
+                                  duration: Duration(seconds: 1),
+                                  curve: Curves.easeInOut,
+                                );
                                 await analytics.logEvent(
                                   name: 'productDetails_btnaddtocart',
                                   parameters: <String, Object>{
@@ -4675,6 +4744,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   productController.callAddtoCart(1, "buy now",
                                       widget.backgroundcolor, widget.productId);
                                 }
+                                _scrollController.animateTo(
+                                  MediaQuery.of(context).size.height / 2.sp +
+                                      150.sp,
+                                  duration: Duration(seconds: 1),
+                                  curve: Curves.easeInOut,
+                                );
                               },
                               controller: productController)),
             )

@@ -175,6 +175,8 @@ class ProductController extends BaseController {
   RxString addressText = "".obs;
   RxString selectedCategoryGender = "".obs;
   RxString addressTypeValue = "".obs;
+  RxString errorSizeMsg = "".obs;
+  RxString errorColorMsg = "".obs;
   List<bool> reorderSelected = List.generate(50, (i) => false).obs;
   TextEditingController brandController = TextEditingController();
   TextEditingController branddetailsSearchController = TextEditingController();
@@ -197,15 +199,19 @@ class ProductController extends BaseController {
 
   bool checkDetailsValidation() {
     if (sizeInventoryId.value == 0 && sizeInventoryList.isNotEmpty) {
-      getSnackBar(
+      /*  getSnackBar(
         "Select Size",
-      );
+      ); */
+      errorSizeMsg.value = "Select Size";
+      errorColorMsg.value = "";
       return false;
     }
     if (colorInventoryId.value == 0 && colorInventoryList.isNotEmpty) {
-      getSnackBar(
+      /*  getSnackBar(
         "Select color",
-      );
+      ); */
+      errorColorMsg.value = "Select Color";
+      errorSizeMsg.value = "";
       return false;
     }
     /*  if (fabricInventoryId.value == 0 && fabricInventoryList.isNotEmpty) {
@@ -214,6 +220,8 @@ class ProductController extends BaseController {
       );
       return false;
     } */
+    errorSizeMsg.value = "";
+    errorColorMsg.value = "";
     return true;
   }
 
@@ -2963,6 +2971,8 @@ class ProductController extends BaseController {
               body: json.encode(sendData));
       if (response.statusCode == 200) {
         addToCart.value = true;
+        errorColorMsg.value = "";
+        errorSizeMsg.value = "";
         if (type == "reorder") {
           Get.to(CartScreen());
           reorderSelected.clear();

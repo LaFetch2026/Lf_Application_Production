@@ -162,7 +162,7 @@ class BottomSizeState extends State<BottomSize> {
                                         ),
                                       )),
                                 ),
-                                int.parse(i['stocks'].toString()) > 10
+                                int.parse(i['stocks'].toString()) > 1
                                     ? const SizedBox()
                                     : Padding(
                                         padding: EdgeInsets.only(top: 8.0.sp),

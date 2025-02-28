@@ -51,8 +51,8 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => controller.getCategoryProductData(widget.catalogId));
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        controller.getCategoryProductData(widget.catalogId, widget.genderType));
     /* WidgetsBinding.instance
         .addPostFrameCallback((_) => productController.id.value = 0); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
