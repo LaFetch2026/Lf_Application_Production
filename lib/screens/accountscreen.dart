@@ -111,7 +111,14 @@ class AccountScreenState extends State<AccountScreen> {
               showSearch: false,
               title: "Profile",
               onPressedHeart: () async {
-                Get.to(const WishlistScreen());
+                Get.to(const WishlistScreen())?.then(
+                  (value) {
+                    SystemChrome.setSystemUIOverlayStyle(
+                        const SystemUiOverlayStyle(
+                      statusBarColor: whiteColor,
+                    ));
+                  },
+                );
                 await analytics.logEvent(
                   name: 'wishlist_page',
                   parameters: <String, Object>{
@@ -120,7 +127,14 @@ class AccountScreenState extends State<AccountScreen> {
                 );
               },
               onPressedCart: () async {
-                Get.to(const CartScreen());
+                Get.to(const CartScreen())?.then(
+                  (value) {
+                    SystemChrome.setSystemUIOverlayStyle(
+                        const SystemUiOverlayStyle(
+                      statusBarColor: whiteColor,
+                    ));
+                  },
+                );
                 await analytics.logEvent(
                   name: 'cart_page',
                   parameters: <String, Object>{
@@ -231,6 +245,12 @@ class AccountScreenState extends State<AccountScreen> {
                                                           )))
                                                   .then((value) => setState(
                                                         () async {
+                                                          SystemChrome
+                                                              .setSystemUIOverlayStyle(
+                                                                  const SystemUiOverlayStyle(
+                                                            statusBarColor:
+                                                                whiteColor,
+                                                          ));
                                                           controller
                                                               .getProfileData();
                                                           controller
@@ -441,7 +461,14 @@ class AccountScreenState extends State<AccountScreen> {
                                 ),
                                 GestureDetector(
                                   onTap: () async {
-                                    Get.to(WishlistScreen());
+                                    Get.to(WishlistScreen())?.then(
+                                      (value) {
+                                        SystemChrome.setSystemUIOverlayStyle(
+                                            const SystemUiOverlayStyle(
+                                          statusBarColor: whiteColor,
+                                        ));
+                                      },
+                                    );
                                     await analytics.logEvent(
                                       name: 'wishlist_page',
                                       parameters: <String, Object>{
@@ -491,7 +518,15 @@ class AccountScreenState extends State<AccountScreen> {
                                       onTap: () async {
                                         Get.to(const SavedAddressScreen(
                                           type: "address",
-                                        ));
+                                        ))?.then(
+                                          (value) {
+                                            SystemChrome
+                                                .setSystemUIOverlayStyle(
+                                                    const SystemUiOverlayStyle(
+                                              statusBarColor: whiteColor,
+                                            ));
+                                          },
+                                        );
                                         await analytics.logEvent(
                                           name: 'addresslist_page',
                                           parameters: <String, Object>{
@@ -551,6 +586,12 @@ class AccountScreenState extends State<AccountScreen> {
                                             .then((value) => setState(
                                                   () async {
                                                     controller.getProfileData();
+                                                    SystemChrome
+                                                        .setSystemUIOverlayStyle(
+                                                            const SystemUiOverlayStyle(
+                                                      statusBarColor:
+                                                          whiteColor,
+                                                    ));
                                                   },
                                                 ));
                                       },

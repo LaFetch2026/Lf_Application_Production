@@ -2,6 +2,7 @@
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
@@ -27,6 +28,14 @@ class DeleteAccountScreen extends StatefulWidget {
 class DeleteAccountScreenState extends State<DeleteAccountScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final controller = Get.put(ProfileController());
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: statusBarColor,
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {

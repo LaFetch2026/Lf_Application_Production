@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -54,6 +55,11 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
         (_) => controller.getCategoryProductData(widget.catalogId));
     /* WidgetsBinding.instance
         .addPostFrameCallback((_) => productController.id.value = 0); */
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: statusBarColor,
+      ));
+    });
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     super.initState();

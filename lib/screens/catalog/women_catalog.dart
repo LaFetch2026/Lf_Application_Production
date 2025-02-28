@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -58,7 +59,12 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                 searchController.searchController.clear();
                 Navigator.push(context, scaleIn(const SearchScreen()))
                     .then((value) => setState(
-                          () {},
+                          () {
+                            SystemChrome.setSystemUIOverlayStyle(
+                                const SystemUiOverlayStyle(
+                              statusBarColor: whiteColor,
+                            ));
+                          },
                         ));
                 await analytics.logEvent(
                   name: 'search_page',
@@ -68,7 +74,14 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                 );
               },
               onPressedHeart: () async {
-                Get.to(const WishlistScreen());
+                Get.to(const WishlistScreen())?.then(
+                  (value) {
+                    SystemChrome.setSystemUIOverlayStyle(
+                        const SystemUiOverlayStyle(
+                      statusBarColor: whiteColor,
+                    ));
+                  },
+                );
                 await analytics.logEvent(
                   name: 'wishlist_page',
                   parameters: <String, Object>{
@@ -77,7 +90,14 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                 );
               },
               onPressedCart: () async {
-                Get.to(const CartScreen());
+                Get.to(const CartScreen())?.then(
+                  (value) {
+                    SystemChrome.setSystemUIOverlayStyle(
+                        const SystemUiOverlayStyle(
+                      statusBarColor: whiteColor,
+                    ));
+                  },
+                );
                 await analytics.logEvent(
                   name: 'cart_page',
                   parameters: <String, Object>{
@@ -282,7 +302,16 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                       .value,
                                                   catalogText: controller
                                                       .categoryName.value,
-                                                ));
+                                                ))?.then(
+                                                  (value) {
+                                                    SystemChrome
+                                                        .setSystemUIOverlayStyle(
+                                                            const SystemUiOverlayStyle(
+                                                      statusBarColor:
+                                                          whiteColor,
+                                                    ));
+                                                  },
+                                                );
                                                 await analytics.logEvent(
                                                   name:
                                                       "catalog_page_${controller.categoryName.value}",

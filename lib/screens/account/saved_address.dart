@@ -41,6 +41,11 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
       shipController.dailogSelected = List.generate(50, (i) => false);
       controller.queryText.value = "";
     });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: statusBarColor,
+      ));
+    });
     super.initState();
   }
 

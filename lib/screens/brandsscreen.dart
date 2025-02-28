@@ -125,7 +125,14 @@ class BrandsScreenState extends State<BrandsScreen> {
                       showSearch: false,
                       title: "Brands",
                       onPressedHeart: () async {
-                        Get.to(const WishlistScreen());
+                        Get.to(const WishlistScreen())?.then(
+                          (value) {
+                            SystemChrome.setSystemUIOverlayStyle(
+                                const SystemUiOverlayStyle(
+                              statusBarColor: whiteColor,
+                            ));
+                          },
+                        );
                         await analytics.logEvent(
                           name: 'wishlist_page',
                           parameters: <String, Object>{
@@ -134,7 +141,14 @@ class BrandsScreenState extends State<BrandsScreen> {
                         );
                       },
                       onPressedCart: () async {
-                        Get.to(const CartScreen());
+                        Get.to(const CartScreen())?.then(
+                          (value) {
+                            SystemChrome.setSystemUIOverlayStyle(
+                                const SystemUiOverlayStyle(
+                              statusBarColor: whiteColor,
+                            ));
+                          },
+                        );
                         await analytics.logEvent(
                           name: 'cart_page',
                           parameters: <String, Object>{
@@ -441,7 +455,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                     screen: widget.screen!,
                                                                                   ))?.then((value) {
                                                                                     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-                                                                                      statusBarColor: statusBarColor,
+                                                                                      statusBarColor: whiteColor,
                                                                                     ));
                                                                                   });
                                                                                   await analytics.logEvent(
@@ -588,7 +602,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                             screen: widget.screen!,
                                                                                                           ))?.then((value) {
                                                                                                             SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-                                                                                                              statusBarColor: statusBarColor,
+                                                                                                              statusBarColor: whiteColor,
                                                                                                             ));
                                                                                                           });
                                                                                                           await analytics.logEvent(
@@ -607,7 +621,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                                     width: 97.sp,
                                                                                                                     child: CachedNetworkImage(
                                                                                                                       cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-                                                                                                                      fit: BoxFit.cover,
+                                                                                                                      fit: BoxFit.contain,
                                                                                                                       imageUrl: val.brandList[a]["brands"][index]["products"][i]["images"][0]["name"],
                                                                                                                       errorWidget: (context, url, error) => Image.asset(
                                                                                                                         downloadImage,
@@ -651,7 +665,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                     screen: widget.screen!,
                                                                                                   ))?.then((value) {
                                                                                                     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-                                                                                                      statusBarColor: statusBarColor,
+                                                                                                      statusBarColor: whiteColor,
                                                                                                     ));
                                                                                                   });
                                                                                                   await analytics.logEvent(

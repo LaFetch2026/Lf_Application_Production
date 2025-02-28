@@ -88,7 +88,7 @@ class HomeScreenState extends State<HomeScreen> {
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: statusBarColor,
+        statusBarColor: whiteColor,
       ));
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -380,6 +380,10 @@ class HomeScreenState extends State<HomeScreen> {
                         () {
                           productController.categoryFilter.value =
                               homeController.homeGenderValue.value;
+                          SystemChrome.setSystemUIOverlayStyle(
+                              const SystemUiOverlayStyle(
+                            statusBarColor: whiteColor,
+                          ));
                           /*   productController.getHandPickedProduct(
                               "", false, false, productController.tagId.value); */
                         },
@@ -392,7 +396,14 @@ class HomeScreenState extends State<HomeScreen> {
               );
             },
             onPressedHeart: () async {
-              Get.to(const WishlistScreen());
+              Get.to(const WishlistScreen())?.then(
+                (value) {
+                  SystemChrome.setSystemUIOverlayStyle(
+                      const SystemUiOverlayStyle(
+                    statusBarColor: whiteColor,
+                  ));
+                },
+              );
               await analytics.logEvent(
                 name: 'wishlist_page',
                 parameters: <String, Object>{
@@ -401,7 +412,14 @@ class HomeScreenState extends State<HomeScreen> {
               );
             },
             onPressedCart: () async {
-              Navigator.push(context, scaleIn(const CartScreen()));
+              Navigator.push(context, scaleIn(const CartScreen())).then(
+                (value) {
+                  SystemChrome.setSystemUIOverlayStyle(
+                      const SystemUiOverlayStyle(
+                    statusBarColor: whiteColor,
+                  ));
+                },
+              );
               await analytics.logEvent(
                 name: 'cart_page',
                 parameters: <String, Object>{
@@ -1351,7 +1369,16 @@ class HomeScreenState extends State<HomeScreen> {
                                                                     .value,
                                                             categoryList:
                                                                 categoryList,
-                                                            tagIds: const []));
+                                                            tagIds: const []))?.then(
+                                                          (value) {
+                                                            SystemChrome
+                                                                .setSystemUIOverlayStyle(
+                                                                    const SystemUiOverlayStyle(
+                                                              statusBarColor:
+                                                                  whiteColor,
+                                                            ));
+                                                          },
+                                                        );
                                                         await analytics
                                                             .logEvent(
                                                           name:
@@ -1632,7 +1659,7 @@ class HomeScreenState extends State<HomeScreen> {
                                                                 .setSystemUIOverlayStyle(
                                                                     const SystemUiOverlayStyle(
                                                               statusBarColor:
-                                                                  statusBarColor,
+                                                                  whiteColor,
                                                             ));
                                                           },
                                                         );
@@ -1795,6 +1822,11 @@ class HomeScreenState extends State<HomeScreen> {
                                         )).then((value) => setState(
                                           () {
                                             cartController.getCartData();
+                                            SystemChrome
+                                                .setSystemUIOverlayStyle(
+                                                    const SystemUiOverlayStyle(
+                                              statusBarColor: whiteColor,
+                                            ));
                                           },
                                         ));
                                     await analytics.logEvent(
