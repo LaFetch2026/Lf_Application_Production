@@ -1258,7 +1258,7 @@ class HomeScreenState extends State<HomeScreen> {
                             child: Center(
                               child: Marquee(
                                 text:
-                                    '  More than 50+ Homegrown Brands Fast and Reliable Fashion for all occassions',
+                                    '  ✦  More than 50+ Homegrown Brands  ✦  Fast and Reliable  ✦  Fashion for all occassions',
                                 //  text:
                                 //    '  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
                                 style: TextStyle(

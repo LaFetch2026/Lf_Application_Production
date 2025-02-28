@@ -585,7 +585,7 @@ class QuickScreenState extends State<QuickScreen> {
                             child: Center(
                               child: Marquee(
                                 text:
-                                    '  More than 50+ Homegrown Brands -- Delivered in 30 mins',
+                                    '  ✦  More than 50+ Homegrown Brands  ✦  Delivered in 30 mins',
                                 //text:
                                 //      '  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
                                 style: TextStyle(
