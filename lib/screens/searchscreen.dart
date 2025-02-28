@@ -1377,15 +1377,15 @@ class SearchScreenState extends State<SearchScreen> {
                                                                         CrossAxisAlignment
                                                                             .center,
                                                                     children: [
-                                                                      controller.suggestedList[index]["thumbnail"].isNotEmpty &&
-                                                                              controller.suggestedList[index]["thumbnail"] != null
+                                                                      controller.suggestedList[index]["image"].isNotEmpty &&
+                                                                              controller.suggestedList[index]["image"] != null
                                                                           ? SizedBox(
                                                                               width: 104.sp,
                                                                               height: 130.sp,
                                                                               child: CachedNetworkImage(
                                                                                 cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
                                                                                 fit: BoxFit.cover,
-                                                                                imageUrl: isImage(controller.suggestedList[index]["thumbnail"]) ? controller.suggestedList[index]["thumbnail"] : controller.suggestedList[index]["thumbnail"],
+                                                                                imageUrl: isImage(controller.suggestedList[index]["image"]) ? controller.suggestedList[index]["image"] : controller.suggestedList[index]["image"],
                                                                                 errorWidget: (context, url, error) => Image.asset(
                                                                                   downloadImage,
                                                                                   fit: BoxFit.cover,
