@@ -617,7 +617,8 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                                     width: 97.sp,
                                                                                                                     child: CachedNetworkImage(
                                                                                                                       cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-                                                                                                                      fit: BoxFit.contain,
+                                                                                                                      fit: BoxFit.cover,
+                                                                                                                      alignment: Alignment.topCenter,
                                                                                                                       imageUrl: val.brandList[a]["brands"][index]["products"][i]["images"][0]["name"],
                                                                                                                       errorWidget: (context, url, error) => Image.asset(
                                                                                                                         downloadImage,
