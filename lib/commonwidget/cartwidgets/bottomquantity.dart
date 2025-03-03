@@ -49,7 +49,7 @@ class BottomQuantityState extends State<BottomQuantity> {
             topRight: Radius.circular(16.0.sp)), */
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 5.sp),
+        padding: EdgeInsets.symmetric(vertical: 5.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

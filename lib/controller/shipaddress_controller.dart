@@ -144,7 +144,7 @@ class ShipAddressController extends BaseController {
 
   bool checkLocationValidation() {
     if (lat.value == 0.0 && lng.value == 0.0) {
-      getSnackBar("Select Location");
+      // getSnackBar("Select Location");
       return false;
     }
     return true;

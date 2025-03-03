@@ -61,8 +61,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarColor: homeAppBarColor.withOpacity(0.5),
-          systemNavigationBarColor: homeAppBarColor.withOpacity(0.5)));
+          statusBarColor: homeAppBarColor,
+          systemNavigationBarColor: homeAppBarColor));
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.brandProductDetailsList.clear();
@@ -115,7 +115,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
           sigmaX: isBottomSheet ? 1 : 0, sigmaY: isBottomSheet ? 1 : 0),
       child: Scaffold(
           key: scaffoldKey,
-          backgroundColor: homeAppBarColor.withOpacity(0.5),
+          backgroundColor: homeAppBarColor,
           body: Stack(
             children: [
               Visibility(
@@ -176,7 +176,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                         )
                       : Container(
                           width: MediaQuery.of(context).size.width,
-                          color: homeAppBarColor.withOpacity(0.5),
+                          color: homeAppBarColor,
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -239,8 +239,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                               SystemChrome
                                                   .setSystemUIOverlayStyle(
                                                       SystemUiOverlayStyle(
-                                                statusBarColor: homeAppBarColor
-                                                    .withOpacity(0.5),
+                                                statusBarColor: homeAppBarColor,
                                               ));
                                             },
                                           );
@@ -269,8 +268,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                               SystemChrome
                                                   .setSystemUIOverlayStyle(
                                                       SystemUiOverlayStyle(
-                                                statusBarColor: homeAppBarColor
-                                                    .withOpacity(0.5),
+                                                statusBarColor: homeAppBarColor,
                                               ));
                                             },
                                           );
