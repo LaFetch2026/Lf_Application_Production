@@ -9,7 +9,6 @@ import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/commonwidget/doublebutton_new.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import '../../utils/constants.dart';
-import '../common_widgets.dart';
 import '../smallbtn.dart';
 
 class BottomWishlist extends StatefulWidget {
@@ -34,6 +33,7 @@ class BottomWishlist extends StatefulWidget {
 
 class _BottomWishlistState extends State<BottomWishlist> {
   String text = "0";
+  String error = "";
   int id = 0;
   List<bool> wishlistSelected = List.generate(50, (i) => false);
 
@@ -46,6 +46,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
         color: whiteColor,
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
@@ -179,7 +180,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                       ? Container(
                           //  color: blue,
                           width: double.infinity,
-                          height: 250.sp,
+                          height: 240.sp,
                           child: ListView.builder(
                               physics: const ScrollPhysics(),
                               itemCount: widget.wishlistList.length,
@@ -395,7 +396,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                                                                 id = widget
                                                                         .wishlistList[
                                                                     index]["id"];
-
+                                                                error = "";
                                                                 setState(() {});
                                                               },
                                                             )),
@@ -443,6 +444,23 @@ class _BottomWishlistState extends State<BottomWishlist> {
               ],
             ),
           ),
+          Visibility(
+            visible: error != "" ? true : false,
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: 20.sp,
+                right: 20.sp,
+                top: 2.sp,
+              ),
+              child: AppText(
+                text: error,
+                fontFamily: "Franklin Gothic Regular",
+                fontWeight: FontWeight.w400,
+                color: redColor,
+                fontSize: 12,
+              ),
+            ),
+          ),
           widget.wishlistList.isNotEmpty
               ? DoubleButtonNew(
                   firstText: "CLOSE",
@@ -456,7 +474,9 @@ class _BottomWishlistState extends State<BottomWishlist> {
                     if (id != 0) {
                       widget.onPressed?.call(id);
                     } else {
-                      getSnackBar("Select Wishlist");
+                      // getSnackBar("Select Wishlist");
+                      error = "Select Wishlist";
+                      setState(() {});
                     }
                   },
                 )
