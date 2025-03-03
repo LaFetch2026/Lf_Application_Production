@@ -75,6 +75,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         systemNavigationBarColor: whiteTextColor,
       ));
     });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      profileController.nameError.value = "";
+      profileController.phoneError.value = "";
+      profileController.emailError.value = "";
+      profileController.genderError.value = "";
+    });
     super.initState();
   }
 
@@ -132,6 +138,25 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         controller: profileController.nameController,
                       ),
                     ),
+                    Obx(() => Visibility(
+                          visible: profileController.nameError.value != ""
+                              ? true
+                              : false,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 20.sp,
+                              right: 20.sp,
+                              top: 2.sp,
+                            ),
+                            child: AppText(
+                              text: profileController.nameError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )),
                     Obx(
                       () => Padding(
                         padding: EdgeInsets.only(top: 10.sp),
@@ -142,6 +167,25 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             controller: profileController.phoneController),
                       ),
                     ),
+                    Obx(() => Visibility(
+                          visible: profileController.phoneError.value != ""
+                              ? true
+                              : false,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 20.sp,
+                              right: 20.sp,
+                              top: 2.sp,
+                            ),
+                            child: AppText(
+                              text: profileController.phoneError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )),
                     Obx(() => profileController.isEditNumber.value
                         ? Row(
                             children: [
@@ -293,6 +337,25 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         controller: profileController.emailController,
                       ),
                     ),
+                    Obx(() => Visibility(
+                          visible: profileController.emailError.value != ""
+                              ? true
+                              : false,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 20.sp,
+                              right: 20.sp,
+                              top: 2.sp,
+                            ),
+                            child: AppText(
+                              text: profileController.emailError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )),
                     Padding(
                       padding: EdgeInsets.only(
                           left: 16.sp, top: 20.sp, right: 16.sp),
@@ -351,6 +414,25 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                       ),
                     ),
+                    Obx(() => Visibility(
+                          visible: profileController.genderError.value != ""
+                              ? true
+                              : false,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 20.sp,
+                              right: 20.sp,
+                              top: 2.sp,
+                            ),
+                            child: AppText(
+                              text: profileController.genderError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )),
                     Obx(
                       () => profileController.showList.value
                           ? Padding(

@@ -35,6 +35,10 @@ class ProfileController extends BaseController {
   final emailController = TextEditingController();
   final gerderController = TextEditingController();
   final phoneController = TextEditingController();
+  RxString nameError = "".obs;
+  RxString phoneError = "".obs;
+  RxString emailError = "".obs;
+  RxString genderError = "".obs;
 
   final RxList<String> genderList = [
     'Male',
@@ -44,44 +48,65 @@ class ProfileController extends BaseController {
 
   bool checkvalidation(String name, String phone, String email, int gender) {
     String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
-    /*  String p =
+    String p =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regExp = RegExp(p); */
+    RegExp regExp = RegExp(p);
     RegExp regExPhone = RegExp(patttern);
     if (name.isEmpty) {
-      getSnackBar("Enter Name");
+      // getSnackBar("Enter Name");
+      nameError.value = "Enter Name";
       return false;
     }
     if (phone.isEmpty) {
-      getSnackBar(
+      /*  getSnackBar(
         "Enter Phone Number",
-      );
+      ); */
+      nameError.value = "";
+      phoneError.value = "Enter Phone Number";
       return false;
     }
     if (phone.length < 10) {
-      getSnackBar(
+      /*  getSnackBar(
         "Enter 10 digit Phone Number",
-      );
+      ); */
+      nameError.value = "";
+      phoneError.value = "Enter 10 digit Phone Number";
       return false;
     }
     if (!regExPhone.hasMatch(phone)) {
-      getSnackBar(
+      /*  getSnackBar(
         "Enter valid Phone Number",
-      );
+      ); */
+      nameError.value = "";
+      phoneError.value = "Enter valid Phone Number";
       return false;
     }
-    /*  if (email.isEmpty) {
-      getSnackBar("Enter Email");
+    if (email.isEmpty) {
+      //getSnackBar("Enter Email");
+      nameError.value = "";
+      phoneError.value = "";
+      emailError.value = "Enter Email";
       return false;
     }
     if (!regExp.hasMatch(email)) {
-      getSnackBar("Enter Valid Email Id");
-      return false;
-    } */
-    if (gender == 0) {
-      getSnackBar("Select Gender");
+      // getSnackBar("Enter Valid Email Id");
+      nameError.value = "";
+      phoneError.value = "";
+      emailError.value = "Enter Valid Email Id";
       return false;
     }
+    if (gender == 0) {
+      // getSnackBar("Select Gender");
+      nameError.value = "";
+      phoneError.value = "";
+      emailError.value = "";
+      genderError.value = "Select Gender";
+      return false;
+    }
+    nameError.value = "";
+    phoneError.value = "";
+    genderError.value = "";
+    emailError.value = "";
     return true;
   }
 
@@ -91,21 +116,32 @@ class ProfileController extends BaseController {
     RegExp regExp = RegExp(p);
 
     if (name.isEmpty) {
-      getSnackBar("Enter Name");
+      // getSnackBar("Enter Name");
+      nameError.value = "Enter Name";
       return false;
     }
     if (email.isEmpty) {
-      getSnackBar("Enter Email");
+      // getSnackBar("Enter Email");
+      nameError.value = "";
+      emailError.value = "Enter Email";
       return false;
     }
     if (!regExp.hasMatch(email)) {
-      getSnackBar("Enter Valid Email Id");
+      //  getSnackBar("Enter Valid Email Id");
+      nameError.value = "";
+      emailError.value = "Enter Valid Email Id";
       return false;
     }
     if (gender == 0) {
-      getSnackBar("Select Gender");
+      // getSnackBar("Select Gender");
+      nameError.value = "";
+      emailError.value = "";
+      genderError.value = "Select Gender";
       return false;
     }
+    nameError.value = "";
+    emailError.value = "";
+    genderError.value = "";
     return true;
   }
 
@@ -204,7 +240,8 @@ class ProfileController extends BaseController {
           } else {
             if (check == false) {
               isPhoneNumber.value = true;
-              getSnackBar("Enter Otp");
+              // getSnackBar("Enter Otp");
+              phoneError.value = "Enter OTP";
             } else {
               if (responseData['data']['email'] != null) {
                 prefs.setString('email', responseData['data']['email']);
@@ -239,11 +276,13 @@ class ProfileController extends BaseController {
         print(response.body);
 
         if (responseData['errors']['phone'] != null) {
-          getSnackBar(responseData['errors']['phone']);
+          //getSnackBar(responseData['errors']['phone']);
+          phoneError.value = responseData['errors']['phone'];
         }
         if (responseData['errors']['otp'] != null) {
           for (var i = 0; i < responseData['errors']['otp'].length; i++) {
-            getSnackBar(responseData['errors']['otp'][i]);
+            // getSnackBar(responseData['errors']['otp'][i]);
+            phoneError.value = responseData['errors']['otp'][i];
           }
         }
       } else if (response.statusCode == 500) {

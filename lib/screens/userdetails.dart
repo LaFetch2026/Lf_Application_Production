@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/commonwidget/login_appbar.dart';
 import 'package:lafetch/commonwidget/loginwidgets/login_widget.dart';
 import 'package:lafetch/commonwidget/text_field.dart';
@@ -24,6 +25,17 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
   final userController = Get.put(ProfileController());
   final loginController = Get.put(LoginController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      userController.nameError.value = "";
+      userController.phoneError.value = "";
+      userController.emailError.value = "";
+      userController.genderError.value = "";
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +85,25 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                         controller: userController.nameController,
                       ),
                     ),
+                    Obx(() => Visibility(
+                          visible: userController.nameError.value != ""
+                              ? true
+                              : false,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 20.sp,
+                              right: 20.sp,
+                              top: 2.sp,
+                            ),
+                            child: AppText(
+                              text: userController.nameError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )),
                     Padding(
                       padding: EdgeInsets.only(top: 24.sp),
                       child: TextFieldWidget(
@@ -80,6 +111,25 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                         controller: userController.emailController,
                       ),
                     ),
+                    Obx(() => Visibility(
+                          visible: userController.emailError.value != ""
+                              ? true
+                              : false,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 20.sp,
+                              right: 20.sp,
+                              top: 2.sp,
+                            ),
+                            child: AppText(
+                              text: userController.emailError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )),
                     Padding(
                       padding: EdgeInsets.only(
                           left: 16.sp, top: 24.sp, right: 16.sp),
@@ -141,6 +191,25 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                         ),
                       ),
                     ),
+                    Obx(() => Visibility(
+                          visible: userController.genderError.value != ""
+                              ? true
+                              : false,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 20.sp,
+                              right: 20.sp,
+                              top: 2.sp,
+                            ),
+                            child: AppText(
+                              text: userController.genderError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )),
                     Obx(
                       () => userController.showList.value
                           ? Padding(
