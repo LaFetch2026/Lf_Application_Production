@@ -60,7 +60,12 @@ class MapScreenState extends State<MapScreen> {
           shipController.locationList.clear();
           shipController.locationController.clear();
         });
-
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: statusBarColor,
+        systemNavigationBarColor: homeAppBarColor,
+      ));
+    });
     if (widget.addressId != 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) =>
           shipController.getAddressDetails(widget.addressId, 2, widget.cartId));

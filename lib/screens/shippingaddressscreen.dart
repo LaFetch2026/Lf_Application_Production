@@ -66,6 +66,13 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
   void initState() {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => shipController.getCitiesData());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      shipController.nameError.value = "";
+      shipController.phoneError.value = "";
+      shipController.addressError.value = "";
+      shipController.localityError.value = "";
+      shipController.addressTypeError.value = "";
+    });
     if (widget.addressId != 0) {
       shipController.stateController.text = widget.stateName;
       shipController.pincodeController.text = widget.pincode;
@@ -411,24 +418,25 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               controller: shipController.nameController,
                             ),
                           ),
-                          /*  shipController.checkvalidation()
-                                ? SizedBox(
-                                    height: 0,
-                                  )
-                                : Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 20.sp,
-                                      right: 20.sp,
-                                      top: 2.sp,
-                                    ),
-                                    child: AppText(
-                                      text: shipController.nameError.value,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: redColor,
-                                      fontSize: 12,
-                                    ),
-                                  ), */
+                          Visibility(
+                            visible: shipController.nameError.value != ""
+                                ? true
+                                : false,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                left: 20.sp,
+                                right: 20.sp,
+                                top: 2.sp,
+                              ),
+                              child: AppText(
+                                text: shipController.nameError.value,
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                                color: redColor,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
                           Padding(
                             padding: EdgeInsets.only(top: 0.sp),
                             child: NumberWidget(
@@ -437,6 +445,25 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                 fillColor: whiteColor,
                                 onPressedLogin: () {},
                                 controller: shipController.phoneController),
+                          ),
+                          Visibility(
+                            visible: shipController.phoneError.value != ""
+                                ? true
+                                : false,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                left: 20.sp,
+                                right: 20.sp,
+                                top: 2.sp,
+                              ),
+                              child: AppText(
+                                text: shipController.phoneError.value,
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                                color: redColor,
+                                fontSize: 12,
+                              ),
+                            ),
                           ),
                           /*    Padding(
                             padding: EdgeInsets.only(
@@ -512,11 +539,49 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               controller: shipController.addressController,
                             ),
                           ),
+                          Visibility(
+                            visible: shipController.addressError.value != ""
+                                ? true
+                                : false,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                left: 20.sp,
+                                right: 20.sp,
+                                top: 2.sp,
+                              ),
+                              child: AppText(
+                                text: shipController.addressError.value,
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                                color: redColor,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
                           Padding(
                             padding: EdgeInsets.only(top: 8.sp),
                             child: TextFieldWidget(
                               hint: "Locality / Town",
                               controller: shipController.localityController,
+                            ),
+                          ),
+                          Visibility(
+                            visible: shipController.localityError.value != ""
+                                ? true
+                                : false,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                left: 20.sp,
+                                right: 20.sp,
+                                top: 2.sp,
+                              ),
+                              child: AppText(
+                                text: shipController.localityError.value,
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                                color: redColor,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                           Padding(
@@ -534,6 +599,25 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                             child: TextFieldWidget(
                               hint: "HOME/FLAT/HOUSE/OFFICE",
                               controller: shipController.addressTypeController,
+                            ),
+                          ),
+                          Visibility(
+                            visible: shipController.addressTypeError.value != ""
+                                ? true
+                                : false,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                left: 20.sp,
+                                right: 20.sp,
+                                top: 2.sp,
+                              ),
+                              child: AppText(
+                                text: shipController.addressTypeError.value,
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                                color: redColor,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                           /*   Padding(

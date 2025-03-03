@@ -53,36 +53,37 @@ class ShipAddressController extends BaseController {
   final addressTypeController = TextEditingController();
   RxString nameError = "".obs;
   RxString phoneError = "".obs;
-  RxString pincodeError = "".obs;
   RxString addressError = "".obs;
   RxString localityError = "".obs;
-  RxString cityError = "".obs;
   RxString addressTypeError = "".obs;
   bool checkvalidation() {
     String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
     RegExp regExp = RegExp(patttern);
     if (nameController.text.toString().trim().isEmpty) {
-      getSnackBar("Enter Name");
-      // nameError.value = "Enter Name";
+      // getSnackBar("Enter Name");
+      nameError.value = "Enter Name";
       return false;
     }
     if (phoneController.text.toString().trim().isEmpty) {
-      getSnackBar("Enter Phone Number");
-      // phoneError.value = "Enter Phone Number";
+      // getSnackBar("Enter Phone Number");
+      phoneError.value = "Enter Phone Number";
+      nameError.value = "";
       return false;
     }
     if (phoneController.text.toString().trim().length < 10) {
-      getSnackBar(
+      /*  getSnackBar(
         "Enter 10 digit Phone Number",
-      );
-      //phoneError.value = "Enter 10 digit Phone Number";
+      ); */
+      phoneError.value = "Enter 10 digit Phone Number";
+      nameError.value = "";
       return false;
     }
     if (!regExp.hasMatch(phoneController.text.toString().trim())) {
-      getSnackBar(
+      /*  getSnackBar(
         "Enter valid Phone Number",
-      );
-      // phoneError.value = "Enter valid Phone Number";
+      ); */
+      phoneError.value = "Enter valid Phone Number";
+      nameError.value = "";
       return false;
     }
     /*  if (pincodeController.text.toString().trim().isEmpty) {
@@ -100,13 +101,18 @@ class ShipAddressController extends BaseController {
       return false;
     } */
     if (addressController.text.toString().trim().isEmpty) {
-      getSnackBar("Enter Address");
-      // addressError.value = "Enter Address";
+      // getSnackBar("Enter Address");
+      addressError.value = "Enter Address";
+      nameError.value = "";
+      phoneError.value = "";
       return false;
     }
     if (localityController.text.toString().trim().isEmpty) {
-      getSnackBar("Enter Locality");
-      //localityError.value = "Enter Locality";
+      // getSnackBar("Enter Locality");
+      localityError.value = "Enter Locality";
+      nameError.value = "";
+      phoneError.value = "";
+      addressError.value = "";
       return false;
     }
     /*   if (cityController.text.toString().trim().isEmpty) {
@@ -119,10 +125,20 @@ class ShipAddressController extends BaseController {
       return false;
     } */
     if (addressTypeController.text.toString().trim().isEmpty) {
-      getSnackBar("Enter Address Type");
-      // addressTypeError.value = "Select Address Type";
+      // getSnackBar("Enter Address Type");
+      addressTypeError.value = "Select Address Type";
+      nameError.value = "";
+      phoneError.value = "";
+      addressError.value = "";
+      localityError.value = "";
       return false;
     }
+
+    addressTypeError.value = "";
+    nameError.value = "";
+    phoneError.value = "";
+    addressError.value = "";
+    localityError.value = "";
     return true;
   }
 

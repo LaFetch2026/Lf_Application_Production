@@ -165,6 +165,12 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                           shipController.dailogSelected.clear();
                                           shipController.dailogSelected =
                                               List.generate(50, (i) => false);
+                                          SystemChrome.setSystemUIOverlayStyle(
+                                              const SystemUiOverlayStyle(
+                                            statusBarColor: statusBarColor,
+                                            systemNavigationBarColor:
+                                                statusBarColor,
+                                          ));
                                         },
                                       ));
                               await analytics.logEvent(
@@ -233,6 +239,12 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                           shipController.dailogSelected.clear();
                                           shipController.dailogSelected =
                                               List.generate(50, (i) => false);
+                                          SystemChrome.setSystemUIOverlayStyle(
+                                              const SystemUiOverlayStyle(
+                                            statusBarColor: statusBarColor,
+                                            systemNavigationBarColor:
+                                                statusBarColor,
+                                          ));
                                         },
                                       ));
                               await analytics.logEvent(
@@ -428,6 +440,10 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                                             shipController.dailogSelected.clear();
                                                                             shipController.dailogSelected =
                                                                                 List.generate(50, (i) => false);
+                                                                            SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+                                                                              statusBarColor: statusBarColor,
+                                                                              systemNavigationBarColor: statusBarColor,
+                                                                            ));
                                                                           },
                                                                         ));
                                                                 await analytics
