@@ -65,6 +65,7 @@ class CartScreenState extends State<CartScreen> {
       controller.couponList.clear();
       controller.selected.clear();
       controller.selected = List.generate(50, (i) => false).obs;
+      controller.addressError.value = "";
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -2753,7 +2754,28 @@ class CartScreenState extends State<CartScreen> {
                             ),
                           ) */
                               Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    Visibility(
+                                      visible:
+                                          controller.addressError.value != ""
+                                              ? true
+                                              : false,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 20.sp,
+                                          right: 20.sp,
+                                          top: 10.sp,
+                                        ),
+                                        child: AppText(
+                                          text: controller.addressError.value,
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: redColor,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
                                     GestureDetector(
                                       onTap: () async {
                                         if (controller.cartDetails["address"] ==
@@ -2893,9 +2915,13 @@ class CartScreenState extends State<CartScreen> {
                                               if (controller
                                                       .cartDetails["address"] ==
                                                   null) {
-                                                getSnackBar(
-                                                    "Add Delivery Address");
+                                                controller.addressError.value =
+                                                    "Add Delivery Address";
+                                                /*   getSnackBar(
+                                                    "Add Delivery Address"); */
                                               } else {
+                                                controller.addressError.value =
+                                                    "";
                                                 if (controller
                                                         .stockErrorText.value ==
                                                     "") {

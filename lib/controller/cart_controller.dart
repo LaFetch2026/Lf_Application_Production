@@ -44,6 +44,7 @@ class CartController extends BaseController {
   RxInt qtyProductId = 0.obs;
   List categoryList = [].obs;
   List tagsList = [].obs;
+  RxString addressError = "".obs;
   List<bool> selected = List.generate(50, (i) => false).obs;
   /* List<Map<String, dynamic>> couponList = [
     {'id': '22', "coupan": 'ECoupan'},

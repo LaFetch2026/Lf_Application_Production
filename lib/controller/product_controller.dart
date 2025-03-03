@@ -2730,19 +2730,21 @@ class ProductController extends BaseController {
               getEstimateDate(id, defaultAddress["zip"]);
             }
           } else {
-            showModalBottomSheet(
-              context: cntx,
-              isScrollControlled: true,
-              constraints: BoxConstraints(
-                  maxWidth: double.infinity,
-                  maxHeight: 600.sp,
-                  minHeight: 500.sp),
-              builder: (ctx) {
-                return ChangeAddressScreen(
-                  cartId: 0,
-                );
-              },
-            );
+            if (id == 0) {
+              showModalBottomSheet(
+                context: cntx,
+                isScrollControlled: true,
+                constraints: BoxConstraints(
+                    maxWidth: double.infinity,
+                    maxHeight: 600.sp,
+                    minHeight: 500.sp),
+                builder: (ctx) {
+                  return ChangeAddressScreen(
+                    cartId: 0,
+                  );
+                },
+              );
+            }
           }
         }
       } else if (response.statusCode == 500) {
