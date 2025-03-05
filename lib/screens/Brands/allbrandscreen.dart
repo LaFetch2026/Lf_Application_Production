@@ -538,6 +538,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       : BrandProductList(
                           radius: 0,
                           onPressed: (p0, p1) async {
+                            videoController.pause();
                             Get.to(ProductDetailsScreen(
                                     expresshour:
                                         homeController.expressHour.value,
@@ -547,6 +548,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                     type: "add"))
                                 ?.then((value) => setState(
                                       () {
+                                        videoController.play();
                                         productController.getBrandProductData();
                                         SystemChrome.setSystemUIOverlayStyle(
                                             const SystemUiOverlayStyle(
@@ -950,6 +952,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               productController.filterProductEnable.value =
                                   false;
                               productController.categoryFilter.value = 0;
+                              videoController.play();
                               /*  productController.getBrandDetailsProduct(
                                       "",
                                       false,

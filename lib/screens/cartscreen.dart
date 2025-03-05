@@ -149,6 +149,60 @@ class CartScreenState extends State<CartScreen> {
     // Do something when an external wallet is selected
   }
 
+  Widget sizeWidget(List orderList, int index) {
+    double width = 100.sp;
+    if (orderList[index]["inventory"]["product_matrix_name_size"] == "Xs" ||
+        orderList[index]["inventory"]["product_matrix_name_size"] == "S" ||
+        orderList[index]["inventory"]["product_matrix_name_size"] == "M" ||
+        orderList[index]["inventory"]["product_matrix_name_size"] == "L" ||
+        orderList[index]["inventory"]["product_matrix_name_size"] == "XL" ||
+        orderList[index]["inventory"]["product_matrix_name_size"] == "XXL" ||
+        orderList[index]["inventory"]["product_matrix_name_size"] == "XXXL") {
+      width = 85.sp;
+    }
+    return Container(
+      decoration: BoxDecoration(
+          color: widget.backgroundcolor == whiteColor
+              ? Color(0xffF3F4F6)
+              : Color(0xFFDFDBFF),
+          border: Border.all(
+              width: 1,
+              color: widget.backgroundcolor == whiteColor
+                  ? Color(0xFFE5E7EB)
+                  : titleColor)),
+      height: 30.sp,
+      width: width,
+      alignment: Alignment.center,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+                left: 8.sp, right: 5.sp, top: 5.sp, bottom: 5.sp),
+            child: AppText(
+              // text: "Size : XXXL",
+              text:
+                  "Size : ${orderList[index]["inventory"] != null ? orderList[index]["inventory"]["product_matrix_name_size"] : ""}",
+              color: titleColor,
+              fontSize: 10,
+              fontFamily: "Franklin Gothic Regular",
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 2.sp, top: 2.sp, right: 2.sp),
+            child: SvgPicture.asset(
+              dropdownSvgImage,
+              color: titleColor,
+              height: 5.sp,
+              width: 8.sp,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
     razorpay.clear();
@@ -825,7 +879,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                       );
                                                                                                     }
                                                                                                   },
-                                                                                                  child: Container(
+                                                                                                  child: /* Container(
                                                                                                     decoration: BoxDecoration(color: widget.backgroundcolor == whiteColor ? Color(0xffF3F4F6) : Color(0xFFDFDBFF), border: Border.all(width: 1, color: widget.backgroundcolor == whiteColor ? Color(0xFFE5E7EB) : titleColor)),
                                                                                                     height: 30.sp,
                                                                                                     width: value.orderList[index]["inventory"]["product_matrix_name_size"] == "Free Size" ? 100.sp : 85.sp,
@@ -855,7 +909,8 @@ class CartScreenState extends State<CartScreen> {
                                                                                                         ),
                                                                                                       ],
                                                                                                     ),
-                                                                                                  ),
+                                                                                                  ) */
+                                                                                                      sizeWidget(value.orderList, index),
                                                                                                 )
                                                                                               : const SizedBox(
                                                                                                   height: 0,
