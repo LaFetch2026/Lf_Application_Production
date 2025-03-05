@@ -1448,6 +1448,8 @@ class QuickScreenState extends State<QuickScreen> {
                                                                       homeAppBarColor,
                                                                   brandName: p1,
                                                                   productId: p0,
+                                                                  expressValue:
+                                                                      1,
                                                                   type: "add"))
                                                               ?.then((value) =>
                                                                   setState(

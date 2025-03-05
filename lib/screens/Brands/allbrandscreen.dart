@@ -942,7 +942,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           scaleIn(
                             BrandViewProductScreen(
                                 expresshour: homeController.expressHour.value,
-                                brand_id: brandController.brandId.value,
+                                brand_id: brandController.brandDetails["id"],
                                 title: brandController.brandDetails["name"],
                                 screen: "brand",
                                 genderName: ""),

@@ -511,13 +511,18 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                                   "quick"
                                                               ? homeAppBarColor
                                                               : whiteColor,
+                                                          expressValue:
+                                                              widget.screen ==
+                                                                      "quick"
+                                                                  ? 1
+                                                                  : 0,
                                                           brandName: productController
-                                                                  .brandProductDetailsList[
-                                                              index]["name"],
+                                                                  .brandProductDetailsList[index]
+                                                              ["name"],
                                                           productId:
                                                               productController
-                                                                      .brandProductDetailsList[
-                                                                  index]["id"],
+                                                                      .brandProductDetailsList[index]
+                                                                  ["id"],
                                                           type: "add"))
                                                       ?.then(
                                                           (value) => setState(

@@ -46,6 +46,7 @@ class ProductDetailsScreen extends StatefulWidget {
   final String Slug;
   final Color backgroundcolor;
   final String expresshour;
+  final int expressValue;
   const ProductDetailsScreen(
       {super.key,
       required this.productId,
@@ -55,6 +56,7 @@ class ProductDetailsScreen extends StatefulWidget {
       this.boardId = 0,
       this.Slug = "",
       this.expresshour = "0",
+      this.expressValue = 0,
       this.wishlistProductId = 0});
 
   @override
@@ -726,7 +728,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       productController.selectedProductSize = "";
       productController.selectedProductColor = "";
       productController.isExpressDelivery.value = false;
-      productController.expressValue.value = 0;
+      productController.expressValue.value = widget.expressValue;
       productController.errorSizeMsg.value = "";
       productController.errorColorMsg.value = "";
     });

@@ -2552,10 +2552,10 @@ class ProductController extends BaseController {
           if (responseData["return_policy"] != null) {
             returnPolicyDetails.value = responseData["return_policy"];
           }
-          if (responseData["express_delivery"] == true) {
+          /* if (responseData["express_delivery"] == true) {
             isExpressDelivery.value = true;
             expressValue.value = 1;
-          }
+          } */
           print(
               'Product Details====>${productDetails["images"]} ${responseData["express_delivery"]}');
           sizeInventoryList = responseData["new_inventories"];
