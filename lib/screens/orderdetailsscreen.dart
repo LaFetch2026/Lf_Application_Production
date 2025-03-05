@@ -1732,7 +1732,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                                   productController.reorderSelected[index] = !productController.reorderSelected[index];
                                                                                                   productController.update();
                                                                                                   productController.sizeInventoryId.value = orderController.orderDetails["orders"][index]["order_lines"][i]["inventory"]["id"];
-                                                                                                  productController.callAddtoCart(orderController.orderDetails["orders"][index]["order_lines"][i]["quantity"], "reorder", whiteColor, 0);
+                                                                                                  productController.callAddtoCart(orderController.orderDetails["orders"][index]["order_lines"][i]["quantity"], "reorder", whiteColor, 0, true);
                                                                                                 },
                                                                                                 child: Padding(
                                                                                                   padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
@@ -2654,7 +2654,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                                                                         productController.reorderSelected[index] = !productController.reorderSelected[index];
                                                                                                         productController.update();
                                                                                                         productController.sizeInventoryId.value = orderController.orderDetails["order_lines"][index]["inventory"]["id"];
-                                                                                                        productController.callAddtoCart(orderController.orderDetails["order_lines"][index]["quantity"], "reorder", whiteColor, 0);
+                                                                                                        productController.callAddtoCart(orderController.orderDetails["order_lines"][index]["quantity"], "reorder", whiteColor, 0, true);
                                                                                                       },
                                                                                                       child: Padding(
                                                                                                         padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),

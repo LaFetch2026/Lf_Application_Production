@@ -4686,8 +4686,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               onPressedSecond: () {
                                 if (productController
                                     .checkDetailsValidation()) {
-                                  productController.callAddtoCart(1, "buy now",
-                                      widget.backgroundcolor, widget.productId);
+                                  productController.callAddtoCart(
+                                      1,
+                                      "buy now",
+                                      widget.backgroundcolor,
+                                      widget.productId,
+                                      true);
                                 }
                                 _scrollController.animateTo(
                                   MediaQuery.of(context).size.height / 2.sp +
@@ -4713,7 +4717,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         1,
                                         "",
                                         widget.backgroundcolor,
-                                        widget.productId);
+                                        widget.productId,
+                                        false);
                                   }
                                 } else {
                                   if (productController
@@ -4743,8 +4748,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               onPressedSecond: () {
                                 if (productController
                                     .checkDetailsValidation()) {
-                                  productController.callAddtoCart(1, "buy now",
-                                      widget.backgroundcolor, widget.productId);
+                                  productController.callAddtoCart(
+                                      1,
+                                      "buy now",
+                                      widget.backgroundcolor,
+                                      widget.productId,
+                                      true);
                                 }
                                 _scrollController.animateTo(
                                   MediaQuery.of(context).size.height / 2.sp +

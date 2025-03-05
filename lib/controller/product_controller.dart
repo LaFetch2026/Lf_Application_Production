@@ -2952,9 +2952,11 @@ class ProductController extends BaseController {
     isPincode.value = false;
   }
 
-  callAddtoCart(
-      int quantity, String type, Color background, int productId) async {
-    showLoading();
+  callAddtoCart(int quantity, String type, Color background, int productId,
+      bool showloader) async {
+    if (showloader) {
+      showLoading();
+    }
     isReorder.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
