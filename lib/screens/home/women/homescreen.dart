@@ -95,7 +95,7 @@ class HomeScreenState extends State<HomeScreen> {
       homeController.currentPage.value = 0;
       productController.current.value = 50;
       productController.tagId.value = 0;
-      productController.tagname.value = "We think you might also like";
+      productController.tagname.value = "";
       productController.productCategory = [];
       productController.productTags = [];
       /*  homeController.homeGenderValue.value = 2;
