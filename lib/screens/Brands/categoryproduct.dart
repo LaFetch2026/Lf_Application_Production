@@ -329,6 +329,15 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                       brandName: productController
                                                               .productCategoryList[
                                                           index]["brand_name"],
+                                                      expressValue:
+                                                          widget.type == "express"
+                                                              ? 1
+                                                              : 0,
+                                                      backgroundcolor:
+                                                          widget.type ==
+                                                                  "express"
+                                                              ? homeAppBarColor
+                                                              : whiteColor,
                                                       productId: productController
                                                               .productCategoryList[
                                                           index]["id"],

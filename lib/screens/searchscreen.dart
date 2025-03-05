@@ -690,8 +690,8 @@ class SearchScreenState extends State<SearchScreen> {
                                                                         context)
                                                                     .push(MaterialPageRoute(
                                                                         builder: (BuildContext context) => ProductDetailsScreen(
-                                                                            brandName: controller.searchList[index][
-                                                                                "brand_name"],
+                                                                            brandName: controller.searchList[index]["brand_name"] ??
+                                                                                "",
                                                                             productId: controller.searchList[index][
                                                                                 "id"],
                                                                             type:

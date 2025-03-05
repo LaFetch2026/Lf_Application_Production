@@ -205,6 +205,7 @@ class QuickScreenState extends State<QuickScreen> {
                                             );
                                           },
                                         ).whenComplete(() {
+                                          homeController.getExpressBrandData();
                                           setState(() {
                                             isBottomSheet = false;
                                           });

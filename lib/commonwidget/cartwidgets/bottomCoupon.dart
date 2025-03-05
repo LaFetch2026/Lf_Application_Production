@@ -1051,7 +1051,10 @@ class BottomCouponState extends State<BottomCoupon> {
                                                             brandId: 0,
                                                             genderName: "",
                                                             genderType: 0,
-                                                            type: "express",
+                                                            type: widget.backColor ==
+                                                                    whiteColor
+                                                                ? "category products"
+                                                                : "express",
                                                             screen: "category",
                                                             tagIds: controller
                                                                 .tagsList,
@@ -1059,7 +1062,24 @@ class BottomCouponState extends State<BottomCoupon> {
                                                                 controller
                                                                     .categoryList,
                                                           ),
+                                                        )).then(
+                                                      (value) {
+                                                        SystemChrome
+                                                            .setSystemUIOverlayStyle(
+                                                                SystemUiOverlayStyle(
+                                                          statusBarColor: widget
+                                                                      .backColor ==
+                                                                  whiteColor
+                                                              ? statusBarColor
+                                                              : homeAppBarColor,
+                                                          systemNavigationBarColor:
+                                                              widget.backColor ==
+                                                                      whiteColor
+                                                                  ? statusBarColor
+                                                                  : homeAppBarColor,
                                                         ));
+                                                      },
+                                                    );
                                                     //  }
                                                   },
                                                   child: Padding(

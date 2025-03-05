@@ -575,18 +575,26 @@ class CartScreenState extends State<CartScreen> {
                                                                         GestureDetector(
                                                                           onTap:
                                                                               () async {
-                                                                            Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.orderList[index]["product"]["id"], brandName: value.orderList[index]["product"]["brand_name"] ?? "", backgroundcolor: widget.backgroundcolor, type: "add"))).then((value) =>
-                                                                                setState(
-                                                                                  () {
-                                                                                    productController.hasnextpage.value = true;
-                                                                                    productController.loadMore.value = false;
-                                                                                    productController.isProduct.value = false;
-                                                                                    productController.page.value = 1;
-                                                                                    productController.getProductData("relevant");
-                                                                                    widget.backgroundcolor == whiteColor ? controller.getCartData() : controller.getExpressCartData();
-                                                                                    controller.update();
-                                                                                  },
-                                                                                ));
+                                                                            Navigator.of(context)
+                                                                                .push(MaterialPageRoute(
+                                                                                    builder: (BuildContext context) => ProductDetailsScreen(
+                                                                                          productId: value.orderList[index]["product"]["id"],
+                                                                                          brandName: value.orderList[index]["product"]["brand_name"] ?? "",
+                                                                                          backgroundcolor: widget.backgroundcolor,
+                                                                                          type: "add",
+                                                                                          expressValue: widget.backgroundcolor == whiteColor ? 0 : 1,
+                                                                                        )))
+                                                                                .then((value) => setState(
+                                                                                      () {
+                                                                                        productController.hasnextpage.value = true;
+                                                                                        productController.loadMore.value = false;
+                                                                                        productController.isProduct.value = false;
+                                                                                        productController.page.value = 1;
+                                                                                        productController.getProductData("relevant");
+                                                                                        widget.backgroundcolor == whiteColor ? controller.getCartData() : controller.getExpressCartData();
+                                                                                        controller.update();
+                                                                                      },
+                                                                                    ));
                                                                             await analytics.logEvent(
                                                                               name: 'cart_product_details',
                                                                               parameters: <String, Object>{
@@ -629,17 +637,26 @@ class CartScreenState extends State<CartScreen> {
                                                                             children: [
                                                                               GestureDetector(
                                                                                 onTap: () async {
-                                                                                  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.orderList[index]["product"]["id"], backgroundcolor: widget.backgroundcolor, brandName: value.orderList[index]["product"]["brand_name"] ?? "", type: "add"))).then((value) => setState(
-                                                                                        () {
-                                                                                          productController.hasnextpage.value = true;
-                                                                                          productController.loadMore.value = false;
-                                                                                          productController.isProduct.value = false;
-                                                                                          productController.page.value = 1;
-                                                                                          productController.getProductData("relevant");
-                                                                                          widget.backgroundcolor == whiteColor ? controller.getCartData() : controller.getExpressCartData();
-                                                                                          controller.update();
-                                                                                        },
-                                                                                      ));
+                                                                                  Navigator.of(context)
+                                                                                      .push(MaterialPageRoute(
+                                                                                          builder: (BuildContext context) => ProductDetailsScreen(
+                                                                                                productId: value.orderList[index]["product"]["id"],
+                                                                                                backgroundcolor: widget.backgroundcolor,
+                                                                                                brandName: value.orderList[index]["product"]["brand_name"] ?? "",
+                                                                                                type: "add",
+                                                                                                expressValue: widget.backgroundcolor == whiteColor ? 0 : 1,
+                                                                                              )))
+                                                                                      .then((value) => setState(
+                                                                                            () {
+                                                                                              productController.hasnextpage.value = true;
+                                                                                              productController.loadMore.value = false;
+                                                                                              productController.isProduct.value = false;
+                                                                                              productController.page.value = 1;
+                                                                                              productController.getProductData("relevant");
+                                                                                              widget.backgroundcolor == whiteColor ? controller.getCartData() : controller.getExpressCartData();
+                                                                                              controller.update();
+                                                                                            },
+                                                                                          ));
                                                                                   await analytics.logEvent(
                                                                                     name: 'cart_product_details',
                                                                                     parameters: <String, Object>{
@@ -666,17 +683,26 @@ class CartScreenState extends State<CartScreen> {
                                                                               ),
                                                                               GestureDetector(
                                                                                 onTap: () async {
-                                                                                  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.orderList[index]["product"]["id"], backgroundcolor: widget.backgroundcolor, brandName: value.orderList[index]["product"]["brand_name"] ?? "", type: "add"))).then((value) => setState(
-                                                                                        () {
-                                                                                          productController.hasnextpage.value = true;
-                                                                                          productController.loadMore.value = false;
-                                                                                          productController.isProduct.value = false;
-                                                                                          productController.page.value = 1;
-                                                                                          productController.getProductData("relevant");
-                                                                                          widget.backgroundcolor == whiteColor ? controller.getCartData() : controller.getExpressCartData();
-                                                                                          controller.update();
-                                                                                        },
-                                                                                      ));
+                                                                                  Navigator.of(context)
+                                                                                      .push(MaterialPageRoute(
+                                                                                          builder: (BuildContext context) => ProductDetailsScreen(
+                                                                                                productId: value.orderList[index]["product"]["id"],
+                                                                                                backgroundcolor: widget.backgroundcolor,
+                                                                                                brandName: value.orderList[index]["product"]["brand_name"] ?? "",
+                                                                                                type: "add",
+                                                                                                expressValue: widget.backgroundcolor == whiteColor ? 0 : 1,
+                                                                                              )))
+                                                                                      .then((value) => setState(
+                                                                                            () {
+                                                                                              productController.hasnextpage.value = true;
+                                                                                              productController.loadMore.value = false;
+                                                                                              productController.isProduct.value = false;
+                                                                                              productController.page.value = 1;
+                                                                                              productController.getProductData("relevant");
+                                                                                              widget.backgroundcolor == whiteColor ? controller.getCartData() : controller.getExpressCartData();
+                                                                                              controller.update();
+                                                                                            },
+                                                                                          ));
                                                                                   await analytics.logEvent(
                                                                                     name: 'cart_product_details',
                                                                                     parameters: <String, Object>{
