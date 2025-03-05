@@ -21,6 +21,7 @@ import 'package:lafetch/commonwidget/doubleiconbtn.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_order_list.dart';
 import 'package:lafetch/commonwidget/homewidget/dummyblack_orderlist.dart';
+import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/controller/wishlist_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/change_address.dart';
@@ -73,7 +74,7 @@ class CartScreenState extends State<CartScreen> {
               ? statusBarColor
               : homeAppBarColor,
           systemNavigationBarColor: widget.backgroundcolor == whiteColor
-              ? statusBarColor
+              ? Colors.transparent
               : homeAppBarColor));
     });
     getPrefrenceValue();
@@ -3045,20 +3046,35 @@ class CartScreenState extends State<CartScreen> {
                                                         ? SizedBox(
                                                             height: 0,
                                                           )
-                                                        : Text(
-                                                            controller.cartDetails[
-                                                                        "address"] ==
-                                                                    null
-                                                                ? "Proceed to checkout"
-                                                                    .toUpperCase()
-                                                                : "Proceed to pay"
-                                                                    .toUpperCase(),
-                                                            style: TextStyle(
-                                                                fontSize: 13.sp,
-                                                                color: Colors
-                                                                    .white,
-                                                                fontFamily:
-                                                                    'Franklin Gothic')),
+                                                        : (controller
+                                                                    .pageState ==
+                                                                PageState
+                                                                    .LOADING)
+                                                            ? Center(
+                                                                child: Transform
+                                                                    .scale(
+                                                                  scale: 0.5.sp,
+                                                                  child:
+                                                                      const CircularProgressIndicator(
+                                                                    color:
+                                                                        whiteColor,
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            : Text(
+                                                                controller.cartDetails["address"] ==
+                                                                        null
+                                                                    ? "Proceed to checkout"
+                                                                        .toUpperCase()
+                                                                    : "Proceed to pay"
+                                                                        .toUpperCase(),
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        13.sp,
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontFamily:
+                                                                        'Franklin Gothic')),
                                                   ),
                                                 ],
                                               ),
