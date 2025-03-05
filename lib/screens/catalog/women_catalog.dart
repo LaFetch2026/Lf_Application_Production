@@ -9,7 +9,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/dummy_catalog_list.dart';
-import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/catalog_controller.dart';
 import 'package:lafetch/controller/search_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
@@ -57,16 +56,15 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
               title: "Categories",
               onPressedSearch: () async {
                 searchController.searchController.clear();
-                Navigator.push(context, scaleIn(const SearchScreen()))
-                    .then((value) => setState(
-                          () {
-                            SystemChrome.setSystemUIOverlayStyle(
-                                const SystemUiOverlayStyle(
-                              statusBarColor: whiteColor,
-                              systemNavigationBarColor: whiteColor,
-                            ));
-                          },
+                Get.to(const SearchScreen())?.then((value) => setState(
+                      () {
+                        SystemChrome.setSystemUIOverlayStyle(
+                            const SystemUiOverlayStyle(
+                          statusBarColor: whiteColor,
+                          systemNavigationBarColor: whiteColor,
                         ));
+                      },
+                    ));
                 await analytics.logEvent(
                   name: 'search_page',
                   parameters: <String, Object>{

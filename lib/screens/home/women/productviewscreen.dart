@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -52,6 +53,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     productController.handPickedProductList.clear();
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+          statusBarColor: statusBarColor,
+          systemNavigationBarColor: statusBarColor));
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.selectedCategoryGender.value = widget.genderName;
       productController.handpickedHasnextpage.value = true;

@@ -257,20 +257,17 @@ class HomeScreenState extends State<HomeScreen> {
             if (homeController.banner1List[itemIndex]["tags"].isNotEmpty &&
                 homeController
                     .banner1List[itemIndex]["categories"].isNotEmpty) {
-              Navigator.push(
-                  context,
-                  scaleIn(
-                    CategoryProductScreen(
-                      categoryName: homeController.banner1List[itemIndex]
-                          ["name"],
-                      categoryId: 0,
-                      genderName: homeController.genderText.value,
-                      brandId: 0,
-                      genderType: homeController.homeGenderValue.value,
-                      tagIds: homeController.bannerTag1Id,
-                      categoryList: homeController.bannerCategory1Id,
-                    ),
-                  ));
+              Get.to(
+                CategoryProductScreen(
+                  categoryName: homeController.banner1List[itemIndex]["name"],
+                  categoryId: 0,
+                  genderName: homeController.genderText.value,
+                  brandId: 0,
+                  genderType: homeController.homeGenderValue.value,
+                  tagIds: homeController.bannerTag1Id,
+                  categoryList: homeController.bannerCategory1Id,
+                ),
+              );
               await analytics.logEvent(
                 name: 'banner_home_page',
                 parameters: <String, Object>{
@@ -374,19 +371,18 @@ class HomeScreenState extends State<HomeScreen> {
           HomeAppbar(
             onPressedSearch: () async {
               searchController.searchController.clear();
-              Navigator.push(context, scaleIn(const SearchScreen()))
-                  .then((value) => setState(
-                        () {
-                          productController.categoryFilter.value =
-                              homeController.homeGenderValue.value;
-                          SystemChrome.setSystemUIOverlayStyle(
-                              const SystemUiOverlayStyle(
-                                  statusBarColor: whiteColor,
-                                  systemNavigationBarColor: whiteColor));
-                          /*   productController.getHandPickedProduct(
+              Get.to(const SearchScreen())?.then((value) => setState(
+                    () {
+                      productController.categoryFilter.value =
+                          homeController.homeGenderValue.value;
+                      SystemChrome.setSystemUIOverlayStyle(
+                          const SystemUiOverlayStyle(
+                              statusBarColor: whiteColor,
+                              systemNavigationBarColor: whiteColor));
+                      /*   productController.getHandPickedProduct(
                               "", false, false, productController.tagId.value); */
-                        },
-                      ));
+                    },
+                  ));
               await analytics.logEvent(
                 name: 'search_page',
                 parameters: <String, Object>{
@@ -411,7 +407,7 @@ class HomeScreenState extends State<HomeScreen> {
               );
             },
             onPressedCart: () async {
-              Navigator.push(context, scaleIn(const CartScreen())).then(
+              Get.to(const CartScreen())?.then(
                 (value) {
                   SystemChrome.setSystemUIOverlayStyle(
                       const SystemUiOverlayStyle(
@@ -1802,26 +1798,30 @@ class HomeScreenState extends State<HomeScreen> {
                                         .filterProductEnable.value = false;
                                     productController.categoryFilter.value =
                                         homeController.homeGenderValue.value;
-                                    Navigator.push(
-                                        context,
-                                        scaleIn(
-                                          ProductViewScreen(
-                                            title: p1,
-                                            genderName:
-                                                homeController.genderText.value,
-                                          ),
-                                        ));
+                                    Get.to(
+                                      ProductViewScreen(
+                                        title: p1,
+                                        genderName:
+                                            homeController.genderText.value,
+                                      ),
+                                    )?.then(
+                                      (value) {
+                                        SystemChrome.setSystemUIOverlayStyle(
+                                            const SystemUiOverlayStyle(
+                                                statusBarColor: whiteColor,
+                                                systemNavigationBarColor:
+                                                    whiteColor));
+                                      },
+                                    );
                                   },
                                   onPressed: (p0) async {
-                                    Navigator.push(
-                                        context,
-                                        scaleIn(
-                                          ProductDetailsScreen(
-                                            productId: p0,
-                                            type: "add",
-                                            brandName: "",
-                                          ),
-                                        )).then((value) => setState(
+                                    Get.to(
+                                      ProductDetailsScreen(
+                                        productId: p0,
+                                        type: "add",
+                                        brandName: "",
+                                      ),
+                                    )?.then((value) => setState(
                                           () {
                                             cartController.getCartData();
                                             SystemChrome.setSystemUIOverlayStyle(
