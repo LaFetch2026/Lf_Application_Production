@@ -52,16 +52,21 @@ class WelcomeScreenState extends State<WelcomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: blackColor,
-      body: Container(
-          child: Stack(
+      body: Stack(
         children: [
           Container(
-            width: double.infinity,
-            height: double.infinity,
-            child: AspectRatio(
-              aspectRatio: 9 / 16,
-              child: VideoPlayer(videoController),
-            ),
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            child: /* AspectRatio(
+          aspectRatio: 9 / 16,
+          child: */
+                FittedBox(
+                    fit: BoxFit.contain,
+                    child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: VideoPlayer(videoController))),
+            // ),
           ),
           Container(
             width: MediaQuery.of(context).size.width.sp,
@@ -85,9 +90,9 @@ class WelcomeScreenState extends State<WelcomeScreen>
                   center: Alignment.center,
                   radius: 0.5,
                   /*  colors: [
-                    Color(0x00000000),
-                    Color(0XCC000000),
-                  ], */
+                Color(0x00000000),
+                Color(0XCC000000),
+              ], */
                   colors: [
                     Color(0x00000000),
                     Color(0x88000000),
@@ -141,45 +146,45 @@ class WelcomeScreenState extends State<WelcomeScreen>
                   ),
                 ),
                 /*    Padding(
-                  padding: EdgeInsets.only(top: 30.sp),
-                  child: DoubleButton(
-                    firstText: "Create Account",
-                    secondText: "Sign In",
-                    firstTextColor: whiteTextColor,
-                    secondTextColor: btnTextColor,
-                    firstBackgroundColor: blackColor,
-                    secondBackgroundColor: whiteBorderColor,
-                    firstBorderColor: whiteBorderColor,
-                    secondBorderColor: whiteBorderColor,
-                    onPressedFirst: () async {
-                      Get.to(
-                        () => const LoginScreen(
-                          initialTab: 1,
-                        ),
-                      );
-                      await analytics.logEvent(
-                        name: 'welcome_page_btncreateaccount',
-                        parameters: <String, Object>{
-                          'page_name': 'welcome_page_btncreateaccount',
-                        },
-                      );
+              padding: EdgeInsets.only(top: 30.sp),
+              child: DoubleButton(
+                firstText: "Create Account",
+                secondText: "Sign In",
+                firstTextColor: whiteTextColor,
+                secondTextColor: btnTextColor,
+                firstBackgroundColor: blackColor,
+                secondBackgroundColor: whiteBorderColor,
+                firstBorderColor: whiteBorderColor,
+                secondBorderColor: whiteBorderColor,
+                onPressedFirst: () async {
+                  Get.to(
+                    () => const LoginScreen(
+                      initialTab: 1,
+                    ),
+                  );
+                  await analytics.logEvent(
+                    name: 'welcome_page_btncreateaccount',
+                    parameters: <String, Object>{
+                      'page_name': 'welcome_page_btncreateaccount',
                     },
-                    onPressedSecond: () async {
-                      Get.to(
-                        () => const LoginScreen(
-                          initialTab: 0,
-                        ),
-                      );
-                      await analytics.logEvent(
-                        name: 'welcome_page_btnsignin',
-                        parameters: <String, Object>{
-                          'page_name': 'welcome_page_btnsignin',
-                        },
-                      );
+                  );
+                },
+                onPressedSecond: () async {
+                  Get.to(
+                    () => const LoginScreen(
+                      initialTab: 0,
+                    ),
+                  );
+                  await analytics.logEvent(
+                    name: 'welcome_page_btnsignin',
+                    parameters: <String, Object>{
+                      'page_name': 'welcome_page_btnsignin',
                     },
-                  ),
-                ),
-               */
+                  );
+                },
+              ),
+            ),
+           */
                 Padding(
                   padding: EdgeInsets.only(top: 24.sp),
                   child: getSingleButton(
@@ -269,7 +274,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
             ),
           ),
         ],
-      )),
+      ),
     );
   }
 }

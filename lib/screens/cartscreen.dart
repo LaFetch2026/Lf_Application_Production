@@ -3082,7 +3082,9 @@ class CartScreenState extends State<CartScreen> {
                                           )
                                         : Padding(
                                             padding: EdgeInsets.only(
-                                                top: 20.sp, bottom: 30.sp),
+                                                top: 20.sp,
+                                                bottom: 30.sp,
+                                                left: 16.sp),
                                             child: Text(
                                                 controller.stockErrorText.value,
                                                 style: TextStyle(
