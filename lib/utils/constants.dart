@@ -265,16 +265,17 @@ const sortBySvgImage = 'assets/images/sortby_svg.svg';
 const confirmSvgImage = 'assets/images/confirm_svg.svg';
 const shipSvgImage = 'assets/images/ship_svg.svg';
 const deliverSvgImage = 'assets/images/deliver_svg.svg';
+const sandLoader = 'assets/images/sand_loader.json';
 
 class ApiConstants {
   ApiConstants._();
-  static const String baseUrl =
-      "https://api.la-fetch.com/customer/api"; //production
-
-  static const String razorPayKey = "rzp_live_rhkxLWkaUrRAHO"; //production
-
   // static const String baseUrl =
-  // "https://staging-api.la-fetch.com/customer/api"; //staging
+  //    "https://api.la-fetch.com/customer/api"; //production
 
-  // static const String razorPayKey = "rzp_test_CA2ZhiypSpQQlk"; //staging
+  // static const String razorPayKey = "rzp_live_rhkxLWkaUrRAHO"; //production
+
+  static const String baseUrl =
+      "https://staging-api.la-fetch.com/customer/api"; //staging
+
+  static const String razorPayKey = "rzp_test_CA2ZhiypSpQQlk"; //staging
 }

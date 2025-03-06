@@ -1,11 +1,12 @@
 // ignore_for_file: avoid_print
-
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomCoupon.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/screens/loginscreen.dart';
+import 'package:lafetch/screens/paymentcheckscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -591,20 +592,21 @@ class CartController extends BaseController {
             "Authorization": "Bearer ${prefs.getString('token')} ",
           },
           body: json.encode(sendData));
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         print(response.body);
         Get.to(PaymentSuccessScreen(
             text1: "Order Placed Successfully",
             orderId: cartId,
             text2: "Thank you for placing your order",
             image: orderSucessImage));
-      } else if (response.statusCode == 400) {
+      } else if (response.statusCode != 200 || response.statusCode != 201) {
         print(response.body);
-        Get.to(const PaymentSuccessScreen(
+        /* Get.to(const PaymentSuccessScreen(
             text1: "Payment Failed",
             orderId: 0,
             text2: "",
-            image: paymentFailImage));
+            image: paymentFailImage)); */
+        Get.to(PaymentCheckScreen(orderId: cartId));
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
@@ -617,6 +619,40 @@ class CartController extends BaseController {
       print(e.toString());
     }
     isPayment.value = false;
+  }
+
+  callPaymentStatus(int cartId, Timer timer) async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+        Uri.parse("${ApiConstants.baseUrl}/order/$cartId/check-status"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
+      );
+      if (response.statusCode == 200) {
+        timer.cancel();
+        Get.off(PaymentSuccessScreen(
+            text1: "Order Placed Successfully",
+            orderId: cartId,
+            text2: "Thank you for placing your order",
+            image: orderSucessImage));
+        print("payment done");
+      } else if (response.statusCode == 400) {
+        print("payment fail");
+      } else if (response.statusCode == 500) {
+        getSnackBar("Please try again");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+      } else {
+        print(response.statusCode);
+        print(response.body);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   callEnableExpressDelivery(Color backColor) async {

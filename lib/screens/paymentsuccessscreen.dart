@@ -2,6 +2,7 @@
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/shopwishlist_appbar.dart';
@@ -32,6 +33,14 @@ class PaymentSuccessScreen extends StatefulWidget {
 class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
   final controller = Get.put(CartController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: statusBarColor,
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
