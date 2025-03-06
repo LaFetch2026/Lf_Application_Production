@@ -886,7 +886,7 @@ class QuickScreenState extends State<QuickScreen> {
                                           padding: EdgeInsets.only(
                                               left: 16.sp,
                                               right: 16.sp,
-                                              bottom: 24.sp),
+                                              bottom: 12.sp),
                                           child: Row(
                                             children: [
                                               SvgPicture.asset(
@@ -917,10 +917,10 @@ class QuickScreenState extends State<QuickScreen> {
                     Obx(() => productController.isBrand.value
                         ? Padding(
                             padding: EdgeInsets.only(
-                              left: 16.sp,
-                              right: 16.sp,
-                              bottom: 10.sp,
-                            ),
+                                left: 16.sp,
+                                right: 16.sp,
+                                bottom: 10.sp,
+                                top: 12.sp),
                             child: ListView.builder(
                                 primary: false,
                                 shrinkWrap: true,
@@ -1045,7 +1045,7 @@ class QuickScreenState extends State<QuickScreen> {
                                     left: 16.sp,
                                     right: 16.sp,
                                     bottom: 10.sp,
-                                    top: 10.sp),
+                                    top: 22.sp),
                                 child: GetBuilder<ProductController>(
                                   builder: (value) => ListView.builder(
                                       primary: false,

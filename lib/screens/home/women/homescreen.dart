@@ -131,7 +131,7 @@ class HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) =>
         catalogController.getCatalogData(homeController.homeGenderValue.value));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      homeController.getConfigurationData();
+      cartController.getConfigurationData();
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       homeController.getDeviceName();
@@ -185,8 +185,8 @@ class HomeScreenState extends State<HomeScreen> {
         productController.update();
       });
     }); */
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => cartController.getCartData());
+    /* WidgetsBinding.instance
+        .addPostFrameCallback((_) => cartController.getCartData()); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       determinePosition();
     });
@@ -1823,7 +1823,8 @@ class HomeScreenState extends State<HomeScreen> {
                                       ),
                                     )?.then((value) => setState(
                                           () {
-                                            cartController.getCartData();
+                                            cartController
+                                                .getConfigurationData();
                                             SystemChrome.setSystemUIOverlayStyle(
                                                 const SystemUiOverlayStyle(
                                                     statusBarColor: whiteColor,

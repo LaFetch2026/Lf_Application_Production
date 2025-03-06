@@ -657,4 +657,39 @@ class CartController extends BaseController {
     }
     hideLoading();
   }
+
+  getConfigurationData() async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      var response = await http.get(
+          Uri.parse("${ApiConstants.baseUrl}/global-configuration"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData != null) {
+          prefs.setInt('tagId', responseData['new_arrival_tag_id']);
+          prefs.setString(
+              'expresshour', responseData['quick_delivery_estimated_hours']);
+          // expressHour.value = responseData['quick_delivery_estimated_hours'];
+          cartTotalValue.value = responseData['cart_count'];
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Please try again");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get configuration failed ${response.statusCode}");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+  }
 }

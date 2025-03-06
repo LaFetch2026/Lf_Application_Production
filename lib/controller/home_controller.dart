@@ -41,6 +41,7 @@ class HomeController extends BaseController {
   RxInt homeGenderValue = 2.obs;
   List banners = [].obs;
   RxString expressHour = "".obs;
+  RxInt cartValue = 0.obs;
   // RxBool loadMore = false.obs;
   // RxBool hasnextpage = true.obs;
   // RxInt page = 1.obs;
@@ -118,7 +119,7 @@ class HomeController extends BaseController {
     istags.value = false;
   }
  */
-  getConfigurationData() async {
+  /* getConfigurationData() async {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
@@ -134,6 +135,7 @@ class HomeController extends BaseController {
           prefs.setString(
               'expresshour', responseData['quick_delivery_estimated_hours']);
           expressHour.value = responseData['quick_delivery_estimated_hours'];
+          prefs.setInt('cartCount', responseData['cart_count']);
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
@@ -150,7 +152,7 @@ class HomeController extends BaseController {
     } catch (e) {
       print("error$e");
     }
-  }
+  } */
 
   /*  fetchMoreTagsData(int genderType) async {
     if (hasnextpage.value == true &&

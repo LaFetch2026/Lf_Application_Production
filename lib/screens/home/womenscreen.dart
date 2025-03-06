@@ -41,7 +41,7 @@ class _WomenScreenState extends State<WomenScreen>
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => homeController.getCategoryData(widget.genderType));
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      homeController.getConfigurationData();
+      //  homeController.getConfigurationData();
     });
     super.initState();
   }
