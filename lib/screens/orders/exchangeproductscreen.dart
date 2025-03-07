@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, deprecated_member_use
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -37,7 +37,6 @@ class ExchangeProductScreen extends StatefulWidget {
 }
 
 class ExchangeProductScreenState extends State<ExchangeProductScreen> {
-  //final controller = Get.put(ReviewController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   String? text1;
   final exchangeController = Get.put(ExchangeController());
