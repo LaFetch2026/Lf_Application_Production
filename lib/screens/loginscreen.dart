@@ -246,8 +246,14 @@ class LoginScreenState extends State<LoginScreen> {
                 LoginAppbar(
                   controller: loginController,
                   hideBack: widget.hideBack,
-                  onPressedSkip: () {
+                  onPressedSkip: () async {
                     loginController.callGuestUser();
+                    await analytics.logEvent(
+                      name: 'login_skip',
+                      parameters: <String, Object>{
+                        'page_name': 'login_skip',
+                      },
+                    );
                   },
                 ),
                 Container(
@@ -420,9 +426,9 @@ class LoginScreenState extends State<LoginScreen> {
                                               "+91${loginController.phoneNumberLogin.text.toString().trim()}";
                                           loginController.callRegisterAccount();
                                           await analytics.logEvent(
-                                            name: 'signin_phonelogin',
+                                            name: 'login_btnRegister',
                                             parameters: <String, Object>{
-                                              'page_name': 'signin_phonelogin',
+                                              'page_name': 'login_btnRegister',
                                             },
                                           );
                                         }
@@ -591,10 +597,9 @@ class LoginScreenState extends State<LoginScreen> {
                                             loginController
                                                 .callRegisterAccount();
                                             await analytics.logEvent(
-                                              name: 'signup_phonelogin',
+                                              name: 'login_btnlogin',
                                               parameters: <String, Object>{
-                                                'page_name':
-                                                    'signup_phonelogin',
+                                                'page_name': 'login_btnlogin',
                                               },
                                             );
                                           }

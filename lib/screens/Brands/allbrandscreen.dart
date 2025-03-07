@@ -209,8 +209,14 @@ class AllBrandScreenState extends State<AllBrandScreen> {
             },
             onPressedShare: () async {
               Share.share(brandController.brandDetails["share_link"]);
+              await analytics.logEvent(
+                name: 'share_brand_click',
+                parameters: <String, Object>{
+                  'page_name': 'share_brand_click',
+                },
+              );
             },
-            onPressedHeart: () {
+            onPressedHeart: () async {
               Get.to(const WishlistScreen())?.then(
                 (value) {
                   SystemChrome.setSystemUIOverlayStyle(
@@ -218,6 +224,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                     statusBarColor: homeAppBarColor,
                     systemNavigationBarColor: homeAppBarColor,
                   ));
+                },
+              );
+              await analytics.logEvent(
+                name: 'wishlist_page',
+                parameters: <String, Object>{
+                  'page_name': 'wishlist_page',
                 },
               );
             },
@@ -559,370 +571,13 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       },
                                     ));
                             await analytics.logEvent(
-                              name: 'category_product_details',
+                              name: 'branddetails_product_details',
                               parameters: <String, Object>{
-                                'page_name': 'category_product_details',
+                                'page_name': 'branddetails_product_details',
                               },
                             );
                           },
                           list: brandController.brandProductDetailsList)),
-                  /*   Obx(
-                    () => brandController.isCategory.value
-                        ? const DummybrandAll()
-                        : Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.sp),
-                            child: MasonryGridView.count(
-                              primary: false,
-                              shrinkWrap: true,
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 7.sp,
-                              mainAxisSpacing: 7.sp,
-                              itemCount: brandController.categoryList.length,
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () async {
-                                    videoController.pause();
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                CategoryProductScreen(
-                                                  genderName: "",
-                                                  categoryName: brandController
-                                                          .categoryList[index]
-                                                      ["name"],
-                                                  categoryId: brandController
-                                                          .categoryList[index]
-                                                      ["id"],
-                                                  tagIds: const [],
-                                                  categoryList: [],
-                                                  genderType: 0,
-                                                  brandId: brandController
-                                                      .brandId.value,
-                                                )))
-                                        .then((value) => setState(
-                                              () {
-                                                videoController.play();
-                                              },
-                                            ));
-                                    await analytics.logEvent(
-                                      name: 'allbrand_categoryList_page',
-                                      parameters: <String, Object>{
-                                        'page_name':
-                                            'allbrand_categoryList_page',
-                                      },
-                                    );
-                                  },
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Stack(
-                                        children: [
-                                          brandController.categoryList[index]
-                                                      ["thumbnail"] !=
-                                                  null
-                                              ? SizedBox(
-                                                  height: heightList[index],
-                                                  width: (MediaQuery.of(context)
-                                                              .size
-                                                              .width /
-                                                          2) -
-                                                      16.sp,
-                                                  child: CachedNetworkImage(
-                                                    cacheManager: CacheManager(
-                                                        Config("customCacheKey",
-                                                            stalePeriod:
-                                                                const Duration(
-                                                                    days: 15),
-                                                            maxNrOfCacheObjects:
-                                                                100)),
-                                                    fit: BoxFit.cover,
-                                                    imageUrl: brandController
-                                                            .categoryList[index]
-                                                        ["thumbnail"],
-                                                    /*  progressIndicatorBuilder:
-                                                        (context, url,
-                                                                downloadProgress) =>
-                                                            Center(
-                                                      child: CircularProgressIndicator(
-                                                          value:
-                                                              downloadProgress
-                                                                  .progress),
-                                                    ), */
-                                                    errorWidget:
-                                                        (context, url, error) =>
-                                                            Image.asset(
-                                                      downloadImage,
-                                                      fit: BoxFit.cover,
-                                                      height: heightList[index],
-                                                      width: (MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width /
-                                                              2) -
-                                                          16.sp,
-                                                    ),
-                                                  ),
-                                                )
-                                              : Center(
-                                                  child: Image.asset(
-                                                      dummyWishlistImage,
-                                                      height: heightList[index],
-                                                      width: (MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width /
-                                                              2) -
-                                                          16.sp,
-                                                      fit: BoxFit.cover),
-                                                ),
-                                          Positioned.fill(
-                                            child: Align(
-                                              alignment: Alignment.bottomLeft,
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 18.sp,
-                                                    vertical: 10.sp),
-                                                child: AppText(
-                                                  text: brandController
-                                                              .categoryList[
-                                                          index]["name"] ??
-                                                      "",
-                                                  color: whiteColor,
-                                                  fontSize: 14,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                  ),
-                  Obx(
-                    () => productController.istagsProduct.value
-                        ? const DummyProductList(text: "New Arrivals")
-                        : productController.tagProductList.isNotEmpty
-                            ? Padding(
-                                padding: EdgeInsets.only(top: 40.sp),
-                                child: HorizontalBrandList(
-                                  text: "New Arrivals",
-                                  controller:
-                                      productController.tagsProductController,
-                                  onPressed: (p0, p1) async {
-                                    videoController.pause();
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                ProductDetailsScreen(
-                                                    brandName: p1,
-                                                    productId: p0,
-                                                    type: "add")))
-                                        .then((value) => setState(
-                                              () {
-                                                videoController.play();
-                                                productController
-                                                    .tagsHasnextpage
-                                                    .value = true;
-                                                productController
-                                                    .tagsLoadMore.value = false;
-                                                productController.istagsProduct
-                                                    .value = false;
-                                                productController
-                                                    .tagsPage.value = 1;
-                                                productController
-                                                    .getTagsProductData(
-                                                        tagId,
-                                                        0,
-                                                        brandController
-                                                            .brandId.value);
-                                              },
-                                            ));
-                                    await analytics.logEvent(
-                                      name: 'allbrand_newarrival_details',
-                                      parameters: <String, Object>{
-                                        'page_name':
-                                            'allbrand_newarrival_details',
-                                      },
-                                    );
-                                  },
-                                  onPressedHeart: (p0, p1) async {
-                                    if (productController.tagProductList[p1]
-                                        ["wishlisted"]) {
-                                      /*  productController.tagProductList[p1]
-                                          ["wishlisted"] = false;
-                                      setState(() {}); */
-                                      productController
-                                          .callAddProductToWishlist(
-                                              productController
-                                                      .tagProductList[p1]
-                                                  ["wishlist_id"],
-                                              "tags",
-                                              p0,
-                                              0,
-                                              brandController.brandId.value,
-                                              [],
-                                              [],
-                                              0,
-                                              0,
-                                              0);
-                                    } else {
-                                      scaffoldKey.currentState?.showBottomSheet(
-                                          (context) => BottomWishlist(
-                                              controller: wishlistController,
-                                              onPressed: (p0) {
-                                                /*  productController
-                                                            .tagProductList[p1]
-                                                        ["wishlisted"] = true;
-                                                    setState(() {}); */
-                                                productController
-                                                    .callAddProductToWishlist(
-                                                        p0,
-                                                        "tags",
-                                                        productController
-                                                                .tagProductList[
-                                                            p1]["id"],
-                                                        0,
-                                                        brandController
-                                                            .brandId.value,
-                                                        [],
-                                                        [],
-                                                        0,
-                                                        0,
-                                                        0);
-                                              },
-                                              wishlistList: wishlistController
-                                                  .wishlistList));
-                                      await analytics.logEvent(
-                                        name: 'allbrand_newarrival_wishlist',
-                                        parameters: <String, Object>{
-                                          'page_name':
-                                              'allbrand_newarrival_wishlist',
-                                        },
-                                      );
-                                    }
-                                  },
-                                  list: productController.tagProductList,
-                                ),
-                              )
-                            : SizedBox(
-                                height: 0,
-                              ),
-                  ),
-                  Obx(() => productController.isBestSeller.value
-                      ? const DummyProductList(text: "Bestsellers")
-                      : productController.bestSellerList.isNotEmpty
-                          ? Padding(
-                              padding: EdgeInsets.only(top: 25.sp),
-                              child: HorizontalBrandList(
-                                text: "Bestsellers",
-                                controller:
-                                    productController.bestSellerController,
-                                onPressed: (p0, p1) async {
-                                  videoController.pause();
-                                  Navigator.of(context)
-                                      .push(MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              ProductDetailsScreen(
-                                                  brandName: p1,
-                                                  productId: p0,
-                                                  type: "add")))
-                                      .then((value) => setState(
-                                            () {
-                                              videoController.play();
-                                              productController
-                                                  .bestSellerHasnextpage
-                                                  .value = true;
-                                              productController
-                                                  .bestSellerLoadMore
-                                                  .value = false;
-                                              productController
-                                                  .isBestSeller.value = false;
-                                              productController
-                                                  .bestSellerPage.value = 1;
-                                              productController
-                                                  .getBestSellerProductData(
-                                                      brandController
-                                                          .brandId.value);
-                                            },
-                                          ));
-                                  await analytics.logEvent(
-                                    name: 'allbrand_bestseller_details',
-                                    parameters: <String, Object>{
-                                      'page_name':
-                                          'allbrand_bestseller_details',
-                                    },
-                                  );
-                                },
-                                onPressedHeart: (p0, p1) async {
-                                  if (productController.bestSellerList[p1]
-                                      ["wishlisted"]) {
-                                    /*  productController.bestSellerList[p1]
-                                        ["wishlisted"] = false;
-                                    setState(() {}); */
-                                    productController.callAddProductToWishlist(
-                                        productController.bestSellerList[p1]
-                                            ["wishlist_id"],
-                                        "seller",
-                                        p0,
-                                        0,
-                                        brandController.brandId.value,
-                                        [],
-                                        [],
-                                        0,
-                                        0,
-                                        0);
-                                  } else {
-                                    scaffoldKey.currentState?.showBottomSheet(
-                                        (context) => BottomWishlist(
-                                            controller: wishlistController,
-                                            onPressed: (p0) {
-                                              /*  productController
-                                                      .bestSellerList[p1]
-                                                  ["wishlisted"] = true;
-                                              setState(() {}); */
-                                              productController
-                                                  .callAddProductToWishlist(
-                                                      p0,
-                                                      "seller",
-                                                      productController
-                                                              .bestSellerList[
-                                                          p1]["id"],
-                                                      0,
-                                                      brandController
-                                                          .brandId.value,
-                                                      [],
-                                                      [],
-                                                      0,
-                                                      0,
-                                                      0);
-                                            },
-                                            wishlistList: wishlistController
-                                                .wishlistList));
-                                    await analytics.logEvent(
-                                      name: 'allbrand_bestseller_wishlist',
-                                      parameters: <String, Object>{
-                                        'page_name':
-                                            'allbrand_bestseller_wishlist',
-                                      },
-                                    );
-                                  }
-                                },
-                                list: productController.bestSellerList,
-                              ),
-                            )
-                          : SizedBox(
-                              height: 0,
-                            )),
-                 */
-
                   InkWell(
                     onTap: () async {
                       final prefs = await SharedPreferences.getInstance();
@@ -961,6 +616,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       "brand"); */
                             },
                           ));
+                      await analytics.logEvent(
+                        name: 'branddetails_btnexploreall',
+                        parameters: <String, Object>{
+                          'page_name': 'branddetails_btnexploreall',
+                        },
+                      );
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(

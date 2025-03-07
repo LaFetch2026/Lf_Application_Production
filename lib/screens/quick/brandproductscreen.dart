@@ -555,11 +555,11 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                               ));
                                                   await analytics.logEvent(
                                                     name:
-                                                        'category_product_details',
+                                                        'brandproduct_product_details',
                                                     parameters: <String,
                                                         Object>{
                                                       'page_name':
-                                                          'category_product_details',
+                                                          'brandproduct_product_details',
                                                     },
                                                   );
                                                 },

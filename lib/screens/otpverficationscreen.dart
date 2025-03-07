@@ -331,11 +331,17 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                         textColor: whiteColor,
                         backgroundColor: homeAppBarColor,
                         controller: otpController,
-                        onPressed: () {
+                        onPressed: () async {
                           if (otpController
                               .checkOtpvalidation(otpController.otp.value)) {
                             otpController.callVerifyOtp(widget.phoneMunber);
                           }
+                          await analytics.logEvent(
+                            name: 'otp_screen_btnsubmit',
+                            parameters: <String, Object>{
+                              'page_name': 'otp_screen_btnsubmit',
+                            },
+                          );
                         },
                         borderColor: btnTextColor),
                   )

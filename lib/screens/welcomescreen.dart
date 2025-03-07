@@ -204,9 +204,9 @@ class WelcomeScreenState extends State<WelcomeScreen>
                           },
                         );
                         await analytics.logEvent(
-                          name: 'welcome_page_btnsignin',
+                          name: 'welcome_page_btnImNew',
                           parameters: <String, Object>{
-                            'page_name': 'welcome_page_btnsignin',
+                            'page_name': 'welcome_page_btnImNew',
                           },
                         );
                       },
@@ -231,17 +231,23 @@ class WelcomeScreenState extends State<WelcomeScreen>
                           },
                         );
                         await analytics.logEvent(
-                          name: 'welcome_page_btncreateaccount',
+                          name: 'welcome_page_btnsignin',
                           parameters: <String, Object>{
-                            'page_name': 'welcome_page_btncreateaccount',
+                            'page_name': 'welcome_page_btnsignin',
                           },
                         );
                       },
                       fontSize: 13),
                 ),
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
                     loginController.callGuestUser();
+                    await analytics.logEvent(
+                      name: 'welcome_page_btnSkip',
+                      parameters: <String, Object>{
+                        'page_name': 'welcome_page_btnSkip',
+                      },
+                    );
                   },
                   child: Obx(() => loginController.isGuest.value
                       ? Center(

@@ -702,7 +702,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                           height: 50.sp,
                                                                                           width: double.infinity,
                                                                                           child: Center(
-                                                                                            child: Text("No Category Found", style: TextStyle(fontSize: 14.sp, color: Colors.black, fontFamily: "Franklin Gothic Regular")),
+                                                                                            child: Text("No Product Found", style: TextStyle(fontSize: 14.sp, color: Colors.black, fontFamily: "Franklin Gothic Regular")),
                                                                                           ),
                                                                                         )
                                                                                   : const SizedBox(
