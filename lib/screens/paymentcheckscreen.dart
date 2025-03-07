@@ -48,6 +48,7 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
           orderId: 0,
           text2: "",
           image: paymentFailImage));
+      timer.cancel();
     });
   }
 
@@ -80,8 +81,8 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
                 );
               },
               onPressedBackButton: () {
-                timer?.cancel();
-                Get.back();
+                /*  timer?.cancel();
+                Get.back(); */
               },
               onPressedheart: () async {
                 Get.to(const WishlistScreen());
