@@ -40,7 +40,7 @@ class HomeController extends BaseController {
   RxInt currentPage = 0.obs;
   RxInt homeGenderValue = 2.obs;
   List banners = [].obs;
-  RxString expressHour = "".obs;
+  RxString expressHour = "2".obs;
   RxInt cartValue = 0.obs;
   // RxBool loadMore = false.obs;
   // RxBool hasnextpage = true.obs;

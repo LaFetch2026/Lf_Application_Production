@@ -889,9 +889,19 @@ class SearchScreenState extends State<SearchScreen> {
                                                         fontSize: 13,
                                                         backgroundColor:
                                                             homeAppBarColor,
-                                                        onPressed: () {
+                                                        onPressed: () async {
                                                           Get.off(
                                                               BottomNavScreen());
+                                                          await analytics
+                                                              .logEvent(
+                                                            name:
+                                                                'search_btnbackhome',
+                                                            parameters: <String,
+                                                                Object>{
+                                                              'page_name':
+                                                                  'search_btnbackhome',
+                                                            },
+                                                          );
                                                         },
                                                         borderColor:
                                                             colorPrimary),
@@ -1353,24 +1363,14 @@ class SearchScreenState extends State<SearchScreen> {
                                                                       await analytics
                                                                           .logEvent(
                                                                         name:
-                                                                            'categories_searchpage',
+                                                                            'search_suggested_categoryproduct',
                                                                         parameters: <String,
                                                                             Object>{
                                                                           'page_name':
-                                                                              'categories_searchpage',
+                                                                              'search_suggested_categoryproduct',
                                                                         },
                                                                       );
                                                                     }
-                                                                    await analytics
-                                                                        .logEvent(
-                                                                      name:
-                                                                          "search_page_mostsearch_details",
-                                                                      parameters: <String,
-                                                                          Object>{
-                                                                        'page_name':
-                                                                            'search_page_mostsearch_details',
-                                                                      },
-                                                                    );
                                                                   },
                                                                   child: Column(
                                                                     crossAxisAlignment:
@@ -1523,24 +1523,14 @@ class SearchScreenState extends State<SearchScreen> {
                                                                 await analytics
                                                                     .logEvent(
                                                                   name:
-                                                                      'categories_searchpage',
+                                                                      'search_mostsearch_categoryProduct',
                                                                   parameters: <String,
                                                                       Object>{
                                                                     'page_name':
-                                                                        'categories_searchpage',
+                                                                        'search_mostsearch_categoryProduct',
                                                                   },
                                                                 );
                                                               }
-                                                              await analytics
-                                                                  .logEvent(
-                                                                name:
-                                                                    "search_page_mostsearch_details",
-                                                                parameters: <String,
-                                                                    Object>{
-                                                                  'page_name':
-                                                                      'search_page_mostsearch_details',
-                                                                },
-                                                              );
                                                             },
                                                             child: Column(
                                                               crossAxisAlignment:

@@ -140,9 +140,15 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
                   textColor: whiteColor,
                   fontSize: 13,
                   backgroundColor: homeAppBarColor,
-                  onPressed: () {
+                  onPressed: () async {
                     Get.close(1);
                     Get.off(OrderExchangeScreen());
+                    await analytics.logEvent(
+                      name: 'payment_btn_myorder',
+                      parameters: <String, Object>{
+                        'page_name': 'payment_btn_myorder',
+                      },
+                    );
                   },
                   borderColor: colorPrimary),
             )

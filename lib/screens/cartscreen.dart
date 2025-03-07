@@ -240,8 +240,14 @@ class CartScreenState extends State<CartScreen> {
                             widget.backgroundcolor == whiteColor ? true : false,
                         child: CartAppbar(
                           text: "Bag",
-                          onPressedWishlist: () {
+                          onPressedWishlist: () async {
                             Get.to(WishlistScreen());
+                            await analytics.logEvent(
+                              name: 'wishlist_page',
+                              parameters: <String, Object>{
+                                'page_name': 'wishlist_page',
+                              },
+                            );
                           },
                         ),
                       ),
@@ -2901,11 +2907,10 @@ class CartScreenState extends State<CartScreen> {
                                                     },
                                                   ));
                                           await analytics.logEvent(
-                                            name:
-                                                'checkoutPage_changeAddressclick',
+                                            name: 'cart_changeAddressclick',
                                             parameters: <String, Object>{
                                               'page_name':
-                                                  'checkoutPage_changeAddressclick',
+                                                  'cart_changeAddressclick',
                                             },
                                           );
                                         }

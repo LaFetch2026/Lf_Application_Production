@@ -116,8 +116,14 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
                               textColor: whiteBorderColor,
                               backgroundColor: homeAppBarColor,
                               controller: controller,
-                              onPressed: () {
+                              onPressed: () async {
                                 controller.callDeleteAccount();
+                                await analytics.logEvent(
+                                  name: 'confirm_delete_btnclick',
+                                  parameters: <String, Object>{
+                                    'page_name': 'confirm_delete_btnclick',
+                                  },
+                                );
                               },
                               borderColor: btnTextColor),
                         )),

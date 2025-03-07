@@ -114,10 +114,16 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     InkWell(
-                      onTap: () {
+                      onTap: () async {
                         controller.selectCategoryGender.value = 2;
                         controller.categoryName.value = "Men";
                         controller.getCatagoryData(2);
+                        await analytics.logEvent(
+                          name: 'category_men',
+                          parameters: <String, Object>{
+                            'page_name': 'category_men',
+                          },
+                        );
                       },
                       child: SizedBox(
                         child: Column(
@@ -152,10 +158,16 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                       ),
                     ),
                     InkWell(
-                      onTap: () {
+                      onTap: () async {
                         controller.selectCategoryGender.value = 3;
                         controller.categoryName.value = "Women";
                         controller.getCatagoryData(3);
+                        await analytics.logEvent(
+                          name: 'category_women',
+                          parameters: <String, Object>{
+                            'page_name': 'category_women',
+                          },
+                        );
                       },
                       child: SizedBox(
                         child: Column(
@@ -190,10 +202,16 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                       ),
                     ),
                     InkWell(
-                      onTap: () {
+                      onTap: () async {
                         controller.selectCategoryGender.value = 1;
                         controller.categoryName.value = "Accessories";
                         controller.getCatagoryData(1);
+                        await analytics.logEvent(
+                          name: 'category_accessories',
+                          parameters: <String, Object>{
+                            'page_name': 'category_accessories',
+                          },
+                        );
                       },
                       child: SizedBox(
                         child: Column(
@@ -315,10 +333,10 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                                 );
                                                 await analytics.logEvent(
                                                   name:
-                                                      "catalog_page_${controller.categoryName.value}",
+                                                      "category_page_${controller.categoryName.value}",
                                                   parameters: <String, Object>{
                                                     'page_name':
-                                                        "catalog_page_${controller.categoryName.value}",
+                                                        "category_page_${controller.categoryName.value}",
                                                   },
                                                 );
                                               },

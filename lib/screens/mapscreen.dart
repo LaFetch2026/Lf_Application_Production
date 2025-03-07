@@ -682,9 +682,9 @@ class MapScreenState extends State<MapScreen> {
                 },
               );
               await analytics.logEvent(
-                name: 'shipAddress_page',
+                name: 'confirmlocation_btnclick',
                 parameters: <String, Object>{
-                  'page_name': 'shipAddress_page',
+                  'page_name': 'confirmlocation_btnclick',
                 },
               );
             } else {

@@ -100,7 +100,7 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
                         ? "TRY again"
                         : "BACK to cart",
                 image: widget.image,
-                onPressed: () {
+                onPressed: () async {
                   if (widget.text1 == "Order Placed Successfully") {
                     Get.close(1);
                     Get.off(OrderDetailsScreen(
@@ -114,6 +114,12 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
                   } else {
                     Get.close(1);
                   }
+                  await analytics.logEvent(
+                    name: 'btn_${widget.text1}',
+                    parameters: <String, Object>{
+                      'page_name': 'btn_${widget.text1}',
+                    },
+                  );
                 },
                 visible:
                     widget.text1 == "Order Placed Successfully" ? true : false,

@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:dotted_line/dotted_line.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -36,6 +37,7 @@ class BottomCoupon extends StatefulWidget {
 class BottomCouponState extends State<BottomCoupon> {
   List<bool> selected = List.generate(50, (i) => false);
   final controller = Get.put(CartController());
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   Timer? debounce;
   int? i;
 
@@ -193,7 +195,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                                     : Colors.transparent
                                                         .withOpacity(0.3),
                                             suffixIcon: GestureDetector(
-                                              onTap: () {
+                                              onTap: () async {
                                                 FocusScope.of(context)
                                                     .unfocus();
                                                 controller.callAddCoupon(
@@ -203,6 +205,13 @@ class BottomCouponState extends State<BottomCoupon> {
                                                         .trim(),
                                                     "coupon",
                                                     widget.backColor);
+                                                await analytics.logEvent(
+                                                  name: 'coupon_btnapply',
+                                                  parameters: <String, Object>{
+                                                    'page_name':
+                                                        'coupon_btnapply',
+                                                  },
+                                                );
                                               },
                                               child: Padding(
                                                 padding: EdgeInsets.symmetric(
@@ -1009,7 +1018,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                                   ),
                                                 ),
                                                 GestureDetector(
-                                                  onTap: () {
+                                                  onTap: () async {
                                                     /*  if (widget.list[index] 
                                                         ["applicable"]) {*/
                                                     controller.categoryList
@@ -1078,6 +1087,15 @@ class BottomCouponState extends State<BottomCoupon> {
                                                                   ? statusBarColor
                                                                   : homeAppBarColor,
                                                         ));
+                                                      },
+                                                    );
+                                                    await analytics.logEvent(
+                                                      name:
+                                                          'browse_collect_click',
+                                                      parameters: <String,
+                                                          Object>{
+                                                        'page_name':
+                                                            'browse_collect_click',
                                                       },
                                                     );
                                                     //  }

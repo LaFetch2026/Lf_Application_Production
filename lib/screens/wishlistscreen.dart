@@ -335,7 +335,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                       wishlistController.wishlistList.length,
                                       (index) {
                                         return GestureDetector(
-                                          onTap: () {
+                                          onTap: () async {
                                             Navigator.of(context)
                                                 .push(MaterialPageRoute(
                                                     builder:
@@ -369,6 +369,12 @@ class WishlistScreenState extends State<WishlistScreen> {
                                                             .getWishlistData();
                                                       },
                                                     ));
+                                            await analytics.logEvent(
+                                              name: 'wishlist_click',
+                                              parameters: <String, Object>{
+                                                'page_name': 'wishlist_click',
+                                              },
+                                            );
                                           },
                                           child: Container(
                                             alignment: Alignment.center,

@@ -188,7 +188,7 @@ class QuickScreenState extends State<QuickScreen> {
                                 )
                               : productController.defaultAddress != ""
                                   ? InkWell(
-                                      onTap: () {
+                                      onTap: () async {
                                         setState(() {
                                           isBottomSheet = true;
                                         });
@@ -210,6 +210,12 @@ class QuickScreenState extends State<QuickScreen> {
                                             isBottomSheet = false;
                                           });
                                         });
+                                        await analytics.logEvent(
+                                          name: 'quick_select_address',
+                                          parameters: <String, Object>{
+                                            'page_name': 'quick_select_address',
+                                          },
+                                        );
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
@@ -806,6 +812,16 @@ class QuickScreenState extends State<QuickScreen> {
                                                                                 "quick");
                                                                           },
                                                                         ));
+                                                            await analytics
+                                                                .logEvent(
+                                                              name:
+                                                                  'quick_featurebrand_click',
+                                                              parameters: <String,
+                                                                  Object>{
+                                                                'page_name':
+                                                                    'quick_featurebrand_click',
+                                                              },
+                                                            );
                                                           },
                                                           child: Padding(
                                                             padding:
@@ -1235,6 +1251,16 @@ class QuickScreenState extends State<QuickScreen> {
                                                                                 "quick");
                                                                           },
                                                                         ));
+                                                                await analytics
+                                                                    .logEvent(
+                                                                  name:
+                                                                      'quick_brandname_click',
+                                                                  parameters: <String,
+                                                                      Object>{
+                                                                    'page_name':
+                                                                        'quick_brandname_click',
+                                                                  },
+                                                                );
                                                               },
                                                               child: Padding(
                                                                 padding: EdgeInsets
@@ -1329,6 +1355,16 @@ class QuickScreenState extends State<QuickScreen> {
                                                                                 "quick");
                                                                           },
                                                                         ));
+                                                                await analytics
+                                                                    .logEvent(
+                                                                  name:
+                                                                      'quick_brandviewall_click',
+                                                                  parameters: <String,
+                                                                      Object>{
+                                                                    'page_name':
+                                                                        'quick_brandviewall_click',
+                                                                  },
+                                                                );
                                                               },
                                                               child: Padding(
                                                                 padding: EdgeInsets
@@ -1462,11 +1498,11 @@ class QuickScreenState extends State<QuickScreen> {
                                                           await analytics
                                                               .logEvent(
                                                             name:
-                                                                'category_product_details',
+                                                                'quick_product_details',
                                                             parameters: <String,
                                                                 Object>{
                                                               'page_name':
-                                                                  'category_product_details',
+                                                                  'quick_product_details',
                                                             },
                                                           );
                                                         },

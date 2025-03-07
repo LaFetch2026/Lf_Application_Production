@@ -498,8 +498,14 @@ class AccountScreenState extends State<AccountScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     GestureDetector(
-                                      onTap: () {
+                                      onTap: () async {
                                         Get.to(CustomerCareScreen());
+                                        await analytics.logEvent(
+                                          name: 'customer_care',
+                                          parameters: <String, Object>{
+                                            'page_name': 'customer_care',
+                                          },
+                                        );
                                       },
                                       child: Padding(
                                         padding: EdgeInsets.only(
@@ -529,9 +535,9 @@ class AccountScreenState extends State<AccountScreen> {
                                           },
                                         );
                                         await analytics.logEvent(
-                                          name: 'addresslist_page',
+                                          name: 'saveaddress_page',
                                           parameters: <String, Object>{
-                                            'page_name': 'addresslist_page',
+                                            'page_name': 'saveaddress_page',
                                           },
                                         );
                                       },
@@ -564,7 +570,7 @@ class AccountScreenState extends State<AccountScreen> {
                                   ),
                                 ), */
                                     SettingWidgets(
-                                      onPressedDelete: () {
+                                      onPressedDelete: () async {
                                         Navigator.of(context)
                                             .push(MaterialPageRoute(
                                                 builder:
@@ -595,8 +601,15 @@ class AccountScreenState extends State<AccountScreen> {
                                                     ));
                                                   },
                                                 ));
+                                        await analytics.logEvent(
+                                          name: 'delete_account_screen',
+                                          parameters: <String, Object>{
+                                            'page_name':
+                                                'delete_account_screen',
+                                          },
+                                        );
                                       },
-                                      onPressedNotification: () {
+                                      onPressedNotification: () async {
                                         if (controller.profileDetails[
                                                 "order_notification_enabled"] ==
                                             0) {
@@ -634,31 +647,67 @@ class AccountScreenState extends State<AccountScreen> {
                                             ));
                                           },
                                         );
+                                        await analytics.logEvent(
+                                          name: 'notification_screen',
+                                          parameters: <String, Object>{
+                                            'page_name': 'notification_screen',
+                                          },
+                                        );
                                       },
                                     ),
                                   ],
                                 ),
                                 SupportWidgets(
                                   visibilty: false,
-                                  onPressedAboutUs: () {
+                                  onPressedAboutUs: () async {
                                     launchUrl(Uri.parse(
                                         "https://la-fetch.com/about-us/"));
+                                    await analytics.logEvent(
+                                      name: 'about_us',
+                                      parameters: <String, Object>{
+                                        'page_name': 'about_us',
+                                      },
+                                    );
                                   },
-                                  onPressedTC: () {
+                                  onPressedTC: () async {
                                     launchUrl(Uri.parse(
                                         "https://la-fetch.com/terms-and-conditions/"));
+                                    await analytics.logEvent(
+                                      name: 'teams_condition',
+                                      parameters: <String, Object>{
+                                        'page_name': 'teams_condition',
+                                      },
+                                    );
                                   },
-                                  onPressedPrivacy: () {
+                                  onPressedPrivacy: () async {
                                     launchUrl(Uri.parse(
                                         "https://la-fetch.com/privacy-policy/"));
+                                    await analytics.logEvent(
+                                      name: 'privacy_policy',
+                                      parameters: <String, Object>{
+                                        'page_name': 'privacy_policy',
+                                      },
+                                    );
                                   },
-                                  onPressedCancelation: () {
+                                  onPressedCancelation: () async {
                                     launchUrl(Uri.parse(
                                         "https://www.la-fetch.com/cancellation-policy/"));
+                                    await analytics.logEvent(
+                                      name: 'cancellation_policy',
+                                      parameters: <String, Object>{
+                                        'page_name': 'cancellation_policy',
+                                      },
+                                    );
                                   },
-                                  onPressedShiping: () {
+                                  onPressedShiping: () async {
                                     launchUrl(Uri.parse(
                                         "https://www.la-fetch.com/shipping-policy/"));
+                                    await analytics.logEvent(
+                                      name: 'shiping_policy',
+                                      parameters: <String, Object>{
+                                        'page_name': 'shiping_policy',
+                                      },
+                                    );
                                   },
                                 ),
                                 /*   controller.profileDetails.isEmpty
