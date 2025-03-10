@@ -55,13 +55,13 @@ class WelcomeScreenState extends State<WelcomeScreen>
       body: Stack(
         children: [
           Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
+            // width: MediaQuery.of(context).size.width,
+            //height: MediaQuery.of(context).size.height,
             child: /* AspectRatio(
           aspectRatio: 9 / 16,
           child: */
                 FittedBox(
-                    fit: BoxFit.contain,
+                    fit: BoxFit.cover,
                     child: Container(
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height,
