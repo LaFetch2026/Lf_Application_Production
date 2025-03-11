@@ -49,8 +49,14 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
   navigateToScreen() {
     if (token != null) {
       if (token!.isNotEmpty && name != null) {
-        Get.offAll(
+        /*   Get.offAll(
           () => const BottomNavScreen(),
+        ); */
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const BottomNavScreen(),
+          ),
+          (Route<dynamic> route) => false,
         );
       } else {
         if (phone == null) {
