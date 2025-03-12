@@ -88,7 +88,10 @@ class HomeScreenState extends State<HomeScreen> {
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-          statusBarColor: whiteColor, systemNavigationBarColor: whiteColor));
+        statusBarColor: whiteColor, systemNavigationBarColor: whiteColor,
+        statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
+        statusBarBrightness: Brightness.light,
+      ));
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.showGenderList.value = false;
@@ -1648,12 +1651,17 @@ class HomeScreenState extends State<HomeScreen> {
                                                                 slug: ""))
                                                             ?.then(
                                                           (value) {
-                                                            SystemChrome.setSystemUIOverlayStyle(
-                                                                const SystemUiOverlayStyle(
-                                                                    statusBarColor:
-                                                                        whiteColor,
-                                                                    systemNavigationBarColor:
-                                                                        whiteColor));
+                                                            SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+                                                                statusBarColor:
+                                                                    whiteColor,
+                                                                statusBarIconBrightness:
+                                                                    Brightness
+                                                                        .dark,
+                                                                statusBarBrightness:
+                                                                    Brightness
+                                                                        .light,
+                                                                systemNavigationBarColor:
+                                                                    whiteColor));
                                                           },
                                                         );
                                                         await analytics

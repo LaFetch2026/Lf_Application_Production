@@ -62,6 +62,8 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
           statusBarColor: homeAppBarColor,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
           systemNavigationBarColor: homeAppBarColor));
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -240,6 +242,10 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                   .setSystemUIOverlayStyle(
                                                       SystemUiOverlayStyle(
                                                 statusBarColor: homeAppBarColor,
+                                                statusBarIconBrightness:
+                                                    Brightness.light,
+                                                statusBarBrightness:
+                                                    Brightness.dark,
                                               ));
                                             },
                                           );
@@ -269,6 +275,10 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                   .setSystemUIOverlayStyle(
                                                       SystemUiOverlayStyle(
                                                 statusBarColor: homeAppBarColor,
+                                                statusBarIconBrightness:
+                                                    Brightness.light,
+                                                statusBarBrightness:
+                                                    Brightness.dark,
                                               ));
                                             },
                                           );
@@ -300,6 +310,10 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                       SystemUiOverlayStyle(
                                                 statusBarColor: homeAppBarColor
                                                     .withOpacity(0.5),
+                                                statusBarIconBrightness:
+                                                    Brightness.light,
+                                                statusBarBrightness:
+                                                    Brightness.dark,
                                               ));
                                             },
                                           );

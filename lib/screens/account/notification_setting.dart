@@ -29,6 +29,8 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
     super.initState();
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: homeAppBarColor,
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
       systemNavigationBarColor: homeAppBarColor,
     ));
   }

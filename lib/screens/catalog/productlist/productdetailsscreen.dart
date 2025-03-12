@@ -706,6 +706,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
         statusBarColor: widget.backgroundcolor == whiteColor
             ? statusBarColor
             : homeAppBarColor,
+        statusBarIconBrightness: widget.backgroundcolor == whiteColor
+            ? Brightness.dark
+            : Brightness.light,
+        statusBarBrightness: widget.backgroundcolor == whiteColor
+            ? Brightness.light
+            : Brightness.dark,
         systemNavigationBarColor: widget.backgroundcolor == whiteColor
             ? statusBarColor
             : homeAppBarColor));

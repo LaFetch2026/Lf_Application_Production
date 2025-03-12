@@ -21,6 +21,8 @@ Future main() async {
   );
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: homeAppBarColor,
+      statusBarIconBrightness: Brightness.light, // For Android (dark icons)
+      statusBarBrightness: Brightness.dark,
       systemNavigationBarColor: homeAppBarColor));
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

@@ -454,7 +454,12 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                     slug: "",
                                                                                     screen: widget.screen!,
                                                                                   ))?.then((value) {
-                                                                                    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: whiteColor, systemNavigationBarColor: whiteColor));
+                                                                                    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+                                                                                      statusBarColor: whiteColor,
+                                                                                      systemNavigationBarColor: whiteColor,
+                                                                                      statusBarIconBrightness: Brightness.dark,
+                                                                                      statusBarBrightness: Brightness.light,
+                                                                                    ));
                                                                                   });
                                                                                   await analytics.logEvent(
                                                                                     name: 'brand_details',
@@ -599,7 +604,12 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                             slug: "",
                                                                                                             screen: widget.screen!,
                                                                                                           ))?.then((value) {
-                                                                                                            SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: whiteColor, systemNavigationBarColor: whiteColor));
+                                                                                                            SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+                                                                                                              statusBarColor: whiteColor,
+                                                                                                              systemNavigationBarColor: whiteColor,
+                                                                                                              statusBarIconBrightness: Brightness.dark,
+                                                                                                              statusBarBrightness: Brightness.light,
+                                                                                                            ));
                                                                                                           });
                                                                                                           await analytics.logEvent(
                                                                                                             name: 'brand_details',
@@ -661,7 +671,12 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                     slug: "",
                                                                                                     screen: widget.screen!,
                                                                                                   ))?.then((value) {
-                                                                                                    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: whiteColor, systemNavigationBarColor: whiteColor));
+                                                                                                    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+                                                                                                      statusBarColor: whiteColor,
+                                                                                                      systemNavigationBarColor: whiteColor,
+                                                                                                      statusBarIconBrightness: Brightness.dark,
+                                                                                                      statusBarBrightness: Brightness.light,
+                                                                                                    ));
                                                                                                   });
                                                                                                   await analytics.logEvent(
                                                                                                     name: 'brand_details',

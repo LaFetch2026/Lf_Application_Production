@@ -644,6 +644,10 @@ class AccountScreenState extends State<AccountScreen> {
                                                 .setSystemUIOverlayStyle(
                                                     const SystemUiOverlayStyle(
                                               statusBarColor: statusBarColor,
+                                              statusBarIconBrightness:
+                                                  Brightness.dark,
+                                              statusBarBrightness:
+                                                  Brightness.light,
                                             ));
                                           },
                                         );

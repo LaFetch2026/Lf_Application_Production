@@ -70,6 +70,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
           statusBarColor: statusBarColor,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
           systemNavigationBarColor: statusBarColor));
     });
     getPrefrenceValue();

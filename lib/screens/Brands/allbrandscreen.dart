@@ -104,6 +104,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
           statusBarColor: homeAppBarColor,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
           systemNavigationBarColor: homeAppBarColor));
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -222,6 +224,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                   SystemChrome.setSystemUIOverlayStyle(
                       const SystemUiOverlayStyle(
                     statusBarColor: homeAppBarColor,
+                    statusBarIconBrightness: Brightness.light,
+                    statusBarBrightness: Brightness.dark,
                     systemNavigationBarColor: homeAppBarColor,
                   ));
                 },
@@ -239,6 +243,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                   SystemChrome.setSystemUIOverlayStyle(
                       const SystemUiOverlayStyle(
                     statusBarColor: homeAppBarColor,
+                    statusBarIconBrightness: Brightness.light,
+                    statusBarBrightness: Brightness.dark,
                     systemNavigationBarColor: homeAppBarColor,
                   ));
                 },
@@ -567,6 +573,9 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                           statusBarColor: homeAppBarColor,
                                           systemNavigationBarColor:
                                               homeAppBarColor,
+                                          statusBarIconBrightness:
+                                              Brightness.light,
+                                          statusBarBrightness: Brightness.dark,
                                         ));
                                       },
                                     ));
