@@ -43,104 +43,101 @@ class DoubleIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: 8.sp, bottom: 8.sp),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              child: Center(
-                child: SizedBox(
-                    width: (MediaQuery.of(context).size.width / 2) - 4,
-                    height: 48.sp,
-                    child: ElevatedButton.icon(
-                        icon: Padding(
-                          padding: EdgeInsets.only(right: 4.sp),
-                          child: SvgPicture.asset(firstIcon,
-                              height: 13.sp,
-                              color: homeAppBarColor,
-                              width: 13.sp,
-                              fit: BoxFit.cover),
-                        ),
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(1))),
-                            side: MaterialStateProperty.all(
-                              BorderSide(width: 1.sp, color: firstBorderColor),
-                            ),
-                            elevation: MaterialStateProperty.all(0.0),
-                            backgroundColor:
-                                MaterialStateProperty.all(firstBackgroundColor),
-                            textStyle: MaterialStateProperty.all(TextStyle(
-                              color: firstTextColor,
-                              fontSize: firstFontSize,
-                            ))),
-                        onPressed: () {
-                          onPressedFirst?.call();
-                        },
-                        label: Text(
-                          firstText,
-                          style: TextStyle(
-                              color: firstTextColor,
-                              fontFamily: fontFamily,
-                              fontSize: firstFontSize.sp),
-                        ))),
-              ),
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            alignment: Alignment.bottomCenter,
+            child: Center(
+              child: SizedBox(
+                  width: (MediaQuery.of(context).size.width / 2) - 4,
+                  height: 48.sp,
+                  child: ElevatedButton.icon(
+                      icon: Padding(
+                        padding: EdgeInsets.only(right: 4.sp),
+                        child: SvgPicture.asset(firstIcon,
+                            height: 13.sp,
+                            color: homeAppBarColor,
+                            width: 13.sp,
+                            fit: BoxFit.cover),
+                      ),
+                      style: ButtonStyle(
+                          shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(1))),
+                          side: MaterialStateProperty.all(
+                            BorderSide(width: 1.sp, color: firstBorderColor),
+                          ),
+                          elevation: MaterialStateProperty.all(0.0),
+                          backgroundColor:
+                              MaterialStateProperty.all(firstBackgroundColor),
+                          textStyle: MaterialStateProperty.all(TextStyle(
+                            color: firstTextColor,
+                            fontSize: firstFontSize,
+                          ))),
+                      onPressed: () {
+                        onPressedFirst?.call();
+                      },
+                      label: Text(
+                        firstText,
+                        style: TextStyle(
+                            color: firstTextColor,
+                            fontFamily: fontFamily,
+                            fontSize: firstFontSize.sp),
+                      ))),
             ),
           ),
-          SizedBox(
-            width: 20.sp,
-          ),
-          Expanded(
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              child: Center(
-                child: SizedBox(
-                    width: (MediaQuery.of(context).size.width / 2) - 4,
-                    height: 48.sp,
-                    child: ElevatedButton.icon(
-                        icon: Padding(
-                          padding: EdgeInsets.only(right: 4.sp),
-                          child: SvgPicture.asset(secondIcon,
-                              height: 18.sp,
-                              color: secondIcon == heartSvgImage
-                                  ? whiteColor
-                                  : redColor,
-                              width: 18.sp,
-                              fit: BoxFit.cover),
-                        ),
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(1))),
-                            side: MaterialStateProperty.all(BorderSide(
-                                color: secondBorderColor,
-                                width: 1.0.sp,
-                                style: BorderStyle.solid)),
-                            backgroundColor: MaterialStateProperty.all(
-                                secondBackgroundColor),
-                            elevation: MaterialStateProperty.all(0.0),
-                            textStyle: MaterialStateProperty.all(TextStyle(
-                              color: secondTextColor,
-                              fontSize: secondFontSize,
-                            ))),
-                        onPressed: () {
-                          onPressedSecond?.call();
-                        },
-                        label: Text(
-                          secondText,
-                          style: TextStyle(
-                              fontFamily: fontFamily,
-                              color: secondTextColor,
-                              fontSize: secondFontSize.sp),
-                        ))),
-              ),
+        ),
+        SizedBox(
+          width: 20.sp,
+        ),
+        Expanded(
+          child: Container(
+            alignment: Alignment.bottomCenter,
+            child: Center(
+              child: SizedBox(
+                  width: (MediaQuery.of(context).size.width / 2) - 4,
+                  height: 48.sp,
+                  child: ElevatedButton.icon(
+                      icon: Padding(
+                        padding: EdgeInsets.only(right: 4.sp),
+                        child: SvgPicture.asset(secondIcon,
+                            height: 18.sp,
+                            color: secondIcon == heartSvgImage
+                                ? whiteColor
+                                : redColor,
+                            width: 18.sp,
+                            fit: BoxFit.cover),
+                      ),
+                      style: ButtonStyle(
+                          shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(1))),
+                          side: MaterialStateProperty.all(BorderSide(
+                              color: secondBorderColor,
+                              width: 1.0.sp,
+                              style: BorderStyle.solid)),
+                          backgroundColor:
+                              MaterialStateProperty.all(secondBackgroundColor),
+                          elevation: MaterialStateProperty.all(0.0),
+                          textStyle: MaterialStateProperty.all(TextStyle(
+                            color: secondTextColor,
+                            fontSize: secondFontSize,
+                          ))),
+                      onPressed: () {
+                        onPressedSecond?.call();
+                      },
+                      label: Text(
+                        secondText,
+                        style: TextStyle(
+                            fontFamily: fontFamily,
+                            color: secondTextColor,
+                            fontSize: secondFontSize.sp),
+                      ))),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -200,6 +200,7 @@ class CartController extends BaseController {
               couponlength = couponlength++;
             }
           }
+          couponController.clear();
           Get.to(BottomCoupon(
             list: couponList,
             backColor: backColor,

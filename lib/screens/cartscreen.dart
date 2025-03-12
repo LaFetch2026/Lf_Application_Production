@@ -568,8 +568,6 @@ class CartScreenState extends State<CartScreen> {
                                                                             .only(
                                                                       top:
                                                                           16.sp,
-                                                                      bottom:
-                                                                          16.sp,
                                                                     ),
                                                                     child: Row(
                                                                       crossAxisAlignment:
@@ -1171,10 +1169,10 @@ class CartScreenState extends State<CartScreen> {
                                                                     child:
                                                                         Padding(
                                                                       padding: EdgeInsets.symmetric(
-                                                                          vertical: 8
+                                                                          horizontal: 16
                                                                               .sp,
-                                                                          horizontal:
-                                                                              16.sp),
+                                                                          vertical:
+                                                                              8.sp),
                                                                       child:
                                                                           AppText(
                                                                         text: "Out of Stock"
@@ -1198,133 +1196,135 @@ class CartScreenState extends State<CartScreen> {
                                                                         ? true
                                                                         : false,
                                                                     child:
-                                                                        DoubleIconButton(
-                                                                      firstText:
-                                                                          "REMOVE",
-                                                                      secondText:
-                                                                          "WISHLIST",
-                                                                      firstTextColor:
-                                                                          homeAppBarColor,
-                                                                      secondTextColor:
-                                                                          whiteColor,
-                                                                      firstBackgroundColor:
-                                                                          whiteColor,
-                                                                      secondBackgroundColor:
-                                                                          homeAppBarColor,
-                                                                      firstBorderColor:
-                                                                          homeAppBarColor,
-                                                                      secondBorderColor: widget.backgroundcolor ==
-                                                                              whiteColor
-                                                                          ? homeAppBarColor
-                                                                          : lightPurpleColor,
-                                                                      firstIcon:
-                                                                          crossSearchImage,
-                                                                      secondIcon: value.orderList[index]["product"]
-                                                                              [
-                                                                              "wishlisted"]
-                                                                          ? redHeartSvgImage
-                                                                          : heartSvgImage,
-                                                                      onPressedFirst:
-                                                                          () async {
-                                                                        showDialog(
-                                                                          barrierColor:
-                                                                              Colors.black26,
-                                                                          context:
-                                                                              context,
-                                                                          builder:
-                                                                              (context) {
-                                                                            return showDoubleBtnDailog(
-                                                                                click1: () {
-                                                                                  Get.back();
-                                                                                },
-                                                                                click2: () {
-                                                                                  value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor);
-                                                                                },
-                                                                                btncolor: colorPrimary,
-                                                                                text: "Are you sure you want to remove this item?",
-                                                                                btn1Text: "Cancel",
-                                                                                btn2Text: "Remove");
-                                                                          },
-                                                                        );
+                                                                        Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                          top: 8
+                                                                              .sp),
+                                                                      child:
+                                                                          DoubleIconButton(
+                                                                        firstText:
+                                                                            "REMOVE",
+                                                                        secondText:
+                                                                            "WISHLIST",
+                                                                        firstTextColor:
+                                                                            homeAppBarColor,
+                                                                        secondTextColor:
+                                                                            whiteColor,
+                                                                        firstBackgroundColor:
+                                                                            whiteColor,
+                                                                        secondBackgroundColor:
+                                                                            homeAppBarColor,
+                                                                        firstBorderColor:
+                                                                            homeAppBarColor,
+                                                                        secondBorderColor: widget.backgroundcolor ==
+                                                                                whiteColor
+                                                                            ? homeAppBarColor
+                                                                            : lightPurpleColor,
+                                                                        firstIcon:
+                                                                            crossSearchImage,
+                                                                        secondIcon: value.orderList[index]["product"]["wishlisted"]
+                                                                            ? redHeartSvgImage
+                                                                            : heartSvgImage,
+                                                                        onPressedFirst:
+                                                                            () async {
+                                                                          showDialog(
+                                                                            barrierColor:
+                                                                                Colors.black26,
+                                                                            context:
+                                                                                context,
+                                                                            builder:
+                                                                                (context) {
+                                                                              return showDoubleBtnDailog(
+                                                                                  click1: () {
+                                                                                    Get.back();
+                                                                                  },
+                                                                                  click2: () {
+                                                                                    value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor);
+                                                                                  },
+                                                                                  btncolor: colorPrimary,
+                                                                                  text: "Are you sure you want to remove this item?",
+                                                                                  btn1Text: "Cancel",
+                                                                                  btn2Text: "Remove");
+                                                                            },
+                                                                          );
 
-                                                                        await analytics
-                                                                            .logEvent(
-                                                                          name:
-                                                                              'cart_product_removeClick',
-                                                                          parameters: <String,
-                                                                              Object>{
-                                                                            'page_name':
+                                                                          await analytics
+                                                                              .logEvent(
+                                                                            name:
                                                                                 'cart_product_removeClick',
-                                                                          },
-                                                                        );
-                                                                      },
-                                                                      onPressedSecond:
-                                                                          () async {
-                                                                        if (value.orderList[index]["product"]
-                                                                            [
-                                                                            "wishlisted"]) {
-                                                                          wishlistController.callAddProductToWishlist(
-                                                                              value.orderList[index]["product"]["wishlist_id"],
-                                                                              value.orderList[index]["product"]["id"],
-                                                                              widget.backgroundcolor);
-                                                                          controller
-                                                                              .getCartData();
-                                                                          await analytics
-                                                                              .logEvent(
-                                                                            name:
-                                                                                'cart_wishlist_remove',
                                                                             parameters: <String,
                                                                                 Object>{
-                                                                              'page_name': 'productdetails_wishlist_remove',
+                                                                              'page_name': 'cart_product_removeClick',
                                                                             },
                                                                           );
-                                                                        } else {
-                                                                          scaffoldKey.currentState?.showBottomSheet((context) => BottomWishlist(
-                                                                              controller: wishlistController,
-                                                                              onPressedBoard: () {
-                                                                                Navigator.of(context)
-                                                                                    .push(MaterialPageRoute(
-                                                                                        builder: (BuildContext context) => NewBoardScreen(
-                                                                                              title: "New Board",
-                                                                                              boardId: 0,
-                                                                                              screen: "Bag",
-                                                                                              productId: value.orderList[index]["product"]["id"],
-                                                                                              hintName: "Name of the Board",
-                                                                                              boardName: "",
-                                                                                              btnText: "Next",
-                                                                                            )))
-                                                                                    .then(
-                                                                                      (value) {},
-                                                                                    );
+                                                                        },
+                                                                        onPressedSecond:
+                                                                            () async {
+                                                                          if (value.orderList[index]["product"]
+                                                                              [
+                                                                              "wishlisted"]) {
+                                                                            wishlistController.callAddProductToWishlist(
+                                                                                value.orderList[index]["product"]["wishlist_id"],
+                                                                                value.orderList[index]["product"]["id"],
+                                                                                widget.backgroundcolor);
+                                                                            controller.getCartData();
+                                                                            await analytics.logEvent(
+                                                                              name: 'cart_wishlist_remove',
+                                                                              parameters: <String, Object>{
+                                                                                'page_name': 'productdetails_wishlist_remove',
                                                                               },
-                                                                              productImage: value.orderList[index]["product"]["images"][0]["name"],
-                                                                              onPressed: (p0) {
-                                                                                wishlistController.callAddProductToWishlist(p0, value.orderList[index]["product"]["id"], widget.backgroundcolor);
-                                                                                value.callAddtoCart(0, "wishlist", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor);
+                                                                            );
+                                                                          } else {
+                                                                            scaffoldKey.currentState?.showBottomSheet((context) => BottomWishlist(
+                                                                                controller: wishlistController,
+                                                                                onPressedBoard: () {
+                                                                                  Navigator.of(context)
+                                                                                      .push(MaterialPageRoute(
+                                                                                          builder: (BuildContext context) => NewBoardScreen(
+                                                                                                title: "New Board",
+                                                                                                boardId: 0,
+                                                                                                screen: "Bag",
+                                                                                                productId: value.orderList[index]["product"]["id"],
+                                                                                                hintName: "Name of the Board",
+                                                                                                boardName: "",
+                                                                                                btnText: "Next",
+                                                                                              )))
+                                                                                      .then(
+                                                                                        (value) {},
+                                                                                      );
+                                                                                },
+                                                                                productImage: value.orderList[index]["product"]["images"][0]["name"],
+                                                                                onPressed: (p0) {
+                                                                                  wishlistController.callAddProductToWishlist(p0, value.orderList[index]["product"]["id"], widget.backgroundcolor);
+                                                                                  value.callAddtoCart(0, "wishlist", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor);
+                                                                                },
+                                                                                wishlistList: wishlistController.wishlistList));
+                                                                            await analytics.logEvent(
+                                                                              name: 'cart_wishlist_add',
+                                                                              parameters: <String, Object>{
+                                                                                'page_name': 'productdetails_wishlist_add',
                                                                               },
-                                                                              wishlistList: wishlistController.wishlistList));
-                                                                          await analytics
-                                                                              .logEvent(
-                                                                            name:
-                                                                                'cart_wishlist_add',
-                                                                            parameters: <String,
-                                                                                Object>{
-                                                                              'page_name': 'productdetails_wishlist_add',
-                                                                            },
-                                                                          );
-                                                                        }
-                                                                      },
+                                                                            );
+                                                                          }
+                                                                        },
+                                                                      ),
                                                                     ),
                                                                   ),
-                                                                  Container(
-                                                                    width: double
-                                                                        .infinity,
-                                                                    color: widget.backgroundcolor ==
-                                                                            whiteColor
-                                                                        ? colorSecondary
-                                                                        : titleColor,
-                                                                    height:
-                                                                        1.sp,
+                                                                  Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        top: 16
+                                                                            .sp),
+                                                                    child:
+                                                                        Container(
+                                                                      width: double
+                                                                          .infinity,
+                                                                      color: widget.backgroundcolor ==
+                                                                              whiteColor
+                                                                          ? colorSecondary
+                                                                          : titleColor,
+                                                                      height:
+                                                                          1.sp,
+                                                                    ),
                                                                   ),
                                                                 ]),
                                                           );
@@ -1615,14 +1615,29 @@ class CartScreenState extends State<CartScreen> {
                                                                         ),
                                                                         controller.couponText.value ==
                                                                                 "Apply Coupon"
-                                                                            ? Padding(
-                                                                                padding: EdgeInsets.symmetric(horizontal: 8.sp),
-                                                                                child: AppText(
-                                                                                  text: controller.couponText.value,
-                                                                                  fontFamily: "Franklin Gothic Regular",
-                                                                                  fontWeight: FontWeight.w500,
-                                                                                  color: widget.backgroundcolor == whiteColor ? titleColor : productSubtitleColor,
-                                                                                  fontSize: 14,
+                                                                            ? GestureDetector(
+                                                                                onTap: () async {
+                                                                                  await analytics.logEvent(
+                                                                                    name: 'cart_page_applycouponclick',
+                                                                                    parameters: <String, Object>{
+                                                                                      'page_name': 'cart_page_applycouponclick',
+                                                                                    },
+                                                                                  );
+                                                                                  if (controller.cartDetails["discount"] != null) {
+                                                                                    controller.callRemoveCoupon(widget.backgroundcolor);
+                                                                                  } else {
+                                                                                    controller.getCouponData(widget.backgroundcolor);
+                                                                                  }
+                                                                                },
+                                                                                child: Padding(
+                                                                                  padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                                                                                  child: AppText(
+                                                                                    text: controller.couponText.value,
+                                                                                    fontFamily: "Franklin Gothic Regular",
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                    color: widget.backgroundcolor == whiteColor ? titleColor : productSubtitleColor,
+                                                                                    fontSize: 14,
+                                                                                  ),
                                                                                 ),
                                                                               )
                                                                             : Container(
