@@ -130,9 +130,16 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               widget.type));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         productController.bannerTagController.addListener(() {
-          productController.fetchMoreBannerTagProductData(
+          /*  productController.fetchMoreBannerTagProductData(
               productController.productTags,
               productController.productCategory,
+              productController.categoryProductGender.value,
+              productController.sortBy.value,
+              productController.filterEnable.value,
+              widget.type); */
+          productController.fetchMoreBannerTagProductData(
+              widget.tagIds,
+              widget.categoryList,
               productController.categoryProductGender.value,
               productController.sortBy.value,
               productController.filterEnable.value,
