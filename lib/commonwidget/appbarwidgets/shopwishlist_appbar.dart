@@ -7,12 +7,14 @@ class ShopWishlistAppbar extends StatefulWidget {
   final Function? onPressedheart;
   final Function? onPressedCart;
   final Function? onPressedBackButton;
+  final bool hideIcon;
 
   const ShopWishlistAppbar({
     Key? key,
     this.onPressedheart,
     this.onPressedCart,
     this.onPressedBackButton,
+    this.hideIcon = true,
   }) : super(key: key);
 
   @override
@@ -57,31 +59,43 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
                   width: 20.sp,
                 ),
               ),
+              Visibility(
+                visible: widget.hideIcon ? false : true,
+                child: SizedBox(
+                  width: 60.sp,
+                ),
+              ),
               const Expanded(
                 child: SizedBox(
                   height: 0,
                 ),
               ),
-              InkWell(
-                onTap: () {
-                  widget.onPressedheart?.call();
-                },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.sp),
-                  child: SvgPicture.asset(heartSvgImage,
-                      height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+              Visibility(
+                visible: widget.hideIcon ? true : false,
+                child: InkWell(
+                  onTap: () {
+                    widget.onPressedheart?.call();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                    child: SvgPicture.asset(heartSvgImage,
+                        height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                  ),
                 ),
               ),
-              InkWell(
-                onTap: () {
-                  widget.onPressedCart?.call();
-                },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.sp),
+              Visibility(
+                visible: widget.hideIcon ? true : false,
+                child: InkWell(
+                  onTap: () {
+                    widget.onPressedCart?.call();
+                  },
                   child: Padding(
-                    padding: EdgeInsets.only(bottom: 3.sp),
-                    child: SvgPicture.asset(cartSvgImage,
-                        height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                    padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 3.sp),
+                      child: SvgPicture.asset(cartSvgImage,
+                          height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                    ),
                   ),
                 ),
               ),

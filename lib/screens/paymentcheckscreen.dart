@@ -11,10 +11,8 @@ import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/shopwishlist_appbar.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/cart_controller.dart';
-import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/orderexchangescreen.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
-import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:lottie/lottie.dart';
 import '../utils/constants.dart';
 
@@ -30,6 +28,8 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final cartController = Get.put(CartController());
   Timer? timer;
+  int _elapsedTime = 0;
+  static const int duration = 120; //for 2 minutes
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: statusBarColor,
     ));
-    timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
+    /*  timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         cartController.callPaymentStatus(widget.orderId, timer);
       });
@@ -49,6 +49,28 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
           text2: "",
           image: paymentFailImage));
       timer.cancel();
+    }); */
+    startTimer();
+  }
+
+  void startTimer() {
+    _elapsedTime = 0; // Reset the elapsed time
+    timer?.cancel(); // Cancel any existing timer
+
+    timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      if (_elapsedTime >= duration) {
+        timer.cancel();
+        Get.off(const PaymentSuccessScreen(
+            text1: "Payment Failed",
+            orderId: 0,
+            text2: "",
+            image: paymentFailImage));
+        return;
+      }
+
+      _elapsedTime += 5;
+      cartController.callPaymentStatus(widget.orderId, timer);
+      print('Method executed at $_elapsedTime seconds');
     });
   }
 
@@ -77,25 +99,10 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ShopWishlistAppbar(
-              onPressedCart: () async {
-                Get.to(const CartScreen());
-                await analytics.logEvent(
-                  name: 'cart_page',
-                  parameters: <String, Object>{
-                    'page_name': 'cart_page',
-                  },
-                );
-              },
+              hideIcon: false,
+              onPressedCart: () async {},
               onPressedBackButton: () {},
-              onPressedheart: () async {
-                Get.to(const WishlistScreen());
-                await analytics.logEvent(
-                  name: 'catalog_page',
-                  parameters: <String, Object>{
-                    'page_name': 'catalog_page',
-                  },
-                );
-              },
+              onPressedheart: () async {},
             ),
             Container(
               color: dividerColor,
