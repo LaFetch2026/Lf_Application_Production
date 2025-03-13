@@ -452,7 +452,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       whiteColor
                                                   ? btnTextColor
                                                   : searchTextColor,
-                                          fontSize: 14,
+                                          fontSize: 12,
                                         ),
                                       ),
                                     )),

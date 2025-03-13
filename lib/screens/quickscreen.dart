@@ -51,6 +51,7 @@ class QuickScreenState extends State<QuickScreen> {
           statusBarBrightness: Brightness.dark,
           systemNavigationBarColor: homeAppBarColor));
       productController.brandController.clear();
+      homeController.expressBrandList.clear();
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.getDefaultAddressData(0, context);
