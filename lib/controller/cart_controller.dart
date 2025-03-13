@@ -417,7 +417,6 @@ class CartController extends BaseController {
           'name': 'Lafetch',
           'order_id': responseData["payment"]["transaction_id"],
           'description': 'Lafetch Customer',
-          'timeout': 60,
           'theme': {
             'color': '#070707',
           },
