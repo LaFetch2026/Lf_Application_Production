@@ -42,6 +42,7 @@ class CartController extends BaseController {
   RxDouble lng = 0.0.obs;
   RxString qtyText = "".obs;
   RxString stockErrorText = "".obs;
+  RxString userNumber = "".obs;
   RxInt qtyProductId = 0.obs;
   List categoryList = [].obs;
   List tagsList = [].obs;
@@ -420,6 +421,7 @@ class CartController extends BaseController {
           'theme': {
             'color': '#070707',
           },
+          "prefill": {"contact": userNumber.value},
           'fullscreen': true,
         };
         razorpay.open(options);

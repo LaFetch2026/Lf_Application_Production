@@ -22,11 +22,13 @@ import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_order_list.dart';
 import 'package:lafetch/commonwidget/homewidget/dummyblack_orderlist.dart';
 import 'package:lafetch/controller/base_controller.dart';
+import 'package:lafetch/controller/profile_controller.dart';
 import 'package:lafetch/controller/wishlist_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/mapscreen.dart';
+import 'package:lafetch/screens/paymentcheckscreen.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
 import 'package:lafetch/screens/wishlist/newboardscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
@@ -50,6 +52,7 @@ class CartScreen extends StatefulWidget {
 
 class CartScreenState extends State<CartScreen> {
   final controller = Get.put(CartController());
+  final profileController = Get.put(ProfileController());
   final productController = Get.put(ProductController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   List qtyList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
@@ -67,6 +70,7 @@ class CartScreenState extends State<CartScreen> {
       controller.selected.clear();
       controller.selected = List.generate(50, (i) => false).obs;
       controller.addressError.value = "";
+      controller.userNumber.value = "";
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -103,6 +107,9 @@ class CartScreenState extends State<CartScreen> {
   Future getPrefrenceValue() async {
     controller.isOrder.value = true;
     final prefs = await SharedPreferences.getInstance();
+    if (prefs.getString("phone_number") != null) {
+      controller.userNumber.value = prefs.getString("phone_number")!;
+    }
     if (prefs.getBool("skip") == true) {
       Get.to(
         () => const LoginScreen(
@@ -125,19 +132,18 @@ class CartScreenState extends State<CartScreen> {
     print("data ${response.data}");
     controller.callProcessPayment(controller.cartDetails["id"],
         response.paymentId!, response.orderId!, response.signature!);
-    // Do something when payment succeeds
   }
 
   void handlePaymentError(PaymentFailureResponse response) {
     print("Error ${response.message}");
     print("Error ${response.code}");
     print("Error ${response.error}");
-    Get.to(const PaymentSuccessScreen(
+    /*  Get.to(const PaymentSuccessScreen(
         text1: "Payment Failed",
         text2: "Thank you for placing your order",
         orderId: 0,
-        image: paymentFailImage));
-    // Do something when payment fails
+        image: paymentFailImage)); */
+    Get.to(PaymentCheckScreen(orderId: controller.cartDetails["id"]));
   }
 
   void handleExternalWallet(ExternalWalletResponse response) {
@@ -147,7 +153,6 @@ class CartScreenState extends State<CartScreen> {
         orderId: 0,
         text2: "Thank you for placing your order",
         image: errorImage));
-    // Do something when an external wallet is selected
   }
 
   Widget sizeWidget(List orderList, int index) {

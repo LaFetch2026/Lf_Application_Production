@@ -58,11 +58,17 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
     super.dispose();
   }
 
+  void stopTimer() {
+    if (timer != null) {
+      timer?.cancel();
+      print("Timer stopped!");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        timer?.cancel();
         return false;
       },
       child: Scaffold(
@@ -80,10 +86,7 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
                   },
                 );
               },
-              onPressedBackButton: () {
-                /*  timer?.cancel();
-                Get.back(); */
-              },
+              onPressedBackButton: () {},
               onPressedheart: () async {
                 Get.to(const WishlistScreen());
                 await analytics.logEvent(
@@ -141,6 +144,7 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
                   fontSize: 13,
                   backgroundColor: homeAppBarColor,
                   onPressed: () async {
+                    stopTimer();
                     Get.close(1);
                     Get.off(OrderExchangeScreen());
                     await analytics.logEvent(

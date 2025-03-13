@@ -159,6 +159,9 @@ class ProfileController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData != null) {
           profileDetails = responseData;
+          if (responseData['phone'] != null) {
+            prefs.setString('phone_number', responseData['phone']);
+          }
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
@@ -235,6 +238,9 @@ class ProfileController extends BaseController {
             if (responseData['data']['name'] != null) {
               prefs.setString('name', responseData['data']['name']);
             }
+            if (responseData['data']['phone'] != null) {
+              prefs.setString('phone_number', responseData['data']['phone']);
+            }
             isPhoneNumber.value = false;
             Get.close(1);
           } else {
@@ -252,6 +258,9 @@ class ProfileController extends BaseController {
               if (responseData['data']['name'] != null) {
                 prefs.setString('name', responseData['data']['name']);
               }
+              if (responseData['data']['phone'] != null) {
+                prefs.setString('phone_number', responseData['data']['phone']);
+              }
               //  getSnackBar("Profile updated");
               Get.close(1);
             }
@@ -267,6 +276,9 @@ class ProfileController extends BaseController {
           }
           if (responseData['data']['name'] != null) {
             prefs.setString('name', responseData['data']['name']);
+          }
+          if (responseData['data']['phone'] != null) {
+            prefs.setString('phone_number', responseData['data']['phone']);
           }
           Get.offAll(
             () => const BottomNavScreen(),

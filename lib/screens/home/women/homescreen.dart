@@ -22,6 +22,7 @@ import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/controller/catalog_controller.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/controller/product_controller.dart';
+import 'package:lafetch/controller/profile_controller.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/cartscreen.dart';
@@ -64,6 +65,7 @@ class HomeScreenState extends State<HomeScreen> {
   final cartController = Get.put(CartController());
   final brandController = Get.put(BrandController());
   final catalogController = Get.put(CatalogController());
+  final profileController = Get.put(ProfileController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final PageController _pageController = PageController(
     initialPage: 0,
@@ -192,6 +194,9 @@ class HomeScreenState extends State<HomeScreen> {
         .addPostFrameCallback((_) => cartController.getCartData()); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       determinePosition();
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      profileController.getProfileData();
     });
   }
 
