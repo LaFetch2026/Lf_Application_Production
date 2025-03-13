@@ -35,14 +35,17 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsets.only(right: 10),
-                child: InkWell(
-                  child: SvgPicture.asset(arrowBack,
-                      height: 15.sp, width: 15.sp, fit: BoxFit.cover),
-                  onTap: () {
-                    widget.onPressedBackButton?.call();
-                  },
+              Visibility(
+                visible: widget.hideIcon ? true : false,
+                child: Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: InkWell(
+                    child: SvgPicture.asset(arrowBack,
+                        height: 15.sp, width: 15.sp, fit: BoxFit.cover),
+                    onTap: () {
+                      widget.onPressedBackButton?.call();
+                    },
+                  ),
                 ),
               ),
               const Expanded(
@@ -62,7 +65,7 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
               Visibility(
                 visible: widget.hideIcon ? false : true,
                 child: SizedBox(
-                  width: 60.sp,
+                  width: 40.sp,
                 ),
               ),
               const Expanded(

@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, deprecated_member_use
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -30,10 +30,13 @@ import '../utils/constants.dart';
 import 'orders/delivery_track.dart';
 import 'orders/reviewproducts.dart';
 import 'orders/trackorderscreen.dart';
+import 'package:lafetch/screens/paymentcheckscreen.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   final int orderId;
-  const OrderDetailsScreen({required this.orderId, super.key});
+  final bool showTrackpayment;
+  const OrderDetailsScreen(
+      {required this.orderId, this.showTrackpayment = false, super.key});
 
   @override
   State<OrderDetailsScreen> createState() => OrderDetailsScreenState();
@@ -168,6 +171,38 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Visibility(
+                    visible: widget.showTrackpayment ? true : false,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 12.sp),
+                      child: SingleButton(
+                          label: "Track Payment",
+                          height: 40,
+                          textColor: whiteColor,
+                          backgroundColor: btnTextColor,
+                          onPressed: () {
+                            Get.off(
+                                PaymentCheckScreen(orderId: widget.orderId));
+                          },
+                          borderColor: btnTextColor),
+                    ),
+                  ),
+                  Visibility(
+                    visible: widget.showTrackpayment ? true : false,
+                    child: Padding(
+                      padding:
+                          EdgeInsets.only(top: 8.sp, left: 16.sp, right: 16.sp),
+                      child: AppText(
+                        text:
+                            "Your payment is currently being processed. Please allow approximately 15 minutes for the transaction to finalize.",
+                        color: deeptYellow.withOpacity(0.5),
+                        maxLines: 4,
+                        fontSize: 12,
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
                   Container(
                     color: whiteColor,
                     child: Column(

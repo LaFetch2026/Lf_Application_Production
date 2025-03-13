@@ -11,7 +11,7 @@ import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/shopwishlist_appbar.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/cart_controller.dart';
-import 'package:lafetch/screens/orderexchangescreen.dart';
+import 'package:lafetch/screens/orderdetailsscreen.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
 import 'package:lottie/lottie.dart';
 import '../utils/constants.dart';
@@ -146,14 +146,17 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
               padding: EdgeInsets.only(top: 20.sp, bottom: 20.sp),
               child: getSingleButton(
                   width: double.infinity,
-                  label: "My Orders".toUpperCase(),
+                  label: "View Order".toUpperCase(),
                   textColor: whiteColor,
                   fontSize: 13,
                   backgroundColor: homeAppBarColor,
                   onPressed: () async {
                     stopTimer();
-                    Get.close(1);
-                    Get.off(OrderExchangeScreen());
+                    // Get.close(1);
+                    Get.off(OrderDetailsScreen(
+                      orderId: widget.orderId,
+                      showTrackpayment: true,
+                    ));
                     await analytics.logEvent(
                       name: 'payment_btn_myorder',
                       parameters: <String, Object>{
