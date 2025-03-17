@@ -3949,36 +3949,39 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                   ),
                                 ],
                               )
-                            : getSingleButton(
-                                label: "Download Invoice",
-                                controller: orderController,
-                                textColor: whiteTextColor,
-                                backgroundColor: btnTextColor,
-                                onPressed: () async {
-                                  /*  final permission =
-                                  await FlDownloader.requestPermission();
-                              if (permission ==
-                                  StoragePermissionStatus.granted) {
-                                /*   await FlDownloader.download(
-                                                  urlController.text,
-                                                  fileName:
-                                                      fileNameController.text,
-                                                ); */
-                                orderController
-                                    .getDownloadInvoice(widget.orderId);
-                              } else {
-                                debugPrint('Permission denied =(');
-                              } */
+                            : Visibility(
+                                visible: widget.showTrackpayment ? false : true,
+                                child: getSingleButton(
+                                    label: "Download Invoice",
+                                    controller: orderController,
+                                    textColor: whiteTextColor,
+                                    backgroundColor: btnTextColor,
+                                    onPressed: () async {
+                                      /*  final permission =
+                                    await FlDownloader.requestPermission();
+                                if (permission ==
+                                    StoragePermissionStatus.granted) {
+                                  /*   await FlDownloader.download(
+                                                    urlController.text,
+                                                    fileName:
+                                                        fileNameController.text,
+                                                  ); */
                                   orderController
                                       .getDownloadInvoice(widget.orderId);
-                                  await analytics.logEvent(
-                                    name: 'download_invoice',
-                                    parameters: <String, Object>{
-                                      'page_name': 'download_invoice',
+                                } else {
+                                  debugPrint('Permission denied =(');
+                                } */
+                                      orderController
+                                          .getDownloadInvoice(widget.orderId);
+                                      await analytics.logEvent(
+                                        name: 'download_invoice',
+                                        parameters: <String, Object>{
+                                          'page_name': 'download_invoice',
+                                        },
+                                      );
                                     },
-                                  );
-                                },
-                                borderColor: btnTextColor),
+                                    borderColor: btnTextColor),
+                              ),
                       ))
                 ],
               ),
