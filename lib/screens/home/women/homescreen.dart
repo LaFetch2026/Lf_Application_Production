@@ -192,9 +192,9 @@ class HomeScreenState extends State<HomeScreen> {
     }); */
     /* WidgetsBinding.instance
         .addPostFrameCallback((_) => cartController.getCartData()); */
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       determinePosition();
-    });
+    }); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       profileController.getProfileData();
     });
