@@ -243,17 +243,20 @@ class BoardScreenState extends State<BoardScreen> {
                                                   onTap: () async {
                                                     if (isDrawer) {
                                                     } else {
-                                                      Get.to(() => ProductDetailsScreen(
-                                                          brandName:
-                                                              value.wishListProduct[
-                                                                          index]
-                                                                      [
-                                                                      "brand_name"] ??
-                                                                  "",
-                                                          productId: value
-                                                                  .wishListProduct[
-                                                              index]["id"],
-                                                          type: "add"));
+                                                      if (value.wishListProduct[
+                                                                  index]
+                                                              ["is_deleted"] ==
+                                                          false) {
+                                                        Get.to(() => ProductDetailsScreen(
+                                                            brandName: value.wishListProduct[
+                                                                        index][
+                                                                    "brand_name"] ??
+                                                                "",
+                                                            productId: value
+                                                                    .wishListProduct[
+                                                                index]["id"],
+                                                            type: "add"));
+                                                      }
                                                     }
                                                     await analytics.logEvent(
                                                       name:
