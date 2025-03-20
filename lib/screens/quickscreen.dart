@@ -331,8 +331,8 @@ class QuickScreenState extends State<QuickScreen> {
                                   print(value);
                                   if (value is RawKeyDownEvent) {
                                     productController.getBrandProductData();
-                                    productController.brandController.clear();
-                                    setState(() {});
+                                    //  productController.brandController.clear();
+                                    // setState(() {});
                                   }
                                 },
                                 child: TextField(

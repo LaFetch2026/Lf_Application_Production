@@ -606,54 +606,65 @@ class BoardScreenState extends State<BoardScreen> {
                                                         padding:
                                                             EdgeInsets.only(
                                                                 top: 5.sp),
-                                                        child: Center(
-                                                          child: getSmallButton(
-                                                              label:
-                                                                  "Move to bag",
-                                                              textColor:
-                                                                  btnTextColor,
-                                                              backgroundColor:
-                                                                  whiteColor,
-                                                              borderColor:
-                                                                  btnTextColor,
-                                                              onPressed:
-                                                                  () async {
-                                                                if (isDrawer) {
-                                                                } else {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .push(MaterialPageRoute(
-                                                                          builder: (BuildContext context) => ProductDetailsScreen(
-                                                                                brandName: value.wishListProduct[index]["brand_name"],
-                                                                                productId: value.wishListProduct[index]["id"],
-                                                                                type: "move",
-                                                                                boardId: widget.boardId,
-                                                                                wishlistProductId: value.wishListProduct[index]["id"],
-                                                                              )))
-                                                                      .then((value) => setState(
-                                                                            () {
-                                                                              //  wishlistController.getWishlistDetails(widget.boardId, 1);
+                                                        child:
+                                                            value.wishListProduct[
+                                                                        index][
+                                                                    "is_deleted"]
+                                                                ? Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        left: 8
+                                                                            .sp),
+                                                                    child: Text(
+                                                                      "Item not available",
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color:
+                                                                            redColor,
+                                                                        fontSize:
+                                                                            11.sp,
+                                                                        fontFamily:
+                                                                            "Franklin Gothic Regular",
+                                                                        fontWeight:
+                                                                            FontWeight.w400,
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                : Center(
+                                                                    child: getSmallButton(
+                                                                        label: "Move to bag",
+                                                                        textColor: btnTextColor,
+                                                                        backgroundColor: whiteColor,
+                                                                        borderColor: btnTextColor,
+                                                                        onPressed: () async {
+                                                                          if (isDrawer) {
+                                                                          } else {
+                                                                            Navigator.of(context)
+                                                                                .push(MaterialPageRoute(
+                                                                                    builder: (BuildContext context) => ProductDetailsScreen(
+                                                                                          brandName: value.wishListProduct[index]["brand_name"],
+                                                                                          productId: value.wishListProduct[index]["id"],
+                                                                                          type: "move",
+                                                                                          boardId: widget.boardId,
+                                                                                          wishlistProductId: value.wishListProduct[index]["id"],
+                                                                                        )))
+                                                                                .then((value) => setState(
+                                                                                      () {
+                                                                                        //  wishlistController.getWishlistDetails(widget.boardId, 1);
+                                                                                      },
+                                                                                    ));
+                                                                          }
+                                                                          await analytics
+                                                                              .logEvent(
+                                                                            name:
+                                                                                'board_product_movetobagClick',
+                                                                            parameters: <String,
+                                                                                Object>{
+                                                                              'page_name': 'board_product_movetobagClick',
                                                                             },
-                                                                          ));
-                                                                }
-                                                                await analytics
-                                                                    .logEvent(
-                                                                  name:
-                                                                      'board_product_movetobagClick',
-                                                                  parameters: <String,
-                                                                      Object>{
-                                                                    'page_name':
-                                                                        'board_product_movetobagClick',
-                                                                  },
-                                                                );
-                                                              },
-                                                              width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width /
-                                                                      2 -
-                                                                  28.sp),
-                                                        ),
+                                                                          );
+                                                                        },
+                                                                        width: MediaQuery.of(context).size.width / 2 - 28.sp),
+                                                                  ),
                                                       )
                                                     ],
                                                   ),
