@@ -421,6 +421,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                     fontFamily: "Franklin Gothic Regular",
                                     fontWeight: FontWeight.w400,
                                     color: redColor,
+                                    maxLines: 2,
                                     fontSize: 14,
                                   ),
                                 ),
@@ -499,7 +500,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                                   setState(() {});
                                                 } else {
                                                   controller.couponError.value =
-                                                      "Coupon does not exist";
+                                                      "Coupon is not applicable on current cart items";
                                                 }
                                               },
                                               child: Row(
@@ -649,7 +650,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                                               controller
                                                                       .couponError
                                                                       .value =
-                                                                  "Coupon does not exist";
+                                                                  "Coupon is not applicable on current cart items";
                                                             }
                                                           },
                                                         )),

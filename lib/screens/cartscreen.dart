@@ -901,7 +901,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                             sizeList: value.orderList[index]["product"]["new_inventories"],
                                                                                                             controller: controller,
                                                                                                             onPressed: (p0) {
-                                                                                                              controller.callAddtoCart(value.orderList[index]["quantity"] ?? 1, "size", p0, value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor);
+                                                                                                              controller.callAddtoCart(value.orderList[index]["quantity"] ?? 1, "size", p0, value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor, value.orderList[index]["inventory"]["id"]);
                                                                                                             },
                                                                                                             selectedSizeId: value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["id"] : 0,
                                                                                                           );
@@ -976,7 +976,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                                     controller: controller,
                                                                                                     stock: value.orderList[index]["inventory"]["stocks"] > 10 ? qtyList.length : value.orderList[index]["inventory"]["stocks"],
                                                                                                     onPressed: (p0) {
-                                                                                                      controller.callAddtoCart(p0, "quantity", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor);
+                                                                                                      controller.callAddtoCart(p0, "quantity", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor, value.orderList[index]["inventory"]["id"]);
                                                                                                     },
                                                                                                   );
                                                                                                 },
@@ -1139,7 +1139,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                       Get.back();
                                                                                     },
                                                                                     click2: () {
-                                                                                      value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor);
+                                                                                      value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor, value.orderList[index]["inventory"]["id"]);
                                                                                     },
                                                                                     btncolor: colorPrimary,
                                                                                     text: "Are you sure you want to remove this item?",
@@ -1244,7 +1244,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                     Get.back();
                                                                                   },
                                                                                   click2: () {
-                                                                                    value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor);
+                                                                                    value.callAddtoCart(0, "remove", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor, value.orderList[index]["inventory"]["id"]);
                                                                                   },
                                                                                   btncolor: colorPrimary,
                                                                                   text: "Are you sure you want to remove this item?",
@@ -1301,7 +1301,7 @@ class CartScreenState extends State<CartScreen> {
                                                                                 productImage: value.orderList[index]["product"]["images"][0]["name"],
                                                                                 onPressed: (p0) {
                                                                                   wishlistController.callAddProductToWishlist(p0, value.orderList[index]["product"]["id"], widget.backgroundcolor);
-                                                                                  value.callAddtoCart(0, "wishlist", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor);
+                                                                                  value.callAddtoCart(0, "wishlist", value.orderList[index]["inventory"]["id"], value.orderList[index]["product"]["id"], value.orderList[index]["product"]["express_delivery"] ? 1 : 0, 1, widget.backgroundcolor, value.orderList[index]["inventory"]["id"]);
                                                                                 },
                                                                                 wishlistList: wishlistController.wishlistList));
                                                                             await analytics.logEvent(

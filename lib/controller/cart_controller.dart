@@ -269,7 +269,7 @@ class CartController extends BaseController {
   }
 
   callAddtoCart(int quantity, String page, int inventoryId, int productId,
-      int expressValue, int type, Color backColor) async {
+      int expressValue, int type, Color backColor, int oldInvertoryId) async {
     if (page == "quantity" || page == "size") {
       showLoading();
     }
@@ -281,6 +281,7 @@ class CartController extends BaseController {
         "inventory_id": inventoryId,
         "product_id": productId,
         "order_id": cartId.value,
+        "old_inventory_id": oldInvertoryId,
         "express_delivery": expressValue,
         "update_inventory": type,
       };
@@ -510,7 +511,7 @@ class CartController extends BaseController {
         }
         couponError.value = "";
       } else if (response.statusCode == 400) {
-        couponError.value = "Coupon does not exist";
+        couponError.value = "Coupon is not applicable on current cart items";
         print(response.body);
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
