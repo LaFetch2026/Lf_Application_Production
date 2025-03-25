@@ -127,7 +127,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               productController.sortBy.value,
               productController.filterEnable.value,
               false,
-              widget.type));
+              widget.type,
+              widget.brandId));
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         productController.bannerTagController.addListener(() {
           /*  productController.fetchMoreBannerTagProductData(
@@ -143,7 +144,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               productController.categoryProductGender.value,
               productController.sortBy.value,
               productController.filterEnable.value,
-              widget.type);
+              widget.type,
+              widget.brandId);
           productController.update();
         });
       });
@@ -952,7 +954,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                             productController
                                                 .filterEnable.value,
                                             false,
-                                            widget.type);
+                                            widget.type,
+                                            widget.brandId);
                                       }
                                     },
                                   );
@@ -1055,7 +1058,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                             productController
                                                 .filterEnable.value,
                                             false,
-                                            widget.type);
+                                            widget.type,
+                                            widget.brandId);
                                       }
                                       productController
                                           .selectedCategoryGender.value = p0;
@@ -1125,7 +1129,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                     productController
                                                         .filterEnable.value,
                                                     false,
-                                                    widget.type);
+                                                    widget.type,
+                                                    widget.brandId);
                                               }
                                             },
                                             onClick: (p0, p1) {
@@ -1164,7 +1169,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                     productController
                                                         .filterEnable.value,
                                                     true,
-                                                    widget.type);
+                                                    widget.type,
+                                                    widget.brandId);
                                               }
                                             },
                                           );
@@ -1306,7 +1312,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                             productController
                                                 .filterEnable.value,
                                             false,
-                                            widget.type);
+                                            widget.type,
+                                            widget.brandId);
                                       }
                                     },
                                     onClick: (p0, p1) {
@@ -1340,7 +1347,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                             productController
                                                 .filterEnable.value,
                                             true,
-                                            widget.type);
+                                            widget.type,
+                                            widget.brandId);
                                       }
                                     },
                                   );
