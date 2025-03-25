@@ -1006,13 +1006,16 @@ class BottomCouponState extends State<BottomCoupon> {
                                                             widget.list[index]
                                                                 ["code"],
                                                         categoryId: 0,
-                                                        brandId: 0,
+                                                        brandId:
+                                                            widget.list[index]
+                                                                ["brand_id"],
                                                         genderName: "",
                                                         genderType: 0,
-                                                        type: widget.backColor ==
-                                                                whiteColor
-                                                            ? "category products"
-                                                            : "express",
+                                                        type:
+                                                            widget.backColor ==
+                                                                    whiteColor
+                                                                ? "coupon"
+                                                                : "express",
                                                         screen: "category",
                                                         tagIds:
                                                             controller.tagsList,

@@ -2084,16 +2084,15 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   : const SizedBox(
                                                       height: 0,
                                                     ),
+                                              /*  orderController.orderDetails[
+                                                                      "orders"]
+                                                                  [index]
+                                                              ["status"] ==
+                                                          4 || */
                                               orderController.orderDetails[
-                                                                      "orders"]
-                                                                  [index]
-                                                              ["status"] ==
-                                                          4 ||
-                                                      orderController.orderDetails[
-                                                                      "orders"]
-                                                                  [index]
-                                                              ["status"] ==
-                                                          5
+                                                              "orders"][index]
+                                                          ["status"] ==
+                                                      5
                                                   ? Padding(
                                                       padding: EdgeInsets.only(
                                                           top: 10,
@@ -2782,13 +2781,12 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                         );
                                                       }),
                                                 ),
+                                                /*  orderController.orderDetails[
+                                                                "status"] ==
+                                                            4 || */
                                                 orderController.orderDetails[
-                                                                "status"] ==
-                                                            4 ||
-                                                        orderController
-                                                                    .orderDetails[
-                                                                "status"] ==
-                                                            5
+                                                            "status"] ==
+                                                        5
                                                     ? Padding(
                                                         padding:
                                                             EdgeInsets.only(
