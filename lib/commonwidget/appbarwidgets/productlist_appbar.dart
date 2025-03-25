@@ -12,6 +12,7 @@ class ProductAppbar extends StatefulWidget {
   final Function? onPressedHeart;
   final bool isHandPicked;
   final bool isWishlist;
+  final bool isCart;
   final String text;
   final Color backColor;
 
@@ -19,6 +20,7 @@ class ProductAppbar extends StatefulWidget {
       {Key? key,
       this.onPressedSearch,
       this.isWishlist = true,
+      this.isCart = true,
       this.onPressedCart,
       this.onPressedHeart,
       this.backColor = statusBarColor,
@@ -123,54 +125,57 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   ),
                 ),
               ),
-              InkWell(
-                onTap: () {
-                  widget.onPressedCart?.call();
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      right: 10.sp, left: 8.sp, top: 8.sp, bottom: 5.sp),
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 3.sp),
-                        child: SvgPicture.asset(cartSvgImage,
-                            height: 18.sp, width: 18.sp, fit: BoxFit.cover),
-                      ),
-                      Obx(() => controller.cartTotalValue.value != 0
-                          ? Positioned(
-                              right: 0,
-                              bottom: 0,
-                              child: Container(
-                                width: 10.sp,
-                                height: 10.sp,
-                                child: Padding(
-                                  padding: EdgeInsets.all(0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: homeAppBarColor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        controller.cartTotalValue.value
-                                            .toString(),
-                                        style: TextStyle(
-                                            fontSize: 8,
-                                            color: whiteColor,
-                                            fontFamily:
-                                                "Libre Franklin Regular",
-                                            fontWeight: FontWeight.w400),
+              Visibility(
+                visible: widget.isCart,
+                child: InkWell(
+                  onTap: () {
+                    widget.onPressedCart?.call();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        right: 10.sp, left: 8.sp, top: 8.sp, bottom: 5.sp),
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 3.sp),
+                          child: SvgPicture.asset(cartSvgImage,
+                              height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                        ),
+                        Obx(() => controller.cartTotalValue.value != 0
+                            ? Positioned(
+                                right: 0,
+                                bottom: 0,
+                                child: Container(
+                                  width: 10.sp,
+                                  height: 10.sp,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: homeAppBarColor,
                                       ),
-                                    ), // inner content
+                                      child: Center(
+                                        child: Text(
+                                          controller.cartTotalValue.value
+                                              .toString(),
+                                          style: TextStyle(
+                                              fontSize: 8,
+                                              color: whiteColor,
+                                              fontFamily:
+                                                  "Libre Franklin Regular",
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ), // inner content
+                                    ),
                                   ),
                                 ),
-                              ),
-                            )
-                          : SizedBox(
-                              height: 0,
-                            ))
-                    ],
+                              )
+                            : SizedBox(
+                                height: 0,
+                              ))
+                      ],
+                    ),
                   ),
                 ),
               ),

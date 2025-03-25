@@ -197,6 +197,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           "page_name": "wishlist_page",
                         });
                   },
+                  isCart: widget.type == "coupon" || widget.type == "express"
+                      ? false
+                      : true,
                   isHandPicked: widget.screen != "" ? true : false,
                   text: widget.categoryName.toUpperCase(),
                   onPressedCart: () async {

@@ -54,6 +54,12 @@ class QuickScreenState extends State<QuickScreen> {
       homeController.expressBrandList.clear();
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.isBrand.value = false;
+      productController.quickProductLoadMore.value = false;
+      productController.quickProductHasnextpage.value = true;
+      productController.quickProductPage.value = 1;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.getDefaultAddressData(0, context);
     });
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -64,6 +70,12 @@ class QuickScreenState extends State<QuickScreen> {
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.getBrandProductData();
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.quickProductListController.addListener(() {
+        productController.fetchMoreBrandProductData();
+        productController.update();
+      });
     });
     super.initState();
   }
@@ -98,6 +110,7 @@ class QuickScreenState extends State<QuickScreen> {
         child: Scaffold(
           backgroundColor: homeAppBarColor,
           body: SingleChildScrollView(
+            controller: productController.quickProductListController,
             child: Stack(
               children: [
                 Positioned(
@@ -1069,7 +1082,8 @@ class QuickScreenState extends State<QuickScreen> {
                                   builder: (value) => ListView.builder(
                                       primary: false,
                                       shrinkWrap: true,
-                                      // controller: value.brandListController,
+                                      controller:
+                                          value.quickProductListController,
                                       physics: const ScrollPhysics(),
                                       itemCount: value.brandProductList.length,
                                       padding: EdgeInsets.zero,
@@ -1556,6 +1570,134 @@ class QuickScreenState extends State<QuickScreen> {
                                   ),
                                 ],
                               )),
+                    Obx(() => productController.quickProductLoadMore.value
+                        ? Padding(
+                            padding: EdgeInsets.only(
+                                left: 16.sp,
+                                right: 16.sp,
+                                bottom: 10.sp,
+                                top: 12.sp),
+                            child: ListView.builder(
+                                primary: false,
+                                shrinkWrap: true,
+                                physics: const ScrollPhysics(),
+                                itemCount: 2,
+                                padding: EdgeInsets.zero,
+                                scrollDirection: Axis.vertical,
+                                itemBuilder: (ctx, index) {
+                                  return Column(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 24.sp),
+                                        child: Container(
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 12.sp,
+                                                      vertical: 12.sp),
+                                                  child: Container(
+                                                    height: 20.sp,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width
+                                                            .sp,
+                                                    decoration: BoxDecoration(
+                                                      color: cardBg,
+                                                    ),
+                                                  )),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 16.sp, bottom: 16.sp),
+                                                child: SizedBox(
+                                                  width: double.infinity,
+                                                  height: 220.sp,
+                                                  child: ListView.builder(
+                                                      shrinkWrap: true,
+                                                      primary: false,
+                                                      physics:
+                                                          const BouncingScrollPhysics(),
+                                                      itemCount: 3,
+                                                      scrollDirection:
+                                                          Axis.horizontal,
+                                                      itemBuilder:
+                                                          (ctx, index) {
+                                                        return Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Container(
+                                                              margin: EdgeInsets
+                                                                  .only(
+                                                                      left: 16
+                                                                          .sp),
+                                                              color: cardBg,
+                                                              height: 170.sp,
+                                                              width: 136.sp,
+                                                            ),
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      top: 8.sp,
+                                                                      left: 16
+                                                                          .sp),
+                                                              child: Container(
+                                                                color: cardBg,
+                                                                height: 16.sp,
+                                                                width: 100.sp,
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      top: 8.sp,
+                                                                      left: 16
+                                                                          .sp),
+                                                              child: Row(
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        right: 6
+                                                                            .sp),
+                                                                    child:
+                                                                        Container(
+                                                                      color:
+                                                                          cardBg,
+                                                                      height:
+                                                                          16.sp,
+                                                                      width:
+                                                                          40.sp,
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    color:
+                                                                        cardBg,
+                                                                    height:
+                                                                        16.sp,
+                                                                    width:
+                                                                        40.sp,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      }),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }),
+                          )
+                        : const SizedBox(
+                            height: 0,
+                          )),
                   ],
                 ),
               ],

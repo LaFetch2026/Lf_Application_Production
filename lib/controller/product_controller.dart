@@ -180,6 +180,10 @@ class ProductController extends BaseController {
   List<bool> reorderSelected = List.generate(50, (i) => false).obs;
   TextEditingController brandController = TextEditingController();
   TextEditingController branddetailsSearchController = TextEditingController();
+  RxInt quickProductPage = 1.obs;
+  RxBool quickProductLoadMore = false.obs;
+  RxBool quickProductHasnextpage = true.obs;
+  ScrollController quickProductListController = ScrollController();
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -270,7 +274,7 @@ class ProductController extends BaseController {
 
       response = await http.get(
           Uri.parse(
-              "${ApiConstants.baseUrl}/brands/products?q=${brandController.text.toString().trim()}"),
+              "${ApiConstants.baseUrl}/brands/express-products?q=${brandController.text.toString().trim()}"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -278,8 +282,8 @@ class ProductController extends BaseController {
 
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData != null) {
-          brandProductList = responseData;
+        if (responseData["data"] != null) {
+          brandProductList = responseData["data"];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
@@ -298,6 +302,52 @@ class ProductController extends BaseController {
       print("error$e");
     }
     isBrand.value = false;
+  }
+
+  fetchMoreBrandProductData() async {
+    if (quickProductHasnextpage.value == true &&
+        isBrand.value == false &&
+        quickProductLoadMore.value == false) {
+      quickProductLoadMore.value = true;
+      quickProductPage.value += 1;
+      print(quickProductPage.value);
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        var response = await http.get(
+            Uri.parse(
+                "${ApiConstants.baseUrl}/brands/express-products?q=${brandController.text.toString().trim()}&page=${quickProductPage.value}"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              "Authorization": "Bearer ${prefs.getString('token')} ",
+            });
+
+        var responseData = json.decode(response.body);
+        if (response.statusCode == 200) {
+          if (responseData["data"] != null) {
+            if (responseData["data"].isNotEmpty) {
+              print(responseData);
+              brandProductList.addAll(responseData['data']);
+            } else {
+              quickProductHasnextpage.value = false;
+            }
+          }
+        } else if (response.statusCode == 500) {
+          getSnackBar("Please try again");
+        } else if (response.statusCode == 401) {
+          Get.offAll(
+            () => const LoginScreen(
+              initialTab: 0,
+            ),
+          );
+          getSnackBar("Authentication failed");
+        } else {
+          getSnackBar("fetch quick brand product failed");
+        }
+      } catch (e) {
+        print("error$e");
+      }
+      quickProductLoadMore.value = false;
+    }
   }
 
   getProductData(String type) async {
