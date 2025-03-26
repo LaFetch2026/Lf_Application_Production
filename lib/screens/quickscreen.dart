@@ -2,7 +2,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:cached_network_image/cached_network_image.dart';
 //import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -45,7 +44,7 @@ class QuickScreenState extends State<QuickScreen> {
   Timer? debounce;
   bool isBottomSheet = false;
   List<Placemark>? placeMarks;
-  String addressString = "";
+  String addressString = "Fetching your Location,Please wait...";
   Placemark? address;
 
   @override
@@ -59,6 +58,7 @@ class QuickScreenState extends State<QuickScreen> {
           systemNavigationBarColor: homeAppBarColor));
       productController.brandController.clear();
       productController.expressBrandList.clear();
+      productController.brandProductList.clear();
       productController.enableLocationText.value = "";
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -108,7 +108,6 @@ class QuickScreenState extends State<QuickScreen> {
       final prefs = await SharedPreferences.getInstance();
       prefs.setDouble("latitude", productController.lat.value);
       prefs.setDouble("longitude", productController.lng.value);
-      //  productController.isBrandProduct.value = true;
       setState(() {});
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         productController.getExpressBrandData();
@@ -132,7 +131,8 @@ class QuickScreenState extends State<QuickScreen> {
       productController.locationText.value = "Turn on Location";
       productController.enableLocationText.value =
           "Please enable you device location";
-      return Future.error('Location services are disabled');
+      return Future.error(
+          'Grant location permission to quickly checkout products and get it delivered to your location. Ensure your location setting is turned. ');
     }
 
     permission = await Geolocator.checkPermission();
@@ -172,6 +172,8 @@ class QuickScreenState extends State<QuickScreen> {
     }
 
     productController.locationText.value = "";
+    productController.isBrand.value = true;
+    productController.isExpressBrand.value = true;
     setState(() {});
     Position position = await Geolocator.getCurrentPosition();
 
@@ -335,6 +337,8 @@ class QuickScreenState extends State<QuickScreen> {
                                             );
                                           },
                                         ).whenComplete(() {
+                                          productController
+                                              .getBrandProductData();
                                           productController
                                               .getExpressBrandData();
                                           setState(() {
@@ -1884,7 +1888,14 @@ class QuickScreenState extends State<QuickScreen> {
                                                         .isNotEmpty
                                                     ? "No ${productController.brandController.text} found"
                                                         .toUpperCase()
-                                                    : "Coming Soon to Your Area",
+                                                    : productController
+                                                            .brandProductdetails
+                                                            .containsKey(
+                                                                'message')
+                                                        ? productController
+                                                                .brandProductdetails[
+                                                            "message"]
+                                                        : "Coming Soon to Your Area",
                                                 style: TextStyle(
                                                     fontSize: 12,
                                                     color: whiteColor,

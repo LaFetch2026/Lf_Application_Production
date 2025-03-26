@@ -188,6 +188,7 @@ class ProductController extends BaseController {
   List expressBrandList = [].obs;
   RxString locationText = "check".obs;
   RxString enableLocationText = "".obs;
+  dynamic brandProductdetails = "".obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -286,8 +287,11 @@ class ProductController extends BaseController {
 
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
+        brandProductdetails = responseData;
+        if (responseData["data"].isNotEmpty) {
           brandProductList = responseData["data"];
+        } else {
+          brandProductList = [];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
@@ -327,10 +331,10 @@ class ProductController extends BaseController {
           if (responseData["data"].isNotEmpty) {
             expressBrandList = responseData["data"];
           } else {
-            expressBrandList.clear();
+            expressBrandList = [];
           }
         } else {
-          expressBrandList.clear();
+          expressBrandList = [];
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
@@ -3006,11 +3010,13 @@ class ProductController extends BaseController {
               );
             }
             if (id != 0) {
+              lat.value = 0;
+              lng.value = 0;
               getEstimateDate(id, defaultAddress["zip"]);
             }
-          } /* else {
+          } else {
             if (id == 0) {
-              showModalBottomSheet(
+              /* showModalBottomSheet(
                 context: cntx,
                 isScrollControlled: true,
                 constraints: BoxConstraints(
@@ -3022,9 +3028,10 @@ class ProductController extends BaseController {
                     cartId: 0,
                   );
                 },
-              );
+              ); */
+              defaultAddress = "";
             }
-          } */
+          }
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
