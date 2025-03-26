@@ -137,14 +137,15 @@ class QuickScreenState extends State<QuickScreen> {
 
     permission = await Geolocator.checkPermission();
 
-    if (permission == LocationPermission.denied) {
+    /*  if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       productController.locationText.value = "Permission Denied";
-
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        return Future.error("Please enable the location to view the products");
-      }
+ */
+    if (permission == LocationPermission.denied) {
+      productController.locationText.value = "Permission Denied";
+      permission = await Geolocator.requestPermission();
+      return Future.error("Please enable the location to view the products");
+      //  }
     }
 
     if (permission == LocationPermission.deniedForever) {
