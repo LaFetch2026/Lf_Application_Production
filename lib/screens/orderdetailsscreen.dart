@@ -3503,6 +3503,73 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                       fontSize: 14,
                                     ),
                                   ),
+                                  /*  Padding(
+                                    padding: EdgeInsets.only(top: 10.sp),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(right: 4.sp),
+                                              child: AppText(
+                                                text: "Total Price",
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: textColor,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  isScrollControlled: true,
+                                                  constraints: BoxConstraints(
+                                                    maxWidth: double.infinity,
+                                                    maxHeight: 220.sp,
+                                                  ),
+                                                  builder: (ctx) {
+                                                    return TotalTaxcharges(
+                                                      total:
+                                                          "\u{20B9}${orderController.orderDetails["total"] ?? "0"}",
+                                                      tax:
+                                                          "\u{20B9}${orderController.orderDetails["total_tax"] ?? "0"}",
+                                                      title: "Tax & Charges",
+                                                      price:
+                                                          "\u{20B9}${orderController.orderDetails["total_mrp"] ?? "0"}",
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              child: SvgPicture.asset(
+                                                questionSvgImage,
+                                                height: 15.sp,
+                                                width: 15.sp,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        const Expanded(
+                                          child: SizedBox(
+                                            height: 0,
+                                          ),
+                                        ),
+                                        AppText(
+                                          text:
+                                              "\u{20B9} ${orderController.orderDetails["total_mrp"] ?? "0"}",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: textColor,
+                                          fontSize: 12,
+                                        ),
+                                      ],
+                                    ),
+                                  ), */
                                   Padding(
                                     padding:
                                         EdgeInsets.symmetric(vertical: 16.sp),

@@ -144,6 +144,9 @@ class HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       initPlatformState();
     });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.getDefaultAddressData(0, context);
+    });
     /*  WidgetsBinding.instance.addPostFrameCallback(
         (_) => productController.getHandPickedProduct("", false, false, 0)); */
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

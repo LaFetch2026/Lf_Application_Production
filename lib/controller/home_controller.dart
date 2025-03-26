@@ -19,7 +19,6 @@ class HomeController extends BaseController {
   RxBool showGenderList = false.obs;
   RxBool isCategory = false.obs;
   RxBool isBrand = false.obs;
-  RxBool isExpressBrand = false.obs;
   RxString playerId = "".obs;
   RxString genderText = "Men".obs;
   RxString fcmToken = "".obs;
@@ -28,7 +27,6 @@ class HomeController extends BaseController {
   RxInt gender_Type = 0.obs;
   List FaqsList = [].obs;
   List brandList = [].obs;
-  List expressBrandList = [].obs;
   List banner2List = [].obs;
   List cityList = [].obs;
   List banner1List = [].obs;
@@ -443,47 +441,5 @@ class HomeController extends BaseController {
       print("error$e");
     }
     isBrand.value = false;
-  }
-
-  getExpressBrandData() async {
-    isExpressBrand.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      dynamic response;
-      response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/brands?type=featured&screen=express"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          if (responseData["data"].isNotEmpty) {
-            expressBrandList = responseData["data"];
-          } else {
-            expressBrandList.clear();
-          }
-        } else {
-          expressBrandList.clear();
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get express brand failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isExpressBrand.value = false;
   }
 }

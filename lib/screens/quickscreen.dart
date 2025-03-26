@@ -11,8 +11,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 //import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/quickwidgets/brand_product_list.dart';
 import 'package:lafetch/controller/home_controller.dart';
@@ -24,6 +27,7 @@ import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/quick/brandproductscreen.dart';
 import 'package:lottie/lottie.dart';
 import 'package:marquee/marquee.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/constants.dart';
 
@@ -40,6 +44,9 @@ class QuickScreenState extends State<QuickScreen> {
   final productController = Get.put(ProductController());
   Timer? debounce;
   bool isBottomSheet = false;
+  List<Placemark>? placeMarks;
+  String addressString = "";
+  Placemark? address;
 
   @override
   void initState() {
@@ -51,7 +58,8 @@ class QuickScreenState extends State<QuickScreen> {
           statusBarBrightness: Brightness.dark,
           systemNavigationBarColor: homeAppBarColor));
       productController.brandController.clear();
-      homeController.expressBrandList.clear();
+      productController.expressBrandList.clear();
+      productController.enableLocationText.value = "";
     });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.isBrand.value = false;
@@ -59,18 +67,10 @@ class QuickScreenState extends State<QuickScreen> {
       productController.quickProductHasnextpage.value = true;
       productController.quickProductPage.value = 1;
     });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.getDefaultAddressData(0, context);
-    });
+    getCurrentLocation();
     /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       homeController.getBannar2Data();
     }); */
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      homeController.getExpressBrandData();
-    });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.getBrandProductData();
-    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.quickProductListController.addListener(() {
         productController.fetchMoreBrandProductData();
@@ -92,6 +92,120 @@ class QuickScreenState extends State<QuickScreen> {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getString("expresshour") != null) {
       homeController.expressHour.value = prefs.getString("expresshour")!;
+    }
+  } */
+
+  void getCurrentLocation() async {
+    Position position = await _determinePosition();
+    if (productController.defaultAddress == "") {
+      productController.lat.value = position.latitude;
+      productController.lng.value = position.longitude;
+      placeMarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
+      address = placeMarks![0];
+      addressString =
+          "${address!.street},${address!.locality},${address!.administrativeArea}, ${address!.postalCode}";
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setDouble("latitude", productController.lat.value);
+      prefs.setDouble("longitude", productController.lng.value);
+      //  productController.isBrandProduct.value = true;
+      setState(() {});
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        productController.getExpressBrandData();
+      });
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        productController.getBrandProductData();
+      });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        productController.getDefaultAddressData(0, context);
+      });
+    }
+  }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // ignore: use_build_context_synchronously
+      productController.locationText.value = "Turn on Location";
+      productController.enableLocationText.value =
+          "Please enable you device location";
+      return Future.error('Location services are disabled');
+    }
+
+    permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      productController.locationText.value = "Permission Denied";
+
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        return Future.error("Please enable the location to view the products");
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      productController.locationText.value = "Permission Denied Forever";
+      showDialog(
+        barrierColor: Colors.black26,
+        context: context,
+        builder: (context) {
+          return showSingleBtnNonCancelableDailog(
+              click1: () {
+                openAppSettings().then((value) {
+                  Get.back();
+                });
+              },
+              btncolor: colorPrimary,
+              text:
+                  "Location services are disabled. Please enable the services",
+              btn1Text: "Open Location Settings");
+        },
+      );
+
+      if (permission == LocationPermission.deniedForever) {
+        return Future.error('Location permissions are permanently denied');
+      }
+    }
+
+    productController.locationText.value = "";
+    setState(() {});
+    Position position = await Geolocator.getCurrentPosition();
+
+    return position;
+  }
+
+  /*  void FetchProduct() async {
+    productController.locationText.value = "";
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getDouble('latitude') != null) {
+      productController.lat.value = prefs.getDouble('latitude')!;
+      productController.lng.value = prefs.getDouble('longitude')!;
+    }
+    // productController.isBrandProduct.value = true;
+    setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.getExpressBrandData();
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      productController.getBrandProductData();
+    });
+  } */
+
+  /* @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      LocationPermission permission;
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        print("Location not enable");
+      } else {
+        getCurrentLocation();
+      }
     }
   } */
 
@@ -221,7 +335,8 @@ class QuickScreenState extends State<QuickScreen> {
                                             );
                                           },
                                         ).whenComplete(() {
-                                          homeController.getExpressBrandData();
+                                          productController
+                                              .getExpressBrandData();
                                           setState(() {
                                             isBottomSheet = false;
                                           });
@@ -287,8 +402,20 @@ class QuickScreenState extends State<QuickScreen> {
                                         ),
                                       ),
                                     )
-                                  : SizedBox(
-                                      height: 0,
+                                  : Container(
+                                      width: MediaQuery.of(context).size.width -
+                                          90.sp,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10.sp),
+                                        child: AppText(
+                                          text: addressString,
+                                          color: whiteColor,
+                                          fontSize: 12,
+                                          maxLines: 3,
+                                          fontFamily: "Franklin Gothic Regular",
+                                        ),
+                                      ),
                                     ))
                         ],
                       ),
@@ -399,6 +526,90 @@ class QuickScreenState extends State<QuickScreen> {
                         ),
                       ),
                     ),
+                    Obx(() => productController.enableLocationText.isNotEmpty
+                        ? Container(
+                            color: Colors.transparent,
+                            margin: EdgeInsets.only(bottom: 10.sp),
+                            width: double.infinity,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16.sp, vertical: 4.sp),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AppText(
+                                    text: "Please Turn on your device location",
+                                    fontFamily: "Franklin Gothic Regular",
+                                    color: redColor,
+                                    fontSize: 12,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : SizedBox(
+                            height: 0,
+                          )),
+                    Obx(() => productController.locationText.isNotEmpty
+                        ? Container(
+                            color: redColor,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16.sp, vertical: 4.sp),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.zero,
+                                        child: AppText(
+                                          text:
+                                              "Location Permission isn't given",
+                                          fontFamily: "Franklin Gothic Regular",
+                                          color: whiteColor,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: SizedBox(
+                                          height: 0,
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          openAppSettings().then((value) async {
+                                            getCurrentLocation();
+                                          });
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              color: deepRed,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(2))),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: AppText(
+                                              text: "Give Permission",
+                                              fontFamily:
+                                                  "Franklin Gothic Bold",
+                                              color: whiteColor,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : SizedBox(
+                            height: 0,
+                          )),
                     /*  Obx(() => Visibility(
                           visible: productController.brandController.text
                                   .toString()
@@ -642,7 +853,7 @@ class QuickScreenState extends State<QuickScreen> {
                                   .isEmpty
                               ? true
                               : false,
-                          child: homeController.isExpressBrand.value
+                          child: productController.isExpressBrand.value
                               ? Container(
                                   child: Column(
                                     crossAxisAlignment:
@@ -694,7 +905,7 @@ class QuickScreenState extends State<QuickScreen> {
                                     ],
                                   ),
                                 )
-                              : homeController.expressBrandList.isNotEmpty
+                              : productController.expressBrandList.isNotEmpty
                                   ? Column(
                                       children: [
                                         Padding(
@@ -739,12 +950,12 @@ class QuickScreenState extends State<QuickScreen> {
                                             child: ListView.builder(
                                                 physics:
                                                     const BouncingScrollPhysics(),
-                                                itemCount: homeController
+                                                itemCount: productController
                                                     .expressBrandList.length,
                                                 scrollDirection:
                                                     Axis.horizontal,
                                                 itemBuilder: (ctx, index) {
-                                                  return homeController
+                                                  return productController
                                                                   .expressBrandList[
                                                               index]["logo"] !=
                                                           null
@@ -802,9 +1013,9 @@ class QuickScreenState extends State<QuickScreen> {
                                                                             .expressHour
                                                                             .value,
                                                                     brand_id:
-                                                                        homeController.expressBrandList[index][
+                                                                        productController.expressBrandList[index][
                                                                             "id"],
-                                                                    title: homeController
+                                                                    title: productController
                                                                             .expressBrandList[index]
                                                                         [
                                                                         "name"],
@@ -858,7 +1069,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                               ),
                                                               margin: EdgeInsets.only(
                                                                   right: index ==
-                                                                          homeController.expressBrandList.length -
+                                                                          productController.expressBrandList.length -
                                                                               1
                                                                       ? 16.sp
                                                                       : 0.sp),
@@ -876,7 +1087,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                                           100)),
                                                                   fit: BoxFit
                                                                       .contain,
-                                                                  imageUrl: homeController
+                                                                  imageUrl: productController
                                                                               .expressBrandList[
                                                                           index]
                                                                       ["logo"],
@@ -1538,36 +1749,148 @@ class QuickScreenState extends State<QuickScreen> {
                             : Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
+                                  Obx(() => productController
+                                          .locationText.isEmpty
+                                      ? Padding(
+                                          padding: EdgeInsets.only(top: 10.sp),
+                                          child: Center(
+                                            child: Image.asset(errorImage,
+                                                height: 200.sp,
+                                                width: 220.sp,
+                                                fit: BoxFit.cover),
+                                          ),
+                                        )
+                                      : SizedBox(
+                                          height: 0,
+                                        )),
                                   Padding(
-                                    padding: EdgeInsets.only(top: 10.sp),
-                                    child: Center(
-                                      child: Image.asset(errorImage,
-                                          height: 200.sp,
-                                          width: 220.sp,
-                                          fit: BoxFit.cover),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      top: 6.sp,
-                                      bottom: 20.sp,
-                                      right: 20.sp,
-                                      left: 20.sp,
-                                    ),
-                                    child: Text(
-                                        // "${'"'}${"NO BRAND FOUND"}${'"'}",
-                                        productController.brandController.text
-                                                .toString()
-                                                .trim()
-                                                .isNotEmpty
-                                            ? "No ${productController.brandController.text} found"
-                                                .toUpperCase()
-                                            : "Coming Soon to Your Area",
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: whiteColor,
-                                            fontFamily: "Franklin Gothic")),
-                                  ),
+                                      padding: EdgeInsets.only(
+                                        top: 6.sp,
+                                        bottom: 20.sp,
+                                        right: 20.sp,
+                                        left: 20.sp,
+                                      ),
+                                      child: Obx(
+                                        () => productController
+                                                .locationText.isNotEmpty
+                                            ? Column(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      openAppSettings()
+                                                          .then((value) async {
+                                                        getCurrentLocation();
+                                                      });
+                                                    },
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 10.sp),
+                                                      child: Text(
+                                                          "Grant location permission",
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                              color: whiteColor,
+                                                              fontFamily:
+                                                                  "Franklin Gothic")),
+                                                    ),
+                                                  ),
+                                                  Text(" or ",
+                                                      style: TextStyle(
+                                                          fontSize: 14,
+                                                          color: whiteColor,
+                                                          fontFamily:
+                                                              "Franklin Gothic")),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      showModalBottomSheet(
+                                                        context: context,
+                                                        isScrollControlled:
+                                                            true,
+                                                        constraints:
+                                                            BoxConstraints(
+                                                                maxWidth: double
+                                                                    .infinity,
+                                                                maxHeight:
+                                                                    600.sp,
+                                                                minHeight:
+                                                                    500.sp),
+                                                        builder: (ctx) {
+                                                          return ChangeAddressScreen(
+                                                            cartId: 0,
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                    child: Text(
+                                                        "select an address",
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .underline,
+                                                            color: whiteColor,
+                                                            fontFamily:
+                                                                "Franklin Gothic")),
+                                                  ),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      showModalBottomSheet(
+                                                        context: context,
+                                                        isScrollControlled:
+                                                            true,
+                                                        constraints:
+                                                            BoxConstraints(
+                                                                maxWidth: double
+                                                                    .infinity,
+                                                                maxHeight:
+                                                                    600.sp,
+                                                                minHeight:
+                                                                    500.sp),
+                                                        builder: (ctx) {
+                                                          return ChangeAddressScreen(
+                                                            cartId: 0,
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                    child: Center(
+                                                      child: Text(
+                                                        "to quickly checkout and get products delivered to your location. Ensure your location setting is turned on.",
+                                                        maxLines: 4,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 13,
+                                                          fontFamily:
+                                                              "Franklin Gothic",
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: whiteColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              )
+                                            : Text(
+                                                // "${'"'}${"NO BRAND FOUND"}${'"'}",
+                                                productController
+                                                        .brandController.text
+                                                        .toString()
+                                                        .trim()
+                                                        .isNotEmpty
+                                                    ? "No ${productController.brandController.text} found"
+                                                        .toUpperCase()
+                                                    : "Coming Soon to Your Area",
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: whiteColor,
+                                                    fontFamily:
+                                                        "Franklin Gothic")),
+                                      )),
                                 ],
                               )),
                     Obx(() => productController.quickProductLoadMore.value

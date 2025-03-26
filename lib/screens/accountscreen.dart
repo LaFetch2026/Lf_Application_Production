@@ -12,6 +12,7 @@ import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_account.dart';
 import 'package:lafetch/commonwidget/singlebtn.dart';
 import 'package:lafetch/controller/home_controller.dart';
+import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/controller/profile_controller.dart';
 import 'package:lafetch/screens/account/customercare.dart';
 import 'package:lafetch/screens/account/deleteaccount.dart';
@@ -39,6 +40,7 @@ class AccountScreen extends StatefulWidget {
 class AccountScreenState extends State<AccountScreen> {
   final controller = Get.put(ProfileController());
   final homeController = Get.put(HomeController());
+  final productController = Get.put(ProductController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
@@ -532,6 +534,9 @@ class AccountScreenState extends State<AccountScreen> {
                                                     const SystemUiOverlayStyle(
                                               statusBarColor: whiteColor,
                                             ));
+                                            productController
+                                                .getDefaultAddressData(
+                                                    0, context);
                                           },
                                         );
                                         await analytics.logEvent(

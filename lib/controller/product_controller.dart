@@ -184,6 +184,10 @@ class ProductController extends BaseController {
   RxBool quickProductLoadMore = false.obs;
   RxBool quickProductHasnextpage = true.obs;
   ScrollController quickProductListController = ScrollController();
+  RxBool isExpressBrand = false.obs;
+  List expressBrandList = [].obs;
+  RxString locationText = "check".obs;
+  RxString enableLocationText = "".obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -274,7 +278,7 @@ class ProductController extends BaseController {
 
       response = await http.get(
           Uri.parse(
-              "${ApiConstants.baseUrl}/brands/express-products?q=${brandController.text.toString().trim()}"),
+              "${ApiConstants.baseUrl}/brands/express-products?q=${brandController.text.toString().trim()}&latitude=${lat.value}&longitude=${lng.value}"),
           headers: <String, String>{
             'Accept': 'application/json; charset=UTF-8',
             "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -304,6 +308,48 @@ class ProductController extends BaseController {
     isBrand.value = false;
   }
 
+  getExpressBrandData() async {
+    isExpressBrand.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      dynamic response;
+      response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/brands?type=featured&screen=express&latitude=${lat.value}&longitude=${lng.value}"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+
+      var responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null) {
+          if (responseData["data"].isNotEmpty) {
+            expressBrandList = responseData["data"];
+          } else {
+            expressBrandList.clear();
+          }
+        } else {
+          expressBrandList.clear();
+        }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Please try again");
+      } else if (response.statusCode == 401) {
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("get express brand failed");
+      }
+    } catch (e) {
+      print("error$e");
+    }
+    isExpressBrand.value = false;
+  }
+
   fetchMoreBrandProductData() async {
     if (quickProductHasnextpage.value == true &&
         isBrand.value == false &&
@@ -315,7 +361,7 @@ class ProductController extends BaseController {
       try {
         var response = await http.get(
             Uri.parse(
-                "${ApiConstants.baseUrl}/brands/express-products?q=${brandController.text.toString().trim()}&page=${quickProductPage.value}"),
+                "${ApiConstants.baseUrl}/brands/express-products?q=${brandController.text.toString().trim()}&page=${quickProductPage.value}&latitude=${lat.value}&longitude=${lng.value}"),
             headers: <String, String>{
               'Accept': 'application/json; charset=UTF-8',
               "Authorization": "Bearer ${prefs.getString('token')} ",
@@ -2929,6 +2975,12 @@ class ProductController extends BaseController {
             for (var i = 0; i < responseData.length; i++) {
               if (responseData[i]["default_shipping"]) {
                 defaultAddress = responseData[i];
+                if (id == 0) {
+                  lat.value = double.parse(defaultAddress["latitude"]);
+                  lng.value = double.parse(defaultAddress["longitude"]);
+                  getExpressBrandData();
+                  getBrandProductData();
+                }
                 addressText.value =
                     "${responseData[i]["zip"]}, ${responseData[i]["address"]}";
                 addressTypeValue.value = responseData[i]["type"];
@@ -2956,7 +3008,7 @@ class ProductController extends BaseController {
             if (id != 0) {
               getEstimateDate(id, defaultAddress["zip"]);
             }
-          } else {
+          } /* else {
             if (id == 0) {
               showModalBottomSheet(
                 context: cntx,
@@ -2972,7 +3024,7 @@ class ProductController extends BaseController {
                 },
               );
             }
-          }
+          } */
         }
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
