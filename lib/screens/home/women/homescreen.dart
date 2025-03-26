@@ -262,7 +262,7 @@ class HomeScreenState extends State<HomeScreen> {
             productController.productCategory =
                 homeController.bannerCategory1Id;
             productController.productTags = homeController.bannerTag1Id;
-            if (homeController.banner1List[itemIndex]["tags"].isNotEmpty &&
+            if (/* homeController.banner1List[itemIndex]["tags"].isNotEmpty && */
                 homeController
                     .banner1List[itemIndex]["categories"].isNotEmpty) {
               Get.to(
@@ -270,7 +270,7 @@ class HomeScreenState extends State<HomeScreen> {
                   categoryName: homeController.banner1List[itemIndex]["name"],
                   categoryId: 0,
                   genderName: homeController.genderText.value,
-                  brandId: 0,
+                  brandId: homeController.banner1List[itemIndex]["brand_id"],
                   genderType: homeController.homeGenderValue.value,
                   tagIds: homeController.bannerTag1Id,
                   categoryList: homeController.bannerCategory1Id,
@@ -283,6 +283,7 @@ class HomeScreenState extends State<HomeScreen> {
                 },
               );
             }
+            print(homeController.banner1List[itemIndex]["name"]);
           },
           child: CachedNetworkImage(
             cacheManager: CacheManager(Config("customCacheKey",

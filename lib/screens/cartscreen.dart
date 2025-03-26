@@ -16,6 +16,7 @@ import 'package:lafetch/commonwidget/cartwidgets/bottomquantity.dart';
 import 'package:lafetch/commonwidget/cartwidgets/bottomsize.dart';
 import 'package:lafetch/commonwidget/cartwidgets/cartbottom.dart';
 import 'package:lafetch/commonwidget/cartwidgets/cartwidgets.dart';
+import 'package:lafetch/commonwidget/cartwidgets/totaltaxCharges.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
 import 'package:lafetch/commonwidget/doubleiconbtn.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
@@ -1925,7 +1926,7 @@ class CartScreenState extends State<CartScreen> {
                                                                 MainAxisAlignment
                                                                     .start,
                                                             children: [
-                                                              Padding(
+                                                              /*  Padding(
                                                                 padding: EdgeInsets
                                                                     .only(
                                                                         right: 4
@@ -1945,6 +1946,69 @@ class CartScreenState extends State<CartScreen> {
                                                                       : productSubtitleColor,
                                                                   fontSize: 12,
                                                                 ),
+                                                              ), */
+                                                              Row(
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        right: 4
+                                                                            .sp),
+                                                                    child:
+                                                                        AppText(
+                                                                      text:
+                                                                          "Total Price",
+                                                                      fontFamily:
+                                                                          "Franklin Gothic Regular",
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                      color: widget.backgroundcolor ==
+                                                                              whiteColor
+                                                                          ? subtitleColor
+                                                                          : productSubtitleColor,
+                                                                      fontSize:
+                                                                          12,
+                                                                    ),
+                                                                  ),
+                                                                  GestureDetector(
+                                                                    onTap: () {
+                                                                      showModalBottomSheet(
+                                                                        context:
+                                                                            context,
+                                                                        isScrollControlled:
+                                                                            true,
+                                                                        constraints:
+                                                                            BoxConstraints(
+                                                                          maxWidth:
+                                                                              double.infinity,
+                                                                          maxHeight:
+                                                                              220.sp,
+                                                                        ),
+                                                                        builder:
+                                                                            (ctx) {
+                                                                          return TotalTaxcharges(
+                                                                            total:
+                                                                                "\u{20B9}${controller.cartDetails["total"] ?? "0"}",
+                                                                            tax:
+                                                                                "\u{20B9}${controller.cartDetails["total_tax"] ?? "0"}",
+                                                                            title:
+                                                                                "Tax & Charges",
+                                                                            price:
+                                                                                "\u{20B9}${controller.cartDetails["total_mrp"] ?? "0"}",
+                                                                          );
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                    child: SvgPicture
+                                                                        .asset(
+                                                                      questionSvgImage,
+                                                                      height:
+                                                                          15.sp,
+                                                                      width:
+                                                                          15.sp,
+                                                                    ),
+                                                                  )
+                                                                ],
                                                               ),
                                                               const Expanded(
                                                                 child: SizedBox(
@@ -2376,7 +2440,7 @@ class CartScreenState extends State<CartScreen> {
                                                             ],
                                                           ),
                                                         ),
-                                                        Padding(
+                                                        /* Padding(
                                                           padding:
                                                               EdgeInsets.only(
                                                                   top: 12.sp),
@@ -2469,7 +2533,7 @@ class CartScreenState extends State<CartScreen> {
                                                               ),
                                                             ],
                                                           ),
-                                                        ),
+                                                        ), */
                                                         Padding(
                                                           padding: EdgeInsets
                                                               .symmetric(
