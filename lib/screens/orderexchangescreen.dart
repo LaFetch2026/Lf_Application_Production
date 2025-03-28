@@ -698,15 +698,7 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             child:
                                                                                 Row(children: [
                                                                               Padding(
-                                                                                padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: SvgPicture.asset(
-                                                                                  shipSvgImage,
-                                                                                  height: 16.sp,
-                                                                                  width: 16.sp,
-                                                                                ),
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
+                                                                                padding: EdgeInsets.only(left: 2.sp, right: 2.sp),
                                                                                 child: AppText(
                                                                                   text: "${value.orderList[index]["status_details"]}".capitalize!, //Cart
                                                                                   color: deeptYellow,
