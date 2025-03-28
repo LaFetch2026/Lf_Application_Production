@@ -674,6 +674,51 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                           ),
                                                                         ),
                                                                       ] else if (value.orderList[index]["status"] ==
+                                                                          1) ...[
+                                                                        AnimatedContainer(
+                                                                          duration:
+                                                                              const Duration(milliseconds: 300),
+                                                                          margin:
+                                                                              EdgeInsets.only(right: 5.sp),
+                                                                          height:
+                                                                              30.sp,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color:
+                                                                                lightYellow,
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(20.sp),
+                                                                            border:
+                                                                                Border.all(color: textHintColor, width: 1.sp),
+                                                                          ),
+                                                                          child:
+                                                                              Padding(
+                                                                            padding:
+                                                                                EdgeInsets.symmetric(horizontal: 5.sp),
+                                                                            child:
+                                                                                Row(children: [
+                                                                              Padding(
+                                                                                padding: EdgeInsets.symmetric(horizontal: 2.sp),
+                                                                                child: SvgPicture.asset(
+                                                                                  shipSvgImage,
+                                                                                  height: 16.sp,
+                                                                                  width: 16.sp,
+                                                                                ),
+                                                                              ),
+                                                                              Padding(
+                                                                                padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
+                                                                                child: AppText(
+                                                                                  text: "${value.orderList[index]["status_details"]}".capitalize!, //Cart
+                                                                                  color: deeptYellow,
+                                                                                  fontSize: 12,
+                                                                                  fontFamily: "Franklin Gothic",
+                                                                                  fontWeight: FontWeight.w500,
+                                                                                ),
+                                                                              ),
+                                                                            ]),
+                                                                          ),
+                                                                        ),
+                                                                      ] else if (value.orderList[index]["status"] ==
                                                                           3) ...[
                                                                         AnimatedContainer(
                                                                           duration:
@@ -1177,7 +1222,12 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                             OrderDetailsScreen(
                                                                           orderId:
                                                                               value.orderList[index]["id"],
-                                                                        ));
+                                                                        ))?.then((value) =>
+                                                                            setState(
+                                                                              () {
+                                                                                orderController.getOrderData();
+                                                                              },
+                                                                            ));
                                                                         await analytics
                                                                             .logEvent(
                                                                           name:
