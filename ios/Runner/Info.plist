@@ -30,8 +30,20 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>shop.la-fetch.com</string>
+				<string>fb915626513880487</string>
 			</array>
 		</dict>
+	</array>
+	<key>FacebookAppID</key>
+	<string>915626513880487</string>
+	<key>FacebookDisplayName</key>
+	<string>Lafetch</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>

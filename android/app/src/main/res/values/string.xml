@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Lafetch</string>
-    <string name="facebook_app_id">384762797883015</string>
-    <string name="facebook_client_token">5764fdada3ba969ccfa5a4421f341b7e</string>
-    <string name="fb_login_protocol_scheme">fb384762797883015</string>
+    <string name="facebook_app_id">915626513880487</string>
+    <string name="fb_login_protocol_scheme">915626513880487</string>
 </resources>
