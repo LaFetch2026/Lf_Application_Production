@@ -38,6 +38,8 @@
 	<string>915626513880487</string>
 	<key>FacebookDisplayName</key>
 	<string>Lafetch</string>
+	<key>FacebookClientToken</key>
+	<string>YOUR_CLIENT_TOKEN_HERE</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
@@ -82,7 +84,7 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>UISupportedInterfaceOrientations</key>	
+	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>

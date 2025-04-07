@@ -32,9 +32,11 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-  # target 'RunnerTests' do
-  #   inherit! :search_paths
-  # end
+
+  # ✅ OPTIONAL: Uncomment only if you're using Facebook Analytics or tracking manually
+  # pod 'FacebookCore', '~> 14.1.0'
+
+  # ❌ DO NOT include FacebookLogin (conflicts with flutter_facebook_auth)
 end
 
 post_install do |installer|
@@ -51,7 +53,7 @@ post_install do |installer|
     system(command)
   end
 
-  framework_paths = [    
+  framework_paths = [
     "Pods/FBAEMKit/XCFrameworks/FBAEMKit.xcframework/ios-arm64/FBAEMKit.framework/FBAEMKit",
     "Pods/FBSDKLoginKit/XCFrameworks/FBSDKLoginKit.xcframework/ios-arm64/FBSDKLoginKit.framework/FBSDKLoginKit",
     "Pods/FBSDKCoreKit/XCFrameworks/FBSDKCoreKit.xcframework/ios-arm64/FBSDKCoreKit.framework/FBSDKCoreKit",
