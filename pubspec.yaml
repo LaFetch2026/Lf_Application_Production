@@ -68,7 +68,7 @@ dependencies:
   #carousel_slider: ^4.2.1
   google_maps_flutter: ^2.3.1
   geolocator: ^13.0.2
-  flutter_facebook_auth: ^4.1.1
+  flutter_facebook_auth: ^4.4.1
   shimmer: ^3.0.0
   geocoding: ^3.0.0
   lottie: ^2.5.0
@@ -96,6 +96,7 @@ dependencies:
   flutter_svg: ^2.0.5
   marquee: ^2.3.0
   firebase_crashlytics: ^3.5.7
+  facebook_app_events: ^0.17.1
 
 dev_dependencies:
   flutter_test:
