@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 import 'dart:async';
 import 'dart:io';
-
+import 'package:lafetch/utils/analytics_helper.dart'; // ✅ Make sure this path is correct
 //import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -381,59 +381,85 @@ class HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           HomeAppbar(
-            onPressedSearch: () async {
-              searchController.searchController.clear();
-              Get.to(const SearchScreen())?.then((value) => setState(
-                    () {
-                      productController.categoryFilter.value =
-                          homeController.homeGenderValue.value;
-                      SystemChrome.setSystemUIOverlayStyle(
-                          const SystemUiOverlayStyle(
-                              statusBarColor: whiteColor,
-                              systemNavigationBarColor: whiteColor));
-                      /*   productController.getHandPickedProduct(
-                              "", false, false, productController.tagId.value); */
-                    },
-                  ));
-              await analytics.logEvent(
-                name: 'search_page',
-                parameters: <String, Object>{
-                  'page_name': 'search_page',
-                },
-              );
-            },
-            onPressedHeart: () async {
-              Get.to(const WishlistScreen())?.then(
-                (value) {
-                  SystemChrome.setSystemUIOverlayStyle(
-                      const SystemUiOverlayStyle(
-                          statusBarColor: whiteColor,
-                          systemNavigationBarColor: whiteColor));
-                },
-              );
-              await analytics.logEvent(
-                name: 'wishlist_page',
-                parameters: <String, Object>{
-                  'page_name': 'wishlist_page',
-                },
-              );
-            },
-            onPressedCart: () async {
-              Get.to(const CartScreen())?.then(
-                (value) {
-                  SystemChrome.setSystemUIOverlayStyle(
-                      const SystemUiOverlayStyle(
-                          statusBarColor: whiteColor,
-                          systemNavigationBarColor: whiteColor));
-                },
-              );
-              await analytics.logEvent(
-                name: 'cart_page',
-                parameters: <String, Object>{
-                  'page_name': 'cart_page',
-                },
-              );
-            },
+      onPressedSearch: () async {
+  final searchQuery = searchController.searchController.text;
+
+  // 🔹 Facebook Analytics
+  AnalyticsHelper.logSearch(searchQuery);
+
+  // 🔹 Firebase Analytics (optional)
+  await analytics.logEvent(
+    name: 'search_page',
+    parameters: {
+      'search_string': searchQuery,
+    },
+  );
+
+  searchController.searchController.clear();
+
+  Get.to(const SearchScreen())?.then((value) {
+    setState(() {
+      productController.categoryFilter.value =
+          homeController.homeGenderValue.value;
+
+      SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          statusBarColor: whiteColor,
+          systemNavigationBarColor: whiteColor,
+        ),
+      );
+    });
+  });
+},
+
+  onPressedHeart: () async {
+  // 🔹 Facebook - Wishlist viewed
+  AnalyticsHelper.logAddToWishlist(productId: 'wishlist_page', value: 0);
+
+  // 🔹 Firebase - Wishlist screen opened
+  await analytics.logEvent(
+    name: 'wishlist_page',
+    parameters: {
+      'page_name': 'wishlist_page',
+    },
+  );
+
+  Get.to(const WishlistScreen())?.then(
+    (_) {
+      SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          statusBarColor: whiteColor,
+          systemNavigationBarColor: whiteColor,
+        ),
+      );
+    },
+  );
+},
+
+onPressedCart: () async {
+  // 🔹 Facebook - Cart viewed (you can log a dummy product if unknown)
+  AnalyticsHelper.logAddToCart(productId: 'cart_page', totalProductValue: 0);
+
+  // 🔹 Firebase - Cart screen opened
+  await analytics.logEvent(
+    name: 'cart_page',
+    parameters: {
+      'page_name': 'cart_page',
+    },
+  );
+
+  Get.to(const CartScreen())?.then(
+    (_) {
+      SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          statusBarColor: whiteColor,
+          systemNavigationBarColor: whiteColor,
+        ),
+      );
+    },
+  );
+},
+
             onPressedDropDown: () {
               if (homeController.showGenderList.value) {
                 homeController.showGenderList.value = false;
@@ -2691,5 +2717,8 @@ class HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+ 
+ 
+ 
   }
 }

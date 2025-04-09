@@ -20,6 +20,8 @@
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
     <string>$(FLUTTER_BUILD_NAME)</string>
+    <key>CFBundleVersion</key>
+    <string>$(FLUTTER_BUILD_NUMBER)</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -29,8 +31,8 @@
             <string>Editor</string>
             <key>CFBundleURLSchemes</key>
             <array>
-                <string>shop.la-fetch.com</string>
                 <string>fb915626513880487</string>
+                <string>shop.la-fetch.com</string>
             </array>
         </dict>
     </array>
@@ -39,7 +41,7 @@
     <key>FacebookDisplayName</key>
     <string>Lafetch</string>
     <key>FacebookClientToken</key>
-    <string>YOUR_CLIENT_TOKEN_HERE</string>
+    <string>bc1c2ad93de1bfbe0f46761e9c26a956</string>
     <key>LSApplicationQueriesSchemes</key>
     <array>
         <string>fbapi</string>
@@ -47,12 +49,8 @@
         <string>fbauth2</string>
         <string>fbshareextension</string>
     </array>
-    <key>CFBundleVersion</key>
-    <string>$(FLUTTER_BUILD_NUMBER)</string>
-    <key>LSRequiresIPhoneOS</key>
-    <true/>
-    <key>LSSupportsOpeningDocumentsInPlace</key>
-    <true/>
+    <key>NSUserTrackingUsageDescription</key>
+    <string>This identifier will be used to show you quick delivery products near you and deliver it to your location.</string>
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>
@@ -66,8 +64,6 @@
     <string>Lafetch uses your location to enhance delivery services, including showing products eligible for quick delivery and optimizing delivery addresses.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Lafetch uses your location to show products available for quick delivery within 4 hours and to streamline adding delivery addresses.</string>
-    <key>NSUserTrackingUsageDescription</key>
-    <string>This identifier will be used to show you quick delivery products near you and deliver it to your location.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Used to capture audio for image picker</string>
     <key>NSPhotoLibraryUsageDescription</key>
@@ -97,4 +93,3 @@
     <true/>
 </dict>
 </plist>
-

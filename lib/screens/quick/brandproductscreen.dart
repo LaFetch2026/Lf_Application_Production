@@ -21,6 +21,7 @@ import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
+import 'package:lafetch/utils/analytics_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../commonwidget/app_text.dart';
 import '../../../controller/product_controller.dart';
@@ -45,7 +46,8 @@ class BrandViewProductScreen extends StatefulWidget {
   @override
   State<BrandViewProductScreen> createState() => BrandViewProductScreenState();
 }
-
+ final ScrollController _scrollController = ScrollController();
+  final List<String> _triggeredScrolls = [];
 class BrandViewProductScreenState extends State<BrandViewProductScreen> {
   final productController = Get.find<ProductController>();
   final wishlistController = Get.put(WishlistController());
@@ -59,6 +61,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
 
   @override
   void initState() {
+        _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
           statusBarColor: homeAppBarColor,
@@ -98,6 +101,31 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
     super.initState();
   }
 
+  void _onScroll() {
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    final scrollPercentage = (currentScroll / maxScroll) * 100;
+
+    if (scrollPercentage >= 25 && !_triggeredScrolls.contains('25%')) {
+      AnalyticsHelper.logScrollEvent('25%');
+      _triggeredScrolls.add('25%');
+    }
+    if (scrollPercentage >= 50 && !_triggeredScrolls.contains('50%')) {
+      AnalyticsHelper.logScrollEvent('50%');
+      _triggeredScrolls.add('50%');
+    }
+    if (scrollPercentage >= 75 && !_triggeredScrolls.contains('75%')) {
+      AnalyticsHelper.logScrollEvent('75%');
+      _triggeredScrolls.add('75%');
+    }
+    if (scrollPercentage >= 100 && !_triggeredScrolls.contains('100%')) {
+      AnalyticsHelper.logScrollEvent('100%');
+      _triggeredScrolls.add('100%');
+    }
+  }
+
+
+
   onSearchChanged(String query) {
     if (debounce?.isActive ?? false) debounce?.cancel();
     debounce = Timer(const Duration(milliseconds: 500), () {
@@ -108,6 +136,12 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
           widget.brand_id,
           widget.screen);
     });
+  }
+
+    @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override

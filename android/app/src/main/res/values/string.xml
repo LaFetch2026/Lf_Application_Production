@@ -3,5 +3,5 @@
     <string name="app_name">Lafetch</string>
     <string name="facebook_app_id">915626513880487</string>
     <string name="fb_login_protocol_scheme">fb915626513880487</string>
-    <string name="facebook_client_token">YOUR_CLIENT_TOKEN_HERE</string>
+    <string name="facebook_client_token">bc1c2ad93de1bfbe0f46761e9c26a956</string>
 </resources>

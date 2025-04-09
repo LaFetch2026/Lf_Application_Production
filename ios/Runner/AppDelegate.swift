@@ -1,7 +1,7 @@
 import UIKit
 import Flutter
 import GoogleMaps
-import FBSDKCoreKit // ✅ Add this import
+import FBSDKCoreKit
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -9,20 +9,17 @@ import FBSDKCoreKit // ✅ Add this import
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    // Google Maps API key
     GMSServices.provideAPIKey("AIzaSyCBFuMTFiBOwMOAbiCNJFInpiknSupbfEc")
-    
-    // Facebook SDK initialization
+
     ApplicationDelegate.shared.application(
       application,
       didFinishLaunchingWithOptions: launchOptions
     )
-    
+
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
-  // ✅ Add this method to handle Facebook Login callback (important!)
   override func application(
     _ app: UIApplication,
     open url: URL,
@@ -34,4 +31,3 @@ import FBSDKCoreKit // ✅ Add this import
     return super.application(app, open: url, options: options)
   }
 }
- 

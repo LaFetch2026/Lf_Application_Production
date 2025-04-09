@@ -27,23 +27,23 @@ class AnalyticsHelper {
   }
 
   /// Search - When search submitted
-  static void logSearch(String query) {
+  static void logSearch(String searchQuery) {
     facebookAppEvents.logEvent(
       name: 'fb_mobile_search',
       parameters: {
-        'search_string': query,
+        'search_string': searchQuery,
         'success': true,
       },
     );
   }
 
   /// Add to Wishlist - User saves product
-  static void logAddToWishlist({required String id, required double value}) {
+  static void logAddToWishlist({required String productId, required double value}) {
     facebookAppEvents.logEvent(
       name: 'fb_mobile_add_to_wishlist',
       parameters: {
         'content_type': 'product',
-        'content_id': id,
+        'content_id': productId,
         'currency': 'USD',
         'value': value,
       },
