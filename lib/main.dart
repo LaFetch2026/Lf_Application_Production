@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:app_links/app_links.dart';
+import 'package:facebook_app_events/facebook_app_events.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -18,12 +19,12 @@ import 'package:lafetch/utils/analytics_helper.dart'; // ✅ Make sure this path
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
-
+  await FacebookAppEvents().setAutoLogAppEventsEnabled(true); // optional
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // ✅ Log App Install only once
+  // ✅ Track App Install - only once
   final prefs = await SharedPreferences.getInstance();
   bool? hasInstalled = prefs.getBool('app_install_logged');
   if (hasInstalled != true) {
@@ -31,21 +32,25 @@ Future main() async {
     await prefs.setBool('app_install_logged', true);
   }
 
-  // ✅ Always log app launch
+  // ✅ Always track App Launch
   AnalyticsHelper.logAppLaunch();
 
+  // ✅ System UI Setup
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: homeAppBarColor,
-      statusBarIconBrightness: Brightness.light,
-      statusBarBrightness: Brightness.dark,
-      systemNavigationBarColor: homeAppBarColor));
+    statusBarColor: homeAppBarColor,
+    statusBarIconBrightness: Brightness.light,
+    statusBarBrightness: Brightness.dark,
+    systemNavigationBarColor: homeAppBarColor,
+  ));
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
+  // ✅ Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
+  // ✅ Handle Deep Links (App Links)
   final AppLinks appLinks = AppLinks();
   appLinks.uriLinkStream.listen((uri) {
     if (uri != null) {
@@ -53,26 +58,29 @@ Future main() async {
       String toRemove = "https://shop.la-fetch.com/";
       String result = original.replaceAll(toRemove, "");
       List<String> parts = result.split('/');
+
       if (parts[0] == "products") {
-        Get.to(ProductDetailsScreen(
+        Get.to(() => ProductDetailsScreen(
           productId: 0,
           type: "add",
           brandName: "",
           Slug: parts[1],
         ));
       } else {
-        Get.to(AllBrandScreen(
+        Get.to(() => AllBrandScreen(
           screen: "home",
           id: 0,
           slug: parts[1],
         ));
       }
+
       print('Received URI: $uri');
     }
   });
 
   runApp(MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});

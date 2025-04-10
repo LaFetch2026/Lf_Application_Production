@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
 import 'package:lafetch/commonwidget/doublebutton_new.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
+import '../../utils/analytics_helper.dart';
 import '../../utils/constants.dart';
 import '../smallbtn.dart';
 
@@ -470,16 +471,25 @@ class _BottomWishlistState extends State<BottomWishlist> {
                   onPressedFirst: () {
                     Get.back();
                   },
-                  onPressedSecond: () {
-                    if (id != 0) {
-                      widget.onPressed?.call(id);
-                    } else {
-                      // getSnackBar("Select Wishlist");
-                      error = "Select Wishlist";
-                      setState(() {});
-                    }
-                  },
-                )
+              onPressedSecond: () {
+                if (id != 0) {
+                  // ✅ Fire Facebook event
+                  AnalyticsHelper.logAddToWishlist(
+                    productId: id.toString(), // or use the actual product ID if different
+                    contentType: 'product',
+                    value: 0.0, // or actual product price if available
+                  );
+
+                  // ✅ Trigger your original action
+                  widget.onPressed?.call(id);
+                } else {
+                  // ❌ No ID selected
+                  error = "Select Wishlist";
+                  setState(() {});
+                }
+              }
+
+          )
               : const SizedBox(
                   height: 0,
                 ),

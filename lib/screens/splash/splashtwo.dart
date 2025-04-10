@@ -5,6 +5,7 @@ import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/utils/constants.dart';
 //import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../utils/analytics_helper.dart';
 import '../bottomnavscreen.dart';
 import '../userdetails.dart';
 import '../welcomescreen.dart';
@@ -49,32 +50,41 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
   navigateToScreen() {
     if (token != null) {
       if (token!.isNotEmpty && name != null) {
-        /*   Get.offAll(
-          () => const BottomNavScreen(),
-        ); */
+        AnalyticsHelper.logContentView(
+          productId: 'home_screen',
+          value: 0.0,
+        );
+
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (context) => const BottomNavScreen(),
           ),
-          (Route<dynamic> route) => false,
+              (Route<dynamic> route) => false,
         );
       } else {
         if (phone == null) {
-          Get.off(
-            () => const WelcomeScreen(),
+          AnalyticsHelper.logContentView(
+            productId: 'welcome_screen',
+            value: 0.0,
           );
+          Get.off(() => const WelcomeScreen());
         } else {
-          Get.off(
-            () => const UserDetailsScreen(),
+          AnalyticsHelper.logContentView(
+            productId: 'user_details_screen',
+            value: 0.0,
           );
+          Get.off(() => const UserDetailsScreen());
         }
       }
     } else {
-      Get.offAll(
-        () => const WelcomeScreen(),
+      AnalyticsHelper.logContentView(
+        productId: 'welcome_screen',
+        value: 0.0,
       );
+      Get.offAll(() => const WelcomeScreen());
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

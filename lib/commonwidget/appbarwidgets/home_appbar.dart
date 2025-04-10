@@ -3,8 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/app_text.dart';
+import 'package:lafetch/commonwidget/appbarwidgets/productdetails_appbar.dart';
 import 'package:lafetch/controller/cart_controller.dart';
 
+import '../../controller/product_controller.dart';
+import '../../utils/analytics_helper.dart';
 import '../../utils/constants.dart';
 
 class HomeAppbar extends StatefulWidget {
@@ -27,8 +30,9 @@ class HomeAppbar extends StatefulWidget {
 
   @override
   State<HomeAppbar> createState() => _HomeAppbarState();
-}
 
+}
+final productController = Get.put(ProductController());
 class _HomeAppbarState extends State<HomeAppbar> {
   // final homeController = Get.put(HomeController());
   final controller = Get.put(CartController());
@@ -117,16 +121,29 @@ class _HomeAppbarState extends State<HomeAppbar> {
                       visible: widget.showSearch,
                       child: InkWell(
                         onTap: () {
+                          // ✅ Call your helper function
+                          AnalyticsHelper.logSearch(
+                            productId: productController.id,
+                            contentType: 'search_icon_tap',
+                            value: 0.0,
+                          );
+
+                          // ✅ Trigger the original callback
                           widget.onPressedSearch?.call();
                         },
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 8.sp, vertical: 8.sp),
-                          child: SvgPicture.asset(searchSvgImage,
-                              height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                          padding: EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
+                          child: SvgPicture.asset(
+                            searchSvgImage,
+                            height: 18.sp,
+                            width: 18.sp,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
+
+
                     InkWell(
                       onTap: () {
                         widget.onPressedHeart?.call();

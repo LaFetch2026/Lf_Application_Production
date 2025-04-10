@@ -14,51 +14,72 @@ class AnalyticsHelper {
   }
 
   /// View Content - e.g. Product page opened
-  static void logContentView({required String productId, required double value}) {
+  static void logContentView({
+    required  productId,
+    required double value,
+  }) {
     facebookAppEvents.logEvent(
       name: 'fb_mobile_content_view',
       parameters: {
         'content_type': 'product',
         'content_id': productId,
         'currency': 'USD',
-        'value': value,
+        'valueToSum': value,
       },
     );
   }
 
   /// Search - When search submitted
-  static void logSearch(String searchQuery) {
+  static void logSearch({
+    required productId,
+    required String contentType,
+    required double value,
+  }) {
+    print("Logging fb_mobile_search: $productId, $contentType, $value");
+
     facebookAppEvents.logEvent(
-      name: 'fb_mobile_search',
+      name: 'Search',
       parameters: {
-        'search_string': searchQuery,
-        'success': true,
+        'content_type': 'search_action',
+        'content_id': 'search_tap',
+        'currency': 'USD',
+        'valueToSum': 0.0,
       },
     );
+
   }
 
+
   /// Add to Wishlist - User saves product
-  static void logAddToWishlist({required String productId, required double value}) {
+  static void logAddToWishlist({
+    required String productId,
+    required String contentType,
+    required double value,
+  }) {
     facebookAppEvents.logEvent(
       name: 'fb_mobile_add_to_wishlist',
       parameters: {
-        'content_type': 'product',
+        'content_type': contentType,
         'content_id': productId,
         'currency': 'USD',
-        'value': value,
+        'valueToSum': value,
       },
     );
   }
 
+
   /// Add to Cart - User adds product to cart
-  static void logAddToCart({required String productId, required double totalProductValue}) {
+  static void logAddToCart({
+    required String productId,
+    required double value,
+  }) {
     facebookAppEvents.logEvent(
       name: 'fb_mobile_add_to_cart',
       parameters: {
         'content_type': 'product',
         'content_id': productId,
         'currency': 'USD',
-        'value': totalProductValue,
+        'valueToSum': value,
       },
     );
   }
@@ -66,30 +87,66 @@ class AnalyticsHelper {
   /// Initiate Checkout - Checkout started
   static void logInitiateCheckout({
     required List<String> productId,
-    required double totalProductValue,
-    bool paymentInfoAvailable = false,
+    required double value,
   }) {
     facebookAppEvents.logEvent(
       name: 'fb_mobile_initiated_checkout',
       parameters: {
         'content_type': 'product',
         'content_id': productId.join(','),
-        'num_items': productId.length,
-        'payment_info_available': paymentInfoAvailable,
         'currency': 'USD',
-        'value': totalProductValue,
+        'valueToSum': value,
+      },
+    );
+  }
+
+  /// Add Payment Info - Called after entering payment method
+  static void logAddPaymentInfo({bool success = true}) {
+    facebookAppEvents.logEvent(
+      name: 'fb_mobile_add_payment_info',
+      parameters: {
+        'success': success,
       },
     );
   }
 
   /// Purchase - After successful order
-  static void logPurchase({required String productId, required double totalProductValue}) {
+  static void logPurchase({
+    required String productId,
+    required double value,
+  }) {
     facebookAppEvents.logPurchase(
-      amount: totalProductValue,
+      amount: value,
       currency: 'USD',
       parameters: {
         'content_type': 'product',
         'content_id': productId,
+        'valueToSum': value,
+      },
+    );
+  }
+
+  /// Start Trial - Placeholder
+  static void logStartTrial() {
+    facebookAppEvents.logEvent(name: 'StartTrial');
+  }
+
+  /// Subscribe - Placeholder
+  static void logSubscribe() {
+    facebookAppEvents.logEvent(name: 'Subscribe');
+  }
+
+  /// Rate - e.g. user rates a product or app
+  static void logRate({
+    required double value,
+    double maxRatingValue = 5.0,
+  }) {
+    facebookAppEvents.logEvent(
+      name: 'Rate',
+      parameters: {
+        'max_rating_value': maxRatingValue,
+        'valueToSum': value,
+        'content_type': 'product',
       },
     );
   }
@@ -99,7 +156,7 @@ class AnalyticsHelper {
     facebookAppEvents.logEvent(
       name: 'scroll',
       parameters: {
-        'scroll_depth': scrollDepth, // e.g. '25%', '50%', '100%'
+        'scroll_depth': scrollDepth,
       },
     );
   }

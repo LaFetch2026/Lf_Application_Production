@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 import 'dart:async';
 import 'dart:io';
-import 'package:lafetch/utils/analytics_helper.dart'; // ✅ Make sure this path is correct
+
 //import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +41,7 @@ import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/common_widgets.dart';
 import '../../../controller/search_controller.dart';
 import '../../../controller/wishlist_controller.dart';
+import '../../../utils/analytics_helper.dart';
 import '../../../utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -381,85 +382,70 @@ class HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           HomeAppbar(
-      onPressedSearch: () async {
-  final searchQuery = searchController.searchController.text;
+            onPressedSearch: () async {
+              AnalyticsHelper.logSearch(
+                productId: productController.id, // using the search term as ID
+                contentType: 'product',
+                value: 0.0, // optionally use number of results here
+              );
 
-  // 🔹 Facebook Analytics
-  AnalyticsHelper.logSearch(searchQuery);
+              searchController.searchController.clear();
+              Get.to(const SearchScreen())?.then((value) => setState(
+                    () {
 
-  // 🔹 Firebase Analytics (optional)
-  await analytics.logEvent(
-    name: 'search_page',
-    parameters: {
-      'search_string': searchQuery,
-    },
-  );
+                      productController.categoryFilter.value =
+                          homeController.homeGenderValue.value;
+                      SystemChrome.setSystemUIOverlayStyle(
+                          const SystemUiOverlayStyle(
+                              statusBarColor: whiteColor,
+                              systemNavigationBarColor: whiteColor));
+                      /*   productController.getHandPickedProduct(
+                              "", false, false, productController.tagId.value); */
+                    },
+                  ));
 
-  searchController.searchController.clear();
+              await analytics.logEvent(
+                name: 'search_page',
+                parameters: <String, Object>{
+                  'page_name': 'search_page',
+                },
+              );
 
-  Get.to(const SearchScreen())?.then((value) {
-    setState(() {
-      productController.categoryFilter.value =
-          homeController.homeGenderValue.value;
 
-      SystemChrome.setSystemUIOverlayStyle(
-        const SystemUiOverlayStyle(
-          statusBarColor: whiteColor,
-          systemNavigationBarColor: whiteColor,
-        ),
-      );
-    });
-  });
-},
+            },
+            onPressedHeart: () async {
 
-  onPressedHeart: () async {
-  // 🔹 Facebook - Wishlist viewed
-  AnalyticsHelper.logAddToWishlist(productId: 'wishlist_page', value: 0);
-
-  // 🔹 Firebase - Wishlist screen opened
-  await analytics.logEvent(
-    name: 'wishlist_page',
-    parameters: {
-      'page_name': 'wishlist_page',
-    },
-  );
-
-  Get.to(const WishlistScreen())?.then(
-    (_) {
-      SystemChrome.setSystemUIOverlayStyle(
-        const SystemUiOverlayStyle(
-          statusBarColor: whiteColor,
-          systemNavigationBarColor: whiteColor,
-        ),
-      );
-    },
-  );
-},
-
-onPressedCart: () async {
-  // 🔹 Facebook - Cart viewed (you can log a dummy product if unknown)
-  AnalyticsHelper.logAddToCart(productId: 'cart_page', totalProductValue: 0);
-
-  // 🔹 Firebase - Cart screen opened
-  await analytics.logEvent(
-    name: 'cart_page',
-    parameters: {
-      'page_name': 'cart_page',
-    },
-  );
-
-  Get.to(const CartScreen())?.then(
-    (_) {
-      SystemChrome.setSystemUIOverlayStyle(
-        const SystemUiOverlayStyle(
-          statusBarColor: whiteColor,
-          systemNavigationBarColor: whiteColor,
-        ),
-      );
-    },
-  );
-},
-
+              Get.to(const WishlistScreen())?.then(
+                (value) {
+                  SystemChrome.setSystemUIOverlayStyle(
+                      const SystemUiOverlayStyle(
+                          statusBarColor: whiteColor,
+                          systemNavigationBarColor: whiteColor));
+                },
+              );
+              await analytics.logEvent(
+                name: 'wishlist_page',
+                parameters: <String, Object>{
+                  'page_name': 'wishlist_page',
+                },
+              );
+            },
+            onPressedCart: () async {
+              Get.to(const CartScreen())?.then(
+                (value) {
+                  SystemChrome.setSystemUIOverlayStyle(
+                      const SystemUiOverlayStyle(
+                          statusBarColor: whiteColor,
+                          systemNavigationBarColor: whiteColor));
+                },
+              );
+              await analytics.logEvent(
+                name: 'cart_page',
+                parameters: <String, Object>{
+                  'page_name': 'cart_page',
+                },
+              );
+            },
             onPressedDropDown: () {
               if (homeController.showGenderList.value) {
                 homeController.showGenderList.value = false;
@@ -469,6 +455,7 @@ onPressedCart: () async {
               setState(() {});
             },
           ),
+
           Obx(
             () => SizedBox(
               height: 40.sp,
@@ -1834,8 +1821,13 @@ onPressedCart: () async {
                                             'homepage_productExploreAll',
                                       },
                                     );
+
                                   },
                                   onPressed: (p0) async {
+                                    AnalyticsHelper.logContentView(
+                                      productId: productController.id,
+                                      value: 0.0,
+                                    );
                                     Get.to(
                                       ProductDetailsScreen(
                                         productId: p0,
@@ -2717,8 +2709,5 @@ onPressedCart: () async {
         ],
       ),
     );
- 
- 
- 
   }
 }

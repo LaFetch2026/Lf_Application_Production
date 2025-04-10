@@ -33,6 +33,7 @@ import '../../../commonwidget/homewidget/dummy_productImage.dart';
 //import '../../../commonwidget/homewidget/dummy_saveaddress.dart';
 //import '../../../commonwidget/homewidget/horizontal_home_list.dart';
 import '../../../controller/wishlist_controller.dart';
+import '../../../utils/analytics_helper.dart';
 import '../../../utils/constants.dart';
 //import '../../account/saved_address.dart';
 import '../../cartscreen.dart';
@@ -820,58 +821,66 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
             Visibility(
               visible: widget.backgroundcolor == whiteColor ? true : false,
               child: ProductdetailsAppbar(
-                onPressedHeart: () async {
-                  if (wishlistController.wishListDetails["wishlisted"]) {
-                    wishlistController.callAddProductToWishlist(
+                  onPressedHeart: () async {
+                    final productId = productController.productDetails["id"].toString();
+                    final productPrice = double.tryParse(productController.productDetails["price"].toString()) ?? 0.0;
+
+                    AnalyticsHelper.logAddToWishlist(
+                      productId: productId,
+                      contentType: 'product',
+                      value: productPrice,
+                    );
+
+                    if (wishlistController.wishListDetails["wishlisted"]) {
+                      wishlistController.callAddProductToWishlist(
                         wishlistController.wishListDetails["wishlist_id"],
                         productController.productDetails["id"],
-                        widget.backgroundcolor);
-                    await analytics.logEvent(
-                      name: 'productdetails_wishlist_remove',
-                      parameters: <String, Object>{
-                        'page_name': 'productdetails_wishlist_remove',
-                      },
-                    );
-                  } else {
-                    scaffoldKey.currentState?.showBottomSheet((context) =>
-                        BottomWishlist(
-                            controller: wishlistController,
-                            onPressedBoard: () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          NewBoardScreen(
-                                            title: "New Board",
-                                            boardId: 0,
-                                            screen: "ProductDetails",
-                                            productId: wishlistController
-                                                .wishListDetails["id"],
-                                            hintName: "Name of the Board",
-                                            boardName: "",
-                                            btnText: "Next",
-                                          )))
-                                  .then(
-                                    (value) {},
-                                  );
-                            },
-                            productImage: wishlistController
-                                .wishListDetails["images"][0]["name"],
-                            onPressed: (p0) {
-                              wishlistController.callAddProductToWishlist(
-                                  p0,
-                                  productController.productDetails["id"],
-                                  widget.backgroundcolor);
-                            },
-                            wishlistList: wishlistController.wishlistList));
-                    await analytics.logEvent(
-                      name: 'productdetails_wishlist_add',
-                      parameters: <String, Object>{
-                        'page_name': 'productdetails_wishlist_add',
-                      },
-                    );
-                  }
-                },
-                onPressedShare: () async {
+                        widget.backgroundcolor,
+                      );
+
+                      await analytics.logEvent(
+                        name: 'productdetails_wishlist_remove',
+                        parameters: <String, Object>{
+                          'page_name': 'productdetails_wishlist_remove',
+                        },
+                      );
+                    } else {
+                      scaffoldKey.currentState?.showBottomSheet((context) => BottomWishlist(
+                        controller: wishlistController,
+                        onPressedBoard: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (BuildContext context) => NewBoardScreen(
+                              title: "New Board",
+                              boardId: 0,
+                              screen: "ProductDetails",
+                              productId: wishlistController.wishListDetails["id"],
+                              hintName: "Name of the Board",
+                              boardName: "",
+                              btnText: "Next",
+                            ),
+                          ));
+                        },
+                        productImage: wishlistController.wishListDetails["images"][0]["name"],
+                        onPressed: (p0) {
+                          wishlistController.callAddProductToWishlist(
+                            p0,
+                            productController.productDetails["id"],
+                            widget.backgroundcolor,
+                          );
+                        },
+                        wishlistList: wishlistController.wishlistList,
+                      ));
+
+                      await analytics.logEvent(
+                        name: 'productdetails_wishlist_add',
+                        parameters: <String, Object>{
+                          'page_name': 'productdetails_wishlist_add',
+                        },
+                      );
+                    }
+                  },
+
+                  onPressedShare: () async {
                   Share.share(productController.productDetails["share_link"]);
                   await analytics.logEvent(
                     name: 'share_product',
@@ -4665,6 +4674,15 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               firstText: "Go to BAG".toUpperCase(),
                               secondText: "Buy Now".toUpperCase(),
                               onPressedFirst: () async {
+
+                                final productId = productController.productDetails["id"].toString();
+                                final productPrice = double.tryParse(productController.productDetails["price"].toString()) ?? 0.0;
+
+                                AnalyticsHelper.logAddToCart(
+                                  productId: productId,
+
+                                  value: productPrice,
+                                );
                                 Get.to(CartScreen(
                                   backgroundcolor: widget.backgroundcolor,
                                 ))?.then(
@@ -4690,6 +4708,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 );
                               },
                               onPressedSecond: () {
+                                final productId = productController.productDetails["id"].toString();
+                                final productPrice = double.tryParse(productController.productDetails["price"].toString()) ?? 0.0;
+
+                                AnalyticsHelper.logAddToCart(
+                                  productId: productId,
+
+                                  value: productPrice,
+                                );
                                 if (productController
                                     .checkDetailsValidation()) {
                                   productController.callAddtoCart(

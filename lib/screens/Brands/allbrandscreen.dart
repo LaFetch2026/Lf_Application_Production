@@ -15,7 +15,6 @@ import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/quick/brandproductscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
-import 'package:lafetch/utils/analytics_helper.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
@@ -37,8 +36,6 @@ class AllBrandScreen extends StatefulWidget {
 }
 
 class AllBrandScreenState extends State<AllBrandScreen> {
-    final ScrollController _scrollController = ScrollController();
-  final List<String> _triggeredScrolls = [];
   final productController = Get.put(ProductController());
   final brandController = Get.put(BrandController());
   final homeController = Get.put(HomeController());
@@ -95,7 +92,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
   @override
   void initState() {
-      _scrollController.addListener(_onScroll);
     videoController = VideoPlayerController.networkUrl(
       Uri.parse(
         brandController.brandbackground.value,
@@ -142,29 +138,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     super.initState();
   }
 
-
-  void _onScroll() {
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.position.pixels;
-    final scrollPercentage = (currentScroll / maxScroll) * 100;
-
-    if (scrollPercentage >= 25 && !_triggeredScrolls.contains('25%')) {
-      AnalyticsHelper.logScrollEvent('25%');
-      _triggeredScrolls.add('25%');
-    }
-    if (scrollPercentage >= 50 && !_triggeredScrolls.contains('50%')) {
-      AnalyticsHelper.logScrollEvent('50%');
-      _triggeredScrolls.add('50%');
-    }
-    if (scrollPercentage >= 75 && !_triggeredScrolls.contains('75%')) {
-      AnalyticsHelper.logScrollEvent('75%');
-      _triggeredScrolls.add('75%');
-    }
-    if (scrollPercentage >= 100 && !_triggeredScrolls.contains('100%')) {
-      AnalyticsHelper.logScrollEvent('100%');
-      _triggeredScrolls.add('100%');
-    }
-  }
   /*  getprefrenceData() async {
     final prefs = await SharedPreferences.getInstance();
     tagId = prefs.getInt('tagId')!;
@@ -222,7 +195,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     videoController.pause();
     videoController.dispose();
     super.dispose();
-      _scrollController.dispose();
   }
 
   @override

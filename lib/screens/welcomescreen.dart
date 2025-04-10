@@ -16,10 +16,11 @@ class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
   @override
-  State<WelcomeScreen> createState() => _WelcomeScreenState();
+  State<WelcomeScreen> createState() => WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateMixin {
+class WelcomeScreenState extends State<WelcomeScreen>
+    with TickerProviderStateMixin {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final loginController = Get.put(LoginController());
   late VideoPlayerController videoController;
@@ -27,19 +28,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
 
   @override
   void initState() {
-    super.initState();
-    
-    videoController = VideoPlayerController.asset(videoOnboard)
-      ..initialize().then((_) => setState(() {}))
-      ..play()
-      ..setLooping(true);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    videoController = VideoPlayerController.asset(
+      videoOnboard,
+    );
+    initializeVideoPlayerFuture = videoController.initialize();
+    videoController.play();
+    videoController.setLooping(true);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        systemNavigationBarColor: Colors.transparent,
-      ));
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Colors.transparent));
     });
+    super.initState();
   }
 
   @override
@@ -54,141 +54,227 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
       backgroundColor: blackColor,
       body: Stack(
         children: [
-          /// **Full-screen Background Video**
-          Positioned.fill(
-            child: FittedBox(
-              fit: BoxFit.cover,
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                child: VideoPlayer(videoController),
+          Container(
+            // width: MediaQuery.of(context).size.width,
+            //height: MediaQuery.of(context).size.height,
+            child: /* AspectRatio(
+          aspectRatio: 9 / 16,
+          child: */
+                FittedBox(
+                    fit: BoxFit.cover,
+                    child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: VideoPlayer(videoController))),
+            // ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width.sp,
+            height: MediaQuery.of(context).size.height.sp,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.transparent, Colors.black.withOpacity(0.01)],
+                stops: [0.535, 0.8978],
               ),
             ),
           ),
-
-          /// **Dark Gradient Overlay**
-          Positioned.fill(
+          Transform.scale(
+            scaleY: 1.8,
             child: Container(
+              width: MediaQuery.of(context).size.width.sp,
+              height: MediaQuery.of(context).size.height.sp,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.black.withOpacity(0.99)],
-                  stops: [0.535, 0.8978],
+                gradient: RadialGradient(
+                  center: Alignment.center,
+                  radius: 0.5,
+                  /*  colors: [
+                Color(0x00000000),
+                Color(0XCC000000),
+              ], */
+                  colors: [
+                    Color(0x00000000),
+                    Color(0x88000000),
+                  ],
+                  stops: [0.5, 1.0],
                 ),
               ),
             ),
           ),
-
-          /// **Radial Gradient Overlay**
-          Positioned.fill(
-            child: Transform.scale(
-              scaleY: 1.8,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: RadialGradient(
-                    center: Alignment.center,
-                    radius: 0.5,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.53)],
-                    stops: [0.5, 1.0],
-                  ),
-                ),
-              ),
-            ),
+          Container(
+            width: MediaQuery.of(context).size.width.sp,
+            height: MediaQuery.of(context).size.height.sp,
+            color: Colors.white.withOpacity(0),
           ),
-
-          /// **App Logo**
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
               padding: EdgeInsets.only(top: 80.sp),
-              child: Image.asset(appNameImage, height: 41.sp, fit: BoxFit.cover),
+              child:
+                  Image.asset(appNameImage, height: 41.sp, fit: BoxFit.cover),
             ),
           ),
-
-          /// **Bottom Section (Title, Buttons, Skip)**
           Positioned(
-            bottom: 40.sp,
-            left: 16.sp,
-            right: 16.sp,
+            bottom: 0,
+            left: 0,
+            right: 0,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// **Title**
-                AppText(
-                  text: "Welcome to Lafetch!".toUpperCase(),
-                  fontFamily: "Franklin Gothic",
-                  fontWeight: FontWeight.w500,
-                  color: whiteBack,
-                  fontSize: 22,
-                ),
-                SizedBox(height: 8.sp),
-
-                /// **Subtitle**
-                AppText(
-                  text: "Shape your closet with India's best curation of homegrown brands, designs and boutiques.",
-                  fontFamily: "Franklin Gothic Regular",
-                  maxLines: 2,
-                  fontWeight: FontWeight.w400,
-                  color: whiteTextColor,
-                  fontSize: 14,
-                ),
-                SizedBox(height: 24.sp),
-
-                /// **"I'M NEW HERE" Button**
-                getSingleButton(
-                  backgroundColor: statusBarColor,
-                  borderColor: statusBarColor,
-                  textColor: titleColor,
-                  label: "I'M NEW HERE",
-                  onPressed: () async {
-                    videoController.pause();
-                    Get.to(() => const LoginScreen(initialTab: 1))
-                        ?.then((_) => videoController.play());
-                    await analytics.logEvent(name: 'welcome_page_btnImNew');
-                  },
-                  fontSize: 13,
-                ),
-                SizedBox(height: 16.sp),
-
-                /// **"SIGN IN" Button**
-                getSingleButton(
-                  backgroundColor: Colors.transparent,
-                  borderColor: whiteColor,
-                  textColor: whiteColor,
-                  label: "SIGN IN",
-                  onPressed: () async {
-                    videoController.pause();
-                    Get.to(() => const LoginScreen(initialTab: 0))
-                        ?.then((_) => videoController.play());
-                    await analytics.logEvent(name: 'welcome_page_btnsignin');
-                  },
-                  fontSize: 13,
-                ),
-                SizedBox(height: 24.sp),
-
-                /// **Skip Button**
-                Center(
-                  child: InkWell(
-                    onTap: () async {
-                      loginController.callGuestUser();
-                      await analytics.logEvent(name: 'welcome_page_btnSkip');
-                    },
-                    child: Obx(() => loginController.isGuest.value
-                        ? SizedBox(
-                            height: 24.sp,
-                            width: 24.sp,
-                            child: const CircularProgressIndicator(color: whiteColor),
-                          )
-                        : AppText(
-                            text: "SKIP",
-                            textAlign: TextAlign.center,
-                            fontFamily: "Franklin Gothic Semibold",
-                            fontWeight: FontWeight.w600,
-                            color: searchTextColor,
-                            fontSize: 12,
-                          )),
+                Padding(
+                  padding: EdgeInsets.only(top: 0, left: 16.sp),
+                  child: AppText(
+                    text: "Welcome to Lafetch!".toUpperCase(),
+                    fontFamily: "Franklin Gothic",
+                    fontWeight: FontWeight.w500,
+                    color: whiteBack,
+                    fontSize: 22,
                   ),
+                ),
+                Padding(
+                  padding:
+                      EdgeInsets.only(top: 8.sp, left: 16.sp, right: 16.sp),
+                  child: AppText(
+                    text:
+                        "Shape your closet with india's best curation of homegrown brands, designs and boutiques",
+                    fontFamily: "Franklin Gothic Regular",
+                    maxLines: 3,
+                    fontWeight: FontWeight.w400,
+                    color: whiteTextColor,
+                    fontSize: 14,
+                  ),
+                ),
+                /*    Padding(
+              padding: EdgeInsets.only(top: 30.sp),
+              child: DoubleButton(
+                firstText: "Create Account",
+                secondText: "Sign In",
+                firstTextColor: whiteTextColor,
+                secondTextColor: btnTextColor,
+                firstBackgroundColor: blackColor,
+                secondBackgroundColor: whiteBorderColor,
+                firstBorderColor: whiteBorderColor,
+                secondBorderColor: whiteBorderColor,
+                onPressedFirst: () async {
+                  Get.to(
+                    () => const LoginScreen(
+                      initialTab: 1,
+                    ),
+                  );
+                  await analytics.logEvent(
+                    name: 'welcome_page_btncreateaccount',
+                    parameters: <String, Object>{
+                      'page_name': 'welcome_page_btncreateaccount',
+                    },
+                  );
+                },
+                onPressedSecond: () async {
+                  Get.to(
+                    () => const LoginScreen(
+                      initialTab: 0,
+                    ),
+                  );
+                  await analytics.logEvent(
+                    name: 'welcome_page_btnsignin',
+                    parameters: <String, Object>{
+                      'page_name': 'welcome_page_btnsignin',
+                    },
+                  );
+                },
+              ),
+            ),
+           */
+                Padding(
+                  padding: EdgeInsets.only(top: 24.sp),
+                  child: getSingleButton(
+                      backgroundColor: statusBarColor,
+                      borderColor: statusBarColor,
+                      textColor: titleColor,
+                      label: "I'M NEW HERE",
+                      onPressed: () async {
+                        videoController.pause();
+                        Get.to(
+                          () => const LoginScreen(
+                            initialTab: 1,
+                          ),
+                        )?.then(
+                          (value) {
+                            videoController.play();
+                          },
+                        );
+                        await analytics.logEvent(
+                          name: 'welcome_page_btnImNew',
+                          parameters: <String, Object>{
+                            'page_name': 'welcome_page_btnImNew',
+                          },
+                        );
+                      },
+                      fontSize: 13),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 24.sp),
+                  child: getSingleButton(
+                      backgroundColor: Colors.transparent,
+                      borderColor: whiteColor,
+                      textColor: whiteColor,
+                      label: "SIGN IN",
+                      onPressed: () async {
+                        videoController.pause();
+                        Get.to(
+                          () => const LoginScreen(
+                            initialTab: 0,
+                          ),
+                        )?.then(
+                          (value) {
+                            videoController.play();
+                          },
+                        );
+                        await analytics.logEvent(
+                          name: 'welcome_page_btnsignin',
+                          parameters: <String, Object>{
+                            'page_name': 'welcome_page_btnsignin',
+                          },
+                        );
+                      },
+                      fontSize: 13),
+                ),
+                InkWell(
+                  onTap: () async {
+                    loginController.callGuestUser();
+                    await analytics.logEvent(
+                      name: 'welcome_page_btnSkip',
+                      parameters: <String, Object>{
+                        'page_name': 'welcome_page_btnSkip',
+                      },
+                    );
+                  },
+                  child: Obx(() => loginController.isGuest.value
+                      ? Center(
+                          child: Transform.scale(
+                            scale: 0.3.sp,
+                            child: const CircularProgressIndicator(
+                              color: whiteColor,
+                            ),
+                          ),
+                        )
+                      : Padding(
+                          padding: EdgeInsets.only(
+                              top: 24.sp,
+                              left: 12.sp,
+                              right: 12.sp,
+                              bottom: 40.sp),
+                          child: Center(
+                            child: AppText(
+                              text: "SKIP".toUpperCase(),
+                              textAlign: TextAlign.center,
+                              fontFamily: "Franklin Gothic Semibold",
+                              fontWeight: FontWeight.w600,
+                              color: searchTextColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )),
                 ),
               ],
             ),
@@ -198,4 +284,3 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
     );
   }
 }
-

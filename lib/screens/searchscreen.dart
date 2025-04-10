@@ -19,6 +19,7 @@ import '../../utils/constants.dart';
 import '../commonwidget/common_widgets.dart';
 import '../controller/product_controller.dart';
 import '../controller/search_controller.dart';
+import '../utils/analytics_helper.dart';
 import 'Brands/categoryproduct.dart';
 import 'catalog/productlist/productdetailsscreen.dart';
 
@@ -36,14 +37,21 @@ class SearchScreenState extends State<SearchScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   bool isSearch = false;
   Timer? debounce;
-
   onSearchChanged(String query) {
     if (debounce?.isActive ?? false) debounce?.cancel();
     debounce = Timer(const Duration(milliseconds: 1000), () {
+      // ✅ Log what the user is actually searching
+      AnalyticsHelper.logSearch(
+        productId: query,
+        contentType: 'search_query',
+        value: 0.0,
+      );
+
       controller.getSearchData(context);
       setState(() {});
     });
   }
+
 
   @override
   void initState() {
@@ -105,7 +113,15 @@ class SearchScreenState extends State<SearchScreen> {
         controller.searchText.value = "Search for products";
         FocusScope.of(context).requestFocus(FocusNode());
         setState(() {});
+
+        // Log Facebook search event
+        AnalyticsHelper. logSearch(
+          productId: 'search_tap', // Use a static ID or dynamic if applicable
+          contentType: 'search_action',
+          value: 0.0, // You can adjust the value if needed
+        );
       },
+
       child: Scaffold(
         backgroundColor: isSearch ? const Color(0xF2F7F7F5) : whiteColor,
         body: Stack(
