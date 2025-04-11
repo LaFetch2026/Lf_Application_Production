@@ -10,6 +10,7 @@ import 'package:lafetch/commonwidget/doublebutton_new.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import '../../utils/analytics_helper.dart';
 import '../../utils/constants.dart';
+import '../appbarwidgets/home_appbar.dart';
 import '../smallbtn.dart';
 
 class BottomWishlist extends StatefulWidget {
@@ -475,7 +476,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                 if (id != 0) {
                   // ✅ Fire Facebook event
                   AnalyticsHelper.logAddToWishlist(
-                    productId: id.toString(), // or use the actual product ID if different
+                      productId: productController.id.value.toString(), // or use the actual product ID if different
                     contentType: 'product',
                     value: 0.0, // or actual product price if available
                   );

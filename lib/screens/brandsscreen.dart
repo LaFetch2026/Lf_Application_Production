@@ -14,6 +14,7 @@ import 'package:lafetch/commonwidget/brandwidgits/dummy_brand_list.dart';
 import 'package:lafetch/controller/brand_controller.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
+
 import '../commonwidget/app_text.dart';
 import '../commonwidget/appbarwidgets/home_appbar.dart';
 import '../utils/constants.dart';
@@ -26,6 +27,7 @@ class BrandsScreen extends StatefulWidget {
   final String? backImage;
   final int? brandId;
   final String? name;
+
   const BrandsScreen(
       {super.key,
       this.screen,
@@ -567,7 +569,8 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                   crossAxisCount: 3,
                                                                                                   scrollDirection: Axis.vertical,
                                                                                                   padding: EdgeInsets.zero,
-                                                                                                  childAspectRatio: 0.85, //0.7
+                                                                                                  childAspectRatio: 0.85,
+                                                                                                  //0.7
                                                                                                   physics: const ScrollPhysics(),
                                                                                                   crossAxisSpacing: 10.sp,
                                                                                                   mainAxisSpacing: 0,

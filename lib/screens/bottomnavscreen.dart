@@ -329,7 +329,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                       child: Container(
                         //  height: 80.sp,
                         padding: EdgeInsets.only(
-                            top: 10.sp, bottom: Platform.isIOS ? 0 : 10.sp),
+                            top: 9.5.sp, bottom: Platform.isIOS ? 0 : 10.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.start,

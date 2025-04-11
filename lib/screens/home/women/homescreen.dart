@@ -384,7 +384,7 @@ class HomeScreenState extends State<HomeScreen> {
           HomeAppbar(
             onPressedSearch: () async {
               AnalyticsHelper.logSearch(
-                productId: productController.id, // using the search term as ID
+                productId:    productController.id.value.toString(), // using the search term as ID
                 contentType: 'product',
                 value: 0.0, // optionally use number of results here
               );
@@ -1825,7 +1825,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   },
                                   onPressed: (p0) async {
                                     AnalyticsHelper.logContentView(
-                                      productId: productController.id,
+                                   productId: productController.id.value.toString(),
                                       value: 0.0,
                                     );
                                     Get.to(

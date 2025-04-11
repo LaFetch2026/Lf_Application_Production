@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:logger/logger.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
+import 'package:logger/logger.dart';
 
 enum PageState { DEFAULT, LOADING, ERROR }
 
@@ -58,6 +58,7 @@ abstract class BaseController extends GetxController {
   final _errorMessageController = ''.obs;
 
   String get errorMessage => _errorMessageController.value;
+
 //forms
   showErrorMessageInForms(String msg) {
     showError();

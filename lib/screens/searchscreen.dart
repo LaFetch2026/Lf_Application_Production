@@ -116,7 +116,7 @@ class SearchScreenState extends State<SearchScreen> {
 
         // Log Facebook search event
         AnalyticsHelper. logSearch(
-          productId: 'search_tap', // Use a static ID or dynamic if applicable
+            productId: productController.id.value.toString(), // Use a static ID or dynamic if applicable
           contentType: 'search_action',
           value: 0.0, // You can adjust the value if needed
         );

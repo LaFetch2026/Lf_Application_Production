@@ -64,8 +64,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '656354073125',
     projectId: 'la-fetch-3b250',
     storageBucket: 'la-fetch-3b250.appspot.com',
-    androidClientId: '656354073125-0l8dgbuisu2o8qefhgkov4avl71a19lu.apps.googleusercontent.com',
-    iosClientId: '656354073125-7vht6l8p69chgg2il02c4pjv0r1okufb.apps.googleusercontent.com',
+    androidClientId:
+        '656354073125-0l8dgbuisu2o8qefhgkov4avl71a19lu.apps.googleusercontent.com',
+    iosClientId:
+        '656354073125-7vht6l8p69chgg2il02c4pjv0r1okufb.apps.googleusercontent.com',
     iosBundleId: 'com.example.demoProject',
   );
 
@@ -75,8 +77,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '656354073125',
     projectId: 'la-fetch-3b250',
     storageBucket: 'la-fetch-3b250.appspot.com',
-    androidClientId: '656354073125-0l8dgbuisu2o8qefhgkov4avl71a19lu.apps.googleusercontent.com',
-    iosClientId: '656354073125-7vht6l8p69chgg2il02c4pjv0r1okufb.apps.googleusercontent.com',
+    androidClientId:
+        '656354073125-0l8dgbuisu2o8qefhgkov4avl71a19lu.apps.googleusercontent.com',
+    iosClientId:
+        '656354073125-7vht6l8p69chgg2il02c4pjv0r1okufb.apps.googleusercontent.com',
     iosBundleId: 'com.example.demoProject',
   );
 

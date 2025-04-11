@@ -249,277 +249,281 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                 ),
               ),
             ),
-            Container(
-              width: double.infinity,
-              color: lightgreyColor,
-              height: 2.sp,
-            ),
-            SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding:
-                        EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
-                    child: AppText(
-                      text: "Explore our entire collection",
-                      fontFamily: "Franklin Gothic Regular",
-                      fontWeight: FontWeight.w400,
-                      color: appbarText,
-                      fontSize: 22,
+            // Container(
+            //   width: double.infinity,
+            //   color: lightgreyColor,
+            //   height: 2.sp,
+            // ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
+                      child: AppText(
+                        text: "Explore our entire collection",
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w400,
+                        color: appbarText,
+                        fontSize: 22,
+                      ),
                     ),
-                  ),
-                  Obx(() => Padding(
-                        padding: EdgeInsets.only(
-                            top: 10.sp, left: 16.sp, right: 16.sp),
-                        child: AppText(
-                          text: "For ${controller.categoryName.value}",
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: textHintColor,
-                          fontSize: 14,
-                        ),
-                      )),
-                  Obx(() => controller.isCatalogCategory.value
-                      ? const DummyCatalogList()
-                      : controller.catagoryList.isNotEmpty
-                          ? Padding(
-                              padding: EdgeInsets.only(
-                                left: 16.sp,
-                                right: 16.sp,
-                                top: 10.sp,
-                              ),
-                              child: SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height - 300.sp,
-                                child: ListView.builder(
-                                    primary: false,
-                                    shrinkWrap: true,
-                                    physics: const ScrollPhysics(),
-                                    itemCount: controller.catagoryList.length,
-                                    padding: EdgeInsets.zero,
-                                    scrollDirection: Axis.vertical,
-                                    itemBuilder: (ctx, index) {
-                                      return Column(
-                                        children: [
-                                          GestureDetector(
-                                              onTap: () async {
-                                                Get.to(CatalogDetailsScreen(
-                                                  title:
-                                                      controller.catagoryList[
-                                                              index]["name"] ??
-                                                          "",
-                                                  catalogId: controller
-                                                          .catagoryList[index]
-                                                      ["id"],
-                                                  catalogImage: controller
-                                                              .catagoryList[
-                                                          index]["thumbnail"] ??
-                                                      "",
-                                                  genderType: controller
-                                                      .selectCategoryGender
-                                                      .value,
-                                                  catalogText: controller
-                                                      .categoryName.value,
-                                                ))?.then(
-                                                  (value) {
-                                                    SystemChrome
-                                                        .setSystemUIOverlayStyle(
-                                                            const SystemUiOverlayStyle(
-                                                      statusBarColor:
-                                                          whiteColor,
-                                                    ));
-                                                  },
-                                                );
-                                                await analytics.logEvent(
-                                                  name:
-                                                      "category_page_${controller.categoryName.value}",
-                                                  parameters: <String, Object>{
-                                                    'page_name':
+                    Obx(() => Padding(
+                          padding: EdgeInsets.only(
+                              top: 10.sp, left: 16.sp, right: 16.sp),
+                          child: AppText(
+                            text: "For ${controller.categoryName.value}",
+                            fontFamily: "Franklin Gothic Regular",
+                            fontWeight: FontWeight.w400,
+                            color: textHintColor,
+                            fontSize: 14,
+                          ),
+                        )),
+                    Obx(() => controller.isCatalogCategory.value
+                        ? const DummyCatalogList()
+                        : controller.catagoryList.isNotEmpty
+                            ? Padding(
+                                padding: EdgeInsets.only(
+                                  left: 16.sp,
+                                  right: 16.sp,
+                                  top: 10.sp,
+                                ),
+                                child: SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height - 300.sp,
+                                  child: ListView.builder(
+                                      primary: false,
+                                      shrinkWrap: true,
+                                      physics: const ScrollPhysics(),
+                                      itemCount: controller.catagoryList.length,
+                                      padding: EdgeInsets.zero,
+                                      scrollDirection: Axis.vertical,
+                                      itemBuilder: (ctx, index) {
+                                        return Column(
+                                          children: [
+                                            GestureDetector(
+                                                onTap: () async {
+                                                  Get.to(CatalogDetailsScreen(
+                                                    title:
+                                                        controller.catagoryList[
+                                                                index]["name"] ??
+                                                            "",
+                                                    catalogId: controller
+                                                            .catagoryList[index]
+                                                        ["id"],
+                                                    catalogImage: controller
+                                                                .catagoryList[
+                                                            index]["thumbnail"] ??
+                                                        "",
+                                                    genderType: controller
+                                                        .selectCategoryGender
+                                                        .value,
+                                                    catalogText: controller
+                                                        .categoryName.value,
+                                                  ))?.then(
+                                                    (value) {
+                                                      SystemChrome
+                                                          .setSystemUIOverlayStyle(
+                                                              const SystemUiOverlayStyle(
+                                                        statusBarColor:
+                                                            whiteColor,
+                                                      ));
+                                                    },
+                                                  );
+                                                  await analytics.logEvent(
+                                                    name:
                                                         "category_page_${controller.categoryName.value}",
-                                                  },
-                                                );
-                                              },
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    bottom: 10.sp),
-                                                child: Container(
-                                                  width: double.infinity,
-                                                  height: 100.sp,
-                                                  child: controller.catagoryList[
-                                                                  index]
-                                                              ["thumbnail"] !=
-                                                          null
-                                                      ? Stack(
-                                                          children: [
-                                                            SizedBox(
-                                                              height: 100.sp,
-                                                              width: double
-                                                                  .infinity,
-                                                              child:
-                                                                  CachedNetworkImage(
-                                                                cacheManager: CacheManager(Config(
-                                                                    "customCacheKey",
-                                                                    stalePeriod:
-                                                                        const Duration(
-                                                                            days:
-                                                                                15),
-                                                                    maxNrOfCacheObjects:
-                                                                        100)),
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                imageUrl: controller
-                                                                            .catagoryList[
-                                                                        index][
-                                                                    "thumbnail"],
-                                                                errorWidget: (context,
-                                                                        url,
-                                                                        error) =>
-                                                                    Image.asset(
-                                                                  downloadImage,
-                                                                  height:
-                                                                      100.sp,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            /*      Align(
-                                                              alignment: Alignment
-                                                                  .bottomCenter,
-                                                              child: Container(
-                                                                height: 36.sp,
-                                                                decoration:
-                                                                    new BoxDecoration(
-                                                                  gradient:
-                                                                      LinearGradient(
-                                                                    colors: [
-                                                                      Color.fromRGBO(
-                                                                          0, 0, 0, 0),
-                                                                      Color.fromRGBO(
-                                                                          0, 0, 0, 0.6),
-                                                                    ],
-                                                                    stops: [
-                                                                      0.2527,
-                                                                      0.8542
-                                                                    ],
-                                                                    begin: Alignment
-                                                                        .topCenter,
-                                                                    end: Alignment
-                                                                        .bottomCenter,
+                                                    parameters: <String, Object>{
+                                                      'page_name':
+                                                          "category_page_${controller.categoryName.value}",
+                                                    },
+                                                  );
+                                                },
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 10.sp),
+                                                  child: Container(
+                                                    width: double.infinity,
+                                                    height: 100.sp,
+                                                    child: controller.catagoryList[
+                                                                    index]
+                                                                ["thumbnail"] !=
+                                                            null
+                                                        ? Stack(
+                                                            children: [
+                                                              SizedBox(
+                                                                height: 100.sp,
+                                                                width: double
+                                                                    .infinity,
+                                                                child:
+                                                                    CachedNetworkImage(
+                                                                  cacheManager: CacheManager(Config(
+                                                                      "customCacheKey",
+                                                                      stalePeriod:
+                                                                          const Duration(
+                                                                              days:
+                                                                                  15),
+                                                                      maxNrOfCacheObjects:
+                                                                          100)),
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  imageUrl: controller
+                                                                              .catagoryList[
+                                                                          index][
+                                                                      "thumbnail"],
+                                                                  errorWidget: (context,
+                                                                          url,
+                                                                          error) =>
+                                                                      Image.asset(
+                                                                    downloadImage,
+                                                                    height:
+                                                                        100.sp,
                                                                   ),
                                                                 ),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      EdgeInsets.only(
-                                                                          left: 10.sp,
-                                                                          right: 10.sp,
-                                                                          bottom: 4.sp),
-                                                                  child: Align(
-                                                                    alignment: Alignment
-                                                                        .bottomCenter,
-                                                                    child: Row(
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .center,
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        AppText(
-                                                                          text: controller
-                                                                                      .catalogList[index]
-                                                                                  [
-                                                                                  "name"] ??
-                                                                              "",
-                                                                          color:
-                                                                              whiteColor,
-                                                                          fontSize: 14,
-                                                                          fontFamily:
-                                                                              "Franklin Gothic Regular",
-                                                                          fontWeight:
-                                                                              FontWeight
-                                                                                  .w400,
-                                                                        ),
-                                                                        const Expanded(
-                                                                          child:
-                                                                              SizedBox(
-                                                                            width: 0,
-                                                                          ),
-                                                                        ),
-                                                                        GestureDetector(
-                                                                          onTap: () {
-                                                                            Get.to(
-                                                                                CatalogDetailsScreen(
-                                                                              title: controller.catalogList[index]
-                                                                                      [
-                                                                                      "name"] ??
-                                                                                  "",
-                                                                              catalogId:
-                                                                                  controller.catalogList[index]
-                                                                                      [
-                                                                                      "id"],
-                                                                              catalogImage:
-                                                                                  controller.catalogList[index]["thumbnail"] ??
-                                                                                      "",
-                                                                              genderType:
-                                                                                  widget
-                                                                                      .type,
-                                                                              catalogText:
-                                                                                  widget
-                                                                                      .categorytext,
-                                                                            ));
-                                                                          },
-                                                                          child: Image.asset(
-                                                                              rightArrowImage,
-                                                                              height:
-                                                                                  20.sp,
-                                                                              width:
-                                                                                  20.sp,
-                                                                              color:
-                                                                                  whiteColor,
-                                                                              fit: BoxFit
-                                                                                  .cover),
-                                                                        ),
+                                                              ),
+                                                              /*      Align(
+                                                                alignment: Alignment
+                                                                    .bottomCenter,
+                                                                child: Container(
+                                                                  height: 36.sp,
+                                                                  decoration:
+                                                                      new BoxDecoration(
+                                                                    gradient:
+                                                                        LinearGradient(
+                                                                      colors: [
+                                                                        Color.fromRGBO(
+                                                                            0, 0, 0, 0),
+                                                                        Color.fromRGBO(
+                                                                            0, 0, 0, 0.6),
                                                                       ],
+                                                                      stops: [
+                                                                        0.2527,
+                                                                        0.8542
+                                                                      ],
+                                                                      begin: Alignment
+                                                                          .topCenter,
+                                                                      end: Alignment
+                                                                          .bottomCenter,
+                                                                    ),
+                                                                  ),
+                                                                  child: Padding(
+                                                                    padding:
+                                                                        EdgeInsets.only(
+                                                                            left: 10.sp,
+                                                                            right: 10.sp,
+                                                                            bottom: 4.sp),
+                                                                    child: Align(
+                                                                      alignment: Alignment
+                                                                          .bottomCenter,
+                                                                      child: Row(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment
+                                                                                .center,
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment
+                                                                                .start,
+                                                                        children: [
+                                                                          AppText(
+                                                                            text: controller
+                                                                                        .catalogList[index]
+                                                                                    [
+                                                                                    "name"] ??
+                                                                                "",
+                                                                            color:
+                                                                                whiteColor,
+                                                                            fontSize: 14,
+                                                                            fontFamily:
+                                                                                "Franklin Gothic Regular",
+                                                                            fontWeight:
+                                                                                FontWeight
+                                                                                    .w400,
+                                                                          ),
+                                                                          const Expanded(
+                                                                            child:
+                                                                                SizedBox(
+                                                                              width: 0,
+                                                                            ),
+                                                                          ),
+                                                                          GestureDetector(
+                                                                            onTap: () {
+                                                                              Get.to(
+                                                                                  CatalogDetailsScreen(
+                                                                                title: controller.catalogList[index]
+                                                                                        [
+                                                                                        "name"] ??
+                                                                                    "",
+                                                                                catalogId:
+                                                                                    controller.catalogList[index]
+                                                                                        [
+                                                                                        "id"],
+                                                                                catalogImage:
+                                                                                    controller.catalogList[index]["thumbnail"] ??
+                                                                                        "",
+                                                                                genderType:
+                                                                                    widget
+                                                                                        .type,
+                                                                                catalogText:
+                                                                                    widget
+                                                                                        .categorytext,
+                                                                              ));
+                                                                            },
+                                                                            child: Image.asset(
+                                                                                rightArrowImage,
+                                                                                height:
+                                                                                    20.sp,
+                                                                                width:
+                                                                                    20.sp,
+                                                                                color:
+                                                                                    whiteColor,
+                                                                                fit: BoxFit
+                                                                                    .cover),
+                                                                          ),
+                                                                        ],
+                                                                      ),
                                                                     ),
                                                                   ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                         */
-                                                          ],
-                                                        )
-                                                      : SizedBox(
-                                                          height: 100.sp,
-                                                          width:
-                                                              double.infinity,
-                                                          child: Image.asset(
-                                                              backImage,
-                                                              height: 100.sp,
-                                                              fit:
-                                                                  BoxFit.cover),
-                                                        ),
-                                                ),
-                                              )),
-                                        ],
-                                      );
-                                    }),
-                              ),
-                            )
-                          : Container(
-                              margin: EdgeInsets.only(top: 100.sp),
-                              child: Center(
-                                child: Text("No Category Found",
-                                    style: TextStyle(
-                                        fontSize: 14.sp,
-                                        color: Colors.black,
-                                        fontFamily: "Franklin Gothic Regular")),
-                              ),
-                            ))
-                ],
+                                                           */
+                                                            ],
+                                                          )
+                                                        : SizedBox(
+                                                            height: 100.sp,
+                                                            width:
+                                                                double.infinity,
+                                                            child: Image.asset(
+                                                                backImage,
+                                                                height: 100.sp,
+                                                                fit:
+                                                                    BoxFit.cover),
+                                                          ),
+                                                  ),
+                                                )),
+                                          ],
+                                        );
+                                      }),
+                                ),
+                              
+                              )
+                            : Container(
+                                margin: EdgeInsets.only(top: 100.sp),
+                                child: Center(
+                                  child: Text("No Category Found",
+                                      style: TextStyle(
+                                          fontSize: 14.sp,
+                                          color: Colors.black,
+                                          fontFamily: "Franklin Gothic Regular")),
+                                ),
+                              ))
+                  ],
+                ),
               ),
             ),
           ],
         ),
+     
       ),
     );
   }
