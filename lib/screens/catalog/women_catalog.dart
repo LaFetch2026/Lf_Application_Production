@@ -271,8 +271,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                       ),
                     ),
                     Obx(() => Padding(
-                          padding: EdgeInsets.only(
-                              top: 10.sp, left: 16.sp, right: 16.sp),
+                          padding:   EdgeInsets.symmetric(horizontal: 16.sp, vertical: 0.sp),
                           child: AppText(
                             text: "For ${controller.categoryName.value}",
                             fontFamily: "Franklin Gothic Regular",
