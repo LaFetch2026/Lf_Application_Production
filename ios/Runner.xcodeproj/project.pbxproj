@@ -10,6 +10,10 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
+		84199B382DAF942F005ADEDF /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = 84199B372DAF942F005ADEDF /* Factory */; };
+		84199B3B2DAF9473005ADEDF /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 84199B3A2DAF9473005ADEDF /* Algorithms */; };
+		849840452DAFB0AD00111319 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 849840442DAFB0AD00111319 /* Algorithms */; };
+		849840482DAFB0B900111319 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = 849840472DAFB0B900111319 /* Factory */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
@@ -56,7 +60,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				849840452DAFB0AD00111319 /* Algorithms in Frameworks */,
+				849840482DAFB0B900111319 /* Factory in Frameworks */,
+				84199B3B2DAF9473005ADEDF /* Algorithms in Frameworks */,
 				AB7D74D7FD4844E60F5FAA03 /* Pods_Runner.framework in Frameworks */,
+				84199B382DAF942F005ADEDF /* Factory in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -179,6 +187,10 @@
 				Base,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
+			packageReferences = (
+				849840432DAFB0AD00111319 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+				849840462DAFB0B900111319 /* XCRemoteSwiftPackageReference "Factory" */,
+			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -611,6 +623,64 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		84199B362DAF942F005ADEDF /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.3;
+			};
+		};
+		84199B392DAF9473005ADEDF /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.1;
+			};
+		};
+		849840432DAFB0AD00111319 /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.1;
+			};
+		};
+		849840462DAFB0B900111319 /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		84199B372DAF942F005ADEDF /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84199B362DAF942F005ADEDF /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+		84199B3A2DAF9473005ADEDF /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84199B392DAF9473005ADEDF /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
+		};
+		849840442DAFB0AD00111319 /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 849840432DAFB0AD00111319 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
+		};
+		849840472DAFB0B900111319 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 849840462DAFB0B900111319 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 97C146E61CF9000F007C117D /* Project object */;
 }

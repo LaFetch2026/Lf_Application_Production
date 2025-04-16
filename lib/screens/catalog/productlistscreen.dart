@@ -9,7 +9,9 @@ import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/screens/catalog/productlist/viewproduct.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
+
 import '../../controller/product_controller.dart';
+import '../../utils/analytics_helper.dart';
 import '../../utils/constants.dart';
 import '../cartscreen.dart';
 
@@ -19,6 +21,7 @@ class ProductListScreen extends StatefulWidget {
   final int genderType;
   final int catalogId;
   final int initailIndex;
+
   const ProductListScreen(
       {super.key,
       required this.tabTextList,
@@ -164,12 +167,28 @@ class ProductListScreenState extends State<ProductListScreen> {
               child: TabBarView(
                 children: List.generate(
                   widget.tabTextList.length + 1,
-                  (index) => ViewProductScreen(
+                  (index) => NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification scrollInfo) {
+                      final scrollPosition = scrollInfo.metrics.pixels;
+                      final maxScroll = scrollInfo.metrics.maxScrollExtent;
+                      final scrollPercent = (scrollPosition / maxScroll * 100)
+                          .clamp(0, 100)
+                          .toInt();
+
+                      if ([25, 50, 75, 100].contains(scrollPercent)) {
+                        AnalyticsHelper.logScrollEvent('$scrollPercent%');
+                      }
+
+                      return false;
+                    },
+                    child: ViewProductScreen(
                       categoryId: index == 0 ? 0 : widget.idList[index - 1],
                       genderType: widget.genderType,
                       catalogId: widget.catalogId,
                       categoryName:
-                          index == 0 ? "" : widget.tabTextList[index - 1]),
+                          index == 0 ? "" : widget.tabTextList[index - 1],
+                    ),
+                  ),
                 ),
               ),
             ),

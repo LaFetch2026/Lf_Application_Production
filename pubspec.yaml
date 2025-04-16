@@ -97,6 +97,7 @@ dependencies:
   marquee: ^2.3.0
   firebase_crashlytics: ^3.5.7
   facebook_app_events: ^0.17.1
+  appsflyer_sdk: ^6.15.2
 
 dev_dependencies:
   flutter_test:

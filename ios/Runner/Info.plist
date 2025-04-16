@@ -91,5 +91,11 @@
     <false/>
     <key>FirebaseCrashlyticsCollectionEnabled</key>
     <true/>
+
+    <!-- ✅ AppsFlyer Configuration -->
+    <key>AppsFlyerDevKey</key>
+    <string>tzivSReYr7ZyuqVbEP6z6d</string>
+    <key>AppID</key>
+    <string>6739497338</string>
 </dict>
 </plist>

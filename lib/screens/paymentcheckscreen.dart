@@ -14,10 +14,13 @@ import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
 import 'package:lottie/lottie.dart';
+
+import '../utils/analytics_helper.dart'; // Ensure this is imported
 import '../utils/constants.dart';
 
 class PaymentCheckScreen extends StatefulWidget {
   final int orderId;
+
   const PaymentCheckScreen({super.key, required this.orderId});
 
   @override
@@ -37,19 +40,10 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: statusBarColor,
     ));
-    /*  timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        cartController.callPaymentStatus(widget.orderId, timer);
-      });
-    });
-    timer = Timer.periodic(Duration(minutes: 2), (Timer timer) {
-      Get.off(const PaymentSuccessScreen(
-          text1: "Payment Failed",
-          orderId: 0,
-          text2: "",
-          image: paymentFailImage));
-      timer.cancel();
-    }); */
+
+    // Facebook Event - Add Payment Info
+    AnalyticsHelper.logAddPaymentInfo(success: true);
+
     startTimer();
   }
 
@@ -61,10 +55,11 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
       if (_elapsedTime >= duration) {
         timer.cancel();
         Get.off(const PaymentSuccessScreen(
-            text1: "Payment Failed",
-            orderId: 0,
-            text2: "",
-            image: paymentFailImage));
+          text1: "Payment Failed",
+          orderId: 0,
+          text2: "",
+          image: paymentFailImage,
+        ));
         return;
       }
 
@@ -145,26 +140,34 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
             Padding(
               padding: EdgeInsets.only(top: 20.sp, bottom: 20.sp),
               child: getSingleButton(
-                  width: double.infinity,
-                  label: "View Order".toUpperCase(),
-                  textColor: whiteColor,
-                  fontSize: 13,
-                  backgroundColor: homeAppBarColor,
-                  onPressed: () async {
-                    stopTimer();
-                    // Get.close(1);
-                    Get.off(OrderDetailsScreen(
-                      orderId: widget.orderId,
-                      showTrackpayment: true,
-                    ));
-                    await analytics.logEvent(
-                      name: 'payment_btn_myorder',
-                      parameters: <String, Object>{
-                        'page_name': 'payment_btn_myorder',
-                      },
-                    );
-                  },
-                  borderColor: colorPrimary),
+                width: double.infinity,
+                label: "View Order".toUpperCase(),
+                textColor: whiteColor,
+                fontSize: 13,
+                backgroundColor: homeAppBarColor,
+                onPressed: () async {
+                  stopTimer();
+
+                  // Facebook Event - Purchase
+                  AnalyticsHelper.logPurchase(
+                    productId: widget.orderId.toString(),
+                    value: 0.0,
+                  );
+
+                  Get.off(OrderDetailsScreen(
+                    orderId: widget.orderId,
+                    showTrackpayment: true,
+                  ));
+
+                  await analytics.logEvent(
+                    name: 'payment_btn_myorder',
+                    parameters: <String, Object>{
+                      'page_name': 'payment_btn_myorder',
+                    },
+                  );
+                },
+                borderColor: colorPrimary,
+              ),
             )
           ],
         ),

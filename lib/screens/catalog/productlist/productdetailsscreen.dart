@@ -13,28 +13,34 @@ import 'package:intl/intl.dart';
 import 'package:lafetch/commonwidget/app_space_text.dart';
 import 'package:lafetch/commonwidget/appbarwidgets/productdetails_appbar.dart';
 import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
+
 //import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/doublebutton_iconnew.dart';
 import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_productdetails.dart';
 import 'package:lafetch/controller/brand_controller.dart';
+
 //import 'package:lafetch/commonwidget/homewidget/dummy_review.dart';
 import 'package:lafetch/controller/product_controller.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productimage.dart';
 import 'package:lafetch/screens/wishlist/newboardscreen.dart';
+
 //import 'package:lafetch/screens/mapscreen.dart';
 import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
+
 import '../../../commonwidget/bottomsizechart.dart';
 import '../../../commonwidget/homewidget/dummy_productImage.dart';
+
 //import '../../../commonwidget/homewidget/dummy_product_list.dart';
 //import '../../../commonwidget/homewidget/dummy_saveaddress.dart';
 //import '../../../commonwidget/homewidget/horizontal_home_list.dart';
 import '../../../controller/wishlist_controller.dart';
 import '../../../utils/analytics_helper.dart';
 import '../../../utils/constants.dart';
+
 //import '../../account/saved_address.dart';
 import '../../cartscreen.dart';
 
@@ -48,6 +54,7 @@ class ProductDetailsScreen extends StatefulWidget {
   final Color backgroundcolor;
   final String expresshour;
   final int expressValue;
+
   const ProductDetailsScreen(
       {super.key,
       required this.productId,
@@ -86,6 +93,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     initialPage: 0,
   );
   ScrollController _scrollController = ScrollController();
+
   /* final List<Map<String, String>> reviewsCount = [
     {'id': '1', 'title': '5', 'count': '1121', 'total': '2015'},
     {'id': '2', 'title': '4', 'count': '406', 'total': '2015'},
@@ -821,66 +829,73 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
             Visibility(
               visible: widget.backgroundcolor == whiteColor ? true : false,
               child: ProductdetailsAppbar(
-                  onPressedHeart: () async {
-                    final productId = productController.productDetails["id"].toString();
-                    final productPrice = double.tryParse(productController.productDetails["price"].toString()) ?? 0.0;
+                onPressedHeart: () async {
+                  final productId =
+                      productController.productDetails["id"].toString();
+                  final productPrice = double.tryParse(productController
+                          .productDetails["price"]
+                          .toString()) ??
+                      0.0;
 
-                    AnalyticsHelper.logAddToWishlist(
-                      productId: productId,
-                      contentType: 'product',
-                      value: productPrice,
+                  AnalyticsHelper.logAddToWishlist(
+                    productId: productId,
+                    contentType: 'product',
+                    value: productPrice,
+                  );
+
+                  if (wishlistController.wishListDetails["wishlisted"]) {
+                    wishlistController.callAddProductToWishlist(
+                      wishlistController.wishListDetails["wishlist_id"],
+                      productController.productDetails["id"],
+                      widget.backgroundcolor,
                     );
 
-                    if (wishlistController.wishListDetails["wishlisted"]) {
-                      wishlistController.callAddProductToWishlist(
-                        wishlistController.wishListDetails["wishlist_id"],
-                        productController.productDetails["id"],
-                        widget.backgroundcolor,
-                      );
+                    await analytics.logEvent(
+                      name: 'productdetails_wishlist_remove',
+                      parameters: <String, Object>{
+                        'page_name': 'productdetails_wishlist_remove',
+                      },
+                    );
+                  } else {
+                    scaffoldKey.currentState
+                        ?.showBottomSheet((context) => BottomWishlist(
+                              controller: wishlistController,
+                              onPressedBoard: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      NewBoardScreen(
+                                    title: "New Board",
+                                    boardId: 0,
+                                    screen: "ProductDetails",
+                                    productId: wishlistController
+                                        .wishListDetails["id"],
+                                    hintName: "Name of the Board",
+                                    boardName: "",
+                                    btnText: "Next",
+                                  ),
+                                ));
+                              },
+                              productImage: wishlistController
+                                  .wishListDetails["images"][0]["name"],
+                              onPressed: (p0) {
+                                wishlistController.callAddProductToWishlist(
+                                  p0,
+                                  productController.productDetails["id"],
+                                  widget.backgroundcolor,
+                                );
+                              },
+                              wishlistList: wishlistController.wishlistList,
+                            ));
 
-                      await analytics.logEvent(
-                        name: 'productdetails_wishlist_remove',
-                        parameters: <String, Object>{
-                          'page_name': 'productdetails_wishlist_remove',
-                        },
-                      );
-                    } else {
-                      scaffoldKey.currentState?.showBottomSheet((context) => BottomWishlist(
-                        controller: wishlistController,
-                        onPressedBoard: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (BuildContext context) => NewBoardScreen(
-                              title: "New Board",
-                              boardId: 0,
-                              screen: "ProductDetails",
-                              productId: wishlistController.wishListDetails["id"],
-                              hintName: "Name of the Board",
-                              boardName: "",
-                              btnText: "Next",
-                            ),
-                          ));
-                        },
-                        productImage: wishlistController.wishListDetails["images"][0]["name"],
-                        onPressed: (p0) {
-                          wishlistController.callAddProductToWishlist(
-                            p0,
-                            productController.productDetails["id"],
-                            widget.backgroundcolor,
-                          );
-                        },
-                        wishlistList: wishlistController.wishlistList,
-                      ));
-
-                      await analytics.logEvent(
-                        name: 'productdetails_wishlist_add',
-                        parameters: <String, Object>{
-                          'page_name': 'productdetails_wishlist_add',
-                        },
-                      );
-                    }
-                  },
-
-                  onPressedShare: () async {
+                    await analytics.logEvent(
+                      name: 'productdetails_wishlist_add',
+                      parameters: <String, Object>{
+                        'page_name': 'productdetails_wishlist_add',
+                      },
+                    );
+                  }
+                },
+                onPressedShare: () async {
                   Share.share(productController.productDetails["share_link"]);
                   await analytics.logEvent(
                     name: 'share_product',
@@ -2296,7 +2311,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                       widget.Slug);
                                                             },
                                                           ));
-                            
+
                                                   await analytics.logEvent(
                                                     name: 'addresslist_page',
                                                     parameters: <String, Object>{
@@ -2400,7 +2415,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                 context);
                                                       },
                                                     ));
-                            
+
                                             await analytics.logEvent(
                                               name: 'mapscreen_page',
                                               parameters: <String, Object>{
@@ -4418,7 +4433,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       : SizedBox(
                                           height: 0,
                                         )),
-                              
+
                             ],
                           ),
                         ) */
@@ -4674,15 +4689,20 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               firstText: "Go to BAG".toUpperCase(),
                               secondText: "Buy Now".toUpperCase(),
                               onPressedFirst: () async {
-
-                                final productId = productController.productDetails["id"].toString();
-                                final productPrice = double.tryParse(productController.productDetails["price"].toString()) ?? 0.0;
+                                final productId = productController
+                                    .productDetails["id"]
+                                    .toString();
+                                final productPrice = double.tryParse(
+                                        productController
+                                            .productDetails["price"]
+                                            .toString()) ??
+                                    0.0;
 
                                 AnalyticsHelper.logAddToCart(
                                   productId: productId,
-
                                   value: productPrice,
                                 );
+
                                 Get.to(CartScreen(
                                   backgroundcolor: widget.backgroundcolor,
                                 ))?.then(
@@ -4708,23 +4728,35 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 );
                               },
                               onPressedSecond: () {
-                                final productId = productController.productDetails["id"].toString();
-                                final productPrice = double.tryParse(productController.productDetails["price"].toString()) ?? 0.0;
+                                // Get product ID and price from controller
+                                final productId = productController
+                                    .productDetails["id"]
+                                    .toString();
+                                final productPrice = double.tryParse(
+                                        productController
+                                            .productDetails["price"]
+                                            .toString()) ??
+                                    0.0;
 
-                                AnalyticsHelper.logAddToCart(
+                                // Call Facebook event log
+                                AnalyticsHelper.logInitiateCheckout(
                                   productId: productId,
-
                                   value: productPrice,
                                 );
+
+                                // Proceed with "buy now" add to cart flow
                                 if (productController
                                     .checkDetailsValidation()) {
                                   productController.callAddtoCart(
-                                      1,
-                                      "buy now",
-                                      widget.backgroundcolor,
-                                      widget.productId,
-                                      true);
+                                    1,
+                                    "buy now",
+                                    widget.backgroundcolor,
+                                    widget.productId,
+                                    true,
+                                  );
                                 }
+
+                                // Scroll animation
                                 _scrollController.animateTo(
                                   MediaQuery.of(context).size.height / 2.sp +
                                       150.sp,

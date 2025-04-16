@@ -107,35 +107,35 @@ class LoginController extends BaseController {
     secondsRemaining.value = 30;
     enableResend.value = false;
     try {
-      var response = await http.post(
-        Uri.parse("${ApiConstants.baseUrl}/login"),
-        body: {
-          "phone": number.value,
-        },
-      );
-
+      var response =
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/login"), body: {
+        "phone": number.value,
+      });
       var responseData = json.decode(response.body);
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.statusCode == 200) {
         print(responseData);
-
-        // Check and print the token
-        if (responseData.containsKey('token')) {
-          print("Token: ${responseData['token']}");
-        }
-
         loginError.value = "";
         registerError.value = "";
-
+        // getSnackBar(responseData['message']);
+        Get.to(OTPVerficationScreen(
+          phoneMunber: number.value,
+        ));
+      } else if (response.statusCode == 201) {
+        print(responseData);
+        loginError.value = "";
+        registerError.value = "";
+        // getSnackBar(responseData['message']);
         Get.to(OTPVerficationScreen(
           phoneMunber: number.value,
         ));
       } else if (response.statusCode == 400) {
         if (responseData['errors']['phone'] != null) {
+          // getSnackBar(responseData['errors']['phone'][0]);
           loginError.value = responseData['errors']['phone'][0];
           registerError.value = responseData['errors']['phone'][0];
         }
         if (responseData['errors']['otp'] != null) {
+          //getSnackBar(responseData['errors']['otp']);
           loginError.value = responseData['errors']['otp'];
           registerError.value = responseData['errors']['otp'];
         }
@@ -147,11 +147,10 @@ class LoginController extends BaseController {
         getSnackBar("login failed");
       }
     } catch (e) {
-      print("Exception: ${e.toString()}");
+      print(e.toString());
     }
     hideLoading();
   }
-
 
   callResendOtp(String num) async {
     secondsRemaining.value = 30;

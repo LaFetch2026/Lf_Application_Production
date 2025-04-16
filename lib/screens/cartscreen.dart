@@ -42,6 +42,7 @@ import '../commonwidget/common_widgets.dart';
 //import '../commonwidget/homewidget/dummy_product_list.dart';
 import '../controller/cart_controller.dart';
 import '../controller/product_controller.dart';
+import '../utils/analytics_helper.dart';
 import '../utils/constants.dart';
 import 'catalog/productlist/productdetailsscreen.dart';
 
@@ -3741,36 +3742,52 @@ class CartScreenState extends State<CartScreen> {
                     controller.stockErrorText.value == ""
                         ? GestureDetector(
                       onTap: () async {
-                        if (controller
-                            .cartDetails["address"] ==
-                            null) {
+                        final productId = productController
+                            .productDetails["id"]
+                            .toString();
+                        final productPrice = double.tryParse(
+                            productController
+                                .productDetails["price"]
+                                .toString()) ??
+                            0.0;
+                        AnalyticsHelper.logInitiateCheckout(
+                          productId: productId,
+                          value: productPrice,
+                        );
+                        if (controller.cartDetails["address"] == null) {
                           controller.addressError.value =
                           "Add Delivery Address";
-                          /*   getSnackBar(
-                                                    "Add Delivery Address"); */
                         } else {
-                          controller.addressError.value =
-                          "";
-                          if (controller
-                              .stockErrorText.value ==
-                              "") {
-                            controller
-                                .callInitiatePayment(
-                                controller
-                                    .cartDetails[
-                                "address"]["id"],
-                                razorpay);
+                          controller.addressError.value = "";
+                          if (controller.stockErrorText.value == "") {
+                            // 🔹 Log Facebook Initiate Checkout Event
+
+
+                            final List<String> productIds = controller
+                                .cartDetails["products"]
+                                .map<String>((product) =>
+                                product["id"].toString())
+                                .toList();
+
+                            final double totalValue = controller
+                                .cartDetails["total"].toDouble();
+
+
+                            controller.callInitiatePayment(
+                              controller.cartDetails["address"]["id"],
+                              razorpay,
+                            );
                           }
                         }
+
                         await analytics.logEvent(
-                          name:
-                          'proceed_checkout_btnclick',
+                          name: 'proceed_checkout_btnclick',
                           parameters: <String, Object>{
-                            'page_name':
-                            'proceed_checkout_btnclick',
+                            'page_name': 'proceed_checkout_btnclick',
                           },
                         );
                       },
+
                       child: Container(
                         width: double.infinity,
                         height: widget.backgroundcolor ==
@@ -3827,6 +3844,8 @@ class CartScreenState extends State<CartScreen> {
                         ),
                       ),
                     )
+
+
                         : Padding(
                       padding: EdgeInsets.only(
                           top: 20.sp,

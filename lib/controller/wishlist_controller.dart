@@ -4,12 +4,11 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import '../screens/wishlist/createboardscreen.dart';
 import '../utils/constants.dart';
 
@@ -464,7 +463,6 @@ class WishlistController extends BaseController {
   getWishlistProductDetails(int productId, String slug, Color backColor) async {
     isProductWishlist.value = true;
     final prefs = await SharedPreferences.getInstance();
-
     try {
       /*  var response = await http.get(
           Uri.parse(

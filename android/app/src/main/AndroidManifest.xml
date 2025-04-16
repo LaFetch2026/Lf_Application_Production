@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 
+
     <!-- Allow deep linking -->
     <queries>
         <intent>
@@ -33,16 +34,32 @@
             android:value="false" />
 
         <!-- Flutter Meta -->
-        <meta-data android:name="flutterEmbedding" android:value="2" />
-        <meta-data android:name="io.flutter.embedding.android.NormalTheme" android:resource="@style/NormalTheme" />
-        <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+        <meta-data
+            android:name="io.flutter.embedding.android.NormalTheme"
+            android:resource="@style/NormalTheme" />
+        <meta-data
+            android:name="flutter_deeplinking_enabled"
+            android:value="true" />
 
         <!-- Facebook SDK Meta -->
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id" />
-        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token" />
-        <meta-data android:name="com.facebook.sdk.AutoLogAppEventsEnabled" android:value="true" />
-        <meta-data android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled" android:value="true" />
-        <meta-data android:name="com.facebook.sdk.CodelessDebugLogEnabled" android:value="true" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="@string/facebook_client_token" />
+        <meta-data
+            android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
+            android:value="true" />
+        <meta-data
+            android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
+            android:value="true" />
+        <meta-data
+            android:name="com.facebook.sdk.CodelessDebugLogEnabled"
+            android:value="true" />
 
         <!-- Main Flutter Activity -->
         <activity
@@ -61,9 +78,13 @@
             <!-- Deep linking -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="shop.la-fetch.com" />
+
+                <data
+                    android:scheme="https"
+                    android:host="https://lafetch.onelink.me/euCr/4in10k7z" />
             </intent-filter>
         </activity>
 
@@ -79,8 +100,10 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>

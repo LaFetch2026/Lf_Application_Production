@@ -15,7 +15,7 @@ class AnalyticsHelper {
 
   /// View Content - e.g. Product page opened
   static void logContentView({
-    required  productId,
+    required productId,
     required double value,
   }) {
     facebookAppEvents.logEvent(
@@ -46,9 +46,7 @@ class AnalyticsHelper {
         'valueToSum': 0.0,
       },
     );
-
   }
-
 
   /// Add to Wishlist - User saves product
   static void logAddToWishlist({
@@ -67,7 +65,6 @@ class AnalyticsHelper {
     );
   }
 
-
   /// Add to Cart - User adds product to cart
   static void logAddToCart({
     required String productId,
@@ -85,15 +82,16 @@ class AnalyticsHelper {
   }
 
   /// Initiate Checkout - Checkout started
+
   static void logInitiateCheckout({
-    required List<String> productId,
+    required String productId,
     required double value,
   }) {
     facebookAppEvents.logEvent(
       name: 'fb_mobile_initiated_checkout',
       parameters: {
         'content_type': 'product',
-        'content_id': productId.join(','),
+        'content_id': productId, // or use List<String> if multiple items
         'currency': 'USD',
         'valueToSum': value,
       },
@@ -101,6 +99,7 @@ class AnalyticsHelper {
   }
 
   /// Add Payment Info - Called after entering payment method
+// Add Payment Info event
   static void logAddPaymentInfo({bool success = true}) {
     facebookAppEvents.logEvent(
       name: 'fb_mobile_add_payment_info',
@@ -110,7 +109,7 @@ class AnalyticsHelper {
     );
   }
 
-  /// Purchase - After successful order
+// Purchase event
   static void logPurchase({
     required String productId,
     required double value,
@@ -154,7 +153,7 @@ class AnalyticsHelper {
   /// Scroll / Engagement - Track scrolling behavior
   static void logScrollEvent(String scrollDepth) {
     facebookAppEvents.logEvent(
-      name: 'scroll',
+      name: 'fb_mobile_scroll',
       parameters: {
         'scroll_depth': scrollDepth,
       },
