@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:app_links/app_links.dart';
 import 'package:facebook_app_events/facebook_app_events.dart';
 import 'package:firebase_core/firebase_core.dart';
