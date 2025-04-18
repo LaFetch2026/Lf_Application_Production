@@ -107,14 +107,24 @@ class WelcomeScreenState extends State<WelcomeScreen>
             height: MediaQuery.of(context).size.height.sp,
             color: Colors.white.withOpacity(0),
           ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: EdgeInsets.only(top: 80.sp),
-              child:
-                  Image.asset(appNameImage, height: 41.sp, fit: BoxFit.cover),
-            ),
-          ),
+Align(
+  alignment: Alignment.bottomCenter,
+  child: Container(
+    height: 1000.sp, // Increased height for more gradient coverage
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Colors.transparent,
+          Colors.black.withOpacity(0.95), // Increased opacity
+        ],
+        stops: [0.0, 1.0], // Smooth transition spread
+      ),
+    ),
+  ),
+),
+
           Positioned(
             bottom: 0,
             left: 0,
