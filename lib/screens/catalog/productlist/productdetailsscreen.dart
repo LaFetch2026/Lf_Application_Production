@@ -1467,7 +1467,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         child: Row(
                                                           children: [
                                                             AppSpacingText(
-                                                              text: 'View Brand \n'
+                                                              text: 'View Brand'
                                                                   .toUpperCase(),
                                                               fontFamily:
                                                                   "Franklin Gothic",

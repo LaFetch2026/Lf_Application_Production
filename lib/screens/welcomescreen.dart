@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,7 +10,6 @@ import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/login_controller.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/utils/constants.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:video_player/video_player.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -61,7 +61,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
           aspectRatio: 9 / 16,
           child: */
                 FittedBox(
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                     child: Container(
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height,
@@ -75,7 +75,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Colors.black.withOpacity(0.01)],
+                colors: [Colors.transparent, Colors.black.withOpacity(0.80)],
                 stops: [0.535, 0.8978],
               ),
             ),
@@ -107,24 +107,23 @@ class WelcomeScreenState extends State<WelcomeScreen>
             height: MediaQuery.of(context).size.height.sp,
             color: Colors.white.withOpacity(0),
           ),
-Align(
-  alignment: Alignment.bottomCenter,
-  child: Container(
-    height: 1000.sp, // Increased height for more gradient coverage
-    decoration: BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Colors.transparent,
-          Colors.black.withOpacity(0.95), // Increased opacity
-        ],
-        stops: [0.0, 1.0], // Smooth transition spread
-      ),
-    ),
-  ),
-),
-
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: 1000.sp, // Increased height for more gradient coverage
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.95), // Increased opacity
+                  ],
+                  stops: [0.0, 1.0], // Smooth transition spread
+                ),
+              ),
+            ),
+          ),
           Positioned(
             bottom: 0,
             left: 0,

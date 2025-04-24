@@ -16,6 +16,7 @@ import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/wishlist/newboardscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
+
 import '../../commonwidget/app_text.dart';
 import '../../controller/catalog_controller.dart';
 import '../../utils/constants.dart';
@@ -294,7 +295,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                                           .categoryProductList[
                                                       index]["id"],
                                                   brandId: 0,
-                                                  screen: "category",
+                                                  screen: "",
                                                   genderType: widget.genderType,
                                                   categoryList: [],
                                                   tagIds: const [])));

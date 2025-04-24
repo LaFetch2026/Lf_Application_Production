@@ -20,7 +20,9 @@ import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../commonwidget/app_text.dart';
+
 //import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
 import '../../../controller/product_controller.dart';
 import '../../../controller/wishlist_controller.dart';
@@ -38,6 +40,7 @@ class CategoryProductScreen extends StatefulWidget {
   final String genderName;
   final String screen;
   final String type;
+
   const CategoryProductScreen(
       {super.key,
       required this.categoryName,
@@ -119,10 +122,13 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         });
       });
     } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) =>
-          productController.getTagsBannerData(
+      // {This is banner flow else part}
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => productController.getTagsBannerData(
               widget.tagIds,
+              // This is currently empty
               widget.categoryList,
+              // This is actually list of IDs inside Category in Banner like 51,52 for Avvissa
               widget.genderType,
               productController.sortBy.value,
               productController.filterEnable.value,

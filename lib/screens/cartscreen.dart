@@ -42,7 +42,6 @@ import '../commonwidget/common_widgets.dart';
 //import '../commonwidget/homewidget/dummy_product_list.dart';
 import '../controller/cart_controller.dart';
 import '../controller/product_controller.dart';
-import '../utils/analytics_helper.dart';
 import '../utils/constants.dart';
 import 'catalog/productlist/productdetailsscreen.dart';
 
@@ -3742,18 +3741,20 @@ class CartScreenState extends State<CartScreen> {
                     controller.stockErrorText.value == ""
                         ? GestureDetector(
                       onTap: () async {
-                        final productId = productController
-                            .productDetails["id"]
-                            .toString();
-                        final productPrice = double.tryParse(
-                            productController
-                                .productDetails["price"]
-                                .toString()) ??
-                            0.0;
-                        AnalyticsHelper.logInitiateCheckout(
-                          productId: productId,
-                          value: productPrice,
-                        );
+                        // final productId = productController
+                        //     .productDetails["id"]
+                        //     .toString();
+                        // final productPrice = double.tryParse(
+                        //     productController
+                        //         .productDetails["price"]
+                        //         .toString()) ??
+                        //     0.0;
+
+
+                        // AnalyticsHelper.logInitiateCheckout(
+                        //   productId: productId,
+                        //   value: productPrice,
+                        // );
                         if (controller.cartDetails["address"] == null) {
                           controller.addressError.value =
                           "Add Delivery Address";
@@ -3762,15 +3763,25 @@ class CartScreenState extends State<CartScreen> {
                           if (controller.stockErrorText.value == "") {
                             // 🔹 Log Facebook Initiate Checkout Event
 
+                            controller.cartProductNamePrice.entries.forEach((
+                                entry) {
+                              print("${entry
+                                  .key}, ${entry.value}");
+                            });
 
-                            final List<String> productIds = controller
-                                .cartDetails["products"]
-                                .map<String>((product) =>
-                                product["id"].toString())
-                                .toList();
+                            // final List<String> productIds = controller
+                            //     .cartDetails["products"]
+                            //     .map<String>((product) =>
+                            //     product["id"].toString())
+                            //     .toList();
 
-                            final double totalValue = controller
-                                .cartDetails["total"].toDouble();
+                            // print("Product Ids : ${productIds}");
+
+
+                            // final double totalValue = controller
+                            //     .cartDetails["total"].toDouble();
+
+                            // print("${totalValue}");
 
 
                             controller.callInitiatePayment(

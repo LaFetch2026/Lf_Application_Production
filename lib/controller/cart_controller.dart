@@ -1,16 +1,18 @@
 // ignore_for_file: avoid_print
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:lafetch/commonwidget/cartwidgets/bottomCoupon.dart';
+import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/controller/base_controller.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/paymentcheckscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'package:lafetch/commonwidget/common_widgets.dart';
+
 import '../screens/paymentsuccessscreen.dart';
 import '../utils/constants.dart';
 
@@ -48,6 +50,9 @@ class CartController extends BaseController {
   List tagsList = [].obs;
   RxString addressError = "".obs;
   List<bool> selected = List.generate(50, (i) => false).obs;
+
+  var cartProductNamePrice = <int, int>{}.obs;
+
   /* List<Map<String, dynamic>> couponList = [
     {'id': '22', "coupan": 'ECoupan'},
     {'id': '73', "coupan": 'AXIS20'},
@@ -56,7 +61,9 @@ class CartController extends BaseController {
 
   getCartData() async {
     isOrder.value = true;
+
     final prefs = await SharedPreferences.getInstance();
+
     try {
       var response = await http.get(
           Uri.parse(
@@ -70,9 +77,16 @@ class CartController extends BaseController {
         orderList.clear();
         var responseData = json.decode(response.body);
         if (responseData != null) {
+          //print("$responseData");
           cartDetails = responseData;
           orderList = responseData["order_lines"];
-          print(orderList);
+          for (int i = 0; i < orderList.length; i++) {
+            var productId = orderList[i]["product"]["id"];
+            var productPrice = orderList[i]["product"]["price"];
+            cartProductNamePrice[productId] = productPrice;
+            //print("Product ID : $productId"); // Use this for sending data in facebook
+          }
+
           cartId.value = responseData["id"];
           qtyProductId.value = 0;
           qtyText.value = "";

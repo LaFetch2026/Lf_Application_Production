@@ -64,6 +64,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
+  bool isRefreshing = false;
+
+  Future<void> _onRefresh() async {
+    setState(() => isRefreshing = true);
+    await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+    setState(() => isRefreshing = false);
+  }
+
   final homeController = Get.put(HomeController());
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
@@ -261,19 +269,21 @@ class HomeScreenState extends State<HomeScreen> {
                 i++) {
               homeController.bannerTag1Id
                   .add(homeController.banner1List[itemIndex]["tags"][i]["id"]);
-            }
+            } // Does not run as tags is empty
             for (var i = 0;
                 i < homeController.banner1List[itemIndex]["categories"].length;
                 i++) {
               homeController.bannerCategory1Id.add(
                   homeController.banner1List[itemIndex]["categories"][i]["id"]);
-            }
+            } // Only for AVVIISA
             productController.productCategory =
-                homeController.bannerCategory1Id;
-            productController.productTags = homeController.bannerTag1Id;
+                homeController.bannerCategory1Id; // {51,52 etc}
+            productController.productTags = homeController
+                .bannerTag1Id; // It is empty as no products have any tags with them
             if (/* homeController.banner1List[itemIndex]["tags"].isNotEmpty && */
                 homeController
                     .banner1List[itemIndex]["categories"].isNotEmpty) {
+              print('.... ${homeController.banner1List[itemIndex]["name"]}');
               Get.to(
                 CategoryProductScreen(
                   categoryName: homeController.banner1List[itemIndex]["name"],
@@ -708,7 +718,8 @@ class HomeScreenState extends State<HomeScreen> {
                                           bottom: 12.sp,
                                           right: 16.sp,
                                         ),
-                                        child: /*  CarouselSlider.builder(
+                                        child:
+                                            /*  CarouselSlider.builder(
                                         itemCount:
                                             homeController.banner1List.length,
                                         options: CarouselOptions(
@@ -897,9 +908,9 @@ class HomeScreenState extends State<HomeScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 //   blankSpace: 20.0,
                                 velocity: 100.0,
-                                pauseAfterRound: Duration(seconds: 1),
+                                // pauseAfterRound: Duration(seconds: 1),
                                 // startPadding: 10.0,
-                                accelerationDuration: Duration(seconds: 1),
+                                // accelerationDuration: Duration(seconds: 1),
                                 accelerationCurve: Curves.linear,
                                 decelerationDuration:
                                     Duration(milliseconds: 500),

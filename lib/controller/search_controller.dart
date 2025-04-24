@@ -1,12 +1,12 @@
-// ignore_for_file: avoid_print
-
 import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/controller/base_controller.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:lafetch/commonwidget/common_widgets.dart';
+import 'package:lafetch/controller/base_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../screens/loginscreen.dart';
 import '../utils/constants.dart';
 

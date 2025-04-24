@@ -30,7 +30,7 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods(File.dirname(File.realpath(__FILE__)))
-  
+
 
 
 
@@ -42,6 +42,11 @@ post_install do |installer|
 
     target.build_configurations.each do |config|
       config.build_settings['SWIFT_VERSION'] = '5.0'
+      config.build_settings['ENABLE_BITCODE'] = 'NO'
+      
+      if target.name == 'FBSDKCoreKit' || target.name == 'FBSDKLoginKit' || target.name == 'FBSDKCoreKit_Basics' || target.name == 'FBAEMKit'
+              config.build_settings['ENABLE_BITCODE'] = 'NO'
+        end
     end
   end
 end
