@@ -18,6 +18,7 @@ import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
+
 import '../../commonwidget/app_text.dart';
 import '../../controller/brand_controller.dart';
 import '../../controller/product_controller.dart';
@@ -28,6 +29,7 @@ class AllBrandScreen extends StatefulWidget {
   final String screen;
   final String slug;
   final int id;
+
   const AllBrandScreen(
       {required this.id, required this.screen, super.key, required this.slug});
 
@@ -41,12 +43,15 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   final homeController = Get.put(HomeController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   int tagId = 0;
   RegExp regExp = RegExp("");
   bool showDescription = false;
+  bool isMuted = false;
   late Future<void> _initializeVideoPlayerFuture;
   late VideoPlayerController videoController;
   late VideoPlayerController slugVideoController;
+
   List heightList = [
     100.00.sp,
     180.00.sp,
@@ -99,8 +104,9 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     );
     _initializeVideoPlayerFuture = videoController.initialize();
     videoController.play();
-    videoController.setVolume(0.05);
+    videoController.setVolume(isMuted ? 0.0 : 0.05);
     videoController.setLooping(true);
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
           statusBarColor: homeAppBarColor,
@@ -108,53 +114,19 @@ class AllBrandScreenState extends State<AllBrandScreen> {
           statusBarBrightness: Brightness.dark,
           systemNavigationBarColor: homeAppBarColor));
     });
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       brandController.brandProductDetailsList.clear();
       productController.productSortBy.value = "";
       productController.filterProductEnable.value = false;
       productController.categoryFilter.value = 0;
     });
-    // getprefrenceData();
+
     WidgetsBinding.instance.addPostFrameCallback(
         (_) => brandController.getBrandDetails(widget.id, widget.slug));
-    /*  WidgetsBinding.instance.addPostFrameCallback((_) => productController
-        .getBrandDetailsProduct("", false, false, widget.id, "brand")); */
-    /* WidgetsBinding.instance
-        .addPostFrameCallback((_) => wishlistController.getWishlistData());
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => brandController.getCategoryData(brandController.brandId.value));
-    WidgetsBinding.instance.addPostFrameCallback((_) => productController
-        .getBestSellerProductData(brandController.brandId.value)); */
-    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.bestSellerController.addListener(() {
-        productController.fetchBestSellerData();
-        productController.update();
-      });
-    }); */
-    /*  productController.bestSellerHasnextpage.value = true;
-    productController.bestSellerLoadMore.value = false;
-    productController.isBestSeller.value = false;
-    productController.bestSellerPage.value = 1; */
+
     super.initState();
   }
-
-  /*  getprefrenceData() async {
-    final prefs = await SharedPreferences.getInstance();
-    tagId = prefs.getInt('tagId')!;
-    WidgetsBinding.instance.addPostFrameCallback((_) => productController
-        .getTagsProductData(tagId, 0, brandController.brandId.value));
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.tagsProductController.addListener(() {
-        productController.fetchMoreTagsProductData(
-            tagId, 0, brandController.brandId.value);
-        productController.update();
-      });
-    });
-    productController.tagsHasnextpage.value = true;
-    productController.tagsLoadMore.value = false;
-    productController.istagsProduct.value = false;
-    productController.tagsPage.value = 1;
-  } */
 
   Widget playvideo(String video) {
     slugVideoController = VideoPlayerController.networkUrl(
@@ -165,7 +137,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     _initializeVideoPlayerFuture = slugVideoController.initialize();
     slugVideoController.setLooping(true);
     slugVideoController.play();
-    slugVideoController.setVolume(0.05);
+    slugVideoController.setVolume(isMuted ? 0.0 : 0.05);
     return FutureBuilder(
       future: _initializeVideoPlayerFuture,
       builder: (context, snapshot) {
@@ -176,6 +148,30 @@ class AllBrandScreenState extends State<AllBrandScreen> {
               AspectRatio(
                 aspectRatio: slugVideoController.value.aspectRatio,
                 child: VideoPlayer(slugVideoController),
+              ),
+              Positioned(
+                bottom: 20.sp,
+                right: 10.sp,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isMuted = !isMuted;
+                      slugVideoController.setVolume(isMuted ? 0.0 : 0.05);
+                    });
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(8.sp),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      isMuted ? Icons.volume_off : Icons.volume_up,
+                      color: Colors.white,
+                      size: 16.sp,
+                    ),
+                  ),
+                ),
               ),
             ],
           );
@@ -265,7 +261,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                   Stack(
                     children: [
                       Container(
-                        // color: blue,
                         alignment: Alignment.bottomCenter,
                         margin: EdgeInsets.only(top: 210.sp),
                         child: Image.asset(
@@ -305,6 +300,43 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                               .aspectRatio,
                                                       child: VideoPlayer(
                                                           videoController),
+                                                    ),
+                                                    Positioned(
+                                                      bottom: 10.sp,
+                                                      right: 10.sp,
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            isMuted = !isMuted;
+                                                            videoController
+                                                                .setVolume(
+                                                                    isMuted
+                                                                        ? 0.0
+                                                                        : 0.05);
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  8.sp),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color:
+                                                                Colors.black54,
+                                                            shape:
+                                                                BoxShape.circle,
+                                                          ),
+                                                          child: Icon(
+                                                            isMuted
+                                                                ? Icons
+                                                                    .volume_off
+                                                                : Icons
+                                                                    .volume_up,
+                                                            color: Colors.white,
+                                                            size: 20.sp,
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
                                                   ],
                                                 );
@@ -480,17 +512,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       ),
                     ],
                   ),
-                  /*  Padding(
-                    padding: EdgeInsets.only(top: 10.sp, left: 16.sp),
-                    child: AppText(
-                      text: "All Products",
-                      color: whiteColor,
-                      fontSize: 20,
-                      maxLines: 1,
-                      fontFamily: "Playfair Display Medium",
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ), */
                   Obx(() => brandController.isProductBrand.value
                       ? Padding(
                           padding: EdgeInsets.only(
@@ -617,12 +638,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                   false;
                               productController.categoryFilter.value = 0;
                               videoController.play();
-                              /*  productController.getBrandDetailsProduct(
-                                      "",
-                                      false,
-                                      false,
-                                      brandController.brandId.value,
-                                      "brand"); */
                             },
                           ));
                       await analytics.logEvent(

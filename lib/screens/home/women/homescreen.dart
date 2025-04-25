@@ -66,12 +66,6 @@ class HomeScreen extends StatefulWidget {
 class HomeScreenState extends State<HomeScreen> {
   bool isRefreshing = false;
 
-  Future<void> _onRefresh() async {
-    setState(() => isRefreshing = true);
-    await Future.delayed(const Duration(seconds: 2)); // Simulate API call
-    setState(() => isRefreshing = false);
-  }
-
   final homeController = Get.put(HomeController());
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
@@ -970,6 +964,7 @@ class HomeScreenState extends State<HomeScreen> {
                                               (index) {
                                                 return Column(
                                                   children: [
+                                                    //
                                                     GestureDetector(
                                                       onTap: () async {
                                                         List categoryList = [];

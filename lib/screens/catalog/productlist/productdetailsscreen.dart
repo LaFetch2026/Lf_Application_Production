@@ -504,6 +504,22 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   } */
 
   SizedBox getListForProductColor() {
+    List availableColors = productController.colorInventoryList
+        .where((element) => int.parse(element['stocks'].toString()) > 0)
+        .toList();
+
+    if (availableColors.isNotEmpty &&
+        productController.selectedProductColor.isEmpty) {
+      final firstColor = availableColors.first;
+      productController.selectedProductColor = firstColor;
+      productController.colorInventoryId.value = firstColor["id"];
+      productController.sizeInventoryId.value = firstColor["id"];
+      productController.productImageindex.value =
+          productController.sizeInventoryList.indexWhere((item) =>
+              item["id"] == productController.selectedProductSize["id"]);
+      productController.getProductImage(firstColor["id"]);
+    }
+
     return SizedBox(
         width: MediaQuery.of(context).size.width,
         child: Padding(
