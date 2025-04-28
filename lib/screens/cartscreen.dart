@@ -2650,17 +2650,20 @@ class CartScreenState extends State<CartScreen> {
                                                 ),
                                               ),
                                               AppText(
-                                                text:
-                                                "\u{20B9}${controller
-                                                    .cartDetails["total_mrp"] ??
-                                                    "0"}",
-                                                fontFamily:
-                                                "Franklin Gothic Regular",
-                                                fontWeight:
-                                                FontWeight
-                                                    .w400,
-                                                color: widget
-                                                    .backgroundcolor ==
+                                                text: "\u{20B9}${NumberFormat(
+                                                    "#,##0.00", "en_IN").format(
+                                                    double.tryParse(
+                                                        (controller
+                                                            .cartDetails["total_mrp"] ??
+                                                            "0")
+                                                            .replaceAll(
+                                                            RegExp(r'[^0-9.]'),
+                                                            '')
+                                                    ) ?? 0.0
+                                                )}",
+                                                fontFamily: "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: widget.backgroundcolor ==
                                                     whiteColor
                                                     ? homeAppBarColor
                                                     : whiteColor,
@@ -2768,19 +2771,17 @@ class CartScreenState extends State<CartScreen> {
                                                 ),
                                               ),
                                               AppText(
-                                                text:
-                                                "\u{20B9}${double.parse(
-                                                    controller
-                                                        .cartDetails["shipping_cost"]) +
-                                                    double.parse(controller
-                                                        .cartDetails["express_delivery_charges"])}",
-                                                fontFamily:
-                                                "Franklin Gothic Regular",
-                                                fontWeight:
-                                                FontWeight
-                                                    .w400,
-                                                color: widget
-                                                    .backgroundcolor ==
+                                                text: "\u{20B9}${(double
+                                                    .tryParse(controller
+                                                    .cartDetails["shipping_cost"]
+                                                    .replaceAll(',', ''))! +
+                                                    double.tryParse(controller
+                                                        .cartDetails["express_delivery_charges"]
+                                                        .replaceAll(
+                                                        ',', ''))!)}",
+                                                fontFamily: "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: widget.backgroundcolor ==
                                                     whiteColor
                                                     ? homeAppBarColor
                                                     : whiteColor,

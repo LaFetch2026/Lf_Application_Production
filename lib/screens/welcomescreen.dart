@@ -54,73 +54,40 @@ class WelcomeScreenState extends State<WelcomeScreen>
       backgroundColor: blackColor,
       body: Stack(
         children: [
-          Container(
-            // width: MediaQuery.of(context).size.width,
-            //height: MediaQuery.of(context).size.height,
-            child: /* AspectRatio(
-          aspectRatio: 9 / 16,
-          child: */
-                FittedBox(
-                    fit: BoxFit.contain,
-                    child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        child: VideoPlayer(videoController))),
-            // ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width.sp,
-            height: MediaQuery.of(context).size.height.sp,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Colors.black.withOpacity(0.80)],
-                stops: [0.535, 0.8978],
-              ),
+          FittedBox(
+            fit: BoxFit.cover,
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: VideoPlayer(videoController),
             ),
           ),
-          Transform.scale(
-            scaleY: 1.8,
-            child: Container(
-              width: MediaQuery.of(context).size.width.sp,
-              height: MediaQuery.of(context).size.height.sp,
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.center,
-                  radius: 0.5,
-                  /*  colors: [
-                Color(0x00000000),
-                Color(0XCC000000),
-              ], */
-                  colors: [
-                    Color(0x00000000),
-                    Color(0x88000000),
-                  ],
-                  stops: [0.5, 1.0],
-                ),
-              ),
-            ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width.sp,
-            height: MediaQuery.of(context).size.height.sp,
-            color: Colors.white.withOpacity(0),
-          ),
+
+          // Bottom Dark Gradient
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: 1000.sp, // Increased height for more gradient coverage
+              height: MediaQuery.of(context).size.height * 0.5,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.95), // Increased opacity
-                  ],
-                  stops: [0.0, 1.0], // Smooth transition spread
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.95)],
+                  stops: const [0.0, 0.60],
                 ),
+              ),
+            ),
+          ),
+
+          // App Logo
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.only(top: 80.sp),
+              child: Image.asset(
+                appNameImage,
+                height: 41.sp,
+                fit: BoxFit.cover,
               ),
             ),
           ),
