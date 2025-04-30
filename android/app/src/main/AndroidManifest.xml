@@ -8,12 +8,10 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 
-
     <!-- Allow deep linking -->
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="https" />
         </intent>
     </queries>
@@ -65,7 +63,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
@@ -82,9 +80,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:scheme="https"
-                    android:host="https://lafetch.onelink.me/euCr/4in10k7z" />
+                <data android:scheme="lafetch" />
+
             </intent-filter>
         </activity>
 
@@ -113,6 +110,5 @@
             android:name="com.facebook.FacebookContentProvider"
             android:authorities="com.facebook.app.FacebookContentProvider915626513880487"
             android:exported="true" />
-
     </application>
 </manifest>

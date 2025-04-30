@@ -1,11 +1,15 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controller/home_controller.dart';
 import 'package:lafetch/utils/constants.dart';
+
 //import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../utils/analytics_helper.dart';
+import '../../utils/deeplink_handler.dart';
 import '../bottomnavscreen.dart';
 import '../userdetails.dart';
 import '../welcomescreen.dart';
@@ -26,8 +30,11 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
   @override
   void initState() {
     super.initState();
-    getPrefrenceValue();
-    Timer(const Duration(milliseconds: 4400), () => navigateToScreen());
+    Future.delayed(const Duration(seconds: 4), () {
+      if (!DeepLinkHandler.deepLinkHandled) {
+        Get.offAll(() => WelcomeScreen());
+      }
+    });
   }
 
   Future getPrefrenceValue() async {
@@ -59,7 +66,7 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
           MaterialPageRoute(
             builder: (context) => const BottomNavScreen(),
           ),
-              (Route<dynamic> route) => false,
+          (Route<dynamic> route) => false,
         );
       } else {
         if (phone == null) {
@@ -84,7 +91,6 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
       Get.offAll(() => const WelcomeScreen());
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

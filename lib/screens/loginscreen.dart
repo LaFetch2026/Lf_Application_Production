@@ -8,22 +8,26 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
 //import 'package:lafetch/commonwidget/app_button.dart';
 import 'package:lafetch/commonwidget/common_widgets.dart';
 import 'package:lafetch/commonwidget/login_appbar.dart';
 import 'package:lafetch/commonwidget/loginwidgets/login_widget.dart';
 import 'package:lafetch/commonwidget/loginwidgets/multiple_text.dart';
 import 'package:lafetch/commonwidget/loginwidgets/number_widget.dart';
+
 //import 'package:lafetch/commonwidget/loginwidgets/or_widget.dart';
 import 'package:lafetch/utils/constants.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../commonwidget/app_text.dart';
 import '../controller/login_controller.dart';
 
 class LoginScreen extends StatefulWidget {
   final int initialTab;
   final bool hideBack;
+
   const LoginScreen(
       {required this.initialTab, this.hideBack = false, super.key});
 
@@ -79,24 +83,41 @@ class LoginScreenState extends State<LoginScreen> {
     print("value: $_authStatus");
   }
 
-  Future<void> showCustomTrackingDialog(BuildContext context) async =>
-      await showDialog<void>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Dear User'),
-          content: const Text(
-            'We care about your privacy and data security. We keep this app free by showing ads. '
-            'Can we continue to use your data to tailor ads for you?\n\nYou can change your choice anytime in the app settings. '
-            'Our partners will collect data and use a unique identifier on your device to show you ads.',
+  Future<void> showCustomTrackingDialog(BuildContext context) async {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: isDarkMode ? Colors.white : Colors.black,
+        title: Text(
+          'Dear User',
+          style: TextStyle(
+            color: isDarkMode ? Colors.black : Colors.white,
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Continue'),
-            ),
-          ],
         ),
-      );
+        content: Text(
+          'We care about your privacy and data security. We keep this app free by showing ads. '
+          'Can we continue to use your data to tailor ads for you?\n\nYou can change your choice anytime in the app settings. '
+          'Our partners will collect data and use a unique identifier on your device to show you ads.',
+          style: TextStyle(
+            color: isDarkMode ? Colors.black : Colors.white,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Continue',
+              style: TextStyle(
+                color: isDarkMode ? Colors.black : Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   requestNotificationPermission() async {
     PermissionStatus status = await Permission.notification.status;

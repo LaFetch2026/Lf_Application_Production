@@ -1,8 +1,7 @@
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/Brands/allbrandscreen.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/loginscreen.dart';
 
 class DeepLinkHandler {
   static final AppsflyerSdk _appsflyerSdk = AppsflyerSdk(
@@ -12,74 +11,76 @@ class DeepLinkHandler {
       showDebug: true,
       timeToWaitForATTUserAuthorization: 15,
     ),
-    
   );
 
   static bool _isInitialized = false;
+  static bool deepLinkHandled = false;
 
   static Future<void> init(BuildContext context) async {
     if (_isInitialized) return;
     _isInitialized = true;
 
-    // Set up deep link listeners
-    _setupDeepLinkListeners(context);
-
-    // Initialize SDK
     await _appsflyerSdk.initSdk(
       registerConversionDataCallback: true,
       registerOnAppOpenAttributionCallback: true,
     );
+
+    _setupDeepLinkListeners(context);
   }
 
   static void _setupDeepLinkListeners(BuildContext context) {
-    // For cold starts (app was terminated)
     _appsflyerSdk.onAppOpenAttribution((res) {
       print('[AppsFlyer] onAppOpenAttribution: $res');
-      _handleDeepLink(res, context);
+      if (_isValidDeepLink(res)) _handleDeepLink(res, context);
     });
 
-    // For deferred deep linking (app not installed)
     _appsflyerSdk.onInstallConversionData((res) {
       print('[AppsFlyer] onInstallConversionData: $res');
-      _handleDeepLink(res, context);
+      if (_isValidDeepLink(res)) _handleDeepLink(res, context);
     });
 
-    // For deep links when app is in background (UPDATED METHOD NAME)
-    _appsflyerSdk.onDeepLinking((DeepLinkResult deepLinkResult) {
-      print('[AppsFlyer] onDeepLinking: $deepLinkResult');
-      if (deepLinkResult.status == Status.FOUND) {
-        _handleDeepLink(deepLinkResult.deepLink?.clickEvent ?? {}, context);
+    _appsflyerSdk.onDeepLinking((DeepLinkResult result) {
+      print('[AppsFlyer] onDeepLinking: $result');
+      final data = result.deepLink?.clickEvent ?? {};
+      if (result.status == Status.FOUND && _isValidDeepLink(data)) {
+        _handleDeepLink(data, context);
       }
     });
   }
 
-  static void _handleDeepLink(Map<dynamic, dynamic> data, BuildContext context) {
-    try {
-      final afDP = data['af_dp'] ?? data['deep_link_value'];
-      print('Handling deep link: $afDP');
+  static bool _isValidDeepLink(Map<dynamic, dynamic> data) {
+    print('[DeepLinkHandler] Full Data: $data');
 
-      if (afDP != null) {
-        final uri = Uri.parse(afDP.toString());
-        
-        if (uri.pathSegments.isNotEmpty) {
-          final slug = uri.pathSegments.last;
-          
-          if (uri.path.contains("product")) {
-            Get.offAll(() => ProductDetailsScreen(
-                  productId: 0,
-                  type: "add",
-                  brandName: "",
-                  Slug: slug,
-                ));
-          } 
-          else if (uri.path.contains("brand")) {
-            Get.offAll(() => AllBrandScreen(
-                  screen: "home",
-                  id: 0,
-                  slug: slug,
-                ));
-          }
-        }
+    final payload =
+        data['payload'] ?? data; // handle AppsFlyer's nested structure
+    final deepLinkValue = payload['deep_link_value'];
+    final slug = payload['slug'];
+    final brand = payload['brand'];
+
+    return (deepLinkValue != null && deepLinkValue.toString().isNotEmpty) ||
+        (slug != null && slug.toString().isNotEmpty) ||
+        (brand != null && brand.toString().isNotEmpty);
+  }
+
+  static void _handleDeepLink(
+      Map<dynamic, dynamic> data, BuildContext context) {
+    try {
+      final payload = data['payload'] ?? data;
+
+      print('[DeepLinkHandler] Handling deep link payload: $payload');
+
+      final deepLinkValue = payload['deep_link_value'];
+      final slug = payload['slug'];
+      final brand = payload['brand'];
+
+      if ((deepLinkValue != null && deepLinkValue.toString().isNotEmpty) ||
+          (slug != null && slug.toString().isNotEmpty) ||
+          (brand != null && brand.toString().isNotEmpty)) {
+        deepLinkHandled = true;
+        Get.offAll(() => LoginScreen(initialTab: 0));
+      } else {
+        print(
+            '[DeepLinkHandler] No valid deep link fields found. Skipping navigation.');
       }
     } catch (e) {
       print('Error handling deep link: $e');

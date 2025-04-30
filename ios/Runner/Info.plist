@@ -24,6 +24,8 @@
     <string>$(FLUTTER_BUILD_NUMBER)</string>
     <key>CFBundleSignature</key>
     <string>????</string>
+
+    <!-- Deep Linking URL Schemes -->
     <key>CFBundleURLTypes</key>
     <array>
         <dict>
@@ -32,16 +34,26 @@
             <key>CFBundleURLSchemes</key>
             <array>
                 <string>fb915626513880487</string>
-                <string>shop.la-fetch.com</string>
+                <string>lafetch</string> <!-- corrected your app scheme for deep linking -->
             </array>
         </dict>
     </array>
+
+    <!-- Associated Domains for Universal Links -->
+    <key>AssociatedDomains</key>
+    <array>
+        <string>applinks:lafetch.onelink.me</string> <!-- very important for universal links -->
+    </array>
+
+    <!-- Facebook -->
     <key>FacebookAppID</key>
     <string>915626513880487</string>
     <key>FacebookDisplayName</key>
     <string>Lafetch</string>
     <key>FacebookClientToken</key>
     <string>bc1c2ad93de1bfbe0f46761e9c26a956</string>
+
+    <!-- Facebook login support -->
     <key>LSApplicationQueriesSchemes</key>
     <array>
         <string>fbapi</string>
@@ -49,6 +61,8 @@
         <string>fbauth2</string>
         <string>fbshareextension</string>
     </array>
+
+    <!-- Privacy Permissions -->
     <key>NSUserTrackingUsageDescription</key>
     <string>This identifier will be used to show you quick delivery products near you and deliver it to your location.</string>
     <key>NSAppTransportSecurity</key>
@@ -68,6 +82,8 @@
     <string>Used to capture audio for image picker</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>To take user profile picture</string>
+
+    <!-- Other App Configurations -->
     <key>UIApplicationSupportsIndirectInputEvents</key>
     <true/>
     <key>UIBackgroundModes</key>
@@ -89,10 +105,12 @@
     </array>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
+
+    <!-- Firebase Crashlytics -->
     <key>FirebaseCrashlyticsCollectionEnabled</key>
     <true/>
 
-    <!-- ✅ AppsFlyer Configuration -->
+    <!-- AppsFlyer Configuration -->
     <key>AppsFlyerDevKey</key>
     <string>tzivSReYr7ZyuqVbEP6z6d</string>
     <key>AppID</key>
