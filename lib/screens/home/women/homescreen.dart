@@ -884,14 +884,13 @@ class HomeScreenState extends State<HomeScreen> {
                           width: MediaQuery.of(context).size.width,
                           child: Padding(
                             padding: EdgeInsets.only(
-                                top: Platform.isIOS ? 7.sp : 6.sp,
-                                bottom: Platform.isIOS ? 5.sp : 6.sp),
+                              top: Platform.isIOS ? 7.sp : 6.sp,
+                              bottom: Platform.isIOS ? 5.sp : 6.sp,
+                            ),
                             child: Center(
                               child: Marquee(
                                 text:
                                     '  ✦  More than 50+ Homegrown Brands  ✦  Fast and Reliable  ✦  Fashion for all occassions',
-                                //  text:
-                                //    '  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12.sp,
@@ -900,19 +899,18 @@ class HomeScreenState extends State<HomeScreen> {
                                 ),
                                 scrollAxis: Axis.horizontal,
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                //   blankSpace: 20.0,
                                 velocity: 100.0,
-                                // pauseAfterRound: Duration(seconds: 1),
-                                // startPadding: 10.0,
-                                // accelerationDuration: Duration(seconds: 1),
+                                blankSpace: 0,
+                                accelerationDuration: Duration.zero,
                                 accelerationCurve: Curves.linear,
-                                decelerationDuration:
-                                    Duration(milliseconds: 500),
-                                decelerationCurve: Curves.easeOut,
+                                decelerationDuration: Duration.zero,
+                                decelerationCurve: Curves.linear,
+                                pauseAfterRound: Duration.zero,
                               ),
                             ),
                           ),
                         ),
+
                         // )
                       ),
                       Obx(() => catalogController.isCatalog.value

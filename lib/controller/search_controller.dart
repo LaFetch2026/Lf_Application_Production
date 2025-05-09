@@ -3,204 +3,142 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:lafetch/commonwidget/common_widgets.dart';
-import 'package:lafetch/controller/base_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../commonwidget/common_widgets.dart';
+import '../controller/base_controller.dart';
 import '../screens/loginscreen.dart';
 import '../utils/constants.dart';
 
 class SearchScreenController extends BaseController {
-  TextEditingController searchController = TextEditingController();
+  final searchController = TextEditingController();
+
   RxBool isSearchItem = false.obs;
   RxBool isCatalog = false.obs;
+  RxBool isRecentSearch = false.obs;
+
+  RxString searchText = "Search for products".obs;
+  RxDouble lat = 0.0.obs;
+  RxDouble lng = 0.0.obs;
+
   List searchList = [].obs;
   List categoryList = [].obs;
   List suggestedList = [].obs;
-  RxBool isRecentSearch = false.obs;
   List recentSearchList = [].obs;
-  RxDouble lat = 0.0.obs;
-  RxDouble lng = 0.0.obs;
-  List<bool> selected = List.generate(50, (i) => false).obs;
-  RxString searchText = "Search for products".obs;
+  List<bool> selected = List.generate(50, (_) => false).obs;
 
-  getSearchData(BuildContext context) async {
-    isSearchItem.value = true;
+  Future<dynamic> _makeRequest(String method, String url,
+      {Map<String, dynamic>? body}) async {
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/search?q=${searchController.text.toString().trim()}&latitude=${lat.value}&longitude=${lng.value}"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData["products"] != null &&
-            responseData["products"].isNotEmpty) {
-          searchList = responseData["products"];
-          searchText.value = "Search for products";
-        } else {
-          searchText.value = "No product found";
-          searchList.clear();
-          // FocusScope.of(context).unfocus();
-        }
-        if (responseData["categories"] != null &&
-            responseData["categories"].isNotEmpty) {
-          categoryList = responseData["categories"];
-          searchText.value = "Search for products";
-        } else {
-          // FocusScope.of(context).unfocus();
-          searchText.value = "No product found";
-          categoryList.clear();
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
+      final headers = {
+        'Accept': 'application/json; charset=UTF-8',
+        'Content-Type': 'application/json;charset=UTF-8',
+        'Authorization': "Bearer ${prefs.getString('token') ?? ''}",
+      };
+
+      http.Response response;
+      if (method == "GET") {
+        response = await http.get(Uri.parse(url), headers: headers);
+      } else if (method == "POST") {
+        response = await http.post(Uri.parse(url),
+            headers: headers, body: json.encode(body));
+      } else if (method == "DELETE") {
+        response = await http.delete(Uri.parse(url), headers: headers);
+      } else {
+        throw Exception("Unsupported HTTP method");
+      }
+
+      final data = json.decode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return data;
       } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
+        Get.offAll(() => const LoginScreen(initialTab: 0));
         getSnackBar("Authentication failed");
       } else {
-        getSnackBar("get search failed");
+        getSnackBar("Something went wrong (${response.statusCode})");
       }
     } catch (e) {
-      print("error$e");
+      print("Request error: $e");
+    }
+    return null;
+  }
+
+  Future<void> getSearchData(BuildContext context) async {
+    isSearchItem.value = true;
+    final url =
+        "${ApiConstants.baseUrl}/search?q=${searchController.text.trim()}&latitude=${lat.value}&longitude=${lng.value}";
+    final data = await _makeRequest("GET", url);
+
+    if (data != null) {
+      searchList.clear();
+      categoryList.clear();
+
+      if (data["products"] != null && data["products"].isNotEmpty) {
+        searchList.addAll(data["products"]);
+        searchText.value = "Search for products";
+      } else {
+        searchText.value = "No product found";
+      }
+
+      if (data["categories"] != null && data["categories"].isNotEmpty) {
+        categoryList.addAll(data["categories"]);
+      }
     }
     isSearchItem.value = false;
   }
 
-  getCatalogData() async {
+  Future<void> getCatalogData() async {
     isCatalog.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/catalogs?type=suggested"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          suggestedList = responseData["data"];
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get catalog failed");
-      }
-    } catch (e) {
-      print("error$e");
+    final url = "${ApiConstants.baseUrl}/catalogs?type=suggested";
+    final data = await _makeRequest("GET", url);
+
+    if (data != null && data["data"] != null) {
+      suggestedList.clear();
+      suggestedList.addAll(data["data"]);
     }
+
     isCatalog.value = false;
   }
 
-  getRecentSearchData() async {
+  Future<void> getRecentSearchData() async {
     isRecentSearch.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/recent-searches?latitude=${lat.value}&longitude=${lng.value}"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData != null) {
-          recentSearchList = responseData;
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get recent search failed");
-      }
-    } catch (e) {
-      print("error$e");
+    final url =
+        "${ApiConstants.baseUrl}/recent-searches?latitude=${lat.value}&longitude=${lng.value}";
+    final data = await _makeRequest("GET", url);
+
+    if (data != null) {
+      recentSearchList.clear();
+      recentSearchList.addAll(data);
     }
+
     isRecentSearch.value = false;
   }
 
-  callDeleteRecent(int id) async {
+  Future<void> callDeleteRecent(int id) async {
     showLoading();
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      var response = await http.delete(
-        Uri.parse("${ApiConstants.baseUrl}/recent-searches/$id"),
-        headers: <String, String>{
-          'Accept': 'application/json; charset=UTF-8',
-          'Content-Type': 'application/json;charset=UTF-8',
-          "Authorization": "Bearer ${prefs.getString('token')} ",
-        },
-      );
-      if (response.statusCode == 200) {
-        selected.clear();
-        selected = List.generate(50, (i) => false).obs;
-        getRecentSearchData();
-      } else if (response.statusCode == 400) {
-        print(response.body);
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        getSnackBar("Authentication failed");
-      } else {
-        print("delete wishlist failed");
-      }
-    } catch (e) {
-      print(e.toString());
+    final url = "${ApiConstants.baseUrl}/recent-searches/$id";
+    final result = await _makeRequest("DELETE", url);
+
+    if (result != null) {
+      selected.clear();
+      selected.addAll(List.generate(50, (_) => false));
+      await getRecentSearchData();
     }
+
     hideLoading();
   }
 
-  callRecentSearch(int productId, String value) async {
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      final Map<String, dynamic> sendData = {
-        "product_id": productId,
-        "search_string": value,
-      };
-      var response =
-          await http.post(Uri.parse("${ApiConstants.baseUrl}/recent-searches"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                'Content-Type': 'application/json;charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              },
-              body: json.encode(sendData));
-      if (response.statusCode == 200) {
-        getRecentSearchData();
-      } else if (response.statusCode == 201) {
-        getRecentSearchData();
-      } else if (response.statusCode == 400) {
-        print(response.body);
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        getSnackBar("Authentication failed");
-      } else {
-        print(response.statusCode);
-      }
-    } catch (e) {
-      print(e.toString());
+  Future<void> callRecentSearch(int productId, String value) async {
+    final url = "${ApiConstants.baseUrl}/recent-searches";
+    final body = {
+      "product_id": productId,
+      "search_string": value,
+    };
+    final result = await _makeRequest("POST", url, body: body);
+
+    if (result != null) {
+      await getRecentSearchData();
     }
   }
 }
