@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 
+import '../screens/Brands/allbrandscreen.dart';
+import '../screens/catalog/productlist/productdetailsscreen.dart';
+
 class DeepLinkHandler {
   static final AppsflyerSdk _appsflyerSdk = AppsflyerSdk(
     AppsFlyerOptions(
@@ -69,18 +72,43 @@ class DeepLinkHandler {
 
       print('[DeepLinkHandler] Handling deep link payload: $payload');
 
-      final deepLinkValue = payload['deep_link_value'];
-      final slug = payload['slug'];
-      final brand = payload['brand'];
+      final productId = int.tryParse(payload['product_id']?.toString() ?? '0');
+      final type = payload['type']?.toString() ?? '';
+      final brandName = payload['brand_name']?.toString() ?? '';
+      final slug = payload['slug']?.toString() ?? '';
+      final expressHour = payload['expresshour']?.toString() ?? '0';
+      final expressValue =
+          int.tryParse(payload['expressValue']?.toString() ?? '0');
+      final wishlistProductId =
+          int.tryParse(payload['wishlistProductId']?.toString() ?? '0');
+      final boardId = int.tryParse(payload['boardId']?.toString() ?? '0');
 
-      if ((deepLinkValue != null && deepLinkValue.toString().isNotEmpty) ||
-          (slug != null && slug.toString().isNotEmpty) ||
-          (brand != null && brand.toString().isNotEmpty)) {
+      final brandId = int.tryParse(payload['brand_id']?.toString() ?? '0');
+      final brandSlug = payload['brand_slug']?.toString() ?? '';
+      final screen = payload['screen']?.toString() ?? '';
+
+      if (productId != null && productId > 0 && type.isNotEmpty) {
         deepLinkHandled = true;
-        Get.offAll(() => LoginScreen(initialTab: 0));
+        Get.offAll(() => ProductDetailsScreen(
+              productId: productId,
+              type: type,
+              brandName: brandName,
+              Slug: slug,
+              expresshour: expressHour,
+              expressValue: expressValue ?? 0,
+              wishlistProductId: wishlistProductId ?? 0,
+              boardId: boardId ?? 0,
+            ));
+      } else if (brandId != null && brandId > 0 && brandSlug.isNotEmpty) {
+        deepLinkHandled = true;
+        Get.offAll(() => AllBrandScreen(
+              id: brandId,
+              slug: brandSlug,
+              screen: screen,
+            ));
       } else {
-        print(
-            '[DeepLinkHandler] No valid deep link fields found. Skipping navigation.');
+        print('[DeepLinkHandler] No target screen found. Navigating to Login.');
+        Get.offAll(() => LoginScreen(initialTab: 0));
       }
     } catch (e) {
       print('Error handling deep link: $e');
