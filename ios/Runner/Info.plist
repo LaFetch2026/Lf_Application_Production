@@ -2,118 +2,101 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!-- App Metadata -->
-    <key>CFBundleDevelopmentRegion</key>
-    <string>$(DEVELOPMENT_LANGUAGE)</string>
-    <key>CFBundleDisplayName</key>
-    <string>Lafetch</string>
-    <key>CFBundleExecutable</key>
-    <string>$(EXECUTABLE_NAME)</string>
-    <key>CFBundleIdentifier</key>
-    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-    <key>CFBundleInfoDictionaryVersion</key>
-    <string>6.0</string>
-    <key>CFBundleName</key>
-    <string>Lafetch</string>
-    <key>CFBundlePackageType</key>
-    <string>APPL</string>
-    <key>CFBundleShortVersionString</key>
-    <string>$(FLUTTER_BUILD_NAME)</string>
-    <key>CFBundleVersion</key>
-    <string>$(FLUTTER_BUILD_NUMBER)</string>
-    <key>CFBundleSignature</key>
-    <string>????</string>
-
-    <!-- URL Schemes: Custom + Facebook -->
-    <key>CFBundleURLTypes</key>
-    <array>
-        <dict>
-            <key>CFBundleTypeRole</key>
-            <string>Editor</string>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>fb915626513880487</string>
-                <string>lafetch</string> <!-- Custom app scheme for deep linking -->
-            </array>
-        </dict>
-    </array>
-
-    <!-- Associated Domains for Universal Links -->
-    <key>AssociatedDomains</key>
-    <array>
-        <string>applinks:lafetch.onelink.me</string> <!-- OneLink domain -->
-    </array>
-
-    <!-- Facebook Configuration -->
-    <key>FacebookAppID</key>
-    <string>915626513880487</string>
-    <key>FacebookDisplayName</key>
-    <string>Lafetch</string>
-    <key>FacebookClientToken</key>
-    <string>bc1c2ad93de1bfbe0f46761e9c26a956</string>
-
-    <!-- Facebook URL Schemes for Login -->
-    <key>LSApplicationQueriesSchemes</key>
-    <array>
-        <string>fbapi</string>
-        <string>fb-messenger-share-api</string>
-        <string>fbauth2</string>
-        <string>fbshareextension</string>
-    </array>
-
-    <!-- Privacy Permissions -->
-    <key>NSUserTrackingUsageDescription</key>
-    <string>This identifier will be used to show you quick delivery products near you and deliver it to your location.</string>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-    </dict>
-    <key>NSCameraUsageDescription</key>
-    <string>To choose user profile picture</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Lafetch requires your location to provide personalized delivery options, including express delivery within 4 hours and seamless address selection for accurate deliveries.</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>Lafetch uses your location to enhance delivery services, including showing products eligible for quick delivery and optimizing delivery addresses.</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Lafetch uses your location to show products available for quick delivery within 4 hours and to streamline adding delivery addresses.</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Used to capture audio for image picker</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>To take user profile picture</string>
-
-    <!-- App Configuration -->
-    <key>UIApplicationSupportsIndirectInputEvents</key>
-    <true/>
-    <key>UIBackgroundModes</key>
-    <array>
-        <string>remote-notification</string>
-    </array>
-    <key>UIFileSharingEnabled</key>
-    <true/>
-    <key>UILaunchStoryboardName</key>
-    <string>LaunchScreen</string>
-    <key>UIMainStoryboardFile</key>
-    <string>Main</string>
-    <key>UISupportedInterfaceOrientations</key>
-    <array>
-        <string>UIInterfaceOrientationPortrait</string>
-        <string>UIInterfaceOrientationPortraitUpsideDown</string>
-        <string>UIInterfaceOrientationLandscapeLeft</string>
-        <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
-    <key>UIViewControllerBasedStatusBarAppearance</key>
-    <false/>
-
-    <!-- Firebase -->
-    <key>FirebaseCrashlyticsCollectionEnabled</key>
-    <true/>
-
-    <!-- AppsFlyer -->
-    <key>AppsFlyerDevKey</key>
-    <string>tzivSReYr7ZyuqVbEP6z6d</string>
-    <key>AppID</key>
-    <string>6739497338</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Lafetch</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Lafetch</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb915626513880487</string>
+				<string>lafetch</string>
+			</array>
+		</dict>
+	</array>
+	<key>AssociatedDomains</key>
+	<array>
+		<string>applinks:lafetch.onelink.me</string>
+	</array>
+	<key>FacebookAppID</key>
+	<string>915626513880487</string>
+	<key>FacebookDisplayName</key>
+	<string>Lafetch</string>
+	<key>FacebookClientToken</key>
+	<string>bc1c2ad93de1bfbe0f46761e9c26a956</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+	</array>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This identifier will be used to show you quick delivery products near you and deliver it to your location.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>To choose user profile picture</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Lafetch requires your location to provide personalized delivery options, including express delivery within 4 hours and seamless address selection for accurate deliveries.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Lafetch uses your location to enhance delivery services, including showing products eligible for quick delivery and optimizing delivery addresses.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Lafetch uses your location to show products available for quick delivery within 4 hours and to streamline adding delivery addresses.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Used to capture audio for image picker</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To take user profile picture</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>FirebaseCrashlyticsCollectionEnabled</key>
+	<true/>
+	<key>AppsFlyerDevKey</key>
+	<string>tzivSReYr7ZyuqVbEP6z6d</string>
+	<key>AppID</key>
+	<string>6739497338</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 </dict>

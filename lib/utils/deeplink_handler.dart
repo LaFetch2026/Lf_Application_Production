@@ -1,10 +1,11 @@
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/loginscreen.dart';
 
 import '../screens/Brands/allbrandscreen.dart';
 import '../screens/catalog/productlist/productdetailsscreen.dart';
+import '../screens/quickscreen.dart';
+import '../screens/welcomescreen.dart';
 
 class DeepLinkHandler {
   static final AppsflyerSdk _appsflyerSdk = AppsflyerSdk(
@@ -69,49 +70,65 @@ class DeepLinkHandler {
       Map<dynamic, dynamic> data, BuildContext context) {
     try {
       final payload = data['payload'] ?? data;
+      final target = payload['target_screen']?.toString() ?? '';
 
       print('[DeepLinkHandler] Handling deep link payload: $payload');
+      deepLinkHandled = true;
 
-      final productId = int.tryParse(payload['product_id']?.toString() ?? '0');
-      final type = payload['type']?.toString() ?? '';
-      final brandName = payload['brand_name']?.toString() ?? '';
-      final slug = payload['slug']?.toString() ?? '';
-      final expressHour = payload['expresshour']?.toString() ?? '0';
-      final expressValue =
-          int.tryParse(payload['expressValue']?.toString() ?? '0');
-      final wishlistProductId =
-          int.tryParse(payload['wishlistProductId']?.toString() ?? '0');
-      final boardId = int.tryParse(payload['boardId']?.toString() ?? '0');
+      switch (target) {
+        case 'product_details':
+          final productId =
+              int.tryParse(payload['product_id']?.toString() ?? '0');
+          final type = payload['type']?.toString() ?? '';
+          final brandName = payload['brand_name']?.toString() ?? '';
+          final slug = payload['slug']?.toString() ?? '';
+          final expressHour = payload['expresshour']?.toString() ?? '0';
+          final expressValue =
+              int.tryParse(payload['expressValue']?.toString() ?? '0');
+          final wishlistProductId =
+              int.tryParse(payload['wishlistProductId']?.toString() ?? '0');
+          final boardId = int.tryParse(payload['boardId']?.toString() ?? '0');
 
-      final brandId = int.tryParse(payload['brand_id']?.toString() ?? '0');
-      final brandSlug = payload['brand_slug']?.toString() ?? '';
-      final screen = payload['screen']?.toString() ?? '';
+          if (productId != null && productId > 0 && type.isNotEmpty) {
+            Get.offAll(() => ProductDetailsScreen(
+                  productId: productId,
+                  type: type,
+                  brandName: brandName,
+                ));
+          } else {
+            throw 'Missing product data';
+          }
+          break;
 
-      if (productId != null && productId > 0 && type.isNotEmpty) {
-        deepLinkHandled = true;
-        Get.offAll(() => ProductDetailsScreen(
-              productId: productId,
-              type: type,
-              brandName: brandName,
-              Slug: slug,
-              expresshour: expressHour,
-              expressValue: expressValue ?? 0,
-              wishlistProductId: wishlistProductId ?? 0,
-              boardId: boardId ?? 0,
-            ));
-      } else if (brandId != null && brandId > 0 && brandSlug.isNotEmpty) {
-        deepLinkHandled = true;
-        Get.offAll(() => AllBrandScreen(
-              id: brandId,
-              slug: brandSlug,
-              screen: screen,
-            ));
-      } else {
-        print('[DeepLinkHandler] No target screen found. Navigating to Login.');
-        Get.offAll(() => LoginScreen(initialTab: 0));
+        case 'brand_page':
+          final brandId = int.tryParse(payload['brand_id']?.toString() ?? '0');
+          final brandSlug = payload['brand_slug']?.toString() ?? '';
+          final screen = payload['screen']?.toString() ?? '';
+
+          if (brandId != null && brandId > 0 && brandSlug.isNotEmpty) {
+            Get.offAll(() => AllBrandScreen(
+                  id: brandId,
+                  slug: brandSlug,
+                  screen: screen,
+                ));
+          } else {
+            throw 'Missing brand data';
+          }
+          break;
+
+        case 'quick_screen':
+          Get.offAll(() => const QuickScreen());
+          break;
+
+        default:
+          print(
+              '[DeepLinkHandler] Unknown target screen. Navigating to Login.');
+          Get.offAll(() => WelcomeScreen());
+          break;
       }
     } catch (e) {
       print('Error handling deep link: $e');
+      Get.offAll(() => WelcomeScreen());
     }
   }
 }

@@ -2853,272 +2853,272 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         ),
                                       ),
                               ),
-                              Obx(() => productController.isDetails.value
-                                  ? SizedBox(
-                                      height: 0,
-                                    )
-                                  : productController
-                                          .productDetails["express_delivery"]
-                                      ? Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 18.0.sp,
-                                              left: 12.sp,
-                                              right: 12.sp),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        right: 12.0.sp),
-                                                    child: Image.asset(
-                                                      getItByIcon,
-                                                      height: 22.sp,
-                                                      width: 22.sp,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: AppSpacingText(
-                                                      text: productController
-                                                                  .productDetails[
-                                                              "express_delivery_estimation"] ??
-                                                          "",
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: titleColor,
-                                                      maxLines: 2,
-                                                      fontSize: 14,
-                                                    ),
-                                                  )
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        )
-                                      : SizedBox(
-                                          height: 0,
-                                        )),
-                              Obx(
-                                () => productController.isDetails.value
-                                    ? SizedBox(
-                                        height: 0,
-                                      )
-                                    : productController
-                                            .productDetails["express_delivery"]
-                                        ? Padding(
-                                            padding: EdgeInsets.only(
-                                              top: 18.0.sp,
-                                              left: 12.sp,
-                                              right: 12.sp,
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right: 12.0.sp),
-                                                  child: Image.asset(
-                                                    truckImage,
-                                                    height: 18.sp,
-                                                    width: 18.sp,
-                                                  ),
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () async {
-                                                    if (productController
-                                                        .isExpressDelivery
-                                                        .value) {
-                                                      productController
-                                                          .isExpressDelivery
-                                                          .value = false;
-                                                      productController
-                                                          .expressValue
-                                                          .value = 0;
-                                                    } else {
-                                                      productController
-                                                          .isExpressDelivery
-                                                          .value = true;
-                                                      productController
-                                                          .expressValue
-                                                          .value = 1;
-                                                    }
-                                                  },
-                                                  child: AppSpacingText(
-                                                    text: 'Express Delivery',
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w500,
-                                                    color: titleColor,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: const SizedBox(
-                                                    width: 0,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 0.sp),
-                                                  child: Container(
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(3.sp),
-                                                        border: Border(
-                                                          top: BorderSide(
-                                                              width: 2.0.sp,
-                                                              color:
-                                                                  greyBorder),
-                                                          left: BorderSide(
-                                                              width: 2.0.sp,
-                                                              color:
-                                                                  greyBorder),
-                                                          right: BorderSide(
-                                                              width: 2.0.sp,
-                                                              color:
-                                                                  greyBorder),
-                                                          bottom: BorderSide(
-                                                              width: 2.0.sp,
-                                                              color:
-                                                                  greyBorder),
-                                                        ),
-                                                      ),
-                                                      width: 20,
-                                                      height: 20,
-                                                      child: Checkbox(
-                                                        value: productController
-                                                            .isExpressDelivery
-                                                            .value,
-                                                        checkColor:
-                                                            btnTextColor,
-                                                        activeColor:
-                                                            whiteBorderColor,
-                                                        side: const BorderSide(
-                                                            color: btnTextColor,
-                                                            width: 0),
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            productController
-                                                                .isExpressDelivery
-                                                                .value = value!;
-                                                            if (productController
-                                                                .isExpressDelivery
-                                                                .value) {
-                                                              productController
-                                                                  .expressValue
-                                                                  .value = 1;
-                                                            } else {
-                                                              productController
-                                                                  .expressValue
-                                                                  .value = 0;
-                                                            }
-                                                          });
-                                                        },
-                                                      )),
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                        : SizedBox(
-                                            height: 0,
-                                          ),
-                              ),
-                              Obx(
-                                () => productController.isDetails.value
-                                    ? SizedBox(
-                                        height: 0,
-                                      )
-                                    : productController
-                                            .productDetails["express_delivery"]
-                                        ? !productController
-                                                .isExpressDelivery.value
-                                            ? SizedBox(
-                                                height: 0,
-                                              )
-                                            : Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 18.0.sp,
-                                                    left: 12.sp,
-                                                    right: 12.sp),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  right:
-                                                                      12.0.sp),
-                                                          child: Image.asset(
-                                                            walletBlack,
-                                                            height: 22.sp,
-                                                            width: 22.sp,
-                                                          ),
-                                                        ),
-                                                        AppSpacingText(
-                                                          text:
-                                                              "Express Delivery Cost :",
-                                                          fontFamily:
-                                                              "Franklin Gothic Regular",
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: blackColor,
-                                                          maxLines: 1,
-                                                          fontSize: 14,
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal:
-                                                                      6),
-                                                          child: AppSpacingText(
-                                                            text:
-                                                                "\u{20B9} ${productController.productDetails["express_delivery_fee"]}",
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            color: titleColor,
-                                                            maxLines: 1,
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            fontSize: 14,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                        : SizedBox(
-                                            height: 0,
-                                          ),
-                              ),
+                              // Obx(() => productController.isDetails.value
+                              //     ? SizedBox(
+                              //         height: 0,
+                              //       )
+                              //     : productController
+                              //             .productDetails["express_delivery"]
+                              //         ? Padding(
+                              //             padding: EdgeInsets.only(
+                              //                 top: 18.0.sp,
+                              //                 left: 12.sp,
+                              //                 right: 12.sp),
+                              //             child: Column(
+                              //               mainAxisSize: MainAxisSize.max,
+                              //               mainAxisAlignment:
+                              //                   MainAxisAlignment.start,
+                              //               crossAxisAlignment:
+                              //                   CrossAxisAlignment.start,
+                              //               children: [
+                              //                 Row(
+                              //                   mainAxisAlignment:
+                              //                       MainAxisAlignment.start,
+                              //                   crossAxisAlignment:
+                              //                       CrossAxisAlignment.center,
+                              //                   children: [
+                              //                     Padding(
+                              //                       padding: EdgeInsets.only(
+                              //                           right: 12.0.sp),
+                              //                       child: Image.asset(
+                              //                         getItByIcon,
+                              //                         height: 22.sp,
+                              //                         width: 22.sp,
+                              //                       ),
+                              //                     ),
+                              //                     Expanded(
+                              //                       flex: 1,
+                              //                       child: AppSpacingText(
+                              //                         text: productController
+                              //                                     .productDetails[
+                              //                                 "express_delivery_estimation"] ??
+                              //                             "",
+                              //                         fontFamily:
+                              //                             "Franklin Gothic Regular",
+                              //                         fontWeight:
+                              //                             FontWeight.w500,
+                              //                         color: titleColor,
+                              //                         maxLines: 2,
+                              //                         fontSize: 14,
+                              //                       ),
+                              //                     )
+                              //                   ],
+                              //                 )
+                              //               ],
+                              //             ),
+                              //           )
+                              //         : SizedBox(
+                              //             height: 0,
+                              //           )),
+                              // Obx(
+                              //   () => productController.isDetails.value
+                              //       ? SizedBox(
+                              //           height: 0,
+                              //         )
+                              //       : productController
+                              //               .productDetails["express_delivery"]
+                              //           ? Padding(
+                              //               padding: EdgeInsets.only(
+                              //                 top: 18.0.sp,
+                              //                 left: 12.sp,
+                              //                 right: 12.sp,
+                              //               ),
+                              //               child: Row(
+                              //                 children: [
+                              //                   Padding(
+                              //                     padding: EdgeInsets.only(
+                              //                         right: 12.0.sp),
+                              //                     child: Image.asset(
+                              //                       truckImage,
+                              //                       height: 18.sp,
+                              //                       width: 18.sp,
+                              //                     ),
+                              //                   ),
+                              //                   GestureDetector(
+                              //                     onTap: () async {
+                              //                       if (productController
+                              //                           .isExpressDelivery
+                              //                           .value) {
+                              //                         productController
+                              //                             .isExpressDelivery
+                              //                             .value = false;
+                              //                         productController
+                              //                             .expressValue
+                              //                             .value = 0;
+                              //                       } else {
+                              //                         productController
+                              //                             .isExpressDelivery
+                              //                             .value = true;
+                              //                         productController
+                              //                             .expressValue
+                              //                             .value = 1;
+                              //                       }
+                              //                     },
+                              //                     child: AppSpacingText(
+                              //                       text: 'Express Delivery',
+                              //                       fontFamily:
+                              //                           "Franklin Gothic Regular",
+                              //                       fontWeight: FontWeight.w500,
+                              //                       color: titleColor,
+                              //                       fontSize: 14,
+                              //                     ),
+                              //                   ),
+                              //                   Expanded(
+                              //                     child: const SizedBox(
+                              //                       width: 0,
+                              //                     ),
+                              //                   ),
+                              //                   Padding(
+                              //                     padding: EdgeInsets.symmetric(
+                              //                         horizontal: 0.sp),
+                              //                     child: Container(
+                              //                         decoration: BoxDecoration(
+                              //                           borderRadius:
+                              //                               BorderRadius
+                              //                                   .circular(3.sp),
+                              //                           border: Border(
+                              //                             top: BorderSide(
+                              //                                 width: 2.0.sp,
+                              //                                 color:
+                              //                                     greyBorder),
+                              //                             left: BorderSide(
+                              //                                 width: 2.0.sp,
+                              //                                 color:
+                              //                                     greyBorder),
+                              //                             right: BorderSide(
+                              //                                 width: 2.0.sp,
+                              //                                 color:
+                              //                                     greyBorder),
+                              //                             bottom: BorderSide(
+                              //                                 width: 2.0.sp,
+                              //                                 color:
+                              //                                     greyBorder),
+                              //                           ),
+                              //                         ),
+                              //                         width: 20,
+                              //                         height: 20,
+                              //                         child: Checkbox(
+                              //                           value: productController
+                              //                               .isExpressDelivery
+                              //                               .value,
+                              //                           checkColor:
+                              //                               btnTextColor,
+                              //                           activeColor:
+                              //                               whiteBorderColor,
+                              //                           side: const BorderSide(
+                              //                               color: btnTextColor,
+                              //                               width: 0),
+                              //                           onChanged: (value) {
+                              //                             setState(() {
+                              //                               productController
+                              //                                   .isExpressDelivery
+                              //                                   .value = value!;
+                              //                               if (productController
+                              //                                   .isExpressDelivery
+                              //                                   .value) {
+                              //                                 productController
+                              //                                     .expressValue
+                              //                                     .value = 1;
+                              //                               } else {
+                              //                                 productController
+                              //                                     .expressValue
+                              //                                     .value = 0;
+                              //                               }
+                              //                             });
+                              //                           },
+                              //                         )),
+                              //                   ),
+                              //                 ],
+                              //               ),
+                              //             )
+                              //           : SizedBox(
+                              //               height: 0,
+                              //             ),
+                              // ),
+                              // Obx(
+                              //   () => productController.isDetails.value
+                              //       ? SizedBox(
+                              //           height: 0,
+                              //         )
+                              //       : productController
+                              //               .productDetails["express_delivery"]
+                              //           ? !productController
+                              //                   .isExpressDelivery.value
+                              //               ? SizedBox(
+                              //                   height: 0,
+                              //                 )
+                              //               : Padding(
+                              //                   padding: EdgeInsets.only(
+                              //                       top: 18.0.sp,
+                              //                       left: 12.sp,
+                              //                       right: 12.sp),
+                              //                   child: Column(
+                              //                     mainAxisSize:
+                              //                         MainAxisSize.max,
+                              //                     mainAxisAlignment:
+                              //                         MainAxisAlignment.start,
+                              //                     crossAxisAlignment:
+                              //                         CrossAxisAlignment.start,
+                              //                     children: [
+                              //                       Row(
+                              //                         mainAxisAlignment:
+                              //                             MainAxisAlignment
+                              //                                 .start,
+                              //                         crossAxisAlignment:
+                              //                             CrossAxisAlignment
+                              //                                 .center,
+                              //                         children: [
+                              //                           Padding(
+                              //                             padding:
+                              //                                 EdgeInsets.only(
+                              //                                     right:
+                              //                                         12.0.sp),
+                              //                             child: Image.asset(
+                              //                               walletBlack,
+                              //                               height: 22.sp,
+                              //                               width: 22.sp,
+                              //                             ),
+                              //                           ),
+                              //                           AppSpacingText(
+                              //                             text:
+                              //                                 "Express Delivery Cost :",
+                              //                             fontFamily:
+                              //                                 "Franklin Gothic Regular",
+                              //                             fontWeight:
+                              //                                 FontWeight.w500,
+                              //                             color: blackColor,
+                              //                             maxLines: 1,
+                              //                             fontSize: 14,
+                              //                           ),
+                              //                           Padding(
+                              //                             padding:
+                              //                                 const EdgeInsets
+                              //                                     .symmetric(
+                              //                                     horizontal:
+                              //                                         6),
+                              //                             child: AppSpacingText(
+                              //                               text:
+                              //                                   "\u{20B9} ${productController.productDetails["express_delivery_fee"]}",
+                              //                               fontFamily:
+                              //                                   "Franklin Gothic Regular",
+                              //                               fontWeight:
+                              //                                   FontWeight.w500,
+                              //                               color: titleColor,
+                              //                               maxLines: 1,
+                              //                               textAlign: TextAlign
+                              //                                   .center,
+                              //                               fontSize: 14,
+                              //                             ),
+                              //                           )
+                              //                         ],
+                              //                       )
+                              //                     ],
+                              //                   ),
+                              //                 )
+                              //           : SizedBox(
+                              //               height: 0,
+                              //             ),
+                              // ),
                             ],
                           ),
                         ),
