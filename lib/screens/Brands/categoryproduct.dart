@@ -20,9 +20,7 @@ import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../commonwidget/app_text.dart';
-
 //import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
 import '../../../controller/product_controller.dart';
 import '../../../controller/wishlist_controller.dart';
@@ -40,7 +38,6 @@ class CategoryProductScreen extends StatefulWidget {
   final String genderName;
   final String screen;
   final String type;
-
   const CategoryProductScreen(
       {super.key,
       required this.categoryName,
@@ -122,13 +119,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         });
       });
     } else {
-      // {This is banner flow else part}
-      WidgetsBinding.instance
-          .addPostFrameCallback((_) => productController.getTagsBannerData(
+      WidgetsBinding.instance.addPostFrameCallback((_) =>
+          productController.getTagsBannerData(
               widget.tagIds,
-              // This is currently empty
               widget.categoryList,
-              // This is actually list of IDs inside Category in Banner like 51,52 for Avvissa
               widget.genderType,
               productController.sortBy.value,
               productController.filterEnable.value,
@@ -812,35 +806,35 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                 top: 3.sp,
                                                                 left: 10.sp,
                                                                 right: 10.sp),
-                                                        // child: Row(
-                                                        //   children: [
-                                                        //     ImageIcon(
-                                                        //       AssetImage(
-                                                        //           truckImage),
-                                                        //       color:
-                                                        //           expressText,
-                                                        //       size: 14.sp,
-                                                        //     ),
-                                                        //     Padding(
-                                                        //       padding: EdgeInsets
-                                                        //           .symmetric(
-                                                        //               horizontal:
-                                                        //                   5.sp),
-                                                        //       child: AppText(
-                                                        //         text: "Express",
-                                                        //         color:
-                                                        //             expressText,
-                                                        //         maxLines: 2,
-                                                        //         fontSize: 11,
-                                                        //         fontFamily:
-                                                        //             "Franklin Gothic Regular",
-                                                        //         fontWeight:
-                                                        //             FontWeight
-                                                        //                 .w400,
-                                                        //       ),
-                                                        //     ),
-                                                        //   ],
-                                                        // ),
+                                                        child: Row(
+                                                          children: [
+                                                            ImageIcon(
+                                                              AssetImage(
+                                                                  truckImage),
+                                                              color:
+                                                                  expressText,
+                                                              size: 14.sp,
+                                                            ),
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          5.sp),
+                                                              child: AppText(
+                                                                text: "Express",
+                                                                color:
+                                                                    expressText,
+                                                                maxLines: 2,
+                                                                fontSize: 11,
+                                                                fontFamily:
+                                                                    "Franklin Gothic Regular",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       )
                                                     : SizedBox(
                                                         height: 0,

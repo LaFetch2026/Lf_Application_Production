@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,18 +13,19 @@ import 'package:lafetch/screens/accountscreen.dart';
 import 'package:lafetch/screens/brandsscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/women_catalog.dart';
+
 //import 'package:lafetch/screens/expressshopscreen.dart';
 import 'package:lafetch/screens/home/women/homescreen.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/quickscreen.dart';
 import 'package:lafetch/utils/constants.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../controller/product_controller.dart';
 
 class BottomNavScreen extends StatefulWidget {
   final int? index;
+
   const BottomNavScreen({super.key, this.index});
 
   @override
@@ -329,7 +331,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                       child: Container(
                         //  height: 80.sp,
                         padding: EdgeInsets.only(
-                            top: 9.5.sp, bottom: Platform.isIOS ? 0 : 10.sp),
+                            top: 8.sp, bottom: Platform.isIOS ? 0 : 10.sp),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.start,

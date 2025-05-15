@@ -2,8 +2,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
-
 //import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +17,6 @@ import 'package:lafetch/commonwidget/homewidget/dummy_home_brand.dart';
 import 'package:lafetch/commonwidget/homewidget/dummy_product_list.dart';
 import 'package:lafetch/commonwidget/homewidget/homelist.dart';
 import 'package:lafetch/controller/brand_controller.dart';
-
 //import 'package:lafetch/commonwidget/homewidget/question_card.dart';
 import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/controller/catalog_controller.dart';
@@ -31,7 +28,6 @@ import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/home/women/productviewscreen.dart';
-
 //import 'package:lafetch/screens/home/women/productviewscreen.dart';
 //import 'package:lafetch/screens/home/faqscreen.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
@@ -41,19 +37,17 @@ import 'package:marquee/marquee.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../commonwidget/app_text.dart';
 import '../../../commonwidget/common_widgets.dart';
 import '../../../controller/search_controller.dart';
 import '../../../controller/wishlist_controller.dart';
-import '../../../utils/analytics_helper.dart';
 import '../../../utils/constants.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 //import '../../account/customercare.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(int)? onPressed;
-
   const HomeScreen({
     this.onPressed,
     super.key,
@@ -64,8 +58,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  bool isRefreshing = false;
-
   final homeController = Get.put(HomeController());
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
@@ -263,21 +255,19 @@ class HomeScreenState extends State<HomeScreen> {
                 i++) {
               homeController.bannerTag1Id
                   .add(homeController.banner1List[itemIndex]["tags"][i]["id"]);
-            } // Does not run as tags is empty
+            }
             for (var i = 0;
                 i < homeController.banner1List[itemIndex]["categories"].length;
                 i++) {
               homeController.bannerCategory1Id.add(
                   homeController.banner1List[itemIndex]["categories"][i]["id"]);
-            } // Only for AVVIISA
+            }
             productController.productCategory =
-                homeController.bannerCategory1Id; // {51,52 etc}
-            productController.productTags = homeController
-                .bannerTag1Id; // It is empty as no products have any tags with them
+                homeController.bannerCategory1Id;
+            productController.productTags = homeController.bannerTag1Id;
             if (/* homeController.banner1List[itemIndex]["tags"].isNotEmpty && */
                 homeController
                     .banner1List[itemIndex]["categories"].isNotEmpty) {
-              print('.... ${homeController.banner1List[itemIndex]["name"]}');
               Get.to(
                 CategoryProductScreen(
                   categoryName: homeController.banner1List[itemIndex]["name"],
@@ -392,13 +382,6 @@ class HomeScreenState extends State<HomeScreen> {
         children: [
           HomeAppbar(
             onPressedSearch: () async {
-              AnalyticsHelper.logSearch(
-                productId: productController.id.value.toString(),
-                // using the search term as ID
-                contentType: 'product',
-                value: 0.0, // optionally use number of results here
-              );
-
               searchController.searchController.clear();
               Get.to(const SearchScreen())?.then((value) => setState(
                     () {
@@ -412,7 +395,6 @@ class HomeScreenState extends State<HomeScreen> {
                               "", false, false, productController.tagId.value); */
                     },
                   ));
-
               await analytics.logEvent(
                 name: 'search_page',
                 parameters: <String, Object>{
@@ -495,21 +477,6 @@ class HomeScreenState extends State<HomeScreen> {
                       );
                     },
                     child: SizedBox(
-                        child: NotificationListener<ScrollNotification>(
-                      onNotification: (ScrollNotification scrollInfo) {
-                        final scrollPosition = scrollInfo.metrics.pixels;
-                        final maxScroll = scrollInfo.metrics.maxScrollExtent;
-                        final scrollPercent = (scrollPosition / maxScroll * 100)
-                            .clamp(0, 100)
-                            .toInt();
-
-                        if ([25, 50, 75, 100].contains(scrollPercent)) {
-                          // Log scroll event based on the depth percentage
-                          AnalyticsHelper.logScrollEvent('$scrollPercent%');
-                        }
-
-                        return false; // Continue with other notifications
-                      },
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -538,7 +505,7 @@ class HomeScreenState extends State<HomeScreen> {
                           ),
                         ],
                       ),
-                    )),
+                    ),
                   ),
                   InkWell(
                     onTap: () async {
@@ -676,6 +643,435 @@ class HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // const SaleCardWidget(),
+                      /*   Obx(() => productController.istags.value
+                          ? Padding(
+                              padding: EdgeInsets.only(
+                                  left: 16.sp,
+                                  bottom: 5.sp,
+                                  right: 16.sp,
+                                  top: 8.sp),
+                              child: SizedBox(
+                                height: 30.sp,
+                                width: double.infinity,
+                                child: ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: 5,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (ctx, index) {
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10.sp),
+                                            child: DummyContainer(
+                                                height: 16, width: 70),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(top: 6.sp),
+                                            child: DummyContainer(
+                                              width: 70,
+                                              height: 2,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }),
+                              ))
+                          : Padding(
+                              padding: EdgeInsets.only(
+                                  left: 16.sp,
+                                  bottom: 5.sp,
+                                  right: 16.sp,
+                                  top: 8.sp),
+                              child: Center(
+                                child: SizedBox(
+                                    width: double.infinity,
+                                    height: 30.sp,
+                                    child: GetBuilder<ProductController>(
+                                      builder: (value) => ListView.builder(
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          itemCount:
+                                              productController.tagsList.length,
+                                          scrollDirection: Axis.horizontal,
+                                          controller:
+                                              productController.tagsController,
+                                          itemBuilder: (ctx, index) {
+                                            return GestureDetector(
+                                              onTap: () async {
+                                                if (productController
+                                                        .current.value ==
+                                                    index) {
+                                                  productController
+                                                      .current.value = 50;
+                                                  productController
+                                                      .tagId.value = 0;
+                                                  productController
+                                                          .tagname.value =
+                                                      "We think you might also like";
+                                                  productController
+                                                      .tagProductList
+                                                      .clear();
+                                                  productController
+                                                      .expressProductList
+                                                      .clear();
+                                                  /*  productController
+                                                      .getExpressProductData(
+                                                          productController
+                                                              .tagId.value,
+                                                          homeController
+                                                              .homeGenderValue
+                                                              .value); */
+                                                  productController
+                                                      .getHandPickedProduct(
+                                                          "",
+                                                          false,
+                                                          false,
+                                                          productController
+                                                              .tagId.value);
+                                                  productController
+                                                      .getTagsProductData(
+                                                          productController
+                                                              .tagId.value,
+                                                          homeController
+                                                              .homeGenderValue
+                                                              .value,
+                                                          0);
+                                                  productController.update();
+                                                } else {
+                                                  productController
+                                                      .current.value = index;
+                                                  productController
+                                                          .tagId.value =
+                                                      productController
+                                                              .tagsList[index]
+                                                          ["id"];
+                                                  productController
+                                                          .tagname.value =
+                                                      productController
+                                                              .tagsList[index]
+                                                          ["name"];
+                                                  productController
+                                                      .tagProductList
+                                                      .clear();
+                                                  productController
+                                                      .expressProductList
+                                                      .clear();
+                                                  /* productController
+                                                      .getExpressProductData(
+                                                          productController
+                                                              .tagId.value,
+                                                          homeController
+                                                              .homeGenderValue
+                                                              .value); */
+                                                  productController
+                                                      .getHandPickedProduct(
+                                                          "",
+                                                          false,
+                                                          false,
+                                                          productController
+                                                              .tagId.value);
+                                                  productController
+                                                      .getTagsProductData(
+                                                          productController
+                                                              .tagId.value,
+                                                          homeController
+                                                              .homeGenderValue
+                                                              .value,
+                                                          0);
+                                                  productController.update();
+                                                }
+
+                                                await analytics.logEvent(
+                                                  name: 'tabclick_home_page',
+                                                  parameters: <String, Object>{
+                                                    'page_name':
+                                                        'tabclick_home_page',
+                                                  },
+                                                );
+                                              },
+                                              child: Container(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          right: 16.sp),
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                            border: Border(
+                                                                bottom: BorderSide(
+                                                                    width: 2,
+                                                                    color: productController.current.value ==
+                                                                            index
+                                                                        ? blackColor
+                                                                        : whiteColor))),
+                                                        child: Center(
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    bottom:
+                                                                        6.sp),
+                                                            child: AppText(
+                                                              text: "${productController.tagsList[index]["name"]}"
+                                                                  .toUpperCase(),
+                                                              color: productController
+                                                                          .current
+                                                                          .value ==
+                                                                      index
+                                                                  ? blackColor
+                                                                  : Color(
+                                                                      0xFF9CA3AF),
+                                                              fontSize: 13,
+                                                              fontFamily: productController
+                                                                          .current
+                                                                          .value ==
+                                                                      index
+                                                                  ? "Franklin Gothic Semibold"
+                                                                  : "Franklin Gothic",
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                    )),
+                              ),
+                            )),
+                      */
+                      /*  Obx(() => homeController.isBanner1.value
+                          ? Padding(
+                              padding: EdgeInsets.only(
+                                  left: 16.sp,
+                                  bottom: 10.sp,
+                                  right: 16.sp,
+                                  top: 6.sp),
+                              child: SizedBox(
+                                height: 210.sp,
+                                width: double.infinity,
+                                child: ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: 5,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (ctx, index) {
+                                      return Container(
+                                        height: 210.sp,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.04),
+                                        ),
+                                      );
+                                    }),
+                              ))
+                          : homeController.banner1List.isNotEmpty &&
+                                  productController.current.value == 50
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 16.sp,
+                                          bottom: 10.sp,
+                                          right: 16.sp,
+                                          top: 6.sp),
+                                      child: CarouselSlider.builder(
+                                        itemCount:
+                                            homeController.banner1List.length,
+                                        options: CarouselOptions(
+                                          height: 210.sp,
+                                          viewportFraction: 1.0,
+                                          aspectRatio: 2.0,
+                                          autoPlay: true,
+                                          onPageChanged: (index, reason) {
+                                            homeController.currentPage.value =
+                                                index;
+                                            homeController.update();
+                                          },
+                                          autoPlayInterval:
+                                              const Duration(seconds: 10),
+                                          enlargeCenterPage: true,
+                                        ),
+                                        itemBuilder: (BuildContext context,
+                                                int itemIndex,
+                                                int pageViewIndex) =>
+                                            GestureDetector(
+                                          onTap: () async {
+                                            homeController.bannerTag1Id.clear();
+                                            homeController.bannerCategory1Id
+                                                .clear();
+                                            productController.productCategory
+                                                .clear();
+                                            productController.productTags
+                                                .clear();
+                                            /*  if (homeController
+                                                .banner1List[itemIndex]["tags"]
+                                                .isNotEmpty) { */
+                                            for (var i = 0;
+                                                i <
+                                                    homeController
+                                                        .banner1List[itemIndex]
+                                                            ["tags"]
+                                                        .length;
+                                                i++) {
+                                              homeController.bannerTag1Id.add(
+                                                  homeController.banner1List[
+                                                          itemIndex]["tags"][i]
+                                                      ["id"]);
+                                            }
+                                            for (var i = 0;
+                                                i <
+                                                    homeController
+                                                        .banner1List[itemIndex]
+                                                            ["categories"]
+                                                        .length;
+                                                i++) {
+                                              homeController.bannerCategory1Id
+                                                  .add(homeController
+                                                              .banner1List[
+                                                          itemIndex]
+                                                      ["categories"][i]["id"]);
+                                            }
+                                            productController.productCategory =
+                                                homeController
+                                                    .bannerCategory1Id;
+                                            productController.productTags =
+                                                homeController.bannerTag1Id;
+                                            Navigator.push(
+                                                context,
+                                                scaleIn(
+                                                  CategoryProductScreen(
+                                                    categoryName: homeController
+                                                            .banner1List[
+                                                        itemIndex]["name"],
+                                                    categoryId: 0,
+                                                    brandId: 0,
+                                                    genderType: homeController
+                                                        .homeGenderValue.value,
+                                                    tagIds: homeController
+                                                        .bannerTag1Id,
+                                                    categoryList: homeController
+                                                        .bannerCategory1Id,
+                                                  ),
+                                                ));
+                                            await analytics.logEvent(
+                                              name: 'banner_home_page',
+                                              parameters: <String, Object>{
+                                                'page_name': 'banner_home_page',
+                                              },
+                                            );
+                                            //   }
+                                          },
+                                          child: CachedNetworkImage(
+                                            cacheManager: CacheManager(Config(
+                                                "customCacheKey",
+                                                stalePeriod:
+                                                    const Duration(days: 15),
+                                                maxNrOfCacheObjects: 100)),
+                                            fit: BoxFit.fill,
+                                            imageUrl: homeController
+                                                    .banner1List[itemIndex]
+                                                ["image"],
+                                            height: 210.sp,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            progressIndicatorBuilder: (context,
+                                                    url, downloadProgress) =>
+                                                Center(
+                                              child: Container(
+                                                height: 210.sp,
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black
+                                                      .withOpacity(0.04),
+                                                ),
+                                              ),
+                                            ),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Image.asset(
+                                              downloadImage,
+                                              height: 210.sp,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    homeController.banner1List.length == 1
+                                        ? SizedBox(
+                                            height: 0,
+                                          )
+                                        : Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 30.sp, right: 10.sp),
+                                            child: Center(
+                                              child: Container(
+                                                width: 25 *
+                                                    homeController
+                                                        .banner1List.length
+                                                        .toDouble(),
+                                                height: 6,
+                                                child: GetBuilder<
+                                                        HomeController>(
+                                                    builder: (value) =>
+                                                        ListView.builder(
+                                                            physics:
+                                                                const BouncingScrollPhysics(),
+                                                            itemCount: value
+                                                                .banner1List
+                                                                .length,
+                                                            scrollDirection:
+                                                                Axis.horizontal,
+                                                            itemBuilder:
+                                                                (ctx, index) {
+                                                              return index ==
+                                                                      value
+                                                                          .currentPage
+                                                                          .value
+                                                                  ? Image.asset(
+                                                                      longIndicator,
+                                                                      width:
+                                                                          48.sp,
+                                                                      height:
+                                                                          6.sp,
+                                                                    )
+                                                                  : Image.asset(
+                                                                      greyIndicator,
+                                                                      width:
+                                                                          8.sp,
+                                                                      height:
+                                                                          8.sp,
+                                                                    );
+                                                            })),
+                                              ),
+                                            ),
+                                          ),
+                                  ],
+                                )
+                              : const SizedBox(
+                                  height: 0,
+                                )), */
                       Obx(() => homeController.isBanner1.value
                           ? Padding(
                               padding: EdgeInsets.only(
@@ -712,8 +1108,7 @@ class HomeScreenState extends State<HomeScreen> {
                                           bottom: 12.sp,
                                           right: 16.sp,
                                         ),
-                                        child:
-                                            /*  CarouselSlider.builder(
+                                        child: /*  CarouselSlider.builder(
                                         itemCount:
                                             homeController.banner1List.length,
                                         options: CarouselOptions(
@@ -884,13 +1279,14 @@ class HomeScreenState extends State<HomeScreen> {
                           width: MediaQuery.of(context).size.width,
                           child: Padding(
                             padding: EdgeInsets.only(
-                              top: Platform.isIOS ? 7.sp : 6.sp,
-                              bottom: Platform.isIOS ? 5.sp : 6.sp,
-                            ),
+                                top: Platform.isIOS ? 7.sp : 6.sp,
+                                bottom: Platform.isIOS ? 5.sp : 6.sp),
                             child: Center(
                               child: Marquee(
                                 text:
                                     '  ✦  More than 50+ Homegrown Brands  ✦  Fast and Reliable  ✦  Fashion for all occassions',
+                                //  text:
+                                //    '  ✦  DELIVERED WITHIN ${homeController.expressHour.value} HRS  ✦  MORE THAN 50 HOMEGROWN BRANDS',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12.sp,
@@ -899,18 +1295,19 @@ class HomeScreenState extends State<HomeScreen> {
                                 ),
                                 scrollAxis: Axis.horizontal,
                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                //   blankSpace: 20.0,
                                 velocity: 100.0,
-                                blankSpace: 0,
-                                accelerationDuration: Duration.zero,
+                                pauseAfterRound: Duration(seconds: 1),
+                                // startPadding: 10.0,
+                                accelerationDuration: Duration(seconds: 1),
                                 accelerationCurve: Curves.linear,
-                                decelerationDuration: Duration.zero,
-                                decelerationCurve: Curves.linear,
-                                pauseAfterRound: Duration.zero,
+                                decelerationDuration:
+                                    Duration(milliseconds: 500),
+                                decelerationCurve: Curves.easeOut,
                               ),
                             ),
                           ),
                         ),
-
                         // )
                       ),
                       Obx(() => catalogController.isCatalog.value
@@ -962,7 +1359,6 @@ class HomeScreenState extends State<HomeScreen> {
                                               (index) {
                                                 return Column(
                                                   children: [
-                                                    //
                                                     GestureDetector(
                                                       onTap: () async {
                                                         List categoryList = [];
@@ -1414,11 +1810,6 @@ class HomeScreenState extends State<HomeScreen> {
                                     );
                                   },
                                   onPressed: (p0) async {
-                                    AnalyticsHelper.logContentView(
-                                      productId:
-                                          productController.id.value.toString(),
-                                      value: 0.0,
-                                    );
                                     Get.to(
                                       ProductDetailsScreen(
                                         productId: p0,

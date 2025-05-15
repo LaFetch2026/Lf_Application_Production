@@ -83,41 +83,24 @@ class LoginScreenState extends State<LoginScreen> {
     print("value: $_authStatus");
   }
 
-  Future<void> showCustomTrackingDialog(BuildContext context) async {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
-    await showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: isDarkMode ? Colors.white : Colors.black,
-        title: Text(
-          'Dear User',
-          style: TextStyle(
-            color: isDarkMode ? Colors.black : Colors.white,
+  Future<void> showCustomTrackingDialog(BuildContext context) async =>
+      await showDialog<void>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Dear User'),
+          content: const Text(
+            'We care about your privacy and data security. We keep this app free by showing ads. '
+            'Can we continue to use your data to tailor ads for you?\n\nYou can change your choice anytime in the app settings. '
+            'Our partners will collect data and use a unique identifier on your device to show you ads.',
           ),
-        ),
-        content: Text(
-          'We care about your privacy and data security. We keep this app free by showing ads. '
-          'Can we continue to use your data to tailor ads for you?\n\nYou can change your choice anytime in the app settings. '
-          'Our partners will collect data and use a unique identifier on your device to show you ads.',
-          style: TextStyle(
-            color: isDarkMode ? Colors.black : Colors.white,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Continue',
-              style: TextStyle(
-                color: isDarkMode ? Colors.black : Colors.white,
-              ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Continue'),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        ),
+      );
 
   requestNotificationPermission() async {
     PermissionStatus status = await Permission.notification.status;

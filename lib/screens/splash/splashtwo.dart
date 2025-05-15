@@ -8,8 +8,6 @@ import 'package:lafetch/utils/constants.dart';
 //import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../utils/analytics_helper.dart';
-import '../../utils/deeplink_handler.dart';
 import '../bottomnavscreen.dart';
 import '../userdetails.dart';
 import '../welcomescreen.dart';
@@ -30,11 +28,8 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 4), () {
-      if (!DeepLinkHandler.deepLinkHandled) {
-        Get.offAll(() => WelcomeScreen());
-      }
-    });
+    getPrefrenceValue();
+    Timer(const Duration(milliseconds: 4400), () => navigateToScreen());
   }
 
   Future getPrefrenceValue() async {
@@ -57,11 +52,9 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
   navigateToScreen() {
     if (token != null) {
       if (token!.isNotEmpty && name != null) {
-        AnalyticsHelper.logContentView(
-          productId: 'home_screen',
-          value: 0.0,
-        );
-
+        /*   Get.offAll(
+          () => const BottomNavScreen(),
+        ); */
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (context) => const BottomNavScreen(),
@@ -70,25 +63,19 @@ class SplashTwoScreenState extends State<SplashTwoScreen> {
         );
       } else {
         if (phone == null) {
-          AnalyticsHelper.logContentView(
-            productId: 'welcome_screen',
-            value: 0.0,
+          Get.off(
+            () => const WelcomeScreen(),
           );
-          Get.off(() => const WelcomeScreen());
         } else {
-          AnalyticsHelper.logContentView(
-            productId: 'user_details_screen',
-            value: 0.0,
+          Get.off(
+            () => const UserDetailsScreen(),
           );
-          Get.off(() => const UserDetailsScreen());
         }
       }
     } else {
-      AnalyticsHelper.logContentView(
-        productId: 'welcome_screen',
-        value: 0.0,
+      Get.offAll(
+        () => const WelcomeScreen(),
       );
-      Get.offAll(() => const WelcomeScreen());
     }
   }
 

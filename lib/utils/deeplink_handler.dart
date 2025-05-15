@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,7 +13,7 @@ class DeepLinkHandler {
   static final AppsflyerSdk _appsflyerSdk = AppsflyerSdk(
     AppsFlyerOptions(
       afDevKey: 'tzivSReYr7ZyuqVbEP6z6d',
-      appId: '915626513880487',
+      appId: _getAppId(), // Dynamically fetch the appId
       showDebug: true,
       timeToWaitForATTUserAuthorization: 15,
     ),
@@ -19,6 +21,17 @@ class DeepLinkHandler {
 
   static bool _isInitialized = false;
   static bool deepLinkHandled = false;
+
+  // Function to dynamically return the correct appId based on platform
+  static String _getAppId() {
+    if (Platform.isIOS) {
+      return '6739497338'; // Replace with your actual iOS App Store ID
+    } else if (Platform.isAndroid) {
+      return 'com.lafetch.customer'; // Replace with your actual Android package name
+    } else {
+      throw Exception('Unsupported platform');
+    }
+  }
 
   static Future<void> init(BuildContext context) async {
     if (_isInitialized) return;
@@ -96,7 +109,7 @@ class DeepLinkHandler {
                   brandName: brandName,
                 ));
           } else {
-            throw 'Missing product data';
+            throw 'Invalid or missing product details';
           }
           break;
 
@@ -112,23 +125,18 @@ class DeepLinkHandler {
                   screen: screen,
                 ));
           } else {
-            throw 'Missing brand data';
+            throw 'Invalid or missing brand data';
           }
           break;
 
         case 'quick_screen':
           Get.offAll(() => const QuickScreen());
           break;
-
-        default:
-          print(
-              '[DeepLinkHandler] Unknown target screen. Navigating to Login.');
-          Get.offAll(() => WelcomeScreen());
-          break;
       }
-    } catch (e) {
-      print('Error handling deep link: $e');
-      Get.offAll(() => WelcomeScreen());
+    } catch (e, stacktrace) {
+      print('[DeepLinkHandler] Error: $e');
+      print('[DeepLinkHandler] Stacktrace: $stacktrace');
+      Get.offAll(() => WelcomeScreen()); // fallback to Home on error
     }
   }
 }

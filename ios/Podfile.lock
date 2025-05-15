@@ -295,6 +295,10 @@ DEPENDENCIES:
   - appsflyer_sdk (from `.symlinks/plugins/appsflyer_sdk/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - facebook_app_events (from `.symlinks/plugins/facebook_app_events/ios`)
+  - FBAEMKit
+  - FBSDKCoreKit
+  - FBSDKCoreKit_Basics
+  - FBSDKLoginKit
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
@@ -484,6 +488,6 @@ SPEC CHECKSUMS:
   video_player_avfoundation: 7c6c11d8470e1675df7397027218274b6d2360b3
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
 
-PODFILE CHECKSUM: cb8a7c7d443ae55fdf4e65f7fffb394d8bbb4a1c
+PODFILE CHECKSUM: 3f810495a4d25451fdabe363c8528254d28064a0
 
 COCOAPODS: 1.16.2
