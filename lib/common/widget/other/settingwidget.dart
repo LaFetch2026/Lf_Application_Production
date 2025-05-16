@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lafetch/common/widget/text/app_text.dart';
-import 'package:lafetch/core/constant/constants.dart';
 
+import '../../../core/constant/constants.dart';
 
+import '../text/app_text.dart';
 
 class SettingWidgets extends StatelessWidget {
   final Function? onPressedNotification;
