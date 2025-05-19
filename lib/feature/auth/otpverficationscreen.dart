@@ -19,9 +19,9 @@ import '../../common/widget/text/app_text.dart';
 import '../../controllers/login_controller.dart';
 import '../../core/constant/constants.dart';
 
-
 class OTPVerficationScreen extends StatefulWidget {
   final String phoneMunber;
+
   const OTPVerficationScreen({required this.phoneMunber, super.key});
 
   @override
@@ -33,6 +33,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   Telephony telephony = Telephony.instance;
   Timer? timer;
+
   @override
   void initState() {
     otpController.showButton.value = false;
@@ -213,7 +214,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                       ),
                     ), */
                     Obx(
-                          () => Padding(
+                      () => Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: 16.sp,
                         ),
@@ -226,24 +227,24 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                               textFieldAlignment: MainAxisAlignment.spaceAround,
                               spaceBetween: 4.sp,
                               fieldWidth:
-                              (MediaQuery.of(context).size.width - 100) / 4,
+                                  (MediaQuery.of(context).size.width - 100) / 4,
                               fieldStyle: FieldStyle.box,
                               outlineBorderRadius: 1.sp,
                               otpFieldStyle: OtpFieldStyle(
                                   focusBorderColor: homeAppBarColor,
                                   enabledBorderColor:
-                                  otpController.otp.value.length == 4
-                                      ? otpController.otpError.value != ""
-                                      ? redColor
-                                      : homeAppBarColor
-                                      : borderColor),
+                                      otpController.otp.value.length == 4
+                                          ? otpController.otpError.value != ""
+                                              ? redColor
+                                              : homeAppBarColor
+                                          : borderColor),
                               style: TextStyle(
                                 color: blackColor,
                                 fontSize: 20.sp,
                                 fontFamily: "Franklin Gothic Regular",
                               ),
                               contentPadding:
-                              EdgeInsets.symmetric(vertical: 20.sp),
+                                  EdgeInsets.symmetric(vertical: 20.sp),
                               onChanged: (code) {
                                 otpController.otp.value = code;
                                 print("Changed: " + code);
@@ -260,18 +261,18 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                     ),
                     Obx(() => otpController.otpError.value != ""
                         ? Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            left: 20.sp, right: 20.sp, top: 24.sp),
-                        child: AppText(
-                          text: otpController.otpError.value,
-                          fontFamily: "Franklin Gothic",
-                          fontWeight: FontWeight.w400,
-                          color: redColor,
-                          fontSize: 14,
-                        ),
-                      ),
-                    )
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: 20.sp, right: 20.sp, top: 24.sp),
+                              child: AppText(
+                                text: otpController.otpError.value,
+                                fontFamily: "Franklin Gothic",
+                                fontWeight: FontWeight.w400,
+                                color: redColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                          )
                         : SizedBox(height: 0)),
                     /*  Padding(
                       padding: EdgeInsets.only(
@@ -328,83 +329,84 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
             ),
             Obx(() => otpController.showButton.value
                 ? Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.sp),
-              child: getSingleButton(
-                  label: "Submit".toUpperCase(),
-                  textColor: whiteColor,
-                  backgroundColor: homeAppBarColor,
-                  controller: otpController,
-                  onPressed: () async {
-                    if (otpController
-                        .checkOtpvalidation(otpController.otp.value)) {
-                      otpController.callVerifyOtp(widget.phoneMunber);
-                    }
-                    await analytics.logEvent(
-                      name: 'otp_screen_btnsubmit',
-                      parameters: <String, Object>{
-                        'page_name': 'otp_screen_btnsubmit',
-                      },
-                    );
-                  },
-                  borderColor: btnTextColor),
-            )
+                    padding: EdgeInsets.symmetric(vertical: 16.sp),
+                    child: getSingleButton(
+                        label: "Submit".toUpperCase(),
+                        textColor: whiteColor,
+                        backgroundColor: homeAppBarColor,
+                        controller: otpController,
+                        onPressed: () async {
+                          if (otpController
+                              .checkOtpvalidation(otpController.otp.value)) {
+                            await otpController.callVerifyOtp(
+                                widget.phoneMunber); // ← Add await here
+                          }
+                          await analytics.logEvent(
+                            name: 'otp_screen_btnsubmit',
+                            parameters: <String, Object>{
+                              'page_name': 'otp_screen_btnsubmit',
+                            },
+                          );
+                        },
+                        borderColor: btnTextColor),
+                  )
                 : Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.sp),
-              child: getSingleButton(
-                  label: "Submit".toUpperCase(),
-                  textColor: whiteColor,
-                  backgroundColor: colorSecondary,
-                  onPressed: () async {
-                    await analytics.logEvent(
-                      name: 'otp_screen_btnsubmit',
-                      parameters: <String, Object>{
-                        'page_name': 'otp_screen_btnsubmit',
-                      },
-                    );
-                  },
-                  borderColor: colorSecondary),
-            )),
+                    padding: EdgeInsets.symmetric(vertical: 16.sp),
+                    child: getSingleButton(
+                        label: "Submit".toUpperCase(),
+                        textColor: whiteColor,
+                        backgroundColor: colorSecondary,
+                        onPressed: () async {
+                          await analytics.logEvent(
+                            name: 'otp_screen_btnsubmit',
+                            parameters: <String, Object>{
+                              'page_name': 'otp_screen_btnsubmit',
+                            },
+                          );
+                        },
+                        borderColor: colorSecondary),
+                  )),
             Obx(
-                  () => otpController.enableResend.value
+              () => otpController.enableResend.value
                   ? Align(
-                alignment: Alignment.center,
-                child: InkWell(
-                  onTap: () {
-                    if (otpController.enableResend.value) {
-                      otpController.callResendOtp(widget.phoneMunber);
-                      otpController.controller.value.clear();
-                      FocusScope.of(context).unfocus();
-                      otpController.showButton.value = true;
-                      setState(() {});
-                      otpController.update();
-                      if (Platform.isAndroid) {
-                        callReceiveMsg();
-                      }
-                    }
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 10.sp),
-                    child: AppText(
-                      text: "Resend Code".toUpperCase(),
-                      fontFamily: "Franklin Gothic",
-                      fontSize: 14,
-                      color: titleColor,
-                    ),
-                  ),
-                ),
-              )
+                      alignment: Alignment.center,
+                      child: InkWell(
+                        onTap: () {
+                          if (otpController.enableResend.value) {
+                            otpController.callResendOtp(widget.phoneMunber);
+                            otpController.controller.value.clear();
+                            FocusScope.of(context).unfocus();
+                            otpController.showButton.value = true;
+                            setState(() {});
+                            otpController.update();
+                            if (Platform.isAndroid) {
+                              callReceiveMsg();
+                            }
+                          }
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 10.sp),
+                          child: AppText(
+                            text: "Resend Code".toUpperCase(),
+                            fontFamily: "Franklin Gothic",
+                            fontSize: 14,
+                            color: titleColor,
+                          ),
+                        ),
+                      ),
+                    )
                   : Padding(
-                padding: EdgeInsets.only(bottom: 10.sp),
-                child: Align(
-                  alignment: Alignment.center,
-                  child: AppText(
-                    text: '00 : ${otpController.secondsRemaining.value}',
-                    fontFamily: "Franklin Gothic",
-                    fontSize: 14,
-                    color: titleColor,
-                  ),
-                ),
-              ),
+                      padding: EdgeInsets.only(bottom: 10.sp),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: AppText(
+                          text: '00 : ${otpController.secondsRemaining.value}',
+                          fontFamily: "Franklin Gothic",
+                          fontSize: 14,
+                          color: titleColor,
+                        ),
+                      ),
+                    ),
             ),
             SizedBox(
               height: 20.sp,

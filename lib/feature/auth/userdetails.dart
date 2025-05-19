@@ -15,7 +15,6 @@ import '../../controllers/login_controller.dart';
 import '../../controllers/profile_controller.dart';
 import '../../core/constant/constants.dart';
 
-
 class UserDetailsScreen extends StatefulWidget {
   const UserDetailsScreen({super.key});
 
@@ -61,18 +60,6 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /* Padding(
-                      padding: EdgeInsets.only(
-                          top: 70.sp, left: 16.sp, right: 16.sp),
-                      child: AppText(
-                        text: "Let’s get to know you\na bit more",
-                        fontFamily: "Franklin Gothic",
-                        maxLines: 2,
-                        fontWeight: FontWeight.w500,
-                        color: blackColor,
-                        fontSize: 28,
-                      ),
-                    ), */
                     SizedBox(
                       height: 40.sp,
                     ),
@@ -88,24 +75,24 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                       ),
                     ),
                     Obx(() => Visibility(
-                      visible: userController.nameError.value != ""
-                          ? true
-                          : false,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: 20.sp,
-                          right: 20.sp,
-                          top: 2.sp,
-                        ),
-                        child: AppText(
-                          text: userController.nameError.value,
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: redColor,
-                          fontSize: 12,
-                        ),
-                      ),
-                    )),
+                          visible: userController.nameError.value != ""
+                              ? true
+                              : false,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 20.sp,
+                              right: 20.sp,
+                              top: 2.sp,
+                            ),
+                            child: AppText(
+                              text: userController.nameError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )),
                     Padding(
                       padding: EdgeInsets.only(top: 24.sp),
                       child: TextFieldWidget(
@@ -114,24 +101,24 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                       ),
                     ),
                     Obx(() => Visibility(
-                      visible: userController.emailError.value != ""
-                          ? true
-                          : false,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: 20.sp,
-                          right: 20.sp,
-                          top: 2.sp,
-                        ),
-                        child: AppText(
-                          text: userController.emailError.value,
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: redColor,
-                          fontSize: 12,
-                        ),
-                      ),
-                    )),
+                          visible: userController.emailError.value != ""
+                              ? true
+                              : false,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 20.sp,
+                              right: 20.sp,
+                              top: 2.sp,
+                            ),
+                            child: AppText(
+                              text: userController.emailError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )),
                     Padding(
                       padding: EdgeInsets.only(
                           left: 16.sp, top: 24.sp, right: 16.sp),
@@ -176,14 +163,14 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                             fillColor: whiteColor,
                             focusedBorder: const OutlineInputBorder(
                                 borderSide:
-                                BorderSide(color: productSubtitleColor)),
+                                    BorderSide(color: productSubtitleColor)),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(1),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(1),
                               borderSide:
-                              const BorderSide(color: productSubtitleColor),
+                                  const BorderSide(color: productSubtitleColor),
                             ),
                             counterText: "",
                             hintText: "Gender",
@@ -194,125 +181,125 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                       ),
                     ),
                     Obx(() => Visibility(
-                      visible: userController.genderError.value != ""
-                          ? true
-                          : false,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: 20.sp,
-                          right: 20.sp,
-                          top: 2.sp,
-                        ),
-                        child: AppText(
-                          text: userController.genderError.value,
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: redColor,
-                          fontSize: 12,
-                        ),
-                      ),
-                    )),
+                          visible: userController.genderError.value != ""
+                              ? true
+                              : false,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 20.sp,
+                              right: 20.sp,
+                              top: 2.sp,
+                            ),
+                            child: AppText(
+                              text: userController.genderError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )),
                     Obx(
-                          () => userController.showList.value
+                      () => userController.showList.value
                           ? Padding(
-                        padding:
-                        EdgeInsets.only(left: 16.sp, right: 16.sp),
-                        child: ListView.builder(
-                            primary: false,
-                            shrinkWrap: true,
-                            physics: const ScrollPhysics(),
-                            itemCount: userController.genderList.length,
-                            padding: EdgeInsets.zero,
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (ctx, index) {
-                              return Column(
-                                children: [
-                                  Container(
-                                    color: whiteColor,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.center,
+                              padding:
+                                  EdgeInsets.only(left: 16.sp, right: 16.sp),
+                              child: ListView.builder(
+                                  primary: false,
+                                  shrinkWrap: true,
+                                  physics: const ScrollPhysics(),
+                                  itemCount: userController.genderList.length,
+                                  padding: EdgeInsets.zero,
+                                  scrollDirection: Axis.vertical,
+                                  itemBuilder: (ctx, index) {
+                                    return Column(
                                       children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            userController
-                                                .gerderController
-                                                .text =
-                                            userController
-                                                .genderList[index];
-                                            if (userController
-                                                .gerderController.text
-                                                .toString() ==
-                                                "Female") {
-                                              userController
-                                                  .genderId.value = 1;
-                                            } else if (userController
-                                                .gerderController.text
-                                                .toString() ==
-                                                "Male") {
-                                              userController
-                                                  .genderId.value = 2;
-                                            } else {
-                                              userController
-                                                  .genderId.value = 3;
-                                            }
-                                            userController
-                                                .showList.value = false;
-                                          },
-                                          child: Container(
-                                            width: double.infinity,
-                                            color: whiteTextColor,
-                                            alignment: Alignment.center,
-                                            child: Padding(
-                                              padding:
-                                              EdgeInsets.symmetric(
-                                                  vertical: 10.sp),
-                                              child: Text(
-                                                userController
-                                                    .genderList[index],
-                                                style: TextStyle(
-                                                  fontSize: 14.sp,
-                                                  color: nameText,
-                                                  fontFamily:
-                                                  "Franklin Gothic Regular",
+                                        Container(
+                                          color: whiteColor,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  userController
+                                                          .gerderController
+                                                          .text =
+                                                      userController
+                                                          .genderList[index];
+                                                  if (userController
+                                                          .gerderController.text
+                                                          .toString() ==
+                                                      "Female") {
+                                                    userController
+                                                        .genderId.value = 1;
+                                                  } else if (userController
+                                                          .gerderController.text
+                                                          .toString() ==
+                                                      "Male") {
+                                                    userController
+                                                        .genderId.value = 2;
+                                                  } else {
+                                                    userController
+                                                        .genderId.value = 3;
+                                                  }
+                                                  userController
+                                                      .showList.value = false;
+                                                },
+                                                child: Container(
+                                                  width: double.infinity,
+                                                  color: whiteTextColor,
+                                                  alignment: Alignment.center,
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 10.sp),
+                                                    child: Text(
+                                                      userController
+                                                          .genderList[index],
+                                                      style: TextStyle(
+                                                        fontSize: 14.sp,
+                                                        color: nameText,
+                                                        fontFamily:
+                                                            "Franklin Gothic Regular",
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ),
-                                        ),
-                                        index == 2
-                                            ? SizedBox(
-                                          width: double.infinity,
-                                          height: 5.sp,
-                                        )
-                                            : Padding(
-                                          padding: const EdgeInsets
-                                              .symmetric(
-                                              horizontal: 16,
-                                              vertical: 2),
-                                          child: Container(
-                                            width: double.infinity,
-                                            color: colorSecondary,
-                                            height: 1.sp,
+                                              index == 2
+                                                  ? SizedBox(
+                                                      width: double.infinity,
+                                                      height: 5.sp,
+                                                    )
+                                                  : Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 16,
+                                                          vertical: 2),
+                                                      child: Container(
+                                                        width: double.infinity,
+                                                        color: colorSecondary,
+                                                        height: 1.sp,
+                                                      ),
+                                                    ),
+                                            ],
                                           ),
                                         ),
                                       ],
-                                    ),
-                                  ),
-                                ],
-                              );
-                            }),
-                      )
+                                    );
+                                  }),
+                            )
                           : const SizedBox(
-                        height: 0,
-                      ),
+                              height: 0,
+                            ),
                     ),
                   ],
                 ),
               ),
             ),
             Obx(
-                  () => Padding(
+              () => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: getSingleButton(
                     label: "Continue".toUpperCase(),
@@ -321,10 +308,22 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                     backgroundColor: colorSecondary,
                     onPressed: () async {
                       if (userController.checkUservalidation(
+                        userController.nameController.text.toString().trim(),
+                        userController.emailController.text.toString().trim(),
+                        userController.genderId.value,
+                      )) {
+                        // Call the update profile method from the login controller
+                        await loginController.callUpdateUserProfile(
                           userController.nameController.text.toString().trim(),
                           userController.emailController.text.toString().trim(),
-                          userController.genderId.value)) {
-                        userController.callupdateProfile("user", "", "", false);
+                          userController.genderId.value == 1
+                              ? "female"
+                              : userController.genderId.value == 2
+                                  ? "male"
+                                  : "other", // Convert genderId to string
+                          loginController.number
+                              .value, // Use the phone number from LoginController
+                        );
                         await analytics.logEvent(
                           name: 'user_detail_btnContinue',
                           parameters: <String, Object>{

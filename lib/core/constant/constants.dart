@@ -269,8 +269,11 @@ const sandLoader = 'assets/images/sand_loader.json';
 
 class ApiConstants {
   ApiConstants._();
-  static const String baseUrl =
-      "https://api.la-fetch.com/customer/api"; //production
+
+  // static const String baseUrl =
+  //     "https://api.la-fetch.com/customer/api"; //production
+
+  static const String baseUrl = "http://localhost:8080/api"; //testing nordjs
 
   static const String razorPayKey = "rzp_live_rhkxLWkaUrRAHO"; //production
 
