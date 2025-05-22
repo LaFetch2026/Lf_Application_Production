@@ -5,9 +5,8 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/other/common_widget.dart';
 import '../common/widget/other/confirmdelete.dart';
@@ -15,7 +14,6 @@ import '../core/constant/constants.dart';
 import '../feature/auth/loginscreen.dart';
 import '../feature/profile/bottomnavscreen.dart';
 import 'base_controller.dart';
-
 
 class ProfileController extends BaseController {
   RxBool showList = false.obs;
@@ -27,7 +25,7 @@ class ProfileController extends BaseController {
   dynamic defaultAddress = "".obs;
   RxString queryText = "".obs;
   List addressList = [].obs;
-  dynamic profileDetails = "".obs;
+  var profileDetails = <String, dynamic>{}.obs; // MAKE IT OBSERVABLE
   RxBool isOrder = false.obs;
   RxBool isOffer = false.obs;
   RxBool isPermotion = true.obs;
@@ -153,33 +151,26 @@ class ProfileController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/profile"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
+        Uri.parse("${ApiConstants.baseUrl}/profile/user-profile/3"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
+      );
+
       if (response.statusCode == 200) {
+        var responseData = json.decode(response.body);
         if (responseData != null) {
-          profileDetails = responseData;
+          profileDetails.value = responseData; // UPDATE OBSERVABLE
           if (responseData['phone'] != null) {
             prefs.setString('phone_number', responseData['phone']);
           }
         }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        /*  Get.to(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        ); */
-        //getSnackBar("Authentication failed");
       } else {
-        getSnackBar("get product failed");
+        getSnackBar("Failed to load profile");
       }
     } catch (e) {
-      print("error$e");
+      print("error $e");
     }
     isProfile.value = false;
   }
@@ -219,13 +210,13 @@ class ProfileController extends BaseController {
       }
 
       var response =
-      await http.put(Uri.parse("${ApiConstants.baseUrl}/profile"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            'Content-Type': 'application/json;charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          },
-          body: json.encode(sendData));
+          await http.put(Uri.parse("${ApiConstants.baseUrl}/profile"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         if (type == "edit") {
@@ -284,7 +275,7 @@ class ProfileController extends BaseController {
             prefs.setString('phone_number', responseData['data']['phone']);
           }
           Get.offAll(
-                () => const BottomNavScreen(),
+            () => const BottomNavScreen(),
           );
         }
       } else if (response.statusCode == 400) {
@@ -341,7 +332,7 @@ class ProfileController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -394,13 +385,13 @@ class ProfileController extends BaseController {
       };
 
       var response =
-      await http.put(Uri.parse("${ApiConstants.baseUrl}/profile"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            'Content-Type': 'application/json;charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          },
-          body: json.encode(sendData));
+          await http.put(Uri.parse("${ApiConstants.baseUrl}/profile"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
@@ -425,34 +416,22 @@ class ProfileController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.post(
-          Uri.parse("${ApiConstants.baseUrl}/logout"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
+        Uri.parse("${ApiConstants.baseUrl}/auth/sign-out/1"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
+      );
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
-        SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.clear();
         GoogleSignIn googleSignIn = GoogleSignIn();
         googleSignIn.signOut();
-        Get.offAll(
-              () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        getSnackBar("Authentication failed");
-        Get.offAll(
-              () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
+        Get.offAll(() => const LoginScreen(initialTab: 0));
       } else {
-        getSnackBar("logout failed");
+        getSnackBar("Logout failed");
+        print(response.body);
       }
     } catch (e) {
       print(e.toString());
@@ -463,30 +442,18 @@ class ProfileController extends BaseController {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.post(
-          Uri.parse("${ApiConstants.baseUrl}/account-deletion"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
+      var response = await http.delete(
+        Uri.parse("${ApiConstants.baseUrl}/auth/delete-account/1"),
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')} ",
+        },
+      );
       if (response.statusCode == 200) {
-        Get.off(
-              () => const ConfirmDeleteScreen(),
-        );
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 400) {
-        var responseData = json.decode(response.body);
-        print(responseData);
-      } else if (response.statusCode == 401) {
-        getSnackBar("Authentication failed");
-        Get.offAll(
-              () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
+        Get.off(() => const ConfirmDeleteScreen());
       } else {
-        getSnackBar("account delete failed");
+        getSnackBar("Account deletion failed");
+        print(response.body);
       }
     } catch (e) {
       print(e.toString());

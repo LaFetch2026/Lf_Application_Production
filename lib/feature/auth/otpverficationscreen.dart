@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'dart:async';
 import 'dart:io';
 
@@ -164,7 +162,9 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
                           Column(
                             children: [
                               Text(
-                                widget.phoneMunber,
+                                widget.phoneMunber.startsWith("+91")
+                                    ? widget.phoneMunber
+                                    : "+91${widget.phoneMunber}",
                                 style: TextStyle(
                                   fontFamily: "Franklin Gothic Regular",
                                   fontSize: 14.sp,

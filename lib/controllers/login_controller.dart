@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:otp_text_field_v2/otp_field_v2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Internal imports
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
 import '../feature/auth/otpverficationscreen.dart';
@@ -26,22 +27,20 @@ class LoginController extends BaseController {
   RxBool isGuest = false.obs;
   RxBool enableResend = false.obs;
   final Rx<OtpFieldControllerV2> controller = OtpFieldControllerV2().obs;
-  RxBool isSignIn = false.obs; // Add this variable to track sign-in/sign-up
+  RxBool isSignIn = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    checkLoginStatus(); // Check login status when the controller is initialized
+    checkLoginStatus();
   }
 
   Future<void> checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     if (token != null && token.isNotEmpty) {
-      // The user has a token, meaning they are logged in
-      Get.offAll(() => const BottomNavScreen()); // Go to the home screen
+      Get.offAll(() => const BottomNavScreen());
     }
-    // If token is null or empty, do nothing (stay on the login/welcome screen)
   }
 
   bool checkOtpvalidation(String otpnumber) {
@@ -75,62 +74,55 @@ class LoginController extends BaseController {
   }
 
   bool checkRegistervalidation(String phone) {
-    String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
-    RegExp regExp = RegExp(patttern);
-    if (phone.isEmpty) {
-      registerError.value = "Enter Phone Number";
-      return false;
-    }
-    if (phone.length < 10) {
-      registerError.value = "Enter 10 digit Phone Number";
-      return false;
-    }
-    if (!regExp.hasMatch(phone)) {
-      registerError.value = "Enter valid Phone Number";
-      return false;
-    }
-    return true;
+    return checkNumbervalidation(phone); // Same validation logic
   }
 
-  callRegisterAccount() async {
-    isSignIn.value = false; // Set to false for register
+  Future<void> callRegisterAccount() async {
+    isSignIn.value = false;
     showLoading();
     secondsRemaining.value = 30;
     enableResend.value = false;
+
     try {
-      var response = await http.post(
+      final phoneNumber =
+          number.value.startsWith("+91") ? number.value : "+91${number.value}";
+
+      final response = await http.post(
         Uri.parse("${ApiConstants.baseUrl}/auth/sign-up-send-otp"),
-        body: {
-          "phone": number.value,
+        headers: {
+          "Content-Type": "application/json",
         },
+        body: json.encode({
+          "phone": phoneNumber,
+        }),
       );
-      var responseData = json.decode(response.body);
+
+      final responseData = json.decode(response.body);
+      print("Register API response: $responseData");
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         loginError.value = "";
         registerError.value = "";
-        Get.to(OTPVerficationScreen(phoneMunber: number.value));
-        hideLoading(); // Hide loading here after navigation
+        Get.to(() => OTPVerficationScreen(
+              phoneMunber: phoneNumber,
+            ));
       } else if (response.statusCode == 400) {
-        if (responseData['errors']['phone'] != null) {
-          loginError.value = responseData['errors']['phone'][0];
-          registerError.value = responseData['errors']['phone'][0];
+        final error = responseData['errors']?['phone']?[0];
+        if (error != null) {
+          loginError.value = error;
+          registerError.value = error;
+        } else {
+          getSnackBar("Invalid phone number or already registered.");
         }
-        if (responseData['errors']['otp'] != null) {
-          loginError.value = responseData['errors']['otp'];
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        getSnackBar("Authentication failed");
       } else {
-        getSnackBar("login failed");
+        getSnackBar("Registration failed. Please try again.");
+        print("Unexpected status: ${response.statusCode}");
       }
     } catch (e) {
-      print(e.toString());
+      print("Exception in callRegisterAccount: $e");
+      getSnackBar("Something went wrong. Please check your internet.");
     } finally {
-      if (pageState ==
-          PageState.LOADING) // only hide if still loading, and not error
-        hideLoading();
+      hideLoading();
     }
   }
 
@@ -140,47 +132,30 @@ class LoginController extends BaseController {
     try {
       var response = await http.post(
         Uri.parse("${ApiConstants.baseUrl}/auth/resend-otp"),
-        body: {
-          "phone": num,
-        },
+        body: {"phone": num},
       );
       var responseData = json.decode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         otpError.value = "";
         Get.to(OTPVerficationScreen(phoneMunber: number.value));
-      } else if (response.statusCode == 400) {
-        if (responseData['errors']['phone'] != null) {
-          otpError.value = responseData['errors']['phone'][0];
-        }
-        if (responseData['errors']['otp'] != null) {
-          otpError.value = responseData['errors']['otp'];
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        getSnackBar("Authentication failed");
       } else {
-        getSnackBar("resend otp failed");
+        getSnackBar("Resend OTP failed");
       }
     } catch (e) {
       print(e.toString());
     } finally {
-      if (pageState ==
-          PageState.LOADING) // only hide if still loading, and not error
-        hideLoading();
+      hideLoading();
     }
   }
 
   callVerifyOtp(String phone) async {
     showLoading();
-    final prefs = await SharedPreferences.getInstance(); // Define prefs here
+    final prefs = await SharedPreferences.getInstance();
     try {
       final Map<String, dynamic> sendData = {
         "phone": phone,
         "otp": otp.value,
       };
-
-      print("📦 Sending OTP verification request: $sendData");
 
       var response = await http.post(
         Uri.parse("${ApiConstants.baseUrl}/auth/verify-otp"),
@@ -192,16 +167,11 @@ class LoginController extends BaseController {
       );
 
       var responseData = json.decode(response.body);
-      print("📥 OTP Verification Response: $responseData");
-
       if (response.statusCode == 200 || response.statusCode == 201) {
-        otpError.value = "";
         final data = responseData['data'];
+        final accessToken = responseData['token'];
+        if (accessToken != null) prefs.setString('token', accessToken);
         if (data != null) {
-          final accessToken = responseData['token'];
-          if (accessToken != null) {
-            prefs.setString('token', accessToken);
-          }
           prefs.setInt('userId', data['id']);
           prefs.setString('name', data['fullName']);
           prefs.setString('email', data['email']);
@@ -209,71 +179,39 @@ class LoginController extends BaseController {
           if (data['gender'] != null) {
             prefs.setInt('gender', data['gender']);
           }
-          await Get.offAll(() =>
-              const BottomNavScreen()); // Go to BottomNavScreen if sign in or has name
-          hideLoading(); // Hide loading here after navigation
+          Get.offAll(() => const BottomNavScreen());
         } else {
-          if (isSignIn.value) {
-            await Get.offAll(
-                () => const BottomNavScreen()); //  Go to home screen if sign in
-            hideLoading(); // Hide loading here after navigation
-          } else {
-            Get.off(() =>
-                const UserDetailsScreen()); // Go to UserDetailsScreen if sign up
-            hideLoading(); // Hide loading here after navigation
-          }
+          isSignIn.value
+              ? Get.offAll(() => const BottomNavScreen())
+              : Get.off(() => const UserDetailsScreen());
         }
-      } else if (response.statusCode == 400) {
-        if (responseData['errors'] != null) {
-          if (responseData['errors']['otp'] != null &&
-              responseData['errors']['otp'].isNotEmpty) {
-            otpError.value = responseData['errors']['otp'][0];
-          }
-          if (responseData['errors']['phone'] != null &&
-              responseData['errors']['phone'].isNotEmpty) {
-            otpError.value = responseData['errors']['phone'][0];
-          }
-        }
-      } else if (response.statusCode == 401) {
-        getSnackBar("Authentication failed");
-      } else if (response.statusCode == 500) {
-        getSnackBar("Server error. Please try again.");
       } else {
-        getSnackBar("OTP verification failed. Try again.");
+        getSnackBar("OTP verification failed.");
       }
     } catch (e) {
       print("❌ Exception in callVerifyOtp: $e");
-      getSnackBar("Something went wrong. Please try again.");
+      getSnackBar("Something went wrong.");
     } finally {
-      if (pageState ==
-          PageState.LOADING) // only hide if still loading, and not error
-        hideLoading();
+      hideLoading();
     }
   }
 
   Future<void> callUpdateUserProfile(
       String fullName, String email, String gender, String phone) async {
     showLoading();
-    final prefs = await SharedPreferences.getInstance(); // Define prefs here
+    final prefs = await SharedPreferences.getInstance();
 
     try {
       final Map<String, dynamic> body = {
         "fullName": fullName,
         "email": email,
-        // "gender": gender, // Removed gender here
         "phone": phone,
-        "type": "signup" // Added type here
+        "type": "signup"
       };
+      if (gender.isNotEmpty) body['gender'] = gender;
 
-      // Add gender only if it's not null or empty
-      if (gender != null && gender.isNotEmpty) {
-        body['gender'] = gender;
-      }
-
-      print("🚀 Sending update profile request: $body"); // Updated log
       var response = await http.put(
         Uri.parse("${ApiConstants.baseUrl}/auth/update-user-profile"),
-        // Corrected endpoint
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -282,41 +220,69 @@ class LoginController extends BaseController {
       );
 
       var responseData = json.decode(response.body);
-      print("📥 Update Profile Response: $responseData");
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = responseData['data'];
-        if (data != null) {
-          final accessToken = data['token'];
-          if (accessToken != null) {
-            prefs.setString('chatToken', accessToken);
-            prefs.setString('token', accessToken);
-            prefs.setInt('userId', data['id']);
-            prefs.setString('name', data['fullName']); // Corrected to fullName
-            prefs.setString('email', data['email']);
-            prefs.setString('phonenumber', data['phone']);
-            if (data['gender'] != null) {
-              prefs.setInt('gender', data['gender']);
-            }
-            await Get.offAll(() => const BottomNavScreen());
-          } else {
-            getSnackBar("Chat token not found in the update profile response.");
-          }
-        } else {
-          getSnackBar(
-              "Invalid response format: 'data' object is missing."); //handle null data
+        final accessToken = data['token'];
+        final refreshToken = data['refreshToken'];
+
+        if (accessToken != null) prefs.setString('token', accessToken);
+        if (refreshToken != null) prefs.setString('refreshToken', refreshToken);
+
+        prefs.setInt('userId', data['id']);
+        prefs.setString('name', data['fullName']);
+        prefs.setString('email', data['email']);
+        prefs.setString('phonenumber', data['phone']);
+        if (data['gender'] != null) {
+          prefs.setInt('gender', data['gender']);
         }
+        Get.offAll(() => const BottomNavScreen());
       } else {
-        // Handle error scenarios
-        if (responseData['errors'] != null) {
-          getSnackBar(responseData['errors'].values.join("\n"));
-        } else {
-          getSnackBar("Failed to update profile.");
-        }
+        getSnackBar("Failed to update profile.");
       }
     } catch (e) {
       print("❌ Error updating profile: $e");
-      getSnackBar("Something went wrong while updating profile.");
+      getSnackBar("Something went wrong.");
+    } finally {
+      hideLoading();
+    }
+  }
+
+  Future<void> callRefreshToken() async {
+    showLoading();
+    final prefs = await SharedPreferences.getInstance();
+    final refreshToken = prefs.getString('refreshToken');
+
+    if (refreshToken == null || refreshToken.isEmpty) {
+      getSnackBar("No refresh token found.");
+      hideLoading();
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse("${ApiConstants.baseUrl}/auth/refresh-token"),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({"refreshToken": refreshToken}),
+      );
+
+      final responseData = json.decode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final newAccessToken = responseData['token'];
+        if (newAccessToken != null) {
+          prefs.setString('token', newAccessToken);
+          getSnackBar("Token refreshed successfully");
+        } else {
+          getSnackBar("Failed to refresh token: No token returned");
+        }
+      } else {
+        getSnackBar("Token refresh failed");
+      }
+    } catch (e) {
+      print("❌ Error refreshing token: $e");
+      getSnackBar("Something went wrong while refreshing token.");
     } finally {
       hideLoading();
     }
@@ -332,14 +298,19 @@ class LoginController extends BaseController {
       var response = await http.post(
         Uri.parse("${ApiConstants.baseUrl}/auth/sign-in-send-otp"),
         body: {
-          "phone": phone,
+          "phone": number.value.startsWith("+91")
+              ? number.value
+              : "+91${number.value}",
         },
       );
+
+      print('${number.value}');
       var responseData = json.decode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         loginError.value = "";
-        Get.to(OTPVerficationScreen(
-            phoneMunber: phone)); // Use the passed phone number
+        final formattedPhone = phone.startsWith("+91") ? phone : "+91$phone";
+        Get.to(OTPVerficationScreen(phoneMunber: formattedPhone));
+        // Use the passed phone number
         hideLoading(); // Hide loading here after navigation
       } else if (response.statusCode == 400) {
         if (responseData['errors']['phone'] != null) {
@@ -366,9 +337,16 @@ class LoginController extends BaseController {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
+      final String verificationType =
+          isSignIn.value ? "login" : "signup"; // Determine type based on flow
+
+      final formattedPhone =
+          number.value.startsWith("+91") ? number.value : "+91${number.value}";
+
       final Map<String, dynamic> sendData = {
-        "phone": phone,
+        "phone": formattedPhone,
         "otp": otp.value,
+        "type": verificationType,
       };
 
       var response = await http.post(

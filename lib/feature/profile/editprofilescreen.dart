@@ -4,18 +4,15 @@ import 'dart:io';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 //import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-
 import 'package:otp_text_field_v2/otp_field_style_v2.dart';
 import 'package:otp_text_field_v2/otp_field_v2.dart';
-
 import 'package:telephony/telephony.dart';
 
 import '../../common/widget/appbar/backbutton_appbar.dart';
-import '../../common/widget/other/common_widget.dart';
 import '../../common/widget/other/text_field.dart';
 import '../../common/widget/text/app_text.dart';
 import '../../common/widget/text/number_widget.dart';
@@ -29,12 +26,13 @@ class EditProfileScreen extends StatefulWidget {
   final String number;
 
   final int genderId;
+
   const EditProfileScreen(
       {super.key,
-        required this.name,
-        required this.email,
-        required this.number,
-        required this.genderId});
+      required this.name,
+      required this.email,
+      required this.number,
+      required this.genderId});
 
   @override
   State<EditProfileScreen> createState() => EditProfileScreenState();
@@ -64,7 +62,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     } else {
       profileController.isEditNumber.value = false;
     }
-    profileController.genderId.value = widget.genderId;
+    // profileController.genderId.value = widget.genderId;
     if (widget.genderId == 1) {
       profileController.gerderController.text = "Female";
     } else if (widget.genderId == 2) {
@@ -117,7 +115,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
         setState(() {
-          profileController.showList.value = false;
+          // profileController.showList.value = false;
         });
       },
       child: Scaffold(
@@ -142,26 +140,26 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ),
                     Obx(() => Visibility(
-                      visible: profileController.nameError.value != ""
-                          ? true
-                          : false,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: 20.sp,
-                          right: 20.sp,
-                          top: 2.sp,
-                        ),
-                        child: AppText(
-                          text: profileController.nameError.value,
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: redColor,
-                          fontSize: 12,
-                        ),
-                      ),
-                    )),
+                          visible: profileController.nameError.value != ""
+                              ? true
+                              : false,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 20.sp,
+                              right: 20.sp,
+                              top: 2.sp,
+                            ),
+                            child: AppText(
+                              text: profileController.nameError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )),
                     Obx(
-                          () => Padding(
+                      () => Padding(
                         padding: EdgeInsets.only(top: 10.sp),
                         child: NumberWidget(
                             login: false,
@@ -171,77 +169,77 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ),
                     Obx(() => Visibility(
-                      visible: profileController.phoneError.value != ""
-                          ? true
-                          : false,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: 20.sp,
-                          right: 20.sp,
-                          top: 2.sp,
-                        ),
-                        child: AppText(
-                          text: profileController.phoneError.value,
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: redColor,
-                          fontSize: 12,
-                        ),
-                      ),
-                    )),
+                          visible: profileController.phoneError.value != ""
+                              ? true
+                              : false,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 20.sp,
+                              right: 20.sp,
+                              top: 2.sp,
+                            ),
+                            child: AppText(
+                              text: profileController.phoneError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )),
                     Obx(() => profileController.isEditNumber.value
                         ? Row(
-                      children: [
-                        const Expanded(
-                          flex: 1,
-                          child: SizedBox(
-                            height: 0,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            profileController.isEditNumber.value = false;
-                            profileController.phoneController.clear();
-                            await analytics.logEvent(
-                              name: 'change_number_click',
-                              parameters: <String, Object>{
-                                'page_name': 'change_number_click',
-                              },
-                            );
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16.sp, vertical: 5.sp),
-                            child: AppText(
-                              text: "Change number",
-                              fontFamily: "Franklin Gothic",
-                              fontSize: 14,
-                              textAlign: TextAlign.right,
-                              color: colorPrimary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
+                            children: [
+                              const Expanded(
+                                flex: 1,
+                                child: SizedBox(
+                                  height: 0,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () async {
+                                  profileController.isEditNumber.value = false;
+                                  profileController.phoneController.clear();
+                                  await analytics.logEvent(
+                                    name: 'change_number_click',
+                                    parameters: <String, Object>{
+                                      'page_name': 'change_number_click',
+                                    },
+                                  );
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16.sp, vertical: 5.sp),
+                                  child: AppText(
+                                    text: "Change number",
+                                    fontFamily: "Franklin Gothic",
+                                    fontSize: 14,
+                                    textAlign: TextAlign.right,
+                                    color: colorPrimary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
                         : const SizedBox(
-                      height: 0,
-                    )),
+                            height: 0,
+                          )),
                     Obx(
-                          () => profileController.isPhoneNumber.value
+                      () => profileController.isPhoneNumber.value
                           ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16.sp, vertical: 10.sp),
-                            child: AppText(
-                              text: "Enter OTP",
-                              fontFamily: "Franklin Gothic",
-                              fontSize: 14,
-                              color: colorPrimary,
-                            ),
-                          ),
-                          /*     Padding(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16.sp, vertical: 10.sp),
+                                  child: AppText(
+                                    text: "Enter OTP",
+                                    fontFamily: "Franklin Gothic",
+                                    fontSize: 14,
+                                    color: colorPrimary,
+                                  ),
+                                ),
+                                /*     Padding(
                                   padding: const EdgeInsets.only(
                                       left: 16, right: 16, top: 10, bottom: 10),
                                   child: Center(
@@ -278,60 +276,60 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                   ),
                                 ),
                               */
-                          Obx(
-                                () => Padding(
-                              padding: EdgeInsets.only(
-                                  left: 16.sp,
-                                  right: 16.sp,
-                                  top: 10.sp,
-                                  bottom: 10.sp),
-                              child: Center(
-                                child: OTPTextFieldV2(
-                                    controller:
-                                    otpController.controller.value,
-                                    length: 4,
-                                    autoFocus: false,
-                                    width:
-                                    MediaQuery.of(context).size.width,
-                                    textFieldAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                    fieldWidth: (MediaQuery.of(context)
-                                        .size
-                                        .width -
-                                        78) /
-                                        4,
-                                    spaceBetween: 4.sp,
-                                    fieldStyle: FieldStyle.box,
-                                    outlineBorderRadius: 1,
-                                    otpFieldStyle: OtpFieldStyle(
-                                        focusBorderColor: borderColor,
-                                        enabledBorderColor: borderColor),
-                                    style: const TextStyle(
-                                      color: loginText,
-                                      fontSize: 16,
+                                Obx(
+                                  () => Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 16.sp,
+                                        right: 16.sp,
+                                        top: 10.sp,
+                                        bottom: 10.sp),
+                                    child: Center(
+                                      child: OTPTextFieldV2(
+                                          controller:
+                                              otpController.controller.value,
+                                          length: 4,
+                                          autoFocus: false,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          textFieldAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          fieldWidth: (MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  78) /
+                                              4,
+                                          spaceBetween: 4.sp,
+                                          fieldStyle: FieldStyle.box,
+                                          outlineBorderRadius: 1,
+                                          otpFieldStyle: OtpFieldStyle(
+                                              focusBorderColor: borderColor,
+                                              enabledBorderColor: borderColor),
+                                          style: const TextStyle(
+                                            color: loginText,
+                                            fontSize: 16,
+                                          ),
+                                          onChanged: (code) {
+                                            otpController.otp.value = code;
+                                            print("Changed: " + code);
+                                          },
+                                          cursorColor: borderColor,
+                                          onCompleted: (pin) {
+                                            otpController.otp.value = pin;
+                                            if (otpController
+                                                    .otp.value.length ==
+                                                4) {
+                                              otpController.showButton.value =
+                                                  true;
+                                            }
+                                          }),
                                     ),
-                                    onChanged: (code) {
-                                      otpController.otp.value = code;
-                                      print("Changed: " + code);
-                                    },
-                                    cursorColor: borderColor,
-                                    onCompleted: (pin) {
-                                      otpController.otp.value = pin;
-                                      if (otpController
-                                          .otp.value.length ==
-                                          4) {
-                                        otpController.showButton.value =
-                                        true;
-                                      }
-                                    }),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
+                                  ),
+                                ),
+                              ],
+                            )
                           : const SizedBox(
-                        height: 0,
-                      ),
+                              height: 0,
+                            ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 10.sp),
@@ -341,249 +339,249 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ),
                     Obx(() => Visibility(
-                      visible: profileController.emailError.value != ""
-                          ? true
-                          : false,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: 20.sp,
-                          right: 20.sp,
-                          top: 2.sp,
-                        ),
-                        child: AppText(
-                          text: profileController.emailError.value,
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: redColor,
-                          fontSize: 12,
-                        ),
-                      ),
-                    )),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: 16.sp, top: 20.sp, right: 16.sp),
-                      child: SizedBox(
-                        height: 44.sp,
-                        child: TextField(
-                          textCapitalization: TextCapitalization.words,
-                          readOnly: true,
-                          onTap: () {
-                            if (profileController.showList.value) {
-                              profileController.showList.value = false;
-                            } else {
-                              profileController.showList.value = true;
-                            }
-                          },
-                          style: const TextStyle(
-                            color: textColor,
-                            fontFamily: "Franklin Gothic Regular",
+                          visible: profileController.emailError.value != ""
+                              ? true
+                              : false,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 20.sp,
+                              right: 20.sp,
+                              top: 2.sp,
+                            ),
+                            child: AppText(
+                              text: profileController.emailError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
                           ),
-                          controller: profileController.gerderController,
-                          keyboardType: TextInputType.text,
-                          decoration: InputDecoration(
-                            filled: true,
-                            suffixIconConstraints: BoxConstraints(
-                              minWidth: 2,
-                              minHeight: 2,
-                            ),
-                            suffixIcon: Padding(
-                              padding: EdgeInsets.only(right: 20.sp),
-                              child: SizedBox(
-                                height: 8.sp,
-                                width: 10.sp,
-                                child: SvgPicture.asset(
-                                  dropdownSvgImage,
-                                  height: 8.sp,
-                                  width: 10.sp,
-                                  // ignore: deprecated_member_use
-                                  color: homeAppBarColor,
-                                ),
-                              ),
-                            ),
-                            fillColor: whiteColor,
-                            focusedBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(color: borderColor)),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(1.sp),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(1.sp),
-                              borderSide: const BorderSide(color: borderColor),
-                            ),
-                            counterText: "",
-                            hintText: "Gender",
-                            hintStyle: TextStyle(fontSize: 14.sp),
-                          ),
-                        ),
-                      ),
-                    ),
+                        )),
+                    // Padding(
+                    //   padding: EdgeInsets.only(
+                    //       left: 16.sp, top: 20.sp, right: 16.sp),
+                    //   child: SizedBox(
+                    //     height: 44.sp,
+                    //     child: TextField(
+                    //       textCapitalization: TextCapitalization.words,
+                    //       readOnly: true,
+                    //       onTap: () {
+                    //         if (profileController.showList.value) {
+                    //           profileController.showList.value = false;
+                    //         } else {
+                    //           profileController.showList.value = true;
+                    //         }
+                    //       },
+                    //       style: const TextStyle(
+                    //         color: textColor,
+                    //         fontFamily: "Franklin Gothic Regular",
+                    //       ),
+                    //       controller: profileController.gerderController,
+                    //       keyboardType: TextInputType.text,
+                    //       decoration: InputDecoration(
+                    //         filled: true,
+                    //         suffixIconConstraints: BoxConstraints(
+                    //           minWidth: 2,
+                    //           minHeight: 2,
+                    //         ),
+                    //         suffixIcon: Padding(
+                    //           padding: EdgeInsets.only(right: 20.sp),
+                    //           child: SizedBox(
+                    //             height: 8.sp,
+                    //             width: 10.sp,
+                    //             child: SvgPicture.asset(
+                    //               dropdownSvgImage,
+                    //               height: 8.sp,
+                    //               width: 10.sp,
+                    //               // ignore: deprecated_member_use
+                    //               color: homeAppBarColor,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //         fillColor: whiteColor,
+                    //         focusedBorder: const OutlineInputBorder(
+                    //             borderSide: BorderSide(color: borderColor)),
+                    //         border: OutlineInputBorder(
+                    //           borderRadius: BorderRadius.circular(1.sp),
+                    //         ),
+                    //         enabledBorder: OutlineInputBorder(
+                    //           borderRadius: BorderRadius.circular(1.sp),
+                    //           borderSide: const BorderSide(color: borderColor),
+                    //         ),
+                    //         counterText: "",
+                    //         hintText: "Gender",
+                    //         hintStyle: TextStyle(fontSize: 14.sp),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     Obx(() => Visibility(
-                      visible: profileController.genderError.value != ""
-                          ? true
-                          : false,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: 20.sp,
-                          right: 20.sp,
-                          top: 2.sp,
-                        ),
-                        child: AppText(
-                          text: profileController.genderError.value,
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: redColor,
-                          fontSize: 12,
-                        ),
-                      ),
-                    )),
-                    Obx(
-                          () => profileController.showList.value
-                          ? Padding(
-                        padding:
-                        EdgeInsets.only(left: 16.sp, right: 16.sp),
-                        child: ListView.builder(
-                            primary: false,
-                            shrinkWrap: true,
-                            physics: const ScrollPhysics(),
-                            itemCount:
-                            profileController.genderList.length,
-                            padding: EdgeInsets.zero,
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (ctx, index) {
-                              return Column(
-                                children: [
-                                  Container(
-                                    color: whiteTextColor,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.center,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            profileController
-                                                .gerderController
-                                                .text =
-                                            profileController
-                                                .genderList[index];
-                                            if (profileController
-                                                .gerderController.text
-                                                .toString() ==
-                                                "Female") {
-                                              profileController
-                                                  .genderId.value = 1;
-                                            } else if (profileController
-                                                .gerderController.text
-                                                .toString() ==
-                                                "Male") {
-                                              profileController
-                                                  .genderId.value = 2;
-                                            } else {
-                                              profileController
-                                                  .genderId.value = 3;
-                                            }
-                                            profileController
-                                                .showList.value = false;
-                                          },
-                                          child: Container(
-                                            width: double.infinity,
-                                            color: whiteTextColor,
-                                            alignment: Alignment.center,
-                                            child: Padding(
-                                              padding:
-                                              EdgeInsets.symmetric(
-                                                  vertical: 10.sp),
-                                              child: Text(
-                                                profileController
-                                                    .genderList[index],
-                                                style: TextStyle(
-                                                  fontSize: 14.sp,
-                                                  color: nameText,
-                                                  fontFamily:
-                                                  "Franklin Gothic Regular",
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        index == 2
-                                            ? SizedBox(
-                                          width: double.infinity,
-                                          height: 5.sp,
-                                        )
-                                            : Padding(
-                                          padding:
-                                          EdgeInsets.symmetric(
-                                              horizontal: 16.sp,
-                                              vertical: 2.sp),
-                                          child: Container(
-                                            width: double.infinity,
-                                            color: colorSecondary,
-                                            height: 1.sp,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              );
-                            }),
-                      )
-                          : const SizedBox(
-                        height: 0,
-                      ),
-                    ),
+                          visible: profileController.genderError.value != ""
+                              ? true
+                              : false,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 20.sp,
+                              right: 20.sp,
+                              top: 2.sp,
+                            ),
+                            child: AppText(
+                              text: profileController.genderError.value,
+                              fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: redColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        )),
+                    // Obx(
+                    //       () => profileController.showList.value
+                    //       ? Padding(
+                    //     padding:
+                    //     EdgeInsets.only(left: 16.sp, right: 16.sp),
+                    //     child: ListView.builder(
+                    //         primary: false,
+                    //         shrinkWrap: true,
+                    //         physics: const ScrollPhysics(),
+                    //         itemCount:
+                    //         profileController.genderList.length,
+                    //         padding: EdgeInsets.zero,
+                    //         scrollDirection: Axis.vertical,
+                    //         itemBuilder: (ctx, index) {
+                    //           return Column(
+                    //             children: [
+                    //               Container(
+                    //                 color: whiteTextColor,
+                    //                 child: Column(
+                    //                   crossAxisAlignment:
+                    //                   CrossAxisAlignment.center,
+                    //                   children: [
+                    //                     GestureDetector(
+                    //                       onTap: () {
+                    //                         profileController
+                    //                             .gerderController
+                    //                             .text =
+                    //                         profileController
+                    //                             .genderList[index];
+                    //                         if (profileController
+                    //                             .gerderController.text
+                    //                             .toString() ==
+                    //                             "Female") {
+                    //                           profileController
+                    //                               .genderId.value = 1;
+                    //                         } else if (profileController
+                    //                             .gerderController.text
+                    //                             .toString() ==
+                    //                             "Male") {
+                    //                           profileController
+                    //                               .genderId.value = 2;
+                    //                         } else {
+                    //                           profileController
+                    //                               .genderId.value = 3;
+                    //                         }
+                    //                         profileController
+                    //                             .showList.value = false;
+                    //                       },
+                    //                       child: Container(
+                    //                         width: double.infinity,
+                    //                         color: whiteTextColor,
+                    //                         alignment: Alignment.center,
+                    //                         child: Padding(
+                    //                           padding:
+                    //                           EdgeInsets.symmetric(
+                    //                               vertical: 10.sp),
+                    //                           child: Text(
+                    //                             profileController
+                    //                                 .genderList[index],
+                    //                             style: TextStyle(
+                    //                               fontSize: 14.sp,
+                    //                               color: nameText,
+                    //                               fontFamily:
+                    //                               "Franklin Gothic Regular",
+                    //                             ),
+                    //                           ),
+                    //                         ),
+                    //                       ),
+                    //                     ),
+                    //                     index == 2
+                    //                         ? SizedBox(
+                    //                       width: double.infinity,
+                    //                       height: 5.sp,
+                    //                     )
+                    //                         : Padding(
+                    //                       padding:
+                    //                       EdgeInsets.symmetric(
+                    //                           horizontal: 16.sp,
+                    //                           vertical: 2.sp),
+                    //                       child: Container(
+                    //                         width: double.infinity,
+                    //                         color: colorSecondary,
+                    //                         height: 1.sp,
+                    //                       ),
+                    //                     ),
+                    //                   ],
+                    //                 ),
+                    //               ),
+                    //             ],
+                    //           );
+                    //         }),
+                    //   )
+                    //       : const SizedBox(
+                    //     height: 0,
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
             ),
-            Obx(
-                  () => Padding(
-                padding: EdgeInsets.symmetric(vertical: 20.sp),
-                child: getSingleButton(
-                    label: "Save Changes",
-                    textColor: whiteBorderColor,
-                    backgroundColor: colorPrimary,
-                    controller: profileController,
-                    onPressed: () async {
-                      if (profileController.checkvalidation(
-                          profileController.nameController.text
-                              .toString()
-                              .trim(),
-                          profileController.phoneController.text
-                              .toString()
-                              .trim(),
-                          profileController.emailController.text
-                              .toString()
-                              .trim(),
-                          profileController.genderId.value)) {
-                        FocusScope.of(context).unfocus();
-                        if (profileController.isPhoneNumber.value) {
-                          if (otpController
-                              .checkOtpvalidation(otpController.otp.value)) {
-                            profileController.callupdateProfile(
-                                "edit",
-                                "+91${profileController.phoneController.text.toString().trim()}",
-                                otpController.otp.value,
-                                profileController.isEditNumber.value);
-                          }
-                        } else {
-                          profileController.callupdateProfile(
-                              "edit",
-                              "+91${profileController.phoneController.text.toString().trim()}",
-                              otpController.otp.value,
-                              profileController.isEditNumber.value);
-                        }
-                      }
-                      await analytics.logEvent(
-                        name: 'editprofile_save_btnclick',
-                        parameters: <String, Object>{
-                          'page_name': 'editprofile_save_btnclick',
-                        },
-                      );
-                    },
-                    borderColor: colorPrimary),
-              ),
-            )
+            // Obx(
+            //       () => Padding(
+            //     padding: EdgeInsets.symmetric(vertical: 20.sp),
+            //     child: getSingleButton(
+            //         label: "Save Changes",
+            //         textColor: whiteBorderColor,
+            //         backgroundColor: colorPrimary,
+            //         controller: profileController,
+            //         onPressed: () async {
+            //           if (profileController.checkvalidation(
+            //               profileController.nameController.text
+            //                   .toString()
+            //                   .trim(),
+            //               profileController.phoneController.text
+            //                   .toString()
+            //                   .trim(),
+            //               profileController.emailController.text
+            //                   .toString()
+            //                   .trim(),
+            //               profileController.genderId.value)) {
+            //             FocusScope.of(context).unfocus();
+            //             if (profileController.isPhoneNumber.value) {
+            //               if (otpController
+            //                   .checkOtpvalidation(otpController.otp.value)) {
+            //                 profileController.callupdateProfile(
+            //                     "edit",
+            //                     "+91${profileController.phoneController.text.toString().trim()}",
+            //                     otpController.otp.value,
+            //                     profileController.isEditNumber.value);
+            //               }
+            //             } else {
+            //               profileController.callupdateProfile(
+            //                   "edit",
+            //                   "+91${profileController.phoneController.text.toString().trim()}",
+            //                   otpController.otp.value,
+            //                   profileController.isEditNumber.value);
+            //             }
+            //           }
+            //           await analytics.logEvent(
+            //             name: 'editprofile_save_btnclick',
+            //             parameters: <String, Object>{
+            //               'page_name': 'editprofile_save_btnclick',
+            //             },
+            //           );
+            //         },
+            //         borderColor: colorPrimary),
+            //   ),
+            // )
           ],
         ),
       ),
