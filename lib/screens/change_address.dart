@@ -7,19 +7,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/saveaddress_appbar.dart';
-import 'package:lafetch/commonwidget/dummy_container.dart';
-import 'package:lafetch/controller/product_controller.dart';
-import 'package:lafetch/controller/profile_controller.dart';
-import 'package:lafetch/controller/shipaddress_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/mapscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../commonwidget/app_text.dart';
-import '../../utils/constants.dart';
+
+import '../common/widget/appbar/saveaddress_appbar.dart';
+import '../common/widget/lists/dummy_container.dart';
+import '../common/widget/text/app_text.dart';
+import '../controllers/product_controller.dart';
+import '../controllers/profile_controller.dart';
+import '../controllers/shipaddress_controller.dart';
+import '../core/constant/constants.dart';
 
 class ChangeAddressScreen extends StatefulWidget {
   final int cartId;
+
   const ChangeAddressScreen({super.key, required this.cartId});
 
   @override

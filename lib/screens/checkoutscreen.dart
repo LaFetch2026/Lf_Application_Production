@@ -6,19 +6,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_estimatedelivery.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_saveaddress.dart';
-import 'package:lafetch/controller/shipaddress_controller.dart';
 import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/mapscreen.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import '../commonwidget/app_text.dart';
-import '../commonwidget/common_widgets.dart';
-import '../controller/cart_controller.dart';
-import '../controller/order_controller.dart';
-import '../utils/constants.dart';
+
+import '../common/widget/appbar/backbutton_appbar.dart';
+import '../common/widget/lists/dummy_estimatedelivery.dart';
+import '../common/widget/lists/dummy_saveaddress.dart';
+import '../common/widget/other/common_widget.dart';
+import '../common/widget/text/app_text.dart';
+import '../controllers/cart_controller.dart';
+import '../controllers/order_controller.dart';
+import '../controllers/shipaddress_controller.dart';
+import '../core/constant/constants.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final String orderId;

@@ -4,18 +4,16 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
-import 'package:lafetch/commonwidget/common_widgets.dart';
-import 'package:lafetch/controller/search_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/catalog/women_catalog.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 
-import '../controller/product_controller.dart';
+import '../common/widget/appbar/home_appbar.dart';
+import '../common/widget/other/common_widget.dart';
 import '../controllers/product_controller.dart';
 import '../controllers/search_controller.dart';
-import '../utils/constants.dart';
+import '../core/constant/constants.dart';
 import 'cartscreen.dart';
 
 class CatalogScreen extends StatefulWidget {
