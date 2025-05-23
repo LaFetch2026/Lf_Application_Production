@@ -1,21 +1,20 @@
 // ignore_for_file: avoid_print
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 import '../common/widget/bottom_sheets/bottomCoupon.dart';
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
-import '../feature/auth/loginscreen.dart';
-import '../feature/payament/paymentcheckscreen.dart';
-import '../feature/payament/paymentsuccessscreen.dart';
+import '../screens/loginscreen.dart';
+import '../screens/paymentcheckscreen.dart';
+import '../screens/paymentsuccessscreen.dart';
 import 'base_controller.dart';
-
 
 class CartController extends BaseController {
   RxBool isOrder = false.obs;
@@ -51,6 +50,7 @@ class CartController extends BaseController {
   List tagsList = [].obs;
   RxString addressError = "".obs;
   List<bool> selected = List.generate(50, (i) => false).obs;
+
   /* List<Map<String, dynamic>> couponList = [
     {'id': '22', "coupan": 'ECoupan'},
     {'id': '73', "coupan": 'AXIS20'},
@@ -222,7 +222,7 @@ class CartController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.to(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -289,13 +289,13 @@ class CartController extends BaseController {
         "update_inventory": type,
       };
       var response =
-      await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            'Content-Type': 'application/json;charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          },
-          body: json.encode(sendData));
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
       if (response.statusCode == 200) {
         if (page == "addproduct") {
           print("addproduct");
@@ -722,7 +722,7 @@ class CartController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );

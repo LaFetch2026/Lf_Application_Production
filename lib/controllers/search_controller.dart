@@ -1,17 +1,16 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
-import '../feature/auth/loginscreen.dart';
+import '../screens/loginscreen.dart';
 import 'base_controller.dart';
-
 
 class SearchScreenController extends BaseController {
   TextEditingController searchController = TextEditingController();
@@ -62,7 +61,7 @@ class SearchScreenController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -95,7 +94,7 @@ class SearchScreenController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -129,7 +128,7 @@ class SearchScreenController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -182,13 +181,13 @@ class SearchScreenController extends BaseController {
         "search_string": value,
       };
       var response =
-      await http.post(Uri.parse("${ApiConstants.baseUrl}/recent-searches"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            'Content-Type': 'application/json;charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          },
-          body: json.encode(sendData));
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/recent-searches"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
       if (response.statusCode == 200) {
         getRecentSearchData();
       } else if (response.statusCode == 201) {

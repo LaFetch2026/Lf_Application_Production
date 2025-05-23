@@ -7,12 +7,10 @@ import 'package:get/get.dart';
 
 import '../../../controllers/profile_controller.dart';
 import '../../../core/constant/constants.dart';
-import '../../../feature/wishlist/wishlistscreen.dart';
+import '../../../screens/wishlistscreen.dart';
 import '../appbar/saveaddress_appbar.dart';
 import '../text/app_text.dart';
 import 'common_widget.dart';
-
-
 
 class ConfirmDeleteScreen extends StatefulWidget {
   const ConfirmDeleteScreen({
@@ -53,7 +51,7 @@ class ConfirmDeleteScreenState extends State<ConfirmDeleteScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 16.sp),
                 child: AppText(
                   text:
-                  "Your account deletion has been received and the account deletion will commence in 7 days.",
+                      "Your account deletion has been received and the account deletion will commence in 7 days.",
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
                   color: appbarText,

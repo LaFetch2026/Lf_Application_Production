@@ -1,15 +1,14 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
-import 'package:get/get.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:lafetch/screens/loginscreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
-import '../feature/auth/loginscreen.dart';
-
 import 'base_controller.dart';
 
 class ExchangeController extends BaseController {
@@ -36,7 +35,7 @@ class ExchangeController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );

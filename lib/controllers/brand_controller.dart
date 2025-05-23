@@ -1,17 +1,16 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
-import '../feature/auth/loginscreen.dart';
+import '../screens/loginscreen.dart';
 import 'base_controller.dart';
-
 
 class BrandController extends BaseController {
   TextEditingController searchController = TextEditingController();
@@ -168,7 +167,7 @@ class BrandController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );
@@ -215,7 +214,7 @@ class BrandController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );

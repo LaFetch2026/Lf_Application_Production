@@ -11,8 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../common/widget/other/common_widget.dart';
 import '../common/widget/other/confirmdelete.dart';
 import '../core/constant/constants.dart';
-import '../feature/auth/loginscreen.dart';
-import '../feature/profile/bottomnavscreen.dart';
+import '../screens/bottomnavscreen.dart';
+import '../screens/loginscreen.dart';
 import 'base_controller.dart';
 
 class ProfileController extends BaseController {
@@ -25,7 +25,7 @@ class ProfileController extends BaseController {
   dynamic defaultAddress = "".obs;
   RxString queryText = "".obs;
   List addressList = [].obs;
-  var profileDetails = <String, dynamic>{}.obs; // MAKE IT OBSERVABLE
+  dynamic profileDetails = "".obs;
   RxBool isOrder = false.obs;
   RxBool isOffer = false.obs;
   RxBool isPermotion = true.obs;
@@ -151,26 +151,33 @@ class ProfileController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.get(
-        Uri.parse("${ApiConstants.baseUrl}/profile/user-profile/3"),
-        headers: <String, String>{
-          'Accept': 'application/json; charset=UTF-8',
-          "Authorization": "Bearer ${prefs.getString('token')} ",
-        },
-      );
-
+          Uri.parse("${ApiConstants.baseUrl}/profile"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
+      var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        var responseData = json.decode(response.body);
         if (responseData != null) {
-          profileDetails.value = responseData; // UPDATE OBSERVABLE
+          profileDetails = responseData;
           if (responseData['phone'] != null) {
             prefs.setString('phone_number', responseData['phone']);
           }
         }
+      } else if (response.statusCode == 500) {
+        getSnackBar("Please try again");
+      } else if (response.statusCode == 401) {
+        /*  Get.to(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        ); */
+        //getSnackBar("Authentication failed");
       } else {
-        getSnackBar("Failed to load profile");
+        getSnackBar("get product failed");
       }
     } catch (e) {
-      print("error $e");
+      print("error$e");
     }
     isProfile.value = false;
   }
@@ -416,22 +423,34 @@ class ProfileController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.post(
-        Uri.parse("${ApiConstants.baseUrl}/auth/sign-out/1"),
-        headers: <String, String>{
-          'Accept': 'application/json; charset=UTF-8',
-          "Authorization": "Bearer ${prefs.getString('token')} ",
-        },
-      );
+          Uri.parse("${ApiConstants.baseUrl}/logout"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
+        SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.clear();
         GoogleSignIn googleSignIn = GoogleSignIn();
         googleSignIn.signOut();
-        Get.offAll(() => const LoginScreen(initialTab: 0));
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
+      } else if (response.statusCode == 500) {
+        getSnackBar("Please try again");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
       } else {
-        getSnackBar("Logout failed");
-        print(response.body);
+        getSnackBar("logout failed");
       }
     } catch (e) {
       print(e.toString());
@@ -442,18 +461,30 @@ class ProfileController extends BaseController {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
-      var response = await http.delete(
-        Uri.parse("${ApiConstants.baseUrl}/auth/delete-account/1"),
-        headers: <String, String>{
-          'Accept': 'application/json; charset=UTF-8',
-          "Authorization": "Bearer ${prefs.getString('token')} ",
-        },
-      );
+      var response = await http.post(
+          Uri.parse("${ApiConstants.baseUrl}/account-deletion"),
+          headers: <String, String>{
+            'Accept': 'application/json; charset=UTF-8',
+            "Authorization": "Bearer ${prefs.getString('token')} ",
+          });
       if (response.statusCode == 200) {
-        Get.off(() => const ConfirmDeleteScreen());
+        Get.off(
+          () => const ConfirmDeleteScreen(),
+        );
+      } else if (response.statusCode == 500) {
+        getSnackBar("Please try again");
+      } else if (response.statusCode == 400) {
+        var responseData = json.decode(response.body);
+        print(responseData);
+      } else if (response.statusCode == 401) {
+        getSnackBar("Authentication failed");
+        Get.offAll(
+          () => const LoginScreen(
+            initialTab: 0,
+          ),
+        );
       } else {
-        getSnackBar("Account deletion failed");
-        print(response.body);
+        getSnackBar("account delete failed");
       }
     } catch (e) {
       print(e.toString());

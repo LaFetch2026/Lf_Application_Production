@@ -7,11 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/firebase_options.dart';
+import 'package:lafetch/screens/splash/splashtwo.dart';
 
 import 'core/constant/constants.dart';
 import 'core/utils/deeplink_handler.dart';
-import 'feature/auth/splash/splashtwo.dart';
-
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -3,15 +3,13 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
-import '../feature/auth/loginscreen.dart';
+import '../screens/loginscreen.dart';
 import 'base_controller.dart';
-
 
 class CatalogController extends BaseController {
   RxBool isCatalog = false.obs;
@@ -42,7 +40,7 @@ class CatalogController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -75,7 +73,7 @@ class CatalogController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -110,7 +108,7 @@ class CatalogController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -125,9 +123,9 @@ class CatalogController extends BaseController {
   }
 
   callAddProductToWishlist(
-      int wishlistId,
-      int id,
-      ) async {
+    int wishlistId,
+    int id,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     try {
       var response = await http.put(

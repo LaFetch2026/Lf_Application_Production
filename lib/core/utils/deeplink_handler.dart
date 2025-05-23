@@ -4,12 +4,10 @@ import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../feature/brand/allbrandscreen.dart';
-import '../../feature/misc/quickscreen.dart';
-import '../../feature/misc/welcomescreen.dart';
-import '../../feature/product/productdetailsscreen.dart';
-
-
+import '../../screens/Brands/allbrandscreen.dart';
+import '../../screens/catalog/productlist/productdetailsscreen.dart';
+import '../../screens/quickscreen.dart';
+import '../../screens/welcomescreen.dart';
 
 class DeepLinkHandler {
   static final AppsflyerSdk _appsflyerSdk = AppsflyerSdk(
@@ -93,23 +91,23 @@ class DeepLinkHandler {
       switch (target) {
         case 'product_details':
           final productId =
-          int.tryParse(payload['product_id']?.toString() ?? '0');
+              int.tryParse(payload['product_id']?.toString() ?? '0');
           final type = payload['type']?.toString() ?? '';
           final brandName = payload['brand_name']?.toString() ?? '';
           final slug = payload['slug']?.toString() ?? '';
           final expressHour = payload['expresshour']?.toString() ?? '0';
           final expressValue =
-          int.tryParse(payload['expressValue']?.toString() ?? '0');
+              int.tryParse(payload['expressValue']?.toString() ?? '0');
           final wishlistProductId =
-          int.tryParse(payload['wishlistProductId']?.toString() ?? '0');
+              int.tryParse(payload['wishlistProductId']?.toString() ?? '0');
           final boardId = int.tryParse(payload['boardId']?.toString() ?? '0');
 
           if (productId != null && productId > 0 && type.isNotEmpty) {
             Get.offAll(() => ProductDetailsScreen(
-              productId: productId,
-              type: type,
-              brandName: brandName,
-            ));
+                  productId: productId,
+                  type: type,
+                  brandName: brandName,
+                ));
           } else {
             throw 'Invalid or missing product details';
           }
@@ -122,10 +120,10 @@ class DeepLinkHandler {
 
           if (brandId != null && brandId > 0 && brandSlug.isNotEmpty) {
             Get.offAll(() => AllBrandScreen(
-              id: brandId,
-              slug: brandSlug,
-              screen: screen,
-            ));
+                  id: brandId,
+                  slug: brandSlug,
+                  screen: screen,
+                ));
           } else {
             throw 'Invalid or missing brand data';
           }

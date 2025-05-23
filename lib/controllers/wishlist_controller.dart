@@ -4,16 +4,14 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
-import '../feature/auth/loginscreen.dart';
-import '../feature/board/createboardscreen.dart';
+import '../screens/loginscreen.dart';
+import '../screens/wishlist/createboardscreen.dart';
 import 'base_controller.dart';
-
 
 class WishlistController extends BaseController {
   RxBool isWishlist = false.obs;
@@ -142,7 +140,7 @@ class WishlistController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );
@@ -180,7 +178,7 @@ class WishlistController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -227,7 +225,7 @@ class WishlistController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );
@@ -284,7 +282,7 @@ class WishlistController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -316,7 +314,7 @@ class WishlistController extends BaseController {
         if (productId == 0) {
           boardError.value = "";
           Get.off(
-                () => CreateBoardScreen(
+            () => CreateBoardScreen(
               btnText: "Add",
               wishlistId: responseData["id"],
               type: "add",

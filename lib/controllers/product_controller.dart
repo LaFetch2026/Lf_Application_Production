@@ -1,19 +1,19 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
-import '../feature/auth/loginscreen.dart';
-import '../feature/cart/cartscreen.dart';
-import '../feature/checkout/change_address.dart';
-import '../feature/product/productlistscreen.dart';
+import '../screens/cartscreen.dart';
+import '../screens/catalog/productlistscreen.dart';
+import '../screens/change_address.dart';
+import '../screens/loginscreen.dart';
 import 'base_controller.dart';
 
 class ProductController extends BaseController {
@@ -342,7 +342,7 @@ class ProductController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -387,7 +387,7 @@ class ProductController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );
@@ -426,7 +426,7 @@ class ProductController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -470,7 +470,7 @@ class ProductController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );
@@ -505,7 +505,7 @@ class ProductController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -549,7 +549,7 @@ class ProductController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );
@@ -717,7 +717,7 @@ class ProductController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );
@@ -965,7 +965,7 @@ class ProductController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );
@@ -1071,7 +1071,7 @@ class ProductController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );
@@ -1372,7 +1372,7 @@ class ProductController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -1665,7 +1665,7 @@ class ProductController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );
@@ -1713,7 +1713,7 @@ class ProductController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -1769,7 +1769,7 @@ class ProductController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.to(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );
@@ -1804,7 +1804,7 @@ class ProductController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -1883,7 +1883,7 @@ class ProductController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -2140,17 +2140,17 @@ class ProductController extends BaseController {
   }
 
   getProductByCategoryData(
-      int categoryId,
-      int brandId,
-      String value,
-      List categoryList,
-      String sort_By,
-      int gendertype,
-      bool filter,
-      int catalogId,
-      bool filterButton,
-      String type,
-      ) async {
+    int categoryId,
+    int brandId,
+    String value,
+    List categoryList,
+    String sort_By,
+    int gendertype,
+    bool filter,
+    int catalogId,
+    bool filterButton,
+    String type,
+  ) async {
     isCategoryProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -2414,7 +2414,7 @@ class ProductController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -2683,7 +2683,7 @@ class ProductController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );
@@ -2719,7 +2719,7 @@ class ProductController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -2763,7 +2763,7 @@ class ProductController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );
@@ -2845,27 +2845,27 @@ class ProductController extends BaseController {
               sizeInventoryId.value = responseData["default_inventory_id"];
               selectedProductSize = sizeInventoryList[0];
               colorInventoryList =
-              sizeInventoryList[0]["product_matrix_available_colors"];
+                  sizeInventoryList[0]["product_matrix_available_colors"];
               if (sizeInventoryList[0]["product_matrix_available_colors"]
-                  .length ==
+                      .length ==
                   1) {
                 selectedProductColor =
-                sizeInventoryList[0]["product_matrix_available_colors"][0];
+                    sizeInventoryList[0]["product_matrix_available_colors"][0];
                 colorInventoryId.value = responseData["default_inventory_id"];
               }
             } else {
               showSizeList.value = true;
               if (sizeInventoryList[0]["product_matrix_available_colors"]
-                  .length ==
+                      .length ==
                   1) {
                 showSizeList.value = true;
                 sizeInventoryId.value = responseData["default_inventory_id"];
                 colorInventoryId.value = responseData["default_inventory_id"];
                 selectedProductSize = sizeInventoryList[0];
                 colorInventoryList =
-                sizeInventoryList[0]["product_matrix_available_colors"];
+                    sizeInventoryList[0]["product_matrix_available_colors"];
                 selectedProductColor =
-                sizeInventoryList[0]["product_matrix_available_colors"][0];
+                    sizeInventoryList[0]["product_matrix_available_colors"][0];
               } else {
                 showSizeList.value = true;
               }
@@ -2937,7 +2937,7 @@ class ProductController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -2988,7 +2988,7 @@ class ProductController extends BaseController {
                   getBrandProductData();
                 }
                 addressText.value =
-                "${responseData[i]["zip"]}, ${responseData[i]["address"]}";
+                    "${responseData[i]["zip"]}, ${responseData[i]["address"]}";
                 addressTypeValue.value = responseData[i]["type"];
                 pincodeController.text = responseData[i]["zip"].toString();
               }
@@ -3073,7 +3073,7 @@ class ProductController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -3107,7 +3107,7 @@ class ProductController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -3141,7 +3141,7 @@ class ProductController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -3185,7 +3185,7 @@ class ProductController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );
@@ -3226,7 +3226,7 @@ class ProductController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -3254,13 +3254,13 @@ class ProductController extends BaseController {
         "express_delivery": expressValue.value,
       };
       var response =
-      await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            'Content-Type': 'application/json;charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          },
-          body: json.encode(sendData));
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/orders"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
       if (response.statusCode == 200) {
         addToCart.value = true;
         errorColorMsg.value = "";
@@ -3269,14 +3269,15 @@ class ProductController extends BaseController {
           Get.to(CartScreen());
           reorderSelected.clear();
           reorderSelected = List.generate(50, (i) => false).obs;
-        } /*  else {
+        }
+        /*  else {
           getSnackBar("Product added to cart");
         } */
         if (type == "buy now") {
           Get.to(CartScreen(
             backgroundcolor: background,
           ))?.then(
-                (value) {
+            (value) {
               getProductDetails(productId, "", background);
               addToCart.value = false;
             },
@@ -3399,7 +3400,7 @@ class ProductController extends BaseController {
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -3438,7 +3439,7 @@ class ProductController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -3482,7 +3483,7 @@ class ProductController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );

@@ -1,17 +1,16 @@
 // ignore_for_file: avoid_print
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
-import '../feature/auth/loginscreen.dart';
+import '../screens/loginscreen.dart';
 import 'base_controller.dart';
 
 class HomeController extends BaseController {
@@ -43,11 +42,13 @@ class HomeController extends BaseController {
   List banners = [].obs;
   RxString expressHour = "2".obs;
   RxInt cartValue = 0.obs;
+
   // RxBool loadMore = false.obs;
   // RxBool hasnextpage = true.obs;
   // RxInt page = 1.obs;
   RxBool IsAnimateTag = true.obs;
   RxInt tagId = 0.obs;
+
   // RxInt current = 0.obs;
   ScrollController tagsController = ScrollController();
   ScrollController discountScreenController = ScrollController();
@@ -218,7 +219,7 @@ class HomeController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -252,7 +253,7 @@ class HomeController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -286,7 +287,7 @@ class HomeController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -319,7 +320,7 @@ class HomeController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -340,20 +341,20 @@ class HomeController extends BaseController {
         "player_id": playerId.value,
         "device_model": devicename,
         "apn_token":
-        "eyJhbGciOiJFUzI1NiIsImtpZCI6Ik4yWEtDWloyRFYifQ.eyJpc3MiOiJGUUxZNEY0N1VNIiwiaWF0IjoxNzM1MjkwNTg4fQ.iVX838tT5plLx2ckS_m8DJAQQxjCioHZyI8yuzwCOZyTFO02aSosEr3a1IHZwKHUu7E9kyr7BAsUAm6j34_27Q",
+            "eyJhbGciOiJFUzI1NiIsImtpZCI6Ik4yWEtDWloyRFYifQ.eyJpc3MiOiJGUUxZNEY0N1VNIiwiaWF0IjoxNzM1MjkwNTg4fQ.iVX838tT5plLx2ckS_m8DJAQQxjCioHZyI8yuzwCOZyTFO02aSosEr3a1IHZwKHUu7E9kyr7BAsUAm6j34_27Q",
         "fcm_token": fcmToken.value,
         "platform": platform,
       };
       dynamic response;
       if (prefs.getString('token') != null) {
         response =
-        await http.put(Uri.parse("${ApiConstants.baseUrl}/device-tokens"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              'Content-Type': 'application/json;charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            },
-            body: json.encode(sendData));
+            await http.put(Uri.parse("${ApiConstants.baseUrl}/device-tokens"),
+                headers: <String, String>{
+                  'Accept': 'application/json; charset=UTF-8',
+                  'Content-Type': 'application/json;charset=UTF-8',
+                  "Authorization": "Bearer ${prefs.getString('token')} ",
+                },
+                body: json.encode(sendData));
       }
       if (response.statusCode == 201) {
         print("device token sent");
@@ -362,7 +363,7 @@ class HomeController extends BaseController {
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -392,7 +393,7 @@ class HomeController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -432,7 +433,7 @@ class HomeController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );

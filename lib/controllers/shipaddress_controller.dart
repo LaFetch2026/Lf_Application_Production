@@ -5,15 +5,13 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
-import '../feature/auth/loginscreen.dart';
+import '../screens/loginscreen.dart';
 import 'base_controller.dart';
-
 
 class ShipAddressController extends BaseController {
   RxBool showList = false.obs;
@@ -59,6 +57,7 @@ class ShipAddressController extends BaseController {
   RxString addressError = "".obs;
   RxString localityError = "".obs;
   RxString addressTypeError = "".obs;
+
   bool checkvalidation() {
     String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
     RegExp regExp = RegExp(patttern);
@@ -195,7 +194,7 @@ class ShipAddressController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -227,13 +226,13 @@ class ShipAddressController extends BaseController {
         "longitude": lng
       };
       var response =
-      await http.post(Uri.parse("${ApiConstants.baseUrl}/addresses"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            'Content-Type': 'application/json;charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          },
-          body: json.encode(sendData));
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/addresses"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
@@ -265,11 +264,11 @@ class ShipAddressController extends BaseController {
   }
 
   callUpdateAddress(
-      int id,
-      double lat,
-      double lng,
-      int value,
-      ) async {
+    int id,
+    double lat,
+    double lng,
+    int value,
+  ) async {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -287,13 +286,13 @@ class ShipAddressController extends BaseController {
         "longitude": lng
       };
       var response =
-      await http.post(Uri.parse("${ApiConstants.baseUrl}/addresses/$id"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            'Content-Type': 'application/json;charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          },
-          body: json.encode(sendData));
+          await http.post(Uri.parse("${ApiConstants.baseUrl}/addresses/$id"),
+              headers: <String, String>{
+                'Accept': 'application/json; charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Authorization": "Bearer ${prefs.getString('token')} ",
+              },
+              body: json.encode(sendData));
       var responseData = json.decode(response.body);
       if (response.statusCode == 200) {
         print(responseData);
@@ -438,7 +437,7 @@ class ShipAddressController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -470,7 +469,7 @@ class ShipAddressController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -502,7 +501,7 @@ class ShipAddressController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );

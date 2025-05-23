@@ -1,19 +1,18 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+
 //import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
-import '../feature/auth/loginscreen.dart';
+import '../screens/loginscreen.dart';
 import 'base_controller.dart';
-
 //import 'package:path_provider/path_provider.dart';
 
 class OrderController extends BaseController {
@@ -43,6 +42,7 @@ class OrderController extends BaseController {
   final searchController = TextEditingController();
   final exchangeComment = TextEditingController();
   List<bool> selected = List.generate(50, (i) => false).obs;
+
   /* final List filterList = [
     'All',
     'Pending',
@@ -127,7 +127,7 @@ class OrderController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -183,7 +183,7 @@ class OrderController extends BaseController {
           getSnackBar("Please try again");
         } else if (response.statusCode == 401) {
           Get.offAll(
-                () => const LoginScreen(
+            () => const LoginScreen(
               initialTab: 0,
             ),
           );
@@ -221,7 +221,7 @@ class OrderController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -255,7 +255,7 @@ class OrderController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -351,7 +351,7 @@ class OrderController extends BaseController {
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -395,7 +395,7 @@ class OrderController extends BaseController {
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -439,7 +439,7 @@ class OrderController extends BaseController {
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
@@ -473,7 +473,7 @@ class OrderController extends BaseController {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
-              () => const LoginScreen(
+          () => const LoginScreen(
             initialTab: 0,
           ),
         );
