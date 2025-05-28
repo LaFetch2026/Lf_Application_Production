@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_ordertrack.dart';
-import '../../commonwidget/app_text.dart';
-import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
-import '../../controller/order_controller.dart';
-import '../../utils/constants.dart';
+
+import '../../common/widget/appbar/backbutton_appbar.dart';
+import '../../common/widget/lists/dummy_ordertrack.dart';
+import '../../common/widget/text/app_text.dart';
+import '../../controllers/order_controller.dart';
+import '../../core/constant/constants.dart';
 
 class TrackOrderScreen extends StatefulWidget {
   final int orderId;
+
   const TrackOrderScreen({super.key, required this.orderId});
 
   @override

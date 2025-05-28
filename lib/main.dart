@@ -10,6 +10,7 @@ import 'package:lafetch/firebase_options.dart';
 import 'package:lafetch/screens/splash/splashtwo.dart';
 
 import 'core/constant/constants.dart';
+import 'core/utils/analytics_helper.dart';
 import 'core/utils/deeplink_handler.dart';
 
 Future main() async {
@@ -19,6 +20,10 @@ Future main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Facebook App Events
+  AnalyticsHelper.logAppInstall(); // Ideally run once (see improvement below)
+  AnalyticsHelper.logAppLaunch(); // Run on every launch
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: homeAppBarColor,

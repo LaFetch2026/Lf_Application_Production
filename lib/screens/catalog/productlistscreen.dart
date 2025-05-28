@@ -4,13 +4,14 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/productlist_appbar.dart';
-import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/screens/catalog/productlist/viewproduct.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
-import '../../controller/product_controller.dart';
-import '../../utils/constants.dart';
+
+import '../../common/widget/appbar/productlist_appbar.dart';
+import '../../controllers/cart_controller.dart';
+import '../../controllers/product_controller.dart';
+import '../../core/constant/constants.dart';
 import '../cartscreen.dart';
 
 class ProductListScreen extends StatefulWidget {
@@ -19,6 +20,7 @@ class ProductListScreen extends StatefulWidget {
   final int genderType;
   final int catalogId;
   final int initailIndex;
+
   const ProductListScreen(
       {super.key,
       required this.tabTextList,

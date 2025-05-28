@@ -6,15 +6,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/catalog/productlist/producthorizontal.dart';
 import 'package:lafetch/screens/catalog/productlist/productvertical.dart';
-import '../../../commonwidget/app_text.dart';
-import '../../../controller/product_controller.dart';
-import '../../../utils/constants.dart';
+
+import '../../../common/widget/text/app_text.dart';
+import '../../../controllers/product_controller.dart';
+import '../../../core/constant/constants.dart';
 
 class ViewProductScreen extends StatefulWidget {
   final int categoryId;
   final String categoryName;
   final int genderType;
   final int catalogId;
+
   const ViewProductScreen(
       {super.key,
       required this.categoryId,

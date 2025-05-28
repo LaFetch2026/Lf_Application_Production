@@ -6,20 +6,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
-import 'package:lafetch/commonwidget/wishlistwidgets/bottomsheetboard.dart';
 import 'package:lafetch/screens/wishlist/createboardscreen.dart';
 import 'package:lafetch/screens/wishlist/newboardscreen.dart';
-import '../../commonwidget/app_text.dart';
-import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
-import '../../commonwidget/common_widgets.dart';
-import '../../controller/wishlist_controller.dart';
-import '../../utils/constants.dart';
+
+import '../../common/widget/appbar/backbutton_appbar.dart';
+import '../../common/widget/bottom_sheets/bottomsheetboard.dart';
+import '../../common/widget/lists/dummy_grid_list.dart';
+import '../../common/widget/other/common_widget.dart';
+import '../../common/widget/text/app_text.dart';
+import '../../controllers/wishlist_controller.dart';
+import '../../core/constant/constants.dart';
 import '../catalog/productlist/productdetailsscreen.dart';
 
 class BoardScreen extends StatefulWidget {
   final String boardName;
   final int boardId;
+
   const BoardScreen({
     super.key,
     required this.boardName,

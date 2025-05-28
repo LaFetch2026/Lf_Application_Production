@@ -8,6 +8,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/screens/Brands/brand_product_list.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/quick/brandproductscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
@@ -22,6 +23,7 @@ import '../../controllers/brand_controller.dart';
 import '../../controllers/home_controller.dart';
 import '../../controllers/product_controller.dart';
 import '../../core/constant/constants.dart';
+import '../../core/utils/analytics_helper.dart';
 import '../cartscreen.dart';
 
 class AllBrandScreen extends StatefulWidget {
@@ -38,6 +40,8 @@ class AllBrandScreen extends StatefulWidget {
 
 class AllBrandScreenState extends State<AllBrandScreen> {
   final productController = Get.put(ProductController());
+  final ScrollController _scrollController = ScrollController();
+  final List<String> _triggeredScrolls = [];
   final brandController = Get.put(BrandController());
   final homeController = Get.put(HomeController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -93,6 +97,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
   @override
   void initState() {
+    _scrollController.addListener(_onScroll);
     videoController = VideoPlayerController.networkUrl(
       Uri.parse(
         brandController.brandbackground.value,
@@ -137,6 +142,29 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     productController.isBestSeller.value = false;
     productController.bestSellerPage.value = 1; */
     super.initState();
+  }
+
+  void _onScroll() {
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    final scrollPercentage = (currentScroll / maxScroll) * 100;
+
+    if (scrollPercentage >= 25 && !_triggeredScrolls.contains('25%')) {
+      AnalyticsHelper.logScrollEvent('25%');
+      _triggeredScrolls.add('25%');
+    }
+    if (scrollPercentage >= 50 && !_triggeredScrolls.contains('50%')) {
+      AnalyticsHelper.logScrollEvent('50%');
+      _triggeredScrolls.add('50%');
+    }
+    if (scrollPercentage >= 75 && !_triggeredScrolls.contains('75%')) {
+      AnalyticsHelper.logScrollEvent('75%');
+      _triggeredScrolls.add('75%');
+    }
+    if (scrollPercentage >= 100 && !_triggeredScrolls.contains('100%')) {
+      AnalyticsHelper.logScrollEvent('100%');
+      _triggeredScrolls.add('100%');
+    }
   }
 
   /*  getprefrenceData() async {
@@ -195,6 +223,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   void dispose() {
     videoController.pause();
     videoController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -239,7 +268,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
               );
             },
             onPressedCart: () async {
-              Get.to(CartScreen())?.then(
+              Get.to(const CartScreen())?.then(
                 (value) {
                   SystemChrome.setSystemUIOverlayStyle(
                       const SystemUiOverlayStyle(

@@ -7,17 +7,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
-import 'package:lafetch/commonwidget/catalogwidgets/dummy_catalog_list.dart';
-import 'package:lafetch/controller/catalog_controller.dart';
-import 'package:lafetch/controller/search_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/catalogdetails.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
-import '../../commonwidget/app_text.dart';
-import '../../utils/constants.dart';
+
+import '../../common/widget/appbar/home_appbar.dart';
+import '../../common/widget/lists/dummy_catalog_list.dart';
+import '../../common/widget/text/app_text.dart';
+import '../../controllers/catalog_controller.dart';
+import '../../controllers/search_controller.dart';
+import '../../core/constant/constants.dart';
 
 class WomenCatalogScreen extends StatefulWidget {
   const WomenCatalogScreen({super.key});

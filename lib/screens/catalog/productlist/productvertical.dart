@@ -5,24 +5,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_vertical_list.dart';
-import 'package:lafetch/commonwidget/productvedio.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
-import '../../../commonwidget/app_text.dart';
-import '../../../commonwidget/catalogwidgets/bottomfiltters.dart';
-import '../../../commonwidget/catalogwidgets/bottomsortby.dart';
-import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
-import '../../../commonwidget/doublebtn.dart';
-import '../../../controller/product_controller.dart';
-import '../../../controller/wishlist_controller.dart';
-import '../../../utils/constants.dart';
+
+import '../../../common/widget/bottom_sheets/bottomfiltters.dart';
+import '../../../common/widget/bottom_sheets/bottomsortby.dart';
+import '../../../common/widget/bottom_sheets/bottomwishlist.dart';
+import '../../../common/widget/button/doublebtn.dart';
+import '../../../common/widget/lists/dummy_vertical_list.dart';
+import '../../../common/widget/other/productvedio.dart';
+import '../../../common/widget/text/app_text.dart';
+import '../../../controllers/product_controller.dart';
+import '../../../controllers/wishlist_controller.dart';
+import '../../../core/constant/constants.dart';
 
 class ProductVerticalScreen extends StatefulWidget {
   final int categoryId;
   final int genderType;
   final int catalogId;
+
   const ProductVerticalScreen(
       {super.key,
       required this.categoryId,
@@ -39,6 +41,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late VideoPlayerController videoController;
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   //late Future<void> _initializeVideoPlayerFuture;
 
   @override

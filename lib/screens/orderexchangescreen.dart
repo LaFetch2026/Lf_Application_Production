@@ -11,14 +11,16 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_order_list.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
-import '../commonwidget/app_text.dart';
-import '../commonwidget/appbarwidgets/backbutton_appbar.dart';
-import '../commonwidget/common_widgets.dart';
-import '../commonwidget/singlebtn.dart';
-import '../controller/order_controller.dart';
-import '../utils/constants.dart';
+
+import '../common/widget/appbar/backbutton_appbar.dart';
+import '../common/widget/button/singlebtn.dart';
+import '../common/widget/lists/dummy_order_list.dart';
+import '../common/widget/other/common_widget.dart';
+import '../common/widget/text/app_text.dart';
+import '../controllers/order_controller.dart';
+import '../core/constant/constants.dart';
+
 
 class OrderExchangeScreen extends StatefulWidget {
   const OrderExchangeScreen({super.key});
@@ -107,15 +109,17 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Obx(
-                        () => Container(
-                          color: whiteColor,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 12.sp, vertical: 20.sp),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                /* Container(
+                            () =>
+                            Container(
+                              color: whiteColor,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 12.sp, vertical: 20.sp),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceAround,
+                                  children: [
+                                    /* Container(
                                 height: 40,
                                 width: 180,
                                 decoration: BoxDecoration(
@@ -146,177 +150,182 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                   ),
                                 ),
                               ), */
-                                MediaQuery.of(context).size.width < 600
-                                    ? Expanded(
-                                        flex: 1,
-                                        child: SizedBox(
-                                          height: 40.sp,
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsets.only(right: 10.sp),
-                                            child: RawKeyboardListener(
-                                              focusNode: FocusNode(),
-                                              onKey: (value) {
-                                                print(value);
-                                                if (value is RawKeyDownEvent) {
-                                                  orderController
-                                                      .queryText.value = "";
-                                                  orderController
-                                                      .getOrderData();
-                                                }
-                                              },
-                                              child: TextField(
-                                                textCapitalization:
-                                                    TextCapitalization.words,
-                                                style: TextStyle(
-                                                  color: textColor,
-                                                  fontSize: 15.sp,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                ),
-                                                onChanged: onSearchChanged,
-                                                controller: orderController
-                                                    .searchController,
-                                                keyboardType:
-                                                    TextInputType.text,
-                                                decoration: InputDecoration(
-                                                  filled: true,
-                                                  // isDense: true,
-                                                  fillColor: whiteColor,
-                                                  prefixIcon: Icon(Icons.search,
-                                                      size: 20.sp,
-                                                      color: Colors.grey),
-                                                  focusedBorder:
-                                                      const OutlineInputBorder(
-                                                          borderSide: BorderSide(
-                                                              color:
-                                                                  borderColor)),
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            1.sp),
-                                                  ),
-                                                  enabledBorder:
-                                                      OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            1.sp),
-                                                    borderSide:
-                                                        const BorderSide(
-                                                            color: borderColor),
-                                                  ),
-                                                  contentPadding:
-                                                      EdgeInsets.zero,
-                                                  counterText: "",
-                                                  hintText: "Search",
-                                                  hintStyle: TextStyle(
-                                                      fontSize: 14.sp),
-                                                ),
+                                    MediaQuery
+                                        .of(context)
+                                        .size
+                                        .width < 600
+                                        ? Expanded(
+                                      flex: 1,
+                                      child: SizedBox(
+                                        height: 40.sp,
+                                        child: Padding(
+                                          padding:
+                                          EdgeInsets.only(right: 10.sp),
+                                          child: RawKeyboardListener(
+                                            focusNode: FocusNode(),
+                                            onKey: (value) {
+                                              print(value);
+                                              if (value is RawKeyDownEvent) {
+                                                orderController
+                                                    .queryText.value = "";
+                                                orderController
+                                                    .getOrderData();
+                                              }
+                                            },
+                                            child: TextField(
+                                              textCapitalization:
+                                              TextCapitalization.words,
+                                              style: TextStyle(
+                                                color: textColor,
+                                                fontSize: 15.sp,
+                                                fontFamily:
+                                                "Franklin Gothic Regular",
                                               ),
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : Expanded(
-                                        flex: 1,
-                                        child: SizedBox(
-                                          height: 40.sp,
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsets.only(right: 10.sp),
-                                            child: RawKeyboardListener(
-                                              focusNode: FocusNode(),
-                                              onKey: (value) {
-                                                print(value);
-                                                if (value is RawKeyDownEvent) {
-                                                  orderController
-                                                      .queryText.value = "";
-                                                  orderController
-                                                      .getOrderData();
-                                                }
-                                              },
-                                              child: TextField(
-                                                textCapitalization:
-                                                    TextCapitalization.words,
-                                                style: TextStyle(
-                                                  color: textColor,
-                                                  fontSize: 15.sp,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
+                                              onChanged: onSearchChanged,
+                                              controller: orderController
+                                                  .searchController,
+                                              keyboardType:
+                                              TextInputType.text,
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                // isDense: true,
+                                                fillColor: whiteColor,
+                                                prefixIcon: Icon(Icons.search,
+                                                    size: 20.sp,
+                                                    color: Colors.grey),
+                                                focusedBorder:
+                                                const OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color:
+                                                        borderColor)),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(
+                                                      1.sp),
                                                 ),
-                                                onChanged: onSearchChanged,
-                                                controller: orderController
-                                                    .searchController,
-                                                keyboardType:
-                                                    TextInputType.text,
-                                                decoration: InputDecoration(
-                                                  filled: true,
-                                                  isDense: true,
-                                                  fillColor: whiteColor,
-                                                  prefixIcon: Icon(Icons.search,
-                                                      size: 20.sp,
-                                                      color: Colors.grey),
-                                                  focusedBorder:
-                                                      const OutlineInputBorder(
-                                                          borderSide: BorderSide(
-                                                              color:
-                                                                  borderColor)),
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            1.sp),
-                                                  ),
-                                                  enabledBorder:
-                                                      OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            1.sp),
-                                                    borderSide:
-                                                        const BorderSide(
-                                                            color: borderColor),
-                                                  ),
-                                                  counterText: "",
-                                                  hintText: "Search",
-                                                  hintStyle: TextStyle(
-                                                      fontSize: 14.sp),
+                                                enabledBorder:
+                                                OutlineInputBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(
+                                                      1.sp),
+                                                  borderSide:
+                                                  const BorderSide(
+                                                      color: borderColor),
                                                 ),
+                                                contentPadding:
+                                                EdgeInsets.zero,
+                                                counterText: "",
+                                                hintText: "Search",
+                                                hintStyle: TextStyle(
+                                                    fontSize: 14.sp),
                                               ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                SizedBox(
-                                  height: 40.sp,
-                                  width: 130.sp,
-                                  child: DropdownButtonFormField2(
-                                    value: filter,
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: whiteColor,
-                                      focusedBorder: const OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: borderColor)),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(1.sp),
-                                        borderSide: const BorderSide(
-                                            color: borderColor),
-                                      ),
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.only(
-                                          left: 10.sp, right: 0),
-                                      hintText: 'Filter',
-                                      hintStyle: TextStyle(
-                                          fontSize: 12.sp,
-                                          fontFamily:
-                                              "Franklin Gothic Regular"),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(1),
+                                    )
+                                        : Expanded(
+                                      flex: 1,
+                                      child: SizedBox(
+                                        height: 40.sp,
+                                        child: Padding(
+                                          padding:
+                                          EdgeInsets.only(right: 10.sp),
+                                          child: RawKeyboardListener(
+                                            focusNode: FocusNode(),
+                                            onKey: (value) {
+                                              print(value);
+                                              if (value is RawKeyDownEvent) {
+                                                orderController
+                                                    .queryText.value = "";
+                                                orderController
+                                                    .getOrderData();
+                                              }
+                                            },
+                                            child: TextField(
+                                              textCapitalization:
+                                              TextCapitalization.words,
+                                              style: TextStyle(
+                                                color: textColor,
+                                                fontSize: 15.sp,
+                                                fontFamily:
+                                                "Franklin Gothic Regular",
+                                              ),
+                                              onChanged: onSearchChanged,
+                                              controller: orderController
+                                                  .searchController,
+                                              keyboardType:
+                                              TextInputType.text,
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                isDense: true,
+                                                fillColor: whiteColor,
+                                                prefixIcon: Icon(Icons.search,
+                                                    size: 20.sp,
+                                                    color: Colors.grey),
+                                                focusedBorder:
+                                                const OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color:
+                                                        borderColor)),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(
+                                                      1.sp),
+                                                ),
+                                                enabledBorder:
+                                                OutlineInputBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(
+                                                      1.sp),
+                                                  borderSide:
+                                                  const BorderSide(
+                                                      color: borderColor),
+                                                ),
+                                                counterText: "",
+                                                hintText: "Search",
+                                                hintStyle: TextStyle(
+                                                    fontSize: 14.sp),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                    isExpanded: true,
-                                    items: orderController.filterList
-                                        .map((item) => DropdownMenuItem<String>(
+                                    SizedBox(
+                                      height: 40.sp,
+                                      width: 130.sp,
+                                      child: DropdownButtonFormField2(
+                                        value: filter,
+                                        decoration: InputDecoration(
+                                          filled: true,
+                                          fillColor: whiteColor,
+                                          focusedBorder: const OutlineInputBorder(
+                                              borderSide:
+                                              BorderSide(color: borderColor)),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(1.sp),
+                                            borderSide: const BorderSide(
+                                                color: borderColor),
+                                          ),
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.only(
+                                              left: 10.sp, right: 0),
+                                          hintText: 'Filter',
+                                          hintStyle: TextStyle(
+                                              fontSize: 12.sp,
+                                              fontFamily:
+                                              "Franklin Gothic Regular"),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                1),
+                                          ),
+                                        ),
+                                        isExpanded: true,
+                                        items: orderController.filterList
+                                            .map((item) =>
+                                            DropdownMenuItem<String>(
                                               value: item,
                                               child: Text(
                                                 item,
@@ -324,194 +333,285 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                   fontSize: 12.sp,
                                                   color: textColor,
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                  "Franklin Gothic Regular",
                                                 ),
                                               ),
                                             ))
-                                        .toList(),
-                                    validator: (value) {
-                                      if (value == null) {
-                                        return 'Please select Types.';
-                                      }
-                                      return null;
-                                    },
-                                    onChanged: (value) async {
-                                      filter = value;
-                                      print(orderController.filterId[
+                                            .toList(),
+                                        validator: (value) {
+                                          if (value == null) {
+                                            return 'Please select Types.';
+                                          }
+                                          return null;
+                                        },
+                                        onChanged: (value) async {
+                                          filter = value;
+                                          print(orderController.filterId[
                                           orderController.filterList
                                               .indexOf(filter.toString())]);
-                                      orderController.status.value =
+                                          orderController.status.value =
                                           orderController.filterId[
-                                              orderController.filterList
-                                                  .indexOf(filter.toString())];
-                                      orderController.getOrderData();
-                                      await analytics.logEvent(
-                                        name: 'order_filterClick',
-                                        parameters: <String, Object>{
-                                          'page_name': 'order_filterClick',
+                                          orderController.filterList
+                                              .indexOf(filter.toString())];
+                                          orderController.getOrderData();
+                                          await analytics.logEvent(
+                                            name: 'order_filterClick',
+                                            parameters: <String, Object>{
+                                              'page_name': 'order_filterClick',
+                                            },
+                                          );
                                         },
-                                      );
-                                    },
-                                    onSaved: (value) {},
-                                    buttonStyleData: ButtonStyleData(
-                                      height: 60.sp,
-                                      padding: EdgeInsets.only(right: 10.sp),
-                                    ),
-                                    iconStyleData: IconStyleData(
-                                      icon:
+                                        onSaved: (value) {},
+                                        buttonStyleData: ButtonStyleData(
+                                          height: 60.sp,
+                                          padding: EdgeInsets.only(
+                                              right: 10.sp),
+                                        ),
+                                        iconStyleData: IconStyleData(
+                                          icon:
                                           ImageIcon(AssetImage(dropdownImage)),
-                                      iconSize: 10.sp,
-                                    ),
-                                    dropdownStyleData: DropdownStyleData(
-                                      maxHeight: 200.sp,
-                                      decoration: BoxDecoration(
-                                        color: whiteTextColor,
-                                        borderRadius:
+                                          iconSize: 10.sp,
+                                        ),
+                                        dropdownStyleData: DropdownStyleData(
+                                          maxHeight: 200.sp,
+                                          decoration: BoxDecoration(
+                                            color: whiteTextColor,
+                                            borderRadius:
                                             BorderRadius.circular(4.sp),
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
                       ),
-                      Obx(() => orderController.isOrder.value
+                      Obx(() =>
+                      orderController.isOrder.value
                           ? const DummyOrderList()
                           : orderController.orderList.isNotEmpty
-                              ? Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                        padding: EdgeInsets.only(bottom: 10.sp),
-                                        child: GetBuilder<OrderController>(
-                                          builder: (value) => ListView.builder(
-                                              primary: false,
-                                              shrinkWrap: true,
-                                              controller:
-                                                  value.orderListController,
-                                              physics: const ScrollPhysics(),
-                                              itemCount: value.orderList.length,
-                                              padding: EdgeInsets.zero,
-                                              scrollDirection: Axis.vertical,
-                                              itemBuilder: (ctx, index) {
-                                                return Padding(
-                                                  padding: EdgeInsets.only(
-                                                      bottom: 10.sp),
-                                                  child: Column(
-                                                    children: [
-                                                      Container(
-                                                        color: whiteColor,
-                                                        child: Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  top: 10.sp),
-                                                          child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              16.sp),
-                                                                  child:
-                                                                      GestureDetector(
-                                                                    onTap:
-                                                                        () async {
-                                                                      orderController
-                                                                          .isDownloadInvoice
-                                                                          .value = false;
-                                                                      orderController
-                                                                          .downloadSuccess
-                                                                          .value = "";
-                                                                      Get.to(
-                                                                          OrderDetailsScreen(
-                                                                        orderId:
-                                                                            value.orderList[index]["id"],
-                                                                      ))?.then((value) =>
-                                                                          setState(
-                                                                            () {
-                                                                              orderController.getOrderData();
-                                                                            },
-                                                                          ));
-                                                                      await analytics
-                                                                          .logEvent(
-                                                                        name:
-                                                                            'order_details',
-                                                                        parameters: <String,
-                                                                            Object>{
-                                                                          'page_name':
-                                                                              'order_details',
-                                                                        },
-                                                                      );
-                                                                    },
-                                                                    child: Row(
+                          ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                              padding: EdgeInsets.only(bottom: 10.sp),
+                              child: GetBuilder<OrderController>(
+                                builder: (value) =>
+                                    ListView.builder(
+                                        primary: false,
+                                        shrinkWrap: true,
+                                        controller:
+                                        value.orderListController,
+                                        physics: const ScrollPhysics(),
+                                        itemCount: value.orderList.length,
+                                        padding: EdgeInsets.zero,
+                                        scrollDirection: Axis.vertical,
+                                        itemBuilder: (ctx, index) {
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                                bottom: 10.sp),
+                                            child: Column(
+                                              children: [
+                                                Container(
+                                                  color: whiteColor,
+                                                  child: Padding(
+                                                    padding:
+                                                    EdgeInsets.only(
+                                                        top: 10.sp),
+                                                    child: Column(
+                                                        crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                        mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .start,
+                                                        children: [
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                horizontal:
+                                                                16.sp),
+                                                            child:
+                                                            GestureDetector(
+                                                              onTap:
+                                                                  () async {
+                                                                orderController
+                                                                    .isDownloadInvoice
+                                                                    .value =
+                                                                false;
+                                                                orderController
+                                                                    .downloadSuccess
+                                                                    .value = "";
+                                                                Get.to(
+                                                                    OrderDetailsScreen(
+                                                                      orderId:
+                                                                      value
+                                                                          .orderList[index]["id"],
+                                                                    ))?.then((
+                                                                    value) =>
+                                                                    setState(
+                                                                          () {
+                                                                        orderController
+                                                                            .getOrderData();
+                                                                      },
+                                                                    ));
+                                                                await analytics
+                                                                    .logEvent(
+                                                                  name:
+                                                                  'order_details',
+                                                                  parameters: <
+                                                                      String,
+                                                                      Object>{
+                                                                    'page_name':
+                                                                    'order_details',
+                                                                  },
+                                                                );
+                                                              },
+                                                              child: Row(
+                                                                children: [
+                                                                  Expanded(
+                                                                      flex:
+                                                                      1,
+                                                                      child: value
+                                                                          .orderList[index]["order_lines"][0]["product"] !=
+                                                                          null
+                                                                          ? value
+                                                                          .orderList[index]["order_lines"][0]["product"]["images"]
+                                                                          .isNotEmpty &&
+                                                                          value
+                                                                              .orderList[index]["order_lines"][0]["product"]["images"] !=
+                                                                              null
+                                                                          ? SizedBox(
+                                                                        height: 85
+                                                                            .sp,
+                                                                        width: 70
+                                                                            .sp,
+                                                                        child: CachedNetworkImage(
+                                                                          cacheManager: CacheManager(
+                                                                              Config(
+                                                                                  "customCacheKey",
+                                                                                  stalePeriod: const Duration(
+                                                                                      days: 15),
+                                                                                  maxNrOfCacheObjects: 100)),
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                          imageUrl: isImage(
+                                                                              value
+                                                                                  .orderList[index]["order_lines"][0]["product"]["images"][0]["name"])
+                                                                              ? value
+                                                                              .orderList[index]["order_lines"][0]["product"]["images"][0]["name"]
+                                                                              : value
+                                                                              .orderList[index]["order_lines"][0]["product"]["images"][1]["name"],
+                                                                          errorWidget: (
+                                                                              context,
+                                                                              url,
+                                                                              error) =>
+                                                                              Image
+                                                                                  .asset(
+                                                                                downloadImage,
+                                                                                fit: BoxFit
+                                                                                    .cover,
+                                                                                height: 85
+                                                                                    .sp,
+                                                                                width: 70
+                                                                                    .sp,
+                                                                              ),
+                                                                        ),
+                                                                      )
+                                                                          : Image
+                                                                          .asset(
+                                                                          dummyWishlistImage,
+                                                                          height: 85
+                                                                              .sp,
+                                                                          width: 70
+                                                                              .sp,
+                                                                          fit: BoxFit
+                                                                              .cover)
+                                                                          : Image
+                                                                          .asset(
+                                                                          dummyWishlistImage,
+                                                                          height: 85
+                                                                              .sp,
+                                                                          width: 70
+                                                                              .sp,
+                                                                          fit: BoxFit
+                                                                              .cover)),
+                                                                  Expanded(
+                                                                    flex:
+                                                                    3,
+                                                                    child:
+                                                                    Column(
+                                                                      crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                      mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
                                                                       children: [
-                                                                        Expanded(
-                                                                            flex:
-                                                                                1,
-                                                                            child: value.orderList[index]["order_lines"][0]["product"] != null
-                                                                                ? value.orderList[index]["order_lines"][0]["product"]["images"].isNotEmpty && value.orderList[index]["order_lines"][0]["product"]["images"] != null
-                                                                                    ? SizedBox(
-                                                                                        height: 85.sp,
-                                                                                        width: 70.sp,
-                                                                                        child: CachedNetworkImage(
-                                                                                          cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-                                                                                          fit: BoxFit.cover,
-                                                                                          imageUrl: isImage(value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"]) ? value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"] : value.orderList[index]["order_lines"][0]["product"]["images"][1]["name"],
-                                                                                          errorWidget: (context, url, error) => Image.asset(
-                                                                                            downloadImage,
-                                                                                            fit: BoxFit.cover,
-                                                                                            height: 85.sp,
-                                                                                            width: 70.sp,
-                                                                                          ),
-                                                                                        ),
-                                                                                      )
-                                                                                    : Image.asset(dummyWishlistImage, height: 85.sp, width: 70.sp, fit: BoxFit.cover)
-                                                                                : Image.asset(dummyWishlistImage, height: 85.sp, width: 70.sp, fit: BoxFit.cover)),
-                                                                        Expanded(
-                                                                          flex:
-                                                                              3,
-                                                                          child:
-                                                                              Column(
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.start,
+                                                                        Padding(
+                                                                          padding: EdgeInsets
+                                                                              .only(
+                                                                              right: 5
+                                                                                  .sp,
+                                                                              left: 12
+                                                                                  .sp),
+                                                                          child: AppText(
+                                                                            text: value
+                                                                                .orderList[index]["order_lines"][0]["product"] !=
+                                                                                null
+                                                                                ? value
+                                                                                .orderList[index]["order_lines"][0]["product"]["name"]
+                                                                                : "",
+                                                                            maxLines: 1,
+                                                                            fontFamily: "Franklin Gothic Regular",
+                                                                            fontWeight: FontWeight
+                                                                                .w400,
+                                                                            fontSize: 14,
+                                                                            color: nameText,
+                                                                          ),
+                                                                        ),
+                                                                        Padding(
+                                                                          padding: EdgeInsets
+                                                                              .only(
+                                                                              right: 5
+                                                                                  .sp,
+                                                                              left: 12
+                                                                                  .sp,
+                                                                              top: 5
+                                                                                  .sp,
+                                                                              bottom: 5
+                                                                                  .sp),
+                                                                          child: AppText(
+                                                                            text: value
+                                                                                .orderList[index]["order_lines"][0]["product"] !=
+                                                                                null
+                                                                                ? value
+                                                                                .orderList[index]["order_lines"][0]["product"]["brand_name"] ??
+                                                                                ""
+                                                                                : "",
+                                                                            color: greyTextColor,
+                                                                            maxLines: 2,
+                                                                            fontSize: 12,
+                                                                            fontFamily: "Franklin Gothic Regular",
+                                                                            fontWeight: FontWeight
+                                                                                .w400,
+                                                                          ),
+                                                                        ),
+                                                                        Padding(
+                                                                          padding: EdgeInsets
+                                                                              .only(
+                                                                              right: 5
+                                                                                  .sp,
+                                                                              left: 12
+                                                                                  .sp,
+                                                                              top: 0
+                                                                                  .sp,
+                                                                              bottom: 5
+                                                                                  .sp),
+                                                                          child: Row(
                                                                             children: [
-                                                                              Padding(
-                                                                                padding: EdgeInsets.only(right: 5.sp, left: 12.sp),
-                                                                                child: AppText(
-                                                                                  text: value.orderList[index]["order_lines"][0]["product"] != null ? value.orderList[index]["order_lines"][0]["product"]["name"] : "",
-                                                                                  maxLines: 1,
-                                                                                  fontFamily: "Franklin Gothic Regular",
-                                                                                  fontWeight: FontWeight.w400,
-                                                                                  fontSize: 14,
-                                                                                  color: nameText,
-                                                                                ),
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: EdgeInsets.only(right: 5.sp, left: 12.sp, top: 5.sp, bottom: 5.sp),
-                                                                                child: AppText(
-                                                                                  text: value.orderList[index]["order_lines"][0]["product"] != null ? value.orderList[index]["order_lines"][0]["product"]["brand_name"] ?? "" : "",
-                                                                                  color: greyTextColor,
-                                                                                  maxLines: 2,
-                                                                                  fontSize: 12,
-                                                                                  fontFamily: "Franklin Gothic Regular",
-                                                                                  fontWeight: FontWeight.w400,
-                                                                                ),
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: EdgeInsets.only(right: 5.sp, left: 12.sp, top: 0.sp, bottom: 5.sp),
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    /*  value.orderList[index]["order_lines"][0]["inventory"] != null
+                                                                              /*  value.orderList[index]["order_lines"][0]["inventory"] != null
                                                                                       ? Padding(
                                                                                           padding: EdgeInsets.only(right: 10.sp),
                                                                                           child: AppText(
@@ -540,708 +640,1118 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                                                                       ),
                                                                                     ),
                                                                                   ), */
-                                                                                    Padding(
-                                                                                      padding: EdgeInsets.only(right: 10.sp),
-                                                                                      child: AppText(
-                                                                                        text: value.orderList[index]["order_lines"].length > 1 ? "Items : ${value.orderList[index]["order_lines"].length}" : "Item : ${value.orderList[index]["order_lines"].length}",
-                                                                                        color: greyTextColor,
-                                                                                        maxLines: 2,
-                                                                                        fontSize: 12,
-                                                                                        fontFamily: "Franklin Gothic Regular",
-                                                                                        fontWeight: FontWeight.w400,
-                                                                                      ),
-                                                                                    ),
-                                                                                    Expanded(
-                                                                                      flex: 1,
-                                                                                      child: const SizedBox(
-                                                                                        height: 0,
-                                                                                      ),
-                                                                                    ),
-                                                                                    AppText(
-                                                                                      text: "\u{20B9} ${value.orderList[index]["total"] ?? "0"}",
-                                                                                      color: greyTextColor,
-                                                                                      fontSize: 12,
-                                                                                      textAlign: TextAlign.right,
-                                                                                      fontFamily: "Franklin Gothic Regular",
-                                                                                      fontWeight: FontWeight.w400,
-                                                                                    ),
-                                                                                  ],
+                                                                              Padding(
+                                                                                padding: EdgeInsets
+                                                                                    .only(
+                                                                                    right: 10
+                                                                                        .sp),
+                                                                                child: AppText(
+                                                                                  text: value
+                                                                                      .orderList[index]["order_lines"]
+                                                                                      .length >
+                                                                                      1
+                                                                                      ? "Items : ${value
+                                                                                      .orderList[index]["order_lines"]
+                                                                                      .length}"
+                                                                                      : "Item : ${value
+                                                                                      .orderList[index]["order_lines"]
+                                                                                      .length}",
+                                                                                  color: greyTextColor,
+                                                                                  maxLines: 2,
+                                                                                  fontSize: 12,
+                                                                                  fontFamily: "Franklin Gothic Regular",
+                                                                                  fontWeight: FontWeight
+                                                                                      .w400,
                                                                                 ),
+                                                                              ),
+                                                                              Expanded(
+                                                                                flex: 1,
+                                                                                child: const SizedBox(
+                                                                                  height: 0,
+                                                                                ),
+                                                                              ),
+                                                                              AppText(
+                                                                                text: "\u{20B9} ${value
+                                                                                    .orderList[index]["total"] ??
+                                                                                    "0"}",
+                                                                                color: greyTextColor,
+                                                                                fontSize: 12,
+                                                                                textAlign: TextAlign
+                                                                                    .right,
+                                                                                fontFamily: "Franklin Gothic Regular",
+                                                                                fontWeight: FontWeight
+                                                                                    .w400,
                                                                               ),
                                                                             ],
                                                                           ),
-                                                                        )
+                                                                        ),
                                                                       ],
                                                                     ),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                vertical:
+                                                                10.sp,
+                                                                horizontal:
+                                                                16.sp),
+                                                            child: Row(
+                                                              children: [
+                                                                if (value
+                                                                    .orderList[index]["status"] ==
+                                                                    6) ...[
+                                                                  AnimatedContainer(
+                                                                    duration:
+                                                                    const Duration(
+                                                                        milliseconds: 300),
+                                                                    margin:
+                                                                    EdgeInsets
+                                                                        .only(
+                                                                        right: 5
+                                                                            .sp),
+                                                                    height:
+                                                                    30.sp,
+                                                                    decoration:
+                                                                    BoxDecoration(
+                                                                      color:
+                                                                      lightGreen,
+                                                                      borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                          20
+                                                                              .sp),
+                                                                      border:
+                                                                      Border
+                                                                          .all(
+                                                                          color: textHintColor,
+                                                                          width: 1
+                                                                              .sp),
+                                                                    ),
+                                                                    child:
+                                                                    Padding(
+                                                                      padding:
+                                                                      EdgeInsets
+                                                                          .symmetric(
+                                                                          horizontal: 5
+                                                                              .sp),
+                                                                      child:
+                                                                      Row(children: [
+                                                                        Padding(
+                                                                          padding: EdgeInsets
+                                                                              .symmetric(
+                                                                              horizontal: 2
+                                                                                  .sp),
+                                                                          child: SvgPicture
+                                                                              .asset(
+                                                                            deliverSvgImage,
+                                                                            height: 8
+                                                                                .sp,
+                                                                            width: 11
+                                                                                .sp,
+                                                                          ),
+                                                                        ),
+                                                                        Padding(
+                                                                          padding: EdgeInsets
+                                                                              .only(
+                                                                              left: 5
+                                                                                  .sp,
+                                                                              right: 2
+                                                                                  .sp),
+                                                                          child: AppText(
+                                                                            text: "${value
+                                                                                .orderList[index]["status_details"]}"
+                                                                                .capitalize!,
+                                                                            //Delivered
+                                                                            color: deepGreen,
+                                                                            fontSize: 12,
+                                                                            fontFamily: "Franklin Gothic",
+                                                                            fontWeight: FontWeight
+                                                                                .w500,
+                                                                          ),
+                                                                        ),
+                                                                      ]),
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                                Padding(
-                                                                  padding: EdgeInsets.symmetric(
-                                                                      vertical:
-                                                                          10.sp,
-                                                                      horizontal:
-                                                                          16.sp),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      if (value.orderList[index]["status"] ==
-                                                                          6) ...[
-                                                                        AnimatedContainer(
-                                                                          duration:
-                                                                              const Duration(milliseconds: 300),
-                                                                          margin:
-                                                                              EdgeInsets.only(right: 5.sp),
-                                                                          height:
-                                                                              30.sp,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                lightGreen,
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(20.sp),
-                                                                            border:
-                                                                                Border.all(color: textHintColor, width: 1.sp),
+                                                                ] else
+                                                                  if (value
+                                                                      .orderList[index]["status"] ==
+                                                                      5) ...[
+                                                                    AnimatedContainer(
+                                                                      duration:
+                                                                      const Duration(
+                                                                          milliseconds: 300),
+                                                                      margin:
+                                                                      EdgeInsets
+                                                                          .only(
+                                                                          right: 5
+                                                                              .sp),
+                                                                      height:
+                                                                      30.sp,
+                                                                      decoration:
+                                                                      BoxDecoration(
+                                                                        color:
+                                                                        lightYellow,
+                                                                        borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                            20
+                                                                                .sp),
+                                                                        border:
+                                                                        Border
+                                                                            .all(
+                                                                            color: textHintColor,
+                                                                            width: 1
+                                                                                .sp),
+                                                                      ),
+                                                                      child:
+                                                                      Padding(
+                                                                        padding:
+                                                                        EdgeInsets
+                                                                            .symmetric(
+                                                                            horizontal: 5
+                                                                                .sp),
+                                                                        child:
+                                                                        Row(children: [
+                                                                          Padding(
+                                                                            padding: EdgeInsets
+                                                                                .symmetric(
+                                                                                horizontal: 2
+                                                                                    .sp),
+                                                                            child: SvgPicture
+                                                                                .asset(
+                                                                              shipSvgImage,
+                                                                              height: 16
+                                                                                  .sp,
+                                                                              width: 16
+                                                                                  .sp,
+                                                                            ),
                                                                           ),
-                                                                          child:
-                                                                              Padding(
-                                                                            padding:
-                                                                                EdgeInsets.symmetric(horizontal: 5.sp),
-                                                                            child:
-                                                                                Row(children: [
-                                                                              Padding(
-                                                                                padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: SvgPicture.asset(
-                                                                                  deliverSvgImage,
-                                                                                  height: 8.sp,
-                                                                                  width: 11.sp,
-                                                                                ),
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
-                                                                                child: AppText(
-                                                                                  text: "${value.orderList[index]["status_details"]}".capitalize!, //Delivered
-                                                                                  color: deepGreen,
-                                                                                  fontSize: 12,
-                                                                                  fontFamily: "Franklin Gothic",
-                                                                                  fontWeight: FontWeight.w500,
-                                                                                ),
-                                                                              ),
-                                                                            ]),
+                                                                          Padding(
+                                                                            padding: EdgeInsets
+                                                                                .only(
+                                                                                left: 5
+                                                                                    .sp,
+                                                                                right: 2
+                                                                                    .sp),
+                                                                            child: AppText(
+                                                                              text: "${value
+                                                                                  .orderList[index]["status_details"]}"
+                                                                                  .capitalize!,
+                                                                              //Shipped
+                                                                              color: deeptYellow,
+                                                                              fontSize: 12,
+                                                                              fontFamily: "Franklin Gothic",
+                                                                              fontWeight: FontWeight
+                                                                                  .w500,
+                                                                            ),
                                                                           ),
+                                                                        ]),
+                                                                      ),
+                                                                    ),
+                                                                  ] else
+                                                                    if (value
+                                                                        .orderList[index]["status"] ==
+                                                                        1) ...[
+                                                                      AnimatedContainer(
+                                                                        duration:
+                                                                        const Duration(
+                                                                            milliseconds: 300),
+                                                                        margin:
+                                                                        EdgeInsets
+                                                                            .only(
+                                                                            right: 5
+                                                                                .sp),
+                                                                        height:
+                                                                        30.sp,
+                                                                        decoration:
+                                                                        BoxDecoration(
+                                                                          color:
+                                                                          lightYellow,
+                                                                          borderRadius:
+                                                                          BorderRadius
+                                                                              .circular(
+                                                                              20
+                                                                                  .sp),
+                                                                          border:
+                                                                          Border
+                                                                              .all(
+                                                                              color: textHintColor,
+                                                                              width: 1
+                                                                                  .sp),
                                                                         ),
-                                                                      ] else if (value.orderList[index]["status"] ==
-                                                                          5) ...[
-                                                                        AnimatedContainer(
-                                                                          duration:
-                                                                              const Duration(milliseconds: 300),
-                                                                          margin:
-                                                                              EdgeInsets.only(right: 5.sp),
-                                                                          height:
-                                                                              30.sp,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                lightYellow,
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(20.sp),
-                                                                            border:
-                                                                                Border.all(color: textHintColor, width: 1.sp),
-                                                                          ),
+                                                                        child:
+                                                                        Padding(
+                                                                          padding:
+                                                                          EdgeInsets
+                                                                              .symmetric(
+                                                                              horizontal: 5
+                                                                                  .sp),
                                                                           child:
-                                                                              Padding(
-                                                                            padding:
-                                                                                EdgeInsets.symmetric(horizontal: 5.sp),
-                                                                            child:
-                                                                                Row(children: [
-                                                                              Padding(
-                                                                                padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: SvgPicture.asset(
-                                                                                  shipSvgImage,
-                                                                                  height: 16.sp,
-                                                                                  width: 16.sp,
-                                                                                ),
+                                                                          Row(children: [
+                                                                            Padding(
+                                                                              padding: EdgeInsets
+                                                                                  .only(
+                                                                                  left: 2
+                                                                                      .sp,
+                                                                                  right: 2
+                                                                                      .sp),
+                                                                              child: AppText(
+                                                                                text: "${value
+                                                                                    .orderList[index]["status_details"]}"
+                                                                                    .capitalize!,
+                                                                                //Cart
+                                                                                color: deeptYellow,
+                                                                                fontSize: 12,
+                                                                                fontFamily: "Franklin Gothic",
+                                                                                fontWeight: FontWeight
+                                                                                    .w500,
                                                                               ),
-                                                                              Padding(
-                                                                                padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
-                                                                                child: AppText(
-                                                                                  text: "${value.orderList[index]["status_details"]}".capitalize!, //Shipped
-                                                                                  color: deeptYellow,
-                                                                                  fontSize: 12,
-                                                                                  fontFamily: "Franklin Gothic",
-                                                                                  fontWeight: FontWeight.w500,
-                                                                                ),
-                                                                              ),
-                                                                            ]),
-                                                                          ),
+                                                                            ),
+                                                                          ]),
                                                                         ),
-                                                                      ] else if (value.orderList[index]["status"] ==
-                                                                          1) ...[
-                                                                        AnimatedContainer(
-                                                                          duration:
-                                                                              const Duration(milliseconds: 300),
-                                                                          margin:
-                                                                              EdgeInsets.only(right: 5.sp),
-                                                                          height:
-                                                                              30.sp,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                lightYellow,
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(20.sp),
-                                                                            border:
-                                                                                Border.all(color: textHintColor, width: 1.sp),
-                                                                          ),
-                                                                          child:
-                                                                              Padding(
-                                                                            padding:
-                                                                                EdgeInsets.symmetric(horizontal: 5.sp),
-                                                                            child:
-                                                                                Row(children: [
-                                                                              Padding(
-                                                                                padding: EdgeInsets.only(left: 2.sp, right: 2.sp),
-                                                                                child: AppText(
-                                                                                  text: "${value.orderList[index]["status_details"]}".capitalize!, //Cart
-                                                                                  color: deeptYellow,
-                                                                                  fontSize: 12,
-                                                                                  fontFamily: "Franklin Gothic",
-                                                                                  fontWeight: FontWeight.w500,
-                                                                                ),
-                                                                              ),
-                                                                            ]),
-                                                                          ),
-                                                                        ),
-                                                                      ] else if (value.orderList[index]["status"] ==
+                                                                      ),
+                                                                    ] else
+                                                                      if (value
+                                                                          .orderList[index]["status"] ==
                                                                           3) ...[
                                                                         AnimatedContainer(
                                                                           duration:
-                                                                              const Duration(milliseconds: 300),
+                                                                          const Duration(
+                                                                              milliseconds: 300),
                                                                           margin:
-                                                                              EdgeInsets.only(right: 5.sp),
+                                                                          EdgeInsets
+                                                                              .only(
+                                                                              right: 5
+                                                                                  .sp),
                                                                           height:
-                                                                              30.sp,
+                                                                          30.sp,
                                                                           decoration:
-                                                                              BoxDecoration(
+                                                                          BoxDecoration(
                                                                             color:
-                                                                                lightPurple,
+                                                                            lightPurple,
                                                                             borderRadius:
-                                                                                BorderRadius.circular(20.sp),
+                                                                            BorderRadius
+                                                                                .circular(
+                                                                                20
+                                                                                    .sp),
                                                                             border:
-                                                                                Border.all(color: textHintColor, width: 1.sp),
+                                                                            Border
+                                                                                .all(
+                                                                                color: textHintColor,
+                                                                                width: 1
+                                                                                    .sp),
                                                                           ),
                                                                           child:
-                                                                              Padding(
+                                                                          Padding(
                                                                             padding:
-                                                                                EdgeInsets.symmetric(horizontal: 5.sp),
+                                                                            EdgeInsets
+                                                                                .symmetric(
+                                                                                horizontal: 5
+                                                                                    .sp),
                                                                             child:
-                                                                                Row(children: [
+                                                                            Row(children: [
                                                                               Padding(
-                                                                                padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: SvgPicture.asset(
+                                                                                padding: EdgeInsets
+                                                                                    .symmetric(
+                                                                                    horizontal: 2
+                                                                                        .sp),
+                                                                                child: SvgPicture
+                                                                                    .asset(
                                                                                   confirmSvgImage,
                                                                                   color: deepPurple,
-                                                                                  height: 16.sp,
-                                                                                  width: 16.sp,
+                                                                                  height: 16
+                                                                                      .sp,
+                                                                                  width: 16
+                                                                                      .sp,
                                                                                 ),
                                                                               ),
                                                                               Padding(
-                                                                                padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
+                                                                                padding: EdgeInsets
+                                                                                    .only(
+                                                                                    left: 5
+                                                                                        .sp,
+                                                                                    right: 2
+                                                                                        .sp),
                                                                                 child: AppText(
-                                                                                  text: "${value.orderList[index]["status_details"]}".capitalize!, //Order Confirmed
+                                                                                  text: "${value
+                                                                                      .orderList[index]["status_details"]}"
+                                                                                      .capitalize!,
+                                                                                  //Order Confirmed
                                                                                   color: deepPurple,
                                                                                   fontSize: 12,
                                                                                   fontFamily: "Franklin Gothic",
-                                                                                  fontWeight: FontWeight.w500,
+                                                                                  fontWeight: FontWeight
+                                                                                      .w500,
                                                                                 ),
                                                                               ),
                                                                             ]),
                                                                           ),
                                                                         ),
-                                                                      ] else if (value.orderList[index]["status"] ==
-                                                                          2) ...[
-                                                                        AnimatedContainer(
-                                                                          duration:
-                                                                              const Duration(milliseconds: 300),
-                                                                          margin:
-                                                                              EdgeInsets.only(right: 5.sp),
-                                                                          height:
-                                                                              30.sp,
-                                                                          decoration:
+                                                                      ] else
+                                                                        if (value
+                                                                            .orderList[index]["status"] ==
+                                                                            2) ...[
+                                                                          AnimatedContainer(
+                                                                            duration:
+                                                                            const Duration(
+                                                                                milliseconds: 300),
+                                                                            margin:
+                                                                            EdgeInsets
+                                                                                .only(
+                                                                                right: 5
+                                                                                    .sp),
+                                                                            height:
+                                                                            30
+                                                                                .sp,
+                                                                            decoration:
+                                                                            BoxDecoration(
+                                                                              color:
+                                                                              lightPurple,
+                                                                              borderRadius:
+                                                                              BorderRadius
+                                                                                  .circular(
+                                                                                  20
+                                                                                      .sp),
+                                                                              border:
+                                                                              Border
+                                                                                  .all(
+                                                                                  color: textHintColor,
+                                                                                  width: 1
+                                                                                      .sp),
+                                                                            ),
+                                                                            child:
+                                                                            Padding(
+                                                                              padding:
+                                                                              EdgeInsets
+                                                                                  .symmetric(
+                                                                                  horizontal: 5
+                                                                                      .sp),
+                                                                              child:
+                                                                              Row(children: [
+                                                                                Padding(
+                                                                                  padding: EdgeInsets
+                                                                                      .symmetric(
+                                                                                      horizontal: 2
+                                                                                          .sp),
+                                                                                  child: ImageIcon(
+                                                                                    AssetImage(
+                                                                                        confirmOrderImage),
+                                                                                    color: deepPurple,
+                                                                                    size: 14
+                                                                                        .sp,
+                                                                                  ),
+                                                                                ),
+                                                                                Padding(
+                                                                                  padding: EdgeInsets
+                                                                                      .only(
+                                                                                      left: 5
+                                                                                          .sp,
+                                                                                      right: 2
+                                                                                          .sp),
+                                                                                  child: AppText(
+                                                                                    text: "${value
+                                                                                        .orderList[index]["status_details"]}"
+                                                                                        .capitalize!,
+                                                                                    //Pending
+                                                                                    color: deepPurple,
+                                                                                    fontSize: 12,
+                                                                                    fontFamily: "Franklin Gothic",
+                                                                                    fontWeight: FontWeight
+                                                                                        .w500,
+                                                                                  ),
+                                                                                ),
+                                                                              ]),
+                                                                            ),
+                                                                          ),
+                                                                        ] else
+                                                                          if (value
+                                                                              .orderList[index]["status"] ==
+                                                                              4) ...[
+                                                                            AnimatedContainer(
+                                                                              duration:
+                                                                              const Duration(
+                                                                                  milliseconds: 300),
+                                                                              margin:
+                                                                              EdgeInsets
+                                                                                  .only(
+                                                                                  right: 5
+                                                                                      .sp),
+                                                                              height:
+                                                                              30
+                                                                                  .sp,
+                                                                              decoration:
                                                                               BoxDecoration(
-                                                                            color:
+                                                                                color:
                                                                                 lightPurple,
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(20.sp),
-                                                                            border:
-                                                                                Border.all(color: textHintColor, width: 1.sp),
-                                                                          ),
-                                                                          child:
+                                                                                borderRadius:
+                                                                                BorderRadius
+                                                                                    .circular(
+                                                                                    20
+                                                                                        .sp),
+                                                                                border:
+                                                                                Border
+                                                                                    .all(
+                                                                                    color: textHintColor,
+                                                                                    width: 1
+                                                                                        .sp),
+                                                                              ),
+                                                                              child:
                                                                               Padding(
-                                                                            padding:
-                                                                                EdgeInsets.symmetric(horizontal: 5.sp),
-                                                                            child:
+                                                                                padding:
+                                                                                EdgeInsets
+                                                                                    .symmetric(
+                                                                                    horizontal: 5
+                                                                                        .sp),
+                                                                                child:
                                                                                 Row(children: [
-                                                                              Padding(
-                                                                                padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: ImageIcon(
-                                                                                  AssetImage(confirmOrderImage),
-                                                                                  color: deepPurple,
-                                                                                  size: 14.sp,
+                                                                                  Padding(
+                                                                                    padding: EdgeInsets
+                                                                                        .symmetric(
+                                                                                        horizontal: 2
+                                                                                            .sp),
+                                                                                    child: SvgPicture
+                                                                                        .asset(
+                                                                                      confirmSvgImage,
+                                                                                      color: deepPurple,
+                                                                                      height: 16
+                                                                                          .sp,
+                                                                                      width: 16
+                                                                                          .sp,
+                                                                                    ),
+                                                                                  ),
+                                                                                  Padding(
+                                                                                    padding: EdgeInsets
+                                                                                        .only(
+                                                                                        left: 5
+                                                                                            .sp,
+                                                                                        right: 2
+                                                                                            .sp),
+                                                                                    child: AppText(
+                                                                                      text: "${value
+                                                                                          .orderList[index]["status_details"]}"
+                                                                                          .capitalize!,
+                                                                                      //Processing
+                                                                                      color: deepPurple,
+                                                                                      fontSize: 12,
+                                                                                      fontFamily: "Franklin Gothic",
+                                                                                      fontWeight: FontWeight
+                                                                                          .w500,
+                                                                                    ),
+                                                                                  ),
+                                                                                ]),
+                                                                              ),
+                                                                            ),
+                                                                          ] else
+                                                                            if (value
+                                                                                .orderList[index]["status"] ==
+                                                                                7) ...[
+                                                                              AnimatedContainer(
+                                                                                duration:
+                                                                                const Duration(
+                                                                                    milliseconds: 300),
+                                                                                margin:
+                                                                                EdgeInsets
+                                                                                    .only(
+                                                                                    right: 5
+                                                                                        .sp),
+                                                                                height:
+                                                                                30
+                                                                                    .sp,
+                                                                                decoration:
+                                                                                BoxDecoration(
+                                                                                  color:
+                                                                                  lightback,
+                                                                                  borderRadius:
+                                                                                  BorderRadius
+                                                                                      .circular(
+                                                                                      20
+                                                                                          .sp),
+                                                                                  border:
+                                                                                  Border
+                                                                                      .all(
+                                                                                      color: textHintColor,
+                                                                                      width: 1
+                                                                                          .sp),
+                                                                                ),
+                                                                                child:
+                                                                                Padding(
+                                                                                  padding:
+                                                                                  EdgeInsets
+                                                                                      .symmetric(
+                                                                                      horizontal: 5
+                                                                                          .sp),
+                                                                                  child:
+                                                                                  Row(children: [
+                                                                                    Padding(
+                                                                                      padding: EdgeInsets
+                                                                                          .symmetric(
+                                                                                          horizontal: 2
+                                                                                              .sp),
+                                                                                      child: ImageIcon(
+                                                                                        AssetImage(
+                                                                                            cancelImage),
+                                                                                        color: deepRed,
+                                                                                        size: 14
+                                                                                            .sp,
+                                                                                      ),
+                                                                                    ),
+                                                                                    Padding(
+                                                                                      padding: EdgeInsets
+                                                                                          .only(
+                                                                                          left: 5
+                                                                                              .sp,
+                                                                                          right: 2
+                                                                                              .sp),
+                                                                                      child: AppText(
+                                                                                        text: "${value
+                                                                                            .orderList[index]["status_details"]}"
+                                                                                            .capitalize!,
+                                                                                        //Cancelled
+                                                                                        color: deepRed,
+                                                                                        fontSize: 12,
+                                                                                        fontFamily: "Franklin Gothic",
+                                                                                        fontWeight: FontWeight
+                                                                                            .w500,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ]),
                                                                                 ),
                                                                               ),
-                                                                              Padding(
-                                                                                padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
-                                                                                child: AppText(
-                                                                                  text: "${value.orderList[index]["status_details"]}".capitalize!, //Pending
-                                                                                  color: deepPurple,
-                                                                                  fontSize: 12,
-                                                                                  fontFamily: "Franklin Gothic",
-                                                                                  fontWeight: FontWeight.w500,
-                                                                                ),
-                                                                              ),
-                                                                            ]),
-                                                                          ),
-                                                                        ),
-                                                                      ] else if (value.orderList[index]["status"] ==
-                                                                          4) ...[
-                                                                        AnimatedContainer(
-                                                                          duration:
-                                                                              const Duration(milliseconds: 300),
-                                                                          margin:
-                                                                              EdgeInsets.only(right: 5.sp),
-                                                                          height:
-                                                                              30.sp,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                lightPurple,
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(20.sp),
-                                                                            border:
-                                                                                Border.all(color: textHintColor, width: 1.sp),
-                                                                          ),
-                                                                          child:
-                                                                              Padding(
-                                                                            padding:
-                                                                                EdgeInsets.symmetric(horizontal: 5.sp),
-                                                                            child:
-                                                                                Row(children: [
-                                                                              Padding(
-                                                                                padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: SvgPicture.asset(
-                                                                                  confirmSvgImage,
-                                                                                  color: deepPurple,
-                                                                                  height: 16.sp,
-                                                                                  width: 16.sp,
-                                                                                ),
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
-                                                                                child: AppText(
-                                                                                  text: "${value.orderList[index]["status_details"]}".capitalize!, //Processing
-                                                                                  color: deepPurple,
-                                                                                  fontSize: 12,
-                                                                                  fontFamily: "Franklin Gothic",
-                                                                                  fontWeight: FontWeight.w500,
-                                                                                ),
-                                                                              ),
-                                                                            ]),
-                                                                          ),
-                                                                        ),
-                                                                      ] else if (value.orderList[index]["status"] ==
-                                                                          7) ...[
-                                                                        AnimatedContainer(
-                                                                          duration:
-                                                                              const Duration(milliseconds: 300),
-                                                                          margin:
-                                                                              EdgeInsets.only(right: 5.sp),
-                                                                          height:
-                                                                              30.sp,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                lightback,
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(20.sp),
-                                                                            border:
-                                                                                Border.all(color: textHintColor, width: 1.sp),
-                                                                          ),
-                                                                          child:
-                                                                              Padding(
-                                                                            padding:
-                                                                                EdgeInsets.symmetric(horizontal: 5.sp),
-                                                                            child:
-                                                                                Row(children: [
-                                                                              Padding(
-                                                                                padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: ImageIcon(
-                                                                                  AssetImage(cancelImage),
-                                                                                  color: deepRed,
-                                                                                  size: 14.sp,
-                                                                                ),
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
-                                                                                child: AppText(
-                                                                                  text: "${value.orderList[index]["status_details"]}".capitalize!, //Cancelled
-                                                                                  color: deepRed,
-                                                                                  fontSize: 12,
-                                                                                  fontFamily: "Franklin Gothic",
-                                                                                  fontWeight: FontWeight.w500,
-                                                                                ),
-                                                                              ),
-                                                                            ]),
-                                                                          ),
-                                                                        ),
-                                                                      ] else if (value.orderList[index]
+                                                                            ] else
+                                                                              if (value
+                                                                                  .orderList[index]
                                                                               [
                                                                               "status"] ==
-                                                                          8) ...[
-                                                                        AnimatedContainer(
-                                                                          duration:
-                                                                              const Duration(milliseconds: 300),
-                                                                          margin:
-                                                                              EdgeInsets.only(right: 5.sp),
-                                                                          height:
-                                                                              30.sp,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                lightPurple,
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(20.sp),
-                                                                            border:
-                                                                                Border.all(color: textHintColor, width: 1.sp),
-                                                                          ),
-                                                                          child:
-                                                                              Padding(
-                                                                            padding:
-                                                                                EdgeInsets.symmetric(horizontal: 5.sp),
-                                                                            child:
-                                                                                Row(children: [
-                                                                              Padding(
-                                                                                padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: SvgPicture.asset(
-                                                                                  confirmSvgImage,
-                                                                                  color: deepPurple,
-                                                                                  height: 16.sp,
-                                                                                  width: 16.sp,
+                                                                                  8) ...[
+                                                                                AnimatedContainer(
+                                                                                  duration:
+                                                                                  const Duration(
+                                                                                      milliseconds: 300),
+                                                                                  margin:
+                                                                                  EdgeInsets
+                                                                                      .only(
+                                                                                      right: 5
+                                                                                          .sp),
+                                                                                  height:
+                                                                                  30
+                                                                                      .sp,
+                                                                                  decoration:
+                                                                                  BoxDecoration(
+                                                                                    color:
+                                                                                    lightPurple,
+                                                                                    borderRadius:
+                                                                                    BorderRadius
+                                                                                        .circular(
+                                                                                        20
+                                                                                            .sp),
+                                                                                    border:
+                                                                                    Border
+                                                                                        .all(
+                                                                                        color: textHintColor,
+                                                                                        width: 1
+                                                                                            .sp),
+                                                                                  ),
+                                                                                  child:
+                                                                                  Padding(
+                                                                                    padding:
+                                                                                    EdgeInsets
+                                                                                        .symmetric(
+                                                                                        horizontal: 5
+                                                                                            .sp),
+                                                                                    child:
+                                                                                    Row(children: [
+                                                                                      Padding(
+                                                                                        padding: EdgeInsets
+                                                                                            .symmetric(
+                                                                                            horizontal: 2
+                                                                                                .sp),
+                                                                                        child: SvgPicture
+                                                                                            .asset(
+                                                                                          confirmSvgImage,
+                                                                                          color: deepPurple,
+                                                                                          height: 16
+                                                                                              .sp,
+                                                                                          width: 16
+                                                                                              .sp,
+                                                                                        ),
+                                                                                      ),
+                                                                                      Padding(
+                                                                                        padding: EdgeInsets
+                                                                                            .only(
+                                                                                            left: 5
+                                                                                                .sp,
+                                                                                            right: 2
+                                                                                                .sp),
+                                                                                        child: AppText(
+                                                                                          text: "${value
+                                                                                              .orderList[index]["status_details"]}"
+                                                                                              .capitalize!,
+                                                                                          //Completed
+                                                                                          color: deepPurple,
+                                                                                          fontSize: 12,
+                                                                                          fontFamily: "Franklin Gothic",
+                                                                                          fontWeight: FontWeight
+                                                                                              .w500,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ]),
+                                                                                  ),
                                                                                 ),
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
-                                                                                child: AppText(
-                                                                                  text: "${value.orderList[index]["status_details"]}".capitalize!, //Completed
-                                                                                  color: deepPurple,
-                                                                                  fontSize: 12,
-                                                                                  fontFamily: "Franklin Gothic",
-                                                                                  fontWeight: FontWeight.w500,
-                                                                                ),
-                                                                              ),
-                                                                            ]),
-                                                                          ),
-                                                                        ),
-                                                                      ] else if (value.orderList[index]
-                                                                              [
-                                                                              "status"] ==
-                                                                          9) ...[
-                                                                        AnimatedContainer(
-                                                                          duration:
-                                                                              const Duration(milliseconds: 300),
-                                                                          margin:
-                                                                              EdgeInsets.only(right: 5.sp),
-                                                                          height:
-                                                                              30.sp,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                lightPurple,
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(20.sp),
-                                                                            border:
-                                                                                Border.all(color: textHintColor, width: 1.sp),
-                                                                          ),
-                                                                          child:
-                                                                              Padding(
-                                                                            padding:
-                                                                                EdgeInsets.symmetric(horizontal: 5.sp),
-                                                                            child:
-                                                                                Row(children: [
-                                                                              Padding(
-                                                                                padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: ImageIcon(
-                                                                                  AssetImage(confirmOrderImage),
-                                                                                  color: deepPurple,
-                                                                                  size: 14,
-                                                                                ),
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
-                                                                                child: AppText(
-                                                                                  text: "${value.orderList[index]["status_details"]}".capitalize!, //Exchange
-                                                                                  color: deepPurple,
-                                                                                  fontSize: 12,
-                                                                                  fontFamily: "Franklin Gothic",
-                                                                                  fontWeight: FontWeight.w500,
-                                                                                ),
-                                                                              ),
-                                                                            ]),
-                                                                          ),
-                                                                        ),
-                                                                      ] else if (value.orderList[index]
-                                                                              [
-                                                                              "status"] ==
-                                                                          11) ...[
-                                                                        AnimatedContainer(
-                                                                          duration:
-                                                                              const Duration(milliseconds: 300),
-                                                                          margin:
-                                                                              EdgeInsets.only(right: 5.sp),
-                                                                          height:
-                                                                              30.sp,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                lightback,
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(20.sp),
-                                                                            border:
-                                                                                Border.all(color: textHintColor, width: 1.sp),
-                                                                          ),
-                                                                          child:
-                                                                              Padding(
-                                                                            padding:
-                                                                                EdgeInsets.symmetric(horizontal: 5.sp),
-                                                                            child:
-                                                                                Row(children: [
-                                                                              Padding(
-                                                                                padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: ImageIcon(
-                                                                                  AssetImage(cancelImage),
-                                                                                  color: deepRed,
-                                                                                  size: 14.sp,
-                                                                                ),
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
-                                                                                child: AppText(
-                                                                                  text: "${value.orderList[index]["status_details"]}".capitalize!, //Rejected
-                                                                                  color: deepRed,
-                                                                                  fontSize: 12,
-                                                                                  fontFamily: "Franklin Gothic",
-                                                                                  fontWeight: FontWeight.w500,
-                                                                                ),
-                                                                              ),
-                                                                            ]),
-                                                                          ),
-                                                                        ),
-                                                                      ] else if (value.orderList[index]
-                                                                              [
-                                                                              "status"] ==
-                                                                          10) ...[
-                                                                        AnimatedContainer(
-                                                                          duration:
-                                                                              const Duration(milliseconds: 300),
-                                                                          margin:
-                                                                              EdgeInsets.only(right: 5.sp),
-                                                                          height:
-                                                                              30.sp,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            color:
-                                                                                lightGreen,
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(20.sp),
-                                                                            border:
-                                                                                Border.all(color: textHintColor, width: 1.sp),
-                                                                          ),
-                                                                          child:
-                                                                              Padding(
-                                                                            padding:
-                                                                                EdgeInsets.symmetric(horizontal: 5.sp),
-                                                                            child:
-                                                                                Row(children: [
-                                                                              Padding(
-                                                                                padding: EdgeInsets.symmetric(horizontal: 2.sp),
-                                                                                child: ImageIcon(
-                                                                                  AssetImage(checkImage),
-                                                                                  color: deepGreen,
-                                                                                  size: 14.sp,
-                                                                                ),
-                                                                              ),
-                                                                              Padding(
-                                                                                padding: EdgeInsets.only(left: 5.sp, right: 2.sp),
-                                                                                child: AppText(
-                                                                                  text: "${value.orderList[index]["status_details"]}".capitalize!, //Approved
-                                                                                  color: deepGreen,
-                                                                                  fontSize: 12,
-                                                                                  fontFamily: "Franklin Gothic",
-                                                                                  fontWeight: FontWeight.w500,
-                                                                                ),
-                                                                              ),
-                                                                            ]),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                      /* const Expanded(
+                                                                              ] else
+                                                                                if (value
+                                                                                    .orderList[index]
+                                                                                [
+                                                                                "status"] ==
+                                                                                    9) ...[
+                                                                                  AnimatedContainer(
+                                                                                    duration:
+                                                                                    const Duration(
+                                                                                        milliseconds: 300),
+                                                                                    margin:
+                                                                                    EdgeInsets
+                                                                                        .only(
+                                                                                        right: 5
+                                                                                            .sp),
+                                                                                    height:
+                                                                                    30
+                                                                                        .sp,
+                                                                                    decoration:
+                                                                                    BoxDecoration(
+                                                                                      color:
+                                                                                      lightPurple,
+                                                                                      borderRadius:
+                                                                                      BorderRadius
+                                                                                          .circular(
+                                                                                          20
+                                                                                              .sp),
+                                                                                      border:
+                                                                                      Border
+                                                                                          .all(
+                                                                                          color: textHintColor,
+                                                                                          width: 1
+                                                                                              .sp),
+                                                                                    ),
+                                                                                    child:
+                                                                                    Padding(
+                                                                                      padding:
+                                                                                      EdgeInsets
+                                                                                          .symmetric(
+                                                                                          horizontal: 5
+                                                                                              .sp),
+                                                                                      child:
+                                                                                      Row(children: [
+                                                                                        Padding(
+                                                                                          padding: EdgeInsets
+                                                                                              .symmetric(
+                                                                                              horizontal: 2
+                                                                                                  .sp),
+                                                                                          child: ImageIcon(
+                                                                                            AssetImage(
+                                                                                                confirmOrderImage),
+                                                                                            color: deepPurple,
+                                                                                            size: 14,
+                                                                                          ),
+                                                                                        ),
+                                                                                        Padding(
+                                                                                          padding: EdgeInsets
+                                                                                              .only(
+                                                                                              left: 5
+                                                                                                  .sp,
+                                                                                              right: 2
+                                                                                                  .sp),
+                                                                                          child: AppText(
+                                                                                            text: "${value
+                                                                                                .orderList[index]["status_details"]}"
+                                                                                                .capitalize!,
+                                                                                            //Exchange
+                                                                                            color: deepPurple,
+                                                                                            fontSize: 12,
+                                                                                            fontFamily: "Franklin Gothic",
+                                                                                            fontWeight: FontWeight
+                                                                                                .w500,
+                                                                                          ),
+                                                                                        ),
+                                                                                      ]),
+                                                                                    ),
+                                                                                  ),
+                                                                                ] else
+                                                                                  if (value
+                                                                                      .orderList[index]
+                                                                                  [
+                                                                                  "status"] ==
+                                                                                      11) ...[
+                                                                                    AnimatedContainer(
+                                                                                      duration:
+                                                                                      const Duration(
+                                                                                          milliseconds: 300),
+                                                                                      margin:
+                                                                                      EdgeInsets
+                                                                                          .only(
+                                                                                          right: 5
+                                                                                              .sp),
+                                                                                      height:
+                                                                                      30
+                                                                                          .sp,
+                                                                                      decoration:
+                                                                                      BoxDecoration(
+                                                                                        color:
+                                                                                        lightback,
+                                                                                        borderRadius:
+                                                                                        BorderRadius
+                                                                                            .circular(
+                                                                                            20
+                                                                                                .sp),
+                                                                                        border:
+                                                                                        Border
+                                                                                            .all(
+                                                                                            color: textHintColor,
+                                                                                            width: 1
+                                                                                                .sp),
+                                                                                      ),
+                                                                                      child:
+                                                                                      Padding(
+                                                                                        padding:
+                                                                                        EdgeInsets
+                                                                                            .symmetric(
+                                                                                            horizontal: 5
+                                                                                                .sp),
+                                                                                        child:
+                                                                                        Row(children: [
+                                                                                          Padding(
+                                                                                            padding: EdgeInsets
+                                                                                                .symmetric(
+                                                                                                horizontal: 2
+                                                                                                    .sp),
+                                                                                            child: ImageIcon(
+                                                                                              AssetImage(
+                                                                                                  cancelImage),
+                                                                                              color: deepRed,
+                                                                                              size: 14
+                                                                                                  .sp,
+                                                                                            ),
+                                                                                          ),
+                                                                                          Padding(
+                                                                                            padding: EdgeInsets
+                                                                                                .only(
+                                                                                                left: 5
+                                                                                                    .sp,
+                                                                                                right: 2
+                                                                                                    .sp),
+                                                                                            child: AppText(
+                                                                                              text: "${value
+                                                                                                  .orderList[index]["status_details"]}"
+                                                                                                  .capitalize!,
+                                                                                              //Rejected
+                                                                                              color: deepRed,
+                                                                                              fontSize: 12,
+                                                                                              fontFamily: "Franklin Gothic",
+                                                                                              fontWeight: FontWeight
+                                                                                                  .w500,
+                                                                                            ),
+                                                                                          ),
+                                                                                        ]),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ] else
+                                                                                    if (value
+                                                                                        .orderList[index]
+                                                                                    [
+                                                                                    "status"] ==
+                                                                                        10) ...[
+                                                                                      AnimatedContainer(
+                                                                                        duration:
+                                                                                        const Duration(
+                                                                                            milliseconds: 300),
+                                                                                        margin:
+                                                                                        EdgeInsets
+                                                                                            .only(
+                                                                                            right: 5
+                                                                                                .sp),
+                                                                                        height:
+                                                                                        30
+                                                                                            .sp,
+                                                                                        decoration:
+                                                                                        BoxDecoration(
+                                                                                          color:
+                                                                                          lightGreen,
+                                                                                          borderRadius:
+                                                                                          BorderRadius
+                                                                                              .circular(
+                                                                                              20
+                                                                                                  .sp),
+                                                                                          border:
+                                                                                          Border
+                                                                                              .all(
+                                                                                              color: textHintColor,
+                                                                                              width: 1
+                                                                                                  .sp),
+                                                                                        ),
+                                                                                        child:
+                                                                                        Padding(
+                                                                                          padding:
+                                                                                          EdgeInsets
+                                                                                              .symmetric(
+                                                                                              horizontal: 5
+                                                                                                  .sp),
+                                                                                          child:
+                                                                                          Row(children: [
+                                                                                            Padding(
+                                                                                              padding: EdgeInsets
+                                                                                                  .symmetric(
+                                                                                                  horizontal: 2
+                                                                                                      .sp),
+                                                                                              child: ImageIcon(
+                                                                                                AssetImage(
+                                                                                                    checkImage),
+                                                                                                color: deepGreen,
+                                                                                                size: 14
+                                                                                                    .sp,
+                                                                                              ),
+                                                                                            ),
+                                                                                            Padding(
+                                                                                              padding: EdgeInsets
+                                                                                                  .only(
+                                                                                                  left: 5
+                                                                                                      .sp,
+                                                                                                  right: 2
+                                                                                                      .sp),
+                                                                                              child: AppText(
+                                                                                                text: "${value
+                                                                                                    .orderList[index]["status_details"]}"
+                                                                                                    .capitalize!,
+                                                                                                //Approved
+                                                                                                color: deepGreen,
+                                                                                                fontSize: 12,
+                                                                                                fontFamily: "Franklin Gothic",
+                                                                                                fontWeight: FontWeight
+                                                                                                    .w500,
+                                                                                              ),
+                                                                                            ),
+                                                                                          ]),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                /* const Expanded(
                                                                         child:
                                                                             SizedBox(
                                                                           width:
                                                                               0,
                                                                         ),
                                                                       ), */
-                                                                    ],
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .only(
+                                                                right:
+                                                                16.sp),
+                                                            child: Row(
+                                                              children: [
+                                                                const Expanded(
+                                                                  child:
+                                                                  SizedBox(
+                                                                    width:
+                                                                    0,
                                                                   ),
                                                                 ),
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .only(
-                                                                          right:
-                                                                              16.sp),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      const Expanded(
-                                                                        child:
-                                                                            SizedBox(
-                                                                          width:
-                                                                              0,
+                                                                Column(
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .end,
+                                                                  children: [
+                                                                    if (value
+                                                                        .orderList[index]["delivered_at"] !=
+                                                                        null) ...[
+                                                                      Padding(
+                                                                        padding: EdgeInsets
+                                                                            .symmetric(
+                                                                            horizontal: 5
+                                                                                .sp,
+                                                                            vertical: 5
+                                                                                .sp),
+                                                                        child: AppText(
+                                                                          text: "Delivered on",
+                                                                          color: greyTextColor,
+                                                                          fontSize: 11,
+                                                                          fontFamily: "Franklin Gothic Regular",
+                                                                          fontWeight: FontWeight
+                                                                              .w400,
                                                                         ),
                                                                       ),
-                                                                      Column(
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.end,
-                                                                        children: [
-                                                                          if (value.orderList[index]["delivered_at"] !=
-                                                                              null) ...[
-                                                                            Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
-                                                                              child: AppText(
-                                                                                text: "Delivered on",
-                                                                                color: greyTextColor,
-                                                                                fontSize: 11,
-                                                                                fontFamily: "Franklin Gothic Regular",
-                                                                                fontWeight: FontWeight.w400,
-                                                                              ),
+                                                                    ] else
+                                                                      if (value
+                                                                          .orderList[index]["estimated_delivery_at"] !=
+                                                                          null) ...[
+                                                                        Padding(
+                                                                          padding: EdgeInsets
+                                                                              .symmetric(
+                                                                              horizontal: 5
+                                                                                  .sp,
+                                                                              vertical: 5
+                                                                                  .sp),
+                                                                          child: AppText(
+                                                                            text: "Estimated Delivery",
+                                                                            color: greyTextColor,
+                                                                            fontSize: 11,
+                                                                            fontFamily: "Franklin Gothic Regular",
+                                                                            fontWeight: FontWeight
+                                                                                .w400,
+                                                                          ),
+                                                                        ),
+                                                                      ] else
+                                                                        if (value
+                                                                            .orderList[index]["cancelled_at"] !=
+                                                                            null) ...[
+                                                                          Padding(
+                                                                            padding: EdgeInsets
+                                                                                .symmetric(
+                                                                                horizontal: 5
+                                                                                    .sp,
+                                                                                vertical: 5
+                                                                                    .sp),
+                                                                            child: AppText(
+                                                                              text: "Cancelled on",
+                                                                              color: greyTextColor,
+                                                                              fontSize: 11,
+                                                                              fontFamily: "Franklin Gothic Regular",
+                                                                              fontWeight: FontWeight
+                                                                                  .w400,
                                                                             ),
-                                                                          ] else if (value.orderList[index]["estimated_delivery_at"] !=
-                                                                              null) ...[
-                                                                            Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
-                                                                              child: AppText(
-                                                                                text: "Estimated Delivery",
-                                                                                color: greyTextColor,
-                                                                                fontSize: 11,
-                                                                                fontFamily: "Franklin Gothic Regular",
-                                                                                fontWeight: FontWeight.w400,
-                                                                              ),
-                                                                            ),
-                                                                          ] else if (value.orderList[index]["cancelled_at"] !=
-                                                                              null) ...[
-                                                                            Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
-                                                                              child: AppText(
-                                                                                text: "Cancelled on",
-                                                                                color: greyTextColor,
-                                                                                fontSize: 11,
-                                                                                fontFamily: "Franklin Gothic Regular",
-                                                                                fontWeight: FontWeight.w400,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                          if (value.orderList[index]["delivered_at"] !=
-                                                                              null) ...[
-                                                                            Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
-                                                                              child: AppText(
-                                                                                text: value.orderList[index]["delivered_at"],
-                                                                                // text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["delivered_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["delivered_at"]).day}, at ${DateFormat('hh:mm a').format(DateTime.parse(value.orderList[index]["delivered_at"]))}",
-                                                                                color: greyTextColor,
-                                                                                fontSize: 11,
-                                                                                fontFamily: "Franklin Gothic Regular",
-                                                                                fontWeight: FontWeight.w400,
-                                                                              ),
-                                                                            )
-                                                                          ] else if (value.orderList[index]["estimated_delivery_at"] !=
-                                                                              null) ...[
-                                                                            Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
-                                                                              child: AppText(
-                                                                                text: value.orderList[index]["estimated_delivery_at"],
-                                                                                // text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["estimated_delivery_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["estimated_delivery_at"]).day}, ${DateTime.parse(value.orderList[index]["estimated_delivery_at"]).year}",
-                                                                                color: greyTextColor,
-                                                                                fontSize: 11,
-                                                                                fontFamily: "Franklin Gothic Regular",
-                                                                                fontWeight: FontWeight.w400,
-                                                                              ),
-                                                                            )
-                                                                          ] else if (value.orderList[index]["cancelled_at"] !=
-                                                                              null) ...[
-                                                                            Padding(
-                                                                              padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
-                                                                              child: AppText(
-                                                                                text: value.orderList[index]["cancelled_at"],
-                                                                                //  text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["cancelled_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["cancelled_at"]).day}, ${DateTime.parse(value.orderList[index]["cancelled_at"]).year}",
-                                                                                color: greyTextColor,
-                                                                                fontSize: 11,
-                                                                                fontFamily: "Franklin Gothic Regular",
-                                                                                fontWeight: FontWeight.w400,
-                                                                              ),
-                                                                            )
-                                                                          ],
+                                                                          ),
                                                                         ],
-                                                                      ),
-                                                                    ],
-                                                                  ),
+                                                                    if (value
+                                                                        .orderList[index]["delivered_at"] !=
+                                                                        null) ...[
+                                                                      Padding(
+                                                                        padding: EdgeInsets
+                                                                            .symmetric(
+                                                                            horizontal: 5
+                                                                                .sp,
+                                                                            vertical: 5
+                                                                                .sp),
+                                                                        child: AppText(
+                                                                          text: value
+                                                                              .orderList[index]["delivered_at"],
+                                                                          // text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["delivered_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["delivered_at"]).day}, at ${DateFormat('hh:mm a').format(DateTime.parse(value.orderList[index]["delivered_at"]))}",
+                                                                          color: greyTextColor,
+                                                                          fontSize: 11,
+                                                                          fontFamily: "Franklin Gothic Regular",
+                                                                          fontWeight: FontWeight
+                                                                              .w400,
+                                                                        ),
+                                                                      )
+                                                                    ] else
+                                                                      if (value
+                                                                          .orderList[index]["estimated_delivery_at"] !=
+                                                                          null) ...[
+                                                                        Padding(
+                                                                          padding: EdgeInsets
+                                                                              .symmetric(
+                                                                              horizontal: 5
+                                                                                  .sp,
+                                                                              vertical: 5
+                                                                                  .sp),
+                                                                          child: AppText(
+                                                                            text: value
+                                                                                .orderList[index]["estimated_delivery_at"],
+                                                                            // text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["estimated_delivery_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["estimated_delivery_at"]).day}, ${DateTime.parse(value.orderList[index]["estimated_delivery_at"]).year}",
+                                                                            color: greyTextColor,
+                                                                            fontSize: 11,
+                                                                            fontFamily: "Franklin Gothic Regular",
+                                                                            fontWeight: FontWeight
+                                                                                .w400,
+                                                                          ),
+                                                                        )
+                                                                      ] else
+                                                                        if (value
+                                                                            .orderList[index]["cancelled_at"] !=
+                                                                            null) ...[
+                                                                          Padding(
+                                                                            padding: EdgeInsets
+                                                                                .symmetric(
+                                                                                horizontal: 5
+                                                                                    .sp,
+                                                                                vertical: 5
+                                                                                    .sp),
+                                                                            child: AppText(
+                                                                              text: value
+                                                                                  .orderList[index]["cancelled_at"],
+                                                                              //  text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["cancelled_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["cancelled_at"]).day}, ${DateTime.parse(value.orderList[index]["cancelled_at"]).year}",
+                                                                              color: greyTextColor,
+                                                                              fontSize: 11,
+                                                                              fontFamily: "Franklin Gothic Regular",
+                                                                              fontWeight: FontWeight
+                                                                                  .w400,
+                                                                            ),
+                                                                          )
+                                                                        ],
+                                                                  ],
                                                                 ),
-                                                                Padding(
-                                                                  padding: EdgeInsets.only(
-                                                                      top:
-                                                                          10.sp,
-                                                                      bottom: 30
-                                                                          .sp),
-                                                                  child: SingleButton(
-                                                                      label: "View details",
-                                                                      height: 40,
-                                                                      textColor: btnTextColor,
-                                                                      backgroundColor: whiteColor,
-                                                                      onPressed: () async {
-                                                                        orderController
-                                                                            .isDownloadInvoice
-                                                                            .value = false;
-                                                                        orderController
-                                                                            .downloadSuccess
-                                                                            .value = "";
-                                                                        Get.to(
-                                                                            OrderDetailsScreen(
-                                                                          orderId:
-                                                                              value.orderList[index]["id"],
-                                                                        ))?.then((value) =>
-                                                                            setState(
-                                                                              () {
-                                                                                orderController.getOrderData();
-                                                                              },
-                                                                            ));
-                                                                        await analytics
-                                                                            .logEvent(
-                                                                          name:
-                                                                              'order_details',
-                                                                          parameters: <String,
-                                                                              Object>{
-                                                                            'page_name':
-                                                                                'order_details',
-                                                                          },
-                                                                        );
-                                                                      },
-                                                                      borderColor: btnTextColor),
-                                                                ),
-                                                              ]),
-                                                        ),
-                                                      ),
-                                                    ],
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .only(
+                                                                top:
+                                                                10.sp,
+                                                                bottom: 30
+                                                                    .sp),
+                                                            child: SingleButton(
+                                                                label: "View details",
+                                                                height: 40,
+                                                                textColor: btnTextColor,
+                                                                backgroundColor: whiteColor,
+                                                                onPressed: () async {
+                                                                  orderController
+                                                                      .isDownloadInvoice
+                                                                      .value =
+                                                                  false;
+                                                                  orderController
+                                                                      .downloadSuccess
+                                                                      .value =
+                                                                  "";
+                                                                  Get.to(
+                                                                      OrderDetailsScreen(
+                                                                        orderId:
+                                                                        value
+                                                                            .orderList[index]["id"],
+                                                                      ))?.then((
+                                                                      value) =>
+                                                                      setState(
+                                                                            () {
+                                                                          orderController
+                                                                              .getOrderData();
+                                                                        },
+                                                                      ));
+                                                                  await analytics
+                                                                      .logEvent(
+                                                                    name:
+                                                                    'order_details',
+                                                                    parameters: <
+                                                                        String,
+                                                                        Object>{
+                                                                      'page_name':
+                                                                      'order_details',
+                                                                    },
+                                                                  );
+                                                                },
+                                                                borderColor: btnTextColor),
+                                                          ),
+                                                        ]),
                                                   ),
-                                                );
-                                              }),
-                                        )),
-                                    /*  orderController.loadMore.value
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }),
+                              )),
+                          /*  orderController.loadMore.value
                                         ? DummyOrderList()
                                         : GestureDetector(
                                             onTap: () {
@@ -1266,29 +1776,29 @@ class OrderExchangeScreenState extends State<OrderExchangeScreen> {
                                               ),
                                             ),
                                           ), */
-                                    orderController.loadMore.value
-                                        ? Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Center(
-                                                child:
-                                                    CircularProgressIndicator()),
-                                          )
-                                        : const SizedBox(
-                                            height: 0,
-                                          ),
-                                  ],
-                                )
-                              : Padding(
-                                  padding: EdgeInsets.all(40.0.sp),
-                                  child: Center(
-                                    child: Text("No Order Found",
-                                        style: TextStyle(
-                                            fontSize: 14.sp,
-                                            color: Colors.black,
-                                            fontFamily:
-                                                "Franklin Gothic Regular")),
-                                  ),
-                                )),
+                          orderController.loadMore.value
+                              ? Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Center(
+                                child:
+                                CircularProgressIndicator()),
+                          )
+                              : const SizedBox(
+                            height: 0,
+                          ),
+                        ],
+                      )
+                          : Padding(
+                        padding: EdgeInsets.all(40.0.sp),
+                        child: Center(
+                          child: Text("No Order Found",
+                              style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: Colors.black,
+                                  fontFamily:
+                                  "Franklin Gothic Regular")),
+                        ),
+                      )),
                     ],
                   ),
                 ),

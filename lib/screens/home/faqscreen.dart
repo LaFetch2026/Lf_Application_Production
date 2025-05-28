@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/brandwidgits/dummy_brand_list.dart';
-import '../../commonwidget/app_text.dart';
-import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
-import '../../controller/home_controller.dart';
-import '../../utils/constants.dart';
+
+import '../../common/widget/appbar/backbutton_appbar.dart';
+import '../../common/widget/lists/dummy_brand_list.dart';
+import '../../common/widget/text/app_text.dart';
+import '../../controllers/home_controller.dart';
+import '../../core/constant/constants.dart';
 
 class FAQScreen extends StatefulWidget {
   const FAQScreen({

@@ -1,10 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/controller/home_controller.dart';
-import 'package:lafetch/utils/constants.dart';
+
 //import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../controllers/home_controller.dart';
+import '../../core/constant/constants.dart';
 import '../bottomnavscreen.dart';
 import '../userdetails.dart';
 import '../welcomescreen.dart';

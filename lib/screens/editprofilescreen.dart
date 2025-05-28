@@ -4,21 +4,23 @@ import 'dart:io';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 //import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
-import 'package:lafetch/commonwidget/common_widgets.dart';
-import 'package:lafetch/commonwidget/text_field.dart';
-import 'package:lafetch/controller/profile_controller.dart';
 import 'package:otp_text_field_v2/otp_field_style_v2.dart';
 import 'package:otp_text_field_v2/otp_field_v2.dart';
-import '../commonwidget/app_text.dart';
-import '../commonwidget/loginwidgets/number_widget.dart';
-import '../controller/login_controller.dart';
-import '../utils/constants.dart';
 import 'package:telephony/telephony.dart';
+
+import '../common/widget/appbar/backbutton_appbar.dart';
+import '../common/widget/other/common_widget.dart';
+import '../common/widget/other/text_field.dart';
+import '../common/widget/text/app_text.dart';
+import '../common/widget/text/number_widget.dart';
+import '../controllers/login_controller.dart';
+import '../controllers/profile_controller.dart';
+import '../core/constant/constants.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final String name;
@@ -26,6 +28,7 @@ class EditProfileScreen extends StatefulWidget {
   final String number;
 
   final int genderId;
+
   const EditProfileScreen(
       {super.key,
       required this.name,

@@ -4,9 +4,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/cart_controller.dart';
+import '../../../controllers/product_controller.dart';
 import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
-
 
 class HomeAppbar extends StatefulWidget {
   final Function? onPressedCart;
@@ -18,12 +18,12 @@ class HomeAppbar extends StatefulWidget {
 
   const HomeAppbar(
       {Key? key,
-        this.onPressedCart,
-        this.onPressedHeart,
-        this.onPressedSearch,
-        this.showSearch = true,
-        this.title = "",
-        this.onPressedDropDown})
+      this.onPressedCart,
+      this.onPressedHeart,
+      this.onPressedSearch,
+      this.showSearch = true,
+      this.title = "",
+      this.onPressedDropDown})
       : super(key: key);
 
   @override
@@ -33,6 +33,8 @@ class HomeAppbar extends StatefulWidget {
 class _HomeAppbarState extends State<HomeAppbar> {
   // final homeController = Get.put(HomeController());
   final controller = Get.put(CartController());
+  final productController = Get.put(ProductController());
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -157,45 +159,45 @@ class _HomeAppbarState extends State<HomeAppbar> {
                             children: [
                               Padding(
                                   padding:
-                                  EdgeInsets.only(bottom: 3.sp, left: 5.sp),
+                                      EdgeInsets.only(bottom: 3.sp, left: 5.sp),
                                   child: SvgPicture.asset(cartSvgImage,
                                       height: 18.sp,
                                       width: 18.sp,
                                       fit: BoxFit.cover)),
                               Obx(() => controller.cartTotalValue.value != 0
                                   ? Positioned(
-                                right: 0,
-                                bottom: 0,
-                                child: Container(
-                                  width: 10.sp,
-                                  height: 10.sp,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: homeAppBarColor,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          controller.cartTotalValue.value
-                                              .toString(),
-                                          style: TextStyle(
-                                              fontSize: 8,
-                                              color: whiteColor,
-                                              fontFamily:
-                                              "Libre Franklin Regular",
-                                              fontWeight:
-                                              FontWeight.w400),
+                                      right: 0,
+                                      bottom: 0,
+                                      child: Container(
+                                        width: 10.sp,
+                                        height: 10.sp,
+                                        child: Padding(
+                                          padding: EdgeInsets.all(0),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: homeAppBarColor,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                controller.cartTotalValue.value
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontSize: 8,
+                                                    color: whiteColor,
+                                                    fontFamily:
+                                                        "Libre Franklin Regular",
+                                                    fontWeight:
+                                                        FontWeight.w400),
+                                              ),
+                                            ), // inner content
+                                          ),
                                         ),
-                                      ), // inner content
-                                    ),
-                                  ),
-                                ),
-                              )
+                                      ),
+                                    )
                                   : SizedBox(
-                                height: 0,
-                              ))
+                                      height: 0,
+                                    ))
                             ],
                           ),
                         ),

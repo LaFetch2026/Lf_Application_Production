@@ -2,11 +2,13 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/home/women/homescreen.dart';
-import '../../controller/home_controller.dart';
-import '../../controller/product_controller.dart';
+
+import '../../controllers/home_controller.dart';
+import '../../controllers/product_controller.dart';
 
 class WomenScreen extends StatefulWidget {
   final int genderType;
+
   const WomenScreen({super.key, required this.genderType});
 
   @override

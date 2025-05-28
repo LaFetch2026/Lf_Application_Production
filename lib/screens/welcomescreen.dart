@@ -69,44 +69,60 @@ class WelcomeScreenState extends State<WelcomeScreen>
                         child: VideoPlayer(videoController))),
             // ),
           ),
-          Container(
-            width: MediaQuery.of(context).size.width.sp,
-            height: MediaQuery.of(context).size.height.sp,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Colors.black.withOpacity(0.01)],
-                stops: [0.535, 0.8978],
-              ),
-            ),
-          ),
-          Transform.scale(
-            scaleY: 1.8,
-            child: Container(
-              width: MediaQuery.of(context).size.width.sp,
-              height: MediaQuery.of(context).size.height.sp,
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.center,
-                  radius: 0.5,
-                  /*  colors: [
-                Color(0x00000000),
-                Color(0XCC000000),
-              ], */
-                  colors: [
-                    Color(0x00000000),
-                    Color(0x88000000),
-                  ],
-                  stops: [0.5, 1.0],
-                ),
-              ),
-            ),
-          ),
+          // Container(
+          //   width: MediaQuery.of(context).size.width.sp,
+          //   height: MediaQuery.of(context).size.height.sp,
+          //   decoration: BoxDecoration(
+          //     gradient: LinearGradient(
+          //       begin: Alignment.topCenter,
+          //       end: Alignment.bottomCenter,
+          //       colors: [Colors.transparent, Colors.black.withOpacity(0.01)],
+          //       stops: [0.535, 0.8978],
+          //     ),
+          //   ),
+          // ),
+          // Transform.scale(
+          //   scaleY: 1.8,
+          //   child: Container(
+          //     width: MediaQuery.of(context).size.width.sp,
+          //     height: MediaQuery.of(context).size.height.sp,
+          //     decoration: BoxDecoration(
+          //       gradient: RadialGradient(
+          //         center: Alignment.center,
+          //         radius: 0.5,
+          //         /*  colors: [
+          //       Color(0x00000000),
+          //       Color(0XCC000000),
+          //     ], */
+          //         colors: [
+          //           Color(0x00000000),
+          //           Color(0x88000000),
+          //         ],
+          //         stops: [0.5, 1.0],
+          //       ),
+          //     ),
+          //   ),
+          // ),
           Container(
             width: MediaQuery.of(context).size.width.sp,
             height: MediaQuery.of(context).size.height.sp,
             color: Colors.white.withOpacity(0),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.5,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+
+                  // Smooth transition spread
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.95)],
+                  stops: const [0.0, 0.60],
+                ),
+              ),
+            ),
           ),
           Align(
             alignment: Alignment.topCenter,

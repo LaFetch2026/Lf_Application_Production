@@ -11,21 +11,23 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/catalogwidgets/bottomcategory.dart';
-import 'package:lafetch/commonwidget/catalogwidgets/bottomfiltters.dart';
-import 'package:lafetch/commonwidget/catalogwidgets/bottomsortby.dart';
-import 'package:lafetch/commonwidget/common_widgets.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_grid_black.dart';
-import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../commonwidget/app_text.dart';
-import '../../../controller/product_controller.dart';
-import '../../../controller/wishlist_controller.dart';
-import '../../../utils/constants.dart';
+
+import '../../common/widget/bottom_sheets/bottomcategory.dart';
+import '../../common/widget/bottom_sheets/bottomfiltters.dart';
+import '../../common/widget/bottom_sheets/bottomsortby.dart';
+import '../../common/widget/lists/dummy_grid_black.dart';
+import '../../common/widget/other/common_widget.dart';
+import '../../common/widget/text/app_text.dart';
+import '../../controllers/cart_controller.dart';
+import '../../controllers/product_controller.dart';
+import '../../controllers/wishlist_controller.dart';
+import '../../core/constant/constants.dart';
+import '../../core/utils/analytics_helper.dart';
 
 class BrandViewProductScreen extends StatefulWidget {
   final String title;
@@ -56,9 +58,12 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
   String categoryName = "";
   bool isBottomSheet = false;
   PersistentBottomSheetController? bottomController;
+  final ScrollController _scrollController = ScrollController();
+  final List<String> _triggeredScrolls = [];
 
   @override
   void initState() {
+    _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
           statusBarColor: homeAppBarColor,
@@ -98,6 +103,29 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
     super.initState();
   }
 
+  void _onScroll() {
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    final scrollPercentage = (currentScroll / maxScroll) * 100;
+
+    if (scrollPercentage >= 25 && !_triggeredScrolls.contains('25%')) {
+      AnalyticsHelper.logScrollEvent('25%');
+      _triggeredScrolls.add('25%');
+    }
+    if (scrollPercentage >= 50 && !_triggeredScrolls.contains('50%')) {
+      AnalyticsHelper.logScrollEvent('50%');
+      _triggeredScrolls.add('50%');
+    }
+    if (scrollPercentage >= 75 && !_triggeredScrolls.contains('75%')) {
+      AnalyticsHelper.logScrollEvent('75%');
+      _triggeredScrolls.add('75%');
+    }
+    if (scrollPercentage >= 100 && !_triggeredScrolls.contains('100%')) {
+      AnalyticsHelper.logScrollEvent('100%');
+      _triggeredScrolls.add('100%');
+    }
+  }
+
   onSearchChanged(String query) {
     if (debounce?.isActive ?? false) debounce?.cancel();
     debounce = Timer(const Duration(milliseconds: 500), () {
@@ -108,6 +136,12 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
           widget.brand_id,
           widget.screen);
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override

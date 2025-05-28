@@ -12,19 +12,22 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:lafetch/commonwidget/app_text.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/saveaddress_appbar.dart';
-import 'package:lafetch/commonwidget/dummy_container.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/shippingaddressscreen.dart';
+
 //import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
-import '../controller/shipaddress_controller.dart';
-import '../utils/constants.dart';
+
+import '../common/widget/appbar/saveaddress_appbar.dart';
+import '../common/widget/lists/dummy_container.dart';
+import '../common/widget/text/app_text.dart';
+import '../controllers/shipaddress_controller.dart';
+import '../core/constant/constants.dart';
 
 class MapScreen extends StatefulWidget {
   final int addressId;
   final int cartId;
+
   const MapScreen({
     super.key,
     required this.addressId,

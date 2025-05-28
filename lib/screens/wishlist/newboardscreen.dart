@@ -6,14 +6,16 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/app_text.dart';
-import 'package:lafetch/commonwidget/common_widgets.dart';
-import 'package:lafetch/commonwidget/text_field.dart';
-import 'package:lafetch/controller/cart_controller.dart';
-import 'package:lafetch/controller/catalog_controller.dart';
-import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
-import '../../controller/wishlist_controller.dart';
-import '../../utils/constants.dart';
+
+import '../../common/widget/appbar/backbutton_appbar.dart';
+import '../../common/widget/other/common_widget.dart';
+import '../../common/widget/other/text_field.dart';
+import '../../common/widget/text/app_text.dart';
+import '../../controllers/cart_controller.dart';
+import '../../controllers/catalog_controller.dart';
+import '../../controllers/wishlist_controller.dart';
+import '../../core/constant/constants.dart';
+
 
 class NewBoardScreen extends StatefulWidget {
   final String title;
@@ -24,16 +26,16 @@ class NewBoardScreen extends StatefulWidget {
   final int productId;
   final int categoryId;
   final String screen;
-  const NewBoardScreen(
-      {required this.title,
-      required this.boardName,
-      required this.hintName,
-      required this.boardId,
-      required this.btnText,
-      required this.productId,
-      this.categoryId = 0,
-      this.screen = "",
-      super.key});
+
+  const NewBoardScreen({required this.title,
+    required this.boardName,
+    required this.hintName,
+    required this.boardId,
+    required this.btnText,
+    required this.productId,
+    this.categoryId = 0,
+    this.screen = "",
+    super.key});
 
   @override
   State<NewBoardScreen> createState() => NewBoardScreenState();
@@ -80,7 +82,8 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                       controller: wishlistController.boardNameController,
                     ),
                   ),
-                  Obx(() => Padding(
+                  Obx(() =>
+                      Padding(
                         padding: EdgeInsets.only(
                             left: 16.sp, right: 5.sp, top: 5.sp),
                         child: AppText(
@@ -95,7 +98,8 @@ class NewBoardScreenState extends State<NewBoardScreen> {
               ),
             ),
           ),
-          Obx(() => Padding(
+          Obx(() =>
+              Padding(
                 padding: EdgeInsets.symmetric(vertical: 20.sp),
                 child: getSingleButton(
                     label: widget.btnText,

@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lafetch/screens/splash/splashtwo.dart';
-import 'package:lafetch/utils/constants.dart';
+
+import '../../core/constant/constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,6 +25,7 @@ class _SplashScreenState extends State<SplashScreen>
     parent: _controller,
     curve: Curves.fastOutSlowIn,
   );
+
   @override
   void initState() {
     super.initState();

@@ -2,6 +2,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
+
 //import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -11,23 +13,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_grid_mostsearch.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_home_brand.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_product_list.dart';
-import 'package:lafetch/commonwidget/homewidget/homelist.dart';
-import 'package:lafetch/controller/brand_controller.dart';
 //import 'package:lafetch/commonwidget/homewidget/question_card.dart';
-import 'package:lafetch/controller/cart_controller.dart';
-import 'package:lafetch/controller/catalog_controller.dart';
-import 'package:lafetch/controller/home_controller.dart';
-import 'package:lafetch/controller/product_controller.dart';
-import 'package:lafetch/controller/profile_controller.dart';
+
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/home/women/productviewscreen.dart';
+
 //import 'package:lafetch/screens/home/women/productviewscreen.dart';
 //import 'package:lafetch/screens/home/faqscreen.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
@@ -37,17 +30,30 @@ import 'package:marquee/marquee.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../commonwidget/app_text.dart';
-import '../../../commonwidget/common_widgets.dart';
-import '../../../controller/search_controller.dart';
-import '../../../controller/wishlist_controller.dart';
-import '../../../utils/constants.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
+import '../../../common/widget/appbar/home_appbar.dart';
+import '../../../common/widget/lists/dummy_grid_mostsearch.dart';
+import '../../../common/widget/lists/dummy_home_brand.dart';
+import '../../../common/widget/lists/dummy_product_list.dart';
+import '../../../common/widget/lists/homelist.dart';
+import '../../../common/widget/other/common_widget.dart';
+import '../../../common/widget/text/app_text.dart';
+import '../../../controllers/brand_controller.dart';
+import '../../../controllers/cart_controller.dart';
+import '../../../controllers/catalog_controller.dart';
+import '../../../controllers/home_controller.dart';
+import '../../../controllers/product_controller.dart';
+import '../../../controllers/profile_controller.dart';
+import '../../../controllers/search_controller.dart';
+import '../../../controllers/wishlist_controller.dart';
+import '../../../core/constant/constants.dart';
+import '../../../core/utils/analytics_helper.dart';
 
 //import '../../account/customercare.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(int)? onPressed;
+
   const HomeScreen({
     this.onPressed,
     super.key,
@@ -382,64 +388,99 @@ class HomeScreenState extends State<HomeScreen> {
         children: [
           HomeAppbar(
             onPressedSearch: () async {
-              searchController.searchController.clear();
-              Get.to(const SearchScreen())?.then((value) => setState(
-                    () {
-                      productController.categoryFilter.value =
-                          homeController.homeGenderValue.value;
-                      SystemChrome.setSystemUIOverlayStyle(
-                          const SystemUiOverlayStyle(
-                              statusBarColor: whiteColor,
-                              systemNavigationBarColor: whiteColor));
-                      /*   productController.getHandPickedProduct(
-                              "", false, false, productController.tagId.value); */
-                    },
-                  ));
+              final searchQuery = searchController.searchController.text;
+
+              // 🔹 Facebook App Event: Search
+              AnalyticsHelper.logSearch(
+                searchQuery: searchQuery,
+                contentType: 'product', // or actual type if available
+                value: 0.0,
+                productId: productController.id.toString(),
+              );
+
+              // 🔹 Firebase (Optional)
               await analytics.logEvent(
                 name: 'search_page',
-                parameters: <String, Object>{
-                  'page_name': 'search_page',
+                parameters: {
+                  'search_string': searchQuery,
                 },
               );
+
+              searchController.searchController.clear();
+
+              Get.to(const SearchScreen())?.then((value) {
+                setState(() {
+                  productController.categoryFilter.value =
+                      homeController.homeGenderValue.value;
+
+                  SystemChrome.setSystemUIOverlayStyle(
+                    const SystemUiOverlayStyle(
+                      statusBarColor: whiteColor,
+                      systemNavigationBarColor: whiteColor,
+                    ),
+                  );
+                });
+              });
             },
             onPressedHeart: () async {
-              Get.to(const WishlistScreen())?.then(
-                (value) {
-                  SystemChrome.setSystemUIOverlayStyle(
-                      const SystemUiOverlayStyle(
-                          statusBarColor: whiteColor,
-                          systemNavigationBarColor: whiteColor));
+              // 🔹 Facebook App Event: Custom - View Wishlist Page
+              facebookAppEvents.logEvent(
+                name: 'fb_view_wishlist_page',
+                parameters: {
+                  'page_name': 'wishlist_page',
                 },
               );
+
+              // 🔹 Firebase
               await analytics.logEvent(
                 name: 'wishlist_page',
-                parameters: <String, Object>{
+                parameters: {
                   'page_name': 'wishlist_page',
+                },
+              );
+
+              Get.to(const WishlistScreen())?.then(
+                (_) {
+                  SystemChrome.setSystemUIOverlayStyle(
+                    const SystemUiOverlayStyle(
+                      statusBarColor: whiteColor,
+                      systemNavigationBarColor: whiteColor,
+                    ),
+                  );
                 },
               );
             },
             onPressedCart: () async {
-              Get.to(const CartScreen())?.then(
-                (value) {
-                  SystemChrome.setSystemUIOverlayStyle(
-                      const SystemUiOverlayStyle(
-                          statusBarColor: whiteColor,
-                          systemNavigationBarColor: whiteColor));
+              // 🔹 Facebook App Event: Custom - View Cart Page
+              facebookAppEvents.logEvent(
+                name: 'fb_view_cart_page',
+                parameters: {
+                  'page_name': 'cart_page',
                 },
               );
+
+              // 🔹 Firebase (Optional)
               await analytics.logEvent(
                 name: 'cart_page',
-                parameters: <String, Object>{
+                parameters: {
                   'page_name': 'cart_page',
+                },
+              );
+
+              Get.to(const CartScreen())?.then(
+                (_) {
+                  SystemChrome.setSystemUIOverlayStyle(
+                    const SystemUiOverlayStyle(
+                      statusBarColor: whiteColor,
+                      systemNavigationBarColor: whiteColor,
+                    ),
+                  );
                 },
               );
             },
             onPressedDropDown: () {
-              if (homeController.showGenderList.value) {
-                homeController.showGenderList.value = false;
-              } else {
-                homeController.showGenderList.value = true;
-              }
+              homeController.showGenderList.value =
+                  !homeController.showGenderList.value;
               setState(() {});
             },
           ),

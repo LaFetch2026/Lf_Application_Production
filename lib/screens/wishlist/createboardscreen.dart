@@ -6,19 +6,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/editboard_appbar.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
-import '../../commonwidget/app_text.dart';
-import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
-import '../../commonwidget/common_widgets.dart';
-import '../../controller/wishlist_controller.dart';
-import '../../utils/constants.dart';
+
+import '../../common/widget/appbar/backbutton_appbar.dart';
+import '../../common/widget/appbar/editboard_appbar.dart';
+import '../../common/widget/lists/dummy_grid_list.dart';
+import '../../common/widget/other/common_widget.dart';
+import '../../common/widget/text/app_text.dart';
+import '../../controllers/wishlist_controller.dart';
+import '../../core/constant/constants.dart';
 import '../catalog/productlist/productdetailsscreen.dart';
 
 class CreateBoardScreen extends StatefulWidget {
   final String btnText;
   final int wishlistId;
   final String type;
+
   const CreateBoardScreen(
       {required this.btnText,
       required this.wishlistId,
@@ -32,6 +34,7 @@ class CreateBoardScreen extends StatefulWidget {
 class CreateBoardScreenState extends State<CreateBoardScreen> {
   final wishlistController = Get.put(WishlistController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

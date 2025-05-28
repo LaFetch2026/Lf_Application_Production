@@ -7,11 +7,12 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
-import 'package:lafetch/commonwidget/common_widgets.dart';
-import 'package:lafetch/controller/order_controller.dart';
-import 'package:lafetch/utils/constants.dart';
-import '../../commonwidget/app_text.dart';
+
+import '../../common/widget/appbar/backbutton_appbar.dart';
+import '../../common/widget/other/common_widget.dart';
+import '../../common/widget/text/app_text.dart';
+import '../../controllers/order_controller.dart';
+import '../../core/constant/constants.dart';
 
 class ExchangeConfirmScreen extends StatefulWidget {
   final int productId;
@@ -21,6 +22,7 @@ class ExchangeConfirmScreen extends StatefulWidget {
   final int sizeId;
   final int orderId;
   final int newInventoryId;
+
   const ExchangeConfirmScreen(
       {super.key,
       required this.productId,

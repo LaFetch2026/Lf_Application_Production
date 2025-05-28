@@ -1,22 +1,26 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 import 'dart:async';
+
 //import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+
 //import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../../controller/order_controller.dart';
-import '../../utils/constants.dart';
+
+import '../../controllers/order_controller.dart';
+import '../../core/constant/constants.dart';
 
 class DeliverTrackScreen extends StatefulWidget {
   final int orderId;
   final double dropLat;
   final double dropLng;
+
   const DeliverTrackScreen({
     super.key,
     required this.orderId,
@@ -38,6 +42,7 @@ class DeliverTrackScreenState extends State<DeliverTrackScreen>
   Map<PolylineId, Polyline> polylines = {};
   String googleAPiKey = "AIzaSyCBFuMTFiBOwMOAbiCNJFInpiknSupbfEc";
   PolylinePoints polylinePoints = PolylinePoints();
+
   @override
   void initState() {
     /*  WidgetsBinding.instance.addPostFrameCallback((_) {

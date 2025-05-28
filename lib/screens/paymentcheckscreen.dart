@@ -7,17 +7,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/app_text.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/shopwishlist_appbar.dart';
-import 'package:lafetch/commonwidget/common_widgets.dart';
-import 'package:lafetch/controller/cart_controller.dart';
 import 'package:lafetch/screens/orderdetailsscreen.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
 import 'package:lottie/lottie.dart';
-import '../utils/constants.dart';
+
+import '../common/widget/appbar/shopwishlist_appbar.dart';
+import '../common/widget/other/common_widget.dart';
+import '../common/widget/text/app_text.dart';
+import '../controllers/cart_controller.dart';
+import '../core/constant/constants.dart';
 
 class PaymentCheckScreen extends StatefulWidget {
   final int orderId;
+
   const PaymentCheckScreen({super.key, required this.orderId});
 
   @override

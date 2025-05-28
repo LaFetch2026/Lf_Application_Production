@@ -15,6 +15,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/screens/Brands/brand_product_list.dart';
 //import 'package:lafetch/commonwidget/common_widgets.dart';
 
 //import 'package:lafetch/screens/Brands/categoryproduct.dart';

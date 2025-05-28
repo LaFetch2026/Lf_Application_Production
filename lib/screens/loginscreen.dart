@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_print
-
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -8,22 +7,23 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-//import 'package:lafetch/commonwidget/app_button.dart';
-import 'package:lafetch/commonwidget/common_widgets.dart';
-import 'package:lafetch/commonwidget/login_appbar.dart';
-import 'package:lafetch/commonwidget/loginwidgets/login_widget.dart';
-import 'package:lafetch/commonwidget/loginwidgets/multiple_text.dart';
-import 'package:lafetch/commonwidget/loginwidgets/number_widget.dart';
-//import 'package:lafetch/commonwidget/loginwidgets/or_widget.dart';
-import 'package:lafetch/utils/constants.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../commonwidget/app_text.dart';
-import '../controller/login_controller.dart';
+
+import '../common/widget/appbar/login_appbar.dart';
+import '../common/widget/other/common_widget.dart';
+import '../common/widget/other/login_widget.dart';
+import '../common/widget/text/app_text.dart';
+import '../common/widget/text/multiple_text.dart';
+import '../common/widget/text/number_widget.dart';
+import '../controllers/login_controller.dart';
+import '../core/constant/constants.dart';
+import '../core/utils/analytics_helper.dart';
 
 class LoginScreen extends StatefulWidget {
   final int initialTab;
   final bool hideBack;
+
   const LoginScreen(
       {required this.initialTab, this.hideBack = false, super.key});
 
@@ -247,6 +247,10 @@ class LoginScreenState extends State<LoginScreen> {
                   controller: loginController,
                   hideBack: widget.hideBack,
                   onPressedSkip: () async {
+                    AnalyticsHelper.logInitiateCheckout(
+                      productId: 'guest_login', // or some meaningful identifier
+                      value: 0.0, // or whatever value makes sense
+                    );
                     loginController.callGuestUser();
                     await analytics.logEvent(
                       name: 'login_skip',

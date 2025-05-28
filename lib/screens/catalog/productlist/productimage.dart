@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/controller/product_controller.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:video_player/video_player.dart';
-import '../../../utils/constants.dart';
+
+import '../../../controllers/product_controller.dart';
+import '../../../core/constant/constants.dart';
 
 class ProductImageScreen extends StatefulWidget {
   final int curr;
   final List list;
+
   const ProductImageScreen({
     super.key,
     required this.curr,

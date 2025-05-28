@@ -8,24 +8,27 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/productlist_appbar.dart';
-import 'package:lafetch/commonwidget/catalogwidgets/bottomcategory.dart';
-import 'package:lafetch/commonwidget/catalogwidgets/bottomfiltters.dart';
-import 'package:lafetch/commonwidget/catalogwidgets/bottomsortby.dart';
-import 'package:lafetch/commonwidget/common_widgets.dart';
 //import 'package:lafetch/commonwidget/dummy_container.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
-import 'package:lafetch/controller/cart_controller.dart';
+
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../commonwidget/app_text.dart';
+
+import '../../../common/widget/appbar/productlist_appbar.dart';
+import '../../../common/widget/bottom_sheets/bottomcategory.dart';
+import '../../../common/widget/bottom_sheets/bottomfiltters.dart';
+import '../../../common/widget/bottom_sheets/bottomsortby.dart';
+import '../../../common/widget/lists/dummy_grid_list.dart';
+import '../../../common/widget/other/common_widget.dart';
+import '../../../common/widget/text/app_text.dart';
+import '../../../controllers/cart_controller.dart';
+import '../../../controllers/product_controller.dart';
+import '../../../controllers/wishlist_controller.dart';
+import '../../../core/constant/constants.dart';
+
 //import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
-import '../../../controller/product_controller.dart';
-import '../../../controller/wishlist_controller.dart';
-import '../../../utils/constants.dart';
 
 class ProductViewScreen extends StatefulWidget {
   final String title;

@@ -7,18 +7,21 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/app_text.dart';
-import 'package:lafetch/commonwidget/login_appbar.dart';
-import 'package:lafetch/utils/constants.dart';
+
 //import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:otp_text_field_v2/otp_field_style_v2.dart';
 import 'package:otp_text_field_v2/otp_field_v2.dart';
 import 'package:telephony/telephony.dart';
-import '../commonwidget/common_widgets.dart';
-import '../controller/login_controller.dart';
+
+import '../common/widget/appbar/login_appbar.dart';
+import '../common/widget/other/common_widget.dart';
+import '../common/widget/text/app_text.dart';
+import '../controllers/login_controller.dart';
+import '../core/constant/constants.dart';
 
 class OTPVerficationScreen extends StatefulWidget {
   final String phoneMunber;
+
   const OTPVerficationScreen({required this.phoneMunber, super.key});
 
   @override
@@ -30,6 +33,7 @@ class OTPVerficationScreenState extends State<OTPVerficationScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   Telephony telephony = Telephony.instance;
   Timer? timer;
+
   @override
   void initState() {
     otpController.showButton.value = false;

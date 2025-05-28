@@ -5,19 +5,22 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/home_appbar.dart';
-import 'package:lafetch/commonwidget/dummy_container.dart';
+
 //import 'package:lafetch/commonwidget/smallbtn.dart';
 import 'package:lafetch/screens/expressshopping/viewall.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../commonwidget/app_text.dart';
+
 //import '../commonwidget/common_widgets.dart';
-import '../commonwidget/common_widgets.dart';
-import '../controller/brand_controller.dart';
-import '../controller/product_controller.dart';
-import '../utils/constants.dart';
+
+import '../common/widget/appbar/home_appbar.dart';
+import '../common/widget/lists/dummy_container.dart';
+import '../common/widget/other/common_widget.dart';
+import '../common/widget/text/app_text.dart';
+import '../controllers/brand_controller.dart';
+import '../controllers/product_controller.dart';
+import '../core/constant/constants.dart';
 import 'bottomnavscreen.dart';
 import 'cartscreen.dart';
 import 'mapscreen.dart';

@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constant/constants.dart';
+import '../../../core/utils/analytics_helper.dart';
 import '../../../screens/wishlistscreen.dart';
 import '../button/doublebutton_new.dart';
 import '../button/smallbtn.dart';
@@ -472,6 +473,12 @@ class _BottomWishlistState extends State<BottomWishlist> {
                     Get.back();
                   },
                   onPressedSecond: () {
+                    AnalyticsHelper.logAddToWishlist(
+                      productId: id.toString(),
+                      // or use the actual product ID if different
+                      contentType: 'product',
+                      value: 0.0, // or actual product price if available
+                    );
                     if (id != 0) {
                       widget.onPressed?.call(id);
                     } else {

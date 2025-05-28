@@ -7,14 +7,16 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/backbutton_appbar.dart';
-import 'package:lafetch/commonwidget/dummy_container.dart';
-import 'package:lafetch/controller/exchange_controller.dart';
+
 //import 'package:lafetch/controller/review_controller.dart';
 import 'package:lafetch/screens/orders/exchangeconfirm.dart';
-import 'package:lafetch/utils/constants.dart';
-import '../../commonwidget/app_text.dart';
-import '../../commonwidget/cartwidgets/bottomsize.dart';
+
+import '../../common/widget/appbar/backbutton_appbar.dart';
+import '../../common/widget/bottom_sheets/bottomsize.dart';
+import '../../common/widget/lists/dummy_container.dart';
+import '../../common/widget/text/app_text.dart';
+import '../../controllers/exchange_controller.dart';
+import '../../core/constant/constants.dart';
 
 class ExchangeProductScreen extends StatefulWidget {
   final int productId;
@@ -23,6 +25,7 @@ class ExchangeProductScreen extends StatefulWidget {
   final String productimage;
   final int sizeId;
   final int orderId;
+
   const ExchangeProductScreen(
       {super.key,
       required this.productId,

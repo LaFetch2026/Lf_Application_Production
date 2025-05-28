@@ -14,6 +14,7 @@ import '../common/widget/appbar/shopwishlist_appbar.dart';
 import '../common/widget/other/paymentfailwidget.dart';
 import '../controllers/cart_controller.dart';
 import '../core/constant/constants.dart';
+import '../core/utils/analytics_helper.dart';
 
 class PaymentSuccessScreen extends StatefulWidget {
   final String text1;
@@ -37,11 +38,31 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
+  @override
   void initState() {
     super.initState();
+
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: statusBarColor,
     ));
+
+    if (widget.text1 == "Order Placed Successfully") {
+      // Log Facebook Purchase event
+      AnalyticsHelper.logPurchase(
+        productId: widget.orderId.toString(),
+        value: 0.0, // or correct total value
+      );
+
+      // Log Firebase Analytics event
+      analytics.logEvent(
+        name: 'purchase_success',
+        parameters: <String, Object>{
+          'order_id': widget.orderId,
+          'value': controller.cartTotalValue.value,
+          'currency': 'USD',
+        },
+      );
+    }
   }
 
   @override

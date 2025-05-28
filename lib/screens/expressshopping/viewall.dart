@@ -6,22 +6,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/commonwidget/common_widgets.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_grid_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../commonwidget/app_text.dart';
-import '../../commonwidget/catalogwidgets/bottomfiltters.dart';
-import '../../commonwidget/catalogwidgets/bottomsortby.dart';
-import '../../commonwidget/catalogwidgets/bottomwishlist.dart';
-import '../../commonwidget/doublebtn.dart';
-import '../../commonwidget/dummy_container.dart';
-import '../../controller/product_controller.dart';
-import '../../controller/wishlist_controller.dart';
-import '../../utils/constants.dart';
+
+import '../../common/widget/bottom_sheets/bottomfiltters.dart';
+import '../../common/widget/bottom_sheets/bottomsortby.dart';
+import '../../common/widget/bottom_sheets/bottomwishlist.dart';
+import '../../common/widget/button/doublebtn.dart';
+import '../../common/widget/lists/dummy_container.dart';
+import '../../common/widget/lists/dummy_grid_list.dart';
+import '../../common/widget/other/common_widget.dart';
+import '../../common/widget/text/app_text.dart';
+import '../../controllers/product_controller.dart';
+import '../../controllers/wishlist_controller.dart';
+import '../../core/constant/constants.dart';
 import '../catalog/productlist/productdetailsscreen.dart';
 
 class ViewAllScreen extends StatefulWidget {
   final int brandId;
+
   const ViewAllScreen({super.key, required this.brandId});
 
   @override

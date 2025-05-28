@@ -7,17 +7,19 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
-import 'package:lafetch/commonwidget/common_widgets.dart';
-import '../../commonwidget/app_text.dart';
-import '../../commonwidget/appbarwidgets/backbutton_appbar.dart';
-import '../../controller/order_controller.dart';
-import '../../utils/constants.dart';
+
+import '../../common/widget/appbar/backbutton_appbar.dart';
+import '../../common/widget/other/common_widget.dart';
+import '../../common/widget/text/app_text.dart';
+import '../../controllers/order_controller.dart';
+import '../../core/constant/constants.dart';
 
 class ReviewProductScreen extends StatefulWidget {
   final String productName;
   final int productId;
   final int orderId;
   final String productimage;
+
   const ReviewProductScreen(
       {super.key,
       required this.productName,

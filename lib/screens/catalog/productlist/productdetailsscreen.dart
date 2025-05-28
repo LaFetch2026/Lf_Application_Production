@@ -10,31 +10,37 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:lafetch/commonwidget/app_space_text.dart';
-import 'package:lafetch/commonwidget/appbarwidgets/productdetails_appbar.dart';
-import 'package:lafetch/commonwidget/catalogwidgets/bottomwishlist.dart';
 //import 'package:lafetch/commonwidget/common_widgets.dart';
-import 'package:lafetch/commonwidget/doublebutton_iconnew.dart';
-import 'package:lafetch/commonwidget/dummy_container.dart';
-import 'package:lafetch/commonwidget/homewidget/dummy_productdetails.dart';
-import 'package:lafetch/controller/brand_controller.dart';
+
 //import 'package:lafetch/commonwidget/homewidget/dummy_review.dart';
-import 'package:lafetch/controller/product_controller.dart';
+
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productimage.dart';
 import 'package:lafetch/screens/wishlist/newboardscreen.dart';
+
 //import 'package:lafetch/screens/mapscreen.dart';
 import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
-import '../../../commonwidget/bottomsizechart.dart';
-import '../../../commonwidget/homewidget/dummy_productImage.dart';
+
 //import '../../../commonwidget/homewidget/dummy_product_list.dart';
 //import '../../../commonwidget/homewidget/dummy_saveaddress.dart';
 //import '../../../commonwidget/homewidget/horizontal_home_list.dart';
-import '../../../controller/wishlist_controller.dart';
-import '../../../utils/constants.dart';
+
 //import '../../account/saved_address.dart';
+import '../../../common/widget/appbar/productdetails_appbar.dart';
+import '../../../common/widget/bottom_sheets/bottomsizechart.dart';
+import '../../../common/widget/bottom_sheets/bottomwishlist.dart';
+import '../../../common/widget/button/oublebutton_iconnew.dart';
+import '../../../common/widget/lists/dummy_container.dart';
+import '../../../common/widget/lists/dummy_productImage.dart';
+import '../../../common/widget/lists/dummy_productdetails.dart';
+import '../../../common/widget/text/app_space_text.dart';
+import '../../../controllers/brand_controller.dart';
+import '../../../controllers/product_controller.dart';
+import '../../../controllers/wishlist_controller.dart';
+import '../../../core/constant/constants.dart';
+import '../../../core/utils/analytics_helper.dart';
 import '../../cartscreen.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -47,6 +53,7 @@ class ProductDetailsScreen extends StatefulWidget {
   final Color backgroundcolor;
   final String expresshour;
   final int expressValue;
+
   const ProductDetailsScreen(
       {super.key,
       required this.productId,
@@ -85,6 +92,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     initialPage: 0,
   );
   ScrollController _scrollController = ScrollController();
+
   /* final List<Map<String, String>> reviewsCount = [
     {'id': '1', 'title': '5', 'count': '1121', 'total': '2015'},
     {'id': '2', 'title': '4', 'count': '406', 'total': '2015'},
@@ -821,6 +829,17 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
               visible: widget.backgroundcolor == whiteColor ? true : false,
               child: ProductdetailsAppbar(
                 onPressedHeart: () async {
+                  final productId =
+                      productController.productDetails["id"].toString();
+                  final productPrice = double.tryParse(productController
+                          .productDetails["price"]
+                          .toString()) ??
+                      0.0;
+                  AnalyticsHelper.logAddToWishlist(
+                    productId: productId,
+                    contentType: 'product',
+                    value: productPrice,
+                  );
                   if (wishlistController.wishListDetails["wishlisted"]) {
                     wishlistController.callAddProductToWishlist(
                         wishlistController.wishListDetails["wishlist_id"],
@@ -2287,7 +2306,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                       widget.Slug);
                                                             },
                                                           ));
-                            
+
                                                   await analytics.logEvent(
                                                     name: 'addresslist_page',
                                                     parameters: <String, Object>{
@@ -2391,7 +2410,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                                 context);
                                                       },
                                                     ));
-                            
+
                                             await analytics.logEvent(
                                               name: 'mapscreen_page',
                                               parameters: <String, Object>{
@@ -4409,7 +4428,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       : SizedBox(
                                           height: 0,
                                         )),
-                              
+
                             ],
                           ),
                         ) */
@@ -4665,23 +4684,45 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               firstText: "Go to BAG".toUpperCase(),
                               secondText: "Buy Now".toUpperCase(),
                               onPressedFirst: () async {
-                                Get.to(CartScreen(
-                                  backgroundcolor: widget.backgroundcolor,
-                                ))?.then(
+                                final productId = productController
+                                    .productDetails["id"]
+                                    .toString();
+                                final productPrice = double.tryParse(
+                                      productController.productDetails["price"]
+                                          .toString(),
+                                    ) ??
+                                    0.0;
+
+                                // Log Facebook Add to Cart event
+                                AnalyticsHelper.logAddToCart(
+                                  productId: productId,
+                                  contentType: 'product',
+                                  value: productPrice,
+                                );
+
+                                Get.to(
+                                  CartScreen(
+                                      backgroundcolor: widget.backgroundcolor),
+                                )?.then(
                                   (value) {
                                     productController.getProductDetails(
-                                        widget.productId,
-                                        "",
-                                        widget.backgroundcolor);
+                                      widget.productId,
+                                      "",
+                                      widget.backgroundcolor,
+                                    );
                                   },
                                 );
+
+                                // Optional: custom Firebase Analytics event
                                 await analytics.logEvent(
                                   name: 'productDetails_btnGotocart',
                                   parameters: <String, Object>{
                                     'page_name': 'productDetails_btnGotocart',
                                   },
                                 );
+
                                 productController.addToCart.value = false;
+
                                 _scrollController.animateTo(
                                   MediaQuery.of(context).size.height / 2.sp +
                                       150.sp,
@@ -4690,15 +4731,32 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 );
                               },
                               onPressedSecond: () {
+                                final productId = productController
+                                    .productDetails["id"]
+                                    .toString();
+                                final productPrice = double.tryParse(
+                                      productController.productDetails["price"]
+                                          .toString(),
+                                    ) ??
+                                    0.0;
+
                                 if (productController
                                     .checkDetailsValidation()) {
+                                  // Optionally track purchase if "Buy Now" initiates immediate checkout/purchase
+                                  AnalyticsHelper.logPurchase(
+                                    productId: productId,
+                                    value: productPrice,
+                                  );
+
                                   productController.callAddtoCart(
-                                      1,
-                                      "buy now",
-                                      widget.backgroundcolor,
-                                      widget.productId,
-                                      true);
+                                    1,
+                                    "buy now",
+                                    widget.backgroundcolor,
+                                    widget.productId,
+                                    true,
+                                  );
                                 }
+
                                 _scrollController.animateTo(
                                   MediaQuery.of(context).size.height / 2.sp +
                                       150.sp,
@@ -4706,7 +4764,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   curve: Curves.easeInOut,
                                 );
                               },
-                              controller: productController)
+                              controller: productController,
+                            )
                           : DoubleButtonIconNew(
                               lineColor: widget.backgroundcolor == whiteColor
                                   ? dividerColor
