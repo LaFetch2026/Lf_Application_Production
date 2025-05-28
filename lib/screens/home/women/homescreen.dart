@@ -1338,12 +1338,9 @@ class HomeScreenState extends State<HomeScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 //   blankSpace: 20.0,
                                 velocity: 100.0,
-                                pauseAfterRound: Duration(seconds: 1),
-                                // startPadding: 10.0,
-                                accelerationDuration: Duration(seconds: 1),
+                                pauseAfterRound: Duration.zero,
                                 accelerationCurve: Curves.linear,
-                                decelerationDuration:
-                                    Duration(milliseconds: 500),
+
                                 decelerationCurve: Curves.easeOut,
                               ),
                             ),
