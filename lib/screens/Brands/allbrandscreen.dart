@@ -49,6 +49,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   int tagId = 0;
   RegExp regExp = RegExp("");
   bool showDescription = false;
+
   late Future<void> _initializeVideoPlayerFuture;
   late VideoPlayerController videoController;
   late VideoPlayerController slugVideoController;
@@ -335,6 +336,38 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                               .aspectRatio,
                                                       child: VideoPlayer(
                                                           videoController),
+                                                    ),
+                                                    Positioned(
+                                                      top: 10,
+                                                      right: 10,
+                                                      child:
+                                                          Obx(() => IconButton(
+                                                                icon: Icon(
+                                                                  brandController
+                                                                          .isMuted
+                                                                          .value
+                                                                      ? Icons
+                                                                          .volume_off
+                                                                      : Icons
+                                                                          .volume_up,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                                onPressed: () {
+                                                                  brandController
+                                                                          .isMuted
+                                                                          .value =
+                                                                      !brandController
+                                                                          .isMuted
+                                                                          .value;
+                                                                  videoController.setVolume(
+                                                                      brandController
+                                                                              .isMuted
+                                                                              .value
+                                                                          ? 0
+                                                                          : 1);
+                                                                },
+                                                              )),
                                                     ),
                                                   ],
                                                 );

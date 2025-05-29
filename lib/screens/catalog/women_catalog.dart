@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print, deprecated_member_use
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';

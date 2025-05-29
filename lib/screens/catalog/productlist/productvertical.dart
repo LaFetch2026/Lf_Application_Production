@@ -740,36 +740,36 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                   right: 10.sp,
                                                                   bottom:
                                                                       30.sp),
-                                                          child: Row(
-                                                            children: [
-                                                              ImageIcon(
-                                                                AssetImage(
-                                                                    truckImage),
-                                                                color:
-                                                                    expressText,
-                                                                size: 14.sp,
-                                                              ),
-                                                              Padding(
-                                                                padding: EdgeInsets
-                                                                    .symmetric(
-                                                                        horizontal:
-                                                                            5.sp),
-                                                                child: AppText(
-                                                                  text:
-                                                                      "Express",
-                                                                  color:
-                                                                      expressText,
-                                                                  maxLines: 2,
-                                                                  fontSize: 11,
-                                                                  fontFamily:
-                                                                      "Franklin Gothic Regular",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
+                                                          // child: Row(
+                                                          //   children: [
+                                                          //     ImageIcon(
+                                                          //       AssetImage(
+                                                          //           truckImage),
+                                                          //       color:
+                                                          //           expressText,
+                                                          //       size: 14.sp,
+                                                          //     ),
+                                                          //     Padding(
+                                                          //       padding: EdgeInsets
+                                                          //           .symmetric(
+                                                          //               horizontal:
+                                                          //                   5.sp),
+                                                          //       child: AppText(
+                                                          //         text:
+                                                          //             "Express",
+                                                          //         color:
+                                                          //             expressText,
+                                                          //         maxLines: 2,
+                                                          //         fontSize: 11,
+                                                          //         fontFamily:
+                                                          //             "Franklin Gothic Regular",
+                                                          //         fontWeight:
+                                                          //             FontWeight
+                                                          //                 .w400,
+                                                          //       ),
+                                                          //     ),
+                                                          //   ],
+                                                          // ),
                                                         )
                                                       : SizedBox(
                                                           height: 0,

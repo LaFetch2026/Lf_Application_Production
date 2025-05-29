@@ -15,6 +15,8 @@ import 'base_controller.dart';
 class BrandController extends BaseController {
   TextEditingController searchController = TextEditingController();
   RxInt page = 1.obs;
+  RxBool isMuted = false.obs;
+
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
   ScrollController brandListController = ScrollController();
