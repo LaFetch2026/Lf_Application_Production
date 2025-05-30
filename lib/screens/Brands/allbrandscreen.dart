@@ -340,34 +340,34 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                     Positioned(
                                                       top: 10,
                                                       right: 10,
-                                                      child:
-                                                          Obx(() => IconButton(
-                                                                icon: Icon(
-                                                                  brandController
-                                                                          .isMuted
-                                                                          .value
-                                                                      ? Icons
-                                                                          .volume_off
-                                                                      : Icons
-                                                                          .volume_up,
-                                                                  color: Colors
-                                                                      .white,
-                                                                ),
-                                                                onPressed: () {
-                                                                  brandController
-                                                                          .isMuted
-                                                                          .value =
-                                                                      !brandController
-                                                                          .isMuted
-                                                                          .value;
-                                                                  videoController.setVolume(
-                                                                      brandController
-                                                                              .isMuted
-                                                                              .value
-                                                                          ? 0
-                                                                          : 1);
-                                                                },
-                                                              )),
+                                                      child: Obx(
+                                                        () => IconButton(
+                                                          icon: Icon(
+                                                            brandController
+                                                                    .isMuted
+                                                                    .value
+                                                                ? Icons
+                                                                    .volume_off
+                                                                : Icons
+                                                                    .volume_up,
+                                                            color: Colors.white,
+                                                          ),
+                                                          onPressed: () {
+                                                            brandController
+                                                                    .isMuted
+                                                                    .value =
+                                                                !brandController
+                                                                    .isMuted
+                                                                    .value;
+                                                            videoController.setVolume(
+                                                                brandController
+                                                                        .isMuted
+                                                                        .value
+                                                                    ? 0
+                                                                    : 1);
+                                                          },
+                                                        ),
+                                                      ),
                                                     ),
                                                   ],
                                                 );

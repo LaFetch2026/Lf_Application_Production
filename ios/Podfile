@@ -1,4 +1,4 @@
-platform :ios, '14.5' # or higher if needed
+platform :ios, '14.5'
 
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
@@ -31,12 +31,8 @@ target 'Runner' do
 
   flutter_install_all_ios_pods(File.dirname(File.realpath(__FILE__)))
 
-  # ✅ Add Facebook SDK dependencies here (CocoaPods will manage bitcode correctly)
-  pod 'FBSDKCoreKit'
-  pod 'FBSDKLoginKit'
-  pod 'FBSDKCoreKit_Basics'
-  pod 'FBAEMKit'
-
+  # Optional: If you want to force newer version of Facebook SDK
+  # pod 'FBSDKCoreKit', '~> 14.1'
 end
 
 post_install do |installer|

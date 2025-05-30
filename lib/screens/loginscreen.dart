@@ -3,7 +3,6 @@ import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -35,7 +34,8 @@ class LoginScreenState extends State<LoginScreen> {
   final loginController = Get.put(LoginController());
   Color appbarColor = colorPrimary;
   Map<String, dynamic>? fbData;
-  AccessToken? accessToken;
+
+  // AccessToken? accessToken;
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   String _authStatus = 'Unknown';
 
@@ -106,30 +106,30 @@ class LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  facebooklogin(String type) async {
-    final LoginResult result = await FacebookAuth.instance.login();
-
-    if (result.status == LoginStatus.success) {
-      accessToken = result.accessToken;
-
-      final userData = await FacebookAuth.instance.getUserData();
-      fbData = userData;
-      print(fbData);
-      print("${fbData!["name"]}");
-      print("${fbData!["email"]}");
-      loginController.callSocailMediaLogin(
-          fbData!["name"], fbData!["email"], "facebook", fbData!["id"]);
-      await analytics.logEvent(
-        name: '$type btnFacebook',
-        parameters: <String, Object>{
-          'page_name': '$type btnFacebook',
-        },
-      );
-    } else {
-      print(result.status);
-      print(result.message);
-    }
-  }
+  // facebooklogin(String type) async {
+  //   final LoginResult result = await FacebookAuth.instance.login();
+  //
+  //   if (result.status == LoginStatus.success) {
+  //     accessToken = result.accessToken;
+  //
+  //     final userData = await FacebookAuth.instance.getUserData();
+  //     fbData = userData;
+  //     print(fbData);
+  //     print("${fbData!["name"]}");
+  //     print("${fbData!["email"]}");
+  //     loginController.callSocailMediaLogin(
+  //         fbData!["name"], fbData!["email"], "facebook", fbData!["id"]);
+  //     await analytics.logEvent(
+  //       name: '$type btnFacebook',
+  //       parameters: <String, Object>{
+  //         'page_name': '$type btnFacebook',
+  //       },
+  //     );
+  //   } else {
+  //     print(result.status);
+  //     print(result.message);
+  //   }
+  // }
 
   void googleSignInProcess(BuildContext context, String type) async {
     GoogleSignIn googleSignIn = GoogleSignIn();
