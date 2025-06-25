@@ -4698,7 +4698,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 AnalyticsHelper.logAddToCart(
                                   productId: productId,
                                   contentType: 'product',
-                                  value: productPrice,
                                 );
 
                                 Get.to(

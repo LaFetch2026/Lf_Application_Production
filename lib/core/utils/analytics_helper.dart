@@ -80,7 +80,6 @@ class AnalyticsHelper {
   static void logAddToCart({
     required String productId,
     required String contentType,
-    required double value,
   }) {
     facebookAppEvents.logEvent(
       name: 'fb_mobile_add_to_cart',
@@ -88,7 +87,6 @@ class AnalyticsHelper {
         'content_type': contentType,
         'content_id': productId,
         'currency': 'USD',
-        'valueToSum': value,
       },
     );
   }
@@ -96,7 +94,6 @@ class AnalyticsHelper {
   /// Initiate Checkout
   static void logInitiateCheckout({
     required String productId,
-    required double value,
   }) {
     facebookAppEvents.logEvent(
       name: 'fb_mobile_initiated_checkout',
@@ -104,7 +101,6 @@ class AnalyticsHelper {
         'content_type': 'product',
         'content_id': productId,
         'currency': 'USD',
-        'valueToSum': value,
       },
     );
   }

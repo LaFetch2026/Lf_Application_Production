@@ -3622,7 +3622,7 @@ class CartScreenState extends State<CartScreen> {
                                 "0") ?? 0.0;
                         AnalyticsHelper.logInitiateCheckout(
                           productId: productId,
-                          value: totalValue,
+
                         );
                       },
                       child: Container(
