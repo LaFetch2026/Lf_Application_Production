@@ -15,7 +15,6 @@ import '../common/widget/text/app_text.dart';
 import '../common/widget/text/number_widget.dart';
 import '../controllers/shipaddress_controller.dart';
 import '../core/constant/constants.dart';
-import '../core/utils/analytics_helper.dart';
 import 'bottomnavscreen.dart';
 
 class ShippingAddressScreen extends StatefulWidget {
@@ -1200,12 +1199,12 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                             'page_name': 'default_addressClick',
                                           },
                                         );
-                                        AnalyticsHelper.logInitiateCheckout(
-                                          productId: 'guest_login',
-                                          // or some meaningful identifier
-                                          value:
-                                              0.0, // or whatever value makes sense
-                                        );
+                                        // AnalyticsHelper.logInitiateCheckout(
+                                        //   productId: 'guest_login',
+                                        //   // or some meaningful identifier
+                                        //   value:
+                                        //       0.0, // or whatever value makes sense
+                                        // );
                                       },
                                       child: AppText(
                                         text: "Make this my default address",
@@ -1233,10 +1232,6 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                 Get.back();
               },
               onPressedSecond: () async {
-                AnalyticsHelper.logInitiateCheckout(
-                  productId: 'guest_login', // or some meaningful identifier
-                  value: 0.0, // or whatever value makes sense
-                );
                 FocusScope.of(context).requestFocus(FocusNode());
                 if (widget.addressId != 0) {
                   if (shipController.checkvalidation()) {

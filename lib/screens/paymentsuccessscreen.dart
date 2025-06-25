@@ -38,7 +38,6 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
-  @override
   void initState() {
     super.initState();
 
@@ -47,20 +46,12 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
     ));
 
     if (widget.text1 == "Order Placed Successfully") {
-      // Log Facebook Purchase event
+      final orderValue = controller.cartTotalValue.value.toDouble();
+
+      // Facebook App Event
       AnalyticsHelper.logPurchase(
         productId: widget.orderId.toString(),
-        value: 0.0, // or correct total value
-      );
-
-      // Log Firebase Analytics event
-      analytics.logEvent(
-        name: 'purchase_success',
-        parameters: <String, Object>{
-          'order_id': widget.orderId,
-          'value': controller.cartTotalValue.value,
-          'currency': 'USD',
-        },
+        value: orderValue,
       );
     }
   }

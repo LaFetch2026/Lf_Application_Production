@@ -17,7 +17,6 @@ import '../common/widget/text/multiple_text.dart';
 import '../common/widget/text/number_widget.dart';
 import '../controllers/login_controller.dart';
 import '../core/constant/constants.dart';
-import '../core/utils/analytics_helper.dart';
 
 class LoginScreen extends StatefulWidget {
   final int initialTab;
@@ -247,10 +246,10 @@ class LoginScreenState extends State<LoginScreen> {
                   controller: loginController,
                   hideBack: widget.hideBack,
                   onPressedSkip: () async {
-                    AnalyticsHelper.logInitiateCheckout(
-                      productId: 'guest_login', // or some meaningful identifier
-                      value: 0.0, // or whatever value makes sense
-                    );
+                    // AnalyticsHelper.logInitiateCheckout(
+                    //   productId: 'guest_login', // or some meaningful identifier
+                    //   value: 0.0, // or whatever value makes sense
+                    // );
                     loginController.callGuestUser();
                     await analytics.logEvent(
                       name: 'login_skip',

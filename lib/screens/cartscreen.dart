@@ -43,6 +43,7 @@ import '../controllers/product_controller.dart';
 import '../controllers/profile_controller.dart';
 import '../controllers/wishlist_controller.dart';
 import '../core/constant/constants.dart';
+import '../core/utils/analytics_helper.dart';
 import 'catalog/productlist/productdetailsscreen.dart';
 
 class CartScreen extends StatefulWidget {
@@ -383,167 +384,7 @@ class CartScreenState extends State<CartScreen> {
                               crossAxisAlignment:
                               CrossAxisAlignment.start,
                               children: [
-                                /*  Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 16.sp,
-                                                      vertical: 20.sp),
-                                                  child: Row(
-                                                    mainAxisSize: MainAxisSize.max,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          AppText(
-                                                            text: "Shopping Bag",
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            color: blackColor,
-                                                            fontSize: 16,
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    top: 5.sp),
-                                                            child: Row(
-                                                              children: [
-                                                                AppText(
-                                                                  text: controller.orderList
-                                                                                  .length ==
-                                                                              1 ||
-                                                                          controller
-                                                                              .orderList
-                                                                              .isEmpty
-                                                                      ? "${controller.orderList.length} item"
-                                                                      : "${controller.orderList.length} items",
-                                                                  fontFamily:
-                                                                      "Franklin Gothic Regular",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  color:
-                                                                      textHintColor,
-                                                                  fontSize: 12,
-                                                                ),
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              10.sp),
-                                                                  child: Container(
-                                                                    width: 1.sp,
-                                                                    color:
-                                                                        textHintColor,
-                                                                    height: 16.sp,
-                                                                  ),
-                                                                ),
-                                                                AppText(
-                                                                  text:
-                                                                      "\u{20B9} ${controller.cartDetails["total"] ?? "0"}",
-                                                                  fontFamily:
-                                                                      "Franklin Gothic Regular",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  color:
-                                                                      textHintColor,
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                      const Expanded(
-                                                        child: SizedBox(
-                                                          height: 0,
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                        padding: EdgeInsets.only(
-                                                            bottom: 15.sp),
-                                                        child: GestureDetector(
-                                                          onTap: () async {
-                                                            showDialog(
-                                                              barrierColor:
-                                                                  Colors.black26,
-                                                              context: context,
-                                                              builder: (context) {
-                                                                return showDoubleBtnDailog(
-                                                                    click1: () {
-                                                                      Get.back();
-                                                                    },
-                                                                    click2: () {
-                                                                      if (controller
-                                                                              .cartId
-                                                                              .value !=
-                                                                          0) {
-                                                                        controller
-                                                                            .callDeleteCart();
-                                                                      }
-                                                                    },
-                                                                    btncolor:
-                                                                        colorPrimary,
-                                                                    text:
-                                                                        "Are you sure you want to clear cart?",
-                                                                    btn1Text:
-                                                                        "Cancel",
-                                                                    btn2Text:
-                                                                        "Clear");
-                                                              },
-                                                            );
-                                                                        
-                                                            await analytics
-                                                                .logEvent(
-                                                              name:
-                                                                  'cart_page_clearbagclick',
-                                                              parameters: <String,
-                                                                  Object>{
-                                                                'page_name':
-                                                                    'cart_page_clearbagclick',
-                                                              },
-                                                            );
-                                                          },
-                                                          child: Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              ImageIcon(
-                                                                AssetImage(
-                                                                    deleteIcon),
-                                                                color: colorPrimary,
-                                                                size: 16.sp,
-                                                              ),
-                                                              Padding(
-                                                                padding: EdgeInsets
-                                                                    .symmetric(
-                                                                        horizontal:
-                                                                            2.sp),
-                                                                child: AppText(
-                                                                  text: "Clear Bag",
-                                                                  fontFamily:
-                                                                      "Franklin Gothic",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  color:
-                                                                      colorPrimary,
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ), */
+
                                 GetBuilder<CartController>(
                                   builder: (value) =>
                                       RefreshIndicator(
@@ -2768,24 +2609,27 @@ class CartScreenState extends State<CartScreen> {
                                                 ),
                                               ),
                                               AppText(
-                                                text:
-                                                "\u{20B9}${double.parse(
+                                                text: "\u{20B9}${double.parse(
                                                     controller
-                                                        .cartDetails["shipping_cost"]) +
-                                                    double.parse(controller
-                                                        .cartDetails["express_delivery_charges"])}",
-                                                fontFamily:
-                                                "Franklin Gothic Regular",
-                                                fontWeight:
-                                                FontWeight
-                                                    .w400,
-                                                color: widget
-                                                    .backgroundcolor ==
+                                                        .cartDetails["shipping_cost"]
+                                                        .toString()
+                                                        .replaceAll(",", ""))
+                                                    +
+                                                    double.parse(
+                                                        controller
+                                                            .cartDetails["express_delivery_charges"]
+                                                            .toString()
+                                                            .replaceAll(
+                                                            ",", ""))}",
+                                                fontFamily: "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: widget.backgroundcolor ==
                                                     whiteColor
                                                     ? homeAppBarColor
                                                     : whiteColor,
                                                 fontSize: 12,
                                               ),
+
                                             ],
                                           ),
                                         ),
@@ -3499,7 +3343,8 @@ class CartScreenState extends State<CartScreen> {
                   ),
                 )
                     : controller.orderList.isNotEmpty
-                    ? /* Container(
+                    ?
+                /* Container(
                             color: whiteColor,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -3769,6 +3614,15 @@ class CartScreenState extends State<CartScreen> {
                             'page_name':
                             'proceed_checkout_btnclick',
                           },
+                        );
+                        final productId = controller.cartDetails["product_id"]
+                            ?.toString() ?? "unknown_product";
+                        final totalValue = double.tryParse(
+                            controller.cartDetails["total"]?.toString() ??
+                                "0") ?? 0.0;
+                        AnalyticsHelper.logInitiateCheckout(
+                          productId: productId,
+                          value: totalValue,
                         );
                       },
                       child: Container(

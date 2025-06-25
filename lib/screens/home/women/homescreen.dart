@@ -1149,7 +1149,8 @@ class HomeScreenState extends State<HomeScreen> {
                                           bottom: 12.sp,
                                           right: 16.sp,
                                         ),
-                                        child: /*  CarouselSlider.builder(
+                                        child:
+                                            /*  CarouselSlider.builder(
                                         itemCount:
                                             homeController.banner1List.length,
                                         options: CarouselOptions(

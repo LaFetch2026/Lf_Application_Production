@@ -4689,7 +4689,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     .toString();
                                 final productPrice = double.tryParse(
                                       productController.productDetails["price"]
-                                          .toString(),
+                                          .toString()
+                                          .replaceAll(",", ""),
                                     ) ??
                                     0.0;
 
@@ -4736,17 +4737,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     .toString();
                                 final productPrice = double.tryParse(
                                       productController.productDetails["price"]
-                                          .toString(),
+                                          .toString()
+                                          .replaceAll(",", ""),
                                     ) ??
                                     0.0;
 
                                 if (productController
                                     .checkDetailsValidation()) {
                                   // Optionally track purchase if "Buy Now" initiates immediate checkout/purchase
-                                  AnalyticsHelper.logPurchase(
-                                    productId: productId,
-                                    value: productPrice,
-                                  );
 
                                   productController.callAddtoCart(
                                     1,
