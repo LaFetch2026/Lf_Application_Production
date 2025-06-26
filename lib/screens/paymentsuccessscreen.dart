@@ -45,15 +45,23 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
       statusBarColor: statusBarColor,
     ));
 
-    if (widget.text1 == "Order Placed Successfully") {
-      final orderValue = controller.cartTotalValue.value.toDouble();
+    // Run after widget has built and controller values are available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.text1 == "Order Placed Successfully") {
+        final orderValue = controller.cartTotalValue.value.toDouble();
 
-      // Facebook App Event
-      AnalyticsHelper.logPurchase(
-        productId: widget.orderId.toString(),
-        value: orderValue,
-      );
-    }
+        if (orderValue > 0) {
+          AnalyticsHelper.logPurchase(
+            productId: widget.orderId.toString(),
+            value: orderValue,
+          );
+          print(
+              "✅ Facebook logPurchase tracked for order ${widget.orderId} with value: $orderValue");
+        } else {
+          print("⚠️ Skipping logPurchase: cart value is zero.");
+        }
+      }
+    });
   }
 
   @override
