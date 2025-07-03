@@ -4382,6 +4382,7 @@ class OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                             fit: BoxFit.cover),
                                       )
                                     ],
+                                    
                                   ),
                                   const Expanded(
                                     child: SizedBox(

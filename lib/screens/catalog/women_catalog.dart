@@ -258,8 +258,11 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding:
-                        EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
+                    padding: EdgeInsets.only(
+                      top: 0.sp,
+                      left: 16.sp,
+                      right: 16.sp,
+                    ),
                     child: AppText(
                       text: "Explore our entire collection",
                       fontFamily: "Franklin Gothic Regular",

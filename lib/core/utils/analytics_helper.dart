@@ -79,7 +79,7 @@ class AnalyticsHelper {
   /// Add to Cart
   static void logAddToCart({
     required String productId,
-    required String contentType,
+    required String contentType, required double value,
   }) {
     facebookAppEvents.logEvent(
       name: 'fb_mobile_add_to_cart',

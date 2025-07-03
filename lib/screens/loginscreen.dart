@@ -142,16 +142,16 @@ class LoginScreenState extends State<LoginScreen> {
       print("photoUrl ${googleUser.photoUrl}");
       print("id ${googleUser.id}");
       print("token $token");
-      if (googleUser.displayName != null) {
-        loginController.callSocailMediaLogin(
-            googleUser.displayName!, googleUser.email, "google", googleUser.id);
-        await analytics.logEvent(
-          name: '$type btnGoogle',
-          parameters: <String, Object>{
-            'page_name': '$type btnGoogle',
-          },
-        );
-      }
+      // if (googleUser.displayName != null) {
+      //   loginController.callSocailMediaLogin(
+      //       googleUser.displayName!, googleUser.email, "google", googleUser.id);
+      //   await analytics.logEvent(
+      //     name: '$type btnGoogle',
+      //     parameters: <String, Object>{
+      //       'page_name': '$type btnGoogle',
+      //     },
+      //   );
+      // }
     }
   }
 

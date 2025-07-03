@@ -301,7 +301,7 @@ class ProfileController extends BaseController {
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
-        getSnackBar("Authentication failed");
+        // getSnackBar("Authentication failed");
       } else {
         getSnackBar("profile update failed");
       }
@@ -343,7 +343,7 @@ class ProfileController extends BaseController {
             initialTab: 0,
           ),
         );
-        getSnackBar("Authentication failed");
+        // getSnackBar("Authentication failed");
       } else {
         getSnackBar("get product failed");
       }
@@ -372,7 +372,7 @@ class ProfileController extends BaseController {
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
-        getSnackBar("Authentication failed");
+        // getSnackBar("Authentication failed");
       } else {
         print("delete address failed");
       }
@@ -409,7 +409,7 @@ class ProfileController extends BaseController {
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
-        getSnackBar("Authentication failed");
+        // getSnackBar("Authentication failed");
       } else {
         getSnackBar("notification failed");
       }
@@ -443,7 +443,7 @@ class ProfileController extends BaseController {
       } else if (response.statusCode == 500) {
         getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
-        getSnackBar("Authentication failed");
+        // getSnackBar("Authentication failed");
         Get.offAll(
           () => const LoginScreen(
             initialTab: 0,
@@ -477,7 +477,7 @@ class ProfileController extends BaseController {
         var responseData = json.decode(response.body);
         print(responseData);
       } else if (response.statusCode == 401) {
-        getSnackBar("Authentication failed");
+        // getSnackBar("Authentication failed");
         Get.offAll(
           () => const LoginScreen(
             initialTab: 0,
