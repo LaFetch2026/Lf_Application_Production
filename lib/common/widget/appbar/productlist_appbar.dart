@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/screens/bottomnavscreen.dart';
+import 'package:lafetch/screens/home/women/homescreen.dart';
 
 import '../../../controllers/cart_controller.dart';
 import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
-
 
 class ProductAppbar extends StatefulWidget {
   final Function? onPressedSearch;
@@ -20,14 +21,14 @@ class ProductAppbar extends StatefulWidget {
 
   const ProductAppbar(
       {Key? key,
-        this.onPressedSearch,
-        this.isWishlist = true,
-        this.isCart = true,
-        this.onPressedCart,
-        this.onPressedHeart,
-        this.backColor = statusBarColor,
-        this.text = "",
-        this.isHandPicked = false})
+      this.onPressedSearch,
+      this.isWishlist = true,
+      this.isCart = true,
+      this.onPressedCart,
+      this.onPressedHeart,
+      this.backColor = statusBarColor,
+      this.text = "",
+      this.isHandPicked = false})
       : super(key: key);
 
   @override
@@ -51,14 +52,20 @@ class _ProductAppbarState extends State<ProductAppbar> {
             children: [
               InkWell(
                 onTap: () {
-                  Get.back();
+                  // Always navigate back to HomeScreen
+
+                  Get.offAll(() => const BottomNavScreen());
                 },
                 child: Container(
                   alignment: Alignment.bottomCenter,
                   padding:
-                  EdgeInsets.only(left: 16.sp, right: 12.sp, top: 4.sp),
-                  child: SvgPicture.asset(arrowBack,
-                      height: 15.sp, width: 15.sp, fit: BoxFit.cover),
+                      EdgeInsets.only(left: 16.sp, right: 12.sp, top: 4.sp),
+                  child: SvgPicture.asset(
+                    arrowBack,
+                    height: 15.sp,
+                    width: 15.sp,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               Visibility(
@@ -108,7 +115,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                 },
                 child: Padding(
                   padding:
-                  EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
+                      EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
                   child: SvgPicture.asset(searchSvgImage,
                       height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                 ),
@@ -121,7 +128,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   },
                   child: Padding(
                     padding:
-                    EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
+                        EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
                     child: SvgPicture.asset(heartSvgImage,
                         height: 18.sp, width: 18.sp, fit: BoxFit.cover),
                   ),
@@ -145,37 +152,37 @@ class _ProductAppbarState extends State<ProductAppbar> {
                         ),
                         Obx(() => controller.cartTotalValue.value != 0
                             ? Positioned(
-                          right: 0,
-                          bottom: 0,
-                          child: Container(
-                            width: 10.sp,
-                            height: 10.sp,
-                            child: Padding(
-                              padding: EdgeInsets.all(0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: homeAppBarColor,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    controller.cartTotalValue.value
-                                        .toString(),
-                                    style: TextStyle(
-                                        fontSize: 8,
-                                        color: whiteColor,
-                                        fontFamily:
-                                        "Libre Franklin Regular",
-                                        fontWeight: FontWeight.w400),
+                                right: 0,
+                                bottom: 0,
+                                child: Container(
+                                  width: 10.sp,
+                                  height: 10.sp,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: homeAppBarColor,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          controller.cartTotalValue.value
+                                              .toString(),
+                                          style: TextStyle(
+                                              fontSize: 8,
+                                              color: whiteColor,
+                                              fontFamily:
+                                                  "Libre Franklin Regular",
+                                              fontWeight: FontWeight.w400),
+                                        ),
+                                      ), // inner content
+                                    ),
                                   ),
-                                ), // inner content
-                              ),
-                            ),
-                          ),
-                        )
+                                ),
+                              )
                             : SizedBox(
-                          height: 0,
-                        ))
+                                height: 0,
+                              ))
                       ],
                     ),
                   ),

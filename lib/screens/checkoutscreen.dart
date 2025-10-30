@@ -59,7 +59,7 @@ class CheckoutScreen extends StatefulWidget {
 
 class CheckoutScreenState extends State<CheckoutScreen> {
   final controller = Get.put(CartController());
-  final orderController = Get.put(OrderController());
+  // final orderController = Get.put(OrderController());
   final shipController = Get.put(ShipAddressController());
   final Razorpay razorpay = Razorpay();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;

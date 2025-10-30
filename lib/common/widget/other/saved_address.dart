@@ -8,16 +8,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-
-import '../../../controllers/profile_controller.dart';
-import '../../../controllers/shipaddress_controller.dart';
-import '../../../core/constant/constants.dart';
-import '../../../screens/mapscreen.dart';
-import '../../../screens/wishlistscreen.dart';
-import '../appbar/saveaddress_appbar.dart';
-import '../lists/dummy_container.dart';
-import '../text/app_text.dart';
-import 'common_widget.dart';
+import 'package:lafetch/common/widget/appbar/saveaddress_appbar.dart';
+import 'package:lafetch/common/widget/lists/dummy_container.dart';
+import 'package:lafetch/common/widget/other/common_widget.dart';
+import 'package:lafetch/common/widget/text/app_text.dart';
+import 'package:lafetch/controllers/profile_controller.dart';
+import 'package:lafetch/controllers/shipaddress_controller.dart';
+import 'package:lafetch/core/constant/constants.dart';
+import 'package:lafetch/screens/mapscreen.dart';
+import 'package:lafetch/screens/shippingaddressscreen.dart';
+import 'package:lafetch/screens/wishlistscreen.dart';
 
 class SavedAddressScreen extends StatefulWidget {
   final String type;
@@ -33,6 +33,10 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
   final shipController = Get.put(ShipAddressController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   Timer? debounce;
+  String draggedAddress = "";
+  String localityName = "";
+  String stateName = "";
+  String pincode = "";
 
   @override
   void initState() {
@@ -228,27 +232,33 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                               top: 5.sp, left: 16.sp, right: 16.sp),
                           child: GestureDetector(
                             onTap: () async {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          const MapScreen(
-                                            addressId: 0,
-                                            cartId: 0,
-                                          )))
-                                  .then((value) => setState(
-                                        () {
-                                          controller.getAddressData();
-                                          shipController.dailogSelected.clear();
-                                          shipController.dailogSelected =
-                                              List.generate(50, (i) => false);
-                                          SystemChrome.setSystemUIOverlayStyle(
-                                              const SystemUiOverlayStyle(
-                                            statusBarColor: statusBarColor,
-                                            systemNavigationBarColor:
-                                                statusBarColor,
-                                          ));
-                                        },
-                                      ));
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    ShippingAddressScreen(
+                                  addressId: 0,
+                                  cartId: 0,
+                                  pincode: pincode,
+                                  stateName: stateName,
+                                  address: draggedAddress,
+                                  localityName: localityName,
+                                  latitude: shipController.lat.value,
+                                  longitude: shipController.lng.value,
+                                ),
+                              ));
+                              // .then((value) => setState(
+                              //       () {
+                              //         controller.getAddressData();
+                              //         shipController.dailogSelected.clear();
+                              //         shipController.dailogSelected =
+                              //             List.generate(50, (i) => false);
+                              //         SystemChrome.setSystemUIOverlayStyle(
+                              //             const SystemUiOverlayStyle(
+                              //           statusBarColor: statusBarColor,
+                              //           systemNavigationBarColor:
+                              //               statusBarColor,
+                              //         ));
+                              //       },
+                              //     ));
                               await analytics.logEvent(
                                 name: 'map_page',
                                 parameters: <String, Object>{
@@ -522,20 +532,38 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                                         (i) =>
                                                                             false);
                                                                 value.update();
-                                                                controller.callRemoveAddress(
-                                                                    controller.addressList[
-                                                                            index]
-                                                                        ["id"]);
-                                                                await analytics
-                                                                    .logEvent(
-                                                                  name:
-                                                                      'remove_addressClick',
-                                                                  parameters: <String,
-                                                                      Object>{
-                                                                    'page_name':
-                                                                        'remove_addressClick',
-                                                                  },
-                                                                );
+
+                                                                final id = controller
+                                                                            .addressList[
+                                                                        index][
+                                                                    "id"] as int;
+
+                                                                final confirmed =
+                                                                    await Get.dialog<
+                                                                            bool>(
+                                                                          AlertDialog(
+                                                                            title:
+                                                                                const Text('Delete address?'),
+                                                                            content:
+                                                                                const Text('This action cannot be undone.'),
+                                                                            actions: [
+                                                                              TextButton(onPressed: () => Get.back(result: false), child: const Text('Cancel')),
+                                                                              TextButton(onPressed: () => Get.back(result: true), child: const Text('Delete')),
+                                                                            ],
+                                                                          ),
+                                                                        ) ??
+                                                                        false;
+                                                                if (!confirmed)
+                                                                  return;
+
+                                                                final ok = await shipController
+                                                                    .callDeleteAddress(
+                                                                        addressId:
+                                                                            id);
+                                                                if (ok) {
+                                                                  await controller
+                                                                      .getAddressData(); // refresh list
+                                                                }
                                                               },
                                                               child: Container(
                                                                 decoration:
@@ -826,52 +854,84 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                                 shipController,
                                                             onPressed:
                                                                 () async {
+                                                              final item =
+                                                                  controller
+                                                                          .addressList[
+                                                                      index];
+
+                                                              // Fill controllers for the UPDATE API body
                                                               shipController
                                                                   .nameController
-                                                                  .text = controller
-                                                                      .addressList[
-                                                                  index]["name"];
+                                                                  .text = (item[
+                                                                          "name"] ??
+                                                                      "")
+                                                                  .toString();
                                                               shipController
                                                                   .phoneController
-                                                                  .text = controller
-                                                                      .addressList[
-                                                                  index]["phone"];
+                                                                  .text = (item[
+                                                                          "phone"] ??
+                                                                      "")
+                                                                  .toString();
                                                               shipController
                                                                   .addressController
-                                                                  .text = controller
-                                                                      .addressList[
-                                                                  index]["address"];
-                                                              shipController
-                                                                      .pincodeController
-                                                                      .text =
-                                                                  controller
-                                                                      .addressList[
-                                                                          index]
-                                                                          [
-                                                                          "zip"]
-                                                                      .toString();
+                                                                  .text = (item[
+                                                                          "address"] ??
+                                                                      item[
+                                                                          "line1"] ??
+                                                                      "")
+                                                                  .toString();
                                                               shipController
                                                                   .localityController
-                                                                  .text = controller
-                                                                          .addressList[
-                                                                      index]
-                                                                  ["locality"];
+                                                                  .text = (item[
+                                                                          "locality"] ??
+                                                                      item[
+                                                                          "line2"] ??
+                                                                      "")
+                                                                  .toString();
                                                               shipController
-                                                                  .cityId
-                                                                  .value = controller
-                                                                          .addressList[
-                                                                      index][
-                                                                  "city"]["id"];
+                                                                  .pincodeController
+                                                                  .text = (item[
+                                                                          "zip"] ??
+                                                                      item[
+                                                                          "postalCode"] ??
+                                                                      "")
+                                                                  .toString();
+
+                                                              // The UPDATE endpoint requires text fields for city/state/country
                                                               shipController
-                                                                  .type
-                                                                  .value = controller
-                                                                      .addressList[
-                                                                  index]["type"];
+                                                                  .cityController
+                                                                  .text = (item["city"]
+                                                                              is Map
+                                                                          ? item["city"]
+                                                                              [
+                                                                              "name"]
+                                                                          : item[
+                                                                              "city"])
+                                                                      ?.toString() ??
+                                                                  "";
+                                                              shipController
+                                                                  .stateController
+                                                                  .text = (item["state"]
+                                                                              is Map
+                                                                          ? item["state"]
+                                                                              [
+                                                                              "name"]
+                                                                          : item[
+                                                                              "state"])
+                                                                      ?.toString() ??
+                                                                  "";
+                                                              // If you store country on the item, use it; otherwise default is "india" in the controller
+                                                              // shipController.countryController?.text = (item["country"] ?? "").toString();
+
+                                                              shipController
+                                                                      .type
+                                                                      .value =
+                                                                  (item["type"] ??
+                                                                          "")
+                                                                      .toString();
                                                               shipController
                                                                   .defaultBilling
-                                                                  .value = controller
-                                                                              .addressList[index]
-                                                                          [
+                                                                  .value = item[
                                                                           "default_billing"] ==
                                                                       true
                                                                   ? 1
@@ -879,21 +939,47 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                               shipController
                                                                   .defaultShipping
                                                                   .value = 1;
-                                                              shipController.callUpdateAddress(
-                                                                  controller.addressList[
-                                                                          index]
-                                                                      ["id"],
-                                                                  double.parse(controller
-                                                                              .addressList[
-                                                                          index]
-                                                                      [
-                                                                      "latitude"]),
-                                                                  double.parse(
-                                                                      controller
-                                                                              .addressList[index]
-                                                                          [
-                                                                          "longitude"]),
-                                                                  2);
+
+                                                              final double lat =
+                                                                  double.tryParse(
+                                                                          "${item["latitude"]}") ??
+                                                                      0.0;
+                                                              final double lng =
+                                                                  double.tryParse(
+                                                                          "${item["longitude"]}") ??
+                                                                      0.0;
+
+                                                              // ✅ Call the NEW named-params version of callUpdateAddress
+                                                              final ok =
+                                                                  await shipController
+                                                                      .callUpdateAddress(
+                                                                addressIdParam:
+                                                                    item["id"]
+                                                                        as int,
+                                                                latitude: lat,
+                                                                longitude: lng,
+                                                                typeValue:
+                                                                    shipController
+                                                                        .type
+                                                                        .value,
+                                                                // In your old code you passed "2" to avoid closing 2 levels.
+                                                                // Here set closeAllOnSuccess to false to mimic that behavior.
+                                                                closeAllOnSuccess:
+                                                                    false,
+                                                              );
+
+                                                              if (ok) {
+                                                                // Link to cart was done inside callUpdateAddress() if cartId was set.
+                                                                // If this screen was pushed from CartScreen, return true so Cart can refresh.
+                                                                if (Get
+                                                                    .isOverlaysOpen) {
+                                                                  try {
+                                                                    Get.back(
+                                                                        result:
+                                                                            true);
+                                                                  } catch (_) {}
+                                                                }
+                                                              }
                                                             },
                                                             borderColor:
                                                                 btnTextColor),
@@ -921,407 +1007,6 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                 ),
                               ),
                             ))
-                  /*  SizedBox(
-                    height: 10.sp,
-                  ),
-                  widget.type == "product details"
-                      ? SizedBox(
-                          height: 0,
-                        )
-                      : Padding(
-                          padding: EdgeInsets.only(
-                              top: 10.sp, left: 16.sp, right: 16.sp),
-                          child: GestureDetector(
-                            onTap: () async {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          const MapScreen(
-                                            addressId: 0,
-                                            cartId: 0,
-                                          )))
-                                  .then((value) => setState(
-                                        () {
-                                          controller.getAddressData();
-                                        },
-                                      ));
-                              await analytics.logEvent(
-                                name: 'map_page',
-                                parameters: <String, Object>{
-                                  'page_name': 'map_page',
-                                },
-                              );
-                            },
-                            child: Row(
-                              children: [
-                                AppText(
-                                  text: "",
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: textHintColor,
-                                  fontSize: 12,
-                                ),
-                                const Expanded(
-                                  child: SizedBox(
-                                    width: 0,
-                                  ),
-                                ),
-                                Icon(
-                                  Icons.add,
-                                  color: blackColor,
-                                  size: 16.sp,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 5.sp),
-                                  child: AppText(
-                                    text: "New Address",
-                                    color: blackColor,
-                                    fontSize: 12,
-                                    fontFamily: "Franklin Gothic Bold",
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                  Obx(() => controller.isAddress.value
-                      ? const DummySaveAddress()
-                      : controller.addressList.isNotEmpty
-                          ? Padding(
-                              padding: EdgeInsets.only(top: 10.sp),
-                              child: ListView.builder(
-                                  primary: false,
-                                  shrinkWrap: true,
-                                  physics: const ScrollPhysics(),
-                                  itemCount: controller.addressList.length,
-                                  padding: EdgeInsets.zero,
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder: (ctx, index) {
-                                    return Container(
-                                      color: whiteColor,
-                                      margin: EdgeInsets.only(bottom: 10.sp),
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                          top: 10.sp,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 14.sp,
-                                                            vertical: 5.sp),
-                                                    child: AppText(
-                                                      text: controller
-                                                                  .addressList[
-                                                              index]["name"] ??
-                                                          "",
-                                                      color: loginText,
-                                                      fontSize: 16,
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                ),
-                                                controller.addressList[index]
-                                                        ["default_shipping"]
-                                                    ? Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                          horizontal: 14.sp,
-                                                        ),
-                                                        child:
-                                                            AnimatedContainer(
-                                                          duration:
-                                                              const Duration(
-                                                                  milliseconds:
-                                                                      300),
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  right: 5.sp),
-                                                          width: 80.sp,
-                                                          height: 20.sp,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color:
-                                                                whiteBorderColor,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20.sp),
-                                                            border: Border.all(
-                                                                color:
-                                                                    btnTextColor,
-                                                                width: 1.sp),
-                                                          ),
-                                                          child: Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        5.sp),
-                                                            child: Center(
-                                                              child: AppText(
-                                                                text: controller
-                                                                            .addressList[index]
-                                                                        [
-                                                                        "default_shipping"]
-                                                                    ? "Default"
-                                                                    : "",
-                                                                color:
-                                                                    btnTextColor,
-                                                                fontSize: 12,
-                                                                fontFamily:
-                                                                    "Franklin Gothic",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      )
-                                                    : const SizedBox(
-                                                        height: 0,
-                                                      ),
-                                              ],
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 14.sp,
-                                                  vertical: 2.sp),
-                                              child: AppText(
-                                                text: controller
-                                                            .addressList[index]
-                                                        ["address"] ??
-                                                    "",
-                                                color: greyTextColor,
-                                                fontSize: 12,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 14.sp,
-                                                  vertical: 2.sp),
-                                              child: AppText(
-                                                text:
-                                                    "${controller.addressList[index]["locality"] ?? ""} ,${controller.addressList[index]["city"] != null ? controller.addressList[index]["city"]["name"] : ""}",
-                                                color: greyTextColor,
-                                                fontSize: 12,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 14.sp,
-                                                  vertical: 2.sp),
-                                              child: AppText(
-                                                text: controller
-                                                            .addressList[index]
-                                                        ["type"] ??
-                                                    "",
-                                                color: loginText,
-                                                fontSize: 12,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 14.sp,
-                                                  vertical: 2.sp),
-                                              child: AppText(
-                                                text: controller
-                                                    .addressList[index]["zip"]
-                                                    .toString(),
-                                                color: loginText,
-                                                fontSize: 12,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                            widget.type == 'address'
-                                                ? Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 14.sp,
-                                                        right: 14.sp,
-                                                        bottom: 10.sp),
-                                                    child: DoubleIconButton(
-                                                        firstText: "Remove",
-                                                        secondText: "Edit",
-                                                        firstTextColor:
-                                                            btnTextColor,
-                                                        secondTextColor:
-                                                            btnTextColor,
-                                                        firstBackgroundColor:
-                                                            whiteColor,
-                                                        secondBackgroundColor:
-                                                            whiteColor,
-                                                        firstBorderColor:
-                                                            btnTextColor,
-                                                        secondBorderColor:
-                                                            btnTextColor,
-                                                        firstIcon:
-                                                            blackCrossImage,
-                                                        onPressedFirst:
-                                                            () async {
-                                                          controller.callRemoveAddress(
-                                                              controller
-                                                                      .addressList[
-                                                                  index]["id"]);
-                                                          await analytics
-                                                              .logEvent(
-                                                            name:
-                                                                'remove_addressClick',
-                                                            parameters: <String,
-                                                                Object>{
-                                                              'page_name':
-                                                                  'remove_addressClick',
-                                                            },
-                                                          );
-                                                        },
-                                                        onPressedSecond:
-                                                            () async {
-                                                          Navigator.of(context)
-                                                              .push(
-                                                                  MaterialPageRoute(
-                                                                      builder: (BuildContext
-                                                                              context) =>
-                                                                          MapScreen(
-                                                                            addressId:
-                                                                                controller.addressList[index]["id"],
-                                                                            cartId:
-                                                                                0,
-                                                                          )))
-                                                              .then((value) =>
-                                                                  setState(
-                                                                    () {
-                                                                      controller
-                                                                          .getAddressData();
-                                                                    },
-                                                                  ));
-                                                          await analytics
-                                                              .logEvent(
-                                                            name: 'map_page',
-                                                            parameters: <String,
-                                                                Object>{
-                                                              'page_name':
-                                                                  'map_page',
-                                                            },
-                                                          );
-                                                        },
-                                                        secondIcon: editImage))
-                                                : Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 10.sp),
-                                                    child: getSingleButton(
-                                                        label: "Select Address",
-                                                        textColor: btnTextColor,
-                                                        backgroundColor:
-                                                            whiteColor,
-                                                        controller:
-                                                            shipController,
-                                                        onPressed: () async {
-                                                          shipController
-                                                              .nameController
-                                                              .text = controller
-                                                                  .addressList[
-                                                              index]["name"];
-                                                          shipController
-                                                              .phoneController
-                                                              .text = controller
-                                                                  .addressList[
-                                                              index]["phone"];
-                                                          shipController
-                                                              .addressController
-                                                              .text = controller
-                                                                  .addressList[
-                                                              index]["address"];
-                                                          shipController
-                                                                  .pincodeController
-                                                                  .text =
-                                                              controller
-                                                                  .addressList[
-                                                                      index]
-                                                                      ["zip"]
-                                                                  .toString();
-                                                          shipController
-                                                              .localityController
-                                                              .text = controller
-                                                                  .addressList[
-                                                              index]["locality"];
-                                                          shipController.cityId
-                                                              .value = controller
-                                                                  .addressList[
-                                                              index]["city"]["id"];
-                                                          shipController.type
-                                                              .value = controller
-                                                                  .addressList[
-                                                              index]["type"];
-                                                          shipController
-                                                              .defaultBilling
-                                                              .value = controller
-                                                                              .addressList[
-                                                                          index]
-                                                                      [
-                                                                      "default_billing"] ==
-                                                                  true
-                                                              ? 1
-                                                              : 0;
-                                                          shipController
-                                                              .defaultShipping
-                                                              .value = 1;
-                                                          shipController.callUpdateAddress(
-                                                              controller
-                                                                      .addressList[
-                                                                  index]["id"],
-                                                              double.parse(controller
-                                                                          .addressList[
-                                                                      index]
-                                                                  ["latitude"]),
-                                                              double.parse(controller
-                                                                          .addressList[
-                                                                      index][
-                                                                  "longitude"]),
-                                                              2);
-                                                        },
-                                                        borderColor:
-                                                            btnTextColor),
-                                                  )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                            )
-                          : SizedBox(
-                              height: MediaQuery.of(context).size.height,
-                              width: MediaQuery.of(context).size.width,
-                              child: Center(
-                                child: Text("No Address Found",
-                                    style: TextStyle(
-                                        fontSize: 14.sp,
-                                        color: Colors.black,
-                                        fontFamily: "Franklin Gothic Regular")),
-                              ),
-                            ))
-                */
                 ],
               ),
             ),
@@ -1330,4 +1015,22 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
       ),
     );
   }
+}
+
+// --- Added helper (non-breaking): normalize an Address Map for returning via Get.back/Navigator.pop
+// Call this when an address tile is tapped, e.g.:
+//   onTap: () { Get.back(result: normalizeAddressResult(addressMap)); }
+Map<String, dynamic> normalizeAddressResult(Map input) {
+  return {
+    'id': input['id']?.toString() ?? input['address_id']?.toString() ?? '',
+    'name':
+        input['name']?.toString() ?? input['label']?.toString() ?? 'Address',
+    'full': [
+      input['line1'] ?? input['address'] ?? '',
+      input['city'] ?? '',
+      input['state'] ?? '',
+      input['pincode'] ?? input['zip'] ?? ''
+    ].where((e) => (e?.toString().trim() ?? '').isNotEmpty).join(', '),
+    'phone': input['phone']?.toString() ?? input['mobile']?.toString() ?? '',
+  };
 }

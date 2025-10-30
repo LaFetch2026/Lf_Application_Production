@@ -32,12 +32,10 @@ class ReviewProductScreen extends StatefulWidget {
 }
 
 class ReviewProductScreenState extends State<ReviewProductScreen> {
-  final controller = Get.put(OrderController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
-    controller.rating.value = 0.0;
     super.initState();
   }
 
@@ -108,22 +106,6 @@ class ReviewProductScreenState extends State<ReviewProductScreen> {
                                       color: nameText,
                                     ),
                                   ),
-                                  Obx(
-                                    () => Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 10.sp, horizontal: 10.sp),
-                                      child: GFRating(
-                                        value: controller.rating.value,
-                                        borderColor: const Color(0XFFA6A39F),
-                                        color: Colors.amber,
-                                        size: 24.sp,
-                                        onChanged: (value) {
-                                          controller.rating.value = value;
-                                          print(controller.rating.value);
-                                        },
-                                      ),
-                                    ),
-                                  )
                                 ],
                               ),
                             )
@@ -153,7 +135,6 @@ class ReviewProductScreenState extends State<ReviewProductScreen> {
                             fontSize: 14.sp,
                             fontFamily: "Franklin Gothic Regular",
                           ),
-                          controller: controller.comment,
                           maxLines: 5,
                           keyboardType: TextInputType.multiline,
                           decoration: InputDecoration(
@@ -177,27 +158,6 @@ class ReviewProductScreenState extends State<ReviewProductScreen> {
                           ),
                         ),
                       ),
-                      Obx(() => Padding(
-                            padding: EdgeInsets.only(top: 30.sp, bottom: 10.sp),
-                            child: getSingleButton(
-                                label: "Submit",
-                                textColor: btnTextColor,
-                                controller: controller,
-                                backgroundColor: whiteColor,
-                                onPressed: () async {
-                                  if (controller.checkReviewValidation()) {
-                                    controller.callAddReview(
-                                        widget.productId, widget.orderId);
-                                  }
-                                  await analytics.logEvent(
-                                    name: 'submit_productReviewClick',
-                                    parameters: <String, Object>{
-                                      'page_name': 'submit_productReviewClick',
-                                    },
-                                  );
-                                },
-                                borderColor: btnTextColor),
-                          ))
                     ],
                   ),
                 ),

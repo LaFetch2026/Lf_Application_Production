@@ -1,560 +1,196 @@
 // ignore_for_file: deprecated_member_use
 
 import 'dart:io';
-
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/accountscreen.dart';
-import 'package:lafetch/screens/brandsscreen.dart';
-import 'package:lafetch/screens/cartscreen.dart';
-import 'package:lafetch/screens/catalog/women_catalog.dart';
-
-//import 'package:lafetch/screens/expressshopscreen.dart';
-import 'package:lafetch/screens/home/women/homescreen.dart';
-import 'package:lafetch/screens/loginscreen.dart';
-import 'package:lafetch/screens/quickscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../controllers/cart_controller.dart';
 import '../controllers/product_controller.dart';
+import '../controllers/profile_controller.dart';
 import '../core/constant/constants.dart';
+import '../screens/accountscreen.dart';
+import '../screens/brandsscreen.dart';
+import '../screens/cartscreen.dart';
+import '../screens/catalog/women_catalog.dart';
+import '../screens/home/women/homescreen.dart';
+import '../screens/quickscreen.dart';
 
 class BottomNavScreen extends StatefulWidget {
   final int? index;
-
   const BottomNavScreen({super.key, this.index});
 
   @override
-  State<BottomNavScreen> createState() => BottomNavScreenState();
+  State<BottomNavScreen> createState() => _BottomNavScreenState();
 }
 
-class BottomNavScreenState extends State<BottomNavScreen> {
+class _BottomNavScreenState extends State<BottomNavScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final productController = Get.put(ProductController());
-  final carttController = Get.put(CartController());
+  final cartController = Get.put(CartController());
+  bool isGuest = false;
   int _currentIndex = 0;
-  bool? skipValue;
-  var screen = [
-    const HomeScreen(),
-    const BrandsScreen(
-      screen: "home",
-    ),
-    const WomenCatalogScreen(),
-    const AccountScreen(),
+
+  late final List<Widget> _screens = [
+    HomeScreen(onPressed: (index) => _changeTab(index)),
+    const BrandsScreen(screen: "home"),
+    WomenCatalogScreen(),
+    AccountScreen(onPressed: () => _changeTab(2)),
     const QuickScreen(),
   ];
 
   @override
   void initState() {
-    analytics.setAnalyticsCollectionEnabled(true);
-    screen = [
-      HomeScreen(
-        onPressed: (p0) {
-          changeTab(p0);
-        },
-      ),
-      const BrandsScreen(
-        screen: "home",
-      ),
-      WomenCatalogScreen(),
-      AccountScreen(onPressed: () {
-        changeTab(2);
-      }),
-      const QuickScreen(),
-    ];
-    if (widget.index != null) {
-      _currentIndex = widget.index!;
-    }
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-          statusBarColor: statusBarColor,
-          statusBarIconBrightness: Brightness.dark,
-          statusBarBrightness: Brightness.light,
-          systemNavigationBarColor: statusBarColor));
-    });
-    getPrefrenceValue();
     super.initState();
-  }
+    _currentIndex = widget.index ?? 0;
 
-  Future getPrefrenceValue() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool("skip") == true) {
-      skipValue = true;
-      setState(() {});
-    }
-  }
-
-  void changeTab(index) {
-    setState(() {
-      _currentIndex = index;
+    // Status bar setup
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: statusBarColor,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: statusBarColor,
+      ));
     });
+
+    _loadGuestFlag();
+
+    // Init profile safely
+    Future.microtask(() async {
+      try {
+        final profileController = Get.find<ProfileController>();
+        await profileController.safeInitProfile();
+      } catch (_) {}
+    });
+  }
+
+  Future<void> _loadGuestFlag() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isGuest = prefs.getBool("skip") ?? false;
+    });
+  }
+
+  void _changeTab(int index) {
+    setState(() => _currentIndex = index);
+  }
+
+  void _handleProtectedNavigation(VoidCallback onAllowed) {
+    if (isGuest) {
+      // Get.to(() => const LoginScreen(initialTab: 0, hideBack: true));
+    } else {
+      onAllowed();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whiteColor,
+      body: _currentIndex == 5
+          ? const CartScreen(backgroundcolor: homeAppBarColor)
+          : _screens[_currentIndex],
       bottomNavigationBar: BottomAppBar(
         padding: EdgeInsets.zero,
-        color: _currentIndex == 4 || _currentIndex == 5
-            ? homeAppBarColor
-            : whiteColor,
+        color: whiteColor,
         height: Platform.isIOS ? 50.sp : 60.sp,
-        child: _currentIndex == 4 || _currentIndex == 5
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        setState(() {
-                          _currentIndex = 0;
-                        });
-                        await analytics.logEvent(
-                          name: 'home_page',
-                          parameters: <String, Object>{
-                            'page_name': 'home_page',
-                            'page_index': _currentIndex,
-                          },
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.only(
-                            top: 10.sp, bottom: Platform.isIOS ? 0 : 12.sp),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              color: productSubtitleColor,
-                              _currentIndex == 0 ? arrowBack : arrowBack,
-                              height: 17.sp,
-                              width: 15.sp,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 7.sp),
-                              child: Text(
-                                "Back".toUpperCase(),
-                                style: TextStyle(
-                                    color: productSubtitleColor,
-                                    fontSize: 10.sp,
-                                    fontFamily: "Franklin Gothic"),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: 60.sp,
-                    width: 2.sp,
-                    color: subtitleColor,
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        if (skipValue == true) {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const LoginScreen(
-                                    initialTab: 0,
-                                    hideBack: true,
-                                  )));
-                        } else {
-                          setState(() {
-                            _currentIndex = 4;
-                          });
-                        }
-                        await analytics.logEvent(
-                          name: 'express_page',
-                          parameters: <String, Object>{
-                            'page_name': 'brand_page',
-                            'page_index': _currentIndex,
-                          },
-                        );
-                      },
-                      child: Container(
-                        // height: 80.sp,
-                        padding: EdgeInsets.only(
-                            top: 10.sp, bottom: Platform.isIOS ? 0 : 10.sp),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              _currentIndex == 4
-                                  ? quickSelectedSvgImage
-                                  : quickSvgImage,
-                              color: _currentIndex == 4
-                                  ? Color(0xFF988AFF)
-                                  : subtitleColor,
-                              height: 19.sp,
-                              width: 13.sp,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 7.sp),
-                              child: Text(
-                                "Quick".toUpperCase(),
-                                style: TextStyle(
-                                    color: _currentIndex == 4
-                                        ? Color(0xFF988AFF)
-                                        : subtitleColor,
-                                    fontSize: 10.sp,
-                                    fontFamily: "Franklin Gothic"),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        carttController.orderList.clear();
-                        setState(() {
-                          _currentIndex = 5;
-                        });
-                      },
-                      child: Container(
-                        // height: 80.sp,
-                        padding: EdgeInsets.only(
-                            top: 10.sp, bottom: Platform.isIOS ? 0 : 10.sp),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              bagSvgImage,
-                              color: _currentIndex != 5
-                                  ? subtitleColor
-                                  : lightPurpleColor,
-                              height: 24.sp,
-                              width: 19.sp,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 2.sp),
-                              child: Text(
-                                "Bag".toUpperCase(),
-                                style: TextStyle(
-                                    color: _currentIndex != 5
-                                        ? subtitleColor
-                                        : lightPurpleColor,
-                                    fontSize: 10.sp,
-                                    fontFamily: "Franklin Gothic"),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        setState(() {
-                          _currentIndex = 0;
-                        });
-                        await analytics.logEvent(
-                          name: 'home_page',
-                          parameters: <String, Object>{
-                            'page_name': 'home_page',
-                            'page_index': _currentIndex,
-                          },
-                        );
-                      },
-                      child: Container(
-                        // height: 80.sp,
-                        padding: EdgeInsets.only(
-                            top: 10.sp, bottom: Platform.isIOS ? 0 : 10.sp),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            /*  Image.asset(
-                        _currentIndex == 0 ? homeBottomIcon : homeBottomIcon,
-                        color:
-                            _currentIndex == 0 ? whiteColor : Color(0xFF9CA3AF),
-                        height: 16.sp,
-                        width: 16.sp,
-                      ), */
-                            SvgPicture.asset(
-                              _currentIndex == 0
-                                  ? homeSelectedSvgImage
-                                  : homeSvgImage,
-                              height: 17.sp,
-                              width: 15.sp,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 7.sp),
-                              child: Text(
-                                "Home".toUpperCase(),
-                                style: TextStyle(
-                                    color: _currentIndex == 0
-                                        ? homeAppBarColor
-                                        : searchTextColor,
-                                    fontSize: 10.sp,
-                                    fontFamily: "Franklin Gothic"),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        setState(() {
-                          _currentIndex = 1;
-                        });
-                        await analytics.logEvent(
-                          name: 'shop_page',
-                          parameters: <String, Object>{
-                            'page_name': 'brand_page',
-                            'page_index': _currentIndex,
-                          },
-                        );
-                      },
-                      child: Container(
-                        //  height: 80.sp,
-                        padding: EdgeInsets.only(
-                            top: 8.2.sp, bottom: Platform.isIOS ? 0 : 10.sp),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            /*  Image.asset(
-                        _currentIndex == 1 ? shopBottomIcon : shopBottomIcon,
-                        color:
-                            _currentIndex == 1 ? whiteColor : Color(0xFF9CA3AF),
-                        height: 16.sp,
-                        width: 16.sp,
-                      ), */
-                            SvgPicture.asset(
-                              _currentIndex == 1
-                                  ? brandSelectedSvgImage
-                                  : brandSvgImage,
-                              height: 20.sp,
-                              width: 20.sp,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 7.sp),
-                              child: Text(
-                                "Brands".toUpperCase(),
-                                style: TextStyle(
-                                    color: _currentIndex == 1
-                                        ? homeAppBarColor
-                                        : Color(0xFF9CA3AF),
-                                    fontSize: 10.sp,
-                                    fontFamily: "Franklin Gothic"),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        if (skipValue == true) {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const LoginScreen(
-                                    initialTab: 0,
-                                    hideBack: true,
-                                  )));
-                        } else {
-                          setState(() {
-                            _currentIndex = 4;
-                          });
-                        }
-                        await analytics.logEvent(
-                          name: 'express_page',
-                          parameters: <String, Object>{
-                            'page_name': 'brand_page',
-                            'page_index': _currentIndex,
-                          },
-                        );
-                      },
-                      child: Container(
-                        // height: 80.sp,
-                        padding: EdgeInsets.only(
-                            top: 10.sp, bottom: Platform.isIOS ? 0 : 10.sp),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            /*  Image.asset(
-                        _currentIndex == 4 ? expressImage : expressImage,
-                        color: _currentIndex == 4
-                            ? Color(0xFFDFC5FE)
-                            : Color(0xFFDFC5FE),
-                        height: 18.sp,
-                        width: 18.sp,
-                      ), */
-                            SvgPicture.asset(
-                              _currentIndex == 4
-                                  ? quickSelectedSvgImage
-                                  : quickSvgImage,
-                              height: 19.sp,
-                              width: 13.sp,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 7.sp),
-                              child: Text(
-                                "Quick".toUpperCase(),
-                                style: TextStyle(
-                                    color: _currentIndex == 4
-                                        ? Color(0xFF988AFF)
-                                        : Color(0xFF988AFF),
-                                    fontSize: 10.sp,
-                                    fontFamily: "Franklin Gothic"),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        setState(() {
-                          _currentIndex = 2;
-                        });
-                        await analytics.logEvent(
-                          name: 'wishlist_page',
-                          parameters: <String, Object>{
-                            'page_name': 'wishlist_page',
-                            'page_index': _currentIndex,
-                          },
-                        );
-                      },
-                      child: Container(
-                        // height: 80.sp,
-                        padding: EdgeInsets.only(
-                            top: 10.sp, bottom: Platform.isIOS ? 0 : 10.sp),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            /*  Image.asset(
-                        _currentIndex == 2
-                            ? wishlistBottomIcon
-                            : wishlistBottomIcon,
-                        color:
-                            _currentIndex == 2 ? whiteColor : Color(0xFF9CA3AF),
-                        height: 16.sp,
-                        width: 16.sp,
-                      ), */
-                            SvgPicture.asset(
-                              _currentIndex == 2
-                                  ? categorySelectedSvgImage
-                                  : categorySvgImage,
-                              height: 17.sp,
-                              width: 17.sp,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 7.sp),
-                              child: Text(
-                                "Category".toUpperCase(),
-                                style: TextStyle(
-                                    color: _currentIndex == 2
-                                        ? homeAppBarColor
-                                        : Color(0xFF9CA3AF),
-                                    fontSize: 10.sp,
-                                    fontFamily: "Franklin Gothic"),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () async {
-                        if (skipValue == true) {
-                          Get.to(
-                            () => const LoginScreen(
-                              initialTab: 0,
-                              hideBack: true,
-                            ),
-                          );
-                        } else {
-                          setState(() {
-                            _currentIndex = 3;
-                          });
-                        }
-                        await analytics.logEvent(
-                          name: 'account_page',
-                          parameters: <String, Object>{
-                            'page_name': 'account_page',
-                            'page_index': _currentIndex,
-                          },
-                        );
-                      },
-                      child: Container(
-                        //  height: 80.sp,
-                        padding: EdgeInsets.only(
-                            top: 10.sp, bottom: Platform.isIOS ? 0 : 10.sp),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            /*  Image.asset(
-                        _currentIndex == 3 ? shopBottomIcon : shopBottomIcon,
-                        color:
-                            _currentIndex == 3 ? whiteColor : Color(0xFF9CA3AF),
-                        height: 16.sp,
-                        width: 16.sp,
-                      ), */
-                            SvgPicture.asset(
-                              _currentIndex == 3
-                                  ? profileSelectedSvgImage
-                                  : profileSvgImage,
-                              height: 17.sp,
-                              width: 14.sp,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 7.sp),
-                              child: Text(
-                                "Profile".toUpperCase(),
-                                style: TextStyle(
-                                    color: _currentIndex == 3
-                                        ? homeAppBarColor
-                                        : Color(0xFF9CA3AF),
-                                    fontSize: 10.sp,
-                                    fontFamily: "Franklin Gothic"),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _navItem(
+              icon: _currentIndex == 0 ? homeSelectedSvgImage : homeSvgImage,
+              label: "Home",
+              selected: _currentIndex == 0,
+              onTap: () {
+                _changeTab(0);
+                analytics.logEvent(name: 'home_page');
+              },
+            ),
+            _navItem(
+              icon: _currentIndex == 1 ? brandSelectedSvgImage : brandSvgImage,
+              label: "Brands",
+              selected: _currentIndex == 1,
+              onTap: () {
+                _changeTab(1);
+                analytics.logEvent(name: 'brands_page');
+              },
+            ),
+            _navItem(
+              icon: _currentIndex == 4 ? quickSelectedSvgImage : quickSvgImage,
+              label: "Quick",
+              selected: _currentIndex == 4,
+              onTap: () {
+                _changeTab(4);
+                analytics.logEvent(name: 'quick_page');
+              },
+            ),
+            _navItem(
+              icon: _currentIndex == 2
+                  ? categorySelectedSvgImage
+                  : categorySvgImage,
+              label: "Category",
+              selected: _currentIndex == 2,
+              onTap: () {
+                _changeTab(2);
+                analytics.logEvent(name: 'category_page');
+              },
+            ),
+            _navItem(
+              icon: _currentIndex == 3
+                  ? profileSelectedSvgImage
+                  : profileSvgImage,
+              label: "Profile",
+              selected: _currentIndex == 3,
+              onTap: () => _handleProtectedNavigation(() {
+                _changeTab(3);
+                analytics.logEvent(name: 'profile_page');
+              }),
+            ),
+          ],
+        ),
       ),
-      body: _currentIndex == 5
-          ? CartScreen(
-              backgroundcolor: homeAppBarColor,
-            )
-          : screen[_currentIndex],
+    );
+  }
+
+  /// Reusable bottom nav item
+  Widget _navItem({
+    required String icon,
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    final color = selected ? homeAppBarColor : const Color(0xFF9CA3AF);
+
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.only(
+            top: 10.sp,
+            bottom: Platform.isIOS ? 0 : 10.sp,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SvgPicture.asset(icon, height: 20.sp, color: color),
+              SizedBox(height: 6.sp),
+              Text(
+                label.toUpperCase(),
+                style: TextStyle(
+                  color: color,
+                  fontSize: 10.sp,
+                  fontFamily: "Franklin Gothic",
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

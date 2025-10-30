@@ -1,11 +1,8 @@
 // ignore_for_file: avoid_print
 import 'dart:io';
-
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-//import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -26,44 +23,46 @@ class EditProfileScreen extends StatefulWidget {
   final String name;
   final String email;
   final String number;
-
   final int genderId;
 
-  const EditProfileScreen(
-      {super.key,
-      required this.name,
-      required this.email,
-      required this.number,
-      required this.genderId});
+  const EditProfileScreen({
+    super.key,
+    required this.name,
+    required this.email,
+    required this.number,
+    required this.genderId,
+  });
 
   @override
   State<EditProfileScreen> createState() => EditProfileScreenState();
 }
 
 class EditProfileScreenState extends State<EditProfileScreen> {
-  Telephony telephony = Telephony.instance;
+  final Telephony telephony = Telephony.instance;
   final profileController = Get.put(ProfileController());
   final otpController = Get.put(LoginController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
+    super.initState();
     otpController.otp.value = "";
     if (Platform.isAndroid) {
       callReceiveMsg();
     }
+
     profileController.isEditNumber.value = true;
     profileController.isPhoneNumber.value = false;
     profileController.nameController.text = widget.name;
     profileController.emailController.text = widget.email;
-    /* profileController.phoneController.text =
-        widget.number.replaceAll("+91", ""); */
-    if (widget.number != "") {
+
+    if (widget.number.isNotEmpty) {
       profileController.phoneController.text =
           widget.number.replaceAll("+91", "");
     } else {
       profileController.isEditNumber.value = false;
     }
+
     profileController.genderId.value = widget.genderId;
     if (widget.genderId == 1) {
       profileController.gerderController.text = "Female";
@@ -72,39 +71,30 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     } else if (widget.genderId == 3) {
       profileController.gerderController.text = "Non-Binary";
     }
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: whiteTextColor,
         systemNavigationBarColor: whiteTextColor,
       ));
-    });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       profileController.nameError.value = "";
       profileController.phoneError.value = "";
       profileController.emailError.value = "";
       profileController.genderError.value = "";
     });
-    super.initState();
   }
 
-  callReceiveMsg() {
+  void callReceiveMsg() {
     telephony.listenIncomingSms(
       onNewMessage: (SmsMessage message) {
-        print(message.address);
-        print(message.body);
-
-        String sms = message.body.toString();
-
-        if (message.body!.contains('La Fetch')) {
-          String otpcode = sms.replaceAll(new RegExp(r'[^0-9]'), '');
-          String string = '$otpcode';
-          print(string.split(''));
+        if (!mounted) return;
+        if (message.body?.contains('La Fetch') ?? false) {
+          final otpcode = message.body!.replaceAll(RegExp(r'[^0-9]'), '');
           otpController.otp.value = otpcode;
-          print("abc $otpcode");
-          otpController.controller.value.set(otpcode.split(""));
-          setState(() {});
-        } else {
-          print("error");
+          if (mounted) {
+            otpController.controller.value.set(otpcode.split(""));
+            setState(() {});
+          }
         }
       },
       listenInBackground: false,
@@ -115,7 +105,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
+        FocusScope.of(context).unfocus();
         setState(() {
           profileController.showList.value = false;
         });
@@ -142,15 +132,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ),
                     Obx(() => Visibility(
-                          visible: profileController.nameError.value != ""
-                              ? true
-                              : false,
+                          visible: profileController.nameError.value.isNotEmpty,
                           child: Padding(
-                            padding: EdgeInsets.only(
-                              left: 20.sp,
-                              right: 20.sp,
-                              top: 2.sp,
-                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20.sp, vertical: 2.sp),
                             child: AppText(
                               text: profileController.nameError.value,
                               fontFamily: "Franklin Gothic Regular",
@@ -160,26 +145,21 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             ),
                           ),
                         )),
-                    Obx(
-                      () => Padding(
-                        padding: EdgeInsets.only(top: 10.sp),
-                        child: NumberWidget(
+                    Obx(() => Padding(
+                          padding: EdgeInsets.only(top: 10.sp),
+                          child: NumberWidget(
                             login: false,
                             onPressedLogin: () {},
                             readonly: profileController.isEditNumber.value,
-                            controller: profileController.phoneController),
-                      ),
-                    ),
+                            controller: profileController.phoneController,
+                          ),
+                        )),
                     Obx(() => Visibility(
-                          visible: profileController.phoneError.value != ""
-                              ? true
-                              : false,
+                          visible:
+                              profileController.phoneError.value.isNotEmpty,
                           child: Padding(
-                            padding: EdgeInsets.only(
-                              left: 20.sp,
-                              right: 20.sp,
-                              top: 2.sp,
-                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20.sp, vertical: 2.sp),
                             child: AppText(
                               text: profileController.phoneError.value,
                               fontFamily: "Franklin Gothic Regular",
@@ -192,20 +172,15 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     Obx(() => profileController.isEditNumber.value
                         ? Row(
                             children: [
-                              const Expanded(
-                                flex: 1,
-                                child: SizedBox(
-                                  height: 0,
-                                ),
-                              ),
+                              const Expanded(child: SizedBox()),
                               GestureDetector(
                                 onTap: () async {
                                   profileController.isEditNumber.value = false;
                                   profileController.phoneController.clear();
                                   await analytics.logEvent(
                                     name: 'change_number_click',
-                                    parameters: <String, Object>{
-                                      'page_name': 'change_number_click',
+                                    parameters: {
+                                      'page_name': 'change_number_click'
                                     },
                                   );
                                 },
@@ -216,59 +191,60 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                     text: "Change number",
                                     fontFamily: "Franklin Gothic",
                                     fontSize: 14,
-                                    textAlign: TextAlign.right,
                                     color: colorPrimary,
                                   ),
                                 ),
                               ),
                             ],
                           )
-                        : const SizedBox(
-                            height: 0,
-                          )),
-                    Obx(
-                      () => profileController.isPhoneNumber.value
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
+                        : const SizedBox()),
+                    Obx(() => profileController.isPhoneNumber.value
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16.sp, vertical: 10.sp),
+                                child: AppText(
+                                  text: "Enter OTP",
+                                  fontFamily: "Franklin Gothic",
+                                  fontSize: 14,
+                                  color: colorPrimary,
+                                ),
+                              ),
+                              Obx(
+                                () => Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 16.sp, vertical: 10.sp),
-                                  child: AppText(
-                                    text: "Enter OTP",
-                                    fontFamily: "Franklin Gothic",
-                                    fontSize: 14,
-                                    color: colorPrimary,
-                                  ),
-                                ),
-                                /*     Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, right: 16, top: 10, bottom: 10),
                                   child: Center(
-                                    child: OtpTextField(
-                                      borderRadius: BorderRadius.circular(1),
-                                      numberOfFields: 4,
-                                      clearText: otpController.otpClear.value,
+                                    child: OTPTextFieldV2(
+                                      controller:
+                                          otpController.controller.value,
+                                      length: 4,
+                                      autoFocus: false,
+                                      width: MediaQuery.of(context).size.width,
+                                      textFieldAlignment:
+                                          MainAxisAlignment.spaceAround,
                                       fieldWidth:
                                           (MediaQuery.of(context).size.width -
-                                                  65) /
+                                                  78) /
                                               4,
-                                      textStyle: const TextStyle(
-                                          color: loginText,
-                                          fontSize: 16,
-                                          height: 2.5),
-                                      focusedBorderColor: borderColor,
-                                      borderWidth: 1,
-                                      enabledBorderColor: borderColor,
-                                      showFieldAsBox: true,
-                                      onCodeChanged: (String code) {
-                                        otpController.otpClear.value = false;
+                                      spaceBetween: 4.sp,
+                                      fieldStyle: FieldStyle.box,
+                                      outlineBorderRadius: 1,
+                                      otpFieldStyle: OtpFieldStyle(
+                                          focusBorderColor: borderColor,
+                                          enabledBorderColor: borderColor),
+                                      style: const TextStyle(
+                                        color: loginText,
+                                        fontSize: 16,
+                                      ),
+                                      onChanged: (code) {
                                         otpController.otp.value = code;
                                       },
-                                      onSubmit: (String verificationCode) {
-                                        otpController.otpClear.value = false;
-                                        otpController.otp.value =
-                                            verificationCode;
+                                      cursorColor: borderColor,
+                                      onCompleted: (pin) {
+                                        otpController.otp.value = pin;
                                         if (otpController.otp.value.length ==
                                             4) {
                                           otpController.showButton.value = true;
@@ -277,62 +253,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                     ),
                                   ),
                                 ),
-                              */
-                                Obx(
-                                  () => Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 16.sp,
-                                        right: 16.sp,
-                                        top: 10.sp,
-                                        bottom: 10.sp),
-                                    child: Center(
-                                      child: OTPTextFieldV2(
-                                          controller:
-                                              otpController.controller.value,
-                                          length: 4,
-                                          autoFocus: false,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          textFieldAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          fieldWidth: (MediaQuery.of(context)
-                                                      .size
-                                                      .width -
-                                                  78) /
-                                              4,
-                                          spaceBetween: 4.sp,
-                                          fieldStyle: FieldStyle.box,
-                                          outlineBorderRadius: 1,
-                                          otpFieldStyle: OtpFieldStyle(
-                                              focusBorderColor: borderColor,
-                                              enabledBorderColor: borderColor),
-                                          style: const TextStyle(
-                                            color: loginText,
-                                            fontSize: 16,
-                                          ),
-                                          onChanged: (code) {
-                                            otpController.otp.value = code;
-                                            print("Changed: " + code);
-                                          },
-                                          cursorColor: borderColor,
-                                          onCompleted: (pin) {
-                                            otpController.otp.value = pin;
-                                            if (otpController
-                                                    .otp.value.length ==
-                                                4) {
-                                              otpController.showButton.value =
-                                                  true;
-                                            }
-                                          }),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : const SizedBox(
-                              height: 0,
-                            ),
-                    ),
+                              ),
+                            ],
+                          )
+                        : const SizedBox()),
                     Padding(
                       padding: EdgeInsets.only(top: 10.sp),
                       child: TextFieldWidget(
@@ -341,15 +265,11 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ),
                     Obx(() => Visibility(
-                          visible: profileController.emailError.value != ""
-                              ? true
-                              : false,
+                          visible:
+                              profileController.emailError.value.isNotEmpty,
                           child: Padding(
-                            padding: EdgeInsets.only(
-                              left: 20.sp,
-                              right: 20.sp,
-                              top: 2.sp,
-                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20.sp, vertical: 2.sp),
                             child: AppText(
                               text: profileController.emailError.value,
                               fontFamily: "Franklin Gothic Regular",
@@ -360,44 +280,30 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           ),
                         )),
                     Padding(
-                      padding: EdgeInsets.only(
-                          left: 16.sp, top: 20.sp, right: 16.sp),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.sp, vertical: 20.sp),
                       child: SizedBox(
                         height: 44.sp,
                         child: TextField(
-                          textCapitalization: TextCapitalization.words,
                           readOnly: true,
                           onTap: () {
-                            if (profileController.showList.value) {
-                              profileController.showList.value = false;
-                            } else {
-                              profileController.showList.value = true;
-                            }
+                            profileController.showList.value =
+                                !profileController.showList.value;
                           },
                           style: const TextStyle(
                             color: textColor,
                             fontFamily: "Franklin Gothic Regular",
                           ),
                           controller: profileController.gerderController,
-                          keyboardType: TextInputType.text,
                           decoration: InputDecoration(
                             filled: true,
-                            suffixIconConstraints: BoxConstraints(
-                              minWidth: 2,
-                              minHeight: 2,
-                            ),
                             suffixIcon: Padding(
                               padding: EdgeInsets.only(right: 20.sp),
-                              child: SizedBox(
+                              child: SvgPicture.asset(
+                                dropdownSvgImage,
                                 height: 8.sp,
                                 width: 10.sp,
-                                child: SvgPicture.asset(
-                                  dropdownSvgImage,
-                                  height: 8.sp,
-                                  width: 10.sp,
-                                  // ignore: deprecated_member_use
-                                  color: homeAppBarColor,
-                                ),
+                                color: homeAppBarColor,
                               ),
                             ),
                             fillColor: whiteColor,
@@ -406,11 +312,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(1.sp),
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(1.sp),
-                              borderSide: const BorderSide(color: borderColor),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: borderColor),
                             ),
-                            counterText: "",
                             hintText: "Gender",
                             hintStyle: TextStyle(fontSize: 14.sp),
                           ),
@@ -418,15 +322,11 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ),
                     Obx(() => Visibility(
-                          visible: profileController.genderError.value != ""
-                              ? true
-                              : false,
+                          visible:
+                              profileController.genderError.value.isNotEmpty,
                           child: Padding(
-                            padding: EdgeInsets.only(
-                              left: 20.sp,
-                              right: 20.sp,
-                              top: 2.sp,
-                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20.sp, vertical: 2.sp),
                             child: AppText(
                               text: profileController.genderError.value,
                               fontFamily: "Franklin Gothic Regular",
@@ -436,102 +336,46 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             ),
                           ),
                         )),
-                    Obx(
-                      () => profileController.showList.value
-                          ? Padding(
-                              padding:
-                                  EdgeInsets.only(left: 16.sp, right: 16.sp),
-                              child: ListView.builder(
-                                  primary: false,
-                                  shrinkWrap: true,
-                                  physics: const ScrollPhysics(),
-                                  itemCount:
-                                      profileController.genderList.length,
-                                  padding: EdgeInsets.zero,
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder: (ctx, index) {
-                                    return Column(
-                                      children: [
-                                        Container(
-                                          color: whiteTextColor,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  profileController
-                                                          .gerderController
-                                                          .text =
-                                                      profileController
-                                                          .genderList[index];
-                                                  if (profileController
-                                                          .gerderController.text
-                                                          .toString() ==
-                                                      "Female") {
-                                                    profileController
-                                                        .genderId.value = 1;
-                                                  } else if (profileController
-                                                          .gerderController.text
-                                                          .toString() ==
-                                                      "Male") {
-                                                    profileController
-                                                        .genderId.value = 2;
-                                                  } else {
-                                                    profileController
-                                                        .genderId.value = 3;
-                                                  }
-                                                  profileController
-                                                      .showList.value = false;
-                                                },
-                                                child: Container(
-                                                  width: double.infinity,
-                                                  color: whiteTextColor,
-                                                  alignment: Alignment.center,
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 10.sp),
-                                                    child: Text(
-                                                      profileController
-                                                          .genderList[index],
-                                                      style: TextStyle(
-                                                        fontSize: 14.sp,
-                                                        color: nameText,
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              index == 2
-                                                  ? SizedBox(
-                                                      width: double.infinity,
-                                                      height: 5.sp,
-                                                    )
-                                                  : Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 16.sp,
-                                                              vertical: 2.sp),
-                                                      child: Container(
-                                                        width: double.infinity,
-                                                        color: colorSecondary,
-                                                        height: 1.sp,
-                                                      ),
-                                                    ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  }),
-                            )
-                          : const SizedBox(
-                              height: 0,
+                    Obx(() => profileController.showList.value
+                        ? Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                            child: ListView.builder(
+                              primary: false,
+                              shrinkWrap: true,
+                              itemCount: profileController.genderList.length,
+                              itemBuilder: (ctx, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    profileController.gerderController.text =
+                                        profileController.genderList[index];
+                                    if (profileController
+                                            .gerderController.text ==
+                                        "Female") {
+                                      profileController.genderId.value = 1;
+                                    } else if (profileController
+                                            .gerderController.text ==
+                                        "Male") {
+                                      profileController.genderId.value = 2;
+                                    } else {
+                                      profileController.genderId.value = 3;
+                                    }
+                                    profileController.showList.value = false;
+                                  },
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 10.sp),
+                                    child: AppText(
+                                      text: profileController.genderList[index],
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontSize: 14.sp,
+                                      color: nameText,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                    ),
+                          )
+                        : const SizedBox()),
                   ],
                 ),
               ),
@@ -540,48 +384,59 @@ class EditProfileScreenState extends State<EditProfileScreen> {
               () => Padding(
                 padding: EdgeInsets.symmetric(vertical: 20.sp),
                 child: getSingleButton(
-                    label: "Save Changes",
-                    textColor: whiteBorderColor,
-                    backgroundColor: colorPrimary,
-                    controller: profileController,
-                    onPressed: () async {
-                      if (profileController.checkvalidation(
-                          profileController.nameController.text
-                              .toString()
-                              .trim(),
-                          profileController.phoneController.text
-                              .toString()
-                              .trim(),
-                          profileController.emailController.text
-                              .toString()
-                              .trim(),
-                          profileController.genderId.value)) {
-                        FocusScope.of(context).unfocus();
-                        if (profileController.isPhoneNumber.value) {
-                          if (otpController
-                              .checkOtpvalidation(otpController.otp.value)) {
-                            profileController.callupdateProfile(
-                                "edit",
-                                "+91${profileController.phoneController.text.toString().trim()}",
-                                otpController.otp.value,
-                                profileController.isEditNumber.value);
+                  label: "Save Changes",
+                  textColor: whiteBorderColor,
+                  backgroundColor: colorPrimary,
+                  controller: profileController,
+                  borderColor: colorPrimary,
+                  onPressed: () async {
+                    FocusScope.of(context).unfocus();
+
+                    bool basicFieldsValid =
+                        profileController.validateBasicProfileFields();
+
+                    bool isPhoneBeingEdited =
+                        profileController.isPhoneNumber.value;
+                    String phoneNumber =
+                        profileController.phoneController.text.trim();
+                    String otpValue = otpController.otp.value;
+
+                    bool phoneNeedsValidation = isPhoneBeingEdited;
+
+                    if (basicFieldsValid) {
+                      if (phoneNeedsValidation) {
+                        bool phoneValid =
+                            profileController.validatePhoneNumber(phoneNumber);
+                        if (phoneValid) {
+                          if (isPhoneBeingEdited) {
+                            if (otpController.checkOtpValidation(otpValue)) {
+                              await profileController.updatePhoneNumberWithOtp(
+                                  phone: phoneNumber, otp: otpValue);
+                            }
+                          } else {
+                            await profileController.updateBasicProfile(
+                                isInitialSetup: false);
                           }
-                        } else {
-                          profileController.callupdateProfile(
-                              "edit",
-                              "+91${profileController.phoneController.text.toString().trim()}",
-                              otpController.otp.value,
-                              profileController.isEditNumber.value);
                         }
+                      } else {
+                        await profileController.updateBasicProfile(
+                            isInitialSetup: false);
                       }
+
                       await analytics.logEvent(
                         name: 'editprofile_save_btnclick',
-                        parameters: <String, Object>{
+                        parameters: {
                           'page_name': 'editprofile_save_btnclick',
                         },
                       );
-                    },
-                    borderColor: colorPrimary),
+
+                      // ✅ Return to AccountScreen and refresh data
+                      if (mounted) {
+                        Navigator.pop(context, true);
+                      }
+                    }
+                  },
+                ),
               ),
             )
           ],

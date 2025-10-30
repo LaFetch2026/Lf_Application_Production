@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -16,7 +17,6 @@ class BrandController extends BaseController {
   TextEditingController searchController = TextEditingController();
   RxInt page = 1.obs;
   RxBool isMuted = false.obs;
-
   RxBool loadMore = false.obs;
   RxBool hasnextpage = true.obs;
   ScrollController brandListController = ScrollController();
@@ -30,7 +30,8 @@ class BrandController extends BaseController {
   RxString text = "Expand All".obs;
   RxBool showAllBrand = false.obs;
   RxBool isDetails = false.obs;
-  dynamic brandDetails = "".obs;
+  var brandDetails = <String, dynamic>{}.obs; // ✅ correct: reactive Map
+
   RxBool isCategory = false.obs;
   RxBool isProductBrand = false.obs;
   List categoryList = [].obs;
@@ -39,224 +40,202 @@ class BrandController extends BaseController {
   RxInt selectIndex = 0.obs;
   List<bool> selected = List.generate(50, (i) => false).obs;
 
-  /*  @override
-  void onInit() async {
-    listController.addListener(() {
-      fetchMoreData();
-      update();
-    });
-    super.onInit();
-  } */
-
-  getBrandData(String type) async {
+  Future<void> getBrandData(String type) async {
     isBrand.value = true;
     final prefs = await SharedPreferences.getInstance();
+
     try {
-      dynamic response;
-      if (type == "express") {
-        response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/brands?q=${queryText.value}&express_delivery=1"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-      } else if (type == "brand") {
-        response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/brands?q=${queryText.value}&type=alphabet"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-      } else {
-        response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/brands?q=${queryText.value}&type=recently-viewed"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-      }
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (type == "brand") {
-          brandList = responseData;
-        } else {
-          if (responseData["data"] != null) {
-            brandList = responseData["data"];
-            print(brandList.length);
-            selected.clear();
-            selected = List.generate(brandList.length, (i) => false);
-          }
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        /*  Get.to(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        ); */
-        // getSnackBar("Authentication failed");
-        print(response..statusCode);
-      } else {
-        getSnackBar("get brand failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isBrand.value = false;
-  }
+      // Build base = laFetchBaseUrl (your sample shows this host)
+      final base = ApiConstants.baseUrl; // ← use laFetch here per your API
+      final baseUri = Uri.parse(base);
 
-  fetchMoreData(String type) async {
-    if (hasnextpage.value == true &&
-        isBrand.value == false &&
-        loadMore.value == false) {
-      loadMore.value = true;
-      page.value += 1;
-      print(page.value);
-      final prefs = await SharedPreferences.getInstance();
+      // Only append isFeatured (present in your payload). Avoid unknown params.
+      final queryParams = <String, String>{};
+      if (type == "featured") {
+        queryParams["isFeatured"] = "true";
+      }
+
+      final uri = baseUri.replace(
+        path: baseUri.path.endsWith('/')
+            ? '${baseUri.path}brands'
+            : '${baseUri.path}/brands',
+        queryParameters: queryParams.isEmpty ? null : queryParams,
+      );
+
+      final headers = <String, String>{
+        'Accept': 'application/json; charset=UTF-8',
+      };
+      final token = prefs.getString('token');
+      if (token != null && token.trim().isNotEmpty) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+
+      final response = await http
+          .get(uri, headers: headers)
+          .timeout(const Duration(seconds: 20));
+
+      print("➡️ Brand API URL: $uri");
+      print("⬅️ Status Code: ${response.statusCode}");
+
+      // Handle non-200 early
+      if (response.statusCode == 401) {
+        getSnackBar("Session expired. Please log in again.");
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+        return;
+      }
+      if (response.statusCode != 200) {
+        // Try to parse the error payload to show message if any
+        try {
+          final err = json.decode(response.body);
+          final msg = (err is Map && err["message"] is String)
+              ? err["message"] as String
+              : "Unknown error";
+          getSnackBar("Failed to fetch brands: $msg");
+        } catch (_) {
+          getSnackBar("Failed to fetch brands (${response.statusCode}).");
+        }
+        return;
+      }
+
+      // Ensure JSON
+      final contentType =
+          (response.headers['content-type'] ?? '').toLowerCase();
+      if (!contentType.contains('application/json')) {
+        getSnackBar("Unexpected response while fetching brands.");
+        return;
+      }
+
+      // Decode payload: { status, message, data: [ {...}, ... ] }
+      dynamic decoded;
       try {
-        dynamic response;
-        if (type == "express") {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/brands?q=${queryText.value}&page=${page.value}&express_delivery=1"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
-        } else if (type == "brand") {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/brands?q=${queryText.value}&page=${page.value}&type=alphabet"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
-        } else {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/brands?q=${queryText.value}&page=${page.value}"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
-        }
-        var responseData = json.decode(response.body);
-        if (response.statusCode == 200) {
-          if (type == "brand") {
-            if (responseData.isNotEmpty) {
-              brandList.addAll(responseData);
-            } else {
-              hasnextpage.value = false;
-            }
-          } else {
-            if (responseData["data"] != null) {
-              if (responseData["data"].isNotEmpty) {
-                print(responseData);
-                brandList.addAll(responseData['data']);
-                print(brandList.length);
-                selected.clear();
-                selected = List.generate(brandList.length, (i) => false);
-              } else {
-                hasnextpage.value = false;
-              }
-            }
-          }
-        } else if (response.statusCode == 500) {
-          getSnackBar("Please try again");
-        } else if (response.statusCode == 401) {
-          Get.offAll(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
-          );
-          getSnackBar("Authentication failed");
-        } else {
-          getSnackBar("fetch brand failed");
-        }
+        decoded = json.decode(response.body);
       } catch (e) {
-        print("error$e");
+        print("❌ JSON decode error: $e");
+        getSnackBar("Something went wrong while fetching brands.");
+        return;
       }
-      loadMore.value = false;
+
+      final List<dynamic> allBrandsRaw =
+          (decoded is Map && decoded['data'] is List)
+              ? decoded['data'] as List
+              : const [];
+
+      // Client-side search filter (API sample doesn't show ?q= support)
+      final q = (queryText.value).trim().toLowerCase();
+      final filtered = q.isEmpty
+          ? allBrandsRaw
+          : allBrandsRaw.where((b) {
+              final name =
+                  (b is Map && b['name'] != null) ? b['name'].toString() : '';
+              return name.toLowerCase().contains(q);
+            }).toList();
+
+      // Group & sort alphabetically
+      final Map<String, List<Map<String, dynamic>>> grouped = {};
+
+      for (final item in filtered) {
+        if (item is! Map) continue;
+        final name = (item['name'] ?? '').toString().trim();
+        // Fall back group key if name missing/empty
+        final String key = name.isEmpty ? '#' : name[0].toUpperCase();
+        (grouped[key] ??= <Map<String, dynamic>>[]).add(
+          // make sure map has String keys
+          item.map((k, v) => MapEntry(k.toString(), v)),
+        );
+      }
+
+      // Sort groups by letter, and items inside by name
+      final sortedGroups = grouped.entries.toList()
+        ..sort((a, b) => a.key.compareTo(b.key));
+
+      brandList = []; // Clear and rebuild
+      for (final entry in sortedGroups) {
+        final letter = entry.key;
+        final items = entry.value
+          ..sort((a, b) => (a['name'] ?? '')
+              .toString()
+              .toLowerCase()
+              .compareTo((b['name'] ?? '').toString().toLowerCase()));
+        // Insert group heading followed by items
+        brandList.add({"alphabet": letter});
+        brandList.addAll(items);
+      }
+
+      // Selection states aligned to new length
+      selected.clear();
+      selected = List<bool>.generate(brandList.length, (_) => false);
+
+      print(
+          "✅ Brands loaded: ${filtered.length} | Groups: ${sortedGroups.length}");
+    } on TimeoutException {
+      print("⏳ Brand API timeout");
+      getSnackBar("Brands request timed out. Please try again.");
+    } catch (e) {
+      print("❌ Error fetching brand data: $e");
+      getSnackBar("Something went wrong while fetching brands.");
+    } finally {
+      isBrand.value = false;
     }
   }
 
-  getBrandDetails(int id, String slug) async {
+  Future<void> getBrandDetails(int id, String slug) async {
     isDetails.value = true;
     final prefs = await SharedPreferences.getInstance();
-    try {
-      dynamic response;
-      if (id != 0) {
-        response = await http.get(
-            Uri.parse("${ApiConstants.baseUrl}/brand/$id"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-      } else {
-        response = await http.get(
-            Uri.parse("${ApiConstants.baseUrl}/brand/$slug"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-      }
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        brand_category_List.clear();
-        brandDetails = responseData;
-        for (var i = 0; i < responseData["categories"].length; i++) {
-          brand_category_List.add(responseData["categories"][i]["id"]);
-        }
-        getBrandDetailsProduct(responseData["id"], brand_category_List);
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get brand details failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isDetails.value = false;
-  }
 
-  getBrandDetailsProduct(int brandId, List categoryList) async {
-    isProductBrand.value = true;
-    final prefs = await SharedPreferences.getInstance();
     try {
-      dynamic response;
-      response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/products?brand_id=$brandId&categories_ids[]=${categoryList.join(',')}"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
+      final url = "${ApiConstants.baseUrl}/view-brand/$id";
+      print("➡️ Brand details URL: $url");
+
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          'Authorization': "Bearer ${prefs.getString('token') ?? ''}",
+        },
+      );
+
+      print("⬅️ Status Code: ${response.statusCode}");
+      print("📦 Raw Response Body:\n${response.body}");
+
+      final responseData = json.decode(response.body);
+
       if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          brandProductDetailsList = responseData["data"];
+        final data = responseData["data"] ?? {};
+
+        // ✅ Store full data object (brandInfo + products)
+        brandDetails.value = data;
+
+        // Clear & update brand category list
+        brand_category_List.clear();
+        if (data["brandInfo"]?["categories"] is List) {
+          for (var item in data["brandInfo"]["categories"]) {
+            brand_category_List.add(item["id"]);
+          }
         }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
+
+        // Clear & update brand product list
+        brandProductDetailsList.clear();
+        if (data["products"] is List) {
+          brandProductDetailsList.addAll(data["products"]);
+        }
+
+        print(
+            "✅ Brand details fetched. ${brand_category_List.length} categories, ${(data["products"] as List).length} products.");
       } else if (response.statusCode == 401) {
-        print(response.statusCode);
+        getSnackBar("Session expired. Please log in again.");
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server error. Please try again later.");
       } else {
-        getSnackBar("get brand details product failed");
+        final msg = responseData["message"] ?? "Unknown error";
+        print("❌ Brand fetch failed: $msg");
+        getSnackBar("Failed to fetch brand details: $msg");
       }
     } catch (e) {
-      print("error$e");
+      print("❌ Exception in getBrandDetails: $e");
+      getSnackBar("Something went wrong while fetching brand details.");
+    } finally {
+      isDetails.value = false;
     }
-    isProductBrand.value = false;
   }
 }

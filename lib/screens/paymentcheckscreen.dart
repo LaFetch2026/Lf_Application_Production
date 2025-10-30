@@ -154,17 +154,6 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
                   backgroundColor: homeAppBarColor,
                   onPressed: () async {
                     stopTimer();
-                    // Get.close(1);
-                    Get.off(OrderDetailsScreen(
-                      orderId: widget.orderId,
-                      showTrackpayment: true,
-                    ));
-                    await analytics.logEvent(
-                      name: 'payment_btn_myorder',
-                      parameters: <String, Object>{
-                        'page_name': 'payment_btn_myorder',
-                      },
-                    );
                   },
                   borderColor: colorPrimary),
             )

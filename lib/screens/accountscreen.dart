@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_print
-
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,12 +10,9 @@ import 'package:lafetch/screens/account/deleteaccount.dart';
 import 'package:lafetch/screens/account/notification_setting.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/cartscreen.dart';
-import 'package:lafetch/screens/editprofilescreen.dart';
-import 'package:lafetch/screens/orderexchangescreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../common/widget/appbar/home_appbar.dart';
 import '../common/widget/bottom_sheets/profilebottom.dart';
 import '../common/widget/button/singlebtn.dart';
@@ -44,73 +40,39 @@ class AccountScreenState extends State<AccountScreen> {
   final homeController = Get.put(HomeController());
   final productController = Get.put(ProductController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  bool isGuest = false;
 
   @override
   void initState() {
-    controller.getProfileData();
     super.initState();
+    _initProfile();
+  }
+
+  Future<void> _initProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    isGuest = prefs.getBool('isGuest') ?? prefs.getBool('skip') ?? false;
+
+    if (!isGuest) {
+      // Only fetch profile if logged in
+      controller.getProfileData();
+    } else {
+      print("👤 Guest mode active — skipping profile fetch");
+    }
+
+    if (mounted) setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
-        Get.offAll(const BottomNavScreen(
-          index: 0,
-        ));
+        Get.offAll(const BottomNavScreen(index: 0));
         return false;
       },
       child: Scaffold(
         backgroundColor: whiteColor,
         body: Column(
           children: [
-            /*   Padding(
-              padding: EdgeInsets.only(left: 16.sp, top: 40.sp, right: 16.sp),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  AppText(
-                    text: "Profile",
-                    fontFamily: "Franklin Gothic Regular",
-                    fontWeight: FontWeight.w400,
-                    color: appbarText,
-                    fontSize: 22,
-                  ),
-                  const Expanded(
-                    child: SizedBox(
-                      height: 0,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      Get.to(const CartScreen());
-                      await analytics.logEvent(
-                        name: 'cart_page',
-                        parameters: <String, Object>{
-                          'page_name': 'cart_page',
-                        },
-                      );
-                    },
-                    child: SizedBox(
-                      height: 30.sp,
-                      width: 30.sp,
-                      child: CircleAvatar(
-                        backgroundColor: blackColor,
-                        child: Image.asset(
-                          cartNewImage,
-                          color: whiteColor,
-                          height: 18.sp,
-                          width: 18.sp,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-           */
             HomeAppbar(
               showSearch: false,
               title: "Profile",
@@ -118,37 +80,89 @@ class AccountScreenState extends State<AccountScreen> {
                 Get.to(const WishlistScreen())?.then(
                   (value) {
                     SystemChrome.setSystemUIOverlayStyle(
-                        const SystemUiOverlayStyle(
-                            statusBarColor: whiteColor,
-                            systemNavigationBarColor: whiteColor));
+                      const SystemUiOverlayStyle(
+                        statusBarColor: whiteColor,
+                        systemNavigationBarColor: whiteColor,
+                      ),
+                    );
                   },
                 );
                 await analytics.logEvent(
                   name: 'wishlist_page',
-                  parameters: <String, Object>{
-                    'page_name': 'wishlist_page',
-                  },
+                  parameters: {'page_name': 'wishlist_page'},
                 );
               },
               onPressedCart: () async {
                 Get.to(CartScreen())?.then(
                   (value) {
                     SystemChrome.setSystemUIOverlayStyle(
-                        const SystemUiOverlayStyle(
-                            statusBarColor: whiteColor,
-                            systemNavigationBarColor: whiteColor));
+                      const SystemUiOverlayStyle(
+                        statusBarColor: whiteColor,
+                        systemNavigationBarColor: whiteColor,
+                      ),
+                    );
                   },
                 );
                 await analytics.logEvent(
                   name: 'cart_page',
-                  parameters: <String, Object>{
-                    'page_name': 'cart_page',
-                  },
+                  parameters: {'page_name': 'cart_page'},
                 );
               },
             ),
-            Obx(
-              () => controller.isProfile.value
+            Obx(() {
+              if (isGuest) {
+                // 👤 Guest UI
+                return Expanded(
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            "assets/images/guest_user.png", // replace with your placeholder image
+                            height: 120.sp,
+                          ),
+                          SizedBox(height: 20.sp),
+                          AppText(
+                            text: "You're exploring as a guest!",
+                            fontFamily: "Franklin Gothic",
+                            fontWeight: FontWeight.w500,
+                            color: blackColor,
+                            fontSize: 16,
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 10.sp),
+                          AppText(
+                            text:
+                                "Sign in or create an account to access your orders, addresses, and more.",
+                            fontFamily: "Franklin Gothic Regular",
+                            fontWeight: FontWeight.w400,
+                            color: greyTextColor,
+                            fontSize: 13,
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 30.sp),
+                          getSingleButton(
+                            label: "SIGN IN / REGISTER",
+                            textColor: whiteColor,
+                            borderColor: homeAppBarColor,
+                            backgroundColor: homeAppBarColor,
+                            onPressed: () {
+                              Get.offAllNamed(
+                                  '/login'); // or Get.offAll(() => LoginScreen(initialTab: 0));
+                            },
+                            fontSize: 14,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              // 🔒 Logged-in user UI (your existing code)
+              return controller.isProfile.value
                   ? DummyAccount()
                   : controller.profileDetails != ""
                       ? Expanded(
@@ -156,278 +170,157 @@ class AccountScreenState extends State<AccountScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                /*   controller.profileDetails.isBlank
-                                ? const ProfilePicWidgets()
-                                : */
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: 16.sp,
-                                          bottom: 20.sp,
-                                          right: 16.sp),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              AppText(
-                                                text: controller.profileDetails[
-                                                        "name"] ??
-                                                    "",
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                                color: blackColor,
-                                                fontSize: 28,
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 5.sp),
-                                                child: Row(
-                                                  children: [
-                                                    ImageIcon(
-                                                      AssetImage(phoneImage),
-                                                      color: greyTextColor,
-                                                      size: 18.sp,
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 5.sp),
-                                                      child: AppText(
-                                                        text: controller
-                                                                    .profileDetails[
-                                                                "phone"] ??
-                                                            "",
-                                                        fontFamily:
-                                                            "Franklin Gothic Regular",
-                                                        fontWeight:
-                                                            FontWeight.w400,
+                                    Obx(() {
+                                      final profileData =
+                                          controller.profileDetails.value ?? {};
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 16.sp,
+                                            bottom: 20.sp,
+                                            right: 16.sp),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                AppText(
+                                                  text:
+                                                      profileData["fullName"] ??
+                                                          "",
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                  color: blackColor,
+                                                  fontSize: 28,
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: 5.sp),
+                                                  child: Row(
+                                                    children: [
+                                                      ImageIcon(
+                                                        AssetImage(phoneImage),
                                                         color: greyTextColor,
-                                                        fontSize: 14,
+                                                        size: 18.sp,
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          const Expanded(
-                                            child: SizedBox(
-                                              height: 0,
+                                                      Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal:
+                                                                    5.sp),
+                                                        child: AppText(
+                                                          text: profileData[
+                                                                  "phone"] ??
+                                                              "",
+                                                          fontFamily:
+                                                              "Franklin Gothic Regular",
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          color: greyTextColor,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
                                             ),
-                                          ),
-                                          GestureDetector(
-                                            onTap: () async {
-                                              Navigator.of(context)
-                                                  .push(MaterialPageRoute(
-                                                      builder: (BuildContext
-                                                              context) =>
-                                                          EditProfileScreen(
-                                                            name: controller
-                                                                        .profileDetails[
-                                                                    "name"] ??
-                                                                "",
-                                                            email: controller
-                                                                        .profileDetails[
-                                                                    "email"] ??
-                                                                "",
-                                                            number: controller
-                                                                        .profileDetails[
-                                                                    "phone"] ??
-                                                                "",
-                                                            genderId: controller
-                                                                        .profileDetails[
-                                                                    "gender"] ??
-                                                                0,
-                                                          )))
-                                                  .then((value) => setState(
-                                                        () async {
-                                                          SystemChrome
-                                                              .setSystemUIOverlayStyle(
-                                                                  const SystemUiOverlayStyle(
-                                                            statusBarColor:
-                                                                whiteColor,
-                                                          ));
-                                                          controller
-                                                              .getProfileData();
-                                                          controller
-                                                              .isEditNumber
-                                                              .value = true;
-                                                          controller
-                                                              .isPhoneNumber
-                                                              .value = false;
-                                                          final prefs =
-                                                              await SharedPreferences
-                                                                  .getInstance();
-                                                          if (prefs.getInt(
-                                                                  'gender') !=
-                                                              null) {
-                                                            int id =
-                                                                prefs.getInt(
-                                                                    'gender')!;
-                                                            if (id == 1) {
-                                                              homeController
-                                                                  .homeGenderValue
-                                                                  .value = 3;
-                                                              homeController
-                                                                      .genderText
-                                                                      .value =
-                                                                  "Women";
-                                                            } else if (id ==
-                                                                2) {
-                                                              homeController
-                                                                  .homeGenderValue
-                                                                  .value = 2;
-                                                              homeController
-                                                                  .genderText
-                                                                  .value = "Men";
-                                                            } else {}
-                                                          }
-                                                        },
-                                                      ));
-                                              await analytics.logEvent(
-                                                name: 'edit_profile_page',
-                                                parameters: <String, Object>{
-                                                  'page_name':
-                                                      'edit_profile_page',
-                                                },
-                                              );
-                                            },
-                                            child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  bottom: 16.sp),
-                                              child: AppText(
-                                                text: "Edit",
-                                                fontFamily: "Franklin Gothic",
-                                                fontWeight: FontWeight.w500,
-                                                color: colorPrimary,
-                                                fontSize: 12,
+                                            const Expanded(child: SizedBox()),
+                                            GestureDetector(
+                                              onTap: () async {
+                                                if (profileData.isNotEmpty) {
+                                                  String? genderStr =
+                                                      profileData["gender"]
+                                                          ?.toString()
+                                                          .toLowerCase();
+                                                  if (genderStr == "male") {
+                                                  } else if (genderStr ==
+                                                      "female") {
+                                                  } else if (genderStr ==
+                                                      "non-binary") {}
+
+                                                  // run async work first
+                                                  SystemChrome
+                                                      .setSystemUIOverlayStyle(
+                                                    const SystemUiOverlayStyle(
+                                                      statusBarColor:
+                                                          whiteColor,
+                                                    ),
+                                                  );
+                                                  await controller
+                                                      .getProfileData();
+                                                  controller.isEditNumber
+                                                      .value = true;
+                                                  controller.isPhoneNumber
+                                                      .value = false;
+
+                                                  final prefs =
+                                                      await SharedPreferences
+                                                          .getInstance();
+                                                  if (prefs.getInt('gender') !=
+                                                      null) {
+                                                    int id =
+                                                        prefs.getInt('gender')!;
+                                                    if (id == 1) {
+                                                      homeController
+                                                          .homeGenderValue
+                                                          .value = 2;
+                                                      homeController.genderText
+                                                          .value = "Men";
+                                                    } else if (id == 2) {
+                                                      homeController
+                                                          .homeGenderValue
+                                                          .value = 3;
+                                                      homeController.genderText
+                                                          .value = "Women";
+                                                    } else {
+                                                      homeController
+                                                          .homeGenderValue
+                                                          .value = 0;
+                                                      homeController.genderText
+                                                          .value = "Other";
+                                                    }
+                                                  }
+
+                                                  if (mounted) {
+                                                    setState(() {});
+                                                  }
+
+                                                  await analytics.logEvent(
+                                                    name: 'edit_profile_page',
+                                                    parameters: {
+                                                      'page_name':
+                                                          'edit_profile_page'
+                                                    },
+                                                  );
+                                                } else {
+                                                  getSnackBar(
+                                                      "Profile data not loaded yet. Please wait.");
+                                                }
+                                              },
+                                              child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    bottom: 16.sp),
+                                                child: AppText(
+                                                  text: "Edit",
+                                                  fontFamily: "Franklin Gothic",
+                                                  fontWeight: FontWeight.w500,
+                                                  color: colorPrimary,
+                                                  fontSize: 12,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    /*  const SizedBox(
-                                  height: 12,
-                                ),
-                                Container(
-                                  color: backWhite,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 16, right: 16, top: 16, bottom: 16),
-                                    child: Row(
-                                      children: [
-                                        const ImageIcon(
-                                          AssetImage(pointImage),
-                                          color: btnTextColor,
-                                          size: 24,
+                                          ],
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 5),
-                                          child: AppText(
-                                            text:
-                                                "${controller.profileDetails["reward_points"].toString()} Lafetch points",
-                                            fontFamily: "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                            color: btnTextColor,
-                                            fontSize: 16.sp,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16, right: 16, top: 20, bottom: 20),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            color: whiteBack,
-                                            border: Border.all(
-                                                color: profileBorder, width: 1)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 16,
-                                              right: 16,
-                                              top: 10,
-                                              bottom: 10),
-                                          child: Row(
-                                            children: [
-                                              Image.asset(rewardsImage,
-                                                  height: 40,
-                                                  width: 40,
-                                                  fit: BoxFit.cover),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 5),
-                                                child: AppText(
-                                                  text: "Rewards",
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: btnTextColor,
-                                                  fontSize: 14.sp,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      const Expanded(
-                                        child: SizedBox(
-                                          width: 0,
-                                        ),
-                                      ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            color: whiteBack,
-                                            border: Border.all(
-                                                color: profileBorder, width: 1)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 16,
-                                              right: 16,
-                                              top: 10,
-                                              bottom: 10),
-                                          child: Row(
-                                            children: [
-                                              Image.asset(mysteryBoxImage,
-                                                  height: 40,
-                                                  width: 40,
-                                                  fit: BoxFit.cover),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 5),
-                                                child: AppText(
-                                                  text: "Mystery Box",
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: btnTextColor,
-                                                  fontSize: 14.sp,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              */
+                                      );
+                                    }),
                                   ],
                                 ),
                                 Padding(
@@ -442,20 +335,12 @@ class AccountScreenState extends State<AccountScreen> {
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap: () async {
-                                    Get.to(const OrderExchangeScreen());
-                                    await analytics.logEvent(
-                                      name: 'order_page',
-                                      parameters: <String, Object>{
-                                        'page_name': 'order_page',
-                                      },
-                                    );
-                                  },
+                                  onTap: () async {},
                                   child: Padding(
                                     padding: EdgeInsets.only(
                                         top: 20.sp, left: 16.sp, right: 16.sp),
                                     child: AppText(
-                                      text: "Orders & Exchanges",
+                                      text: "My Orders",
                                       fontFamily: "Franklin Gothic Regular",
                                       fontWeight: FontWeight.w400,
                                       color: nameText,
@@ -463,41 +348,6 @@ class AccountScreenState extends State<AccountScreen> {
                                     ),
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: () async {
-                                    Get.to(WishlistScreen())?.then(
-                                      (value) {
-                                        SystemChrome.setSystemUIOverlayStyle(
-                                            const SystemUiOverlayStyle(
-                                                statusBarColor: whiteColor,
-                                                systemNavigationBarColor:
-                                                    whiteColor));
-                                      },
-                                    );
-                                    await analytics.logEvent(
-                                      name: 'wishlist_page',
-                                      parameters: <String, Object>{
-                                        'page_name': 'wishlist_page',
-                                      },
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 20.sp, left: 16.sp, right: 16.sp),
-                                    child: AppText(
-                                      text: "My Wishlist",
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: nameText,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                                /*  controller.profileDetails.isEmpty
-                                ? const SizedBox(
-                                    height: 0,
-                                  )
-                                : */
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -506,8 +356,8 @@ class AccountScreenState extends State<AccountScreen> {
                                         Get.to(CustomerCareScreen());
                                         await analytics.logEvent(
                                           name: 'customer_care',
-                                          parameters: <String, Object>{
-                                            'page_name': 'customer_care',
+                                          parameters: {
+                                            'page_name': 'customer_care'
                                           },
                                         );
                                       },
@@ -528,23 +378,20 @@ class AccountScreenState extends State<AccountScreen> {
                                     GestureDetector(
                                       onTap: () async {
                                         Get.to(const SavedAddressScreen(
-                                          type: "address",
-                                        ))?.then(
+                                                type: "address"))
+                                            ?.then(
                                           (value) {
                                             SystemChrome
                                                 .setSystemUIOverlayStyle(
-                                                    const SystemUiOverlayStyle(
-                                              statusBarColor: whiteColor,
-                                            ));
-                                            productController
-                                                .getDefaultAddressData(
-                                                    0, context);
+                                              const SystemUiOverlayStyle(
+                                                  statusBarColor: whiteColor),
+                                            );
                                           },
                                         );
                                         await analytics.logEvent(
                                           name: 'saveaddress_page',
-                                          parameters: <String, Object>{
-                                            'page_name': 'saveaddress_page',
+                                          parameters: {
+                                            'page_name': 'saveaddress_page'
                                           },
                                         );
                                       },
@@ -562,106 +409,81 @@ class AccountScreenState extends State<AccountScreen> {
                                         ),
                                       ),
                                     ),
-                                    /* GestureDetector(
-                                  onTap: () {},
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 20, left: 16, right: 16),
-                                    child: AppText(
-                                      text: "Payments & Currencies",
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: nameText,
-                                      fontSize: 14.sp,
-                                    ),
-                                  ),
-                                ), */
                                     SettingWidgets(
                                       onPressedDelete: () async {
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        DeleteAccountScreen(
-                                                          date: controller.profileDetails[
-                                                                      "account_deletion_requested_at"] !=
-                                                                  null
-                                                              ? controller
-                                                                      .profileDetails[
-                                                                  "account_deletion_requested_at"]
-                                                              : "",
-                                                          account_requested:
-                                                              controller.profileDetails[
-                                                                          "account_deletion_requested_at"] !=
-                                                                      null
-                                                                  ? true
-                                                                  : false,
-                                                        )))
-                                            .then((value) => setState(
-                                                  () async {
-                                                    controller.getProfileData();
-                                                    SystemChrome
-                                                        .setSystemUIOverlayStyle(
-                                                            const SystemUiOverlayStyle(
-                                                      statusBarColor:
-                                                          whiteColor,
-                                                    ));
-                                                  },
-                                                ));
+                                        final profileData =
+                                            controller.profileDetails.value ??
+                                                {};
+
+                                        final result =
+                                            await Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                DeleteAccountScreen(
+                                              date: profileData[
+                                                      "account_deletion_requested_at"] ??
+                                                  "",
+                                              account_requested: profileData[
+                                                          "account_deletion_requested_at"] !=
+                                                      null &&
+                                                  profileData[
+                                                          "account_deletion_requested_at"]
+                                                      .isNotEmpty,
+                                            ),
+                                          ),
+                                        );
+
+                                        await controller.getProfileData();
+                                        SystemChrome.setSystemUIOverlayStyle(
+                                          const SystemUiOverlayStyle(
+                                              statusBarColor: whiteColor),
+                                        );
+
+                                        if (mounted) {
+                                          setState(() {});
+                                        }
+
                                         await analytics.logEvent(
                                           name: 'delete_account_screen',
-                                          parameters: <String, Object>{
-                                            'page_name':
-                                                'delete_account_screen',
+                                          parameters: {
+                                            'page_name': 'delete_account_screen'
                                           },
                                         );
                                       },
                                       onPressedNotification: () async {
-                                        if (controller.profileDetails[
-                                                "order_notification_enabled"] ==
-                                            0) {
-                                          controller.isOrder.value = false;
-                                          controller.orderValue.value = 0;
-                                        } else {
-                                          controller.isOrder.value = true;
-                                          controller.orderValue.value = 1;
-                                        }
-                                        if (controller.profileDetails[
-                                                "offer_notification_enabled"] ==
-                                            0) {
-                                          controller.isOffer.value = false;
-                                          controller.offerValue.value = 0;
-                                        } else {
-                                          controller.isOffer.value = true;
-                                          controller.offerValue.value = 1;
-                                        }
-                                        if (controller.profileDetails[
-                                                "promotional_notification_enabled"] ==
-                                            0) {
-                                          controller.isPermotion.value = false;
-                                          controller.permotionValue.value = 0;
-                                        } else {
-                                          controller.isPermotion.value = true;
-                                          controller.permotionValue.value = 1;
-                                        }
+                                        final profile =
+                                            controller.profileDetails.value ??
+                                                {};
+                                        controller.isOrder.value = (profile[
+                                                    "order_notification_enabled"] ??
+                                                0) ==
+                                            1;
+                                        controller.isOffer.value = (profile[
+                                                    "offer_notification_enabled"] ??
+                                                0) ==
+                                            1;
+                                        controller.isPermotion.value = (profile[
+                                                    "promotional_notification_enabled"] ??
+                                                0) ==
+                                            1;
+
                                         Get.to(NotificationSettingScreen())
-                                            ?.then(
-                                          (value) {
-                                            SystemChrome
-                                                .setSystemUIOverlayStyle(
-                                                    const SystemUiOverlayStyle(
+                                            ?.then((value) {
+                                          SystemChrome.setSystemUIOverlayStyle(
+                                            const SystemUiOverlayStyle(
                                               statusBarColor: statusBarColor,
                                               statusBarIconBrightness:
                                                   Brightness.dark,
                                               statusBarBrightness:
                                                   Brightness.light,
-                                            ));
-                                          },
-                                        );
+                                            ),
+                                          );
+                                          controller.getProfileData();
+                                        });
                                         await analytics.logEvent(
                                           name: 'notification_screen',
-                                          parameters: <String, Object>{
-                                            'page_name': 'notification_screen',
+                                          parameters: {
+                                            'page_name': 'notification_screen'
                                           },
                                         );
                                       },
@@ -675,9 +497,7 @@ class AccountScreenState extends State<AccountScreen> {
                                         "https://la-fetch.com/about-us/"));
                                     await analytics.logEvent(
                                       name: 'about_us',
-                                      parameters: <String, Object>{
-                                        'page_name': 'about_us',
-                                      },
+                                      parameters: {'page_name': 'about_us'},
                                     );
                                   },
                                   onPressedTC: () async {
@@ -685,8 +505,8 @@ class AccountScreenState extends State<AccountScreen> {
                                         "https://la-fetch.com/terms-and-conditions/"));
                                     await analytics.logEvent(
                                       name: 'teams_condition',
-                                      parameters: <String, Object>{
-                                        'page_name': 'teams_condition',
+                                      parameters: {
+                                        'page_name': 'teams_condition'
                                       },
                                     );
                                   },
@@ -695,8 +515,8 @@ class AccountScreenState extends State<AccountScreen> {
                                         "https://la-fetch.com/privacy-policy/"));
                                     await analytics.logEvent(
                                       name: 'privacy_policy',
-                                      parameters: <String, Object>{
-                                        'page_name': 'privacy_policy',
+                                      parameters: {
+                                        'page_name': 'privacy_policy'
                                       },
                                     );
                                   },
@@ -705,8 +525,8 @@ class AccountScreenState extends State<AccountScreen> {
                                         "https://www.la-fetch.com/cancellation-policy/"));
                                     await analytics.logEvent(
                                       name: 'cancellation_policy',
-                                      parameters: <String, Object>{
-                                        'page_name': 'cancellation_policy',
+                                      parameters: {
+                                        'page_name': 'cancellation_policy'
                                       },
                                     );
                                   },
@@ -715,63 +535,55 @@ class AccountScreenState extends State<AccountScreen> {
                                         "https://www.la-fetch.com/shipping-policy/"));
                                     await analytics.logEvent(
                                       name: 'shiping_policy',
-                                      parameters: <String, Object>{
-                                        'page_name': 'shiping_policy',
+                                      parameters: {
+                                        'page_name': 'shiping_policy'
                                       },
                                     );
                                   },
                                 ),
-                                /*   controller.profileDetails.isEmpty
-                                ? const SizedBox(
-                                    height: 0,
-                                  )
-                                : */
                                 Padding(
                                   padding: EdgeInsets.only(
                                       top: 60.sp, bottom: 20.sp),
                                   child: SingleButton(
-                                      label: "Logout",
-                                      textColor: redColor,
-                                      onPressed: () {
-                                        showDialog(
-                                          barrierColor: Colors.black26,
-                                          context: context,
-                                          builder: (context) {
-                                            return showDoubleBtnDailog(
-                                                click1: () {
-                                                  Get.back();
+                                    label: "Logout",
+                                    textColor: redColor,
+                                    backgroundColor: whiteColor,
+                                    borderColor: redColor,
+                                    onPressed: () {
+                                      showDialog(
+                                        barrierColor: Colors.black26,
+                                        context: context,
+                                        builder: (context) {
+                                          return showDoubleBtnDailog(
+                                            text:
+                                                "Are you sure you want to logout?",
+                                            btn1Text: "No",
+                                            btn2Text: "Yes",
+                                            btncolor: colorPrimary,
+                                            click1: () => Get.back(),
+                                            click2: () async {
+                                              await controller.callLogout();
+                                              await analytics.logEvent(
+                                                name: 'logout_btnclick',
+                                                parameters: {
+                                                  'page_name': 'logout_btnclick'
                                                 },
-                                                click2: () async {
-                                                  controller.callLogout();
-                                                  await analytics.logEvent(
-                                                    name: 'logout_btnclick',
-                                                    parameters: <String,
-                                                        Object>{
-                                                      'page_name':
-                                                          'logout_btnclick',
-                                                    },
-                                                  );
-                                                },
-                                                btncolor: colorPrimary,
-                                                text:
-                                                    "Are you sure you want to logout?",
-                                                btn1Text: "No",
-                                                btn2Text: "Yes");
-                                          },
-                                        );
-                                      },
-                                      backgroundColor: whiteColor,
-                                      borderColor: redColor),
+                                              );
+                                              Get.back();
+                                            },
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
                                 ),
-                                const ProfileBottom(
-                                  version: " 1.0.7",
-                                )
+                                const ProfileBottom(version: "1.0.7"),
                               ],
                             ),
                           ),
                         )
-                      : DummyAccount(),
-            )
+                      : DummyAccount();
+            })
           ],
         ),
       ),

@@ -13,7 +13,6 @@ import '../../../core/constant/constants.dart';
 import '../other/common_widget.dart';
 import '../text/app_text.dart';
 
-
 class HomeProductList extends StatelessWidget {
   final List list;
   final int parentIndex;
@@ -22,10 +21,11 @@ class HomeProductList extends StatelessWidget {
 
   const HomeProductList(
       {Key? key,
-        required this.list,
-        this.onPressed,
-        required this.parentIndex,
-        this.onPressedExplore})
+      required this.list,
+      this.onPressed,
+      required this.parentIndex,
+      this.onPressedExplore,
+      required int parentInde})
       : super(key: key);
 
   @override
@@ -64,53 +64,53 @@ class HomeProductList extends StatelessWidget {
                                 Stack(
                                   children: [
                                     list[index]["images"].isNotEmpty &&
-                                        list[index]["images"] != null
+                                            list[index]["images"] != null
                                         ? ImageFiltered(
-                                      imageFilter: ImageFilter.blur(
-                                          sigmaX: list.length >= 4 &&
-                                              index == 3
-                                              ? 1
-                                              : 0,
-                                          sigmaY: list.length >= 4 &&
-                                              index == 3
-                                              ? 1
-                                              : 0),
-                                      child: SizedBox(
-                                        height: 170.sp,
-                                        width: 136.sp,
-                                        child: CachedNetworkImage(
-                                          cacheManager: CacheManager(
-                                              Config("customCacheKey",
-                                                  stalePeriod:
-                                                  const Duration(
-                                                      days: 15),
-                                                  maxNrOfCacheObjects:
-                                                  100)),
-                                          fit: BoxFit.cover,
-                                          fadeOutCurve: Curves.ease,
-                                          fadeOutDuration:
-                                          Duration(milliseconds: 100),
-                                          imageUrl: isImage(list[index]
-                                          ["images"][0]["name"])
-                                              ? list[index]["images"][0]
-                                          ["name"]
-                                              : list[index]["images"][1]
-                                          ["name"],
-                                          errorWidget:
-                                              (context, url, error) =>
-                                              Image.asset(
-                                                downloadImage,
+                                            imageFilter: ImageFilter.blur(
+                                                sigmaX: list.length >= 4 &&
+                                                        index == 3
+                                                    ? 1
+                                                    : 0,
+                                                sigmaY: list.length >= 4 &&
+                                                        index == 3
+                                                    ? 1
+                                                    : 0),
+                                            child: SizedBox(
+                                              height: 170.sp,
+                                              width: 136.sp,
+                                              child: CachedNetworkImage(
+                                                cacheManager: CacheManager(
+                                                    Config("customCacheKey",
+                                                        stalePeriod:
+                                                            const Duration(
+                                                                days: 15),
+                                                        maxNrOfCacheObjects:
+                                                            100)),
                                                 fit: BoxFit.cover,
-                                                height: 170.sp,
-                                                width: 136.sp,
+                                                fadeOutCurve: Curves.ease,
+                                                fadeOutDuration:
+                                                    Duration(milliseconds: 100),
+                                                imageUrl: isImage(list[index]
+                                                        ["images"][0]["name"])
+                                                    ? list[index]["images"][0]
+                                                        ["name"]
+                                                    : list[index]["images"][1]
+                                                        ["name"],
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Image.asset(
+                                                  downloadImage,
+                                                  fit: BoxFit.cover,
+                                                  height: 170.sp,
+                                                  width: 136.sp,
+                                                ),
                                               ),
-                                        ),
-                                      ),
-                                    )
+                                            ),
+                                          )
                                         : Image.asset(dummyWishlistImage,
-                                        height: 170.sp,
-                                        width: 136.sp,
-                                        fit: BoxFit.cover),
+                                            height: 170.sp,
+                                            width: 136.sp,
+                                            fit: BoxFit.cover),
                                     Visibility(
                                       visible: list.length >= 4 && index == 3
                                           ? true
@@ -127,7 +127,7 @@ class HomeProductList extends StatelessWidget {
                                             margin: EdgeInsets.all(12.sp),
                                             decoration: BoxDecoration(
                                                 color:
-                                                whiteColor.withOpacity(0.5),
+                                                    whiteColor.withOpacity(0.5),
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(20.sp))),
                                             child: Padding(
@@ -135,7 +135,7 @@ class HomeProductList extends StatelessWidget {
                                                   horizontal: 12.sp),
                                               child: AppText(
                                                 text:
-                                                "Explore All".toUpperCase(),
+                                                    "Explore All".toUpperCase(),
                                                 color: homeAppBarColor,
                                                 fontSize: 13,
                                                 fontFamily: "Franklin Gothic",

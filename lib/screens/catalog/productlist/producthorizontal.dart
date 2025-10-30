@@ -51,28 +51,11 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
       productController.isCategoryProduct.value = false;
       productController.categoryProductPage.value = 1;
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) =>
-        productController.getProductByCategoryData(
-            widget.categoryId,
-            0,
-            "",
-            [],
-            productController.sortBy.value,
-            widget.genderType,
-            productController.filterEnable.value,
-            widget.catalogId,
-            false,
-            "catalog"));
+
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.categoryProductController.addListener(() {
-        productController.fetchCategoryProductMoreData(
-            0,
-            productController.sortBy.value,
-            widget.genderType,
-            productController.filterEnable.value,
-            "catalog");
         productController.update();
       });
     });
@@ -161,20 +144,6 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                           productController
                                                               .categoryProductPage
                                                               .value = 1;
-                                                          productController.getProductByCategoryData(
-                                                              widget.categoryId,
-                                                              0,
-                                                              "",
-                                                              [],
-                                                              productController
-                                                                  .sortBy.value,
-                                                              widget.genderType,
-                                                              productController
-                                                                  .filterEnable
-                                                                  .value,
-                                                              widget.catalogId,
-                                                              false,
-                                                              "catalog");
                                                         },
                                                       ));
                                               await analytics.logEvent(
@@ -643,17 +612,6 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                 return BottomSortBy(
                                   onPressedButton: (p0) {
                                     productController.sortBy.value = p0;
-                                    productController.getProductByCategoryData(
-                                        widget.categoryId,
-                                        0,
-                                        "",
-                                        [],
-                                        p0,
-                                        widget.genderType,
-                                        productController.filterEnable.value,
-                                        widget.catalogId,
-                                        false,
-                                        "catalog");
                                   },
                                 );
                               },
@@ -685,33 +643,11 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                     prefs.remove("upper");
                                     prefs.remove("lower");
                                     prefs.remove("sortby");
-                                    productController.getProductByCategoryData(
-                                        widget.categoryId,
-                                        0,
-                                        "",
-                                        [],
-                                        productController.sortBy.value,
-                                        widget.genderType,
-                                        productController.filterEnable.value,
-                                        widget.catalogId,
-                                        false,
-                                        "catalog");
                                   },
                                   onClick: (p0, p1) {
                                     productController.filterEnable.value = true;
                                     productController.lowPrice.value = p0;
                                     productController.highPrice.value = p1;
-                                    productController.getProductByCategoryData(
-                                        widget.categoryId,
-                                        0,
-                                        "",
-                                        [],
-                                        productController.sortBy.value,
-                                        widget.genderType,
-                                        productController.filterEnable.value,
-                                        widget.catalogId,
-                                        true,
-                                        "catalog");
                                   },
                                 );
                               },

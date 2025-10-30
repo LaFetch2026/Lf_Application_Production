@@ -8,6 +8,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
@@ -16,42 +18,39 @@ import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../common/widget/appbar/productlist_appbar.dart';
-import '../../common/widget/bottom_sheets/bottomcategory.dart';
-import '../../common/widget/bottom_sheets/bottomfiltters.dart';
-import '../../common/widget/bottom_sheets/bottomsortby.dart';
 import '../../common/widget/lists/dummy_container.dart';
 import '../../common/widget/lists/dummy_grid_list.dart';
 import '../../common/widget/other/common_widget.dart';
-import '../../common/widget/text/app_text.dart';
+import '../../controllers/catalog_controller.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/product_controller.dart';
 import '../../controllers/wishlist_controller.dart';
 import '../../core/constant/constants.dart';
 
-//import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
-
 class CategoryProductScreen extends StatefulWidget {
   final String categoryName;
-  final int categoryId;
-  final int brandId;
-  final int genderType;
-  final List tagIds;
-  final List categoryList;
+  final int categoryId; // can be 0 for "banner only" lists
+  final int brandId; // optional 0
+  final int genderType; // 1/2/3 (Men/Women/Accessories)
+  final List tagIds; // keep dynamic to match existing code
+  final List categoryList; // keep dynamic to match existing code
   final String genderName;
-  final String screen;
-  final String type;
+  final String screen; // e.g. "category"
+  final String type; // default: "category products"
 
-  const CategoryProductScreen(
-      {super.key,
-      required this.categoryName,
-      required this.categoryId,
-      required this.brandId,
-      required this.genderType,
-      required this.tagIds,
-      required this.genderName,
-      this.type = "category products",
-      this.screen = "",
-      required this.categoryList});
+  const CategoryProductScreen({
+    super.key,
+    required this.categoryName,
+    required this.categoryId,
+    required this.brandId,
+    required this.genderType,
+    required this.tagIds,
+    required this.genderName,
+    this.type = "category products",
+    this.screen = "",
+    required this.categoryList,
+    required String title, // kept for backward signature compatibility
+  });
 
   @override
   State<CategoryProductScreen> createState() => CategoryProductScreenState();
@@ -59,1352 +58,598 @@ class CategoryProductScreen extends StatefulWidget {
 
 class CategoryProductScreenState extends State<CategoryProductScreen> {
   final productController = Get.find<ProductController>();
-  final wishlistController = Get.put(WishlistController());
-  final controller = Get.put(CartController());
+  final wishlistController = Get.put(WishlistController(), permanent: false);
+  final controller = Get.put(CartController(), permanent: false);
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  bool isBottomSheet = false;
+  final catalogController = Get.put(CatalogController(), permanent: false);
+
+  /// INR formatter – tolerant of nulls
+  String _fmtINR(num? v, {bool cents = true}) {
+    if (v == null) return '';
+    final f = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: '₹ ',
+      decimalDigits: cents ? 2 : 0,
+    );
+    return f.format(v);
+  }
+
+  /// Robustly pick an image string from new/old shapes
+  String? _imageFrom(Map<String, dynamic> m) {
+    // new API: imageUrls: [String, ...]
+    final urlList = (m['imageUrls'] as List?)
+            ?.whereType()
+            .map((e) => e.toString())
+            .where((s) => s.trim().isNotEmpty)
+            .toList() ??
+        const <String>[];
+    if (urlList.isNotEmpty) return urlList.first;
+
+    // legacy fallbacks
+    for (final key in const [
+      'image',
+      'thumbnail',
+      'thumb',
+      'cover',
+      'defaultImage',
+      'primaryImage',
+      'img',
+      'photo'
+    ]) {
+      final v = m[key];
+      if (v is String && v.trim().isNotEmpty) return v;
+    }
+    return null;
+  }
+
+  Future<void> _clearPref() async {
+    final prefs = await SharedPreferences.getInstance();
+    for (final k in [
+      "brandList",
+      "colorList",
+      "sizeList",
+      "upper",
+      "lower",
+      "sortby",
+      "category"
+    ]) {
+      await prefs.remove(k);
+    }
+  }
+
+  void _showGenderSelector(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: whiteColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 20.sp, horizontal: 20.sp),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Select Category",
+                style: TextStyle(
+                  fontFamily: "Franklin Gothic",
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                  color: blackColor,
+                ),
+              ),
+              SizedBox(height: 16.sp),
+              _genderOption(context, "Men", 1),
+              _genderOption(context, "Women", 2),
+              _genderOption(context, "Accessories", 3),
+              SizedBox(height: 12.sp),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => wishlistController.getWishlistData());
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.productCategoryList.clear();
-      productController.selectedCategoryGender.value = widget.genderName;
-      productController.categoryProductHasnextpage.value = true;
-      productController.categoryProductLoadMore.value = false;
-      productController.categoryProductPage.value = 1;
-      productController.isCategoryProduct.value = false;
-      productController.bannerTagHasnextpage.value = true;
-      productController.bannerTagLoadMore.value = false;
-      productController.bannerTagPage.value = 1;
-      productController.sortBy.value = "";
-      productController.filterEnable.value = false;
-      productController.categoryProductGender.value = widget.genderType;
-      productController.size_ids.clear();
-      productController.color_ids.clear();
-      productController.brand_ids.clear();
-    });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    super.initState();
+
+    // One post-frame is enough
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Set system bars for this screen
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: statusBarColor,
+        statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: statusBarColor,
+        systemNavigationBarIconBrightness: Brightness.dark,
       ));
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) =>
-        widget.type == "category products"
-            ? controller.getCartData()
-            : print("express product"));
-    if (widget.categoryId != 0) {
-      productController.category_id.value = widget.categoryId;
-      WidgetsBinding.instance.addPostFrameCallback((_) =>
-          productController.getProductByCategoryData(
-              widget.categoryId,
-              widget.brandId,
-              "",
-              [],
-              productController.sortBy.value,
-              widget.genderType,
-              productController.filterEnable.value,
-              0,
-              false,
-              ""));
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        productController.brandProductController.addListener(() {
-          productController.fetchCategoryProductMoreData(
-              widget.brandId,
-              productController.sortBy.value,
-              productController.categoryProductGender.value,
-              productController.filterEnable.value,
-              "");
-          productController.update();
-        });
-      });
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) =>
-          productController.getTagsBannerData(
-              widget.tagIds,
-              widget.categoryList,
-              widget.genderType,
-              productController.sortBy.value,
-              productController.filterEnable.value,
-              false,
-              widget.type,
-              widget.brandId));
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        productController.bannerTagController.addListener(() {
-          /*  productController.fetchMoreBannerTagProductData(
-              productController.productTags,
-              productController.productCategory,
-              productController.categoryProductGender.value,
-              productController.sortBy.value,
-              productController.filterEnable.value,
-              widget.type); */
-          productController.fetchMoreBannerTagProductData(
-              widget.tagIds,
-              widget.categoryList,
-              productController.categoryProductGender.value,
-              productController.sortBy.value,
-              productController.filterEnable.value,
-              widget.type,
-              widget.brandId);
-          productController.update();
-        });
-      });
-    }
-    WidgetsBinding.instance.addPostFrameCallback((_) => clearPrefrenceValue());
-    super.initState();
-  }
 
-  clearPrefrenceValue() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.remove("brandList");
-    prefs.remove("colorList");
-    prefs.remove("sizeList");
-    prefs.remove("upper");
-    prefs.remove("lower");
-    prefs.remove("sortby");
-    prefs.remove("category");
-    print("abcdef");
+      // Load data
+      await wishlistController.getWishlistData();
+      if (widget.type == "category products") {
+        await controller.getCartData();
+      }
+      await _clearPref();
+
+      // Drive list by category (and gender) as before
+      await catalogController.getCategoryProductData(
+        widget.categoryId,
+        widget.genderType,
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: isBottomSheet ? 0.5 : 1,
-      child: Scaffold(
-          key: scaffoldKey,
-          backgroundColor: whiteColor,
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ProductAppbar(
-                  onPressedSearch: () async {
-                    Get.to(const SearchScreen());
-                    analytics.logEvent(
-                        name: "search_page",
-                        parameters: <String, Object>{
-                          "page_name": "search_page",
-                        });
-                  },
-                  onPressedHeart: () async {
-                    Get.to(WishlistScreen())?.then((value) => setState(
-                          () {
-                            controller.getCartData();
-                          },
-                        ));
-                    analytics.logEvent(
-                        name: "wishlist_page",
-                        parameters: <String, Object>{
-                          "page_name": "wishlist_page",
-                        });
-                  },
-                  isCart: widget.type == "coupon" || widget.type == "express"
-                      ? false
-                      : true,
-                  isHandPicked: widget.screen != "" ? true : false,
-                  text: widget.categoryName.toUpperCase(),
-                  onPressedCart: () async {
-                    Get.to(const CartScreen())?.then((value) => setState(
-                          () {
-                            controller.getCartData();
-                          },
-                        ));
-                    analytics.logEvent(
-                        name: "cart_page",
-                        parameters: <String, Object>{
-                          "page_name": "cart_page",
-                        });
-                  }),
-              Visibility(
-                visible: widget.screen == "" ? true : false,
-                child: Obx(() => productController.isCategoryProduct.value
-                    ? Padding(
-                        padding: EdgeInsets.only(left: 16.sp),
-                        child: const DummyContainer(
-                          height: 10,
-                          width: 60,
-                        ),
-                      )
-                    : Visibility(
-                        visible:
-                            productController.productCategoryList.isNotEmpty
-                                ? true
-                                : false,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 16.sp),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(top: 16.sp),
-                                child: AppText(
-                                  text: "Showing result for  ",
-                                  color: Color(0xFF4B5563),
-                                  fontSize: 16,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  textAlign: TextAlign.center,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              Container(
-                                width: MediaQuery.sizeOf(context).width / 2.sp,
-                                alignment: Alignment.topLeft,
-                                child: Padding(
-                                  padding: EdgeInsets.only(top: 16.sp),
-                                  child: AppText(
-                                    text:
-                                        "'${widget.categoryName.toUpperCase()}'",
-                                    color: Color(0xFF4B5563),
-                                    fontSize: 16,
-                                    maxLines: 1,
-                                    fontFamily: "Franklin Gothic Semibold",
-                                    textAlign: TextAlign.start,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )),
-              ),
-              Visibility(
-                visible: widget.screen == "" ? true : false,
-                child: Obx(() => Padding(
-                      padding: EdgeInsets.only(left: 20.sp, top: 5.sp),
-                      child: productController.isCategoryProduct.value
-                          ? const DummyContainer(
-                              height: 10,
-                              width: 60,
-                            )
-                          : Visibility(
-                              visible: productController
-                                      .productCategoryList.isNotEmpty
-                                  ? true
-                                  : false,
-                              child: AppText(
-                                text: productController.total.value == 1 ||
-                                        productController.total.value == 0
-                                    ? "${productController.total.value} item"
-                                    : "${productController.total.value} items",
-                                color: Color(0xFF4B5563),
-                                fontSize: 10,
-                                fontFamily: "Franklin Gothic Regular",
-                                textAlign: TextAlign.center,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                    )),
-              ),
-              Obx(
-                () => productController.isCategoryProduct.value
-                    ? Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 10.sp),
-                          child: const DummyGridList(
-                            size: 2,
-                          ),
-                        ),
-                      )
-                    : productController.productCategoryList.isNotEmpty
-                        ? Expanded(
-                            child: SingleChildScrollView(
-                              controller: widget.categoryId != 0
-                                  ? productController.brandProductController
-                                  : productController.bannerTagController,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 16.sp, vertical: 20.sp),
-                                    child: GridView.count(
-                                      shrinkWrap: true,
-                                      crossAxisCount: 2,
-                                      controller: widget.categoryId != 0
-                                          ? productController
-                                              .brandProductController
-                                          : productController
-                                              .bannerTagController,
-                                      scrollDirection: Axis.vertical,
-                                      padding: EdgeInsets.zero,
-                                      childAspectRatio: 0.57,
-                                      physics: const ScrollPhysics(),
-                                      crossAxisSpacing: 5.sp,
-                                      mainAxisSpacing: 8.sp,
-                                      children: List.generate(
-                                        productController
-                                            .productCategoryList.length,
-                                        (index) {
-                                          return GestureDetector(
-                                            onTap: () async {
-                                              Get.to(ProductDetailsScreen(
-                                                      brandName: productController
-                                                              .productCategoryList[
-                                                          index]["brand_name"],
-                                                      expressValue:
-                                                          widget.type == "express"
-                                                              ? 1
-                                                              : 0,
-                                                      backgroundcolor:
-                                                          widget.type ==
-                                                                  "express"
-                                                              ? homeAppBarColor
-                                                              : whiteColor,
-                                                      productId: productController
-                                                              .productCategoryList[
-                                                          index]["id"],
-                                                      type: "add"))
-                                                  ?.then((value) => setState(
-                                                        () {
-                                                          productController
-                                                              .categoryProductHasnextpage
-                                                              .value = true;
-                                                          productController
-                                                              .categoryProductLoadMore
-                                                              .value = false;
-                                                          productController
-                                                              .isCategoryProduct
-                                                              .value = false;
-                                                          /*  productController
-                                                              .categoryProductPage
-                                                              .value = 1; */
-                                                          productController
-                                                              .bannerTagHasnextpage
-                                                              .value = true;
-                                                          productController
-                                                              .bannerTagLoadMore
-                                                              .value = false;
-                                                          /*  productController
-                                                              .bannerTagPage
-                                                              .value = 1; */
-                                                          controller
-                                                              .getCartData();
-                                                        },
-                                                      ));
-                                              await analytics.logEvent(
-                                                name:
-                                                    'category_product_details',
-                                                parameters: <String, Object>{
-                                                  'page_name':
-                                                      'category_product_details',
-                                                },
-                                              );
-                                            },
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Stack(
-                                                  children: [
-                                                    Center(
-                                                      child: productController
-                                                                  .productCategoryList[index]
-                                                                      ["images"]
-                                                                  .isNotEmpty &&
-                                                              productController.productCategoryList[index]
-                                                                      [
-                                                                      "images"] !=
-                                                                  null
-                                                          ? SizedBox(
-                                                              height: (MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width /
-                                                                      2) +
-                                                                  10.sp,
-                                                              width: (MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width /
-                                                                      2) -
-                                                                  24.sp,
-                                                              child:
-                                                                  CachedNetworkImage(
-                                                                cacheManager: CacheManager(Config(
-                                                                    "customCacheKey",
-                                                                    stalePeriod:
-                                                                        const Duration(
-                                                                            days:
-                                                                                15),
-                                                                    maxNrOfCacheObjects:
-                                                                        100)),
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                imageUrl: isImage(productController.productCategoryList[index]
-                                                                            ["images"][0]
-                                                                        [
-                                                                        "name"])
-                                                                    ? productController.productCategoryList[index]
-                                                                            ["images"][0]
-                                                                        ["name"]
-                                                                    : productController.productCategoryList[index]
-                                                                            ["images"][1]
-                                                                        [
-                                                                        "name"],
-                                                                /* progressIndicatorBuilder:
-                                                                    (context, url,
-                                                                            downloadProgress) =>
-                                                                        Center(
-                                                                  child: CircularProgressIndicator(
-                                                                      value: downloadProgress
-                                                                          .progress),
-                                                                ), */
-                                                                errorWidget: (context,
-                                                                        url,
-                                                                        error) =>
-                                                                    Image.asset(
-                                                                  downloadImage,
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  height: (MediaQuery.of(context)
-                                                                              .size
-                                                                              .width /
-                                                                          2) +
-                                                                      10.sp,
-                                                                  width: (MediaQuery.of(context)
-                                                                              .size
-                                                                              .width /
-                                                                          2) -
-                                                                      24.sp,
-                                                                ),
-                                                              ),
-                                                            )
-                                                          : Image.asset(
-                                                              dummyWishlistImage,
-                                                              height: (MediaQuery.of(context)
-                                                                          .size
-                                                                          .width /
-                                                                      2) +
-                                                                  10.sp,
-                                                              width: (MediaQuery.of(context)
-                                                                          .size
-                                                                          .width /
-                                                                      2) -
-                                                                  24.sp,
-                                                              fit: BoxFit.cover),
-                                                    ),
-                                                    /*   GestureDetector(
-                                                      onTap: () async {
-                                                        if (widget.categoryId !=
-                                                            0) {
-                                                          if (productController
-                                                                  .productCategoryList[
-                                                              index]["wishlisted"]) {
-                                                            productController.callAddProductToWishlist(
-                                                                productController
-                                                                            .productCategoryList[
-                                                                        index][
-                                                                    "wishlist_id"],
-                                                                "category product",
-                                                                productController
-                                                                        .productCategoryList[
-                                                                    index]["id"],
-                                                                widget.categoryId,
-                                                                widget.brandId,
-                                                                [],
-                                                                [],
-                                                                0,
-                                                                productController
-                                                                    .categoryProductGender
-                                                                    .value,
-                                                                0);
-                                                          } else {
-                                                            scaffoldKey
-                                                                .currentState
-                                                                ?.showBottomSheet((context) =>
-                                                                    BottomWishlist(
-                                                                        controller:
-                                                                            wishlistController,
-                                                                        onPressed:
-                                                                            (p0) {
-                                                                          productController.callAddProductToWishlist(
-                                                                              p0,
-                                                                              "category product",
-                                                                              productController.productCategoryList[index]["id"],
-                                                                              widget.categoryId,
-                                                                              widget.brandId,
-                                                                              [],
-                                                                              [],
-                                                                              0,
-                                                                              productController.categoryProductGender.value,
-                                                                              0);
-                                                                        },
-                                                                        wishlistList:
-                                                                            wishlistController
-                                                                                .wishlistList));
-                                                          }
-                                                        } else {
-                                                          if (productController
-                                                                  .productCategoryList[
-                                                              index]["wishlisted"]) {
-                                                            productController
-                                                                        .productCategoryList[
-                                                                    index][
-                                                                "wishlisted"] = false;
-                                                            setState(() {});
-                                                            productController.callAddProductToWishlist(
-                                                                productController
-                                                                            .productCategoryList[
-                                                                        index][
-                                                                    "wishlist_id"],
-                                                                "bannerTag",
-                                                                productController
-                                                                        .productCategoryList[
-                                                                    index]["id"],
-                                                                widget.categoryId,
-                                                                widget.brandId,
-                                                                productController
-                                                                    .productTags,
-                                                                productController
-                                                                    .productCategory,
-                                                                0,
-                                                                productController
-                                                                    .categoryProductGender
-                                                                    .value,
-                                                                0);
-                                                          } else {
-                                                            scaffoldKey
-                                                                .currentState
-                                                                ?.showBottomSheet((context) =>
-                                                                    BottomWishlist(
-                                                                        controller:
-                                                                            wishlistController,
-                                                                        onPressed:
-                                                                            (p0) {
-                                                                          productController.productCategoryList[index]["wishlisted"] =
-                                                                              true;
-                                                                          setState(
-                                                                              () {});
-                                                                          productController.callAddProductToWishlist(
-                                                                              p0,
-                                                                              "bannerTag",
-                                                                              productController.productCategoryList[index]["id"],
-                                                                              widget.categoryId,
-                                                                              0,
-                                                                              productController.productTags,
-                                                                              productController.productCategory,
-                                                                              0,
-                                                                              productController.categoryProductGender.value,
-                                                                              0);
-                                                                        },
-                                                                        wishlistList:
-                                                                            wishlistController
-                                                                                .wishlistList));
-                                                          }
-                                                        }
-                                                        await analytics.logEvent(
-                                                          name:
-                                                              'category_product_wishlist',
-                                                          parameters: <String,
-                                                              Object>{
-                                                            'page_name':
-                                                                'category_product_wishlist',
-                                                          },
-                                                        );
-                                                      },
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.symmetric(
-                                                                horizontal: 16.sp,
-                                                                vertical: 10.sp),
-                                                        child: Align(
-                                                          alignment:
-                                                              Alignment.topRight,
-                                                          child: InkWell(
-                                                            child: SizedBox(
-                                                              height: 24.sp,
-                                                              width: 24.sp,
-                                                              child: CircleAvatar(
-                                                                backgroundColor:
-                                                                    whiteColor,
-                                                                child: productController
-                                                                                .productCategoryList[
-                                                                            index]
-                                                                        [
-                                                                        "wishlisted"]
-                                                                    ? Image.asset(
-                                                                        wishlistSelectImage,
-                                                                        height:
-                                                                            18,
-                                                                        width: 18,
-                                                                      )
-                                                                    : Image.asset(
-                                                                        heartImage,
-                                                                        height:
-                                                                            18.sp,
-                                                                        width:
-                                                                            18.sp,
-                                                                      ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Positioned(
-                                                      bottom: 10.sp,
-                                                      left: 16.sp,
-                                                      child: Container(
-                                                        color: const Color(
-                                                            0xB3F7F7F5),
-                                                        height: 26.sp,
-                                                        width: 80.sp,
-                                                        child: Row(
-                                                          children: [
-                                                            Padding(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          2.sp),
-                                                              child: Image.asset(
-                                                                starImage,
-                                                                height: 16.sp,
-                                                                color:
-                                                                    bottomnavBack,
-                                                                width: 16.sp,
-                                                              ),
-                                                            ),
-                                                            AppText(
-                                                              text: productController
-                                                                              .productCategoryList[index]
-                                                                          [
-                                                                          "aggregated_rating"] !=
-                                                                      null
-                                                                  ? productController
-                                                                      .productCategoryList[
-                                                                          index][
-                                                                          "aggregated_rating"]
-                                                                      .toString()
-                                                                  : "0",
-                                                              color: colorPrimary,
-                                                              fontSize: 12,
-                                                              fontFamily:
-                                                                  "Franklin Gothic Regular",
-                                                              fontWeight:
-                                                                  FontWeight.w400,
-                                                            ),
-                                                            Padding(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          10.sp),
-                                                              child: Container(
-                                                                width: 1,
-                                                                color:
-                                                                    textHintColor,
-                                                                height: 16.sp,
-                                                              ),
-                                                            ),
-                                                            AppText(
-                                                              text: productController
-                                                                  .productCategoryList[
-                                                                      index][
-                                                                      "reviews_count"]
-                                                                  .toString(),
-                                                              color: colorPrimary,
-                                                              fontSize: 12,
-                                                              fontFamily:
-                                                                  "Franklin Gothic Regular",
-                                                              fontWeight:
-                                                                  FontWeight.w400,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  */
-                                                  ],
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 10.sp,
-                                                      vertical: 5.sp),
-                                                  child: AppText(
-                                                    text:
-                                                        "${productController.productCategoryList[index]["brand_name"]}"
-                                                            .toUpperCase(),
-                                                    color: blackColor,
-                                                    maxLines: 1,
-                                                    fontSize: 13,
-                                                    fontFamily:
-                                                        "Franklin Gothic",
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 10.sp),
-                                                  child: AppText(
-                                                    text: productController
-                                                                .productCategoryList[
-                                                            index]["name"] ??
-                                                        "",
-                                                    color: Color(0xFF6B7280),
-                                                    maxLines: 1,
-                                                    fontSize: 11,
-                                                    fontFamily:
-                                                        "Franklin Gothic Regular",
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      top: 8.sp,
-                                                      left: 10.sp,
-                                                      right: 1.sp),
-                                                  child: Row(
-                                                    children: [
-                                                      Visibility(
-                                                        visible: productController
-                                                                        .productCategoryList[
-                                                                    index]["mrp"] !=
-                                                                null
-                                                            ? true
-                                                            : false,
-                                                        child: Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  right: 5.sp),
-                                                          child: Text(
-                                                            "\u{20B9} ${productController.productCategoryList[index]["mrp"] ?? ""}",
-                                                            style: TextStyle(
-                                                              color:
-                                                                  searchTextColor,
-                                                              fontSize: 11.sp,
-                                                              decoration:
-                                                                  TextDecoration
-                                                                      .lineThrough,
-                                                              fontFamily:
-                                                                  "Franklin Gothic Regular",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      AppText(
-                                                        text:
-                                                            "\u{20B9} ${productController.productCategoryList[index]["price"] ?? ""}",
-                                                        color: homeAppBarColor,
-                                                        maxLines: 2,
-                                                        fontSize: 11,
-                                                        fontFamily:
-                                                            "Franklin Gothic",
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                productController
-                                                            .productCategoryList[
-                                                        index]["express_delivery"]
-                                                    ? Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 3.sp,
-                                                                left: 10.sp,
-                                                                right: 10.sp),
-                                                        child: Row(
-                                                          children: [
-                                                            ImageIcon(
-                                                              AssetImage(
-                                                                  truckImage),
-                                                              color:
-                                                                  expressText,
-                                                              size: 14.sp,
-                                                            ),
-                                                            Padding(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      horizontal:
-                                                                          5.sp),
-                                                              child: AppText(
-                                                                text: "Express",
-                                                                color:
-                                                                    expressText,
-                                                                maxLines: 2,
-                                                                fontSize: 11,
-                                                                fontFamily:
-                                                                    "Franklin Gothic Regular",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      )
-                                                    : SizedBox(
-                                                        height: 0,
-                                                      )
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  productController
-                                              .categoryProductLoadMore.value ||
-                                          productController
-                                              .bannerTagLoadMore.value
-                                      ? DummyGridList()
-                                      : const SizedBox(
-                                          height: 0,
-                                        ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(top: 0.sp),
-                                  child: Center(
-                                    child: Image.asset(errorImage,
-                                        height: 200.sp,
-                                        width: 220.sp,
-                                        fit: BoxFit.cover),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16.sp, vertical: 2.sp),
-                                  child: Text(
-                                    "No products found",
-                                    style: TextStyle(
-                                      color: colorPrimary,
-                                      fontSize: 14,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(top: 20.sp),
-                                  child: getSingleButton(
-                                      width: double.infinity,
-                                      label: "Back to home".toUpperCase(),
-                                      textColor: whiteColor,
-                                      fontSize: 13,
-                                      backgroundColor: homeAppBarColor,
-                                      onPressed: () {
-                                        Get.off(BottomNavScreen());
-                                      },
-                                      borderColor: colorPrimary),
-                                )
-                              ],
-                            ),
-                          ),
-              ),
-              Container(
-                color: statusBarColor,
-                child: Column(
+    return Scaffold(
+      key: scaffoldKey,
+      backgroundColor: whiteColor,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ProductAppbar(
+            onPressedSearch: () async {
+              Get.to(const SearchScreen());
+              await analytics.logEvent(
+                name: "search_page",
+                parameters: {"page_name": "search_page"},
+              );
+            },
+            onPressedHeart: () async {
+              Get.to(const WishlistScreen())
+                  ?.then((_) => controller.getCartData());
+              await analytics.logEvent(
+                name: "wishlist_page",
+                parameters: {"page_name": "wishlist_page"},
+              );
+            },
+            isCart: widget.type != "coupon" && widget.type != "express",
+            isHandPicked: widget.screen.isNotEmpty,
+            text: widget.categoryName.toUpperCase(),
+            onPressedCart: () async {
+              Get.to(const CartScreen())?.then((_) => controller.getCartData());
+              await analytics.logEvent(
+                name: "cart_page",
+                parameters: {"page_name": "cart_page"},
+              );
+            },
+          ),
+
+          SizedBox(height: 8.sp),
+
+          Expanded(
+            child: Obx(() {
+              if (catalogController.isCategory.value) {
+                return const Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: DummyGridList(size: 2),
+                );
+              }
+
+              final items = catalogController.categoryProductList;
+              if (items.isEmpty) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      height: 1.sp,
-                      color: dividerColor,
+                    Image.asset(
+                      errorImage,
+                      height: 200.sp,
+                      width: 220.sp,
+                      fit: BoxFit.cover,
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.sp),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                isBottomSheet = true;
-                              });
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                constraints: BoxConstraints(
-                                  maxWidth: double.infinity,
-                                  maxHeight: 340.sp,
-                                ),
-                                builder: (ctx) {
-                                  return BottomSortBy(
-                                    onPressedButton: (p0) {
-                                      productController.sortBy.value = p0;
-                                      if (widget.categoryId != 0) {
-                                        productController
-                                            .getProductByCategoryData(
-                                                widget.categoryId,
-                                                widget.brandId,
-                                                "",
-                                                [],
-                                                productController.sortBy.value,
-                                                productController
-                                                    .categoryProductGender
-                                                    .value,
-                                                productController
-                                                    .filterEnable.value,
-                                                0,
-                                                false,
-                                                "");
-                                      } else {
-                                        productController.getTagsBannerData(
-                                            widget.tagIds,
-                                            widget.categoryList,
-                                            productController
-                                                .categoryProductGender.value,
-                                            productController.sortBy.value,
-                                            productController
-                                                .filterEnable.value,
-                                            false,
-                                            widget.type,
-                                            widget.brandId);
-                                      }
-                                    },
-                                  );
-                                },
-                              ).whenComplete(() {
-                                setState(() {
-                                  isBottomSheet = false;
-                                });
-                              });
-                            },
-                            child: Container(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 10.sp, horizontal: 5.sp),
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      sortBySvgImage,
-                                      height: 19.sp,
-                                      width: 15.sp,
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 5.sp),
-                                      child: Text(
-                                        "SORT BY",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Color(0xFF374151),
-                                          decoration: TextDecoration.none,
-                                          fontSize: 13.sp,
-                                          fontFamily: "Franklin Gothic",
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 0.sp),
-                            child: Container(
-                              width: 1.sp,
-                              color: dividerColor,
-                              height: 46.sp,
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                isBottomSheet = true;
-                              });
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                constraints: BoxConstraints(
-                                  maxWidth: double.infinity,
-                                  maxHeight: 270.sp,
-                                ),
-                                builder: (ctx) {
-                                  return BottomCategory(
-                                    gender: productController
-                                        .selectedCategoryGender.value,
-                                    onPressedButton: (p0) {
-                                      if (p0 == "Women") {
-                                        productController
-                                            .categoryProductGender.value = 3;
-                                      } else if (p0 == "Men") {
-                                        productController
-                                            .categoryProductGender.value = 2;
-                                      } else {
-                                        productController
-                                            .categoryProductGender.value = 1;
-                                      }
-                                      if (widget.categoryId != 0) {
-                                        productController
-                                            .getProductByCategoryData(
-                                                widget.categoryId,
-                                                widget.brandId,
-                                                "",
-                                                [],
-                                                productController.sortBy.value,
-                                                productController
-                                                    .categoryProductGender
-                                                    .value,
-                                                productController
-                                                    .filterEnable.value,
-                                                0,
-                                                false,
-                                                "");
-                                      } else {
-                                        productController.getTagsBannerData(
-                                            widget.tagIds,
-                                            widget.categoryList,
-                                            productController
-                                                .categoryProductGender.value,
-                                            productController.sortBy.value,
-                                            productController
-                                                .filterEnable.value,
-                                            false,
-                                            widget.type,
-                                            widget.brandId);
-                                      }
-                                      productController
-                                          .selectedCategoryGender.value = p0;
-                                      //setState(() {});
-                                    },
-                                    onPressedFilter: () {
-                                      setState(() {
-                                        isBottomSheet = true;
-                                      });
-                                      Get.back();
-                                      showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        constraints: BoxConstraints(
-                                          maxWidth: double.infinity,
-                                          maxHeight: 500.sp,
-                                        ),
-                                        builder: (ctx) {
-                                          return BottomFilters(
-                                            btnclearAll: () async {
-                                              productController.brand_ids
-                                                  .clear();
-                                              productController.color_ids
-                                                  .clear();
-                                              productController.size_ids
-                                                  .clear();
-                                              productController.sortBy.value =
-                                                  "";
-                                              productController
-                                                  .filterEnable.value = false;
-                                              final prefs =
-                                                  await SharedPreferences
-                                                      .getInstance();
-                                              prefs.remove("brandList");
-                                              prefs.remove("colorList");
-                                              prefs.remove("sizeList");
-                                              prefs.remove("upper");
-                                              prefs.remove("lower");
-                                              prefs.remove("sortby");
-                                              prefs.remove("category");
-                                              if (widget.categoryId != 0) {
-                                                productController
-                                                    .getProductByCategoryData(
-                                                        widget.categoryId,
-                                                        widget.brandId,
-                                                        "",
-                                                        [],
-                                                        productController
-                                                            .sortBy.value,
-                                                        productController
-                                                            .categoryProductGender
-                                                            .value,
-                                                        productController
-                                                            .filterEnable.value,
-                                                        0,
-                                                        false,
-                                                        "");
-                                              } else {
-                                                productController.getTagsBannerData(
-                                                    widget.tagIds,
-                                                    widget.categoryList,
-                                                    productController
-                                                        .categoryProductGender
-                                                        .value,
-                                                    productController
-                                                        .sortBy.value,
-                                                    productController
-                                                        .filterEnable.value,
-                                                    false,
-                                                    widget.type,
-                                                    widget.brandId);
-                                              }
-                                            },
-                                            onClick: (p0, p1) {
-                                              productController
-                                                  .filterEnable.value = true;
-                                              productController.lowPrice.value =
-                                                  p0;
-                                              productController
-                                                  .highPrice.value = p1;
-                                              if (widget.categoryId != 0) {
-                                                productController
-                                                    .getProductByCategoryData(
-                                                        widget.categoryId,
-                                                        widget.brandId,
-                                                        "",
-                                                        [],
-                                                        productController
-                                                            .sortBy.value,
-                                                        productController
-                                                            .categoryProductGender
-                                                            .value,
-                                                        productController
-                                                            .filterEnable.value,
-                                                        0,
-                                                        true,
-                                                        "");
-                                              } else {
-                                                productController.getTagsBannerData(
-                                                    widget.tagIds,
-                                                    widget.categoryList,
-                                                    productController
-                                                        .categoryProductGender
-                                                        .value,
-                                                    productController
-                                                        .sortBy.value,
-                                                    productController
-                                                        .filterEnable.value,
-                                                    true,
-                                                    widget.type,
-                                                    widget.brandId);
-                                              }
-                                            },
-                                          );
-                                        },
-                                      ).whenComplete(() {
-                                        setState(() {
-                                          isBottomSheet = false;
-                                        });
-                                      });
-                                    },
-                                  );
-                                },
-                              ).whenComplete(() {
-                                setState(() {
-                                  isBottomSheet = false;
-                                });
-                              });
-                            },
-                            child: Container(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 10.sp, horizontal: 5.sp),
-                                child: Column(
-                                  children: [
-                                    /*  Image.asset(
-                                      categoryIcon,
-                                      height: 20.sp,
-                                      width: 20.sp,
-                                    ), */
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 5.sp),
-                                      child: Text(
-                                        "CATEGORY",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Color(0xFF374151),
-                                          decoration: TextDecoration.none,
-                                          fontSize: 13.sp,
-                                          fontFamily: "Franklin Gothic",
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                    Obx(() => Visibility(
-                                          visible: productController
-                                                      .selectedCategoryGender
-                                                      .value ==
-                                                  ""
-                                              ? false
-                                              : true,
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 5.sp,
-                                                right: 5.sp,
-                                                top: 1.sp),
-                                            child: Text(
-                                              productController
-                                                  .selectedCategoryGender.value
-                                                  .toUpperCase(),
-                                              style: TextStyle(
-                                                decoration:
-                                                    TextDecoration.underline,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                                color: appBarColor,
-                                                fontSize: 10.sp,
-                                              ),
-                                            ),
-                                          ),
-                                        )),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 0.sp),
-                            child: Container(
-                              width: 1.sp,
-                              color: dividerColor,
-                              height: 46.sp,
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                isBottomSheet = true;
-                              });
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                constraints: BoxConstraints(
-                                  maxWidth: double.infinity,
-                                  maxHeight: 500.sp,
-                                ),
-                                builder: (ctx) {
-                                  return BottomFilters(
-                                    btnclearAll: () async {
-                                      productController.brand_ids.clear();
-                                      productController.color_ids.clear();
-                                      productController.size_ids.clear();
-                                      productController.sortBy.value = "";
-                                      productController.filterEnable.value =
-                                          false;
-                                      final prefs =
-                                          await SharedPreferences.getInstance();
-                                      prefs.remove("brandList");
-                                      prefs.remove("colorList");
-                                      prefs.remove("sizeList");
-                                      prefs.remove("upper");
-                                      prefs.remove("lower");
-                                      prefs.remove("sortby");
-                                      prefs.remove("category");
-                                      if (widget.categoryId != 0) {
-                                        productController
-                                            .getProductByCategoryData(
-                                                widget.categoryId,
-                                                widget.brandId,
-                                                "",
-                                                [],
-                                                productController.sortBy.value,
-                                                productController
-                                                    .categoryProductGender
-                                                    .value,
-                                                productController
-                                                    .filterEnable.value,
-                                                0,
-                                                false,
-                                                "");
-                                      } else {
-                                        productController.getTagsBannerData(
-                                            widget.tagIds,
-                                            widget.categoryList,
-                                            productController
-                                                .categoryProductGender.value,
-                                            productController.sortBy.value,
-                                            productController
-                                                .filterEnable.value,
-                                            false,
-                                            widget.type,
-                                            widget.brandId);
-                                      }
-                                    },
-                                    onClick: (p0, p1) {
-                                      productController.filterEnable.value =
-                                          true;
-                                      productController.lowPrice.value = p0;
-                                      productController.highPrice.value = p1;
-                                      if (widget.categoryId != 0) {
-                                        productController
-                                            .getProductByCategoryData(
-                                                widget.categoryId,
-                                                widget.brandId,
-                                                "",
-                                                [],
-                                                productController.sortBy.value,
-                                                productController
-                                                    .categoryProductGender
-                                                    .value,
-                                                productController
-                                                    .filterEnable.value,
-                                                0,
-                                                true,
-                                                "");
-                                      } else {
-                                        productController.getTagsBannerData(
-                                            widget.tagIds,
-                                            widget.categoryList,
-                                            productController
-                                                .categoryProductGender.value,
-                                            productController.sortBy.value,
-                                            productController
-                                                .filterEnable.value,
-                                            true,
-                                            widget.type,
-                                            widget.brandId);
-                                      }
-                                    },
-                                  );
-                                },
-                              ).whenComplete(() {
-                                setState(() {
-                                  isBottomSheet = false;
-                                });
-                              });
-                            },
-                            child: Container(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 10.sp, horizontal: 5.sp),
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      filterSvgImage,
-                                      color: titleColor,
-                                      height: 11.sp,
-                                      width: 17.sp,
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 5.sp),
-                                      child: Text(
-                                        "FILTERS",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Color(0xFF374151),
-                                          decoration: TextDecoration.none,
-                                          fontSize: 13.sp,
-                                          fontFamily: "Franklin Gothic",
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.sp,
+                        vertical: 2.sp,
+                      ),
+                      child: const Text(
+                        "No products found",
+                        style: TextStyle(
+                          color: colorPrimary,
+                          fontSize: 14,
+                          fontFamily: "Franklin Gothic Regular",
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 20.sp),
+                      child: getSingleButton(
+                        width: double.infinity,
+                        label: "BACK TO HOME",
+                        textColor: whiteColor,
+                        fontSize: 13,
+                        backgroundColor: homeAppBarColor,
+                        onPressed: () => Get.off(const BottomNavScreen()),
+                        borderColor: colorPrimary,
                       ),
                     ),
                   ],
+                );
+              }
+
+              return GridView.builder(
+                padding: EdgeInsets.fromLTRB(16.sp, 8.sp, 16.sp, 20.sp),
+                itemCount: items.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  // Taller cells reduce overflow risk on long titles
+                  childAspectRatio: 0.56,
+                  crossAxisSpacing: 16.sp,
+                  mainAxisSpacing: 18.sp,
                 ),
-              )
+                itemBuilder: (context, index) {
+                  final m = items[index] as Map<String, dynamic>? ?? {};
+
+                  // Prefer new API fields, fallback to legacy
+                  final brand = (m['brand_name'] ?? m['brandName'] ?? '')
+                      .toString()
+                      .trim();
+
+                  final title =
+                      (m['title'] ?? m['name'] ?? m['productTitle'] ?? '')
+                          .toString()
+                          .trim();
+
+                  final shortDesc = (m['shortDescription'] ??
+                          m['short_description'] ??
+                          m['shortDesc'] ??
+                          '')
+                      .toString()
+                      .trim();
+
+                  num? price;
+                  final rawPrice = m['basePrice'] ??
+                      m['base_price'] ??
+                      m['baseprice'] ??
+                      m['price'];
+                  if (rawPrice is num) {
+                    price = rawPrice;
+                  } else if (rawPrice is String) {
+                    price = num.tryParse(rawPrice);
+                  }
+
+                  num? mrp;
+                  final rawMrp = m['mrp'];
+                  if (rawMrp is num) {
+                    mrp = rawMrp;
+                  } else if (rawMrp is String) {
+                    mrp = num.tryParse(rawMrp);
+                  }
+
+                  final img = _imageFrom(m);
+
+                  // Robust product id parsing
+                  final int pid = () {
+                    final v = m['id'];
+                    if (v is int) return v;
+                    return int.tryParse(v?.toString() ?? '') ?? 0;
+                  }();
+
+                  return GestureDetector(
+                    onTap: () async {
+                      if (pid == 0) {
+                        getSnackBar("Product not available");
+                        return;
+                      }
+                      Get.to(
+                        ProductDetailsScreen(
+                          brandName: brand.isEmpty ? title : brand,
+                          expressValue: widget.type == "express" ? 1 : 0,
+                          backgroundcolor: widget.type == "express"
+                              ? homeAppBarColor
+                              : whiteColor,
+                          productId: pid,
+                          type: "add",
+                        ),
+                      )?.then((_) => controller.getCartData());
+                      await analytics.logEvent(
+                        name: 'category_product_details',
+                        parameters: {'page_name': 'category_product_details'},
+                      );
+                    },
+                    child: _ProductTileNoOverflow(
+                      imageUrl: img,
+                      brand: brand.isEmpty ? title : brand,
+                      description: shortDesc.isEmpty ? title : shortDesc,
+                      mrp: mrp,
+                      price: price,
+                      fmt: _fmtINR,
+                    ),
+                  );
+                },
+              );
+            }),
+          ),
+
+          // --- ENABLED BOTTOM BAR ---
+          Container(
+            color: statusBarColor,
+            child: Column(
+              children: [
+                Container(height: 1.sp, color: dividerColor),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _activeBottomButton(
+                        icon: sortBySvgImage,
+                        label: "SORT BY",
+                        onTap: () async {
+                          // 👉 Open your sort modal or page
+                          getSnackBar("Sort options coming soon!");
+                          // Example: await showSortBottomSheet(context);
+                        },
+                      ),
+                      _divider(),
+                      _activeTextOnlyButton(
+                        "CATEGORY",
+                        subtitle: widget.genderName.toUpperCase(),
+                        onTap: () async {
+                          // _showGenderSelector(context);
+                        },
+                      ),
+                      _divider(),
+                      _activeBottomButton(
+                        icon: filterSvgImage,
+                        label: "FILTERS",
+                        vector: true,
+                        onTap: () async {
+                          // 👉 Open filters bottom sheet
+                          getSnackBar("Filter options coming soon!");
+                          // Example: await showFilterBottomSheet(context);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _genderOption(BuildContext context, String label, int genderType) {
+    return ListTile(
+      leading: Icon(
+        genderType == 1
+            ? Icons.male
+            : genderType == 2
+                ? Icons.female
+                : Icons.shopping_bag_outlined,
+        color: appBarColor,
+      ),
+      title: Text(
+        label,
+        style: const TextStyle(
+          fontFamily: "Franklin Gothic Regular",
+          fontWeight: FontWeight.w500,
+          fontSize: 16,
+          color: blackColor,
+        ),
+      ),
+      onTap: () async {
+        Navigator.pop(context); // close sheet
+
+        // Save new gender selection
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('selectedGender', genderType);
+
+        // Clear cached filters
+        await _clearPref();
+
+        // Fetch category products for selected gender
+        catalogController.isCategory.value = true;
+        await catalogController.getCategoryProductData(
+          widget.categoryId,
+          genderType,
+        );
+        catalogController.isCategory.value = false;
+
+        // Show feedback
+        getSnackBar("Switched to $label");
+
+        setState(() {
+          // Update local gender name in UI
+          widget.genderName == label;
+        });
+      },
+    );
+  }
+
+  Widget _divider() =>
+      Container(width: 1.sp, color: dividerColor, height: 46.sp);
+
+  Widget _activeBottomButton({
+    required String icon,
+    required String label,
+    required VoidCallback onTap,
+    bool vector = false,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              icon,
+              height: vector ? 11.sp : 19.sp,
+              width: vector ? 17.sp : 15.sp,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.sp),
+              child: Text(
+                label,
+                style: const TextStyle(
+                  color: Color(0xFF374151),
+                  fontSize: 13,
+                  fontFamily: "Franklin Gothic",
+                  fontWeight: FontWeight.w500,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _activeTextOnlyButton(
+    String label, {
+    String? subtitle,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
+        child: Column(
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                color: Color(0xFF374151),
+                fontSize: 13,
+                fontFamily: "Franklin Gothic",
+                fontWeight: FontWeight.w500,
+                decoration: TextDecoration.none,
+              ),
+            ),
+            if ((subtitle ?? '').isNotEmpty)
+              Padding(
+                padding: EdgeInsets.only(top: 1.sp),
+                child: Text(
+                  subtitle!,
+                  style: const TextStyle(
+                    decoration: TextDecoration.underline,
+                    fontFamily: "Franklin Gothic Regular",
+                    fontWeight: FontWeight.w400,
+                    color: appBarColor,
+                    fontSize: 10,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Card that never overflows.
+class _ProductTileNoOverflow extends StatelessWidget {
+  final String? imageUrl;
+  final String brand;
+  final String description;
+  final num? mrp;
+  final num? price;
+  final String Function(num?, {bool cents}) fmt;
+
+  const _ProductTileNoOverflow({
+    required this.imageUrl,
+    required this.brand,
+    required this.description,
+    required this.mrp,
+    required this.price,
+    required this.fmt,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: imageUrl != null && imageUrl!.trim().isNotEmpty
+                ? CachedNetworkImage(
+                    cacheManager: CacheManager(
+                      Config(
+                        "productGridCache",
+                        stalePeriod: Duration(days: 15),
+                        maxNrOfCacheObjects: 100,
+                      ),
+                    ),
+                    imageUrl: imageUrl!,
+                    fit: BoxFit.cover,
+                    errorWidget: (_, __, ___) =>
+                        Image.asset(downloadImage, fit: BoxFit.cover),
+                  )
+                : Image.asset(dummyWishlistImage, fit: BoxFit.cover),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(6.sp, 8.sp, 6.sp, 0),
+          child: Text(
+            brand.toUpperCase(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: blackColor,
+              fontSize: 15,
+              fontFamily: "Franklin Gothic",
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(6.sp, 4.sp, 6.sp, 0),
+          child: Text(
+            description,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xFF6B7280),
+              fontSize: 13,
+              fontFamily: "Franklin Gothic Regular",
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(6.sp, 6.sp, 6.sp, 0),
+          child: Row(
+            children: [
+              if (mrp != null && mrp! > 0)
+                Padding(
+                  padding: EdgeInsets.only(right: 6.sp),
+                  child: Text(
+                    fmt(mrp, cents: true),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Color(0xFF9CA3AF),
+                      fontSize: 13,
+                      fontFamily: "Franklin Gothic Regular",
+                      fontWeight: FontWeight.w400,
+                      decoration: TextDecoration.lineThrough,
+                    ),
+                  ),
+                ),
+              Text(
+                (price == null || price == 0) ? "" : fmt(price, cents: true),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: blackColor,
+                  fontSize: 15,
+                  fontFamily: "Franklin Gothic",
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ],
-          )),
+          ),
+        ),
+      ],
     );
   }
 }

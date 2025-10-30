@@ -38,6 +38,7 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
+  @override
   void initState() {
     super.initState();
 
@@ -45,23 +46,23 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
       statusBarColor: statusBarColor,
     ));
 
-    // Run after widget has built and controller values are available
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.text1 == "Order Placed Successfully") {
-        final orderValue = controller.cartTotalValue.value.toDouble();
+    if (widget.text1 == "Order Placed Successfully") {
+      // Log Facebook Purchase event
+      AnalyticsHelper.logPurchase(
+        productId: widget.orderId.toString(),
+        value: 0.0, // or correct total value
+      );
 
-        if (orderValue > 0) {
-          AnalyticsHelper.logPurchase(
-            productId: widget.orderId.toString(),
-            value: orderValue,
-          );
-          print(
-              "✅ Facebook logPurchase tracked for order ${widget.orderId} with value: $orderValue");
-        } else {
-          print("⚠️ Skipping logPurchase: cart value is zero.");
-        }
-      }
-    });
+      // Log Firebase Analytics event
+      analytics.logEvent(
+        name: 'purchase_success',
+        parameters: <String, Object>{
+          'order_id': widget.orderId,
+          'value': controller.cartTotalValue.value,
+          'currency': 'USD',
+        },
+      );
+    }
   }
 
   @override
@@ -122,27 +123,7 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
                         ? "TRY again"
                         : "BACK to cart",
                 image: widget.image,
-                onPressed: () async {
-                  if (widget.text1 == "Order Placed Successfully") {
-                    Get.close(1);
-                    Get.off(OrderDetailsScreen(
-                      orderId: widget.orderId,
-                    ));
-                    controller.orderList.clear();
-                    controller.cartTotalValue.value = 0;
-                    controller.getCartData();
-                  } else if (widget.text1 == "Payment Failed") {
-                    Get.close(1);
-                  } else {
-                    Get.close(1);
-                  }
-                  await analytics.logEvent(
-                    name: 'btn_${widget.text1}',
-                    parameters: <String, Object>{
-                      'page_name': 'btn_${widget.text1}',
-                    },
-                  );
-                },
+                onPressed: () async {},
                 visible:
                     widget.text1 == "Order Placed Successfully" ? true : false,
               ),

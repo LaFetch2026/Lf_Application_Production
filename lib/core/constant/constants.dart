@@ -270,15 +270,18 @@ const sandLoader = 'assets/images/sand_loader.json';
 class ApiConstants {
   ApiConstants._();
 
-  static const String baseUrl =
-      "https://api.la-fetch.com/customer/api"; //production
+  // static const String baseUrl =
+  // "https://api.la-fetch.com/customer/api"; //production
 
-  // static const String baseUrl = "http://localhost:8080/api"; //testing nordjs
+  // static const String baseUrl = "http://192.168.1.69:8080/api"; //local nordjs
 
   static const String razorPayKey = "rzp_live_rhkxLWkaUrRAHO"; //production
 
-// static const String baseUrl =
-//  "https://staging-api.la-fetch.com/customer/api"; //staging
+  static const String baseUrl = "http://65.0.153.196:8080/api"; //staging
 
 //  static const String razorPayKey = "rzp_test_CA2ZhiypSpQQlk"; //staging
 }
+
+// for meta dashborad
+// Business Manager ID: 571572502507020
+// Ad Account ID: 1180043083793246

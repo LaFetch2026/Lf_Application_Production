@@ -63,7 +63,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
       ));
     });
     WidgetsBinding.instance
-        .addPostFrameCallback((_) => wishlistController.getWishlistData());
+        .addPostFrameCallback((_) => wishlistController.fetchBoards());
     super.initState();
   }
 
@@ -87,7 +87,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
               backColor: statusBarColor,
               text: widget.title.toUpperCase(),
               onPressedSearch: () async {
-                Get.to(const SearchScreen())?.then((value) => setState(
+                Get.to(SearchScreen())?.then((value) => setState(
                       () {},
                     ));
                 analytics
@@ -286,19 +286,20 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                           Navigator.push(
                                               context,
                                               scaleIn(CategoryProductScreen(
-                                                  categoryName: controller
-                                                          .categoryProductList[
-                                                      index]["name"],
-                                                  genderName:
-                                                      widget.catalogText,
-                                                  categoryId: controller
-                                                          .categoryProductList[
-                                                      index]["id"],
-                                                  brandId: 0,
-                                                  screen: "category",
-                                                  genderType: widget.genderType,
-                                                  categoryList: [],
-                                                  tagIds: const [])));
+                                                categoryName: controller
+                                                        .categoryProductList[
+                                                    index]["name"],
+                                                genderName: widget.catalogText,
+                                                categoryId: controller
+                                                        .categoryProductList[
+                                                    index]["id"],
+                                                brandId: 0,
+                                                screen: "category",
+                                                genderType: widget.genderType,
+                                                categoryList: [],
+                                                tagIds: const [],
+                                                title: '',
+                                              )));
                                           await analytics.logEvent(
                                             name: 'category_product_screen',
                                             parameters: <String, Object>{
@@ -444,7 +445,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                                       },
                                                       wishlistList:
                                                           wishlistController
-                                                              .wishlistList));
+                                                              .boardProducts));
                                               await analytics.logEvent(
                                                 name:
                                                     'allbrand_bestseller_wishlist',

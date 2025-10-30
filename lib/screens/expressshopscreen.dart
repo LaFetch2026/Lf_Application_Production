@@ -51,7 +51,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
     }
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       brandController.brandListController.addListener(() {
-        brandController.fetchMoreData("express");
+        // brandController.fetchMoreData("express");
         brandController.update();
       });
     });
@@ -89,8 +89,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
     }
     productController.isBrandProduct.value = true;
     setState(() {});
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getDefaultAddressData(0, context));
+  
     WidgetsBinding.instance
         .addPostFrameCallback((_) => brandController.getBrandData("express"));
   }
@@ -106,8 +105,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
     prefs.setDouble("longitude", productController.lng.value);
     productController.isBrandProduct.value = true;
     setState(() {});
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getDefaultAddressData(0, context));
+
     WidgetsBinding.instance
         .addPostFrameCallback((_) => brandController.getBrandData("express"));
   }
@@ -255,7 +253,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
           children: [
             HomeAppbar(
               onPressedSearch: () async {
-                Get.to(const SearchScreen());
+                Get.to(SearchScreen());
                 await analytics.logEvent(
                   name: 'search_page',
                   parameters: <String, Object>{
@@ -340,8 +338,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                       )))
                               .then((value) => setState(
                                     () {
-                                      productController.getDefaultAddressData(
-                                          0, context);
+                                     
                                       productController.addressList.clear();
                                     },
                                   ));
@@ -845,9 +842,9 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                         onPageChanged: callOnchanged,
                         physics: const NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
-                          return ViewAllScreen(
-                            brandId: productController.brand_id.value,
-                          );
+                          // return ViewAllScreen(
+                          //   brandId: productController.brand_id.value,
+                          // );
                         },
                       ),
                     )

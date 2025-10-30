@@ -190,12 +190,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                         if (controller
                                             .couponController.text.isNotEmpty) {
                                           FocusScope.of(context).unfocus();
-                                          controller.callAddCoupon(
-                                              controller.couponController.text
-                                                  .toString()
-                                                  .trim(),
-                                              "coupon",
-                                              widget.backColor);
+
                                           await analytics.logEvent(
                                             name: 'coupon_btnapply',
                                             parameters: <String, Object>{
@@ -317,12 +312,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                         if (controller
                                             .couponController.text.isNotEmpty) {
                                           FocusScope.of(context).unfocus();
-                                          controller.callAddCoupon(
-                                              controller.couponController.text
-                                                  .toString()
-                                                  .trim(),
-                                              "coupon",
-                                              widget.backColor);
+
                                           await analytics.logEvent(
                                             name: 'coupon_btnapply',
                                             parameters: <String, Object>{
@@ -1022,6 +1012,7 @@ class BottomCouponState extends State<BottomCoupon> {
                                                             controller.tagsList,
                                                         categoryList: controller
                                                             .categoryList,
+                                                        title: '',
                                                       ),
                                                     )).then(
                                                   (value) {

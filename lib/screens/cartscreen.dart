@@ -1,7 +1,4 @@
-// ignore_for_file: avoid_print, deprecated_member_use
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,23 +7,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:lafetch/common/widget/bottom_sheets/bottomCoupon.dart';
+import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/loginscreen.dart';
-import 'package:lafetch/screens/mapscreen.dart';
 import 'package:lafetch/screens/paymentcheckscreen.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
 import 'package:lafetch/screens/wishlist/newboardscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-//import '../commonwidget/homewidget/dummy_product_list.dart';
-
 import '../common/widget/appbar/cart_appbar.dart';
 import '../common/widget/bottom_sheets/bottomCharges.dart';
 import '../common/widget/bottom_sheets/bottomquantity.dart';
-import '../common/widget/bottom_sheets/bottomsize.dart';
 import '../common/widget/bottom_sheets/bottomwishlist.dart';
 import '../common/widget/bottom_sheets/cartbottom.dart';
 import '../common/widget/bottom_sheets/totaltaxCharges.dart';
@@ -43,7 +37,6 @@ import '../controllers/product_controller.dart';
 import '../controllers/profile_controller.dart';
 import '../controllers/wishlist_controller.dart';
 import '../core/constant/constants.dart';
-import '../core/utils/analytics_helper.dart';
 import 'catalog/productlist/productdetailsscreen.dart';
 
 class CartScreen extends StatefulWidget {
@@ -59,131 +52,1406 @@ class CartScreenState extends State<CartScreen> {
   final controller = Get.put(CartController());
   final profileController = Get.put(ProfileController());
   final productController = Get.put(ProductController());
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  List qtyList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
-  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  final Razorpay razorpay = Razorpay();
   final wishlistController = Get.put(WishlistController());
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  List<String> qtyList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
+  // ⚠️ Use build-time config; do not hardcode live key in production.
+  static const String _razorpayKey = "rzp_live_rhkxLWkaUrRAHO";
+
+  late Razorpay _razorpay;
+
+  /// Holds an address chosen in SavedAddressScreen before backend attach.
+  Map<String, dynamic>? _pendingSelectedAddress;
+
+  // ---------- Utilities ----------
+
+  String? _firstImageUrl(dynamic product) {
+    if (product is! Map) return null;
+    final images = product["images"];
+    if (images == null) return null;
+
+    if (images is String) return images.isNotEmpty ? images : null;
+
+    if (images is List) {
+      for (final it in images) {
+        if (it == null) continue;
+        if (it is String && it.isNotEmpty) return it;
+        if (it is Map) {
+          final url =
+              (it["name"] ?? it["url"] ?? it["image"] ?? it["src"])?.toString();
+          if (url != null && url.isNotEmpty) return url;
+        }
+      }
+    }
+    return null;
+  }
+
+  num _asNum(dynamic v) {
+    if (v is num) return v;
+    return num.tryParse('$v'.replaceAll(',', '').trim()) ?? 0;
+  }
+
+  // ---------- Razorpay Handlers ----------
+
+  void _onPaymentSuccess(PaymentSuccessResponse response) async {
+    final int orderId = (controller.cartDetails["id"] is num)
+        ? (controller.cartDetails["id"] as num).toInt()
+        : int.tryParse("${controller.cartDetails["id"]}") ?? 0;
+
+    // ✅ Clear saved coupon after successful payment
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('applied_coupon_code');
+    await prefs.remove('applied_coupon_discount');
+
+    // Verify on backend; then process
+    controller.callProcessPayment(
+      orderId,
+      response.paymentId ?? "",
+      response.orderId ?? "",
+      response.signature ?? "",
+    );
+  }
+
+  void _onPaymentError(PaymentFailureResponse response) {
+    // Typical cancel flows from Razorpay return code == 2 on Android/iOS.
+    // Fallback to message-text checks just in case.
+    final msg = (response.message ?? '').toLowerCase();
+    final bool isUserCancelled = response.code == 2 ||
+        msg.contains('cancelled') ||
+        msg.contains('canceled');
+
+    if (isUserCancelled) {
+      // Stay on CartScreen and show a snackbar/toast
+      getSnackBar("Payment declined by user");
+      return;
+    }
+
+    // For any other kind of failure, keep your existing fallback
+    final int orderId = (controller.cartDetails["id"] is num)
+        ? (controller.cartDetails["id"] as num).toInt()
+        : int.tryParse("${controller.cartDetails["id"]}") ?? 0;
+
+    getSnackBar("Payment failed. Please try again.");
+    Get.to(PaymentCheckScreen(orderId: orderId));
+  }
+
+  void _onExternalWallet(ExternalWalletResponse response) {
+    Get.to(const PaymentSuccessScreen(
+      text1: "Uh-oh something went wrong!",
+      orderId: 0,
+      text2: "Thank you for placing your order",
+      image: errorImage,
+    ));
+  }
+
+  num _computeCartTotalInRupees() {
+    final dynamic total = controller.cartDetails["final_amount"] ??
+        controller.cartDetails["total"];
+    if (total is num) return total;
+    if (total is String) return num.tryParse(total) ?? 0;
+    return 0;
+  }
+
+  Future<void> _debugPhoneNumber() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    print('=== PHONE DEBUG ===');
+    print('phone_number from prefs: ${prefs.getString('phone_number')}');
+    print('controller.userNumber.value: ${controller.userNumber.value}');
+
+    // Check all keys in SharedPreferences
+    print('All SharedPreferences keys:');
+    prefs.getKeys().forEach((key) {
+      if (key.toLowerCase().contains('phone') ||
+          key.toLowerCase().contains('mobile') ||
+          key.toLowerCase().contains('contact')) {
+        print('  $key: ${prefs.get(key)}');
+      }
+    });
+    print('==================');
+  }
+
+  Future<void> _handleCheckout() async {
+    final readyToPay = controller.cartDetails["address"] != null ||
+        _pendingSelectedAddress != null;
+
+    if (!readyToPay) {
+      _handleAddressSelection();
+      return;
+    }
+
+    // Validate phone number before opening Razorpay
+    final prefs = await SharedPreferences.getInstance();
+
+    // ✅ FIX: Use 'phonenumber' (lowercase, no underscore)
+    String rawPhone =
+        prefs.getString('phonenumber') ?? controller.userNumber.value;
+
+    rawPhone = rawPhone.trim();
+
+    print('Raw phone: $rawPhone');
+
+    final String phone = _sanitizeIndianPhone(rawPhone);
+
+    print('Sanitized phone: $phone (length: ${phone.length})');
+
+    if (phone.length != 10) {
+      getSnackBar('Please update your phone number in profile to continue');
+      return;
+    }
+
+    await _openRazorpayCheckout();
+  }
+
+  String _sanitizeIndianPhone(String? raw) {
+    if (raw == null || raw.isEmpty) return '';
+
+    // Remove all non-digits
+    final digits = raw.replaceAll(RegExp(r'\D'), '');
+
+    // If starts with 91, remove it
+    String cleanDigits = digits;
+    if (digits.startsWith('91') && digits.length > 10) {
+      cleanDigits = digits.substring(2);
+    }
+
+    // Return last 10 digits
+    return cleanDigits.length >= 10
+        ? cleanDigits.substring(cleanDigits.length - 10)
+        : cleanDigits;
+  }
+
+  bool _hasValidPhone(String? raw) {
+    final sanitized = _sanitizeIndianPhone(raw);
+    return sanitized.length == 10;
+  }
+
+  Future<void> _openRazorpayCheckout() async {
+    final num cartTotalInRupees = _computeCartTotalInRupees();
+    final int amountInPaise = (cartTotalInRupees * 100).round();
+
+    // Read user info for prefill
+    final prefs = await SharedPreferences.getInstance();
+    final String userName = (prefs.getString('user_name') ?? '').trim();
+    final String userEmail = (prefs.getString('email') ?? '').trim();
+
+    // ✅ FIX: Use 'phonenumber' (lowercase, no underscore)
+    String rawPhone =
+        prefs.getString('phonenumber') ?? controller.userNumber.value;
+
+    rawPhone = rawPhone.trim();
+    final String phone = _sanitizeIndianPhone(rawPhone);
+
+    // Debug logging (remove in production)
+    print('=== RAZORPAY CHECKOUT ===');
+    print('Raw phone: $rawPhone');
+    print('Sanitized phone: $phone');
+    print('Phone length: ${phone.length}');
+    print('========================');
+
+    final String? orderId =
+        controller.cartDetails['payment']?['transaction_id'];
+
+    final options = <String, dynamic>{
+      'key': _razorpayKey,
+      'amount': amountInPaise,
+      'currency': 'INR',
+      if (orderId != null && orderId.isNotEmpty) 'order_id': orderId,
+
+      // BRANDING
+      'name': 'Lafetch',
+      'description': 'Order #${controller.cartDetails["id"] ?? ""}',
+
+      // USER PREFILL - Contact is mandatory with +91 prefix
+      'prefill': <String, dynamic>{
+        if (userName.isNotEmpty) 'name': userName,
+        if (userEmail.isNotEmpty) 'email': userEmail,
+        // ⚠️ CRITICAL: Always include +91 prefix for Indian numbers
+        if (phone.length == 10) 'contact': '+91$phone',
+      },
+
+      // Lock fields if we have valid data
+      'readonly': <String, dynamic>{
+        if (userName.isNotEmpty) 'name': true,
+        if (userEmail.isNotEmpty) 'email': true,
+        if (phone.length == 10) 'contact': true,
+      },
+
+      'remember_customer': true,
+      if (phone.length == 10) 'send_sms_hash': true,
+      'retry': {'enabled': true, 'max_count': 1},
+      'theme': {'color': '#070707'},
+
+      'notes': {
+        'cart_id': '${controller.cartDetails["id"] ?? ""}',
+      },
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      print('Razorpay error: $e');
+      getSnackBar("Unable to start payment: $e");
+    }
+  }
+
+  // ---------- Lifecycle ----------
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    super.initState();
+
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onPaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _onPaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _onExternalWallet);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.qtyProductId.value = 0;
       controller.qtyText.value = "";
       controller.stockErrorText.value = "";
       controller.couponList.clear();
       controller.selected.clear();
-      controller.selected = List
-          .generate(50, (i) => false)
-          .obs;
+      controller.selected = List.generate(50, (i) => false).obs;
       controller.addressError.value = "";
       controller.userNumber.value = "";
-    });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+
+      // ✅ DON'T reset coupon text if it already exists
+      // controller.couponText.value stays as is
+
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarColor: widget.backgroundcolor == whiteColor
-              ? statusBarColor
-              : homeAppBarColor,
-          systemNavigationBarColor: widget.backgroundcolor == whiteColor
-              ? Colors.transparent
-              : homeAppBarColor));
+        statusBarColor: widget.backgroundcolor == whiteColor
+            ? statusBarColor
+            : homeAppBarColor,
+        systemNavigationBarColor: widget.backgroundcolor == whiteColor
+            ? Colors.transparent
+            : homeAppBarColor,
+      ));
     });
-    getPrefrenceValue();
+
+    getPreferenceValue();
+
     WidgetsBinding.instance
         .addPostFrameCallback((_) => wishlistController.getWishlistData());
-    /*  WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getProductData("relevant")); */
-    /*  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.hasnextpage.value = true;
-      productController.loadMore.value = false;
-      productController.isProduct.value = false;
-      productController.page.value = 1;
-    }); */
-    /* WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.listController.addListener(() {
-        productController.fetchMoreData("relevant");
-        productController.update();
-      });
-    }); */
-    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
-    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
-    razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
-    super.initState();
   }
 
-  Future getPrefrenceValue() async {
-    controller.isOrder.value = true;
+  Future<void> getPreferenceValue() async {
     final prefs = await SharedPreferences.getInstance();
-    if (prefs.getString("phone_number") != null) {
-      controller.userNumber.value = prefs.getString("phone_number")!;
-    }
-    if (prefs.getBool("skip") == true) {
-      Get.to(
-            () =>
-        const LoginScreen(
-          initialTab: 0,
-          hideBack: true,
+    final phone = prefs.getString("phonenumber");
+
+    final skip = prefs.getBool("skip") == true;
+
+    // ✅ Restore saved coupon
+    final savedCouponCode = prefs.getString('applied_coupon_code');
+    final savedCouponDiscount = prefs.getInt('applied_coupon_discount');
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      if (phone != null) {
+        controller.userNumber.value = phone;
+      }
+
+      // ✅ Restore coupon state if exists
+      if (savedCouponCode != null && savedCouponDiscount != null) {
+        controller.couponText.value = savedCouponCode;
+        controller.cartDetails["coupon_discount"] = savedCouponDiscount;
+        controller.cartDetails["discount"] = true;
+      } else {
+        // Only reset if no saved coupon
+        controller.couponText.value = "Apply Coupon";
+      }
+
+      if (skip) {
+        Get.to(() => const LoginScreen(initialTab: 0, hideBack: true));
+        return;
+      }
+
+      if (widget.backgroundcolor == whiteColor) {
+        controller.getCartData();
+      } else {
+        // controller.getExpressCartData();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _razorpay.clear(); // remove listeners & cleanup
+    super.dispose();
+  }
+
+  // ---------- UI ----------
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        if (widget.backgroundcolor == homeAppBarColor) {
+          Get.offAll(const BottomNavScreen(index: 0));
+          return false;
+        }
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: widget.backgroundcolor,
+        key: scaffoldKey,
+        body: Stack(
+          children: [
+            Obx(
+              () => controller.isPayment.value
+                  ? Container(
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      color: whiteColor,
+                      child: const Center(child: CircularProgressIndicator()),
+                    )
+                  : Column(
+                      children: [
+                        // App Bar (light theme)
+                        Visibility(
+                          visible: widget.backgroundcolor == whiteColor,
+                          child: CartAppbar(
+                            text: "Bag",
+                            onPressedWishlist: () async {
+                              Get.to(WishlistScreen());
+                              await analytics.logEvent(
+                                name: 'wishlist_page',
+                                parameters: <String, Object>{
+                                  'page_name': 'wishlist_page',
+                                },
+                              );
+                            },
+                          ),
+                        ),
+
+                        // Divider
+                        Visibility(
+                          visible: widget.backgroundcolor == whiteColor,
+                          child: Container(
+                            color: dividerColor,
+                            height: 1.sp,
+                          ),
+                        ),
+
+                        // Main Content
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Stack(
+                              children: [
+                                // Dark theme background decoration
+                                Visibility(
+                                  visible: widget.backgroundcolor != whiteColor,
+                                  child: Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    child: ShaderMask(
+                                      shaderCallback: (Rect bounds) {
+                                        return const LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.black,
+                                            Colors.transparent
+                                          ],
+                                          stops: [0.1, 1.0],
+                                        ).createShader(bounds);
+                                      },
+                                      blendMode: BlendMode.dstIn,
+                                      child: Image.asset(
+                                        quickBackCircle,
+                                        height: 250.sp,
+                                        width: 300.sp,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                Column(
+                                  children: [
+                                    // Dark theme header
+                                    Visibility(
+                                      visible:
+                                          widget.backgroundcolor != whiteColor,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(top: 50.sp),
+                                            child: Center(
+                                              child: Image.asset(
+                                                bagLogoImage,
+                                                height: 33.sp,
+                                                width: 17.sp,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 28.sp, left: 16.sp),
+                                            child: const AppText(
+                                              text: "BAG",
+                                              fontFamily:
+                                                  "Franklin Gothic Semibold",
+                                              fontWeight: FontWeight.w600,
+                                              color: whiteColor,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 1.sp, left: 16.sp),
+                                            child: Obx(
+                                              () => controller.isOrder.value
+                                                  ? const DummyContainer(
+                                                      height: 8, width: 50)
+                                                  : AppText(
+                                                      text: controller.orderList
+                                                                  .length ==
+                                                              1
+                                                          ? "${controller.orderList.length} Product"
+                                                          : "${controller.orderList.length} Products",
+                                                      fontFamily:
+                                                          "Franklin Gothic Regular",
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color:
+                                                          productSubtitleColor,
+                                                      fontSize: 10,
+                                                    ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // Cart Items List
+                                    Obx(
+                                      () => controller.isOrder.value
+                                          ? widget.backgroundcolor == whiteColor
+                                              ? const DummyOrderList(size: 3)
+                                              : const DummyBlackOrderList(
+                                                  size: 3)
+                                          : controller.orderList.isNotEmpty
+                                              ? _buildCartItemsList()
+                                              : _buildEmptyCart(),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        // Bottom Section (Address & Checkout)
+                        Obx(
+                          () => !controller.isOrder.value &&
+                                  controller.orderList.isNotEmpty
+                              ? _buildBottomSection()
+                              : const SizedBox.shrink(),
+                        ),
+                      ],
+                    ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildCartItemsList() {
+    final items = List<Map<String, dynamic>>.from(controller.orderList);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListView.builder(
+          key: ValueKey(
+              items.map((e) => e['id'] ?? e['product']?['id']).join(',')),
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: items.length,
+          padding: EdgeInsets.zero,
+          itemBuilder: (ctx, index) {
+            final item = items[index];
+            final product =
+                (item["product"] ?? const {}) as Map<String, dynamic>;
+            final inventory =
+                (item["inventory"] ?? const {}) as Map<String, dynamic>;
+            final imgUrl = _firstImageUrl(product);
+            final outOfStock = _asNum(inventory["stocks"]).toInt() == 0;
+
+            return KeyedSubtree(
+              key: ValueKey(item['id'] ?? '${product['id']}_$index'),
+              child: Padding(
+                padding: EdgeInsets.only(left: 16.sp, right: 16.sp),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 16.sp),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildProductImage(
+                              product, imgUrl, outOfStock, index),
+                          _buildProductDetails(
+                              product, inventory, item, index, outOfStock),
+                          _buildRemoveButton(item, index),
+                        ],
+                      ),
+                    ),
+                    if (outOfStock)
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.sp, vertical: 8.sp),
+                        child: const AppText(
+                          text: "OUT OF STOCK",
+                          color: redColor,
+                          fontSize: 10,
+                          maxLines: 1,
+                          fontFamily: "Franklin Gothic",
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    if (outOfStock) _buildOutOfStockActions(item, index),
+                    Padding(
+                      padding: EdgeInsets.only(top: 16.sp),
+                      child: Container(
+                        width: double.infinity,
+                        color: widget.backgroundcolor == whiteColor
+                            ? colorSecondary
+                            : titleColor,
+                        height: 1.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+        _buildOrderSummary(),
+      ],
+    );
+  }
+
+  Widget _buildProductImage(
+      Map product, String? imgUrl, bool outOfStock, int index) {
+    return GestureDetector(
+      onTap: () => _navigateToProductDetails(index),
+      child: Opacity(
+        opacity: outOfStock ? 0.5 : 1,
+        child: SizedBox(
+          height: 130.sp,
+          width: 100.sp,
+          child: imgUrl != null
+              ? CachedNetworkImage(
+                  cacheManager: CacheManager(
+                    Config(
+                      "customCacheKey",
+                      stalePeriod: const Duration(days: 15),
+                      maxNrOfCacheObjects: 100,
+                    ),
+                  ),
+                  fit: BoxFit.cover,
+                  imageUrl: imgUrl,
+                  errorWidget: (context, url, error) => Image.asset(
+                    downloadImage,
+                    fit: BoxFit.cover,
+                    height: 130.sp,
+                    width: 100.sp,
+                  ),
+                )
+              : Image.asset(
+                  dummyWishlistImage,
+                  height: 130.sp,
+                  width: 100.sp,
+                  fit: BoxFit.cover,
+                ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductDetails(
+      Map product, Map inventory, Map item, int index, bool outOfStock) {
+    return Padding(
+      padding: EdgeInsets.only(left: 12.sp),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Brand
+          GestureDetector(
+            onTap: () => _navigateToProductDetails(index),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width - 165.sp,
+              child: AppText(
+                text: (product["brand_name"] ?? "").toString().toUpperCase(),
+                maxLines: 1,
+                fontFamily: "Franklin Gothic",
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+                color: widget.backgroundcolor == whiteColor
+                    ? (outOfStock ? blackColor.withOpacity(0.3) : blackColor)
+                    : whiteColor,
+              ),
+            ),
+          ),
+
+          // Product Name
+          GestureDetector(
+            onTap: () => _navigateToProductDetails(index),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width - 165.sp,
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 4.sp),
+                child: AppText(
+                  text: Bidi.stripHtmlIfNeeded(product["name"] ?? ""),
+                  color: widget.backgroundcolor == whiteColor
+                      ? (outOfStock
+                          ? subtitleColor.withOpacity(0.5)
+                          : subtitleColor)
+                      : productSubtitleColor,
+                  maxLines: 1,
+                  fontSize: 14,
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ),
+
+          Opacity(
+            opacity: outOfStock ? 0.5 : 1,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 4.sp),
+              child: Row(
+                children: [
+                  // 👇 Size box shown as non-clickable (disabled)
+                  if (inventory["product_matrix_name_size"] != null &&
+                      inventory["product_matrix_name_size"]
+                          .toString()
+                          .isNotEmpty)
+                    Padding(
+                      padding: EdgeInsets.only(top: 5.sp, bottom: 5.sp),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: widget.backgroundcolor == whiteColor
+                              ? const Color(0xffF3F4F6)
+                              : const Color(0xFFDFDBFF),
+                          border: Border.all(
+                            width: 1,
+                            color: widget.backgroundcolor == whiteColor
+                                ? const Color(0xFFE5E7EB)
+                                : titleColor,
+                          ),
+                        ),
+                        height: 30.sp,
+                        width: 85.sp,
+                        alignment: Alignment.center,
+                        child: AppText(
+                          text:
+                              "Size : ${inventory["product_matrix_name_size"].toString()}",
+                          color: titleColor,
+                          fontSize: 10,
+                          fontFamily: "Franklin Gothic Regular",
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+
+                  // 👇 Only this (Qty) can be changed
+                  GestureDetector(
+                    onTap: () => _showQuantityBottomSheet(index),
+                    child: Padding(
+                      padding:
+                          EdgeInsets.only(left: 10.sp, top: 5.sp, bottom: 5.sp),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: widget.backgroundcolor == whiteColor
+                              ? const Color(0xffF3F4F6)
+                              : const Color(0xFFDFDBFF),
+                          border: Border.all(
+                            width: 1,
+                            color: widget.backgroundcolor == whiteColor
+                                ? const Color(0xFFE5E7EB)
+                                : titleColor,
+                          ),
+                        ),
+                        height: 30.sp,
+                        width: 85.sp,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 5.sp, horizontal: 8.sp),
+                              child: AppText(
+                                text: "Qty : ${item["quantity"] ?? "0"}",
+                                color: titleColor,
+                                fontSize: 10,
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: 2.sp, top: 2.sp, right: 2.sp),
+                              child: SvgPicture.asset(
+                                dropdownSvgImage,
+                                color: titleColor,
+                                height: 5.sp,
+                                width: 8.sp,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Qty error
+          Obx(
+            () => product["id"] == controller.qtyProductId.value
+                ? SizedBox(
+                    width: MediaQuery.of(context).size.width - 165.sp,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5.sp),
+                      child: AppText(
+                        text: controller.qtyText.value,
+                        color: deepRed,
+                        fontSize: 12,
+                        maxLines: 3,
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
+
+          // Prices
+          Opacity(
+            opacity: outOfStock ? 0.5 : 1,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 4.sp),
+              child: Row(
+                children: [
+                  // MRP
+                  Visibility(
+                    visible: product["mrp"] != null &&
+                        product["mrp"] != product["price"] &&
+                        _asNum(product["mrp"]) > _asNum(product["price"]),
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 10.sp),
+                      child: Text(
+                        "₹${product["mrp"] ?? "0"}",
+                        style: TextStyle(
+                          color: widget.backgroundcolor == whiteColor
+                              ? lightText
+                              : searchTextColor,
+                          fontSize: 12.sp,
+                          decoration: TextDecoration.lineThrough,
+                          fontFamily: "Franklin Gothic",
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Selling
+                  Padding(
+                    padding: EdgeInsets.only(right: 6.sp),
+                    child: Text(
+                      "₹${product["price"] ?? "0"}",
+                      style: TextStyle(
+                        color: widget.backgroundcolor == whiteColor
+                            ? nameText
+                            : whiteColor,
+                        fontSize: 12.sp,
+                        fontFamily: "Franklin Gothic",
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  // Discount chip
+                  if (_asNum(product["mrp"]) > _asNum(product["price"]))
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xffA7F3D0),
+                        borderRadius: BorderRadius.all(Radius.circular(20.sp)),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 10.sp, vertical: 4.sp),
+                        child: Text(
+                          "${_calculateDiscountPercentage(product)} OFF",
+                          style: const TextStyle(
+                            color: homeAppBarColor,
+                            fontSize: 12,
+                            fontFamily: "Franklin Gothic",
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRemoveButton(Map item, int index) {
+    return GestureDetector(
+      onTap: () => _showRemoveDialog(item),
+      child: Container(
+        color: Colors.transparent,
+        padding: EdgeInsets.symmetric(horizontal: 6.sp, vertical: 6.sp),
+        child: SvgPicture.asset(
+          crossSearchImage,
+          color: widget.backgroundcolor == whiteColor
+              ? homeAppBarColor
+              : whiteColor,
+          height: 9.sp,
+          width: 9.sp,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOutOfStockActions(Map item, int index) {
+    final product = (item["product"] ?? {}) as Map<String, dynamic>;
+    final isWishlisted = product["wishlisted"] == true;
+
+    return Padding(
+      padding: EdgeInsets.only(top: 8.sp),
+      child: DoubleIconButton(
+        firstText: "REMOVE",
+        secondText: "WISHLIST",
+        firstTextColor: homeAppBarColor,
+        secondTextColor: whiteColor,
+        firstBackgroundColor: whiteColor,
+        secondBackgroundColor: homeAppBarColor,
+        firstBorderColor: homeAppBarColor,
+        secondBorderColor: widget.backgroundcolor == whiteColor
+            ? homeAppBarColor
+            : lightPurpleColor,
+        firstIcon: crossSearchImage,
+        secondIcon: isWishlisted ? redHeartSvgImage : heartSvgImage,
+        onPressedFirst: () => _showRemoveDialog(item),
+        onPressedSecond: () => _handleWishlistAction(item, isWishlisted),
+      ),
+    );
+  }
+
+  Widget _buildOrderSummary() {
+    final totalMrp = _asNum(controller.cartDetails["total_mrp"]);
+    final sellingTotal = _asNum(controller.cartDetails["total"]);
+    final couponDiscount = _asNum(controller.cartDetails["coupon_discount"]);
+    final deliveryCharges = _asNum(controller.cartDetails["shipping_cost"]) +
+        _asNum(controller.cartDetails["express_delivery_charges"]);
+
+    // Discount on MRP = difference between MRP and selling price
+    final discountOnMrp = totalMrp - sellingTotal;
+
+    // Final amount = selling price - coupon discount + delivery charges
+    final finalTotal = (sellingTotal - couponDiscount) + deliveryCharges;
+
+    return Container(
+      color: widget.backgroundcolor,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.sp),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Coupon Section
+            _buildCouponSection(),
+
+            Padding(
+              padding: EdgeInsets.only(top: 24.sp),
+              child: AppText(
+                text: "ORDER DETAILS",
+                fontFamily: "Franklin Gothic",
+                fontWeight: FontWeight.w500,
+                color: widget.backgroundcolor == whiteColor
+                    ? homeAppBarColor
+                    : whiteColor,
+                fontSize: 14,
+              ),
+            ),
+
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.sp),
+              child: Container(
+                width: double.infinity,
+                color: colorSecondary,
+                height: 1.sp,
+              ),
+            ),
+
+            // 🟣 Total MRP
+            _buildPriceRow(
+              "Total MRP",
+              "₹${totalMrp.toStringAsFixed(0)}",
+              false,
+            ),
+
+            // 🟢 Discount on MRP (Green with minus sign)
+            if (discountOnMrp > 0)
+              _buildPriceRow(
+                "Discount on MRP",
+                "- ₹${discountOnMrp.toStringAsFixed(0)}",
+                false,
+              ),
+
+            // Divider before Subtotal
+            if (discountOnMrp > 0)
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.sp),
+                child: Container(
+                  width: double.infinity,
+                  color: colorSecondary,
+                  height: 0.5.sp,
+                ),
+              ),
+
+            // 🔵 Subtotal (Selling Price)
+            Padding(
+              padding: EdgeInsets.only(top: 12.sp),
+              child: Row(
+                children: [
+                  AppText(
+                    text: "Subtotal",
+                    fontFamily: "Franklin Gothic Regular",
+                    fontWeight: FontWeight.w400,
+                    color: widget.backgroundcolor == whiteColor
+                        ? subtitleColor
+                        : productSubtitleColor,
+                    fontSize: 12,
+                  ),
+                  const Spacer(),
+                  AppText(
+                    text: "₹${sellingTotal.toStringAsFixed(0)}",
+                    fontFamily: "Franklin Gothic",
+                    fontWeight: FontWeight.w500,
+                    color: widget.backgroundcolor == whiteColor
+                        ? homeAppBarColor
+                        : whiteColor,
+                    fontSize: 12,
+                  ),
+                ],
+              ),
+            ),
+
+            // 🟡 Coupon Discount (ALWAYS SHOW IF > 0)
+            if (couponDiscount > 0)
+              Padding(
+                padding: EdgeInsets.only(top: 12.sp),
+                child: Row(
+                  children: [
+                    AppText(
+                      text: "Coupon Discount",
+                      fontFamily: "Franklin Gothic Regular",
+                      fontWeight: FontWeight.w400,
+                      color: widget.backgroundcolor == whiteColor
+                          ? subtitleColor
+                          : productSubtitleColor,
+                      fontSize: 12,
+                    ),
+                    const Spacer(),
+                    AppText(
+                      text: "- ₹${couponDiscount.toStringAsFixed(0)}",
+                      fontFamily: "Franklin Gothic Regular",
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xff059669), // Green color
+                      fontSize: 12,
+                    ),
+                  ],
+                ),
+              ),
+
+            // 🟠 Delivery Charges
+            Padding(
+              padding: EdgeInsets.only(top: 12.sp),
+              child: Row(
+                children: [
+                  AppText(
+                    text: "Delivery Charges",
+                    fontFamily: "Franklin Gothic Regular",
+                    fontWeight: FontWeight.w400,
+                    color: widget.backgroundcolor == whiteColor
+                        ? subtitleColor
+                        : productSubtitleColor,
+                    fontSize: 12,
+                  ),
+                  const Spacer(),
+                  AppText(
+                    text: deliveryCharges == 0
+                        ? "Free"
+                        : "+ ₹${deliveryCharges.toStringAsFixed(0)}",
+                    fontFamily: "Franklin Gothic Regular",
+                    fontWeight: FontWeight.w400,
+                    color: deliveryCharges == 0
+                        ? const Color(0xff059669) // Green for Free
+                        : (widget.backgroundcolor == whiteColor
+                            ? homeAppBarColor
+                            : whiteColor),
+                    fontSize: 12,
+                  ),
+                ],
+              ),
+            ),
+
+            // Divider before Total
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.sp),
+              child: Container(
+                width: double.infinity,
+                color: colorSecondary,
+                height: 1.5.sp,
+              ),
+            ),
+
+            // 🔵 Final Total
+            Row(
+              children: [
+                AppText(
+                  text: "TOTAL AMOUNT",
+                  fontFamily: "Franklin Gothic",
+                  fontWeight: FontWeight.w500,
+                  color: widget.backgroundcolor == whiteColor
+                      ? colorPrimary
+                      : whiteColor,
+                  fontSize: 15,
+                ),
+                const Spacer(),
+                AppText(
+                  text: "₹${finalTotal.toStringAsFixed(0)}",
+                  fontFamily: "Franklin Gothic",
+                  fontWeight: FontWeight.w500,
+                  color: widget.backgroundcolor == whiteColor
+                      ? colorPrimary
+                      : whiteColor,
+                  fontSize: 15,
+                ),
+              ],
+            ),
+
+            SizedBox(height: 30.sp),
+            Cartbottom(backgroundColor: widget.backgroundcolor),
+            SizedBox(height: 40.sp),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCouponSection() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 24.sp),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          border: Border.all(color: borderColor, width: 1.sp),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 8.sp),
+        child: Obx(() {
+          final bool hasDiscount = controller.cartDetails["discount"] == true;
+          final String couponText = controller.couponText.value;
+
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                couponSvgImage,
+                color: widget.backgroundcolor == whiteColor
+                    ? titleColor
+                    : productSubtitleColor,
+                height: 20.sp,
+                width: 20.sp,
+              ),
+              SizedBox(width: 8.sp),
+              Expanded(
+                child: Text(
+                  couponText,
+                  style: TextStyle(
+                    fontFamily: "Franklin Gothic Regular",
+                    fontWeight: FontWeight.w500,
+                    color: widget.backgroundcolor == whiteColor
+                        ? titleColor
+                        : productSubtitleColor,
+                    fontSize: 14.sp,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              SizedBox(width: 8.sp),
+              SizedBox(
+                width: 90.sp,
+                height: 30.sp,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (hasDiscount) {
+                      await _removeAppliedCoupon();
+                      return;
+                    }
+
+                    // ✅ Always fetch live coupons before showing bottom sheet
+                    await productController.getCoupons();
+
+                    if (productController.couponList.isEmpty) {
+                      getSnackBar("No coupons available right now");
+                      return;
+                    }
+
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (ctx) {
+                        return BottomCoupon(
+                          list: productController.couponList, // ✅ from API
+                          backColor: widget.backgroundcolor,
+                          onPressed: (code) {
+                            Navigator.pop(ctx);
+                            _applyCoupon(code); // ✅ use live API logic
+                          },
+                        );
+                      },
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: hasDiscount
+                        ? Colors.transparent
+                        : (widget.backgroundcolor == whiteColor
+                            ? homeAppBarColor
+                            : Colors.transparent),
+                    side: BorderSide(
+                      color: hasDiscount
+                          ? redColor
+                          : (widget.backgroundcolor == whiteColor
+                              ? btnTextColor
+                              : Colors.transparent),
+                      width: 1.sp,
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
+                  child: Text(
+                    hasDiscount ? "REMOVE" : "SELECT",
+                    style: TextStyle(
+                      color: hasDiscount ? redColor : whiteColor,
+                      fontSize: 12.sp,
+                      fontFamily: "Franklin Gothic",
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        }),
+      ),
+    );
+  }
+
+// ---------- Apply Coupon via API ----------
+  Future<void> _applyCoupon(String code) async {
+    try {
+      // Load latest coupons
+      if (productController.couponList.isEmpty) {
+        await productController.getCoupons();
+      }
+
+      // Find coupon by code
+      final coupon = productController.couponList.firstWhere(
+        (c) =>
+            (c['code']?.toString().toUpperCase() ?? '') == code.toUpperCase(),
+        orElse: () => {},
       );
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) =>
-      widget.backgroundcolor == whiteColor
-          ? controller.getCartData()
-          : controller.getExpressCartData());
+
+      if (coupon.isEmpty) {
+        getSnackBar("Invalid or expired coupon");
+        return;
+      }
+
+      // Calculate discount
+      final num total = _asNum(controller.cartDetails["total"]) != 0
+          ? _asNum(controller.cartDetails["total"])
+          : 0;
+
+      num discountValue = 0;
+      final type = (coupon['type'] ?? '').toString().toLowerCase();
+
+      if (type == 'percentage') {
+        final discountPercent =
+            num.tryParse(coupon['discount']?.toString() ?? '0') ?? 0;
+        discountValue = (total * (discountPercent / 100)).round();
+      } else if (type == 'flat') {
+        discountValue =
+            num.tryParse(coupon['discount']?.toString() ?? '0') ?? 0;
+      }
+
+      final maxDiscount =
+          num.tryParse(coupon['max_discount']?.toString() ?? '0') ?? 0;
+      if (maxDiscount > 0 && discountValue > maxDiscount) {
+        discountValue = maxDiscount;
+      }
+
+      // Update cart
+      controller.couponText.value = code;
+      controller.cartDetails["coupon_discount"] = discountValue;
+      controller.cartDetails["discount"] = true;
+
+      controller.cartDetails["total_mrp"] ??= total;
+      controller.cartDetails["total"] ??= total;
+      controller.cartDetails["shipping_cost"] ??= 0;
+      controller.cartDetails["express_delivery_charges"] ??= 0;
+
+      // Save locally
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('applied_coupon_code', code);
+      await prefs.setInt('applied_coupon_discount', discountValue.toInt());
+
+      getSnackBar("Coupon '$code' applied successfully");
+      controller.update();
+    } catch (e) {
+      print("✗ Error applying coupon: $e");
+      getSnackBar("Failed to apply coupon. Please try again.");
     }
   }
 
-  void handlePaymentSuccess(PaymentSuccessResponse response) {
-    print("order id ${response.orderId}");
-    print("payment id ${response.paymentId}");
-    print("singature ${response.signature}");
-    print("data ${response.data}");
-    controller.callProcessPayment(controller.cartDetails["id"],
-        response.paymentId!, response.orderId!, response.signature!);
+// ---------- Remove Applied Coupon (Reactive) ----------
+  Future<void> _removeAppliedCoupon() async {
+    controller.couponText.value = "Apply Coupon";
+    controller.couponSave.value = "0";
+    controller.cartDetails["discount"] = false;
+    controller.cartDetails["coupon_discount"] = 0;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('applied_coupon_code');
+    await prefs.remove('applied_coupon_discount');
+
+    getSnackBar("Coupon removed");
+
+    // ✅ will instantly update all Obx UI
+    controller.update();
   }
 
-  void handlePaymentError(PaymentFailureResponse response) {
-    print("Error ${response.message}");
-    print("Error ${response.code}");
-    print("Error ${response.error}");
-    /*  Get.to(const PaymentSuccessScreen(
-        text1: "Payment Failed",
-        text2: "Thank you for placing your order",
-        orderId: 0,
-        image: paymentFailImage)); */
-    Get.to(PaymentCheckScreen(orderId: controller.cartDetails["id"]));
+// ---------- Price Row (Green discount values) ----------
+
+  Widget _buildPriceRow(String label, String value, bool hasIcon) {
+    final bool isDiscountRow =
+        label.toLowerCase().contains("discount") && !label.contains("Delivery");
+
+    final Color valueColor = isDiscountRow
+        ? const Color(0xff059669)
+        : widget.backgroundcolor == whiteColor
+            ? homeAppBarColor
+            : whiteColor;
+
+    return Padding(
+      padding: EdgeInsets.only(top: 12.sp),
+      child: Row(
+        children: [
+          Expanded(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: AppText(
+                    text: label,
+                    fontFamily: "Franklin Gothic Regular",
+                    fontWeight: FontWeight.w400,
+                    color: widget.backgroundcolor == whiteColor
+                        ? subtitleColor
+                        : productSubtitleColor,
+                    fontSize: 12,
+                    maxLines: 1,
+                    // overflow: TextOverflow.ellipsis, // ❌ Remove this line
+                  ),
+                ),
+                if (hasIcon &&
+                    (label == "Total Price" || label == "Convenience Fee"))
+                  Padding(
+                    padding: EdgeInsets.only(left: 4.sp),
+                    child: GestureDetector(
+                      onTap: () => _showInfoBottomSheet(label),
+                      child: SvgPicture.asset(
+                        questionSvgImage,
+                        height: 15.sp,
+                        width: 15.sp,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          SizedBox(width: 8.sp),
+          AppText(
+            text: value,
+            fontFamily: "Franklin Gothic Regular",
+            fontWeight: FontWeight.w400,
+            color: valueColor,
+            fontSize: 12,
+          ),
+        ],
+      ),
+    );
   }
 
-  void handleExternalWallet(ExternalWalletResponse response) {
-    print("Wallet ${response.walletName}");
-    Get.to(const PaymentSuccessScreen(
-        text1: "Uh-oh something went wrong!",
-        orderId: 0,
-        text2: "Thank you for placing your order",
-        image: errorImage));
+  Widget _buildEmptyCart() {
+    return Padding(
+      padding: EdgeInsets.only(top: 60.sp),
+      child: CartWidget(
+        image: shopBagImage,
+        backColor: widget.backgroundcolor,
+        text1: "There is still room for more",
+        onPressed: () => Get.offAll(const BottomNavScreen(index: 0)),
+        text2:
+            "Looking for items you previously saved?\nSign in to pick up where you left out",
+        btntext: "Continue Shopping",
+        visible: true,
+      ),
+    );
   }
 
   Widget sizeWidget(List orderList, int index) {
     double width = 100.sp;
-    if (orderList[index]["inventory"]["product_matrix_name_size"] == "Xs" ||
-        orderList[index]["inventory"]["product_matrix_name_size"] == "S" ||
-        orderList[index]["inventory"]["product_matrix_name_size"] == "M" ||
-        orderList[index]["inventory"]["product_matrix_name_size"] == "L" ||
-        orderList[index]["inventory"]["product_matrix_name_size"] == "XL" ||
-        orderList[index]["inventory"]["product_matrix_name_size"] == "XXL" ||
-        orderList[index]["inventory"]["product_matrix_name_size"] == "XXXL") {
+    final String? size = (orderList[index]?["inventory"]
+            ?["product_matrix_name_size"])
+        ?.toString();
+
+    if (["XS", "S", "M", "L", "XL", "XXL", "XXXL"].contains(size)) {
       width = 85.sp;
     }
+
     return Container(
       decoration: BoxDecoration(
+        color: widget.backgroundcolor == whiteColor
+            ? const Color(0xffF3F4F6)
+            : const Color(0xFFDFDBFF),
+        border: Border.all(
+          width: 1,
           color: widget.backgroundcolor == whiteColor
-              ? Color(0xffF3F4F6)
-              : Color(0xFFDFDBFF),
-          border: Border.all(
-              width: 1,
-              color: widget.backgroundcolor == whiteColor
-                  ? Color(0xFFE5E7EB)
-                  : titleColor)),
+              ? const Color(0xFFE5E7EB)
+              : titleColor,
+        ),
+      ),
       height: 30.sp,
       width: width,
       alignment: Alignment.center,
@@ -194,11 +1462,7 @@ class CartScreenState extends State<CartScreen> {
             padding: EdgeInsets.only(
                 left: 8.sp, right: 5.sp, top: 5.sp, bottom: 5.sp),
             child: AppText(
-              // text: "Size : XXXL",
-              text:
-              "Size : ${orderList[index]["inventory"] != null
-                  ? orderList[index]["inventory"]["product_matrix_name_size"]
-                  : ""}",
+              text: "Size : ${size ?? ""}",
               color: titleColor,
               fontSize: 10,
               fontFamily: "Franklin Gothic Regular",
@@ -219,3489 +1483,404 @@ class CartScreenState extends State<CartScreen> {
     );
   }
 
-  @override
-  void dispose() {
-    razorpay.clear();
-    super.dispose();
+  Widget _buildBottomSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Obx(
+          () => controller.addressError.value.isNotEmpty
+              ? Padding(
+                  padding:
+                      EdgeInsets.only(left: 20.sp, right: 20.sp, top: 10.sp),
+                  child: AppText(
+                    text: controller.addressError.value,
+                    fontFamily: "Franklin Gothic Regular",
+                    fontWeight: FontWeight.w400,
+                    color: redColor,
+                    fontSize: 12,
+                  ),
+                )
+              : const SizedBox.shrink(),
+        ),
+        GestureDetector(
+          onTap: () => _handleAddressSelection(),
+          child: Container(
+            color: widget.backgroundcolor == whiteColor
+                ? lightgreyColor
+                : homeAppBarColor,
+            margin: EdgeInsets.only(top: 10.sp),
+            height: 40.sp,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.sp),
+              child: Row(
+                children: [
+                  Obx(() {
+                    if (controller.isOrder.value) {
+                      return const SizedBox(width: 0);
+                    }
+                    final hasAnyAddress =
+                        controller.cartDetails["address"] != null ||
+                            _pendingSelectedAddress != null;
+                    return Text(
+                      hasAnyAddress ? "DELIVERING IN " : "",
+                      style: TextStyle(
+                        fontFamily: "Franklin Gothic",
+                        fontWeight: FontWeight.w500,
+                        color: searchTextColor,
+                        fontSize: 14.sp,
+                      ),
+                    );
+                  }),
+                  Obx(() {
+                    if (controller.isOrder.value) {
+                      return const DummyContainer(height: 10, width: 100);
+                    }
+                    final cartAddr = controller.cartDetails["address"];
+                    String label;
+                    if (cartAddr != null) {
+                      label =
+                          "${cartAddr["type"] ?? ""} ${cartAddr["zip"] ?? ""}"
+                              .toUpperCase();
+                    } else if (_pendingSelectedAddress != null) {
+                      label =
+                          "${_pendingSelectedAddress!["name"] ?? "ADDRESS"} ${_pendingSelectedAddress!["pincode"] ?? ""}"
+                              .toUpperCase();
+                    } else {
+                      label = "Select Shipping Address";
+                    }
+                    return Text(
+                      label,
+                      style: TextStyle(
+                        fontFamily: "Franklin Gothic",
+                        fontWeight: FontWeight.w500,
+                        color: widget.backgroundcolor == whiteColor
+                            ? titleColor
+                            : lightgreyColor,
+                        fontSize: 14.sp,
+                      ),
+                    );
+                  }),
+                  const Spacer(),
+                  Padding(
+                    padding: EdgeInsets.only(left: 2.sp, right: 5.sp),
+                    child: Image.asset(
+                      rightArrowImage,
+                      color: widget.backgroundcolor == whiteColor
+                          ? titleColor
+                          : lightgreyColor,
+                      height: 16.sp,
+                      width: 16.sp,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Obx(
+          () => controller.stockErrorText.value.isEmpty
+              ? _buildCheckoutButton()
+              : _buildStockError(),
+        ),
+      ],
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (widget.backgroundcolor == homeAppBarColor) {
-          Get.offAll(const BottomNavScreen(
-            index: 0,
-          ));
-          return false;
-        }
-        return true;
-      },
-      child: Scaffold(
-        backgroundColor: widget.backgroundcolor,
-        key: scaffoldKey,
-        body: Stack(
+  Widget _buildCheckoutButton() {
+    return GestureDetector(
+      onTap: _handleCheckout,
+      child: Container(
+        width: double.infinity,
+        height: widget.backgroundcolor == whiteColor ? 70.sp : 50.sp,
+        color: widget.backgroundcolor == whiteColor
+            ? homeAppBarColor
+            : lightPurpleColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Obx(() =>
-            controller.isPayment.value
-                ? Container(
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height,
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width,
-                color: whiteColor,
-                child: Center(child: CircularProgressIndicator()))
-                : Column(
-              children: [
-                Visibility(
-                  visible:
-                  widget.backgroundcolor == whiteColor ? true : false,
-                  child: CartAppbar(
-                    text: "Bag",
-                    onPressedWishlist: () async {
-                      Get.to(WishlistScreen());
-                      await analytics.logEvent(
-                        name: 'wishlist_page',
-                        parameters: <String, Object>{
-                          'page_name': 'wishlist_page',
-                        },
-                      );
-                    },
-                  ),
-                ),
-                Visibility(
-                  visible:
-                  widget.backgroundcolor == whiteColor ? true : false,
-                  child: Container(
-                    color: dividerColor,
-                    height: 1.sp,
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Stack(
-                      children: [
-                        Visibility(
-                          visible: widget.backgroundcolor == whiteColor
-                              ? false
-                              : true,
-                          child: Positioned(
-                            top: 0,
-                            right: 0,
-                            child: ShaderMask(
-                              shaderCallback: (Rect bounds) {
-                                return LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.black,
-                                    Colors.transparent
-                                  ],
-                                  stops: [0.1, 1.0],
-                                ).createShader(bounds);
-                              },
-                              blendMode: BlendMode.dstIn,
-                              child: Image.asset(
-                                quickBackCircle,
-                                height: 250.sp,
-                                width: 300.sp,
-                              ),
+            Padding(
+              padding: EdgeInsets.only(top: 16.sp),
+              child: Obx(
+                () => controller.isOrder.value
+                    ? const SizedBox.shrink()
+                    : (controller.pageState == PageState.LOADING)
+                        ? Center(
+                            child: Transform.scale(
+                              scale: 0.5.sp,
+                              child: const CircularProgressIndicator(
+                                  color: whiteColor),
                             ),
-                          ),
-                        ),
-                        Column(
-                          children: [
-                            Visibility(
-                              visible:
-                              widget.backgroundcolor == whiteColor
-                                  ? false
-                                  : true,
-                              child: Column(
-                                mainAxisAlignment:
-                                MainAxisAlignment.start,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 50.sp),
-                                    child: Center(
-                                        child: Image.asset(
-                                          bagLogoImage,
-                                          height: 33.sp,
-                                          width: 17.sp,
-                                        )),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 28.sp, left: 16.sp),
-                                    child: AppText(
-                                      text: "Bag".toUpperCase(),
-                                      fontFamily:
-                                      "Franklin Gothic Semibold",
-                                      fontWeight: FontWeight.w600,
-                                      color: whiteColor,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 1.sp, left: 16.sp),
-                                    child: controller.isOrder.value
-                                        ? DummyContainer(
-                                        height: 8, width: 50)
-                                        : AppText(
-                                      text: controller.orderList
-                                          .length ==
-                                          1
-                                          ? "${controller.orderList
-                                          .length} Product"
-                                          : "${controller.orderList
-                                          .length} Products",
-                                      fontFamily:
-                                      "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w600,
-                                      color: productSubtitleColor,
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            controller.isOrder.value
-                                ? widget.backgroundcolor == whiteColor
-                                ? const DummyOrderList(
-                              size: 3,
-                            )
-                                : DummyBlackOrderList(
-                              size: 3,
-                            )
-                                : controller.orderList.isNotEmpty
-                                ? Column(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-
-                                GetBuilder<CartController>(
-                                  builder: (value) =>
-                                      RefreshIndicator(
-                                        onRefresh: () {
-                                          return Future.delayed(
-                                              const Duration(
-                                                  seconds: 1), () {
-                                            widget.backgroundcolor ==
-                                                whiteColor
-                                                ? controller
-                                                .getCartData()
-                                                : controller
-                                                .getExpressCartData();
-                                          });
-                                        },
-                                        child: ListView.builder(
-                                            primary: false,
-                                            shrinkWrap: true,
-                                            //  physics: const AlwaysScrollableScrollPhysics(),
-                                            itemCount: value
-                                                .orderList.length,
-                                            padding:
-                                            EdgeInsets.zero,
-                                            scrollDirection:
-                                            Axis.vertical,
-                                            itemBuilder:
-                                                (ctx, index) {
-                                              return Padding(
-                                                padding:
-                                                EdgeInsets.only(
-                                                    left: 16.sp,
-                                                    right:
-                                                    16.sp),
-                                                child: Column(
-                                                    crossAxisAlignment:
-                                                    CrossAxisAlignment
-                                                        .start,
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .start,
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                        EdgeInsets
-                                                            .only(
-                                                          top:
-                                                          16.sp,
-                                                        ),
-                                                        child: Row(
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                          children: [
-                                                            GestureDetector(
-                                                              onTap:
-                                                                  () async {
-                                                                Navigator.of(
-                                                                    context)
-                                                                    .push(
-                                                                    MaterialPageRoute(
-                                                                        builder: (
-                                                                            BuildContext context) =>
-                                                                            ProductDetailsScreen(
-                                                                              productId: value
-                                                                                  .orderList[index]["product"]["id"],
-                                                                              brandName: value
-                                                                                  .orderList[index]["product"]["brand_name"] ??
-                                                                                  "",
-                                                                              backgroundcolor: widget
-                                                                                  .backgroundcolor,
-                                                                              type: "add",
-                                                                              expressValue: widget
-                                                                                  .backgroundcolor ==
-                                                                                  whiteColor
-                                                                                  ? 0
-                                                                                  : 1,
-                                                                            )))
-                                                                    .then((
-                                                                    value) =>
-                                                                    setState(
-                                                                          () {
-                                                                        productController
-                                                                            .hasnextpage
-                                                                            .value =
-                                                                        true;
-                                                                        productController
-                                                                            .loadMore
-                                                                            .value =
-                                                                        false;
-                                                                        productController
-                                                                            .isProduct
-                                                                            .value =
-                                                                        false;
-                                                                        productController
-                                                                            .page
-                                                                            .value =
-                                                                        1;
-                                                                        productController
-                                                                            .getProductData(
-                                                                            "relevant");
-                                                                        widget
-                                                                            .backgroundcolor ==
-                                                                            whiteColor
-                                                                            ? controller
-                                                                            .getCartData()
-                                                                            : controller
-                                                                            .getExpressCartData();
-                                                                        controller
-                                                                            .update();
-                                                                      },
-                                                                    ));
-                                                                await analytics
-                                                                    .logEvent(
-                                                                  name: 'cart_product_details',
-                                                                  parameters: <
-                                                                      String,
-                                                                      Object>{
-                                                                    'page_name': 'cart_product_details',
-                                                                  },
-                                                                );
-                                                              },
-                                                              child: value
-                                                                  .orderList[index]["product"] !=
-                                                                  null
-                                                                  ? value
-                                                                  .orderList[index]["product"]["images"]
-                                                                  .isNotEmpty &&
-                                                                  value
-                                                                      .orderList[index]["product"]["images"] !=
-                                                                      null
-                                                                  ? Opacity(
-                                                                opacity: value
-                                                                    .orderList[index]["inventory"]["stocks"] ==
-                                                                    0 ? 0.5 : 1,
-                                                                child: SizedBox(
-                                                                  height: 130
-                                                                      .sp,
-                                                                  width: 100.sp,
-                                                                  child: CachedNetworkImage(
-                                                                    cacheManager: CacheManager(
-                                                                        Config(
-                                                                            "customCacheKey",
-                                                                            stalePeriod: const Duration(
-                                                                                days: 15),
-                                                                            maxNrOfCacheObjects: 100)),
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                    imageUrl: isImage(
-                                                                        value
-                                                                            .orderList[index]["product"]["images"][0]["name"])
-                                                                        ? value
-                                                                        .orderList[index]["product"]["images"][0]["name"]
-                                                                        : value
-                                                                        .orderList[index]["product"]["images"][1]["name"],
-                                                                    errorWidget: (
-                                                                        context,
-                                                                        url,
-                                                                        error) =>
-                                                                        Image
-                                                                            .asset(
-                                                                          downloadImage,
-                                                                          fit: BoxFit
-                                                                              .cover,
-                                                                          height: 130
-                                                                              .sp,
-                                                                          width: 100
-                                                                              .sp,
-                                                                        ),
-                                                                  ),
-                                                                ),
-                                                              )
-                                                                  : Image.asset(
-                                                                  dummyWishlistImage,
-                                                                  height: 130
-                                                                      .sp,
-                                                                  width: 100.sp,
-                                                                  fit: BoxFit
-                                                                      .cover)
-                                                                  : Image.asset(
-                                                                  dummyWishlistImage,
-                                                                  height: 130
-                                                                      .sp,
-                                                                  width: 100.sp,
-                                                                  fit: BoxFit
-                                                                      .cover),
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                              EdgeInsets.only(
-                                                                  left: 12.sp),
-                                                              child:
-                                                              Column(
-                                                                crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                                mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                                children: [
-                                                                  GestureDetector(
-                                                                    onTap: () async {
-                                                                      Navigator
-                                                                          .of(
-                                                                          context)
-                                                                          .push(
-                                                                          MaterialPageRoute(
-                                                                              builder: (
-                                                                                  BuildContext context) =>
-                                                                                  ProductDetailsScreen(
-                                                                                    productId: value
-                                                                                        .orderList[index]["product"]["id"],
-                                                                                    backgroundcolor: widget
-                                                                                        .backgroundcolor,
-                                                                                    brandName: value
-                                                                                        .orderList[index]["product"]["brand_name"] ??
-                                                                                        "",
-                                                                                    type: "add",
-                                                                                    expressValue: widget
-                                                                                        .backgroundcolor ==
-                                                                                        whiteColor
-                                                                                        ? 0
-                                                                                        : 1,
-                                                                                  )))
-                                                                          .then((
-                                                                          value) =>
-                                                                          setState(
-                                                                                () {
-                                                                              productController
-                                                                                  .hasnextpage
-                                                                                  .value =
-                                                                              true;
-                                                                              productController
-                                                                                  .loadMore
-                                                                                  .value =
-                                                                              false;
-                                                                              productController
-                                                                                  .isProduct
-                                                                                  .value =
-                                                                              false;
-                                                                              productController
-                                                                                  .page
-                                                                                  .value =
-                                                                              1;
-                                                                              productController
-                                                                                  .getProductData(
-                                                                                  "relevant");
-                                                                              widget
-                                                                                  .backgroundcolor ==
-                                                                                  whiteColor
-                                                                                  ? controller
-                                                                                  .getCartData()
-                                                                                  : controller
-                                                                                  .getExpressCartData();
-                                                                              controller
-                                                                                  .update();
-                                                                            },
-                                                                          ));
-                                                                      await analytics
-                                                                          .logEvent(
-                                                                        name: 'cart_product_details',
-                                                                        parameters: <
-                                                                            String,
-                                                                            Object>{
-                                                                          'page_name': 'cart_product_details',
-                                                                        },
-                                                                      );
-                                                                    },
-                                                                    child: Container(
-                                                                      width: MediaQuery
-                                                                          .of(
-                                                                          context)
-                                                                          .size
-                                                                          .width -
-                                                                          165
-                                                                              .sp,
-                                                                      margin: EdgeInsets
-                                                                          .only(
-                                                                          top: 10
-                                                                              .sp),
-                                                                      child: AppText(
-                                                                        text: value
-                                                                            .orderList[index]["product"]["brand_name"] !=
-                                                                            null
-                                                                            ? value
-                                                                            .orderList[index]["product"]["brand_name"]
-                                                                            .toUpperCase()
-                                                                            : "",
-                                                                        maxLines: 1,
-                                                                        fontFamily: "Franklin Gothic",
-                                                                        fontWeight: FontWeight
-                                                                            .w500,
-                                                                        fontSize: 16,
-                                                                        color: widget
-                                                                            .backgroundcolor ==
-                                                                            whiteColor
-                                                                            ? value
-                                                                            .orderList[index]["inventory"]["stocks"] ==
-                                                                            0
-                                                                            ? blackColor
-                                                                            .withOpacity(
-                                                                            0.3)
-                                                                            : blackColor
-                                                                            : whiteColor,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  GestureDetector(
-                                                                    onTap: () async {
-                                                                      Navigator
-                                                                          .of(
-                                                                          context)
-                                                                          .push(
-                                                                          MaterialPageRoute(
-                                                                              builder: (
-                                                                                  BuildContext context) =>
-                                                                                  ProductDetailsScreen(
-                                                                                    productId: value
-                                                                                        .orderList[index]["product"]["id"],
-                                                                                    backgroundcolor: widget
-                                                                                        .backgroundcolor,
-                                                                                    brandName: value
-                                                                                        .orderList[index]["product"]["brand_name"] ??
-                                                                                        "",
-                                                                                    type: "add",
-                                                                                    expressValue: widget
-                                                                                        .backgroundcolor ==
-                                                                                        whiteColor
-                                                                                        ? 0
-                                                                                        : 1,
-                                                                                  )))
-                                                                          .then((
-                                                                          value) =>
-                                                                          setState(
-                                                                                () {
-                                                                              productController
-                                                                                  .hasnextpage
-                                                                                  .value =
-                                                                              true;
-                                                                              productController
-                                                                                  .loadMore
-                                                                                  .value =
-                                                                              false;
-                                                                              productController
-                                                                                  .isProduct
-                                                                                  .value =
-                                                                              false;
-                                                                              productController
-                                                                                  .page
-                                                                                  .value =
-                                                                              1;
-                                                                              productController
-                                                                                  .getProductData(
-                                                                                  "relevant");
-                                                                              widget
-                                                                                  .backgroundcolor ==
-                                                                                  whiteColor
-                                                                                  ? controller
-                                                                                  .getCartData()
-                                                                                  : controller
-                                                                                  .getExpressCartData();
-                                                                              controller
-                                                                                  .update();
-                                                                            },
-                                                                          ));
-                                                                      await analytics
-                                                                          .logEvent(
-                                                                        name: 'cart_product_details',
-                                                                        parameters: <
-                                                                            String,
-                                                                            Object>{
-                                                                          'page_name': 'cart_product_details',
-                                                                        },
-                                                                      );
-                                                                    },
-                                                                    child: Container(
-                                                                      width: MediaQuery
-                                                                          .of(
-                                                                          context)
-                                                                          .size
-                                                                          .width -
-                                                                          165
-                                                                              .sp,
-                                                                      child: Padding(
-                                                                        padding: EdgeInsets
-                                                                            .symmetric(
-                                                                            vertical: 4
-                                                                                .sp),
-                                                                        child: AppText(
-                                                                          text: Bidi
-                                                                              .stripHtmlIfNeeded(
-                                                                              value
-                                                                                  .orderList[index]["product"]["name"] ??
-                                                                                  ""),
-                                                                          color: widget
-                                                                              .backgroundcolor ==
-                                                                              whiteColor
-                                                                              ? value
-                                                                              .orderList[index]["inventory"]["stocks"] ==
-                                                                              0
-                                                                              ? subtitleColor
-                                                                              .withOpacity(
-                                                                              0.5)
-                                                                              : subtitleColor
-                                                                              : productSubtitleColor,
-                                                                          maxLines: 1,
-                                                                          fontSize: 14,
-                                                                          fontFamily: "Franklin Gothic Regular",
-                                                                          fontWeight: FontWeight
-                                                                              .w400,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  /*  value.orderList[index]["discount"] != "0.00"
-                                                                                          ? Padding(
-                                                                                              padding: EdgeInsets.only(left: 1.sp),
-                                                                                              child: AppText(
-                                                                                                text: "Discount : \u{20B9} ${value.orderList[index]["discount"] ?? "0.0"}",
-                                                                                                color: subtitleColor,
-                                                                                                fontSize: 12,
-                                                                                                fontFamily: "Franklin Gothic Regular",
-                                                                                                fontWeight: FontWeight.w400,
-                                                                                              ),
-                                                                                            )
-                                                                                          : SizedBox(
-                                                                                              height: 0,
-                                                                                            ),
-                                                                                      !value.orderList[index]["express_delivery"]
-                                                                                          ? value.orderList[index]["estimated_delivery_by"] != null
-                                                                                              ? value.orderList[index]["estimated_delivery_by"]["show_shipping_cost"]
-                                                                                                  ? Padding(
-                                                                                                      padding: EdgeInsets.only(top: 2.sp),
-                                                                                                      child: Column(
-                                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                                        children: [
-                                                                                                          value.orderList[index]["estimated_delivery_by"]["message"] != null
-                                                                                                              ? AppText(
-                                                                                                                  text: value.orderList[index]["estimated_delivery_by"]["message"],
-                                                                                                                  color: widget.backgroundcolor == whiteColor ? subtitleColor : productSubtitleColor,
-                                                                                                                  fontSize: 12,
-                                                                                                                  fontFamily: "Franklin Gothic Regular",
-                                                                                                                  fontWeight: FontWeight.w400,
-                                                                                                                )
-                                                                                                              : SizedBox(
-                                                                                                                  height: 0,
-                                                                                                                ),
-                                                                                                          Padding(
-                                                                                                            padding: EdgeInsets.only(top: 5.sp),
-                                                                                                            child: AppText(
-                                                                                                              text: "Shipping Cost: \u{20B9} ${value.orderList[index]["estimated_delivery_by"]["shipping_cost"]}",
-                                                                                                              color: widget.backgroundcolor == whiteColor ? subtitleColor : productSubtitleColor,
-                                                                                                              fontSize: 12,
-                                                                                                              fontFamily: "Franklin Gothic Regular",
-                                                                                                              fontWeight: FontWeight.w400,
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                        ],
-                                                                                                      ),
-                                                                                                    )
-                                                                                                  : SizedBox(
-                                                                                                      height: 0,
-                                                                                                    )
-                                                                                              : SizedBox(
-                                                                                                  height: 0,
-                                                                                                )
-                                                                                          : value.orderList[index]["estimated_delivery_by"] != null
-                                                                                              ? Padding(
-                                                                                                  padding: EdgeInsets.only(top: 2.sp),
-                                                                                                  child: Column(
-                                                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                                    children: [
-                                                                                                      AppText(
-                                                                                                        text: value.orderList[index]["estimated_delivery_by"]["message"],
-                                                                                                        color: widget.backgroundcolor == whiteColor ? subtitleColor : productSubtitleColor,
-                                                                                                        fontSize: 12,
-                                                                                                        fontFamily: "Franklin Gothic Regular",
-                                                                                                        fontWeight: FontWeight.w400,
-                                                                                                      ),
-                                                                                                    ],
-                                                                                                  ),
-                                                                                                )
-                                                                                              : SizedBox(
-                                                                                                  height: 0,
-                                                                                                ),
-                                                                                      value.orderList[index]["express_delivery"]
-                                                                                          ? Padding(
-                                                                                              padding: EdgeInsets.only(
-                                                                                                top: 8.0.sp,
-                                                                                              ),
-                                                                                              child: Row(
-                                                                                                children: [
-                                                                                                  Padding(
-                                                                                                    padding: EdgeInsets.only(right: 10.0.sp),
-                                                                                                    child: Image.asset(
-                                                                                                      truckImage,
-                                                                                                      height: 18.sp,
-                                                                                                      width: 18.sp,
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                  AppText(
-                                                                                                    text: 'Express Delivery',
-                                                                                                    fontFamily: "Franklin Gothic Regular",
-                                                                                                    fontWeight: FontWeight.w500,
-                                                                                                    color: widget.backgroundcolor == whiteColor ? blackColor : whiteColor,
-                                                                                                    fontSize: 12,
-                                                                                                  ),
-                                                                                                  /*  value.selected[index]
-                                                                                              ? Padding(
-                                                                                                  padding: EdgeInsets.only(left: 12.sp),
-                                                                                                  child: Center(
-                                                                                                    child: SizedBox(
-                                                                                                      height: 16.sp,
-                                                                                                      width: 16.sp,
-                                                                                                      child: Center(child: CircularProgressIndicator()),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                )
-                                                                                              : Padding(
-                                                                                                  padding: EdgeInsets.only(left: 12.sp),
-                                                                                                  child: Container(
-                                                                                                      decoration: BoxDecoration(
-                                                                                                        borderRadius: BorderRadius.circular(3.sp),
-                                                                                                        border: Border(
-                                                                                                          top: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                                          left: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                                          right: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                                          bottom: BorderSide(width: 2.0.sp, color: greyBorder),
-                                                                                                        ),
-                                                                                                      ),
-                                                                                                      width: 20,
-                                                                                                      height: 20,
-                                                                                                      child: Checkbox(
-                                                                                                        value: value.orderList[index]["express_delivery"],
-                                                                                                        checkColor: btnTextColor,
-                                                                                                        activeColor: whiteBorderColor,
-                                                                                                        side: const BorderSide(color: btnTextColor, width: 0),
-                                                                                                        onChanged: (value) {
-                                                                                                          controller.selected[index] = !controller.selected[index];
-                                                                                                          controller.update();
-                                                                                                          controller.callAddtoCart(controller.orderList[index]["quantity"], "express", controller.orderList[index]["inventory"]["id"], controller.orderList[index]["product"]["id"], controller.orderList[index]["express_delivery"] ? 0 : 1, 1);
-                                                                                                        },
-                                                                                                      )),
-                                                                                                ), */
-                                                                                                ],
-                                                                                              ),
-                                                                                            )
-                                                                                          : SizedBox(
-                                                                                              height: 0,
-                                                                                            ), */
-                                                                  Opacity(
-                                                                    opacity: value
-                                                                        .orderList[index]["inventory"]["stocks"] ==
-                                                                        0
-                                                                        ? 0.5
-                                                                        : 1,
-                                                                    child: Padding(
-                                                                      padding: EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical: 4
-                                                                              .sp),
-                                                                      child: Row(
-                                                                        children: [
-                                                                          value
-                                                                              .orderList[index]["inventory"] !=
-                                                                              null
-                                                                              ? value
-                                                                              .orderList[index]["inventory"]["product_matrix_name_size"] !=
-                                                                              ""
-                                                                              ? GestureDetector(
-                                                                            onTap: () async {
-                                                                              if (value
-                                                                                  .orderList[index]["inventory"]["stocks"] !=
-                                                                                  0) {
-                                                                                showModalBottomSheet(
-                                                                                  context: context,
-                                                                                  isScrollControlled: true,
-                                                                                  constraints: BoxConstraints(
-                                                                                    maxWidth: double
-                                                                                        .infinity,
-                                                                                    maxHeight: 300
-                                                                                        .sp,
-                                                                                  ),
-                                                                                  builder: (
-                                                                                      ctx) {
-                                                                                    return BottomSize(
-                                                                                      onPressedCross: () {
-                                                                                        Get
-                                                                                            .back();
-                                                                                      },
-                                                                                      sizeList: value
-                                                                                          .orderList[index]["product"]["new_inventories"],
-                                                                                      controller: controller,
-                                                                                      onPressed: (
-                                                                                          p0) {
-                                                                                        controller
-                                                                                            .callAddtoCart(
-                                                                                            value
-                                                                                                .orderList[index]["quantity"] ??
-                                                                                                1,
-                                                                                            "size",
-                                                                                            p0,
-                                                                                            value
-                                                                                                .orderList[index]["product"]["id"],
-                                                                                            value
-                                                                                                .orderList[index]["product"]["express_delivery"]
-                                                                                                ? 1
-                                                                                                : 0,
-                                                                                            1,
-                                                                                            widget
-                                                                                                .backgroundcolor,
-                                                                                            value
-                                                                                                .orderList[index]["inventory"]["id"]);
-                                                                                      },
-                                                                                      selectedSizeId: value
-                                                                                          .orderList[index]["inventory"] !=
-                                                                                          null
-                                                                                          ? value
-                                                                                          .orderList[index]["inventory"]["id"]
-                                                                                          : 0,
-                                                                                    );
-                                                                                  },
-                                                                                );
-                                                                                await analytics
-                                                                                    .logEvent(
-                                                                                  name: 'cart_product_updatesizeClick',
-                                                                                  parameters: <
-                                                                                      String,
-                                                                                      Object>{
-                                                                                    'page_name': 'cart_product_updatesizeClick',
-                                                                                  },
-                                                                                );
-                                                                              }
-                                                                            },
-                                                                            child: /* Container(
-                                                                                                    decoration: BoxDecoration(color: widget.backgroundcolor == whiteColor ? Color(0xffF3F4F6) : Color(0xFFDFDBFF), border: Border.all(width: 1, color: widget.backgroundcolor == whiteColor ? Color(0xFFE5E7EB) : titleColor)),
-                                                                                                    height: 30.sp,
-                                                                                                    width: value.orderList[index]["inventory"]["product_matrix_name_size"] == "Free Size" ? 100.sp : 85.sp,
-                                                                                                    alignment: Alignment.center,
-                                                                                                    child: Row(
-                                                                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                                      children: [
-                                                                                                        Padding(
-                                                                                                          padding: EdgeInsets.only(left: 8.sp, right: 5.sp, top: 5.sp, bottom: 5.sp),
-                                                                                                          child: AppText(
-                                                                                                            // text: "Size : XXXL",
-                                                                                                            text: "Size : ${value.orderList[index]["inventory"] != null ? value.orderList[index]["inventory"]["product_matrix_name_size"] : ""}",
-                                                                                                            color: titleColor,
-                                                                                                            fontSize: 10,
-                                                                                                            fontFamily: "Franklin Gothic Regular",
-                                                                                                            fontWeight: FontWeight.w400,
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                        Padding(
-                                                                                                          padding: EdgeInsets.only(left: 2.sp, top: 2.sp, right: 2.sp),
-                                                                                                          child: SvgPicture.asset(
-                                                                                                            dropdownSvgImage,
-                                                                                                            color: titleColor,
-                                                                                                            height: 5.sp,
-                                                                                                            width: 8.sp,
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                      ],
-                                                                                                    ),
-                                                                                                  ) */
-                                                                            sizeWidget(
-                                                                                value
-                                                                                    .orderList,
-                                                                                index),
-                                                                          )
-                                                                              : const SizedBox(
-                                                                            height: 0,
-                                                                          )
-                                                                              : const SizedBox(
-                                                                            height: 0,
-                                                                          ),
-                                                                          GestureDetector(
-                                                                            onTap: () async {
-                                                                              if (value
-                                                                                  .orderList[index]["inventory"]["stocks"] !=
-                                                                                  0) {
-                                                                                if (value
-                                                                                    .orderList[index]["product"]["express_delivery"]) {
-                                                                                  value
-                                                                                      .qtyProductId
-                                                                                      .value =
-                                                                                  value
-                                                                                      .orderList[index]["product"]["id"];
-                                                                                  value
-                                                                                      .qtyText
-                                                                                      .value =
-                                                                                  "For express delivery product, quantity cant be updated.";
-                                                                                  value
-                                                                                      .update();
-                                                                                } else {
-                                                                                  showModalBottomSheet(
-                                                                                    context: context,
-                                                                                    isScrollControlled: true,
-                                                                                    constraints: BoxConstraints(
-                                                                                      maxWidth: double
-                                                                                          .infinity,
-                                                                                      maxHeight: 230
-                                                                                          .sp,
-                                                                                    ),
-                                                                                    builder: (
-                                                                                        ctx) {
-                                                                                      return BottomQuantity(
-                                                                                        qtyList: qtyList,
-                                                                                        selectedQty: value
-                                                                                            .orderList[index]["quantity"]
-                                                                                            .toString(),
-                                                                                        controller: controller,
-                                                                                        stock: value
-                                                                                            .orderList[index]["inventory"]["stocks"] >
-                                                                                            10
-                                                                                            ? qtyList
-                                                                                            .length
-                                                                                            : value
-                                                                                            .orderList[index]["inventory"]["stocks"],
-                                                                                        onPressed: (
-                                                                                            p0) {
-                                                                                          controller
-                                                                                              .callAddtoCart(
-                                                                                              p0,
-                                                                                              "quantity",
-                                                                                              value
-                                                                                                  .orderList[index]["inventory"]["id"],
-                                                                                              value
-                                                                                                  .orderList[index]["product"]["id"],
-                                                                                              value
-                                                                                                  .orderList[index]["product"]["express_delivery"]
-                                                                                                  ? 1
-                                                                                                  : 0,
-                                                                                              1,
-                                                                                              widget
-                                                                                                  .backgroundcolor,
-                                                                                              value
-                                                                                                  .orderList[index]["inventory"]["id"]);
-                                                                                        },
-                                                                                      );
-                                                                                    },
-                                                                                  );
-                                                                                  await analytics
-                                                                                      .logEvent(
-                                                                                    name: 'cart_product_updateqtyClick',
-                                                                                    parameters: <
-                                                                                        String,
-                                                                                        Object>{
-                                                                                      'page_name': 'cart_product_updateqtyClick',
-                                                                                    },
-                                                                                  );
-                                                                                  controller
-                                                                                      .qtyProductId
-                                                                                      .value =
-                                                                                  0;
-                                                                                  controller
-                                                                                      .qtyText
-                                                                                      .value =
-                                                                                  "";
-                                                                                  value
-                                                                                      .update();
-                                                                                }
-                                                                              }
-                                                                            },
-                                                                            child: Padding(
-                                                                              padding: EdgeInsets
-                                                                                  .only(
-                                                                                  left: 10
-                                                                                      .sp,
-                                                                                  top: 5
-                                                                                      .sp,
-                                                                                  bottom: 5
-                                                                                      .sp),
-                                                                              child: Container(
-                                                                                decoration: BoxDecoration(
-                                                                                    color: widget
-                                                                                        .backgroundcolor ==
-                                                                                        whiteColor
-                                                                                        ? Color(
-                                                                                        0xffF3F4F6)
-                                                                                        : Color(
-                                                                                        0xFFDFDBFF),
-                                                                                    border: Border
-                                                                                        .all(
-                                                                                        width: 1,
-                                                                                        color: widget
-                                                                                            .backgroundcolor ==
-                                                                                            whiteColor
-                                                                                            ? Color(
-                                                                                            0xFFE5E7EB)
-                                                                                            : titleColor)),
-                                                                                height: 30
-                                                                                    .sp,
-                                                                                width: 85
-                                                                                    .sp,
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    Padding(
-                                                                                      padding: EdgeInsets
-                                                                                          .symmetric(
-                                                                                          vertical: 5
-                                                                                              .sp,
-                                                                                          horizontal: 8
-                                                                                              .sp),
-                                                                                      child: AppText(
-                                                                                        text: "Qty : ${value
-                                                                                            .orderList[index]["quantity"] ??
-                                                                                            "0"}",
-                                                                                        color: titleColor,
-                                                                                        fontSize: 10,
-                                                                                        fontFamily: "Franklin Gothic Regular",
-                                                                                        fontWeight: FontWeight
-                                                                                            .w400,
-                                                                                      ),
-                                                                                    ),
-                                                                                    Padding(
-                                                                                      padding: EdgeInsets
-                                                                                          .only(
-                                                                                          left: 2
-                                                                                              .sp,
-                                                                                          top: 2
-                                                                                              .sp,
-                                                                                          right: 2
-                                                                                              .sp),
-                                                                                      child: SvgPicture
-                                                                                          .asset(
-                                                                                        dropdownSvgImage,
-                                                                                        color: titleColor,
-                                                                                        height: 5
-                                                                                            .sp,
-                                                                                        width: 8
-                                                                                            .sp,
-                                                                                      ),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          )
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  value
-                                                                      .orderList[index]["product"]["id"] ==
-                                                                      value
-                                                                          .qtyProductId
-                                                                          .value
-                                                                      ? Container(
-                                                                    width: MediaQuery
-                                                                        .of(
-                                                                        context)
-                                                                        .size
-                                                                        .width -
-                                                                        165.sp,
-                                                                    child: Padding(
-                                                                      padding: EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical: 5
-                                                                              .sp),
-                                                                      child: AppText(
-                                                                        text: value
-                                                                            .qtyText
-                                                                            .value,
-                                                                        color: deepRed,
-                                                                        fontSize: 12,
-                                                                        maxLines: 3,
-                                                                        fontFamily: "Franklin Gothic Regular",
-                                                                        fontWeight: FontWeight
-                                                                            .w400,
-                                                                      ),
-                                                                    ),
-                                                                  )
-                                                                      : SizedBox(
-                                                                    height: 0,
-                                                                  ),
-                                                                  Opacity(
-                                                                    opacity: value
-                                                                        .orderList[index]["inventory"]["stocks"] ==
-                                                                        0
-                                                                        ? 0.5
-                                                                        : 1,
-                                                                    child: Padding(
-                                                                      padding: EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical: 4
-                                                                              .sp),
-                                                                      child: Row(
-                                                                        children: [
-                                                                          Visibility(
-                                                                            visible: value
-                                                                                .orderList[index]["product"]["mrp"] ==
-                                                                                null ||
-                                                                                value
-                                                                                    .orderList[index]["product"]["mrp"] ==
-                                                                                    value
-                                                                                        .orderList[index]["product"]["price"]
-                                                                                ? false
-                                                                                : true,
-                                                                            child: Padding(
-                                                                              padding: EdgeInsets
-                                                                                  .only(
-                                                                                  right: 10
-                                                                                      .sp),
-                                                                              child: Text(
-                                                                                "\u{20B9} ${value
-                                                                                    .orderList[index]["product"]["mrp"] ??
-                                                                                    "0"}",
-                                                                                style: TextStyle(
-                                                                                  color: widget
-                                                                                      .backgroundcolor ==
-                                                                                      whiteColor
-                                                                                      ? lightText
-                                                                                      : searchTextColor,
-                                                                                  fontSize: 12
-                                                                                      .sp,
-                                                                                  decoration: TextDecoration
-                                                                                      .lineThrough,
-                                                                                  fontFamily: "Franklin Gothic",
-                                                                                  fontWeight: FontWeight
-                                                                                      .w500,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Padding(
-                                                                            padding: EdgeInsets
-                                                                                .only(
-                                                                                right: 6
-                                                                                    .sp),
-                                                                            child: Text(
-                                                                              "\u{20B9} ${value
-                                                                                  .orderList[index]["product"]["price"] ??
-                                                                                  "0"}",
-                                                                              style: TextStyle(
-                                                                                color: widget
-                                                                                    .backgroundcolor ==
-                                                                                    whiteColor
-                                                                                    ? nameText
-                                                                                    : whiteColor,
-                                                                                fontSize: 12
-                                                                                    .sp,
-                                                                                fontFamily: "Franklin Gothic",
-                                                                                fontWeight: FontWeight
-                                                                                    .w500,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Visibility(
-                                                                            visible: value
-                                                                                .orderList[index]["product"]["discount_percentage"] ==
-                                                                                "0.00%"
-                                                                                ? false
-                                                                                : true,
-                                                                            child: Container(
-                                                                              decoration: BoxDecoration(
-                                                                                color: Color(
-                                                                                    0xffA7F3D0),
-                                                                                borderRadius: BorderRadius
-                                                                                    .all(
-                                                                                    Radius
-                                                                                        .circular(
-                                                                                        20
-                                                                                            .sp)),
-                                                                              ),
-                                                                              child: Padding(
-                                                                                padding: EdgeInsets
-                                                                                    .only(
-                                                                                    left: 10
-                                                                                        .sp,
-                                                                                    right: 10
-                                                                                        .sp,
-                                                                                    top: 4
-                                                                                        .sp,
-                                                                                    bottom: 4
-                                                                                        .sp),
-                                                                                child: Text(
-                                                                                  "${value
-                                                                                      .orderList[index]["product"]["discount_percentage"] ??
-                                                                                      "0 %"} OFF",
-                                                                                  style: TextStyle(
-                                                                                    color: homeAppBarColor,
-                                                                                    fontSize: 12
-                                                                                        .sp,
-                                                                                    fontFamily: "Franklin Gothic",
-                                                                                    fontWeight: FontWeight
-                                                                                        .w500,
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  /*  value.orderList[index]["estimated_delivery_by"] != null
-                                                                                      ? Container(
-                                                                                          width: MediaQuery.of(context).size.width - 165.sp,
-                                                                                          child: Padding(
-                                                                                            padding: EdgeInsets.symmetric(vertical: 5.sp),
-                                                                                            child: AppText(
-                                                                                              text: "${value.orderList[index]["estimated_delivery_by"]["message"]}",
-                                                                                              color: subtitleColor,
-                                                                                              fontSize: 12,
-                                                                                              maxLines: 3,
-                                                                                              fontFamily: "Franklin Gothic Regular",
-                                                                                              fontWeight: FontWeight.w400,
-                                                                                            ),
-                                                                                          ),
-                                                                                        )
-                                                                                      : SizedBox(
-                                                                                          height: 0,
-                                                                                        ), */
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            GestureDetector(
-                                                              onTap:
-                                                                  () async {
-                                                                showDialog(
-                                                                  barrierColor: Colors
-                                                                      .black26,
-                                                                  context: context,
-                                                                  builder: (
-                                                                      context) {
-                                                                    return showDoubleBtnDailog(
-                                                                        click1: () {
-                                                                          Get
-                                                                              .back();
-                                                                        },
-                                                                        click2: () {
-                                                                          value
-                                                                              .callAddtoCart(
-                                                                              0,
-                                                                              "remove",
-                                                                              value
-                                                                                  .orderList[index]["inventory"]["id"],
-                                                                              value
-                                                                                  .orderList[index]["product"]["id"],
-                                                                              value
-                                                                                  .orderList[index]["product"]["express_delivery"]
-                                                                                  ? 1
-                                                                                  : 0,
-                                                                              1,
-                                                                              widget
-                                                                                  .backgroundcolor,
-                                                                              value
-                                                                                  .orderList[index]["inventory"]["id"]);
-                                                                        },
-                                                                        btncolor: colorPrimary,
-                                                                        text: "Are you sure you want to remove this item?",
-                                                                        btn1Text: "Cancel",
-                                                                        btn2Text: "Remove");
-                                                                  },
-                                                                );
-
-                                                                await analytics
-                                                                    .logEvent(
-                                                                  name: 'cart_product_removeClick',
-                                                                  parameters: <
-                                                                      String,
-                                                                      Object>{
-                                                                    'page_name': 'cart_product_removeClick',
-                                                                  },
-                                                                );
-                                                              },
-                                                              child:
-                                                              Container(
-                                                                color:
-                                                                Colors
-                                                                    .transparent,
-                                                                child:
-                                                                Padding(
-                                                                    padding: EdgeInsets
-                                                                        .symmetric(
-                                                                        horizontal: 6
-                                                                            .sp,
-                                                                        vertical: 6
-                                                                            .sp),
-                                                                    child: SvgPicture
-                                                                        .asset(
-                                                                        crossSearchImage,
-                                                                        color: widget
-                                                                            .backgroundcolor ==
-                                                                            whiteColor
-                                                                            ? homeAppBarColor
-                                                                            : whiteColor,
-                                                                        height: 9
-                                                                            .sp,
-                                                                        width: 9
-                                                                            .sp,
-                                                                        fit: BoxFit
-                                                                            .cover)),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      Visibility(
-                                                        visible: value
-                                                            .orderList[index]["inventory"]["stocks"] ==
-                                                            0
-                                                            ? true
-                                                            : false,
-                                                        child:
-                                                        Padding(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                              horizontal: 16
-                                                                  .sp,
-                                                              vertical:
-                                                              8.sp),
-                                                          child:
-                                                          AppText(
-                                                            text: "Out of Stock"
-                                                                .toUpperCase(),
-                                                            color:
-                                                            redColor,
-                                                            fontSize:
-                                                            10,
-                                                            maxLines:
-                                                            1,
-                                                            fontFamily:
-                                                            "Franklin Gothic",
-                                                            fontWeight:
-                                                            FontWeight.w400,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Visibility(
-                                                        visible: value
-                                                            .orderList[index]["inventory"]["stocks"] ==
-                                                            0
-                                                            ? true
-                                                            : false,
-                                                        child:
-                                                        Padding(
-                                                          padding: EdgeInsets
-                                                              .only(
-                                                              top: 8
-                                                                  .sp),
-                                                          child:
-                                                          DoubleIconButton(
-                                                            firstText:
-                                                            "REMOVE",
-                                                            secondText:
-                                                            "WISHLIST",
-                                                            firstTextColor:
-                                                            homeAppBarColor,
-                                                            secondTextColor:
-                                                            whiteColor,
-                                                            firstBackgroundColor:
-                                                            whiteColor,
-                                                            secondBackgroundColor:
-                                                            homeAppBarColor,
-                                                            firstBorderColor:
-                                                            homeAppBarColor,
-                                                            secondBorderColor: widget
-                                                                .backgroundcolor ==
-                                                                whiteColor
-                                                                ? homeAppBarColor
-                                                                : lightPurpleColor,
-                                                            firstIcon:
-                                                            crossSearchImage,
-                                                            secondIcon: value
-                                                                .orderList[index]["product"]["wishlisted"]
-                                                                ? redHeartSvgImage
-                                                                : heartSvgImage,
-                                                            onPressedFirst:
-                                                                () async {
-                                                              showDialog(
-                                                                barrierColor:
-                                                                Colors.black26,
-                                                                context:
-                                                                context,
-                                                                builder:
-                                                                    (context) {
-                                                                  return showDoubleBtnDailog(
-                                                                      click1: () {
-                                                                        Get
-                                                                            .back();
-                                                                      },
-                                                                      click2: () {
-                                                                        value
-                                                                            .callAddtoCart(
-                                                                            0,
-                                                                            "remove",
-                                                                            value
-                                                                                .orderList[index]["inventory"]["id"],
-                                                                            value
-                                                                                .orderList[index]["product"]["id"],
-                                                                            value
-                                                                                .orderList[index]["product"]["express_delivery"]
-                                                                                ? 1
-                                                                                : 0,
-                                                                            1,
-                                                                            widget
-                                                                                .backgroundcolor,
-                                                                            value
-                                                                                .orderList[index]["inventory"]["id"]);
-                                                                      },
-                                                                      btncolor: colorPrimary,
-                                                                      text: "Are you sure you want to remove this item?",
-                                                                      btn1Text: "Cancel",
-                                                                      btn2Text: "Remove");
-                                                                },
-                                                              );
-
-                                                              await analytics
-                                                                  .logEvent(
-                                                                name:
-                                                                'cart_product_removeClick',
-                                                                parameters: <
-                                                                    String,
-                                                                    Object>{
-                                                                  'page_name': 'cart_product_removeClick',
-                                                                },
-                                                              );
-                                                            },
-                                                            onPressedSecond:
-                                                                () async {
-                                                              if (value
-                                                                  .orderList[index]["product"]
-                                                              [
-                                                              "wishlisted"]) {
-                                                                wishlistController
-                                                                    .callAddProductToWishlist(
-                                                                    value
-                                                                        .orderList[index]["product"]["wishlist_id"],
-                                                                    value
-                                                                        .orderList[index]["product"]["id"],
-                                                                    widget
-                                                                        .backgroundcolor);
-                                                                controller
-                                                                    .getCartData();
-                                                                await analytics
-                                                                    .logEvent(
-                                                                  name: 'cart_wishlist_remove',
-                                                                  parameters: <
-                                                                      String,
-                                                                      Object>{
-                                                                    'page_name': 'productdetails_wishlist_remove',
-                                                                  },
-                                                                );
-                                                              } else {
-                                                                scaffoldKey
-                                                                    .currentState
-                                                                    ?.showBottomSheet((
-                                                                    context) =>
-                                                                    BottomWishlist(
-                                                                        controller: wishlistController,
-                                                                        onPressedBoard: () {
-                                                                          Navigator
-                                                                              .of(
-                                                                              context)
-                                                                              .push(
-                                                                              MaterialPageRoute(
-                                                                                  builder: (
-                                                                                      BuildContext context) =>
-                                                                                      NewBoardScreen(
-                                                                                        title: "New Board",
-                                                                                        boardId: 0,
-                                                                                        screen: "Bag",
-                                                                                        productId: value
-                                                                                            .orderList[index]["product"]["id"],
-                                                                                        hintName: "Name of the Board",
-                                                                                        boardName: "",
-                                                                                        btnText: "Next",
-                                                                                      )))
-                                                                              .then(
-                                                                                (
-                                                                                value) {},
-                                                                          );
-                                                                        },
-                                                                        productImage: value
-                                                                            .orderList[index]["product"]["images"][0]["name"],
-                                                                        onPressed: (
-                                                                            p0) {
-                                                                          wishlistController
-                                                                              .callAddProductToWishlist(
-                                                                              p0,
-                                                                              value
-                                                                                  .orderList[index]["product"]["id"],
-                                                                              widget
-                                                                                  .backgroundcolor);
-                                                                          value
-                                                                              .callAddtoCart(
-                                                                              0,
-                                                                              "wishlist",
-                                                                              value
-                                                                                  .orderList[index]["inventory"]["id"],
-                                                                              value
-                                                                                  .orderList[index]["product"]["id"],
-                                                                              value
-                                                                                  .orderList[index]["product"]["express_delivery"]
-                                                                                  ? 1
-                                                                                  : 0,
-                                                                              1,
-                                                                              widget
-                                                                                  .backgroundcolor,
-                                                                              value
-                                                                                  .orderList[index]["inventory"]["id"]);
-                                                                        },
-                                                                        wishlistList: wishlistController
-                                                                            .wishlistList));
-                                                                await analytics
-                                                                    .logEvent(
-                                                                  name: 'cart_wishlist_add',
-                                                                  parameters: <
-                                                                      String,
-                                                                      Object>{
-                                                                    'page_name': 'productdetails_wishlist_add',
-                                                                  },
-                                                                );
-                                                              }
-                                                            },
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                        padding: EdgeInsets
-                                                            .only(
-                                                            top: 16
-                                                                .sp),
-                                                        child:
-                                                        Container(
-                                                          width: double
-                                                              .infinity,
-                                                          color: widget
-                                                              .backgroundcolor ==
-                                                              whiteColor
-                                                              ? colorSecondary
-                                                              : titleColor,
-                                                          height:
-                                                          1.sp,
-                                                        ),
-                                                      ),
-                                                    ]),
-                                              );
-                                            }),
-                                      ),
-                                ),
-                                /*  productController.isProduct.value
-                                                    ? const DummyProductList(
-                                                        text: "You may also like")
-                                                    : productController
-                                                            .productList.isNotEmpty
-                                                        ? Container(
-                                                            color: whiteBack,
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .only(
-                                                                          top:
-                                                                              24.sp,
-                                                                          left: 16
-                                                                              .sp),
-                                                                  child: AppText(
-                                                                    text:
-                                                                        "You may also like",
-                                                                    fontFamily:
-                                                                        "Franklin Gothic Regular",
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    color:
-                                                                        colorPrimary,
-                                                                    fontSize: 12,
-                                                                  ),
-                                                                ),
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              16.sp,
-                                                                          vertical:
-                                                                              10.sp),
-                                                                  child: SizedBox(
-                                                                      width: double
-                                                                          .infinity,
-                                                                      height:
-                                                                          310.sp,
-                                                                      child: GetBuilder<
-                                                                          ProductController>(
-                                                                        builder: (value) => ListView.builder(
-                                                                            shrinkWrap: true,
-                                                                            primary: false,
-                                                                            controller: productController.listController,
-                                                                            physics: const BouncingScrollPhysics(),
-                                                                            itemCount: value.productList.length,
-                                                                            scrollDirection: Axis.horizontal,
-                                                                            itemBuilder: (ctx, index) {
-                                                                              return Column(
-                                                                                children: [
-                                                                                  GestureDetector(
-                                                                                    onTap: () async {
-                                                                                      Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.productList[index]["id"], brandName: value.productList[index]["brand_name"], type: "add"))).then((value) => setState(
-                                                                                            () {
-                                                                                              productController.hasnextpage.value = true;
-                                                                                              productController.loadMore.value = false;
-                                                                                              productController.isProduct.value = false;
-                                                                                              productController.page.value = 1;
-                                                                                              productController.getProductData("relevant");
-                                                                                              controller.getCartData();
-                                                                                              controller.update();
-                                                                                            },
-                                                                                          ));
-                                                                                      await analytics.logEvent(
-                                                                                        name: 'cart_youmay_product_details',
-                                                                                        parameters: <String, Object>{
-                                                                                          'page_name': 'cart_youmay_product_details',
-                                                                                        },
-                                                                                      );
-                                                                                    },
-                                                                                    child: AnimatedContainer(
-                                                                                      duration: const Duration(milliseconds: 300),
-                                                                                      margin: EdgeInsets.only(right: 8.sp),
-                                                                                      color: whiteColor,
-                                                                                      width: 122.sp,
-                                                                                      child: Column(
-                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                        children: [
-                                                                                          productController.productList[index]["images"].isNotEmpty && productController.productList[index]["images"] != null
-                                                                                              ? SizedBox(
-                                                                                                  height: 150.sp,
-                                                                                                  width: 122.sp,
-                                                                                                  child: CachedNetworkImage(
-                                                                                                    cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-                                                                                                    fit: BoxFit.cover,
-                                                                                                    imageUrl: isImage(productController.productList[index]["images"][0]["name"]) ? productController.productList[index]["images"][0]["name"] : productController.productList[index]["images"][1]["name"],
-                                                                                                    /*  progressIndicatorBuilder: (context, url, downloadProgress) => Center(
-                                                                                            child: CircularProgressIndicator(value: downloadProgress.progress),
-                                                                                          ), */
-                                                                                                    errorWidget: (context, url, error) => Image.asset(
-                                                                                                      downloadImage,
-                                                                                                      fit: BoxFit.cover,
-                                                                                                      height: 150.sp,
-                                                                                                      width: 122.sp,
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                )
-                                                                                              : Image.asset(dummyWishlistImage, height: 150, width: 122, fit: BoxFit.cover),
-                                                                                          Padding(
-                                                                                            padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 5.sp),
-                                                                                            child: AppText(
-                                                                                              text: value.productList[index]["name"] ?? "",
-                                                                                              color: nameText,
-                                                                                              fontSize: 12,
-                                                                                              maxLines: 1,
-                                                                                              fontFamily: "Franklin Gothic",
-                                                                                              fontWeight: FontWeight.w500,
-                                                                                            ),
-                                                                                          ),
-                                                                                          Padding(
-                                                                                            padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 3.sp),
-                                                                                            child: AppText(
-                                                                                              text: value.productList[index]["short_description"] ?? "",
-                                                                                              color: nameText,
-                                                                                              maxLines: 1,
-                                                                                              fontSize: 11,
-                                                                                              fontFamily: "Franklin Gothic Regular",
-                                                                                              fontWeight: FontWeight.w400,
-                                                                                            ),
-                                                                                          ),
-                                                                                          Padding(
-                                                                                            padding: EdgeInsets.only(top: 10.sp, left: 10.sp, right: 1.sp),
-                                                                                            child: Row(
-                                                                                              children: [
-                                                                                                AppText(
-                                                                                                  text: "\u{20B9} ${value.productList[index]["price"] ?? "0"}",
-                                                                                                  color: deepGreytextColor,
-                                                                                                  maxLines: 2,
-                                                                                                  fontSize: 11,
-                                                                                                  fontFamily: "Franklin Gothic",
-                                                                                                  fontWeight: FontWeight.w500,
-                                                                                                ),
-                                                                                                Padding(
-                                                                                                  padding: EdgeInsets.only(left: 5.sp),
-                                                                                                  child: Text(
-                                                                                                    "\u{20B9} ${value.productList[index]["mrp"] ?? "0"}",
-                                                                                                    style: TextStyle(
-                                                                                                      color: textHintColor,
-                                                                                                      fontSize: 11.sp,
-                                                                                                      decoration: TextDecoration.lineThrough,
-                                                                                                      fontFamily: "Franklin Gothic Regular",
-                                                                                                      fontWeight: FontWeight.w400,
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ],
-                                                                                            ),
-                                                                                          ),
-                                                                                          Padding(
-                                                                                            padding: EdgeInsets.only(top: 10.sp),
-                                                                                            child: getSmallButton(
-                                                                                                label: "Add to bag",
-                                                                                                fontSize: 12,
-                                                                                                onPressed: () async {
-                                                                                                  Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => ProductDetailsScreen(productId: value.productList[index]["id"], brandName: value.productList[index]["brand_name"], type: "add"))).then((value) => setState(
-                                                                                                        () {
-                                                                                                          productController.hasnextpage.value = true;
-                                                                                                          productController.loadMore.value = false;
-                                                                                                          productController.isProduct.value = false;
-                                                                                                          productController.page.value = 1;
-                                                                                                          productController.getProductData("relevant");
-                                                                                                        },
-                                                                                                      ));
-                                                                                                  await analytics.logEvent(
-                                                                                                    name: 'cart_youmay_product_addtobag',
-                                                                                                    parameters: <String, Object>{
-                                                                                                      'page_name': 'cart_youmay_product_addtobag',
-                                                                                                    },
-                                                                                                  );
-                                                                                                  // controller.callAddtoCart(1, "addproduct");
-                                                                                                },
-                                                                                                textColor: btnTextColor,
-                                                                                                backgroundColor: whiteColor,
-                                                                                                borderColor: btnTextColor,
-                                                                                                width: 122.sp),
-                                                                                          )
-                                                                                        ],
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
-                                                                              );
-                                                                            }),
-                                                                      )),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          )
-                                                        : SizedBox(
-                                                            height: 0,
-                                                          ),
-                                                const SizedBox(
-                                                  height: 8,
-                                                ), */
-                                Container(
-                                  color: widget.backgroundcolor,
-                                  child: Padding(
-                                    padding:
-                                    EdgeInsets.symmetric(
-                                      horizontal: 16.sp,
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment
-                                          .start,
-                                      children: [
-                                        /*  AppText(
-                                                          text: "Coupons",
-                                                          fontFamily:
-                                                              "Franklin Gothic Regular",
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color: colorPrimary,
-                                                          fontSize: 12,
-                                                        ), */
-                                        Padding(
-                                          padding: EdgeInsets
-                                              .symmetric(
-                                              vertical:
-                                              24.sp),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color:
-                                                    borderColor,
-                                                    width:
-                                                    1.sp),
-                                                borderRadius:
-                                                BorderRadius
-                                                    .circular(
-                                                    1)),
-                                            child: Padding(
-                                              padding: EdgeInsets
-                                                  .symmetric(
-                                                  horizontal:
-                                                  10.sp,
-                                                  vertical:
-                                                  6.sp),
-                                              child: Row(
-                                                mainAxisSize:
-                                                MainAxisSize
-                                                    .max,
-                                                mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .start,
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap:
-                                                        () {},
-                                                    child: Row(
-                                                      children: [
-                                                        Visibility(
-                                                          visible: controller
-                                                              .couponText
-                                                              .value ==
-                                                              "Apply Coupon"
-                                                              ? true
-                                                              : false,
-                                                          child:
-                                                          /*  ImageIcon(
-                                                                            AssetImage(
-                                                                                coupanImage),
-                                                                            color: widget.backgroundcolor == whiteColor
-                                                                                ? titleColor
-                                                                                : productSubtitleColor,
-                                                                            size:
-                                                                                22.sp,
-                                                                          ) */
-                                                          SvgPicture.asset(
-                                                            couponSvgImage,
-                                                            color: widget
-                                                                .backgroundcolor ==
-                                                                whiteColor
-                                                                ? titleColor
-                                                                : productSubtitleColor,
-                                                            height:
-                                                            20.sp,
-                                                            width:
-                                                            20.sp,
-                                                          ),
-                                                        ),
-                                                        controller.couponText
-                                                            .value ==
-                                                            "Apply Coupon"
-                                                            ? GestureDetector(
-                                                          onTap: () async {
-                                                            await analytics
-                                                                .logEvent(
-                                                              name: 'cart_page_applycouponclick',
-                                                              parameters: <
-                                                                  String,
-                                                                  Object>{
-                                                                'page_name': 'cart_page_applycouponclick',
-                                                              },
-                                                            );
-                                                            if (controller
-                                                                .cartDetails["discount"] !=
-                                                                null) {
-                                                              controller
-                                                                  .callRemoveCoupon(
-                                                                  widget
-                                                                      .backgroundcolor);
-                                                            } else {
-                                                              controller
-                                                                  .getCouponData(
-                                                                  widget
-                                                                      .backgroundcolor);
-                                                            }
-                                                          },
-                                                          child: Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 8
-                                                                    .sp),
-                                                            child: AppText(
-                                                              text: controller
-                                                                  .couponText
-                                                                  .value,
-                                                              fontFamily: "Franklin Gothic Regular",
-                                                              fontWeight: FontWeight
-                                                                  .w500,
-                                                              color: widget
-                                                                  .backgroundcolor ==
-                                                                  whiteColor
-                                                                  ? titleColor
-                                                                  : productSubtitleColor,
-                                                              fontSize: 14,
-                                                            ),
-                                                          ),
-                                                        )
-                                                            : Container(
-                                                          color: Color(
-                                                              0xffD1FAE5),
-                                                          child: DottedBorder(
-                                                            borderType: BorderType
-                                                                .RRect,
-                                                            dashPattern: [
-                                                              5,
-                                                              5
-                                                            ],
-                                                            color: Color(
-                                                                0xff10B981),
-                                                            strokeWidth: 1,
-                                                            child: Padding(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                  vertical: 6
-                                                                      .sp,
-                                                                  horizontal: 8
-                                                                      .sp),
-                                                              child: AppText(
-                                                                text: controller
-                                                                    .couponText
-                                                                    .value
-                                                                    .toUpperCase(),
-                                                                fontFamily: "Franklin Gothic",
-                                                                fontWeight: FontWeight
-                                                                    .w500,
-                                                                color: titleColor,
-                                                                fontSize: 14,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Visibility(
-                                                          visible: controller
-                                                              .couponText
-                                                              .value ==
-                                                              "Apply Coupon"
-                                                              ? false
-                                                              : true,
-                                                          child:
-                                                          Padding(
-                                                            padding:
-                                                            EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 2.sp,
-                                                                horizontal: 10
-                                                                    .sp),
-                                                            child:
-                                                            AppText(
-                                                              text: "Saved ₹${controller
-                                                                  .couponSave
-                                                                  .value}",
-                                                              fontFamily: "Franklin Gothic",
-                                                              fontWeight: FontWeight
-                                                                  .w500,
-                                                              color: Color(
-                                                                  0xff059669),
-                                                              fontSize: 12,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  const Expanded(
-                                                    child:
-                                                    SizedBox(
-                                                      height: 0,
-                                                    ),
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap:
-                                                        () async {
-                                                      await analytics
-                                                          .logEvent(
-                                                        name:
-                                                        'cart_page_applycouponclick',
-                                                        parameters: <
-                                                            String,
-                                                            Object>{
-                                                          'page_name':
-                                                          'cart_page_applycouponclick',
-                                                        },
-                                                      );
-                                                      if (controller
-                                                          .cartDetails["discount"] !=
-                                                          null) {
-                                                        controller
-                                                            .callRemoveCoupon(
-                                                            widget
-                                                                .backgroundcolor);
-                                                      } else {
-                                                        controller
-                                                            .getCouponData(
-                                                            widget
-                                                                .backgroundcolor);
-                                                      }
-                                                    },
-                                                    child: controller
-                                                        .isRemoveCoupan
-                                                        .value
-                                                        ? SizedBox(
-                                                      height:
-                                                      10.sp,
-                                                      width:
-                                                      10.sp,
-                                                      child:
-                                                      Center(
-                                                          child: CircularProgressIndicator()),
-                                                    )
-                                                        : controller
-                                                        .cartDetails["discount"] !=
-                                                        null
-                                                        ? AppText(
-                                                      text: "Remove"
-                                                          .toUpperCase(),
-                                                      fontFamily: "Franklin Gothic",
-                                                      fontWeight: FontWeight
-                                                          .w500,
-                                                      color: redColor,
-                                                      fontSize: 10,
-                                                    )
-                                                        : Container(
-                                                      width: 80.sp,
-                                                      height: 30.sp,
-                                                      decoration: BoxDecoration(
-                                                        color: widget
-                                                            .backgroundcolor ==
-                                                            whiteColor
-                                                            ? homeAppBarColor
-                                                            : Colors
-                                                            .transparent,
-                                                        border: Border.all(
-                                                            color: widget
-                                                                .backgroundcolor ==
-                                                                whiteColor
-                                                                ? btnTextColor
-                                                                : Colors
-                                                                .transparent,
-                                                            width: 1.sp),
-                                                      ),
-                                                      child: Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                            horizontal: 0.sp),
-                                                        child: Center(
-                                                          child: AppText(
-                                                            text: "Select"
-                                                                .toUpperCase(),
-                                                            color: whiteColor,
-                                                            fontSize: 12,
-                                                            fontFamily: "Franklin Gothic",
-                                                            fontWeight: FontWeight
-                                                                .w500,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        /*    controller.cartDetails[
-                                                          "express_delivery_charges"] ==
-                                                      "0.00"
-                                                  ? SizedBox(
-                                                      height: 0,
-                                                    )
-                                                  : Padding(
-                                                      padding: EdgeInsets.symmetric(
-                                                          horizontal: 0.sp,
-                                                          vertical: 10.sp),
-                                                      child: Row(
-                                                        children: [
-                                                          GestureDetector(
-                                                            onTap: () async {
-                                                              if (controller
-                                                                  .isExpress.value) {
-                                                                controller.isExpress
-                                                                    .value = false;
-                                                                controller
-                                                                    .expressValue
-                                                                    .value = 0;
-                                                              } else {
-                                                                controller.isExpress
-                                                                    .value = true;
-                                                                controller
-                                                                    .expressValue
-                                                                    .value = 1;
-                                                              }
-                                                              controller
-                                                                  .callEnableExpressDelivery();
-                                                            },
-                                                            child: AppText(
-                                                              text:
-                                                                  "Express Delivery Charges \u{20B9} ${controller.cartDetails["express_delivery_charges"]} ",
-                                                              fontFamily:
-                                                                  "Franklin Gothic Regular",
-                                                              fontWeight:
-                                                                  FontWeight.w400,
-                                                              color: loginText,
-                                                              fontSize: 12,
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: const SizedBox(
-                                                              width: 0,
-                                                            ),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsets.symmetric(
-                                                                    horizontal: 0.sp),
-                                                            child: Container(
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              3.sp),
-                                                                  border: Border(
-                                                                    top: BorderSide(
-                                                                        width: 2.0.sp,
-                                                                        color:
-                                                                            greyBorder),
-                                                                    left: BorderSide(
-                                                                        width: 2.0.sp,
-                                                                        color:
-                                                                            greyBorder),
-                                                                    right: BorderSide(
-                                                                        width: 2.0.sp,
-                                                                        color:
-                                                                            greyBorder),
-                                                                    bottom: BorderSide(
-                                                                        width: 2.0.sp,
-                                                                        color:
-                                                                            greyBorder),
-                                                                  ),
-                                                                ),
-                                                                width: 20,
-                                                                height: 20,
-                                                                child: Checkbox(
-                                                                  value: controller
-                                                                      .isExpress
-                                                                      .value,
-                                                                  checkColor:
-                                                                      btnTextColor,
-                                                                  activeColor:
-                                                                      whiteBorderColor,
-                                                                  side: const BorderSide(
-                                                                      color:
-                                                                          btnTextColor,
-                                                                      width: 0),
-                                                                  onChanged: (value) {
-                                                                    setState(() {
-                                                                      controller
-                                                                              .isExpress
-                                                                              .value =
-                                                                          value!;
-                                                                      if (controller
-                                                                          .isExpress
-                                                                          .value) {
-                                                                        controller
-                                                                            .expressValue
-                                                                            .value = 1;
-                                                                      } else {
-                                                                        controller
-                                                                            .expressValue
-                                                                            .value = 0;
-                                                                      }
-                                                                      controller
-                                                                          .callEnableExpressDelivery();
-                                                                    });
-                                                                  },
-                                                                )),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                             */
-                                        Padding(
-                                          padding:
-                                          EdgeInsets.only(
-                                              top: 24.sp),
-                                          child: AppText(
-                                            text: "order Details"
-                                                .toUpperCase(),
-                                            fontFamily:
-                                            "Franklin Gothic",
-                                            fontWeight:
-                                            FontWeight.w500,
-                                            color: widget
-                                                .backgroundcolor ==
-                                                whiteColor
-                                                ? homeAppBarColor
-                                                : whiteColor,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets
-                                              .symmetric(
-                                              vertical:
-                                              10.sp),
-                                          child: Container(
-                                            width:
-                                            double.infinity,
-                                            color:
-                                            colorSecondary,
-                                            height: 1.sp,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                          EdgeInsets.only(
-                                              top: 10.sp),
-                                          child: Row(
-                                            mainAxisSize:
-                                            MainAxisSize
-                                                .max,
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .start,
-                                            children: [
-                                              /*  Padding(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        right: 4
-                                                                            .sp),
-                                                                child: AppText(
-                                                                  text:
-                                                                      "Total Price",
-                                                                  fontFamily:
-                                                                      "Franklin Gothic Regular",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  color: widget
-                                                                              .backgroundcolor ==
-                                                                          whiteColor
-                                                                      ? subtitleColor
-                                                                      : productSubtitleColor,
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ), */
-                                              Row(
-                                                children: [
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        right: 4
-                                                            .sp),
-                                                    child:
-                                                    AppText(
-                                                      text:
-                                                      "Total Price",
-                                                      fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .w400,
-                                                      color: widget
-                                                          .backgroundcolor ==
-                                                          whiteColor
-                                                          ? subtitleColor
-                                                          : productSubtitleColor,
-                                                      fontSize:
-                                                      12,
-                                                    ),
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      showModalBottomSheet(
-                                                        context:
-                                                        context,
-                                                        isScrollControlled:
-                                                        true,
-                                                        constraints:
-                                                        BoxConstraints(
-                                                          maxWidth:
-                                                          double.infinity,
-                                                          maxHeight:
-                                                          220.sp,
-                                                        ),
-                                                        builder:
-                                                            (ctx) {
-                                                          return TotalTaxcharges(
-                                                            total:
-                                                            "\u{20B9}${controller
-                                                                .cartDetails["total"] ??
-                                                                "0"}",
-                                                            tax:
-                                                            "\u{20B9}${controller
-                                                                .cartDetails["total_tax"] ??
-                                                                "0"}",
-                                                            title:
-                                                            "Tax & Charges",
-                                                            price:
-                                                            "\u{20B9}${controller
-                                                                .cartDetails["total_mrp"] ??
-                                                                "0"}",
-                                                          );
-                                                        },
-                                                      );
-                                                    },
-                                                    child: SvgPicture
-                                                        .asset(
-                                                      questionSvgImage,
-                                                      height:
-                                                      15.sp,
-                                                      width:
-                                                      15.sp,
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              const Expanded(
-                                                child: SizedBox(
-                                                  height: 0,
-                                                ),
-                                              ),
-                                              AppText(
-                                                text:
-                                                "\u{20B9}${controller
-                                                    .cartDetails["total_mrp"] ??
-                                                    "0"}",
-                                                fontFamily:
-                                                "Franklin Gothic Regular",
-                                                fontWeight:
-                                                FontWeight
-                                                    .w400,
-                                                color: widget
-                                                    .backgroundcolor ==
-                                                    whiteColor
-                                                    ? homeAppBarColor
-                                                    : whiteColor,
-                                                fontSize: 12,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        /*  controller.cartDetails[
-                                                                    "express_delivery_charges"] ==
-                                                                "0.00"
-                                                            ? SizedBox(
-                                                                height: 0,
-                                                              )
-                                                            : Padding(
-                                                                padding:
-                                                                    EdgeInsets.only(
-                                                                        top: 10.sp),
-                                                                child: Row(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Padding(
-                                                                      padding: EdgeInsets
-                                                                          .only(
-                                                                              right:
-                                                                                  4.sp),
-                                                                      child:
-                                                                          AppText(
-                                                                        text: "Express Delivery Charges"
-                                                                            .toUpperCase(),
-                                                                        fontFamily:
-                                                                            "Franklin Gothic Regular",
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w400,
-                                                                        color:
-                                                                            subtitleColor,
-                                                                        fontSize:
-                                                                            12,
-                                                                      ),
-                                                                    ),
-                                                                    const Expanded(
-                                                                      child:
-                                                                          SizedBox(
-                                                                        height: 0,
-                                                                      ),
-                                                                    ),
-                                                                    AppText(
-                                                                      text:
-                                                                          "\u{20B9} ${controller.cartDetails["express_delivery_charges"] ?? "0"}",
-                                                                      fontFamily:
-                                                                          "Franklin Gothic Regular",
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
-                                                                      color:
-                                                                          homeAppBarColor,
-                                                                      fontSize: 12,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                        */
-                                        Padding(
-                                          padding:
-                                          EdgeInsets.only(
-                                              top: 12.sp),
-                                          child: Row(
-                                            mainAxisSize:
-                                            MainAxisSize
-                                                .max,
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .start,
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets
-                                                    .only(
-                                                    right: 4
-                                                        .sp),
-                                                child: AppText(
-                                                  text:
-                                                  "Delivery Charges",
-                                                  fontFamily:
-                                                  "Franklin Gothic Regular",
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .w400,
-                                                  color: widget
-                                                      .backgroundcolor ==
-                                                      whiteColor
-                                                      ? subtitleColor
-                                                      : productSubtitleColor,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                              const Expanded(
-                                                child: SizedBox(
-                                                  height: 0,
-                                                ),
-                                              ),
-                                              AppText(
-                                                text: "\u{20B9}${double.parse(
-                                                    controller
-                                                        .cartDetails["shipping_cost"]
-                                                        .toString()
-                                                        .replaceAll(",", ""))
-                                                    +
-                                                    double.parse(
-                                                        controller
-                                                            .cartDetails["express_delivery_charges"]
-                                                            .toString()
-                                                            .replaceAll(
-                                                            ",", ""))}",
-                                                fontFamily: "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                                color: widget.backgroundcolor ==
-                                                    whiteColor
-                                                    ? homeAppBarColor
-                                                    : whiteColor,
-                                                fontSize: 12,
-                                              ),
-
-                                            ],
-                                          ),
-                                        ),
-                                        /*    Padding(
-                                                              padding:
-                                                                  EdgeInsets.only(
-                                                                      top: 12.sp),
-                                                              child: Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Padding(
-                                                                    padding: EdgeInsets
-                                                                        .only(
-                                                                            right: 4
-                                                                                .sp),
-                                                                    child: AppText(
-                                                                      text:
-                                                                          "Discount on MRP",
-                                                                      fontFamily:
-                                                                          "Franklin Gothic Regular",
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
-                                                                      color:
-                                                                          subtitleColor,
-                                                                      fontSize: 12,
-                                                                    ),
-                                                                  ),
-                                                                  const Expanded(
-                                                                    child: SizedBox(
-                                                                      height: 0,
-                                                                    ),
-                                                                  ),
-                                                                  AppText(
-                                                                    text:
-                                                                        "\u{20B9}${controller.cartDetails["discount_on_mrp"] ?? "0"}",
-                                                                    fontFamily:
-                                                                        "Franklin Gothic Regular",
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    color:
-                                                                        greenText,
-                                                                    fontSize: 12,
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            */
-                                        controller.cartDetails[
-                                        "coupon_discount"] ==
-                                            "0.00"
-                                            ? SizedBox(
-                                          height: 0,
-                                        )
-                                            : Padding(
-                                          padding: EdgeInsets
-                                              .only(
-                                              top: 12
-                                                  .sp),
-                                          child: Row(
-                                            mainAxisSize:
-                                            MainAxisSize
-                                                .max,
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .start,
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    right:
-                                                    4.sp),
-                                                child:
-                                                AppText(
-                                                  text:
-                                                  "Coupon Discount",
-                                                  fontFamily:
-                                                  "Franklin Gothic Regular",
-                                                  fontWeight:
-                                                  FontWeight.w400,
-                                                  color: widget
-                                                      .backgroundcolor ==
-                                                      whiteColor
-                                                      ? subtitleColor
-                                                      : productSubtitleColor,
-                                                  fontSize:
-                                                  12,
-                                                ),
-                                              ),
-                                              const Expanded(
-                                                child:
-                                                SizedBox(
-                                                  height:
-                                                  0,
-                                                ),
-                                              ),
-                                              GestureDetector(
-                                                onTap:
-                                                    () {
-                                                  /*  Get.to(
-                                                                            BottomCoupon(
-                                                                          list: controller
-                                                                              .couponList,
-                                                                          backColor:
-                                                                              widget.backgroundcolor,
-                                                                          onPressed:
-                                                                              (p0) {
-                                                                            controller
-                                                                                .couponText
-                                                                                .value = p0;
-                                                                            controller.callAddCoupon(
-                                                                                p0,
-                                                                                "cart",
-                                                                                widget.backgroundcolor);
-                                                                          },
-                                                                        )); */
-                                                  /*  if (controller
-                                                                              .cartDetails["discount"] !=
-                                                                          null) {
-                                                                        controller
-                                                                            .callRemoveCoupon(
-                                                                                widget.backgroundcolor);
-                                                                      } else { */
-                                                  controller
-                                                      .getCouponData(
-                                                      widget.backgroundcolor);
-                                                  //   }
-                                                },
-                                                child:
-                                                AppText(
-                                                  text: controller
-                                                      .cartDetails["discount"] !=
-                                                      null
-                                                      ? "\u{20B9} ${controller
-                                                      .cartDetails["coupon_discount"] ??
-                                                      "0"}"
-                                                      : "Apply Coupon",
-                                                  fontFamily:
-                                                  "Franklin Gothic",
-                                                  fontWeight:
-                                                  FontWeight.w500,
-                                                  color: controller
-                                                      .cartDetails["discount"] !=
-                                                      null
-                                                      ? widget
-                                                      .backgroundcolor ==
-                                                      whiteColor
-                                                      ? homeAppBarColor
-                                                      : whiteColor
-                                                      : Color(0xff7A6ECC),
-                                                  fontSize:
-                                                  10,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        /*  Padding(
-                                                          padding: EdgeInsets.only(
-                                                              top: 10.sp),
-                                                          child: Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize.max,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Padding(
-                                                                padding:
-                                                                    EdgeInsets.only(
-                                                                        right:
-                                                                            4.sp),
-                                                                child: AppText(
-                                                                  text:
-                                                                      "Service tax",
-                                                                  fontFamily:
-                                                                      "Franklin Gothic Regular",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  color: textColor,
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ),
-                                                              const Expanded(
-                                                                child: SizedBox(
-                                                                  height: 0,
-                                                                ),
-                                                              ),
-                                                              AppText(
-                                                                text:
-                                                                    "\u{20B9} ${controller.cartDetails["lafetch_service_tax"].toString()}",
-                                                                fontFamily:
-                                                                    "Franklin Gothic Regular",
-                                                                fontWeight:
-                                                                    FontWeight.w400,
-                                                                color: greenText,
-                                                                fontSize: 12,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        */
-                                        Padding(
-                                          padding:
-                                          EdgeInsets.only(
-                                              top: 12.sp),
-                                          child: Row(
-                                            mainAxisSize:
-                                            MainAxisSize
-                                                .max,
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        right: 4
-                                                            .sp),
-                                                    child:
-                                                    AppText(
-                                                      text:
-                                                      "Convenience Fee",
-                                                      fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .w400,
-                                                      color: widget
-                                                          .backgroundcolor ==
-                                                          whiteColor
-                                                          ? subtitleColor
-                                                          : productSubtitleColor,
-                                                      fontSize:
-                                                      12,
-                                                    ),
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      showModalBottomSheet(
-                                                        context:
-                                                        context,
-                                                        isScrollControlled:
-                                                        true,
-                                                        constraints:
-                                                        BoxConstraints(
-                                                          maxWidth:
-                                                          double.infinity,
-                                                          maxHeight:
-                                                          220.sp,
-                                                        ),
-                                                        builder:
-                                                            (ctx) {
-                                                          return BottomCharges(
-                                                            text:
-                                                            "This fee covers the costs of our convenient online shopping services, including secure payment processing, 24/7 customer support, and fast order processing. It helps us offer you a hassle-free shopping experience from the comfort of your home.",
-                                                            title:
-                                                            "Convenience Fee",
-                                                          );
-                                                        },
-                                                      );
-                                                    },
-                                                    child: SvgPicture
-                                                        .asset(
-                                                      questionSvgImage,
-                                                      height:
-                                                      15.sp,
-                                                      width:
-                                                      15.sp,
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              const Expanded(
-                                                child: SizedBox(
-                                                  height: 0,
-                                                ),
-                                              ),
-                                              AppText(
-                                                text:
-                                                "\u{20B9}${controller
-                                                    .cartDetails["convenience_fee"] ??
-                                                    "Free"}",
-                                                fontFamily:
-                                                "Franklin Gothic Regular",
-                                                fontWeight:
-                                                FontWeight
-                                                    .w400,
-                                                color: widget
-                                                    .backgroundcolor ==
-                                                    whiteColor
-                                                    ? homeAppBarColor
-                                                    : whiteColor,
-                                                fontSize: 12,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        /* Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  top: 12.sp),
-                                                          child: Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Row(
-                                                                children: [
-                                                                  Padding(
-                                                                    padding: EdgeInsets.only(
-                                                                        right: 4
-                                                                            .sp),
-                                                                    child:
-                                                                        AppText(
-                                                                      text:
-                                                                          "Tax & Charges",
-                                                                      fontFamily:
-                                                                          "Franklin Gothic Regular",
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
-                                                                      color: widget.backgroundcolor ==
-                                                                              whiteColor
-                                                                          ? subtitleColor
-                                                                          : productSubtitleColor,
-                                                                      fontSize:
-                                                                          12,
-                                                                    ),
-                                                                  ),
-                                                                  GestureDetector(
-                                                                    onTap: () {
-                                                                      showModalBottomSheet(
-                                                                        context:
-                                                                            context,
-                                                                        isScrollControlled:
-                                                                            true,
-                                                                        constraints:
-                                                                            BoxConstraints(
-                                                                          maxWidth:
-                                                                              double.infinity,
-                                                                          maxHeight:
-                                                                              220.sp,
-                                                                        ),
-                                                                        builder:
-                                                                            (ctx) {
-                                                                          return BottomCharges(
-                                                                            text:
-                                                                                "This amount includes applicable sales tax and any additional charges required by local regulations. The exact breakdown may vary based on your location and the items in your cart.",
-                                                                            title:
-                                                                                "Tax & Charges",
-                                                                          );
-                                                                        },
-                                                                      );
-                                                                    },
-                                                                    child: SvgPicture
-                                                                        .asset(
-                                                                      questionSvgImage,
-                                                                      height:
-                                                                          15.sp,
-                                                                      width:
-                                                                          15.sp,
-                                                                    ),
-                                                                  )
-                                                                ],
-                                                              ),
-                                                              const Expanded(
-                                                                child: SizedBox(
-                                                                  height: 0,
-                                                                ),
-                                                              ),
-                                                              AppText(
-                                                                text:
-                                                                    "\u{20B9}${controller.cartDetails["total_tax"].toString()}",
-                                                                fontFamily:
-                                                                    "Franklin Gothic Regular",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                color: widget
-                                                                            .backgroundcolor ==
-                                                                        whiteColor
-                                                                    ? homeAppBarColor
-                                                                    : whiteColor,
-                                                                fontSize: 12,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ), */
-                                        Padding(
-                                          padding: EdgeInsets
-                                              .symmetric(
-                                              vertical:
-                                              10.sp),
-                                          child: Container(
-                                            width:
-                                            double.infinity,
-                                            color:
-                                            colorSecondary,
-                                            height: 1.5,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                          EdgeInsets.only(
-                                              top: 0.sp),
-                                          child: Row(
-                                            mainAxisSize:
-                                            MainAxisSize
-                                                .max,
-                                            mainAxisAlignment:
-                                            MainAxisAlignment
-                                                .start,
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets
-                                                    .only(
-                                                    right: 4
-                                                        .sp),
-                                                child: AppText(
-                                                  text:
-                                                  "BILL TOTAL",
-                                                  fontFamily:
-                                                  "Franklin Gothic",
-                                                  fontWeight:
-                                                  FontWeight
-                                                      .w500,
-                                                  color: widget
-                                                      .backgroundcolor ==
-                                                      whiteColor
-                                                      ? colorPrimary
-                                                      : whiteColor,
-                                                  fontSize: 15,
-                                                ),
-                                              ),
-                                              const Expanded(
-                                                child: SizedBox(
-                                                  height: 0,
-                                                ),
-                                              ),
-                                              AppText(
-                                                text:
-                                                "\u{20B9}${controller
-                                                    .cartDetails["total"] ??
-                                                    "0"}",
-                                                fontFamily:
-                                                "Franklin Gothic",
-                                                fontWeight:
-                                                FontWeight
-                                                    .w500,
-                                                color: widget
-                                                    .backgroundcolor ==
-                                                    whiteColor
-                                                    ? colorPrimary
-                                                    : whiteColor,
-                                                fontSize: 12,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 30.sp,
-                                        ),
-                                        Cartbottom(
-                                          backgroundColor: widget
-                                              .backgroundcolor,
-                                        ),
-                                        SizedBox(
-                                          height: 40.sp,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-
-                                /*  Container(
-                                        color: backWhite,
-                                        height: 34,
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 16, right: 16, top: 6, bottom: 6),
-                                          child: Center(
-                                            child: AppText(
-                                              text:
-                                                  "You will earn 100 LaFetch coins on this purchase",
-                                              fontFamily: "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                              color: deepPurple,
-                                              fontSize: 12.sp,
-                                            ),
-                                          ),
-                                        ),
-                                                                                  ), */
-                                /*      Container(
-                                        color: whiteColor,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 20, horizontal: 16),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                    color: whiteBorderColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(1)),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(14.0),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
-                                                    children: [
-                                                      AppText(
-                                                        text: "Return/Refund Policy",
-                                                        fontFamily: "Franklin Gothic",
-                                                        fontWeight: FontWeight.w500,
-                                                        color: nameText,
-                                                        fontSize: 14.sp,
-                                                      ),
-                                                      Padding(
-                                                        padding: const EdgeInsets
-                                                            .symmetric(vertical: 10),
-                                                        child: AppText(
-                                                          text:
-                                                              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nibh augue, commodo eget pulvinar ac, pretium a ipsum.",
-                                                          fontFamily:
-                                                              "Franklin Gothic Regular",
-                                                          fontWeight: FontWeight.w400,
-                                                          maxLines: 3,
-                                                          color: greyTextColor,
-                                                          fontSize: 12.sp,
-                                                        ),
-                                                      ),
-                                                      AppText(
-                                                        text: "READ POLICY",
-                                                        fontFamily: "Franklin Gothic",
-                                                        fontWeight: FontWeight.w500,
-                                                        color: greyTextColor,
-                                                        fontSize: 12.sp,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 30, bottom: 30),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.spaceEvenly,
-                                                  children: [
-                                                    Column(
-                                                      children: [
-                                                        Image.asset(deliveredImage,
-                                                            height: 40,
-                                                            width: 40,
-                                                            fit: BoxFit.cover),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets.only(
-                                                                  top: 4),
-                                                          child: AppText(
-                                                            text:
-                                                                "Delivered in\n6 hours",
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            color: greyTextColor,
-                                                            maxLines: 2,
-                                                            textAlign:
-                                                                TextAlign.center,
-                                                            fontSize: 10.sp,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    Column(
-                                                      children: [
-                                                        Image.asset(qualityImage,
-                                                            height: 40,
-                                                            width: 40,
-                                                            fit: BoxFit.cover),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets.only(
-                                                                  top: 4),
-                                                          child: AppText(
-                                                            text:
-                                                                "100% Quality\nassured",
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            color: greyTextColor,
-                                                            maxLines: 2,
-                                                            textAlign:
-                                                                TextAlign.center,
-                                                            fontSize: 10.sp,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    Column(
-                                                      children: [
-                                                        Image.asset(locationBaseImage,
-                                                            height: 40,
-                                                            width: 40,
-                                                            fit: BoxFit.cover),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets.only(
-                                                                  top: 4),
-                                                          child: AppText(
-                                                            text:
-                                                                "Location based\nDeliveries",
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            color: greyTextColor,
-                                                            maxLines: 2,
-                                                            textAlign:
-                                                                TextAlign.center,
-                                                            fontSize: 10.sp,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    Column(
-                                                      children: [
-                                                        Image.asset(exchangeImage,
-                                                            height: 40,
-                                                            width: 40,
-                                                            fit: BoxFit.cover),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets.only(
-                                                                  top: 4),
-                                                          child: AppText(
-                                                            text:
-                                                                "2 exchanges\nwithin 2 days",
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            color: greyTextColor,
-                                                            maxLines: 2,
-                                                            textAlign:
-                                                                TextAlign.center,
-                                                            fontSize: 10.sp,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                                                                  )
-                                                                              */
-                              ],
-                            )
-                                : Padding(
-                              padding:
-                              EdgeInsets.only(top: 60.sp),
-                              child: CartWidget(
-                                  image: shopBagImage,
-                                  backColor:
-                                  widget.backgroundcolor,
-                                  text1:
-                                  "There is still room for more",
-                                  onPressed: () {
-                                    Get.offAll(
-                                        const BottomNavScreen(
-                                          index: 0,
-                                        ));
-                                  },
-                                  text2:
-                                  "Looking for items you previously saved?\nSign in to pick up where you left out",
-                                  btntext: "Continue Shopping",
-                                  visible: true),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                controller.isOrder.value
-                    ? SizedBox(
-                  height: 20.sp,
-                  width: 20.sp,
-                  child: Padding(
-                    padding: EdgeInsets.all(10.0.sp),
-                    child:
-                    Center(child: CircularProgressIndicator()),
-                  ),
-                )
-                    : controller.orderList.isNotEmpty
-                    ?
-                /* Container(
-                            color: whiteColor,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 16.sp, left: 20.sp, right: 20.sp),
-                                  child: AppText(
-                                    text: controller.orderList.length == 1 ||
-                                            controller.orderList.isEmpty
-                                        ? "${controller.orderList.length} item in shopping bag"
-                                        : "${controller.orderList.length} items in shopping bag",
-                                    textAlign: TextAlign.center,
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: blackColor,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 16.sp),
-                                  child: getSingleButton(
-                                      label: "Proceed to checkout",
-                                      textColor: whiteBorderColor,
-                                      backgroundColor: colorPrimary,
-                                      controller: controller,
-                                      onPressed: () async {
-                                        controller.mrp.value =
-                                            controller.cartDetails["total_mrp"] ?? "";
-                                        controller.expressDelivery.value =
-                                            controller.cartDetails[
-                                                    "express_delivery_charges"] ??
-                                                "";
-                                        controller.discount.value = controller
-                                            .cartDetails["discount_on_mrp"]
-                                            .toString();
-                                        controller.coupanDiscount.value = controller
-                                                .cartDetails["coupon_discount"] ??
-                                            "";
-                                        controller.convenienceFee.value = controller
-                                            .cartDetails["convenience_fee"]
-                                            .toString();
-                                        controller.tax.value = controller
-                                            .cartDetails["total_tax"]
-                                            .toString();
-                                        controller.total.value = controller
-                                            .cartDetails["total"]
-                                            .toString();
-                                        if (controller.cartDetails["address"] !=
-                                            null) {
-                                          controller.callInitiatePayment(
-                                              controller.cartDetails["address"]["id"],
-                                              context,
-                                              controller.cartDetails["shipping_cost"],
-                                              controller
-                                                  .cartDetails["lafetch_service_tax"]
-                                                  .toString());
-                                        } else {
-                                          controller.callInitiatePayment(
-                                              0,
-                                              context,
-                                              controller.cartDetails["shipping_cost"],
-                                              controller
-                                                  .cartDetails["lafetch_service_tax"]
-                                                  .toString());
-                                        }
-                                        await analytics.logEvent(
-                                          name: 'proceed_checkout_btnclick',
-                                          parameters: <String, Object>{
-                                            'page_name': 'proceed_checkout_btnclick',
-                                          },
-                                        );
-                                      },
-                                      borderColor: colorPrimary),
-                                ),
-                              ],
-                            ),
-                          ) */
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Visibility(
-                      visible:
-                      controller.addressError.value != ""
-                          ? true
-                          : false,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: 20.sp,
-                          right: 20.sp,
-                          top: 10.sp,
-                        ),
-                        child: AppText(
-                          text: controller.addressError.value,
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: redColor,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        if (controller.cartDetails["address"] ==
-                            null) {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(
-                              builder: (BuildContext
-                              context) =>
-                                  MapScreen(
-                                    addressId: 0,
-                                    cartId: controller
-                                        .cartDetails["id"],
-                                  )))
-                              .then((value) =>
-                              setState(
-                                    () {
-                                  widget.backgroundcolor ==
-                                      whiteColor
-                                      ? controller
-                                      .getCartData()
-                                      : controller
-                                      .getExpressCartData();
-                                },
-                              ));
-                        } else {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(
-                              builder: (BuildContext
-                              context) =>
-                                  ChangeAddressScreen(
-                                    cartId: controller
-                                        .cartDetails["id"],
-                                  )))
-                              .then((value) =>
-                              setState(
-                                    () {
-                                  widget.backgroundcolor ==
-                                      whiteColor
-                                      ? controller
-                                      .getCartData()
-                                      : controller
-                                      .getExpressCartData();
-                                },
-                              ));
-                          await analytics.logEvent(
-                            name: 'cart_changeAddressclick',
-                            parameters: <String, Object>{
-                              'page_name':
-                              'cart_changeAddressclick',
-                            },
-                          );
-                        }
-                      },
-                      child: Container(
-                        color:
-                        widget.backgroundcolor == whiteColor
-                            ? lightgreyColor
-                            : homeAppBarColor,
-                        margin: EdgeInsets.only(top: 10.sp),
-                        height: 40.sp,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16.sp),
-                          child: Row(
-                            children: [
-                              controller.isOrder.value
-                                  ? SizedBox(
-                                width: 0,
-                              )
-                                  : Text(
-                                controller.cartDetails[
-                                "address"] ==
-                                    null
-                                    ? ""
-                                    : "delivering in "
-                                    .toUpperCase(),
-                                style: TextStyle(
-                                  fontFamily:
-                                  "Franklin Gothic",
-                                  fontWeight:
-                                  FontWeight.w500,
-                                  color: searchTextColor,
-                                  fontSize: 14.sp,
-                                ),
-                              ),
-                              controller.isOrder.value
-                                  ? DummyContainer(
-                                height: 10,
-                                width: 100,
-                              )
-                                  : Text(
-                                controller.cartDetails[
-                                "address"] ==
-                                    null
-                                    ? "Select Shipping Address"
-                                    : "${controller
-                                    .cartDetails["address"]["type"]
-                                    .toString()} ${controller
-                                    .cartDetails["address"]["zip"].toString()}"
-                                    .toUpperCase(),
-                                style: TextStyle(
-                                  fontFamily:
-                                  "Franklin Gothic",
-                                  fontWeight:
-                                  FontWeight.w500,
-                                  color:
-                                  widget.backgroundcolor ==
-                                      whiteColor
-                                      ? titleColor
-                                      : lightgreyColor,
-                                  fontSize: 14.sp,
-                                ),
-                              ),
-                              Expanded(
-                                child: SizedBox(
-                                  height: 0,
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: 2.sp, right: 5.sp),
-                                child: Image.asset(
-                                    rightArrowImage,
-                                    color:
-                                    widget.backgroundcolor ==
-                                        whiteColor
-                                        ? titleColor
-                                        : lightgreyColor,
-                                    height: 16.sp,
-                                    width: 16.sp,
-                                    fit: BoxFit.cover),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    controller.stockErrorText.value == ""
-                        ? GestureDetector(
-                      onTap: () async {
-                        if (controller
-                            .cartDetails["address"] ==
-                            null) {
-                          controller.addressError.value =
-                          "Add Delivery Address";
-                          /*   getSnackBar(
-                                                    "Add Delivery Address"); */
-                        } else {
-                          controller.addressError.value =
-                          "";
-                          if (controller
-                              .stockErrorText.value ==
-                              "") {
-                            controller
-                                .callInitiatePayment(
-                                controller
-                                    .cartDetails[
-                                "address"]["id"],
-                                razorpay);
-                          }
-                        }
-                        await analytics.logEvent(
-                          name:
-                          'proceed_checkout_btnclick',
-                          parameters: <String, Object>{
-                            'page_name':
-                            'proceed_checkout_btnclick',
-                          },
-                        );
-                        final productId = controller.cartDetails["product_id"]
-                            ?.toString() ?? "unknown_product";
-                        final totalValue = double.tryParse(
-                            controller.cartDetails["total"]?.toString() ??
-                                "0") ?? 0.0;
-                        AnalyticsHelper.logInitiateCheckout(
-                          productId: productId,
-
-                        );
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        height: widget.backgroundcolor ==
-                            whiteColor
-                            ? 70.sp
-                            : 50.sp,
-                        color: widget.backgroundcolor ==
-                            whiteColor
-                            ? homeAppBarColor
-                            : lightPurpleColor,
-                        child: Column(
-                          crossAxisAlignment:
-                          CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: 16.sp),
-                              child: controller
-                                  .isOrder.value
-                                  ? SizedBox(
-                                height: 0,
-                              )
-                                  : (controller
-                                  .pageState ==
-                                  PageState
-                                      .LOADING)
-                                  ? Center(
-                                child: Transform
-                                    .scale(
-                                  scale: 0.5.sp,
-                                  child:
-                                  const CircularProgressIndicator(
-                                    color:
-                                    whiteColor,
-                                  ),
-                                ),
-                              )
-                                  : Text(
-                                  controller.cartDetails["address"] ==
-                                      null
-                                      ? "Proceed to checkout"
-                                      .toUpperCase()
-                                      : "Proceed to pay"
-                                      .toUpperCase(),
-                                  style: TextStyle(
-                                      fontSize:
-                                      13.sp,
-                                      color: Colors
-                                          .white,
-                                      fontFamily:
-                                      'Franklin Gothic')),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                        : Padding(
-                      padding: EdgeInsets.only(
-                          top: 20.sp,
-                          bottom: 30.sp,
-                          left: 16.sp),
-                      child: Text(
-                          controller.stockErrorText.value,
-                          style: TextStyle(
+                          )
+                        : Text(
+                            controller.cartDetails["address"] == null &&
+                                    _pendingSelectedAddress == null
+                                ? "PROCEED TO CHECKOUT"
+                                : "PROCEED TO PAY",
+                            style: TextStyle(
                               fontSize: 13.sp,
-                              color: redColor,
-                              fontFamily:
-                              'Franklin Gothic')),
-                    ),
-                  ],
-                )
-                    : const SizedBox(height: 0)
-              ],
-            )),
+                              color: Colors.white,
+                              fontFamily: 'Franklin Gothic',
+                            ),
+                          ),
+              ),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildStockError() {
+    return Padding(
+      padding: EdgeInsets.only(top: 20.sp, bottom: 30.sp, left: 16.sp),
+      child: Text(
+        controller.stockErrorText.value,
+        style: TextStyle(
+          fontSize: 13.sp,
+          color: redColor,
+          fontFamily: 'Franklin Gothic',
+        ),
+      ),
+    );
+  }
+
+  // ---------- Helpers ----------
+
+  String _calculateDiscountPercentage(Map product) {
+    final mrp = _asNum(product["mrp"]);
+    final price = _asNum(product["price"]);
+    if (mrp > price && mrp > 0) {
+      final discount = ((mrp - price) / mrp * 100).round();
+      return "$discount%";
+    }
+    return "0%";
+  }
+
+  void _navigateToProductDetails(int index) async {
+    final item = controller.orderList[index];
+    final product = item["product"];
+
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+          builder: (BuildContext context) => ProductDetailsScreen(
+            productId: product["id"],
+            brandName: product["brand_name"] ?? "",
+            backgroundcolor: widget.backgroundcolor,
+            type: "add",
+            expressValue: widget.backgroundcolor == whiteColor ? 0 : 1,
+          ),
+        ))
+        .then((_) {});
+
+    await analytics.logEvent(
+      name: 'cart_product_details',
+      parameters: <String, Object>{'page_name': 'cart_product_details'},
+    );
+  }
+
+  void _showQuantityBottomSheet(int index) async {
+    final item = controller.orderList[index];
+    if (item["inventory"]["stocks"] == 0) return;
+
+    if (item["product"]["express_delivery"] == true) {
+      controller.qtyProductId.value = item["product"]["id"];
+      controller.qtyText.value =
+          "For express delivery product, quantity cant be updated.";
+      controller.update();
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: double.infinity,
+        maxHeight: 230.sp,
+      ),
+      builder: (ctx) {
+        return BottomQuantity(
+          qtyList: qtyList,
+          selectedQty: item["quantity"].toString(),
+          controller: controller,
+          stock: item["inventory"]["stocks"] > 10
+              ? qtyList.length
+              : item["inventory"]["stocks"],
+          onPressed: (quantity) {
+            controller.callAddtoCart(
+              quantity,
+              "quantity",
+              item["inventory"]["id"],
+              item["product"]["id"],
+              item["product"]["express_delivery"] ? 1 : 0,
+              1,
+              widget.backgroundcolor,
+              item["inventory"]["id"],
+            );
+          },
+        );
+      },
+    );
+
+    await analytics.logEvent(
+      name: 'cart_product_updateqtyClick',
+      parameters: <String, Object>{'page_name': 'cart_product_updateqtyClick'},
+    );
+
+    controller.qtyProductId.value = 0;
+    controller.qtyText.value = "";
+    controller.update();
+  }
+
+  void _showRemoveDialog(Map item) async {
+    final productId = (item["product"]["id"] is num)
+        ? (item["product"]["id"] as num).toInt()
+        : int.tryParse("${item["product"]["id"]}") ?? 0;
+
+    showDialog(
+      barrierColor: Colors.black26,
+      context: context,
+      builder: (context) {
+        return showDoubleBtnDailog(
+          click1: () => Get.back(),
+          click2: () async {
+            Get.back();
+            await controller.callDeleteCart(widget.backgroundcolor, productId);
+          },
+          btncolor: colorPrimary,
+          text: "Are you sure you want to remove this item?",
+          btn1Text: "Cancel",
+          btn2Text: "Remove",
+        );
+      },
+    );
+
+    await analytics.logEvent(
+      name: 'cart_product_removeClick',
+      parameters: <String, Object>{'page_name': 'cart_product_removeClick'},
+    );
+  }
+
+  void _handleWishlistAction(Map item, bool isWishlisted) async {
+    final product = (item["product"] ?? {}) as Map<String, dynamic>;
+    final productId = (product["id"] is num)
+        ? (product["id"] as num).toInt()
+        : int.tryParse("${product["id"]}") ?? 0;
+
+    if (isWishlisted) {
+      final wishlistId = product["wishlist_id"];
+      wishlistController.addProductToBoard(wishlistId, productId);
+      await controller.getCartData();
+
+      await analytics.logEvent(
+        name: 'cart_wishlist_remove',
+        parameters: <String, Object>{'page_name': 'cart_wishlist_remove'},
+      );
+    } else {
+      final preview = _firstImageUrl(product) ?? "";
+
+      scaffoldKey.currentState?.showBottomSheet(
+        (context) => BottomWishlist(
+          controller: wishlistController,
+          onPressedBoard: () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(
+                  builder: (context) => NewBoardScreen(
+                    title: "New Board",
+                    boardId: 0,
+                    screen: "Bag",
+                    productId: productId,
+                    hintName: "Name of the Board",
+                    boardName: "",
+                    btnText: "Next",
+                  ),
+                ))
+                .then((_) {});
+          },
+          productImage: preview,
+          onPressed: (boardId) async {
+            wishlistController.addProductToBoard(boardId, productId);
+            await controller.callDeleteCart(widget.backgroundcolor, productId);
+          },
+          wishlistList: wishlistController.wishlistList,
+        ),
+      );
+
+      await analytics.logEvent(
+        name: 'cart_wishlist_add',
+        parameters: <String, Object>{'page_name': 'cart_wishlist_add'},
+      );
+    }
+  }
+
+  void _showInfoBottomSheet(String label) {
+    if (label == "Total Price") {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        constraints: BoxConstraints(
+          maxWidth: double.infinity,
+          maxHeight: 220.sp,
+        ),
+        builder: (ctx) {
+          return TotalTaxcharges(
+            total: "₹${controller.cartDetails["total"] ?? "0"}",
+            tax: "₹${controller.cartDetails["total_tax"] ?? "0"}",
+            title: "Tax & Charges",
+            price: "₹${controller.cartDetails["total_mrp"] ?? "0"}",
+          );
+        },
+      );
+    } else if (label == "Convenience Fee") {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        constraints: BoxConstraints(
+          maxWidth: double.infinity,
+          maxHeight: 220.sp,
+        ),
+        builder: (ctx) {
+          return const BottomCharges(
+            text:
+                "This fee covers the costs of our convenient online shopping services, including secure payment processing, 24/7 customer support, and fast order processing. It helps us offer you a hassle-free shopping experience from the comfort of your home.",
+            title: "Convenience Fee",
+          );
+        },
+      );
+    }
+  }
+
+  // Open SavedAddress when no address; else ChangeAddress
+  void _handleAddressSelection() async {
+    if (controller.cartDetails["address"] != null) {
+      final changed = await Navigator.of(context).push<bool>(
+        MaterialPageRoute(
+          builder: (_) => ChangeAddressScreen(
+            cartId: controller.cartDetails["id"],
+          ),
+        ),
+      );
+
+      if (changed == true) {}
+
+      await analytics.logEvent(
+        name: 'cart_changeAddressclick',
+        parameters: <String, Object>{'page_name': 'cart_changeAddressclick'},
+      );
+      return;
+    }
+
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const SavedAddressScreen(type: ''),
+      ),
+    );
+
+    if (result is Map) {
+      setState(() {
+        _pendingSelectedAddress = Map<String, dynamic>.from(result);
+        controller.addressError.value = "";
+      });
+    } else if (result == true) {}
   }
 }

@@ -233,31 +233,22 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                                                 CrossAxisAlignment.center,
                                             children: [
                                               GestureDetector(
-                                                onTap: () {
-                                                  userController
-                                                          .gerderController
-                                                          .text =
-                                                      userController
-                                                          .genderList[index];
-                                                  if (userController
-                                                          .gerderController.text
-                                                          .toString() ==
-                                                      "Female") {
-                                                    userController
-                                                        .genderId.value = 1;
-                                                  } else if (userController
-                                                          .gerderController.text
-                                                          .toString() ==
-                                                      "Male") {
-                                                    userController
-                                                        .genderId.value = 2;
-                                                  } else {
-                                                    userController
-                                                        .genderId.value = 3;
-                                                  }
-                                                  userController
-                                                      .showList.value = false;
-                                                },
+                                              onTap: () {
+                                    userController.gerderController.text = userController.genderList[index];
+
+                                    final selectedGender = userController.gerderController.text.toLowerCase();
+
+                                    if (selectedGender == "male") {
+                                    userController.genderId.value = 1;
+                                    } else if (selectedGender == "female") {
+                                    userController.genderId.value = 2;
+                                    } else if (selectedGender == "non-binary") {
+                                    userController.genderId.value = 3;
+                                    }
+
+                                    userController.showList.value = false;
+                                    },
+
                                                 child: Container(
                                                   width: double.infinity,
                                                   color: whiteTextColor,
@@ -310,31 +301,31 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                 ),
               ),
             ),
-            Obx(
-              () => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: getSingleButton(
-                    label: "Continue".toUpperCase(),
-                    textColor: greyTextColor,
-                    controller: userController,
-                    backgroundColor: colorSecondary,
-                    onPressed: () async {
-                      if (userController.checkUservalidation(
-                          userController.nameController.text.toString().trim(),
-                          userController.emailController.text.toString().trim(),
-                          userController.genderId.value)) {
-                        userController.callupdateProfile("user", "", "", false);
-                        await analytics.logEvent(
-                          name: 'user_detail_btnContinue',
-                          parameters: <String, Object>{
-                            'page_name': 'user_detail_btnContinue',
-                          },
-                        );
-                      }
-                    },
-                    borderColor: colorSecondary),
+            Obx(() => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: getSingleButton(
+                label: "Continue".toUpperCase(),
+                textColor: greyTextColor,
+                controller: userController,
+                backgroundColor: colorSecondary,
+                onPressed: () async {
+                  // Step 1: Validate name, email, gender
+                  if (userController.validateBasicProfileFields()) {
+                    // Step 2: Submit profile update
+                    await userController.updateBasicProfile(isInitialSetup: true);
+
+                    // Step 3: Log analytics
+                    await analytics.logEvent(
+                      name: 'user_detail_btnContinue',
+                      parameters: {'page_name': 'user_detail_btnContinue'},
+                    );
+                  }
+                  // Errors (if any) show automatically via Obx watching nameError/emailError/genderError
+                },
+                borderColor: colorSecondary,
               ),
-            )
+            ))
+
           ],
         ),
       ),

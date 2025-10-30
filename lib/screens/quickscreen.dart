@@ -77,7 +77,6 @@ class QuickScreenState extends State<QuickScreen> {
     }); */
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.quickProductListController.addListener(() {
-        productController.fetchMoreBrandProductData();
         productController.update();
       });
     });
@@ -87,7 +86,6 @@ class QuickScreenState extends State<QuickScreen> {
   onSearchChanged(String query) {
     if (debounce?.isActive ?? false) debounce?.cancel();
     debounce = Timer(const Duration(milliseconds: 500), () {
-      productController.getBrandProductData();
       setState(() {});
     });
   }
@@ -113,17 +111,9 @@ class QuickScreenState extends State<QuickScreen> {
       prefs.setDouble("latitude", productController.lat.value);
       prefs.setDouble("longitude", productController.lng.value);
       setState(() {});
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        productController.getExpressBrandData();
-      });
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        productController.getBrandProductData();
-      });
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        productController.getDefaultAddressData(0, context);
-      });
-    }
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {});
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {});
+    } else {}
   }
 
   Future<Position> _determinePosition() async {
@@ -342,10 +332,6 @@ class QuickScreenState extends State<QuickScreen> {
                                             );
                                           },
                                         ).whenComplete(() {
-                                          productController
-                                              .getBrandProductData();
-                                          productController
-                                              .getExpressBrandData();
                                           setState(() {
                                             isBottomSheet = false;
                                           });
@@ -478,11 +464,6 @@ class QuickScreenState extends State<QuickScreen> {
                                 focusNode: FocusNode(),
                                 onKey: (value) {
                                   print(value);
-                                  if (value is RawKeyDownEvent) {
-                                    productController.getBrandProductData();
-                                    //  productController.brandController.clear();
-                                    // setState(() {});
-                                  }
                                 },
                                 child: TextField(
                                   textCapitalization: TextCapitalization.words,
@@ -1040,12 +1021,6 @@ class QuickScreenState extends State<QuickScreen> {
                                                                                 false;
                                                                             productController.categoryFilter.value =
                                                                                 0;
-                                                                            productController.getBrandDetailsProduct(
-                                                                                "",
-                                                                                false,
-                                                                                false,
-                                                                                0,
-                                                                                "quick");
                                                                           },
                                                                         ));
                                                             await analytics
@@ -1480,12 +1455,6 @@ class QuickScreenState extends State<QuickScreen> {
                                                                                 false;
                                                                             productController.categoryFilter.value =
                                                                                 0;
-                                                                            productController.getBrandDetailsProduct(
-                                                                                "",
-                                                                                false,
-                                                                                false,
-                                                                                0,
-                                                                                "quick");
                                                                           },
                                                                         ));
                                                                 await analytics
@@ -1584,12 +1553,6 @@ class QuickScreenState extends State<QuickScreen> {
                                                                                 false;
                                                                             productController.categoryFilter.value =
                                                                                 0;
-                                                                            productController.getBrandDetailsProduct(
-                                                                                "",
-                                                                                false,
-                                                                                false,
-                                                                                0,
-                                                                                "quick");
                                                                           },
                                                                         ));
                                                                 await analytics
@@ -1677,12 +1640,6 @@ class QuickScreenState extends State<QuickScreen> {
                                                                                 false;
                                                                             productController.categoryFilter.value =
                                                                                 0;
-                                                                            productController.getBrandDetailsProduct(
-                                                                                "",
-                                                                                false,
-                                                                                false,
-                                                                                0,
-                                                                                "quick");
                                                                           },
                                                                         ));
                                                               },
@@ -1710,42 +1667,43 @@ class QuickScreenState extends State<QuickScreen> {
                                                         ),
                                                       ),
                                                     ),
-                                                    BrandProductList(
-                                                        onPressed:
-                                                            (p0, p1) async {
-                                                          Get.to(ProductDetailsScreen(
-                                                                  expresshour:
-                                                                      homeController
-                                                                          .expressHour
-                                                                          .value,
-                                                                  backgroundcolor:
-                                                                      homeAppBarColor,
-                                                                  brandName: p1,
-                                                                  productId: p0,
-                                                                  expressValue:
-                                                                      1,
-                                                                  type: "add"))
-                                                              ?.then((value) =>
-                                                                  setState(
-                                                                    () {
-                                                                      productController
-                                                                          .getBrandProductData();
-                                                                    },
-                                                                  ));
-                                                          await analytics
-                                                              .logEvent(
-                                                            name:
-                                                                'quick_product_details',
-                                                            parameters: <String,
-                                                                Object>{
-                                                              'page_name':
-                                                                  'quick_product_details',
-                                                            },
-                                                          );
-                                                        },
-                                                        list: value
-                                                                .brandProductList[
-                                                            index]["products"])
+
+                                                    // BrandProductList(
+                                                    //     onPressed:
+                                                    //         (p0, p1) async {
+                                                    //       Get.to(ProductDetailsScreen(
+                                                    //               expresshour:
+                                                    //                   homeController
+                                                    //                       .expressHour
+                                                    //                       .value,
+                                                    //               backgroundcolor:
+                                                    //                   homeAppBarColor,
+                                                    //               brandName: p1,
+                                                    //               productId: p0,
+                                                    //               expressValue:
+                                                    //                   1,
+                                                    //               type: "add"))
+                                                    //           ?.then((value) =>
+                                                    //               setState(
+                                                    //                 () {
+                                                    //                   productController
+                                                    //                       .getBrandProductData();
+                                                    //                 },
+                                                    //               ));
+                                                    //       await analytics
+                                                    //           .logEvent(
+                                                    //         name:
+                                                    //             'quick_product_details',
+                                                    //         parameters: <String,
+                                                    //             Object>{
+                                                    //           'page_name':
+                                                    //               'quick_product_details',
+                                                    //         },
+                                                    //       );
+                                                    //     },
+                                                    //     list: value
+                                                    //             .brandProductList[
+                                                    //         index]["products"])
                                                   ],
                                                 ),
                                               ),

@@ -9,7 +9,6 @@ import 'package:lafetch/common/widget/text/app_text.dart';
 import 'package:lafetch/controllers/product_controller.dart';
 import 'package:lafetch/core/constant/constants.dart';
 
-
 class BrandProductList extends StatelessWidget {
   final List list;
   final Function(int, String)? onPressed;
@@ -20,6 +19,7 @@ class BrandProductList extends StatelessWidget {
     required this.list,
     this.radius = 8.0,
     this.onPressed,
+    required Axis scrollDirection,
   }) : super(key: key);
 
   @override
@@ -56,22 +56,23 @@ class BrandProductList extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                list[index]["images"].isNotEmpty &&
-                                        list[index]["images"] != null
+                                (list[index]["images"] != null &&
+                                        list[index]["images"].isNotEmpty)
                                     ? ClipRRect(
                                         borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(radius.sp),
-                                            topRight:
-                                                Radius.circular(radius.sp)),
+                                          topLeft: Radius.circular(radius.sp),
+                                          topRight: Radius.circular(radius.sp),
+                                        ),
                                         child: Container(
                                           height: 170.sp,
                                           width: 136.sp,
                                           child: CachedNetworkImage(
                                             cacheManager: CacheManager(Config(
-                                                "customCacheKey",
-                                                stalePeriod:
-                                                    const Duration(days: 15),
-                                                maxNrOfCacheObjects: 100)),
+                                              "customCacheKey",
+                                              stalePeriod:
+                                                  const Duration(days: 15),
+                                              maxNrOfCacheObjects: 100,
+                                            )),
                                             fit: BoxFit.cover,
                                             fadeOutCurve: Curves.ease,
                                             fadeOutDuration:
@@ -80,7 +81,7 @@ class BrandProductList extends StatelessWidget {
                                                     ["images"][0]["name"])
                                                 ? list[index]["images"][0]
                                                     ["name"]
-                                                : list[index]["images"][1]
+                                                : list[index]["images"][0]
                                                     ["name"],
                                             errorWidget:
                                                 (context, url, error) =>
@@ -93,10 +94,12 @@ class BrandProductList extends StatelessWidget {
                                           ),
                                         ),
                                       )
-                                    : Image.asset(dummyWishlistImage,
+                                    : Image.asset(
+                                        dummyWishlistImage,
                                         height: 170.sp,
                                         width: 136.sp,
-                                        fit: BoxFit.cover),
+                                        fit: BoxFit.cover,
+                                      ),
                                 Padding(
                                   padding: EdgeInsets.only(top: 8.sp),
                                   child: AppText(

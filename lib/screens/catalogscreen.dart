@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
-import 'package:lafetch/screens/catalog/women_catalog.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 
@@ -74,8 +73,8 @@ class CatalogScreenState extends State<CatalogScreen> {
                 showSearch: true,
                 title: "Categories",
                 onPressedSearch: () async {
-                  searchController.searchController.clear();
-                  Navigator.push(context, scaleIn(const SearchScreen()))
+                  // searchController.searchController.clear();
+                  Navigator.push(context, scaleIn(SearchScreen()))
                       .then((value) => setState(
                             () {},
                           ));
@@ -171,15 +170,15 @@ class CatalogScreenState extends State<CatalogScreen> {
                 child: TabBarView(
                     physics: NeverScrollableScrollPhysics(),
                     children: [
-                      WomenCatalogScreen(
+                      CatalogScreen(
                           // categorytext: "Men",
                           //type: 2,
                           ),
-                      WomenCatalogScreen(
+                      CatalogScreen(
                           //   categorytext: "Women",
                           // type: 3,
                           ),
-                      WomenCatalogScreen(
+                      CatalogScreen(
                           //  categorytext: "Accessories",
                           //type: 1,
                           ),

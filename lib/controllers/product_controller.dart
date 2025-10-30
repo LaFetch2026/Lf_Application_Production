@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
 import '../screens/cartscreen.dart';
-import '../screens/catalog/productlistscreen.dart';
+
 import '../screens/change_address.dart';
 import '../screens/loginscreen.dart';
 import 'base_controller.dart';
@@ -42,7 +43,8 @@ class ProductController extends BaseController {
   RxInt sizeInventoryId = 0.obs;
   RxInt colorInventoryId = 0.obs;
   RxInt fabricInventoryId = 0.obs;
-  dynamic productDetails = "".obs;
+  Map<String, dynamic> productDetails = {};
+
   dynamic selectedProductSize = {}.obs;
   dynamic selectedProductColor = {}.obs;
   dynamic brandDetails = "".obs;
@@ -67,7 +69,7 @@ class ProductController extends BaseController {
   RxInt current = 50.obs;
   RxInt totalExpress = 0.obs;
   List inventoryList = [].obs;
-  List sizeInventoryList = [].obs;
+  RxList<Map<String, dynamic>> sizeInventoryList = <Map<String, dynamic>>[].obs;
   List colorInventoryList = [].obs;
   List fabricInventoryList = [].obs;
   List reviewList = [].obs;
@@ -191,6 +193,19 @@ class ProductController extends BaseController {
   RxString locationText = "check".obs;
   RxString enableLocationText = "".obs;
   dynamic brandProductdetails = "".obs;
+  RxBool isSubmittingReview = false.obs;
+  RxBool isFetchingReviews = false.obs;
+  int? productsShuffleSeed;
+
+  RxList<dynamic> lafetchexclusiveList = <dynamic>[].obs;
+  RxList<dynamic> premiumList = <dynamic>[].obs;
+  RxList<dynamic> luxuriousList = <dynamic>[].obs;
+  RxList<dynamic> standardList = <dynamic>[].obs;
+  final RxBool isCatProducts = false.obs;
+  final RxList<Map<String, dynamic>> catProductList =
+      <Map<String, dynamic>>[].obs;
+  RxBool isCoupons = false.obs;
+  RxList<Map<String, dynamic>> couponList = <Map<String, dynamic>>[].obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -209,1660 +224,430 @@ class ProductController extends BaseController {
   }
 
   bool checkDetailsValidation() {
-    if (sizeInventoryId.value == 0 && sizeInventoryList.isNotEmpty) {
-      /*  getSnackBar(
-        "Select Size",
-      ); */
-      errorSizeMsg.value = "Select Size";
-      errorColorMsg.value = "";
-      return false;
-    }
-    if (colorInventoryId.value == 0 && colorInventoryList.isNotEmpty) {
-      /*  getSnackBar(
-        "Select color",
-      ); */
-      errorColorMsg.value = "Select Color";
-      errorSizeMsg.value = "";
-      return false;
-    }
-    /*  if (fabricInventoryId.value == 0 && fabricInventoryList.isNotEmpty) {
-      getSnackBar(
-        "Select fabric",
-      );
-      return false;
-    } */
+    bool isValid = true;
+
+    // Reset previous errors
     errorSizeMsg.value = "";
     errorColorMsg.value = "";
-    return true;
+
+    final hasSizes = sizeInventoryList.isNotEmpty;
+    final hasColors = colorInventoryList.isNotEmpty;
+
+    // Check size selection
+    if (hasSizes) {
+      final selectedSize =
+          (selectedProductSize is Map && selectedProductSize.isNotEmpty)
+              ? selectedProductSize
+              : (selectedProductSize is Rx &&
+                      (selectedProductSize as Rx).value is Map)
+                  ? (selectedProductSize as Rx).value
+                  : null;
+
+      if (selectedSize == null || selectedSize.isEmpty) {
+        errorSizeMsg.value = "Please select a size.";
+        isValid = false;
+      }
+    }
+
+    // Check color selection
+    if (hasColors) {
+      final selectedColor =
+          (selectedProductColor is Map && selectedProductColor.isNotEmpty)
+              ? selectedProductColor
+              : (selectedProductColor is Rx &&
+                      (selectedProductColor as Rx).value is Map)
+                  ? (selectedProductColor as Rx).value
+                  : null;
+
+      if (selectedColor == null || selectedColor.isEmpty) {
+        errorColorMsg.value = "Please select a color.";
+        isValid = false;
+      }
+    }
+
+    return isValid;
   }
 
-  getHomeProduct(int gender) async {
+  Future<void> getHomeProduct(int gender) async {
     isHomeProduct.value = true;
+    homeProductList.clear();
+
     final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+
+    // Use laFetch base for this API
+    final base = ApiConstants.baseUrl; // << make sure this exists
+    final uri = Uri.parse("$base/collection-with-products").replace(
+      // Keep this only if backend supports gender filtering here.
+      // Remove the queryParameters line if it doesn't.
+      queryParameters: {'status': '$gender'},
+    );
+
     try {
-      var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/tags/sections?gender_type=$gender"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 20));
+
       if (response.statusCode == 200) {
-        if (responseData.isNotEmpty) {
-          homeProductList = responseData;
-        } else {
-          homeProductList = [];
+        final body = json.decode(response.body);
+
+        // Expect: { status, message, data: [ { id, name, desc?, products: [] }, ... ] }
+        final List<Map<String, dynamic>> data =
+            (body is Map && body['data'] is List)
+                ? List<Map<String, dynamic>>.from(
+                    (body['data'] as List).whereType<Map>())
+                : <Map<String, dynamic>>[];
+
+        // Ensure products is always a List for the UI
+        for (final c in data) {
+          if (c['products'] is! List) c['products'] = <dynamic>[];
         }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        /* Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed"); */
-        print(response.statusCode);
+
+        // Update reactive list
+        homeProductList.assignAll(data);
+
+        // Optional tagname for your loading stub
+        tagname.value =
+            data.isNotEmpty ? (data.first['name']?.toString() ?? '') : '';
+
+        // Stable shuffle seed for session (declare: int? productsShuffleSeed; in controller)
+        productsShuffleSeed ??= DateTime.now().millisecondsSinceEpoch;
+
+        print("Ã¢Å“â€¦ collections loaded: ${homeProductList.length}");
       } else {
-        getSnackBar("get home product failed");
+        homeProductList.clear();
+        print(
+            "Ã¢ÂÅ’ collections load failed: ${response.statusCode} ${response.reasonPhrase}");
+        // print(response.body); // uncomment to debug server message
       }
+    } on TimeoutException {
+      homeProductList.clear();
+      print("Ã¢ÂÅ’ Request timed out for $uri");
     } catch (e) {
-      print("error$e");
+      homeProductList.clear();
+      print("Ã¢ÂÅ’ Error fetching collections: $e");
+    } finally {
+      isHomeProduct.value = false;
     }
-    isHomeProduct.value = false;
   }
 
-  getBrandProductData() async {
-    isBrand.value = true;
+  Future<void> getProductByCatId({
+    required int gender,
+    required int catId,
+  }) async {
+    isCatProducts.value = true;
+    catProductList.clear();
+
     final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+
+    final base = ApiConstants.baseUrl; // <-- laFetch base
+    final baseUri = Uri.parse(base);
+
+    // {base}/products?gender=<g>&catId=<id>
+    final uri = baseUri.replace(
+      path: baseUri.path.endsWith('/')
+          ? '${baseUri.path}products'
+          : '${baseUri.path}/products',
+      queryParameters: {
+        'gender': '$gender',
+        'catId': '$catId',
+      },
+    );
+
     try {
-      dynamic response;
+      final res = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 20));
 
-      response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/brands/express-products?q=${brandController.text.toString().trim()}&latitude=${lat.value}&longitude=${lng.value}"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        brandProductdetails = responseData;
-        if (responseData["data"].isNotEmpty) {
-          brandProductList = responseData["data"];
-        } else {
-          brandProductList = [];
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        /*  Get.to(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        ); */
-        // getSnackBar("Authentication failed");
-        print(response..statusCode);
-      } else {
-        getSnackBar("get brand failed");
+      if (res.statusCode != 200) {
+        catProductList.clear();
+        print(
+            '✗ getProductByCatId failed: ${res.statusCode} ${res.reasonPhrase}');
+        return;
       }
-    } catch (e) {
-      print("error$e");
-    }
-    isBrand.value = false;
-  }
 
-  getExpressBrandData() async {
-    isExpressBrand.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      dynamic response;
-      response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/brands?type=featured&screen=express&latitude=${lat.value}&longitude=${lng.value}"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          if (responseData["data"].isNotEmpty) {
-            expressBrandList = responseData["data"];
-          } else {
-            expressBrandList = [];
-          }
-        } else {
-          expressBrandList = [];
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get express brand failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isExpressBrand.value = false;
-  }
-
-  fetchMoreBrandProductData() async {
-    if (quickProductHasnextpage.value == true &&
-        isBrand.value == false &&
-        quickProductLoadMore.value == false) {
-      quickProductLoadMore.value = true;
-      quickProductPage.value += 1;
-      print(quickProductPage.value);
-      final prefs = await SharedPreferences.getInstance();
+      dynamic decoded;
       try {
-        var response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/brands/express-products?q=${brandController.text.toString().trim()}&page=${quickProductPage.value}&latitude=${lat.value}&longitude=${lng.value}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-
-        var responseData = json.decode(response.body);
-        if (response.statusCode == 200) {
-          if (responseData["data"] != null) {
-            if (responseData["data"].isNotEmpty) {
-              print(responseData);
-              brandProductList.addAll(responseData['data']);
-            } else {
-              quickProductHasnextpage.value = false;
-            }
-          }
-        } else if (response.statusCode == 500) {
-          getSnackBar("Please try again");
-        } else if (response.statusCode == 401) {
-          Get.offAll(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
-          );
-          getSnackBar("Authentication failed");
-        } else {
-          getSnackBar("fetch quick brand product failed");
-        }
+        decoded = json.decode(res.body);
       } catch (e) {
-        print("error$e");
+        catProductList.clear();
+        print('✗ getProductByCatId JSON decode error: $e');
+        return;
       }
-      quickProductLoadMore.value = false;
+
+      // Expect: { status, message, data: [...] }
+      final List<Map<String, dynamic>> items =
+          (decoded is Map && decoded['data'] is List)
+              ? List<Map<String, dynamic>>.from(
+                  (decoded['data'] as List).whereType<Map>())
+              : <Map<String, dynamic>>[];
+
+      // Normalize nullable arrays so UI is safe
+      for (final m in items) {
+        m['imageUrls'] ??= <String>[];
+        m['tags'] ??= <dynamic>[];
+        m['targetGenders'] ??= <dynamic>[];
+        m['fabrics'] ??= <dynamic>[];
+        m['colorPatterns'] ??= <dynamic>[];
+      }
+
+      catProductList.assignAll(items);
+      print('✓ getProductByCatId loaded: ${catProductList.length}');
+    } on TimeoutException {
+      catProductList.clear();
+      print('✗ getProductByCatId timeout: $uri');
+    } catch (e) {
+      catProductList.clear();
+      print('✗ getProductByCatId error: $e');
+    } finally {
+      isCatProducts.value = false;
     }
   }
 
-  getProductData(String type) async {
+  Future<void> getProductById(int id) async {
+    isDetails.value = true; // loader on
+    try {
+      errorMsg.value = "";
+      productDetails = <String, dynamic>{};
+      imageList.clear();
+      sizeInventoryList.clear();
+      colorInventoryList.clear();
+
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+
+      final base = ApiConstants.baseUrl;
+      final uri = Uri.parse('$base/product/$id');
+
+      final resp = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 20));
+
+      if (resp.statusCode == 200) {
+        final decoded = json.decode(resp.body);
+
+        if (decoded is! Map || decoded['data'] is! Map) {
+          errorMsg.value = 'Unexpected product payload.';
+          return;
+        }
+
+        final Map<String, dynamic> data =
+            Map<String, dynamic>.from(decoded['data'] as Map);
+
+        // ---------- Helpers ----------
+        num _num(dynamic v) =>
+            (v is num) ? v : num.tryParse(v?.toString() ?? '') ?? 0;
+        String _str(dynamic v) => (v ?? '').toString();
+        List<String> _strList(dynamic v) => (v is List)
+            ? v
+                .map((e) => e?.toString() ?? '')
+                .where((s) => s.isNotEmpty)
+                .toList()
+            : const <String>[];
+
+        // ---------- Base price & MRP ----------
+        final productLevelPrice = _num(data['price'] ??
+            data['msp'] ??
+            data['lfMsp'] ??
+            data['mrp'] ??
+            data['basePrice']);
+        final productLevelMrp = _num(data['mrp']);
+
+        // ---------- Variants ----------
+        final List<Map<String, dynamic>> variants = (data['variants'] is List)
+            ? List<Map<String, dynamic>>.from(
+                (data['variants'] as List).whereType<Map>())
+            : <Map<String, dynamic>>[];
+
+        // Derive prices
+        final variantPrices = variants
+            .map((v) => _num(v['price']).toDouble())
+            .where((p) => p > 0)
+            .toList();
+        final variantMrps = variants
+            .map((v) => _num(v['compareAtPrice']).toDouble())
+            .where((p) => p > 0)
+            .toList();
+
+        double displayPrice =
+            productLevelPrice > 0 ? productLevelPrice.toDouble() : 0;
+        double displayMrp =
+            productLevelMrp > 0 ? productLevelMrp.toDouble() : 0;
+
+        if (displayPrice <= 0 && variantPrices.isNotEmpty) {
+          displayPrice = variantPrices.first;
+        }
+        if (displayMrp <= 0 && variantMrps.isNotEmpty) {
+          displayMrp = variantMrps.first;
+        }
+
+        // ---------- Totals / discount ----------
+        final discountPct = (displayMrp > 0 && displayPrice < displayMrp)
+            ? '${(((displayMrp - displayPrice) / displayMrp) * 100).toStringAsFixed(0)}%'
+            : '0%';
+
+        final rating = _num(data['rating']);
+        final hasCOD = data['hasCOD'] == true;
+        final hasExchange = data['hasExchange'] == true;
+        final exchangeDays = _num(data['exchangeDays']).toInt();
+
+        // ---------- Product Details ----------
+        productDetails = {
+          'id': data['id'],
+          'type': _str(data['type']),
+          'title': _str(data['title']),
+          'description': _str(data['description']),
+          'tags': _strList(data['tags']),
+          'imageUrls': _strList(data['imageUrls']),
+          'brand': data['brand'],
+          'hasExchange': hasExchange,
+          'exchangeDays': exchangeDays,
+          'hasCOD': hasCOD,
+          'brand_name':
+              (data['brand'] is Map ? _str(data['brand']['name']) : ''),
+          'name': _str(data['name'] ?? data['title']),
+          'price': displayPrice,
+          'mrp': displayMrp,
+          'discount_percentage': discountPct,
+          'aggregated_rating': rating,
+          'has_cod': hasCOD,
+          'has_exchange': hasExchange,
+          'exchange_days': exchangeDays,
+          'total_stock_count': variants.length,
+          'cart_inventory_ids': <int>[],
+          'share_link': '',
+        };
+
+        // ---------- Gallery ----------
+        final imgs = _strList(data['imageUrls']);
+        imageList.assignAll(imgs.map((u) => {'name': u}).toList());
+
+        // ---------- Sizes ----------
+        // (Your API has no inventoryQuantity, so we'll assume in-stock = true)
+        sizeInventoryList.assignAll(
+          variants.map((v) {
+            final vPrice = _num(v['price']).toDouble();
+            final vMrp = _num(v['compareAtPrice']).toDouble();
+            String sizeLabel = '';
+            if (v['selectedOptions'] is List) {
+              for (final opt in v['selectedOptions']) {
+                if (opt is Map &&
+                    opt['name'].toString().toLowerCase() == 'size') {
+                  sizeLabel = opt['value']?.toString() ?? '';
+                  break;
+                }
+              }
+            }
+            return {
+              'id': v['id'] ?? v['shopifyVariantId'] ?? 0,
+              'product_matrix_size_name': sizeLabel,
+              'stocks': 10, // dummy stock (since API doesn’t provide it)
+              'price': vPrice,
+              'compareAtPrice': vMrp,
+              'product_matrix_available_colors': <Map<String, dynamic>>[],
+            };
+          }).toList(),
+        );
+
+        // ---------- Default size selection ----------
+        if (sizeInventoryId.value == 0 && sizeInventoryList.isNotEmpty) {
+          final first = sizeInventoryList.first;
+          sizeInventoryId.value =
+              int.tryParse(first['id']?.toString() ?? '0') ?? 0;
+          try {
+            (selectedProductSize as dynamic).value = first;
+          } catch (_) {
+            selectedProductSize = first;
+          }
+        }
+
+        colorInventoryList.clear();
+      } else if (resp.statusCode == 404) {
+        errorMsg.value = 'Product not found.';
+      } else if (resp.statusCode == 401) {
+        errorMsg.value = 'Session expired. Please login again.';
+      } else {
+        try {
+          final err = json.decode(resp.body);
+          errorMsg.value = (err is Map && err['message'] != null)
+              ? err['message'].toString()
+              : 'Failed: ${resp.statusCode}';
+        } catch (_) {
+          errorMsg.value = 'Failed to load product. (${resp.statusCode})';
+        }
+      }
+    } catch (e) {
+      errorMsg.value = 'Error fetching product: $e';
+    } finally {
+      isDetails.value = false; // loader off
+      update(); // update UI
+    }
+  }
+
+  Future<void> getProductData(int gender) async {
     isProduct.value = true;
     final prefs = await SharedPreferences.getInstance();
-    try {
-      var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/products?type=$type&latitude=${lat.value}&longitude=${lng.value}"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          productList = responseData["data"];
-          hasnextpage.value = true;
-          loadMore.value = false;
-          isProduct.value = false;
-          page.value = 1;
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get product failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isProduct.value = false;
-  }
 
-  fetchMoreData(String type) async {
-    if (hasnextpage.value == true &&
-        isProduct.value == false &&
-        loadMore.value == false) {
-      loadMore.value = true;
-      page.value += 1;
-      print(page.value);
-      final prefs = await SharedPreferences.getInstance();
-      try {
-        var response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=$type&page=${page.value}&latitude=${lat.value}&longitude=${lng.value}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-        var responseData = json.decode(response.body);
+    productList.clear(); // Ã¢Å“â€¦ Clear previous products
+
+    final List<String> section = [
+      'lafetch-exclusive',
+      'premium',
+      'luxurious',
+      'standard',
+    ];
+
+    try {
+      for (String collectionType in section) {
+        final response = await http.get(
+          Uri.parse(
+              "${ApiConstants.baseUrl}/products?gender=$gender&collectionType=$collectionType?status=1"),
+          headers: {
+            'Accept': 'application/json; charset=UTF-8',
+            'Authorization': "Bearer ${prefs.getString('token') ?? ''}",
+          },
+        );
+
         if (response.statusCode == 200) {
+          final responseData = json.decode(response.body);
           if (responseData["data"] != null) {
-            if (responseData["data"].isNotEmpty) {
-              print(responseData);
-              productList.addAll(responseData['data']);
-            } else {
-              hasnextpage.value = false;
-            }
+            productList.addAll(responseData["data"]);
           }
         } else if (response.statusCode == 500) {
-          getSnackBar("Please try again");
+          getSnackBar("Server error, please try again");
         } else if (response.statusCode == 401) {
-          Get.offAll(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
-          );
+          Get.offAll(() => const LoginScreen(initialTab: 0));
           getSnackBar("Authentication failed");
+          break;
         } else {
-          getSnackBar("fetch product failed");
+          getSnackBar("Failed to load products for $collectionType");
         }
-      } catch (e) {
-        print("error$e");
       }
+
+      hasnextpage.value = true;
       loadMore.value = false;
-    }
-  }
-
-  getFrequentlyProductData(String type, int productId) async {
-    isFrequentlyBought.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/products?type=$type&except_product_id=$productId&latitude=${lat.value}&longitude=${lng.value}"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          frequentlyProductList = responseData["data"];
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get frequently product failed");
-      }
+      page.value = 1;
     } catch (e) {
-      print("error$e");
-    }
-    isFrequentlyBought.value = false;
-  }
-
-  fetchFrequentlyMoreData(String type, int productId) async {
-    if (frequentlyBoughtHasnextpage.value == true &&
-        isFrequentlyBought.value == false &&
-        frequentlyBoughtLoadMore.value == false) {
-      frequentlyBoughtLoadMore.value = true;
-      frequentlyBoughtPage.value += 1;
-      print(frequentlyBoughtPage.value);
-      final prefs = await SharedPreferences.getInstance();
-      try {
-        var response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=$type&page=${frequentlyBoughtPage.value}&except_product_id=$productId&latitude=${lat.value}&longitude=${lng.value}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-        var responseData = json.decode(response.body);
-        if (response.statusCode == 200) {
-          if (responseData["data"] != null) {
-            if (responseData["data"].isNotEmpty) {
-              print(responseData);
-              frequentlyProductList.addAll(responseData['data']);
-            } else {
-              frequentlyBoughtHasnextpage.value = false;
-            }
-          }
-        } else if (response.statusCode == 500) {
-          getSnackBar("Please try again");
-        } else if (response.statusCode == 401) {
-          Get.offAll(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
-          );
-          getSnackBar("Authentication failed");
-        } else {
-          getSnackBar("fetch frequently product failed");
-        }
-      } catch (e) {
-        print("error$e");
-      }
-      frequentlyBoughtLoadMore.value = false;
+      print("Error fetching products: $e");
+      getSnackBar("Something went wrong.");
+    } finally {
+      isProduct.value = false;
     }
   }
 
-  getHomeExploreProduct(
-      String handpickSortBy, bool filter, bool enableFilter, int tagId) async {
-    isHandPicked.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      /*  if (prefs.getInt('gender') != null && categoryFilter.value == 0) {
-        int id = prefs.getInt('gender')!;
-        if (id == 1) {
-          categoryFilter.value = 3;
-        } else if (id == 2) {
-          categoryFilter.value = 2;
-        } else {
-          categoryFilter.value = 1;
-        }
-      } */
-      dynamic response;
-      String colorString = color_ids.join(',');
-      String sizeString = size_ids.join(',');
-      String brandString = brand_ids.join(',');
-      if (handpickSortBy.isNotEmpty) {
-        if (filter) {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/products?sort_by=$handpickSortBy&tag_ids[]=${tagId == 0 ? "" : tagId}&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
-        } else {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/products?sort_by=$handpickSortBy&tag_ids[]=${tagId == 0 ? "" : tagId}&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
-        }
-      } else {
-        if (filter) {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/products?tag_ids[]=${tagId == 0 ? "" : tagId}&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
-        } else {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/products?tag_ids[]=${tagId == 0 ? "" : tagId}&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
-        }
-      }
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        handPickedProductList.clear();
-        if (responseData["data"] != null) {
-          handPickedProductList = responseData["data"];
-          //  totalProductValue.value = responseData["meta"]["total"];
-          handpickedHasnextpage.value = true;
-          handpickedLoadMore.value = false;
-          isHandPicked.value = false;
-          handpickedPage.value = 1;
-          if (enableFilter) {
-            Get.back();
-          }
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        /* Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed"); */
-        print(response.statusCode);
-      } else {
-        getSnackBar("get product failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isHandPicked.value = false;
-  }
-
-  fetchMoreHomeProduct(String handpickSortBy, bool filter, int tagId) async {
-    if (handpickedHasnextpage.value == true &&
-        isHandPicked.value == false &&
-        handpickedLoadMore.value == false) {
-      handpickedLoadMore.value = true;
-      handpickedPage.value += 1;
-      print(handpickedPage.value);
-      final prefs = await SharedPreferences.getInstance();
-      try {
-        dynamic response;
-        String colorString = color_ids.join(',');
-        String sizeString = size_ids.join(',');
-        String brandString = brand_ids.join(',');
-        if (handpickSortBy.isNotEmpty) {
-          if (filter) {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?page=${handpickedPage.value}&tag_ids[]=${tagId == 0 ? "" : tagId}&gender_type=${categoryFilter.value}&sort_by=$handpickSortBy&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          } else {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?page=${handpickedPage.value}&tag_ids[]=${tagId == 0 ? "" : tagId}&gender_type=${categoryFilter.value}&sort_by=$handpickSortBy&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          }
-        } else {
-          if (filter) {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?page=${handpickedPage.value}&tag_ids[]=${tagId == 0 ? "" : tagId}&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          } else {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?page=${handpickedPage.value}&tag_ids[]=${tagId == 0 ? "" : tagId}&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          }
-        }
-        var responseData = json.decode(response.body);
-        if (response.statusCode == 200) {
-          if (responseData["data"] != null) {
-            if (responseData["data"].isNotEmpty) {
-              print(responseData);
-              handPickedProductList.addAll(responseData['data']);
-            } else {
-              handpickedHasnextpage.value = false;
-            }
-          }
-        } else if (response.statusCode == 500) {
-          getSnackBar("Please try again");
-        } else if (response.statusCode == 401) {
-          Get.offAll(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
-          );
-          getSnackBar("Authentication failed");
-        } else {
-          getSnackBar("fetch hand picked product failed");
-        }
-      } catch (e) {
-        print("error$e");
-      }
-      handpickedLoadMore.value = false;
-    }
-  }
-
-  getBrandDetailsProduct(String sortBy, bool filter, bool enableFilter,
-      int brandId, String screen) async {
-    isProductBrand.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      /* if (prefs.getInt('gender') != null && categoryFilter.value == 0) {
-        int id = prefs.getInt('gender')!;
-        if (id == 1) {
-          categoryFilter.value = 3;
-        } else if (id == 2) {
-          categoryFilter.value = 2;
-        } else {
-          categoryFilter.value = 1;
-        }
-      } */
-      dynamic response;
-      String colorString = color_ids.join(',');
-      String sizeString = size_ids.join(',');
-      String brandString = brand_ids.join(',');
-      if (screen == "quick") {
-        if (sortBy.isNotEmpty) {
-          if (filter) {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=express&sort_by=$sortBy&q=${branddetailsSearchController.text.toString().trim()}&brand_id=$brandId&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          } else {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=express&sort_by=$sortBy&q=${branddetailsSearchController.text.toString().trim()}&brand_id=$brandId&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          }
-        } else {
-          if (filter) {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=express&q=${branddetailsSearchController.text.toString().trim()}&brand_id=$brandId&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          } else {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&q=${branddetailsSearchController.text.toString().trim()}&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          }
-        }
-      } else {
-        if (sortBy.isNotEmpty) {
-          if (filter) {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?sort_by=$sortBy&q=${branddetailsSearchController.text.toString().trim()}&brand_id=$brandId&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          } else {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?sort_by=$sortBy&q=${branddetailsSearchController.text.toString().trim()}&brand_id=$brandId&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          }
-        } else {
-          if (filter) {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?q=${branddetailsSearchController.text.toString().trim()}&brand_id=$brandId&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          } else {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?brand_id=$brandId&q=${branddetailsSearchController.text.toString().trim()}&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          }
-        }
-      }
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        handPickedProductList.clear();
-        if (responseData["data"] != null) {
-          brandProductDetailsList = responseData["data"];
-          brandProductHasnextpage.value = true;
-          brandProductLoadMore.value = false;
-          isProductBrand.value = false;
-          brandProductPage.value = 1;
-          if (enableFilter) {
-            Get.back();
-          }
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        /* Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed"); */
-        print(response.statusCode);
-      } else {
-        getSnackBar("get brand details product failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isProductBrand.value = false;
-  }
-
-  fetchMoreBrandDetails(
-      String sortBy, bool filter, int brandId, String screen) async {
-    if (brandProductHasnextpage.value == true &&
-        isProductBrand.value == false &&
-        brandProductLoadMore.value == false) {
-      brandProductLoadMore.value = true;
-      brandProductPage.value += 1;
-      print(brandProductPage.value);
-      final prefs = await SharedPreferences.getInstance();
-      try {
-        dynamic response;
-        String colorString = color_ids.join(',');
-        String sizeString = size_ids.join(',');
-        String brandString = brand_ids.join(',');
-        if (screen == "quick") {
-          if (sortBy.isNotEmpty) {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&sort_by=$sortBy&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&sort_by=$sortBy&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          } else {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          }
-        } else {
-          if (sortBy.isNotEmpty) {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&sort_by=$sortBy&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&sort_by=$sortBy&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          } else {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?page=${brandProductPage.value}&brand_id=$brandId&gender_type=${categoryFilter.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          }
-        }
-        var responseData = json.decode(response.body);
-        if (response.statusCode == 200) {
-          if (responseData["data"] != null) {
-            if (responseData["data"].isNotEmpty) {
-              print(responseData);
-              brandProductDetailsList.addAll(responseData['data']);
-            } else {
-              brandProductHasnextpage.value = false;
-            }
-          }
-        } else if (response.statusCode == 500) {
-          getSnackBar("Please try again");
-        } else if (response.statusCode == 401) {
-          Get.offAll(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
-          );
-          getSnackBar("Authentication failed");
-        } else {
-          getSnackBar("fetch brand details product failed");
-        }
-      } catch (e) {
-        print("error$e");
-      }
-      brandProductLoadMore.value = false;
-    }
-  }
-
-  getTagsProductData(int tagId, int genderType, int brandId) async {
-    istagsProduct.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      dynamic response;
-      if (genderType != 0) {
-        response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/products?tag_ids[]=${tagId == 0 ? "" : tagId}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          },
-        );
-      } else {
-        response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/products?tag_ids[]=${tagId == 0 ? "" : tagId}&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          },
-        );
-      }
-
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          tagProductList = responseData["data"];
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        /*  Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed"); */
-        print(response.statusCode);
-      } else {
-        getSnackBar("get tag product failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    istagsProduct.value = false;
-  }
-
-  fetchMoreTagsProductData(int tagId, int genderType, int brandId) async {
-    if (tagsHasnextpage.value == true &&
-        istagsProduct.value == false &&
-        tagsLoadMore.value == false) {
-      tagsLoadMore.value = true;
-      tagsPage.value += 1;
-      print(page.value);
-      final prefs = await SharedPreferences.getInstance();
-      try {
-        dynamic response;
-        if (genderType != 0) {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&page=${tagsPage.value}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
-        } else {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/products?tag_ids[]=$tagId&page=${tagsPage.value}&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
-        }
-
-        var responseData = json.decode(response.body);
-        if (response.statusCode == 200) {
-          if (responseData["data"] != null) {
-            if (responseData["data"].isNotEmpty) {
-              print(responseData);
-              tagProductList.addAll(responseData['data']);
-            } else {
-              tagsHasnextpage.value = false;
-            }
-          }
-        } else if (response.statusCode == 500) {
-          getSnackBar("Please try again");
-        } else if (response.statusCode == 401) {
-          Get.offAll(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
-          );
-          getSnackBar("Authentication failed");
-        } else {
-          getSnackBar("fetch tag product failed");
-        }
-      } catch (e) {
-        print("error$e");
-      }
-      tagsLoadMore.value = false;
-    }
-  }
-
-  getTagsBannerData(
-      List list,
-      List categoryList,
-      int genderType,
-      String sory_by,
-      bool filter,
-      bool filterButton,
-      String type,
-      int brandId) async {
-    isCategoryProduct.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      dynamic response;
-      if (type == "express") {
-        if (categoryList.isNotEmpty) {
-          String colorString = color_ids.join(',');
-          String sizeString = size_ids.join(',');
-          String brandString = brand_ids.join(',');
-          if (sory_by.isNotEmpty) {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&screen=express&type=discount&brand_id=$brandId&categories_ids[]=${categoryList.join(',')}&sort_by=$sory_by&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&screen=express&type=discount&brand_id=$brandId&categories_ids[]=${categoryList.join(',')}&sort_by=$sory_by&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          } else {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&screen=express&type=discount&brand_id=$brandId&categories_ids[]=${categoryList.join(',')}&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&screen=express&type=discount&brand_id=$brandId&categories_ids[]=${categoryList.join(',')}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          }
-        } else {
-          String colorString = color_ids.join(',');
-          String sizeString = size_ids.join(',');
-          String brandString = brand_ids.join(',');
-          if (sory_by.isNotEmpty) {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&screen=express&type=discount&brand_id=$brandId&sort_by=$sory_by&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&screen=express&type=discount&brand_id=$brandId&sort_by=$sory_by&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          } else {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&screen=express&type=discount&brand_id=$brandId&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&screen=express&type=discount&brand_id=$brandId&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          }
-        }
-      } else if (type == "coupon") {
-        if (categoryList.isNotEmpty) {
-          String colorString = color_ids.join(',');
-          String sizeString = size_ids.join(',');
-          String brandString = brand_ids.join(',');
-          if (sory_by.isNotEmpty) {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&type=discount&brand_id=$brandId&categories_ids[]=${categoryList.join(',')}&sort_by=$sory_by&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&type=discount&brand_id=$brandId&categories_ids[]=${categoryList.join(',')}&sort_by=$sory_by&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          } else {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&type=discount&brand_id=$brandId&categories_ids[]=${categoryList.join(',')}&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&type=discount&brand_id=$brandId&categories_ids[]=${categoryList.join(',')}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          }
-        } else {
-          String colorString = color_ids.join(',');
-          String sizeString = size_ids.join(',');
-          String brandString = brand_ids.join(',');
-          if (sory_by.isNotEmpty) {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&type=discount&brand_id=$brandId&sort_by=$sory_by&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&type=discount&brand_id=$brandId&sort_by=$sory_by&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          } else {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&type=discount&brand_id=$brandId&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&type=discount&brand_id=$brandId&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          }
-        }
-      } else {
-        if (categoryList.isNotEmpty) {
-          String colorString = color_ids.join(',');
-          String sizeString = size_ids.join(',');
-          String brandString = brand_ids.join(',');
-          if (sory_by.isNotEmpty) {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&sort_by=$sory_by&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&sort_by=$sory_by&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          } else {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          }
-        } else {
-          String colorString = color_ids.join(',');
-          String sizeString = size_ids.join(',');
-          String brandString = brand_ids.join(',');
-
-          if (sory_by.isNotEmpty) {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&sort_by=$sory_by&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&sort_by=$sory_by&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          } else {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?tag_ids[]=${list.join(',')}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          }
-        }
-      }
-
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          productCategoryList = responseData["data"];
-          total.value = responseData["meta"]["total"];
-          isCategoryProduct.value = false;
-          bannerTagHasnextpage.value = true;
-          bannerTagLoadMore.value = false;
-          bannerTagPage.value = 1;
-
-          if (filterButton) {
-            Get.back();
-          }
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get banner tag product failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isCategoryProduct.value = false;
-  }
-
-  fetchMoreBannerTagProductData(List list, List categoryList, int genderType,
-      String sory_by, bool filter, String type, int brandId) async {
-    if (bannerTagHasnextpage.value == true &&
-        isCategoryProduct.value == false &&
-        bannerTagLoadMore.value == false) {
-      bannerTagLoadMore.value = true;
-      bannerTagPage.value += 1;
-      print(bannerTagPage.value);
-      final prefs = await SharedPreferences.getInstance();
-      try {
-        dynamic response;
-        if (type == "express") {
-          if (categoryList.isNotEmpty) {
-            String colorString = color_ids.join(',');
-            String sizeString = size_ids.join(',');
-            String brandString = brand_ids.join(',');
-            if (sory_by.isNotEmpty) {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&screen=express&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&sort_by=$sory_by&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&screen=express&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&sort_by=$sory_by&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            } else {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&screen=express&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&screen=express&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            }
-          } else {
-            String colorString = color_ids.join(',');
-            String sizeString = size_ids.join(',');
-            String brandString = brand_ids.join(',');
-            if (sory_by.isNotEmpty) {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&screen=express&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&sort_by=$sory_by&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&screen=express&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&sort_by=$sory_by&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            } else {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&screen=express&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&screen=express&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            }
-          }
-        }
-        if (type == "coupon") {
-          if (categoryList.isNotEmpty) {
-            String colorString = color_ids.join(',');
-            String sizeString = size_ids.join(',');
-            String brandString = brand_ids.join(',');
-            if (sory_by.isNotEmpty) {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&sort_by=$sory_by&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&sort_by=$sory_by&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            } else {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            }
-          } else {
-            String colorString = color_ids.join(',');
-            String sizeString = size_ids.join(',');
-            String brandString = brand_ids.join(',');
-            if (sory_by.isNotEmpty) {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&sort_by=$sory_by&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&sort_by=$sory_by&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            } else {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&type=discount&brand_id=$brandId&tag_ids[]=${list.join(',')}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            }
-          }
-        } else {
-          if (categoryList.isNotEmpty) {
-            String colorString = color_ids.join(',');
-            String sizeString = size_ids.join(',');
-            String brandString = brand_ids.join(',');
-            if (sory_by.isNotEmpty) {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&sort_by=$sory_by&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&sort_by=$sory_by&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            } else {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}&categories_ids[]=${categoryList.join(',')}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            }
-          } else {
-            String colorString = color_ids.join(',');
-            String sizeString = size_ids.join(',');
-            String brandString = brand_ids.join(',');
-            if (sory_by.isNotEmpty) {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}&sort_by=$sory_by&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}&sort_by=$sory_by&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            } else {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}&gender_type=$genderType&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?page=${bannerTagPage.value}&tag_ids[]=${list.join(',')}&gender_type=$genderType&latitude=${lat.value}&longitude=${lng.value}&type=recently-viewed"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            }
-          }
-        }
-        var responseData = json.decode(response.body);
-        if (response.statusCode == 200) {
-          if (responseData["data"] != null) {
-            if (responseData["data"].isNotEmpty) {
-              print(responseData);
-              productCategoryList.addAll(responseData['data']);
-            } else {
-              bannerTagHasnextpage.value = false;
-            }
-          }
-        } else if (response.statusCode == 500) {
-          getSnackBar("Please try again");
-        } else if (response.statusCode == 401) {
-          Get.offAll(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
-          );
-          getSnackBar("Authentication failed");
-        } else {
-          getSnackBar("fetch banner tag product failed");
-        }
-      } catch (e) {
-        print("error$e");
-      }
-      bannerTagLoadMore.value = false;
-    }
-  }
-
-  getExpressProductData(int tagid, int genderType) async {
-    isExpress.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      dynamic response;
-      if (genderType != 0) {
-        response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=express&gender_type=$genderType&tag_ids[]=${tagid == 0 ? "" : tagId}&latitude=${lat.value}&longitude=${lng.value}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-      } else {
-        response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=express&tag_ids[]=${tagid == 0 ? "" : tagId}&latitude=${lat.value}&longitude=${lng.value}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-      }
-
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          expressProductList = responseData["data"];
-          totalExpress.value = responseData["meta"]["total"];
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get product failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isExpress.value = false;
-  }
-
-  fetchExpressMoreData(int tagid, int genderType) async {
-    if (expressHasnextpage.value == true &&
-        isExpress.value == false &&
-        expressLoadMore.value == false) {
-      expressLoadMore.value = true;
-      expressPage.value += 1;
-      print(expressPage.value);
-      final prefs = await SharedPreferences.getInstance();
-      try {
-        dynamic response;
-        if (genderType != 0) {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/products?type=express&page=${expressPage.value}&gender_type=$genderType&tag_ids[]=$tagid&latitude=${lat.value}&longitude=${lng.value}"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
-        } else {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/products?type=express&page=${expressPage.value}&tag_ids[]=$tagid&latitude=${lat.value}&longitude=${lng.value}"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
-        }
-
-        var responseData = json.decode(response.body);
-        if (response.statusCode == 200) {
-          if (responseData["data"] != null) {
-            if (responseData["data"].isNotEmpty) {
-              print(responseData);
-              expressProductList.addAll(responseData['data']);
-            } else {
-              expressHasnextpage.value = false;
-            }
-          }
-        } else if (response.statusCode == 500) {
-          getSnackBar("Please try again");
-        } else if (response.statusCode == 401) {
-          Get.to(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
-          );
-          // getSnackBar("Authentication failed");
-        } else {
-          getSnackBar("fetch express product failed");
-        }
-      } catch (e) {
-        print("error$e");
-      }
-      expressLoadMore.value = false;
-    }
-  }
-
-  getBestSellerProductData(int brandId) async {
-    isBestSeller.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/products-best-seller?brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData != null) {
-          bestSellerList = responseData;
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get best seller product failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isBestSeller.value = false;
-  }
-
-  /*  fetchBestSellerData() async {
-    if (bestSellerHasnextpage.value == true &&
-        isBestSeller.value == false &&
-        bestSellerLoadMore.value == false) {
-      bestSellerLoadMore.value = true;
-      bestSellerPage.value += 1;
-      print(bestSellerPage.value);
-      final prefs = await SharedPreferences.getInstance();
-      try {
-        var response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/best-seller-products?page=${bestSellerPage.value}&brand_id=$brandId"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-        var responseData = json.decode(response.body);
-        if (response.statusCode == 200) {
-          if (responseData["data"] != null) {
-            if (responseData["data"].isNotEmpty) {
-              print(responseData);
-              bestSellerList.addAll(responseData['data']);
-            } else {
-              bestSellerHasnextpage.value = false;
-            }
-          }
-        } else if (response.statusCode == 500) {
-          getSnackBar("Please try again");
-        } else if (response.statusCode == 401) {
-          Get.offAll(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
-          );
-          getSnackBar("Authentication failed");
-        } else {
-          getSnackBar("fetch best sellerproduct failed");
-        }
-      } catch (e) {
-        print("error$e");
-      }
-      bestSellerLoadMore.value = false;
-    }
-  }
- */
   getFilterData(String type) async {
     isFilter.value = true;
     final prefs = await SharedPreferences.getInstance();
@@ -1880,7 +665,6 @@ class ProductController extends BaseController {
           filterList = responseData;
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -1895,1023 +679,6 @@ class ProductController extends BaseController {
       print("error$e");
     }
     isFilter.value = false;
-  }
-
-  getBrandExpressProductData(
-      int brandId, String expressSort, bool filter) async {
-    isBrandExpressProduct.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      dynamic response;
-      if (brandId != 0) {
-        String colorString = color_ids.join(',');
-        String sizeString = size_ids.join(',');
-        String brandString = brand_ids.join(',');
-        if (expressSort.isNotEmpty) {
-          if (filter) {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&sort_by=$expressSort&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          } else {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&sort_by=$expressSort&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          }
-        } else {
-          if (filter) {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          } else {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=express&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          }
-        }
-      } else {
-        String colorString = color_ids.join(',');
-        String sizeString = size_ids.join(',');
-        String brandString = brand_ids.join(',');
-        if (expressSort.isNotEmpty) {
-          if (filter) {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=express&sort_by=$expressSort&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          } else {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=express&sort_by=$expressSort&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          }
-        } else {
-          if (filter) {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=express&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          } else {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?type=express&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          }
-        }
-      }
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData["data"].isNotEmpty) {
-          productExpressBrandList = responseData["data"];
-        } else {
-          productExpressBrandList.clear();
-        }
-        if (filter) {
-          Get.back();
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        /*  Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed"); */
-        print(response..statusCode);
-      } else {
-        getSnackBar("get product failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isBrandExpressProduct.value = false;
-  }
-
-  fetchBrandExpressMoreData(String expressSort, bool filter) async {
-    if (brandExpressHasnextpage.value == true &&
-        isBrandExpressProduct.value == false &&
-        brandExpressLoadMore.value == false) {
-      brandExpressLoadMore.value = true;
-      brandExpressPage.value += 1;
-      print(brandExpressPage.value);
-      final prefs = await SharedPreferences.getInstance();
-      try {
-        dynamic response;
-        if (brand_id.value != 0) {
-          String colorString = color_ids.join(',');
-          String sizeString = size_ids.join(',');
-          String brandString = brand_ids.join(',');
-          if (expressSort.isNotEmpty) {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&brand_id=${brand_id.value}&page=${brandExpressPage.value}&sort_by=$expressSort&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&brand_id=${brand_id.value}&page=${brandExpressPage.value}&sort_by=$expressSort&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          } else {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&brand_id=${brand_id.value}&page=${brandExpressPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&brand_id=${brand_id.value}&page=${brandExpressPage.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          }
-        } else {
-          String colorString = color_ids.join(',');
-          String sizeString = size_ids.join(',');
-          String brandString = brand_ids.join(',');
-          if (expressSort.isNotEmpty) {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&page=${brandExpressPage.value}&sort_by=$expressSort&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&page=${brandExpressPage.value}&sort_by=$expressSort&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          } else {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&page=${brandExpressPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?type=express&page=${brandExpressPage.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          }
-        }
-
-        var responseData = json.decode(response.body);
-        if (response.statusCode == 200) {
-          if (responseData["data"] != null) {
-            if (responseData["data"].isNotEmpty) {
-              print(responseData);
-              productExpressBrandList.addAll(responseData['data']);
-            } else {
-              brandExpressHasnextpage.value = false;
-            }
-          }
-        } else if (response.statusCode == 500) {
-          getSnackBar("Please try again");
-        } else if (response.statusCode == 401) {
-          /*  Get.offAll(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
-          );
-          getSnackBar("Authentication failed"); */
-          print(response..statusCode);
-        } else {
-          getSnackBar("fetch category product failed");
-        }
-      } catch (e) {
-        print("error$e");
-      }
-      brandExpressLoadMore.value = false;
-    }
-  }
-
-  getProductByCategoryData(
-    int categoryId,
-    int brandId,
-    String value,
-    List categoryList,
-    String sort_By,
-    int gendertype,
-    bool filter,
-    int catalogId,
-    bool filterButton,
-    String type,
-  ) async {
-    isCategoryProduct.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      dynamic response;
-      if (type == "catalog") {
-        if (brandId != 0) {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/products?category_id=$categoryId&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
-        } else {
-          if (categoryId == 0) {
-            String colorString = color_ids.join(',');
-            String sizeString = size_ids.join(',');
-            String brandString = brand_ids.join(',');
-            if (sort_By.isEmpty) {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?catalog_id=$catalogId&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?catalog_id=$catalogId&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            } else {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?catalog_id=$catalogId&sort_by=$sort_By&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?catalog_id=$catalogId&sort_by=$sort_By&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            }
-          } else {
-            String colorString = color_ids.join(',');
-            String sizeString = size_ids.join(',');
-            String brandString = brand_ids.join(',');
-            if (sort_By.isEmpty) {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?category_id=$categoryId&gender_type=$gendertype&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                var uri = Uri.parse(
-                    "${ApiConstants.baseUrl}/products?category_id=$categoryId&gender_type=$gendertype&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list");
-                response = await http.get(uri, headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-              }
-            } else {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?category_id=$categoryId&sort_by=$sort_By&gender_type=$gendertype&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?category_id=$categoryId&sort_by=$sort_By&gender_type=$gendertype&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            }
-          }
-        }
-      } else {
-        if (brandId != 0) {
-          String colorString = color_ids.join(',');
-          String sizeString = size_ids.join(',');
-          String brandString = brand_ids.join(',');
-          if (sort_By.isEmpty) {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?category_id=$categoryId&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?category_id=$categoryId&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          } else {
-            if (filter) {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?category_id=$categoryId&sort_by=$sort_By&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            } else {
-              response = await http.get(
-                  Uri.parse(
-                      "${ApiConstants.baseUrl}/products?category_id=$categoryId&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&sort_by=$sort_By"),
-                  headers: <String, String>{
-                    'Accept': 'application/json; charset=UTF-8',
-                    "Authorization": "Bearer ${prefs.getString('token')} ",
-                  });
-            }
-          }
-        } else {
-          if (categoryId == 0) {
-            String colorString = color_ids.join(',');
-            String sizeString = size_ids.join(',');
-            String brandString = brand_ids.join(',');
-            if (sort_By.isEmpty) {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?catalog_id=$catalogId&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?catalog_id=$catalogId&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            } else {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?catalog_id=$catalogId&sort_by=$sort_By&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?catalog_id=$catalogId&sort_by=$sort_By&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            }
-          } else {
-            String colorString = color_ids.join(',');
-            String sizeString = size_ids.join(',');
-            String brandString = brand_ids.join(',');
-            if (sort_By.isEmpty) {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?category_id=$categoryId&gender_type=$gendertype&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                var uri = Uri.parse(
-                    "${ApiConstants.baseUrl}/products?category_id=$categoryId&gender_type=$gendertype&latitude=${lat.value}&longitude=${lng.value}");
-                response = await http.get(uri, headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-              }
-            } else {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?category_id=$categoryId&sort_by=$sort_By&gender_type=$gendertype&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?category_id=$categoryId&sort_by=$sort_By&gender_type=$gendertype&latitude=${lat.value}&longitude=${lng.value}"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            }
-          }
-        }
-      }
-
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          productCategoryList = responseData["data"];
-          total.value = responseData["meta"]["total"];
-          categoryProductHasnextpage.value = true;
-          categoryProductLoadMore.value = false;
-          categoryProductPage.value = 1;
-          isCategoryProduct.value = false;
-          if (value == "Product Vertical") {
-            List<String> nameList = [];
-            List<int> idList = [];
-            for (var i = 0; i < categoryList.length; i++) {
-              nameList.add(categoryList[i]["name"]);
-              idList.add(categoryList[i]["id"]);
-            }
-            size_ids.clear();
-            color_ids.clear();
-            brand_ids.clear();
-            Get.to(ProductListScreen(
-              tabTextList: nameList,
-              idList: idList,
-              genderType: gendertype,
-              catalogId: catalogId,
-              initailIndex: catalogIndex.value,
-            ))?.then((value) {
-              id.value = 0;
-              update();
-            });
-          }
-          if (filterButton) {
-            Get.back();
-          }
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get product failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isCategoryProduct.value = false;
-  }
-
-  fetchCategoryProductMoreData(int brandId, String sort_By, int gendertype,
-      bool filter, String type) async {
-    if (categoryProductHasnextpage.value == true &&
-        isCategoryProduct.value == false &&
-        categoryProductLoadMore.value == false) {
-      categoryProductLoadMore.value = true;
-      categoryProductPage.value += 1;
-      print(categoryProductPage.value);
-      final prefs = await SharedPreferences.getInstance();
-      try {
-        dynamic response;
-        if (type == "catalog") {
-          if (brandId != 0) {
-            String colorString = color_ids.join(',');
-            String sizeString = size_ids.join(',');
-            String brandString = brand_ids.join(',');
-            if (sort_By.isEmpty) {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&screen=catalog product list"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            } else {
-              if (filter) {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&sort_by=$sort_By&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&screen=catalog product list"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              } else {
-                response = await http.get(
-                    Uri.parse(
-                        "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&brand_id=$brandId&latitude=${lat.value}&longitude=${lng.value}&sort_by=$sort_By&screen=catalog product list"),
-                    headers: <String, String>{
-                      'Accept': 'application/json; charset=UTF-8',
-                      "Authorization": "Bearer ${prefs.getString('token')} ",
-                    });
-              }
-            }
-            /*  response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&brand_id=$brandId&page=${categoryProductPage.value}&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                }); */
-          } else {
-            if (category_id == 0) {
-              String colorString = color_ids.join(',');
-              String sizeString = size_ids.join(',');
-              String brandString = brand_ids.join(',');
-              if (sort_By.isEmpty) {
-                if (filter) {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?type=relevant&gender_type=$gendertype&page=${categoryProductPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                } else {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?type=relevant&page=${categoryProductPage.value}&gender_type=$gendertype&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                }
-              } else {
-                if (filter) {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?type=relevant&sort_by=$sort_By&gender_type=$gendertype&page=${categoryProductPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                } else {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?type=relevant&page=${categoryProductPage.value}&sort_by=$sort_By&gender_type=$gendertype&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                }
-              }
-            } else {
-              String colorString = color_ids.join(',');
-              String sizeString = size_ids.join(',');
-              String brandString = brand_ids.join(',');
-              if (sort_By.isEmpty) {
-                if (filter) {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&gender_type=$gendertype&page=${categoryProductPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                } else {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&gender_type=$gendertype&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                }
-              } else {
-                if (filter) {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&sort_by=$sort_By&gender_type=$gendertype&page=${categoryProductPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                } else {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&sort_by=$sort_By&gender_type=$gendertype&latitude=${lat.value}&longitude=${lng.value}&screen=catalog product list"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                }
-              }
-            }
-          }
-        } else {
-          if (brandId != 0) {
-            response = await http.get(
-                Uri.parse(
-                    "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&brand_id=$brandId&page=${categoryProductPage.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                headers: <String, String>{
-                  'Accept': 'application/json; charset=UTF-8',
-                  "Authorization": "Bearer ${prefs.getString('token')} ",
-                });
-          } else {
-            if (category_id == 0) {
-              String colorString = color_ids.join(',');
-              String sizeString = size_ids.join(',');
-              String brandString = brand_ids.join(',');
-              if (sort_By.isEmpty) {
-                if (filter) {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?type=relevant&gender_type=$gendertype&page=${categoryProductPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                } else {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?type=relevant&page=${categoryProductPage.value}&gender_type=$gendertype&latitude=${lat.value}&longitude=${lng.value}"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                }
-              } else {
-                if (filter) {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?type=relevant&sort_by=$sort_By&gender_type=$gendertype&page=${categoryProductPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                } else {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?type=relevant&page=${categoryProductPage.value}&sort_by=$sort_By&gender_type=$gendertype&latitude=${lat.value}&longitude=${lng.value}"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                }
-              }
-            } else {
-              String colorString = color_ids.join(',');
-              String sizeString = size_ids.join(',');
-              String brandString = brand_ids.join(',');
-              if (sort_By.isEmpty) {
-                if (filter) {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&gender_type=$gendertype&page=${categoryProductPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                } else {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&gender_type=$gendertype&latitude=${lat.value}&longitude=${lng.value}"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                }
-              } else {
-                if (filter) {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&sort_by=$sort_By&gender_type=$gendertype&page=${categoryProductPage.value}&color_ids[]=${color_ids.isEmpty ? "" : colorString}&size_ids[]=${size_ids.isEmpty ? "" : sizeString}&brand_ids[]=${brand_ids.isEmpty ? "" : brandString}&price_range[]=${lowPrice.value}&price_range[]=${highPrice.value}&latitude=${lat.value}&longitude=${lng.value}"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                } else {
-                  response = await http.get(
-                      Uri.parse(
-                          "${ApiConstants.baseUrl}/products?category_id=${category_id.value}&page=${categoryProductPage.value}&sort_by=$sort_By&gender_type=$gendertype&latitude=${lat.value}&longitude=${lng.value}"),
-                      headers: <String, String>{
-                        'Accept': 'application/json; charset=UTF-8',
-                        "Authorization": "Bearer ${prefs.getString('token')} ",
-                      });
-                }
-              }
-            }
-          }
-        }
-
-        var responseData = json.decode(response.body);
-        if (response.statusCode == 200) {
-          if (responseData["data"] != null) {
-            if (responseData["data"].isNotEmpty) {
-              print(responseData);
-              productCategoryList.addAll(responseData['data']);
-            } else {
-              categoryProductHasnextpage.value = false;
-            }
-          }
-        } else if (response.statusCode == 500) {
-          getSnackBar("Please try again");
-        } else if (response.statusCode == 401) {
-          Get.offAll(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
-          );
-          getSnackBar("Authentication failed");
-        } else {
-          getSnackBar("fetch category product failed");
-        }
-      } catch (e) {
-        print("error$e");
-      }
-      categoryProductLoadMore.value = false;
-    }
-  }
-
-  getMostViewProductData() async {
-    isMostSearch.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      /*  var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/products?type=most-searched"), */
-      var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/categories?type=most-searched"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData != null) {
-          mostSeachList = responseData;
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get most search product failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isMostSearch.value = false;
-  }
-
-  fetchMostSearchMoreData() async {
-    if (mostViewHasnextpage.value == true &&
-        isMostSearch.value == false &&
-        mostViewLoadMore.value == false) {
-      mostViewLoadMore.value = true;
-      mostViewPage.value += 1;
-      print(mostViewPage.value);
-      final prefs = await SharedPreferences.getInstance();
-      try {
-        var response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/products?type=most-searched&page=${mostViewPage.value}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-        var responseData = json.decode(response.body);
-        if (response.statusCode == 200) {
-          if (responseData["data"] != null) {
-            if (responseData["data"].isNotEmpty) {
-              print(responseData);
-              mostSeachList.addAll(responseData['data']);
-            } else {
-              mostViewHasnextpage.value = false;
-            }
-          }
-        } else if (response.statusCode == 500) {
-          getSnackBar("Please try again");
-        } else if (response.statusCode == 401) {
-          Get.offAll(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
-          );
-          getSnackBar("Authentication failed");
-        } else {
-          getSnackBar("fetch most search product failed");
-        }
-      } catch (e) {
-        print("error$e");
-      }
-      mostViewLoadMore.value = false;
-    }
-  }
-
-  getProductDetails(int productId, String slug, Color backColor) async {
-    isDetails.value = true;
-    isEstimateDate.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      dynamic response;
-      if (productId != 0) {
-        response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/products/$productId?type=relevant&latitude=${lat.value}&longitude=${lng.value}&count=1"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-      } else {
-        if (backColor == whiteColor) {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/products/$slug?type=relevant&latitude=${lat.value}&longitude=${lng.value}&count=1"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
-        } else {
-          response = await http.get(
-              Uri.parse(
-                  "${ApiConstants.baseUrl}/products/$slug?type=express&latitude=${lat.value}&longitude=${lng.value}&count=1"),
-              headers: <String, String>{
-                'Accept': 'application/json; charset=UTF-8',
-                "Authorization": "Bearer ${prefs.getString('token')} ",
-              });
-        }
-      }
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData != null) {
-          productDetails = responseData;
-          if (productDetails["estimated_delivery_by"] != null) {
-            getItBy = productDetails["estimated_delivery_by"];
-            print("move${productDetails["estimated_delivery_by"]}");
-          }
-          if (responseData["reviews"] != null) {
-            totalReview.value = responseData["reviews"].length;
-          }
-          if (responseData["brand"] != null) {
-            brandDetails = responseData["brand"];
-          }
-          if (responseData["composition"] != null) {
-            compositionDetails = responseData["composition"];
-          }
-          if (responseData["return_policy"] != null) {
-            returnPolicyDetails.value = responseData["return_policy"];
-          }
-          /* if (responseData["express_delivery"] == true) {
-            isExpressDelivery.value = true;
-            expressValue.value = 1;
-          } */
-          print(
-              'Product Details====>${productDetails["images"]} ${responseData["express_delivery"]}');
-          sizeInventoryList = responseData["new_inventories"];
-          colorInventoryList.clear();
-          if (sizeInventoryList.length == 1) {
-            if (sizeInventoryList[0]["product_matrix_size_name"] == "") {
-              showSizeList.value = false;
-              sizeInventoryId.value = responseData["default_inventory_id"];
-              selectedProductSize = sizeInventoryList[0];
-              colorInventoryList =
-                  sizeInventoryList[0]["product_matrix_available_colors"];
-              if (sizeInventoryList[0]["product_matrix_available_colors"]
-                      .length ==
-                  1) {
-                selectedProductColor =
-                    sizeInventoryList[0]["product_matrix_available_colors"][0];
-                colorInventoryId.value = responseData["default_inventory_id"];
-              }
-            } else {
-              showSizeList.value = true;
-              if (sizeInventoryList[0]["product_matrix_available_colors"]
-                      .length ==
-                  1) {
-                showSizeList.value = true;
-                sizeInventoryId.value = responseData["default_inventory_id"];
-                colorInventoryId.value = responseData["default_inventory_id"];
-                selectedProductSize = sizeInventoryList[0];
-                colorInventoryList =
-                    sizeInventoryList[0]["product_matrix_available_colors"];
-                selectedProductColor =
-                    sizeInventoryList[0]["product_matrix_available_colors"][0];
-              } else {
-                showSizeList.value = true;
-              }
-            }
-          } else {
-            showSizeList.value = true;
-          }
-          getProductImage(responseData["default_inventory_id"]);
-
-          //  inventoryList = responseData["inventories"];
-          // colorInventoryList = responseData["inventories"]["color"];
-          /*  sizeInventoryList = inventoryList
-              .where((i) =>
-                  i['product_matrix']['product_matrix_group']['name'] == 'Size')
-              .toList();
-
-          colorInventoryList = inventoryList
-              .where((i) =>
-                  i['product_matrix']['product_matrix_group']['name'] ==
-                  'Color')
-              .toList();
-
-          fabricInventoryList = inventoryList
-              .where((i) =>
-                  i['product_matrix']['product_matrix_group']['name'] ==
-                  'Fabric')
-              .toList(); */
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        /*  Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed"); */
-        print(response.statusCode);
-      } else {
-        getSnackBar("get product details failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isDetails.value = false;
-    isEstimateDate.value = false;
   }
 
   getEstimateDate(int id, String zip) async {
@@ -2934,7 +701,6 @@ class ProductController extends BaseController {
           getSnackBar("Invalid Pincode");
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         Get.offAll(
           () => const LoginScreen(
@@ -2950,294 +716,6 @@ class ProductController extends BaseController {
     }
     isEstimateDate.value = false;
     isDetails.value = false;
-  }
-
-  getDefaultAddressData(int id, BuildContext cntx) async {
-    isAddress.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      dynamic response;
-      if (id == 0) {
-        response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/addresses?latitude=${lat.value}&longitude=${lng.value}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-      } else {
-        response = await http.get(
-            Uri.parse("${ApiConstants.baseUrl}/addresses"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-      }
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData != null) {
-          if (responseData.isNotEmpty) {
-            addressList = responseData;
-            for (var i = 0; i < responseData.length; i++) {
-              if (responseData[i]["default_shipping"]) {
-                defaultAddress = responseData[i];
-                if (id == 0) {
-                  lat.value = double.parse(defaultAddress["latitude"]);
-                  lng.value = double.parse(defaultAddress["longitude"]);
-                  getExpressBrandData();
-                  getBrandProductData();
-                }
-                addressText.value =
-                    "${responseData[i]["zip"]}, ${responseData[i]["address"]}";
-                addressTypeValue.value = responseData[i]["type"];
-                pincodeController.text = responseData[i]["zip"].toString();
-              }
-            }
-            if (id == 0 && addressText.value == "") {
-              /*  addressText.value =
-                  "${responseData[0]["zip"]}, ${responseData[0]["address"]}";
-              addressTypeValue.value = responseData[0]["type"]; */
-              showModalBottomSheet(
-                context: cntx,
-                isScrollControlled: true,
-                constraints: BoxConstraints(
-                    maxWidth: double.infinity,
-                    maxHeight: 600.sp,
-                    minHeight: 500.sp),
-                builder: (ctx) {
-                  return ChangeAddressScreen(
-                    cartId: 0,
-                  );
-                },
-              );
-            }
-            if (id != 0) {
-              lat.value = 0;
-              lng.value = 0;
-              getEstimateDate(id, defaultAddress["zip"]);
-            }
-          } else {
-            if (id == 0) {
-              /* showModalBottomSheet(
-                context: cntx,
-                isScrollControlled: true,
-                constraints: BoxConstraints(
-                    maxWidth: double.infinity,
-                    maxHeight: 600.sp,
-                    minHeight: 500.sp),
-                builder: (ctx) {
-                  return ChangeAddressScreen(
-                    cartId: 0,
-                  );
-                },
-              ); */
-              defaultAddress = "";
-            }
-          }
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        /*  Get.to(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        ); */
-        // getSnackBar("Authentication failed");
-        print(response..statusCode);
-      } else {
-        getSnackBar("get product failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isAddress.value = false;
-  }
-
-  getProductReview(int productId) async {
-    isReview.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/products/$productId/reviews"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          reviewList = responseData["data"];
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get product review failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isReview.value = false;
-  }
-
-  getProductImage(int inventoryId) async {
-    isColorimage.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/products/product-images-based-color?inventory_id=$inventoryId"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData != null) {
-          imageList = responseData;
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get product review failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isColorimage.value = false;
-  }
-
-  getProductRecommendations(int productId) async {
-    isRecommendations.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/products/$productId/recommendations?except_product_id=$productId&latitude=${lat.value}&longitude=${lng.value}"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          recommendedList = responseData["data"];
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get product recommendation failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isRecommendations.value = false;
-  }
-
-  fetchMoreRecommendedProductData(int productId) async {
-    if (recommendedHasnextpage.value == true &&
-        isRecommendations.value == false &&
-        recommendedLoadMore.value == false) {
-      recommendedLoadMore.value = true;
-      recommendedPage.value += 1;
-      print(recommendedPage.value);
-      final prefs = await SharedPreferences.getInstance();
-      try {
-        var response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/products/$productId/recommendations?except_product_id=$productId&page=${recommendedPage.value}&latitude=${lat.value}&longitude=${lng.value}"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-        var responseData = json.decode(response.body);
-        if (response.statusCode == 200) {
-          if (responseData["data"] != null) {
-            if (responseData["data"].isNotEmpty) {
-              print(responseData);
-              recommendedList.addAll(responseData['data']);
-            } else {
-              recommendedHasnextpage.value = false;
-            }
-          }
-        } else if (response.statusCode == 500) {
-          getSnackBar("Please try again");
-        } else if (response.statusCode == 401) {
-          Get.offAll(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
-          );
-          getSnackBar("Authentication failed");
-        } else {
-          getSnackBar("fetch recommended product failed");
-        }
-      } catch (e) {
-        print("error$e");
-      }
-      recommendedLoadMore.value = false;
-    }
-  }
-
-  getCheckPincode(String pin) async {
-    isPincode.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      var response = await http.get(
-          Uri.parse(
-              "${ApiConstants.baseUrl}/general/check-pincode?pincode=$pin"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData != null) {
-          getSnackBar(responseData["name"]);
-        }
-      } else if (response.statusCode == 400) {
-        if (responseData['errors']['pincode'] != null) {
-          getSnackBar(responseData['errors']['pincode'][0]);
-        }
-      } else if (response.statusCode == 404) {
-        getSnackBar(responseData["message"]);
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get pincode failed");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    isPincode.value = false;
   }
 
   callAddtoCart(int quantity, String type, Color background, int productId,
@@ -3278,7 +756,6 @@ class ProductController extends BaseController {
             backgroundcolor: background,
           ))?.then(
             (value) {
-              getProductDetails(productId, "", background);
               addToCart.value = false;
             },
           );
@@ -3288,7 +765,6 @@ class ProductController extends BaseController {
         var responseData = json.decode(response.body);
         errorMsg.value = responseData["message"];
       } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -3332,7 +808,9 @@ class ProductController extends BaseController {
           //  getSnackBar("product removed from the wishlist");
         }
         if (type == "product") {
-          getProductData("relevant");
+          final prefs = await SharedPreferences.getInstance();
+          int gender = prefs.getInt("gender") ?? 3;
+          getProductData(gender);
         } else if (type == "category") {
           /*  getProductByCategoryData(categoryId, brandId, "", [], sortBy.value,
               genderType, filterEnable.value, catalogId, false, "catalog"); */
@@ -3344,8 +822,7 @@ class ProductController extends BaseController {
           /*   getProductByCategoryData(categoryId, brandId, "", [], sortBy.value,
               genderType, filterEnable.value, catalogId, false, ""); */
         } else if (type == "tags") {
-          getTagsProductData(prefs.getInt('tagId')!, 0, brandId);
-          getBestSellerProductData(brandId);
+          // getBestSellerProductData(brandId);
         } else if (type == "brand") {
           /*  getBrandExpressProductData(
               brandId, expressSortBy.value, filterExpressEnable.value); */
@@ -3353,17 +830,12 @@ class ProductController extends BaseController {
           /*  getTagsBannerData(list, categoryList, genderType, sortBy.value,
               filterEnable.value, false); */
         } else if (type == "frequently") {
-          getFrequentlyProductData("frequently-bought", existId);
-          getProductRecommendations(existId);
+          // getProductRecommendations(existId);
         } else if (type == "seller") {
-          getBestSellerProductData(brandId);
-          getTagsProductData(prefs.getInt('tagId')!, 0, brandId);
         } else {
-          getProductRecommendations(existId);
-          getFrequentlyProductData("frequently-bought", existId);
+          // getProductRecommendations(existId);
         }
       } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
       } else {
@@ -3371,130 +843,6 @@ class ProductController extends BaseController {
       }
     } catch (e) {
       print(e.toString());
-    }
-  }
-
-  void callReviewVote(int reviewId, int vote, int productId) async {
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      var response = await http.put(
-        Uri.parse("${ApiConstants.baseUrl}/products/$reviewId/vote"),
-        headers: <String, String>{
-          'Accept': 'application/json; charset=UTF-8',
-          'Content-Type': 'application/json;charset=UTF-8',
-          "Authorization": "Bearer ${prefs.getString('token')} ",
-        },
-      );
-      if (response.statusCode == 200) {
-        if (vote == 1) {
-          getSnackBar("Thanks for voting");
-        }
-        getProductReview(productId);
-      } else if (response.statusCode == 201) {
-        if (vote == 1) {
-          getSnackBar("Thanks for voting");
-        }
-        getProductReview(productId);
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        getSnackBar("Authentication failed");
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-      } else {
-        print("vote review failed");
-      }
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  getTagsData(int genderType) async {
-    istags.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      var response = await http.get(
-          Uri.parse("${ApiConstants.baseUrl}/tags?gender_type=$genderType"),
-          headers: <String, String>{
-            'Accept': 'application/json; charset=UTF-8',
-            "Authorization": "Bearer ${prefs.getString('token')} ",
-          });
-      var responseData = json.decode(response.body);
-      if (response.statusCode == 200) {
-        if (responseData["data"] != null) {
-          tagsList = responseData["data"];
-          if (tagsList.isNotEmpty) {
-            // tagId.value = tagsList[0]["id"];
-            tagProductList.clear();
-            expressProductList.clear();
-            // getExpressProductData(0, genderType);
-            getTagsProductData(0, genderType, 0);
-            getHomeExploreProduct("", false, false, 0);
-          }
-        }
-      } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
-      } else if (response.statusCode == 401) {
-        Get.offAll(
-          () => const LoginScreen(
-            initialTab: 0,
-          ),
-        );
-        getSnackBar("Authentication failed");
-      } else {
-        getSnackBar("get tags failed ${response.statusCode}");
-      }
-    } catch (e) {
-      print("error$e");
-    }
-    istags.value = false;
-  }
-
-  fetchMoreTagsData(int genderType) async {
-    if (homeTagshasnextpage.value == true &&
-        istags.value == false &&
-        homeTagsloadMore.value == false) {
-      homeTagsloadMore.value = true;
-      homeTagsPage.value += 1;
-      print(homeTagsPage.value);
-      final prefs = await SharedPreferences.getInstance();
-      try {
-        var response = await http.get(
-            Uri.parse(
-                "${ApiConstants.baseUrl}/tags?page=${homeTagsPage.value}&gender_type=$genderType"),
-            headers: <String, String>{
-              'Accept': 'application/json; charset=UTF-8',
-              "Authorization": "Bearer ${prefs.getString('token')} ",
-            });
-        var responseData = json.decode(response.body);
-        if (response.statusCode == 200) {
-          if (responseData["data"] != null) {
-            if (responseData["data"].isNotEmpty) {
-              print(responseData);
-              tagsList.addAll(responseData['data']);
-            } else {
-              homeTagshasnextpage.value = false;
-            }
-          }
-        } else if (response.statusCode == 500) {
-          getSnackBar("Please try again");
-        } else if (response.statusCode == 401) {
-          Get.offAll(
-            () => const LoginScreen(
-              initialTab: 0,
-            ),
-          );
-          getSnackBar("Authentication failed");
-        } else {
-          getSnackBar("fetch tags failed");
-        }
-      } catch (e) {
-        print("error$e");
-      }
-      homeTagsloadMore.value = false;
     }
   }
 
@@ -3539,16 +887,15 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         print(responseData);
         if (screenType == "change address") {
-          getDefaultAddressData(0, context);
           Get.back();
           /* getBrandExpressProductData(
               brand_id.value, expressSortBy.value, filterExpressEnable.value); */
-          getBrandProductData();
+
           FocusScope.of(context).unfocus();
         }
         if (screenType == "express") {
-          getBrandExpressProductData(
-              brand_id.value, expressSortBy.value, filterExpressEnable.value);
+          // getBrandExpressProductData(
+          //     brand_id.value, expressSortBy.value, filterExpressEnable.value);
         }
         if (screenType == "") {
           Get.back();
@@ -3556,14 +903,13 @@ class ProductController extends BaseController {
       } else if (response.statusCode == 201) {
         print(responseData);
         if (screenType == "change address") {
-          getDefaultAddressData(0, context);
           Get.back();
-          getBrandExpressProductData(
-              brand_id.value, expressSortBy.value, filterExpressEnable.value);
+          // getBrandExpressProductData(
+          //     brand_id.value, expressSortBy.value, filterExpressEnable.value);
         }
         if (screenType == "express") {
-          getBrandExpressProductData(
-              brand_id.value, expressSortBy.value, filterExpressEnable.value);
+          // getBrandExpressProductData(
+          //     brand_id.value, expressSortBy.value, filterExpressEnable.value);
         }
         if (screenType == "") {
           Get.back();
@@ -3571,7 +917,6 @@ class ProductController extends BaseController {
       } else if (response.statusCode == 400) {
         print(response.body);
       } else if (response.statusCode == 500) {
-        getSnackBar("Please try again");
       } else if (response.statusCode == 401) {
         // getSnackBar("Authentication failed");
       } else {
@@ -3579,6 +924,289 @@ class ProductController extends BaseController {
       }
     } catch (e) {
       print(e.toString());
+    }
+  }
+
+  Future<bool> submitProductReview({
+    required int orderId,
+    required int productId,
+    required int rating,
+    required String comment,
+  }) async {
+    isSubmittingReview.value = true;
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+    final userId = prefs.getInt('user_id') ?? 0; // Assuming user_id is stored
+
+    if (token.isEmpty) {
+      getSnackBar("Please login to submit a review");
+      isSubmittingReview.value = false;
+      return false;
+    }
+
+    try {
+      final Map<String, dynamic> sendData = {
+        "userId": userId,
+        "orderId": orderId,
+        "productId": productId,
+        "rating": rating,
+        "comment": comment,
+      };
+
+      final response = await http
+          .post(
+            Uri.parse("${ApiConstants.baseUrl}/review"),
+            headers: <String, String>{
+              'Accept': 'application/json; charset=UTF-8',
+              'Content-Type': 'application/json;charset=UTF-8',
+              "Authorization": "Bearer $token",
+            },
+            body: json.encode(sendData),
+          )
+          .timeout(const Duration(seconds: 20));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = json.decode(response.body);
+        print("✓ Review submitted successfully: $responseData");
+        getSnackBar("Review submitted successfully");
+
+        // Refresh reviews list after submission
+        await getProductReviews(productId);
+
+        return true;
+      } else if (response.statusCode == 400) {
+        final responseData = json.decode(response.body);
+        final errorMessage = responseData["message"] ?? "Invalid review data";
+        getSnackBar(errorMessage);
+        print("✗ Review submission failed: $errorMessage");
+        return false;
+      } else if (response.statusCode == 401) {
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+        getSnackBar("Authentication failed");
+        return false;
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server error, please try again later");
+        return false;
+      } else {
+        getSnackBar("Failed to submit review");
+        print("✗ Review submission failed: ${response.statusCode}");
+        return false;
+      }
+    } on TimeoutException {
+      getSnackBar("Request timeout. Please try again.");
+      print("✗ Review submission timeout");
+      return false;
+    } catch (e) {
+      getSnackBar("Error submitting review");
+      print("✗ Error submitting review: $e");
+      return false;
+    } finally {
+      isSubmittingReview.value = false;
+    }
+  }
+
+  Future<void> getProductReviews(
+    int productId, {
+    int page = 1,
+    int limit = 10,
+  }) async {
+    isFetchingReviews.value = true;
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+
+    try {
+      final queryParams = {
+        'productId': productId.toString(),
+        'page': page.toString(),
+        'limit': limit.toString(),
+      };
+
+      final uri = Uri.parse("${ApiConstants.baseUrl}/reviews")
+          .replace(queryParameters: queryParams);
+
+      final response = await http.get(
+        uri,
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': "Bearer $token",
+        },
+      ).timeout(const Duration(seconds: 20));
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+
+        if (responseData != null) {
+          // Handle different response structures
+          if (responseData is Map) {
+            // Structure: { data: [...], total: n, page: n }
+            if (responseData["data"] != null) {
+              reviewList.assignAll(responseData["data"]);
+              totalReview.value = responseData["total"] ?? reviewList.length;
+            }
+            // Structure: { reviews: [...], totalReviews: n }
+            else if (responseData["reviews"] != null) {
+              reviewList.assignAll(responseData["reviews"]);
+              totalReview.value =
+                  responseData["totalReviews"] ?? reviewList.length;
+            }
+            // Direct array in data field
+            else {
+              reviewList.assignAll([responseData]);
+              totalReview.value = 1;
+            }
+          }
+          // Direct array response
+          else if (responseData is List) {
+            reviewList.assignAll(responseData);
+            totalReview.value = responseData.length;
+          }
+
+          print("✓ Reviews loaded: ${reviewList.length} reviews");
+        } else {
+          reviewList.clear();
+          totalReview.value = 0;
+          print("✓ No reviews found for product $productId");
+        }
+      } else if (response.statusCode == 404) {
+        reviewList.clear();
+        totalReview.value = 0;
+        print("✓ No reviews found for product $productId");
+      } else if (response.statusCode == 401) {
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+        getSnackBar("Authentication failed");
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server error, please try again later");
+        print("✗ Server error fetching reviews");
+      } else {
+        getSnackBar("Failed to load reviews");
+        print("✗ Failed to load reviews: ${response.statusCode}");
+      }
+    } on TimeoutException {
+      getSnackBar("Request timeout. Please try again.");
+      print("✗ Reviews fetch timeout");
+    } catch (e) {
+      print("✗ Error fetching reviews: $e");
+      getSnackBar("Error loading reviews");
+    } finally {
+      isFetchingReviews.value = false;
+    }
+  }
+
+  Future<void> loadMoreReviews(int productId, int currentPage) async {
+    if (isFetchingReviews.value) return;
+
+    final nextPage = currentPage + 1;
+
+    isFetchingReviews.value = true;
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+
+    try {
+      final queryParams = {
+        'productId': productId.toString(),
+        'page': nextPage.toString(),
+        'limit': '10',
+      };
+
+      final uri = Uri.parse("${ApiConstants.baseUrl}/reviews")
+          .replace(queryParameters: queryParams);
+
+      final response = await http.get(
+        uri,
+        headers: <String, String>{
+          'Accept': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': "Bearer $token",
+        },
+      ).timeout(const Duration(seconds: 20));
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+
+        if (responseData != null) {
+          List newReviews = [];
+
+          if (responseData is Map) {
+            if (responseData["data"] != null) {
+              newReviews = responseData["data"];
+            } else if (responseData["reviews"] != null) {
+              newReviews = responseData["reviews"];
+            }
+          } else if (responseData is List) {
+            newReviews = responseData;
+          }
+
+          if (newReviews.isNotEmpty) {
+            reviewList.addAll(newReviews);
+            print("✓ Loaded ${newReviews.length} more reviews");
+          } else {
+            print("✓ No more reviews to load");
+          }
+        }
+      }
+    } on TimeoutException {
+      print("✗ Load more reviews timeout");
+    } catch (e) {
+      print("✗ Error loading more reviews: $e");
+    } finally {
+      isFetchingReviews.value = false;
+    }
+  }
+
+  /// ✅ Fetch available coupons from API
+  Future<void> getCoupons() async {
+    isCoupons.value = true;
+    couponList.clear();
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+
+    final uri = Uri.parse("${ApiConstants.baseUrl}/coupons");
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 20));
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body);
+
+        if (decoded is Map && decoded['data'] is List) {
+          final List<Map<String, dynamic>> data =
+              List<Map<String, dynamic>>.from(
+                  (decoded['data'] as List).whereType<Map>());
+          couponList.assignAll(data);
+          print("✓ Coupons loaded: ${couponList.length}");
+        } else if (decoded is List) {
+          couponList.assignAll(
+              List<Map<String, dynamic>>.from(decoded.whereType<Map>()));
+          print("✓ Coupons loaded (list response): ${couponList.length}");
+        } else {
+          print("✗ Unexpected coupon response: ${response.body}");
+          getSnackBar("Unexpected response from coupons API");
+        }
+      } else if (response.statusCode == 401) {
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+        getSnackBar("Authentication failed");
+      } else if (response.statusCode == 404) {
+        couponList.clear();
+        getSnackBar("No coupons available");
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server error while fetching coupons");
+      }
+    } on TimeoutException {
+      getSnackBar("Request timed out while fetching coupons");
+    } catch (e) {
+      getSnackBar("Error loading coupons");
+      print("✗ Error fetching coupons: $e");
+    } finally {
+      isCoupons.value = false;
     }
   }
 }

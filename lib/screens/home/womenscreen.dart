@@ -24,28 +24,24 @@ class _WomenScreenState extends State<WomenScreen>
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => productController.getTagsData(widget.genderType));
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (widget.genderType == 3) {
-        homeController.getBannar1Data(widget.genderType);
-      }
-    });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (widget.genderType == 3) {
-        homeController.getBannar2Data();
-      }
-    });
-    /*  WidgetsBinding.instance
-        .addPostFrameCallback((_) => homeController.getBannar1Data());
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => homeController.getBannar2Data()); */
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => homeController.getCategoryData(widget.genderType));
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      //  homeController.getConfigurationData();
-    });
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final genderType = widget.genderType;
+
+      // Load tags and category data
+      // productController.getTagsData(genderType);
+      homeController.getCategoryData(genderType);
+
+      // Load banners only if genderType is 3
+      if (genderType == 3) {
+        // homeController.getBannerData();
+        // homeController.getBannerData();
+      }
+
+      // If needed in future
+      // homeController.getConfigurationData();
+    });
   }
 
   callOnchanged(int index) {

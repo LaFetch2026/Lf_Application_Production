@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print
 
 import 'dart:async';
-
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,19 +14,21 @@ import '../../controllers/cart_controller.dart';
 import '../../controllers/catalog_controller.dart';
 import '../../controllers/wishlist_controller.dart';
 import '../../core/constant/constants.dart';
-
+import '../wishlistscreen.dart';
 
 class NewBoardScreen extends StatefulWidget {
   final String title;
   final String boardName;
   final String hintName;
-  final int boardId;
-  final String btnText;
-  final int productId;
+  final int boardId; // 0 => create, otherwise edit/add-to-existing
+  final String btnText; // “Next” / “Save changes”
+  final int productId; // used when adding a product to an existing board
   final int categoryId;
   final String screen;
 
-  const NewBoardScreen({required this.title,
+  const NewBoardScreen({
+    super.key,
+    required this.title,
     required this.boardName,
     required this.hintName,
     required this.boardId,
@@ -35,28 +36,91 @@ class NewBoardScreen extends StatefulWidget {
     required this.productId,
     this.categoryId = 0,
     this.screen = "",
-    super.key});
+  });
 
   @override
-  State<NewBoardScreen> createState() => NewBoardScreenState();
+  State<NewBoardScreen> createState() => _NewBoardScreenState();
 }
 
-class NewBoardScreenState extends State<NewBoardScreen> {
-  final wishlistController = Get.put(WishlistController());
-  final catalogControler = Get.put(CatalogController());
-  final cartControler = Get.put(CartController());
+class _NewBoardScreenState extends State<NewBoardScreen> {
+  final WishlistController wishlistController = Get.put(WishlistController());
+  final CatalogController catalogController = Get.put(CatalogController());
+  final CartController cartController = Get.put(CartController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
+  bool _submitting = false;
+
+  bool get _isEditTitle =>
+      widget.title.toLowerCase().contains('edit') ||
+      widget.btnText.toLowerCase().contains('save');
 
   @override
   void initState() {
-    print(widget.btnText);
-    wishlistController.boardError.value = "";
-    if (widget.boardName.isNotEmpty) {
-      wishlistController.boardNameController.text = widget.boardName;
-    } else {
-      wishlistController.boardNameController.clear();
-    }
     super.initState();
+    wishlistController.boardError.value = "";
+    wishlistController.boardNameController.text = widget.boardName;
+  }
+
+  Future<void> _handlePrimaryAction() async {
+    if (_submitting) return;
+    FocusScope.of(context).unfocus();
+
+    final boardName = wishlistController.boardNameController.text.trim();
+    if (!wishlistController.checkIdNamevalidation(boardName)) return;
+
+    _submitting = true;
+
+    // 1) CREATE NEW BOARD
+    if (widget.boardId == 0) {
+      await wishlistController
+          .createBoard(boardName); // shows snackbar + refresh inside
+
+      if (widget.screen == "Bag") {
+        Timer(const Duration(milliseconds: 400), () {
+          cartController.getCartData();
+        });
+      }
+
+      await analytics.logEvent(
+        name: 'create_board_btnClick',
+        parameters: {'page_name': 'create_board_btnClick'},
+      );
+
+      // Route to Wishlist (fresh list after create)
+      if (!mounted) return;
+      Get.offAll(() => const WishlistScreen());
+      _submitting = false;
+      return;
+    }
+
+    // 2) EXISTING BOARD — either RENAME or ADD PRODUCT
+    if (_isEditTitle) {
+      await wishlistController.renameBoard(widget.boardId, boardName);
+      await analytics.logEvent(
+        name: 'edit_board_btnClick',
+        parameters: {'page_name': 'edit_board_btnClick'},
+      );
+      if (mounted) Get.back();
+      _submitting = false;
+      return;
+    }
+
+    // Add product to an existing board
+    if (widget.productId != 0) {
+      await wishlistController.addProductToBoard(
+          widget.boardId, widget.productId);
+      await analytics.logEvent(
+        name: 'add_product_to_board_click',
+        parameters: {'page_name': 'add_product_to_board_click'},
+      );
+      if (mounted)
+        Get.back(result: {"boardId": widget.boardId, "boardName": boardName});
+      _submitting = false;
+      return;
+    }
+
+    if (mounted) Get.back();
+    _submitting = false;
   }
 
   @override
@@ -82,78 +146,34 @@ class NewBoardScreenState extends State<NewBoardScreen> {
                       controller: wishlistController.boardNameController,
                     ),
                   ),
-                  Obx(() =>
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 16.sp, right: 5.sp, top: 5.sp),
-                        child: AppText(
-                          text: wishlistController.boardError.value,
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: redColor,
-                          fontSize: 12,
-                        ),
-                      )),
+                  Obx(
+                    () => Padding(
+                      padding:
+                          EdgeInsets.only(left: 16.sp, right: 5.sp, top: 5.sp),
+                      child: AppText(
+                        text: wishlistController.boardError.value,
+                        fontFamily: "Franklin Gothic Regular",
+                        fontWeight: FontWeight.w400,
+                        color: redColor,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
-          Obx(() =>
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 20.sp),
-                child: getSingleButton(
-                    label: widget.btnText,
-                    textColor: whiteBorderColor,
-                    backgroundColor: colorPrimary,
-                    controller: wishlistController,
-                    onPressed: () async {
-                      if (widget.boardId == 0) {
-                        if (wishlistController.checkIdNamevalidation(
-                            wishlistController.boardNameController.text
-                                .toString())) {
-                          wishlistController.callCreateWishlist(
-                              wishlistController.boardNameController.text
-                                  .toString(),
-                              widget.productId);
-                          Timer(Duration(seconds: 1), () {
-/*                             if (widget.categoryId != 0) {
-                              catalogControler
-                                  .getCategoryProductData(widget.categoryId);
-                            } */
-                            if (widget.screen == "ProductDetails") {
-                              wishlistController.getWishlistProductDetails(
-                                  widget.productId, "", whiteColor);
-                            }
-                            if (widget.screen == "Bag") {
-                              cartControler.getCartData();
-                            }
-                          });
-                          await analytics.logEvent(
-                            name: 'create_board_btnClick',
-                            parameters: <String, Object>{
-                              'page_name': 'create_board_btnClick',
-                            },
-                          );
-                        }
-                      } else {
-                        if (wishlistController.checkIdNamevalidation(
-                            wishlistController.boardNameController.text
-                                .toString())) {
-                          wishlistController.callUpdateWishlist(
-                              wishlistController.boardNameController.text
-                                  .toString(),
-                              widget.boardId);
-                          await analytics.logEvent(
-                            name: 'edit_board_btnClick',
-                            parameters: <String, Object>{
-                              'page_name': 'edit_board_btnClick',
-                            },
-                          );
-                        }
-                      }
-                    },
-                    borderColor: colorPrimary),
-              ))
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 20.sp),
+            child: getSingleButton(
+              label: widget.btnText,
+              textColor: whiteBorderColor,
+              backgroundColor: colorPrimary,
+              controller: wishlistController,
+              onPressed: _handlePrimaryAction,
+              borderColor: colorPrimary,
+            ),
+          ),
         ],
       ),
     );

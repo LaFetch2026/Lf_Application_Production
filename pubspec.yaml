@@ -98,6 +98,7 @@ dependencies:
   firebase_crashlytics: ^3.5.7
   facebook_app_events: ^0.17.1
   appsflyer_sdk: ^6.15.2
+  firebase_messaging: ^14.7.10
 
 dev_dependencies:
   flutter_test:

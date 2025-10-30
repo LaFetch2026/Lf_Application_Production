@@ -64,7 +64,7 @@ class HomeList extends StatelessWidget {
                         onPressedExplore?.call(list[index]["tag_id"],
                             list[index]["title"].toUpperCase());
                       },
-                      parentIndex: index,
+                      parentIndex: index, parentInde: index,
                     ),
                   ],
                 ),

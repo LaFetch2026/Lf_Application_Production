@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ProductViewScreen.dart  (complete)
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -8,14 +8,11 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-//import 'package:lafetch/commonwidget/dummy_container.dart';
-
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../common/widget/appbar/productlist_appbar.dart';
 import '../../../common/widget/bottom_sheets/bottomcategory.dart';
 import '../../../common/widget/bottom_sheets/bottomfiltters.dart';
@@ -27,8 +24,6 @@ import '../../../controllers/cart_controller.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
-
-//import '../../../commonwidget/catalogwidgets/bottomwishlist.dart';
 
 class ProductViewScreen extends StatefulWidget {
   final String title;
@@ -51,45 +46,87 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
+  // ---- helpers ----
+  String _firstImageUrl(Map<String, dynamic> item) {
+    final imgs = item['images'];
+    if (imgs is List && imgs.isNotEmpty) {
+      final first = imgs.first;
+      final name = (first is Map ? first['name'] : null)?.toString() ?? '';
+      if (name.isNotEmpty) return name;
+    }
+    final urls = item['imageUrls'];
+    if (urls is List && urls.isNotEmpty) {
+      final first = urls.first;
+      final s = (first == null) ? '' : first.toString();
+      if (s.isNotEmpty) return s;
+    }
+    return '';
+  }
+
+  num? _priceOf(Map<String, dynamic> item) {
+    return item['price'] ??
+        item['msp'] ??
+        item['lfMsp'] ??
+        item['mrp'] ??
+        item['basePrice'];
+  }
+
+  String _brandOf(Map<String, dynamic> item) {
+    return (item['brand_name'] ??
+            (item['brand'] is Map ? item['brand']['name'] : null) ??
+            item['type'] ??
+            '')
+        .toString();
+  }
+
+  String _titleOf(Map<String, dynamic> item) {
+    return (item['title'] ?? item['name'] ?? '').toString();
+  }
+  // ---- end helpers ----
+
   @override
   void initState() {
+    super.initState();
+
+    // Map genderName → superCatId
+    final g = widget.genderName.trim().toLowerCase();
+    if (g == 'men') {
+      productController.categoryFilter.value = 1;
+    } else if (g == 'women') {
+      productController.categoryFilter.value = 2;
+    } else {
+      productController.categoryFilter.value = 3; // accessories
+    }
+    productController.selectedCategoryGender.value = widget.genderName;
+
+    // keep your initialization flow
     productController.handPickedProductList.clear();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => wishlistController.getWishlistData());
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    productController.handpickedHasnextpage.value = true;
+    productController.handpickedLoadMore.value = false;
+    productController.isHandPicked.value = false;
+    productController.handpickedPage.value = 1;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      wishlistController.getWishlistData();
+
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-          statusBarColor: statusBarColor,
-          systemNavigationBarColor: statusBarColor));
-    });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      productController.selectedCategoryGender.value = widget.genderName;
-      productController.handpickedHasnextpage.value = true;
-      productController.handpickedLoadMore.value = false;
-      productController.isHandPicked.value = false;
-      productController.handpickedPage.value = 1;
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) =>
-        productController.getHomeExploreProduct(
-            productController.productSortBy.value,
-            productController.filterProductEnable.value,
-            false,
-            productController.tagId.value));
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => controller.getCartData());
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        statusBarColor: statusBarColor,
+        systemNavigationBarColor: statusBarColor,
+      ));
+
+      // fetch all products in the tapped collection (tagId = collectionId)
+
+      controller.getCartData();
+
       productController.handpickedController.addListener(() {
-        productController.fetchMoreHomeProduct(
-            productController.productSortBy.value,
-            productController.filterProductEnable.value,
-            productController.tagId.value);
         productController.update();
       });
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) => clearPrefrenceValue());
-    super.initState();
+
+    _clearPreferenceValue();
   }
 
-  clearPrefrenceValue() async {
+  Future<void> _clearPreferenceValue() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove("brandList");
     prefs.remove("colorList");
@@ -98,896 +135,524 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     prefs.remove("lower");
     prefs.remove("sortby");
     prefs.remove("category");
-    print("abcdef");
+  }
+
+  bool isImage(String url) {
+    final u = url.toLowerCase();
+    return u.endsWith('.jpg') ||
+        u.endsWith('.jpeg') ||
+        u.endsWith('.png') ||
+        u.endsWith('.webp');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: scaffoldKey,
-        backgroundColor: whiteColor,
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ProductAppbar(
-                text: widget.title,
-                onPressedSearch: () async {
-                  Get.to(const SearchScreen())?.then((value) => setState(
-                        () {
-                          productController.getHomeExploreProduct(
-                              productController.productSortBy.value,
-                              productController.filterProductEnable.value,
-                              false,
-                              productController.tagId.value);
-                        },
-                      ));
-                  analytics.logEvent(
-                      name: "search_page",
-                      parameters: <String, Object>{
-                        "page_name": "search_page",
+      key: scaffoldKey,
+      backgroundColor: whiteColor,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ProductAppbar(
+            text: widget.title,
+            onPressedSearch: () async {
+              Get.to(SearchScreen())?.then((_) {
+                setState(() {});
+              });
+              analytics.logEvent(
+                  name: "search_page",
+                  parameters: {"page_name": "search_page"});
+            },
+            isHandPicked: true,
+            onPressedHeart: () async {
+              Get.to(const BottomNavScreen(index: 2))?.then((_) => setState(() {
+                    controller.getCartData();
+                  }));
+              analytics.logEvent(
+                  name: "wishlist_page",
+                  parameters: {"page_name": "wishlist_page"});
+            },
+            onPressedCart: () async {
+              Get.to(const CartScreen())?.then((_) => setState(() {
+                    controller.getCartData();
+                  }));
+              analytics.logEvent(
+                  name: "cart_page", parameters: {"page_name": "cart_page"});
+            },
+          ),
+          SizedBox(height: 10.sp), // Add some space below the app bar
+          // ===== GRID =====
+          // ===== GRID (replace your entire Obx(...) with this) =====
+          Obx(() {
+            final loading = productController.isHomeProduct.value ||
+                productController.isHandPicked.value;
+            if (loading) {
+              return const Expanded(child: DummyGridList(size: 2));
+            }
+
+            final int selectedCollectionId = productController
+                .tagId.value; // collection tapped in "Explore All"
+            final int superCatId = productController
+                .categoryFilter.value; // 1=Men, 2=Women, 3=Accessories
+
+            // flatten collections -> products
+            final List<Map<String, dynamic>> collections = productController
+                .homeProductList
+                .whereType<Map<String, dynamic>>()
+                .toList();
+
+            final List<Map<String, dynamic>> allProducts =
+                <Map<String, dynamic>>[];
+
+            for (final c in collections) {
+              final List<Map<String, dynamic>> prods =
+                  (c['products'] as List? ?? const [])
+                      .whereType<Map<String, dynamic>>()
+                      .toList();
+
+              for (final p in prods) {
+                // keep only the tapped collection (when tagId is set)
+                if (selectedCollectionId != 0 &&
+                    (p['collectionID'] != selectedCollectionId)) continue;
+
+                // keep only current gender tab
+                final sc = p['superCatId'];
+                if (superCatId != 0 && sc is int && sc != superCatId) continue;
+
+                // IMPORTANT: do NOT drop status:false anymore
+                allProducts.add(p);
+              }
+            }
+
+            if (allProducts.isEmpty) {
+              return Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(errorImage,
+                        height: 200.sp, width: 220.sp, fit: BoxFit.cover),
+                    SizedBox(height: 20.sp),
+                    getSingleButton(
+                      width: double.infinity,
+                      label: "BACK TO HOME",
+                      textColor: whiteColor,
+                      fontSize: 13,
+                      backgroundColor: homeAppBarColor,
+                      onPressed: () => Get.off(const BottomNavScreen()),
+                      borderColor: colorPrimary,
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            // client-side paging (infinite scroll)
+            const int pageSize = 12;
+            final int page = (productController.handpickedPage.value <= 0)
+                ? 1
+                : productController.handpickedPage.value;
+
+            final int maxToShow = page * pageSize;
+            final int visibleCount =
+                maxToShow < allProducts.length ? maxToShow : allProducts.length;
+            final List<Map<String, dynamic>> items =
+                allProducts.take(visibleCount).toList();
+
+            return Expanded(
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (n) {
+                  if (n.metrics.pixels >= n.metrics.maxScrollExtent - 160) {
+                    final bool canLoadMore =
+                        items.length < allProducts.length &&
+                            !productController.handpickedLoadMore.value;
+                    if (canLoadMore) {
+                      productController.handpickedLoadMore.value = true;
+                      Future.delayed(const Duration(milliseconds: 200), () {
+                        productController.handpickedPage.value += 1;
+                        productController.handpickedLoadMore.value = false;
                       });
+                    }
+                  }
+                  return false;
                 },
-                isHandPicked: true,
-                onPressedHeart: () async {
-                  Get.to(const BottomNavScreen(
-                    index: 2,
-                  ))?.then((value) => setState(
-                        () {
-                          controller.getCartData();
-                        },
-                      ));
-                  analytics.logEvent(
-                      name: "wishlist_page",
-                      parameters: <String, Object>{
-                        "page_name": "wishlist_page",
-                      });
-                },
-                onPressedCart: () async {
-                  Get.to(const CartScreen())?.then((value) => setState(
-                        () {
-                          controller.getCartData();
-                        },
-                      ));
-                  analytics
-                      .logEvent(name: "cart_page", parameters: <String, Object>{
-                    "page_name": "cart_page",
-                  });
-                }),
-            /*  Padding(
-              padding: EdgeInsets.only(left: 16.sp, top: 16.sp),
-              child: AppText(
-                text: "HANDPICKED FOR YOU",
-                color: Color(0xFF4B5563),
-                fontSize: 16,
-                fontFamily: "Franklin Gothic",
-                textAlign: TextAlign.center,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            Obx(() => Padding(
-                  padding: EdgeInsets.only(left: 16.sp, top: 5.sp),
-                  child: productController.isHandPicked.value
-                      ? const DummyContainer(
-                          height: 10,
-                          width: 60,
-                        )
-                      : AppText(
-                          text: productController.totalProductValue.value ==
-                                      1 ||
-                                  productController.totalProductValue.value == 0
-                              ? "${productController.totalProductValue.value} item"
-                              : "${productController.totalProductValue.value} items",
-                          color: Color(0xFF4B5563),
-                          fontSize: 10,
-                          fontFamily: "Franklin Gothic Regular",
-                          textAlign: TextAlign.center,
-                          fontWeight: FontWeight.w500,
-                        ),
-                )),
-            */
-            Obx(
-              () => productController.isHandPicked.value
-                  ? Expanded(
-                      child: const DummyGridList(
-                        size: 2,
-                      ),
-                    )
-                  : productController.handPickedProductList.isNotEmpty
-                      ? Expanded(
-                          child: SingleChildScrollView(
-                            controller: productController.handpickedController,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16.sp, vertical: 20.sp),
-                                  child: GridView.count(
-                                    shrinkWrap: true,
-                                    crossAxisCount: 2,
-                                    controller:
-                                        productController.handpickedController,
-                                    scrollDirection: Axis.vertical,
-                                    padding: EdgeInsets.zero,
-                                    childAspectRatio: 0.57,
-                                    physics: const ScrollPhysics(),
-                                    crossAxisSpacing: 5.sp,
-                                    mainAxisSpacing: 8.sp,
-                                    children: List.generate(
-                                      productController
-                                          .handPickedProductList.length,
-                                      (index) {
-                                        return GestureDetector(
-                                          onTap: () async {
-                                            Get.to(ProductDetailsScreen(
-                                                    brandName: productController
-                                                            .handPickedProductList[
-                                                        index]["brand_name"],
-                                                    productId: productController
-                                                            .handPickedProductList[
-                                                        index]["id"],
-                                                    type: "add"))
-                                                ?.then((value) => setState(
-                                                      () {
-                                                        productController
-                                                            .handpickedHasnextpage
-                                                            .value = true;
-                                                        productController
-                                                            .handpickedLoadMore
-                                                            .value = false;
-                                                        productController
-                                                            .isHandPicked
-                                                            .value = false;
-                                                        productController
-                                                            .handpickedPage
-                                                            .value = 1;
-                                                        controller
-                                                            .getCartData();
-                                                      },
-                                                    ));
-                                            await analytics.logEvent(
-                                              name: 'category_product_details',
-                                              parameters: <String, Object>{
-                                                'page_name':
-                                                    'category_product_details',
-                                              },
-                                            );
-                                          },
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Stack(
-                                                children: [
-                                                  Center(
-                                                    child: productController
-                                                                .handPickedProductList[index]
-                                                                    ["images"]
-                                                                .isNotEmpty &&
-                                                            productController
-                                                                        .handPickedProductList[index][
-                                                                    "images"] !=
-                                                                null
-                                                        ? SizedBox(
-                                                            height: (MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width /
-                                                                    2) +
-                                                                10.sp,
-                                                            width: (MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width /
-                                                                    2) -
-                                                                24.sp,
-                                                            child:
-                                                                CachedNetworkImage(
-                                                              cacheManager: CacheManager(Config(
-                                                                  "customCacheKey",
-                                                                  stalePeriod:
-                                                                      const Duration(
-                                                                          days:
-                                                                              15),
-                                                                  maxNrOfCacheObjects:
-                                                                      100)),
-                                                              fit: BoxFit.cover,
-                                                              imageUrl: isImage(productController
-                                                                              .handPickedProductList[index]
-                                                                          ["images"][0]
-                                                                      ["name"])
-                                                                  ? productController
-                                                                              .handPickedProductList[index]
-                                                                          ["images"]
-                                                                      [
-                                                                      0]["name"]
-                                                                  : productController
-                                                                              .handPickedProductList[index]
-                                                                          ["images"]
-                                                                      [1]["name"],
-                                                              errorWidget: (context,
-                                                                      url,
-                                                                      error) =>
-                                                                  Image.asset(
-                                                                downloadImage,
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                height: (MediaQuery.of(context)
-                                                                            .size
-                                                                            .width /
-                                                                        2) +
-                                                                    10.sp,
-                                                                width: (MediaQuery.of(context)
-                                                                            .size
-                                                                            .width /
-                                                                        2) -
-                                                                    24.sp,
-                                                              ),
-                                                            ),
-                                                          )
-                                                        : Image.asset(
-                                                            dummyWishlistImage,
-                                                            height: (MediaQuery.of(context)
-                                                                        .size
-                                                                        .width /
-                                                                    2) +
-                                                                10.sp,
-                                                            width: (MediaQuery.of(context)
-                                                                        .size
-                                                                        .width /
-                                                                    2) -
-                                                                24.sp,
-                                                            fit: BoxFit.cover),
-                                                  ),
-                                                  /*   GestureDetector(
-                                                    onTap: () async {
-                                                      if (productController
-                                                              .handPickedProductList[
-                                                          index]["wishlisted"]) {
-                                                        productController
-                                                                    .handPickedProductList[
-                                                                index][
-                                                            "wishlisted"] = false;
-                                                        setState(() {});
-                                                        productController.callAddProductToWishlist(
-                                                            productController
-                                                                        .handPickedProductList[
-                                                                    index]
-                                                                ["wishlist_id"],
-                                                            "handpicked",
-                                                            productController
-                                                                    .handPickedProductList[
-                                                                index]["id"],
-                                                            0,
-                                                            0,
-                                                            [],
-                                                            [],
-                                                            0,
-                                                            productController
-                                                                .categoryFilter
-                                                                .value,
-                                                            0);
-                                                      } else {
-                                                        scaffoldKey.currentState
-                                                            ?.showBottomSheet((context) =>
-                                                                BottomWishlist(
-                                                                    controller:
-                                                                        wishlistController,
-                                                                    onPressed:
-                                                                        (p0) {
-                                                                      productController.handPickedProductList[index]
-                                                                              [
-                                                                              "wishlisted"] =
-                                                                          true;
-                                                                      setState(
-                                                                          () {});
-                                                                      productController.callAddProductToWishlist(
-                                                                          p0,
-                                                                          "handpicked",
-                                                                          productController.handPickedProductList[index]
-                                                                              [
-                                                                              "id"],
-                                                                          0,
-                                                                          0,
-                                                                          [],
-                                                                          [],
-                                                                          0,
-                                                                          productController
-                                                                              .categoryFilter
-                                                                              .value,
-                                                                          0);
-                                                                    },
-                                                                    wishlistList:
-                                                                        wishlistController
-                                                                            .wishlistList));
-                                                      }
-                                                      await analytics.logEvent(
-                                                        name:
-                                                            'category_product_wishlist',
-                                                        parameters: <String,
-                                                            Object>{
-                                                          'page_name':
-                                                              'category_product_wishlist',
-                                                        },
-                                                      );
-                                                    },
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 16.sp,
-                                                              vertical: 10.sp),
-                                                      child: Align(
-                                                        alignment:
-                                                            Alignment.topRight,
-                                                        child: InkWell(
-                                                          child: SizedBox(
-                                                            height: 24.sp,
-                                                            width: 24.sp,
-                                                            child: CircleAvatar(
-                                                              backgroundColor:
-                                                                  whiteColor,
-                                                              child: productController
-                                                                              .handPickedProductList[
-                                                                          index]
-                                                                      [
-                                                                      "wishlisted"]
-                                                                  ? Image.asset(
-                                                                      wishlistSelectImage,
-                                                                      height:
-                                                                          18,
-                                                                      width: 18,
-                                                                    )
-                                                                  : Image.asset(
-                                                                      heartImage,
-                                                                      height:
-                                                                          18.sp,
-                                                                      width:
-                                                                          18.sp,
-                                                                    ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Positioned(
-                                                    bottom: 10.sp,
-                                                    left: 16.sp,
-                                                    child: Container(
-                                                      color: const Color(
-                                                          0xB3F7F7F5),
-                                                      height: 26.sp,
-                                                      width: 80.sp,
-                                                      child: Row(
-                                                        children: [
-                                                          Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        2.sp),
-                                                            child: Image.asset(
-                                                              starImage,
-                                                              height: 16.sp,
-                                                              color:
-                                                                  bottomnavBack,
-                                                              width: 16.sp,
-                                                            ),
-                                                          ),
-                                                          AppText(
-                                                            text: productController
-                                                                            .handPickedProductList[index]
-                                                                        [
-                                                                        "aggregated_rating"] !=
-                                                                    null
-                                                                ? productController
-                                                                    .handPickedProductList[
-                                                                        index][
-                                                                        "aggregated_rating"]
-                                                                    .toString()
-                                                                : "0",
-                                                            color: colorPrimary,
-                                                            fontSize: 12,
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                          ),
-                                                          Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        10.sp),
-                                                            child: Container(
-                                                              width: 1,
-                                                              color:
-                                                                  textHintColor,
-                                                              height: 16.sp,
-                                                            ),
-                                                          ),
-                                                          AppText(
-                                                            text: productController
-                                                                .handPickedProductList[
-                                                                    index][
-                                                                    "reviews_count"]
-                                                                .toString(),
-                                                            color: colorPrimary,
-                                                            fontSize: 12,
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                */
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 10.sp,
-                                                    vertical: 5.sp),
-                                                child: AppText(
-                                                  text:
-                                                      "${productController.handPickedProductList[index]["brand_name"]}"
-                                                          .toUpperCase(),
-                                                  color: blackColor,
-                                                  maxLines: 1,
-                                                  fontSize: 13,
-                                                  fontFamily: "Franklin Gothic",
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 10.sp),
-                                                child: AppText(
-                                                  text: productController
-                                                              .handPickedProductList[
-                                                          index]["name"] ??
-                                                      "",
-                                                  color: Color(0xFF6B7280),
-                                                  maxLines: 1,
-                                                  fontSize: 11,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 8.sp,
-                                                    left: 10.sp,
-                                                    right: 1.sp),
-                                                child: Row(
-                                                  children: [
-                                                    Visibility(
-                                                      visible: productController
-                                                                      .handPickedProductList[
-                                                                  index]["mrp"] !=
-                                                              null
-                                                          ? true
-                                                          : false,
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                right: 5.sp),
-                                                        child: Text(
-                                                          "\u{20B9} ${productController.handPickedProductList[index]["mrp"] ?? ""}",
-                                                          style: TextStyle(
-                                                            color:
-                                                                searchTextColor,
-                                                            fontSize: 11.sp,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .lineThrough,
-                                                            fontFamily:
-                                                                "Franklin Gothic Regular",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    AppText(
-                                                      text:
-                                                          "\u{20B9} ${productController.handPickedProductList[index]["price"] ?? ""}",
-                                                      color: homeAppBarColor,
-                                                      maxLines: 2,
-                                                      fontSize: 11,
-                                                      fontFamily:
-                                                          "Franklin Gothic",
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              productController
-                                                          .handPickedProductList[
-                                                      index]["express_delivery"]
-                                                  ? Padding(
-                                                      padding: EdgeInsets.only(
-                                                          top: 3.sp,
-                                                          left: 10.sp,
-                                                          right: 10.sp),
-                                                      child: Row(
-                                                        children: [
-                                                          ImageIcon(
-                                                            AssetImage(
-                                                                truckImage),
-                                                            color: expressText,
-                                                            size: 14.sp,
-                                                          ),
-                                                          Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        5.sp),
-                                                            child: AppText(
-                                                              text: "Express",
-                                                              color:
-                                                                  expressText,
-                                                              maxLines: 2,
-                                                              fontSize: 11,
-                                                              fontFamily:
-                                                                  "Franklin Gothic Regular",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    )
-                                                  : SizedBox(
-                                                      height: 0,
-                                                    )
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
+                child: CustomScrollView(
+                  controller: productController.handpickedController,
+                  slivers: [
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                      sliver: SliverGrid(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final item = items[index];
+
+                            final imageUrl = _firstImageUrl(item);
+                            final brand = _brandOf(item);
+                            final title = _titleOf(item);
+                            final price = _priceOf(item);
+                            final mrp = item['mrp'];
+                            final express = item['express_delivery'] == true;
+
+                            return GestureDetector(
+                              onTap: () async {
+                                Get.to(
+                                  ProductDetailsScreen(
+                                    brandName: brand,
+                                    productId: item["id"],
+                                    type: "add",
                                   ),
-                                ),
-                                productController.handpickedLoadMore.value
-                                    ? DummyGridList()
-                                    : const SizedBox(
-                                        height: 0,
+                                )?.then((_) {
+                                  productController
+                                      .handpickedHasnextpage.value = true;
+                                  productController.handpickedLoadMore.value =
+                                      false;
+                                  productController.isHandPicked.value = false;
+                                  productController.handpickedPage.value = 1;
+                                  controller.getCartData();
+                                });
+
+                                await analytics.logEvent(
+                                  name: 'category_product_details',
+                                  parameters: {
+                                    'page_name': 'category_product_details'
+                                  },
+                                );
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(6.sp),
+                                    child: AspectRatio(
+                                      aspectRatio: 0.75, // 3:4
+                                      child: CachedNetworkImage(
+                                        imageUrl: imageUrl,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        cacheManager: CacheManager(
+                                          Config("customCacheKey",
+                                              stalePeriod:
+                                                  const Duration(days: 15),
+                                              maxNrOfCacheObjects: 100),
+                                        ),
+                                        placeholder: (_, __) => Container(
+                                            color:
+                                                Colors.black.withOpacity(0.06)),
+                                        errorWidget: (_, __, ___) => Container(
+                                            color:
+                                                Colors.black.withOpacity(0.06)),
                                       ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(top: 0.sp),
-                                child: Center(
-                                  child: Image.asset(errorImage,
-                                      height: 200.sp,
-                                      width: 220.sp,
-                                      fit: BoxFit.cover),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 20.sp),
-                                child: getSingleButton(
-                                    width: double.infinity,
-                                    label: "Back to home".toUpperCase(),
-                                    textColor: whiteColor,
-                                    fontSize: 13,
-                                    backgroundColor: homeAppBarColor,
-                                    onPressed: () {
-                                      Get.off(BottomNavScreen());
-                                    },
-                                    borderColor: colorPrimary),
-                              )
-                            ],
-                          ),
-                        ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        constraints: BoxConstraints(
-                          maxWidth: double.infinity,
-                          maxHeight: 340.sp,
-                        ),
-                        builder: (ctx) {
-                          return BottomSortBy(
-                            onPressedButton: (p0) {
-                              productController.productSortBy.value = p0;
-                              productController.getHomeExploreProduct(
-                                  productController.productSortBy.value,
-                                  productController.filterProductEnable.value,
-                                  false,
-                                  productController.tagId.value);
-                            },
-                          );
-                        },
-                      );
-                    },
-                    child: Container(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.sp, horizontal: 5.sp),
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              sortBySvgImage,
-                              height: 19.sp,
-                              width: 15.sp,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                              child: Text(
-                                "SORT BY",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFF374151),
-                                  decoration: TextDecoration.none,
-                                  fontSize: 13.sp,
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 0.sp),
-                    child: Container(
-                      width: 1.sp,
-                      color: borderColor,
-                      height: 40.sp,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        constraints: BoxConstraints(
-                          maxWidth: double.infinity,
-                          maxHeight: 270.sp,
-                        ),
-                        builder: (ctx) {
-                          print(
-                              'abc ${productController.selectedCategoryGender.value}');
-                          return BottomCategory(
-                            gender:
-                                productController.selectedCategoryGender.value,
-                            onPressedButton: (p0) {
-                              if (p0 == "Women") {
-                                productController.categoryFilter.value = 3;
-                              } else if (p0 == "Men") {
-                                productController.categoryFilter.value = 2;
-                              } else {
-                                productController.categoryFilter.value = 1;
-                              }
-                              productController.getHomeExploreProduct(
-                                  productController.productSortBy.value,
-                                  productController.filterProductEnable.value,
-                                  false,
-                                  productController.tagId.value);
-                              productController.selectedCategoryGender.value =
-                                  p0;
-                            },
-                            onPressedFilter: () {
-                              Get.back();
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                constraints: BoxConstraints(
-                                  maxWidth: double.infinity,
-                                  maxHeight: 500.sp,
-                                ),
-                                builder: (ctx) {
-                                  return BottomFilters(
-                                    btnclearAll: () async {
-                                      productController.brand_ids.clear();
-                                      productController.color_ids.clear();
-                                      productController.size_ids.clear();
-                                      productController.productSortBy.value =
-                                          "";
-                                      productController
-                                          .filterProductEnable.value = false;
-                                      final prefs =
-                                          await SharedPreferences.getInstance();
-                                      prefs.remove("brandList");
-                                      prefs.remove("colorList");
-                                      prefs.remove("sizeList");
-                                      prefs.remove("upper");
-                                      prefs.remove("lower");
-                                      prefs.remove("sortby");
-                                      prefs.remove("category");
-                                      productController.getHomeExploreProduct(
-                                          productController.productSortBy.value,
-                                          productController
-                                              .filterProductEnable.value,
-                                          false,
-                                          productController.tagId.value);
-                                    },
-                                    onClick: (p0, p1) {
-                                      productController
-                                          .filterProductEnable.value = true;
-                                      productController.lowPrice.value = p0;
-                                      productController.highPrice.value = p1;
-                                      productController.getHomeExploreProduct(
-                                          productController.productSortBy.value,
-                                          productController
-                                              .filterProductEnable.value,
-                                          true,
-                                          productController.tagId.value);
-                                    },
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        },
-                      );
-                    },
-                    child: Container(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.sp, horizontal: 5.sp),
-                        child: Column(
-                          children: [
-                            /*  Image.asset(
-                              categoryIcon,
-                              height: 20.sp,
-                              width: 20.sp,
-                            ), */
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                              child: Text(
-                                "CATEGORY",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFF374151),
-                                  decoration: TextDecoration.none,
-                                  fontSize: 13.sp,
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            Obx(
-                              () => Visibility(
-                                visible: productController
-                                            .selectedCategoryGender.value ==
-                                        ""
-                                    ? false
-                                    : true,
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 5.sp, right: 5.sp, top: 1.sp),
-                                  child: Text(
-                                    productController
-                                        .selectedCategoryGender.value
-                                        .toUpperCase(),
-                                    style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      fontFamily: "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: appBarColor,
-                                      fontSize: 10.sp,
                                     ),
                                   ),
-                                ),
+                                  SizedBox(height: 5.sp),
+                                  AppText(
+                                    text: brand.toUpperCase(),
+                                    color: blackColor,
+                                    maxLines: 1,
+                                    fontSize: 13,
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  AppText(
+                                    text: title,
+                                    color: const Color(0xFF6B7280),
+                                    maxLines: 1,
+                                    fontSize: 11,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 6.sp),
+                                    child: Row(
+                                      children: [
+                                        if (mrp != null &&
+                                            mrp is num &&
+                                            price != null &&
+                                            price < mrp)
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(right: 5.sp),
+                                            child: Text(
+                                              "₹ $mrp",
+                                              style: TextStyle(
+                                                color: searchTextColor,
+                                                fontSize: 11.sp,
+                                                decoration:
+                                                    TextDecoration.lineThrough,
+                                                fontFamily:
+                                                    "Franklin Gothic Regular",
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ),
+                                        AppText(
+                                          text: "₹ ${price?.toString() ?? ''}",
+                                          color: homeAppBarColor,
+                                          maxLines: 2,
+                                          fontSize: 11,
+                                          fontFamily: "Franklin Gothic",
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (express)
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 3.sp),
+                                      child: Row(
+                                        children: [
+                                          ImageIcon(AssetImage(truckImage),
+                                              color: expressText, size: 14.sp),
+                                          SizedBox(width: 5.sp),
+                                          AppText(
+                                            text: "Express",
+                                            color: expressText,
+                                            maxLines: 2,
+                                            fontSize: 11,
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                ],
                               ),
-                            )
-                          ],
+                            );
+                          },
+                          childCount: items.length,
+                        ),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.56,
+                          crossAxisSpacing: 5.sp,
+                          mainAxisSpacing: 8.sp,
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 0.sp),
-                    child: Container(
-                      width: 1.sp,
-                      color: borderColor,
-                      height: 40.sp,
+                    SliverToBoxAdapter(
+                      child: productController.handpickedLoadMore.value
+                          ? const DummyGridList(size: 2)
+                          : const SizedBox.shrink(),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+
+          // ===== bottom sort / category / filters row =====
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                // Sort by
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      constraints: BoxConstraints(
+                          maxWidth: double.infinity, maxHeight: 340.sp),
+                      builder: (ctx) => BottomSortBy(
+                        onPressedButton: (p0) {
+                          productController.productSortBy.value = p0;
+                        },
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(sortBySvgImage,
+                            height: 19.sp, width: 15.sp),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                          child: Text(
+                            "SORT BY",
+                            style: TextStyle(
+                              color: const Color(0xFF374151),
+                              fontSize: 13.sp,
+                              fontFamily: "Franklin Gothic",
+                              fontWeight: FontWeight.w500,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        constraints: BoxConstraints(
-                          maxWidth: double.infinity,
-                          maxHeight: 500.sp,
-                        ),
-                        builder: (ctx) {
-                          return BottomFilters(
-                            btnclearAll: () async {
-                              productController.brand_ids.clear();
-                              productController.color_ids.clear();
-                              productController.size_ids.clear();
-                              productController.productSortBy.value = "";
-                              productController.filterProductEnable.value =
-                                  false;
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              prefs.remove("brandList");
-                              prefs.remove("colorList");
-                              prefs.remove("sizeList");
-                              prefs.remove("upper");
-                              prefs.remove("lower");
-                              prefs.remove("sortby");
-                              prefs.remove("category");
-                              productController.getHomeExploreProduct(
-                                  productController.productSortBy.value,
-                                  productController.filterProductEnable.value,
-                                  false,
-                                  productController.tagId.value);
-                            },
-                            onClick: (p0, p1) {
-                              productController.filterProductEnable.value =
-                                  true;
-                              productController.lowPrice.value = p0;
-                              productController.highPrice.value = p1;
-                              productController.getHomeExploreProduct(
-                                  productController.productSortBy.value,
-                                  productController.filterProductEnable.value,
-                                  true,
-                                  productController.tagId.value);
-                            },
+                ),
+                Container(width: 1.sp, color: borderColor, height: 40.sp),
+
+                // Category (Men/Women/Accessories) → sets superCatId
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      constraints: BoxConstraints(
+                          maxWidth: double.infinity, maxHeight: 270.sp),
+                      builder: (ctx) => BottomCategory(
+                        gender: productController.selectedCategoryGender.value,
+                        onPressedButton: (p0) {
+                          // Mapping: Men=1, Women=2, Accessories=3
+                          if (p0 == "Women") {
+                            productController.categoryFilter.value = 2;
+                          } else if (p0 == "Men") {
+                            productController.categoryFilter.value = 1;
+                          } else {
+                            productController.categoryFilter.value = 3;
+                          }
+
+                          productController.selectedCategoryGender.value = p0;
+                        },
+                        onPressedFilter: () {
+                          Get.back();
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            constraints: BoxConstraints(
+                                maxWidth: double.infinity, maxHeight: 500.sp),
+                            builder: (ctx) => BottomFilters(
+                              btnclearAll: () async {
+                                productController.brand_ids.clear();
+                                productController.color_ids.clear();
+                                productController.size_ids.clear();
+                                productController.productSortBy.value = "";
+                                productController.filterProductEnable.value =
+                                    false;
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.remove("brandList");
+                                prefs.remove("colorList");
+                                prefs.remove("sizeList");
+                                prefs.remove("upper");
+                                prefs.remove("lower");
+                                prefs.remove("sortby");
+                                prefs.remove("category");
+                              },
+                              onClick: (p0, p1) {
+                                productController.filterProductEnable.value =
+                                    true;
+                                productController.lowPrice.value = p0;
+                                productController.highPrice.value = p1;
+                              },
+                            ),
                           );
                         },
-                      );
-                    },
-                    child: Container(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10.sp, horizontal: 5.sp),
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              filterSvgImage,
-                              height: 11.sp,
-                              width: 17.sp,
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                          child: Text(
+                            "CATEGORY",
+                            style: TextStyle(
+                              color: const Color(0xFF374151),
+                              fontSize: 13.sp,
+                              fontFamily: "Franklin Gothic",
+                              fontWeight: FontWeight.w500,
+                              decoration: TextDecoration.none,
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                          ),
+                        ),
+                        Obx(
+                          () => Visibility(
+                            visible: productController
+                                .selectedCategoryGender.value.isNotEmpty,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: 5.sp, right: 5.sp, top: 1.sp),
                               child: Text(
-                                "FILTERS",
-                                textAlign: TextAlign.center,
+                                productController.selectedCategoryGender.value
+                                    .toUpperCase(),
                                 style: TextStyle(
-                                  color: Color(0xFF374151),
-                                  decoration: TextDecoration.none,
-                                  fontSize: 13.sp,
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w500,
+                                  decoration: TextDecoration.underline,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: appBarColor,
+                                  fontSize: 10.sp,
                                 ),
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            )
-          ],
-        ));
+                ),
+                Container(width: 1.sp, color: borderColor, height: 40.sp),
+
+                // Filters
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      constraints: BoxConstraints(
+                          maxWidth: double.infinity, maxHeight: 500.sp),
+                      builder: (ctx) => BottomFilters(
+                        btnclearAll: () async {
+                          productController.brand_ids.clear();
+                          productController.color_ids.clear();
+                          productController.size_ids.clear();
+                          productController.productSortBy.value = "";
+                          productController.filterProductEnable.value = false;
+                          final prefs = await SharedPreferences.getInstance();
+                          prefs.remove("brandList");
+                          prefs.remove("colorList");
+                          prefs.remove("sizeList");
+                          prefs.remove("upper");
+                          prefs.remove("lower");
+                          prefs.remove("sortby");
+                          prefs.remove("category");
+                        },
+                        onClick: (p0, p1) {
+                          productController.filterProductEnable.value = true;
+                          productController.lowPrice.value = p0;
+                          productController.highPrice.value = p1;
+                        },
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(filterSvgImage,
+                            height: 11.sp, width: 17.sp),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                          child: Text(
+                            "FILTERS",
+                            style: TextStyle(
+                              color: const Color(0xFF374151),
+                              fontSize: 13.sp,
+                              fontFamily: "Franklin Gothic",
+                              fontWeight: FontWeight.w500,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
