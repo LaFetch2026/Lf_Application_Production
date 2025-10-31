@@ -266,6 +266,7 @@ const confirmSvgImage = 'assets/images/confirm_svg.svg';
 const shipSvgImage = 'assets/images/ship_svg.svg';
 const deliverSvgImage = 'assets/images/deliver_svg.svg';
 const sandLoader = 'assets/images/sand_loader.json';
+const cancelorder = 'assets/cancelpng.png';
 
 class ApiConstants {
   ApiConstants._();

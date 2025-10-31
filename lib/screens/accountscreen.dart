@@ -10,6 +10,7 @@ import 'package:lafetch/screens/account/deleteaccount.dart';
 import 'package:lafetch/screens/account/notification_setting.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/cartscreen.dart';
+import 'package:lafetch/screens/orders/my_order.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -335,7 +336,9 @@ class AccountScreenState extends State<AccountScreen> {
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap: () async {},
+                                  onTap: () async {
+                                    Get.to(MyOrdersScreen());
+                                  },
                                   child: Padding(
                                     padding: EdgeInsets.only(
                                         top: 20.sp, left: 16.sp, right: 16.sp),
