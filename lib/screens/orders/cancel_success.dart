@@ -92,47 +92,52 @@ class CancelSuccessScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.sp),
                 border: Border.all(color: dividerColor),
               ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(6.sp),
-                    child: _buildProductImage(order),
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AppText(
-                          text: order['productName'] ?? 'The Clothing Factory',
-                          fontFamily: "Franklin Gothic",
-                          fontWeight: FontWeight.w700,
-                          color: blackColor,
-                          fontSize: 13,
-                        ),
-                        SizedBox(height: 2.sp),
-                        AppText(
-                          text: order['productDescription'] ??
-                              "Garfield: Grumpy Printed Men’s Overs...",
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: subtitleColor,
-                          fontSize: 11,
-                          maxLines: 2,
-                        ),
-                        SizedBox(height: 6.sp),
-                        AppText(
-                          text:
-                              "Size: ${order['size'] ?? 'M'}   Qty: ${order['quantity'] ?? '1'}",
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: subtitleColor,
-                          fontSize: 11,
-                        ),
-                      ],
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6.sp),
+                      child: _buildProductImage(order),
                     ),
-                  ),
-                ],
+                    SizedBox(width: 10.sp),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppText(
+                            text:
+                                order['productName'] ?? 'The Clothing Factory',
+                            fontFamily: "Franklin Gothic",
+                            fontWeight: FontWeight.w700,
+                            color: blackColor,
+                            fontSize: 13,
+                          ),
+                          SizedBox(height: 2.sp),
+                          AppText(
+                            text: order['productDescription'] ??
+                                "Garfield: Grumpy Printed Men’s Overs...",
+                            fontFamily: "Franklin Gothic Regular",
+                            fontWeight: FontWeight.w400,
+                            color: subtitleColor,
+                            fontSize: 11,
+                            maxLines: 2,
+                          ),
+                          SizedBox(height: 6.sp),
+                          AppText(
+                            text:
+                                "Size: ${order['size'] ?? 'M'}   Qty: ${order['quantity'] ?? '1'}",
+                            fontFamily: "Franklin Gothic Regular",
+                            fontWeight: FontWeight.w400,
+                            color: subtitleColor,
+                            fontSize: 11,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -176,9 +181,11 @@ class CancelSuccessScreen extends StatelessWidget {
     if (isNetwork) {
       return Image.network(
         imageUrl,
+        height: 60.sp,
+        width: 60.sp,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) =>
-            Image.asset(dummyWishlistImage, fit: BoxFit.cover),
+        errorBuilder: (_, __, ___) => Image.asset(dummyWishlistImage,
+            height: 60.sp, width: 60.sp, fit: BoxFit.cover),
       );
     } else {
       return Image.asset(

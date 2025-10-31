@@ -67,7 +67,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                   borderRadius: BorderRadius.circular(4.sp),
                   child: _buildProductImage(widget.order),
                 ),
-                SizedBox(width: 12.sp),
+                SizedBox(width: 10.sp),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,9 +104,10 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                 ),
               ],
             ),
+
             SizedBox(height: 16.sp),
             Divider(color: dividerColor, thickness: 1),
-            SizedBox(height: 12.sp),
+            SizedBox(height: 16.sp),
 
             const AppText(
               text: "WHY DO YOU WISH TO CANCEL THIS ORDER?",
@@ -115,64 +116,95 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
               color: blackColor,
               fontSize: 13,
             ),
-            SizedBox(height: 12.sp),
+            SizedBox(height: 10.sp),
 
+            // ✅ Minimalist reason list
             Expanded(
               child: ListView.separated(
+                physics: const BouncingScrollPhysics(),
                 itemCount: reasons.length,
                 separatorBuilder: (_, __) =>
                     Divider(color: dividerColor, thickness: 1),
                 itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      ListTile(
-                        dense: true,
-                        contentPadding: EdgeInsets.zero,
-                        visualDensity: const VisualDensity(vertical: -2),
-                        title: AppText(
-                          text: reasons[index],
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xFF374151),
-                          fontSize: 13,
-                        ),
-                        trailing: Radio<int>(
-                          value: index,
-                          activeColor: blackColor,
-                          groupValue: selectedReason,
-                          onChanged: (val) =>
-                              setState(() => selectedReason = val),
-                        ),
-                      ),
-                      if (index == reasons.length - 1 &&
-                          selectedReason == index)
-                        Padding(
-                          padding: EdgeInsets.only(top: 8.sp, bottom: 4.sp),
-                          child: TextField(
-                            controller: otherReason,
-                            style: const TextStyle(
+                  final isSelected = selectedReason == index;
+                  return GestureDetector(
+                    onTap: () => setState(() => selectedReason = index),
+                    behavior: HitTestBehavior.translucent,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10.sp),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: AppText(
+                              text: reasons[index],
                               fontFamily: "Franklin Gothic Regular",
+                              fontWeight: FontWeight.w400,
+                              color: const Color(0xFF374151),
                               fontSize: 13,
                             ),
-                            decoration: InputDecoration(
-                              hintText: "Type reason here...",
-                              hintStyle: const TextStyle(
-                                  color: Color(0xFF9CA3AF), fontSize: 13),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(4.sp),
-                                borderSide:
-                                    BorderSide(color: Colors.grey.shade300),
-                              ),
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 10.sp, vertical: 8.sp),
-                            ),
                           ),
-                        ),
-                    ],
+                          Container(
+                            height: 18.sp,
+                            width: 18.sp,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isSelected
+                                    ? blackColor
+                                    : const Color(0xFFD1D5DB),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: isSelected
+                                ? Center(
+                                    child: Container(
+                                      height: 9.sp,
+                                      width: 9.sp,
+                                      decoration: const BoxDecoration(
+                                        color: blackColor,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  )
+                                : null,
+                          ),
+                        ],
+                      ),
+                    ),
                   );
                 },
               ),
             ),
+
+            // ✅ "Other" reason input
+            if (selectedReason == reasons.length - 1)
+              Padding(
+                padding: EdgeInsets.only(top: 10.sp, bottom: 12.sp),
+                child: TextField(
+                  controller: otherReason,
+                  style: const TextStyle(
+                    fontFamily: "Franklin Gothic Regular",
+                    fontSize: 13,
+                    color: blackColor,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: "Type reason here...",
+                    hintStyle: const TextStyle(
+                      color: Color(0xFF9CA3AF),
+                      fontSize: 13,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4.sp),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 12.sp,
+                      vertical: 10.sp,
+                    ),
+                  ),
+                ),
+              ),
 
             // ✅ Bottom buttons
             Row(
@@ -181,7 +213,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                   child: GestureDetector(
                     onTap: () => Get.back(),
                     child: Container(
-                      height: 50.sp,
+                      height: 48.sp,
                       decoration: BoxDecoration(
                         color: const Color(0xFFF9FAFB),
                         border: Border.all(color: dividerColor),
@@ -208,7 +240,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                       }
                     },
                     child: Container(
-                      height: 50.sp,
+                      height: 48.sp,
                       color: blackColor,
                       child: const Center(
                         child: AppText(
@@ -230,7 +262,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
     );
   }
 
-  /// ✅ Safe image loader
+  /// ✅ Safe Image Loader (60x60 per Figma)
   Widget _buildProductImage(Map<String, dynamic> order) {
     final imageUrl = order['imageUrl'];
     final isNetwork =
@@ -239,17 +271,21 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
     if (isNetwork) {
       return Image.network(
         imageUrl,
-        height: 80.sp,
-        width: 80.sp,
+        height: 60.sp,
+        width: 60.sp,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) =>
-            Image.asset(dummyWishlistImage, fit: BoxFit.cover),
+        errorBuilder: (_, __, ___) => Image.asset(
+          dummyWishlistImage,
+          height: 60.sp,
+          width: 60.sp,
+          fit: BoxFit.cover,
+        ),
       );
     } else {
       return Image.asset(
         dummyWishlistImage,
-        height: 80.sp,
-        width: 80.sp,
+        height: 60.sp,
+        width: 60.sp,
         fit: BoxFit.cover,
       );
     }

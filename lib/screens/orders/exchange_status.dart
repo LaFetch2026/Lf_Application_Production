@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
 import 'package:lafetch/core/constant/constants.dart';
+import 'package:lafetch/screens/orders/my_order.dart';
 
 class ExchangeStatusScreen extends StatelessWidget {
   final Map<String, dynamic> order;
@@ -192,7 +193,7 @@ class ExchangeStatusScreen extends StatelessWidget {
 
             // ✅ Bottom CTA
             GestureDetector(
-              onTap: () => Get.offAllNamed('/orders'),
+              onTap: () => Get.to(MyOrdersScreen()),
               child: Container(
                 width: double.infinity,
                 height: 48.sp,
@@ -227,11 +228,15 @@ class ExchangeStatusScreen extends StatelessWidget {
     if (isNetwork) {
       return Image.network(
         imageUrl,
-        height: 70.sp,
-        width: 70.sp,
+        height: 60.sp,
+        width: 60.sp,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) =>
-            Image.asset(dummyWishlistImage, fit: BoxFit.cover),
+        errorBuilder: (_, __, ___) => Image.asset(
+          dummyWishlistImage,
+          height: 60.sp,
+          width: 60.sp,
+          fit: BoxFit.cover,
+        ),
       );
     } else {
       return Image.asset(

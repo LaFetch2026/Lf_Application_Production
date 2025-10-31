@@ -320,11 +320,15 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
     if (isNetwork) {
       return Image.network(
         imageUrl,
-        height: 70.sp,
-        width: 70.sp,
+        height: 60.sp,
+        width: 60.sp,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) =>
-            Image.asset(dummyWishlistImage, fit: BoxFit.cover),
+        errorBuilder: (_, __, ___) => Image.asset(
+          dummyWishlistImage,
+          height: 60.sp,
+          width: 60.sp,
+          fit: BoxFit.cover,
+        ),
       );
     } else {
       return Image.asset(
