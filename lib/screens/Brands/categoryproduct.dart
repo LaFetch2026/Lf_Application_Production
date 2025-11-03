@@ -9,7 +9,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
@@ -18,7 +17,6 @@ import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../common/widget/appbar/productlist_appbar.dart';
-import '../../common/widget/lists/dummy_container.dart';
 import '../../common/widget/lists/dummy_grid_list.dart';
 import '../../common/widget/other/common_widget.dart';
 import '../../controllers/catalog_controller.dart';
@@ -29,14 +27,14 @@ import '../../core/constant/constants.dart';
 
 class CategoryProductScreen extends StatefulWidget {
   final String categoryName;
-  final int categoryId; // can be 0 for "banner only" lists
-  final int brandId; // optional 0
-  final int genderType; // 1/2/3 (Men/Women/Accessories)
-  final List tagIds; // keep dynamic to match existing code
-  final List categoryList; // keep dynamic to match existing code
+  final int categoryId;
+  final int brandId;
+  final int genderType;
+  final List tagIds;
+  final List categoryList;
   final String genderName;
-  final String screen; // e.g. "category"
-  final String type; // default: "category products"
+  final String screen;
+  final String type;
 
   const CategoryProductScreen({
     super.key,
@@ -49,7 +47,7 @@ class CategoryProductScreen extends StatefulWidget {
     this.type = "category products",
     this.screen = "",
     required this.categoryList,
-    required String title, // kept for backward signature compatibility
+    required String title,
   });
 
   @override
@@ -59,12 +57,11 @@ class CategoryProductScreen extends StatefulWidget {
 class CategoryProductScreenState extends State<CategoryProductScreen> {
   final productController = Get.find<ProductController>();
   final wishlistController = Get.put(WishlistController(), permanent: false);
-  final controller = Get.put(CartController(), permanent: false);
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  final cartController = Get.put(CartController(), permanent: false);
   final catalogController = Get.put(CatalogController(), permanent: false);
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  /// INR formatter – tolerant of nulls
   String _fmtINR(num? v, {bool cents = true}) {
     if (v == null) return '';
     final f = NumberFormat.currency(
@@ -75,18 +72,14 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     return f.format(v);
   }
 
-  /// Robustly pick an image string from new/old shapes
   String? _imageFrom(Map<String, dynamic> m) {
-    // new API: imageUrls: [String, ...]
     final urlList = (m['imageUrls'] as List?)
-            ?.whereType()
-            .map((e) => e.toString())
+            ?.whereType<String>()
             .where((s) => s.trim().isNotEmpty)
             .toList() ??
-        const <String>[];
+        [];
     if (urlList.isNotEmpty) return urlList.first;
 
-    // legacy fallbacks
     for (final key in const [
       'image',
       'thumbnail',
@@ -118,48 +111,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     }
   }
 
-  void _showGenderSelector(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: whiteColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.symmetric(vertical: 20.sp, horizontal: 20.sp),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Select Category",
-                style: TextStyle(
-                  fontFamily: "Franklin Gothic",
-                  fontWeight: FontWeight.w700,
-                  fontSize: 18,
-                  color: blackColor,
-                ),
-              ),
-              SizedBox(height: 16.sp),
-              _genderOption(context, "Men", 1),
-              _genderOption(context, "Women", 2),
-              _genderOption(context, "Accessories", 3),
-              SizedBox(height: 12.sp),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   @override
   void initState() {
     super.initState();
-
-    // One post-frame is enough
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // Set system bars for this screen
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: statusBarColor,
         statusBarIconBrightness: Brightness.dark,
@@ -167,14 +122,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         systemNavigationBarIconBrightness: Brightness.dark,
       ));
 
-      // Load data
       await wishlistController.getWishlistData();
       if (widget.type == "category products") {
-        await controller.getCartData();
+        await cartController.getCartData();
       }
       await _clearPref();
 
-      // Drive list by category (and gender) as before
       await catalogController.getCategoryProductData(
         widget.categoryId,
         widget.genderType,
@@ -191,6 +144,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ProductAppbar(
+            text: widget.categoryName.toUpperCase(),
+            isCart: widget.type != "coupon" && widget.type != "express",
+            isHandPicked: widget.screen.isNotEmpty,
             onPressedSearch: () async {
               Get.to(const SearchScreen());
               await analytics.logEvent(
@@ -200,29 +156,28 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
             },
             onPressedHeart: () async {
               Get.to(const WishlistScreen())
-                  ?.then((_) => controller.getCartData());
+                  ?.then((_) => cartController.getCartData());
               await analytics.logEvent(
                 name: "wishlist_page",
                 parameters: {"page_name": "wishlist_page"},
               );
             },
-            isCart: widget.type != "coupon" && widget.type != "express",
-            isHandPicked: widget.screen.isNotEmpty,
-            text: widget.categoryName.toUpperCase(),
             onPressedCart: () async {
-              Get.to(const CartScreen())?.then((_) => controller.getCartData());
+              Get.to(const CartScreen())
+                  ?.then((_) => cartController.getCartData());
               await analytics.logEvent(
                 name: "cart_page",
                 parameters: {"page_name": "cart_page"},
               );
             },
           ),
-
           SizedBox(height: 8.sp),
 
+          /// ✅ Product Grid
           Expanded(
             child: Obx(() {
-              if (catalogController.isCategory.value) {
+              if (catalogController.isCategory.value ||
+                  catalogController.isSorting.value) {
                 return const Padding(
                   padding: EdgeInsets.only(top: 8),
                   child: DummyGridList(size: 2),
@@ -231,44 +186,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
               final items = catalogController.categoryProductList;
               if (items.isEmpty) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      errorImage,
-                      height: 200.sp,
-                      width: 220.sp,
-                      fit: BoxFit.cover,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.sp,
-                        vertical: 2.sp,
-                      ),
-                      child: const Text(
-                        "No products found",
-                        style: TextStyle(
-                          color: colorPrimary,
-                          fontSize: 14,
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 20.sp),
-                      child: getSingleButton(
-                        width: double.infinity,
-                        label: "BACK TO HOME",
-                        textColor: whiteColor,
-                        fontSize: 13,
-                        backgroundColor: homeAppBarColor,
-                        onPressed: () => Get.off(const BottomNavScreen()),
-                        borderColor: colorPrimary,
-                      ),
-                    ),
-                  ],
-                );
+                return _emptyView();
               }
 
               return GridView.builder(
@@ -276,58 +194,32 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                 itemCount: items.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  // Taller cells reduce overflow risk on long titles
                   childAspectRatio: 0.56,
                   crossAxisSpacing: 16.sp,
                   mainAxisSpacing: 18.sp,
                 ),
                 itemBuilder: (context, index) {
-                  final m = items[index] as Map<String, dynamic>? ?? {};
-
-                  // Prefer new API fields, fallback to legacy
+                  final m = items[index] as Map<String, dynamic>;
                   final brand = (m['brand_name'] ?? m['brandName'] ?? '')
                       .toString()
                       .trim();
-
                   final title =
                       (m['title'] ?? m['name'] ?? m['productTitle'] ?? '')
                           .toString()
                           .trim();
-
-                  final shortDesc = (m['shortDescription'] ??
-                          m['short_description'] ??
-                          m['shortDesc'] ??
-                          '')
-                      .toString()
-                      .trim();
-
-                  num? price;
-                  final rawPrice = m['basePrice'] ??
-                      m['base_price'] ??
-                      m['baseprice'] ??
-                      m['price'];
-                  if (rawPrice is num) {
-                    price = rawPrice;
-                  } else if (rawPrice is String) {
-                    price = num.tryParse(rawPrice);
-                  }
-
-                  num? mrp;
-                  final rawMrp = m['mrp'];
-                  if (rawMrp is num) {
-                    mrp = rawMrp;
-                  } else if (rawMrp is String) {
-                    mrp = num.tryParse(rawMrp);
-                  }
-
+                  final shortDesc =
+                      (m['shortDescription'] ?? m['short_description'] ?? '')
+                          .toString()
+                          .trim();
                   final img = _imageFrom(m);
 
-                  // Robust product id parsing
-                  final int pid = () {
-                    final v = m['id'];
-                    if (v is int) return v;
-                    return int.tryParse(v?.toString() ?? '') ?? 0;
-                  }();
+                  num? price = _parseNum(m['basePrice'] ??
+                      m['base_price'] ??
+                      m['baseprice'] ??
+                      m['price']);
+                  num? mrp = _parseNum(m['mrp']);
+
+                  final int pid = int.tryParse(m['id']?.toString() ?? '') ?? 0;
 
                   return GestureDetector(
                     onTap: () async {
@@ -345,7 +237,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           productId: pid,
                           type: "add",
                         ),
-                      )?.then((_) => controller.getCartData());
+                      )?.then((_) => cartController.getCartData());
                       await analytics.logEvent(
                         name: 'category_product_details',
                         parameters: {'page_name': 'category_product_details'},
@@ -365,7 +257,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
             }),
           ),
 
-          // --- ENABLED BOTTOM BAR ---
+          /// ✅ Bottom bar
           Container(
             color: statusBarColor,
             child: Column(
@@ -380,18 +272,20 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                         icon: sortBySvgImage,
                         label: "SORT BY",
                         onTap: () async {
-                          // 👉 Open your sort modal or page
-                          getSnackBar("Sort options coming soon!");
-                          // Example: await showSortBottomSheet(context);
+                          await _showSortBottomSheet(
+                            context,
+                            catId: widget.categoryId,
+                            brandId: widget.brandId,
+                            collectionId:
+                                widget.genderType, // or correct collection ID
+                          );
                         },
                       ),
                       _divider(),
                       _activeTextOnlyButton(
                         "CATEGORY",
                         subtitle: widget.genderName.toUpperCase(),
-                        onTap: () async {
-                          // _showGenderSelector(context);
-                        },
+                        onTap: () {},
                       ),
                       _divider(),
                       _activeBottomButton(
@@ -399,9 +293,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                         label: "FILTERS",
                         vector: true,
                         onTap: () async {
-                          // 👉 Open filters bottom sheet
-                          getSnackBar("Filter options coming soon!");
-                          // Example: await showFilterBottomSheet(context);
+                          await _showFilterBottomSheet(context);
                         },
                       ),
                     ],
@@ -415,53 +307,39 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     );
   }
 
-  Widget _genderOption(BuildContext context, String label, int genderType) {
-    return ListTile(
-      leading: Icon(
-        genderType == 1
-            ? Icons.male
-            : genderType == 2
-                ? Icons.female
-                : Icons.shopping_bag_outlined,
-        color: appBarColor,
-      ),
-      title: Text(
-        label,
-        style: const TextStyle(
-          fontFamily: "Franklin Gothic Regular",
-          fontWeight: FontWeight.w500,
-          fontSize: 16,
-          color: blackColor,
-        ),
-      ),
-      onTap: () async {
-        Navigator.pop(context); // close sheet
-
-        // Save new gender selection
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setInt('selectedGender', genderType);
-
-        // Clear cached filters
-        await _clearPref();
-
-        // Fetch category products for selected gender
-        catalogController.isCategory.value = true;
-        await catalogController.getCategoryProductData(
-          widget.categoryId,
-          genderType,
-        );
-        catalogController.isCategory.value = false;
-
-        // Show feedback
-        getSnackBar("Switched to $label");
-
-        setState(() {
-          // Update local gender name in UI
-          widget.genderName == label;
-        });
-      },
-    );
+  num? _parseNum(dynamic v) {
+    if (v is num) return v;
+    if (v is String) return num.tryParse(v);
+    return null;
   }
+
+  Widget _emptyView() => Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(errorImage, height: 200.sp, width: 220.sp),
+          const Text(
+            "No products found",
+            style: TextStyle(
+              color: colorPrimary,
+              fontSize: 14,
+              fontFamily: "Franklin Gothic Regular",
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 20.sp),
+            child: getSingleButton(
+              width: double.infinity,
+              label: "BACK TO HOME",
+              textColor: whiteColor,
+              fontSize: 13,
+              backgroundColor: homeAppBarColor,
+              onPressed: () => Get.off(const BottomNavScreen()),
+              borderColor: colorPrimary,
+            ),
+          ),
+        ],
+      );
 
   Widget _divider() =>
       Container(width: 1.sp, color: dividerColor, height: 46.sp);
@@ -471,34 +349,474 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     required String label,
     required VoidCallback onTap,
     bool vector = false,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
-        child: Row(
-          children: [
-            SvgPicture.asset(
-              icon,
-              height: vector ? 11.sp : 19.sp,
-              width: vector ? 17.sp : 15.sp,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5.sp),
-              child: Text(
-                label,
-                style: const TextStyle(
-                  color: Color(0xFF374151),
-                  fontSize: 13,
-                  fontFamily: "Franklin Gothic",
-                  fontWeight: FontWeight.w500,
-                  decoration: TextDecoration.none,
+  }) =>
+      GestureDetector(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                icon,
+                height: vector ? 11.sp : 19.sp,
+                width: vector ? 17.sp : 15.sp,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: Color(0xFF374151),
+                    fontSize: 13,
+                    fontFamily: "Franklin Gothic",
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+      );
+
+  Future<void> _showFilterBottomSheet(BuildContext context) async {
+    final selectedFilter = "Brand".obs;
+    final selectedBrands = <String>[].obs;
+    final priceRange = const RangeValues(100, 50000).obs;
+
+    final List<String> filterCategories = [
+      "Brand",
+      "Price Range",
+    ];
+
+    final List<String> brands = [
+      "Select All",
+      "Balenciaga",
+      "Bottega Veneta",
+      "Burberry",
+      "Celine",
+      "Chloe",
+      "Christian Dior",
+      "Fendi",
+      "Givenchy",
+      "Gucci",
+    ];
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: whiteColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
+      builder: (_) {
+        return Container(
+          height: Get.height * 0.8,
+          padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 16.sp),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ---------- HEADER ----------
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "FILTERS",
+                    style: TextStyle(
+                      fontFamily: "Franklin Gothic",
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                      color: blackColor,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      selectedBrands.clear();
+                      priceRange.value = const RangeValues(100, 50000);
+                    },
+                    child: const Text(
+                      "CLEAR ALL",
+                      style: TextStyle(
+                        fontFamily: "Franklin Gothic",
+                        fontSize: 13,
+                        color: appBarColor,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(thickness: 1, color: dividerColor),
+
+              // ---------- MAIN CONTENT ----------
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ---------- LEFT FILTER MENU ----------
+                    Obx(() => Container(
+                          width: 120,
+                          color: const Color(0xFFF5F5F5),
+                          child: ListView.builder(
+                            itemCount: filterCategories.length,
+                            itemBuilder: (context, index) {
+                              final name = filterCategories[index];
+                              final isSelected = selectedFilter.value == name;
+                              return GestureDetector(
+                                onTap: () => selectedFilter.value = name,
+                                child: Container(
+                                  color: isSelected
+                                      ? whiteColor
+                                      : const Color(0xFFF5F5F5),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 12.sp, vertical: 14.sp),
+                                  child: Text(
+                                    name,
+                                    style: TextStyle(
+                                      fontFamily: isSelected
+                                          ? "Franklin Gothic"
+                                          : "Franklin Gothic Regular",
+                                      fontWeight: isSelected
+                                          ? FontWeight.w700
+                                          : FontWeight.w400,
+                                      fontSize: 14,
+                                      color: isSelected
+                                          ? blackColor
+                                          : const Color(0xFF6B7280),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        )),
+
+                    // ---------- RIGHT FILTER CONTENT ----------
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12.sp),
+                        child: Obx(() {
+                          // Switch between filter type
+                          if (selectedFilter.value == "Brand") {
+                            return ListView.builder(
+                              itemCount: brands.length,
+                              itemBuilder: (context, index) {
+                                final brand = brands[index];
+                                final isSelectAll = brand == "Select All";
+                                final allChecked =
+                                    selectedBrands.length == brands.length - 1;
+                                final isChecked = isSelectAll
+                                    ? allChecked
+                                    : selectedBrands.contains(brand);
+
+                                return CheckboxListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  activeColor: appBarColor,
+                                  title: Text(
+                                    brand,
+                                    style: const TextStyle(
+                                      fontFamily: "Franklin Gothic Regular",
+                                      fontSize: 14,
+                                      color: blackColor,
+                                    ),
+                                  ),
+                                  value: isChecked,
+                                  onChanged: (bool? value) {
+                                    if (isSelectAll) {
+                                      if (value == true) {
+                                        selectedBrands.assignAll(
+                                          brands
+                                              .where((b) => b != "Select All")
+                                              .toList(),
+                                        );
+                                      } else {
+                                        selectedBrands.clear();
+                                      }
+                                    } else {
+                                      if (value == true) {
+                                        selectedBrands.add(brand);
+                                      } else {
+                                        selectedBrands.remove(brand);
+                                      }
+                                    }
+                                  },
+                                );
+                              },
+                            );
+                          } else {
+                            // PRICE RANGE SLIDER
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Select price range",
+                                  style: TextStyle(
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 15,
+                                    color: blackColor,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Obx(() => RangeSlider(
+                                      values: priceRange.value,
+                                      min: 100,
+                                      max: 50000,
+                                      divisions: 100,
+                                      activeColor: appBarColor,
+                                      inactiveColor: Colors.grey.shade300,
+                                      labels: RangeLabels(
+                                        "₹${priceRange.value.start.toInt()}",
+                                        "₹${priceRange.value.end.toInt()}",
+                                      ),
+                                      onChanged: (RangeValues values) {
+                                        priceRange.value = values;
+                                      },
+                                    )),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 4.0),
+                                  child: Obx(() => Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "₹${priceRange.value.start.toInt()}",
+                                            style: const TextStyle(
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          Text(
+                                            "₹${priceRange.value.end.toInt()}",
+                                            style: const TextStyle(
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      )),
+                                ),
+                              ],
+                            );
+                          }
+                        }),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ---------- FOOTER ----------
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Get.back(),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: dividerColor, width: 1.2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 12.sp),
+                      ),
+                      child: const Text(
+                        "CLOSE",
+                        style: TextStyle(
+                          fontFamily: "Franklin Gothic",
+                          color: blackColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: blackColor,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                        padding: EdgeInsets.symmetric(vertical: 12.sp),
+                      ),
+                      onPressed: () {
+                        Get.back();
+                        print("✅ Applied Filters:");
+                        print("Brands: ${selectedBrands.join(', ')}");
+                        print(
+                            "Price: ₹${priceRange.value.start.toInt()} - ₹${priceRange.value.end.toInt()}");
+
+                        getSnackBar(
+                          "Applied ${selectedBrands.length} brands, ₹${priceRange.value.start.toInt()}–₹${priceRange.value.end.toInt()}",
+                        );
+                      },
+                      child: const Text(
+                        "APPLY",
+                        style: TextStyle(
+                          fontFamily: "Franklin Gothic",
+                          color: whiteColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _showSortBottomSheet(BuildContext context,
+      {int? catId, int? brandId, int? collectionId}) async {
+    final RxString selectedOption = "recommended".obs;
+
+    final Map<String, String> sortOptions = {
+      "price_asc": "Price - low to high",
+      "price_desc": "Price - high to low",
+      "whats_new": "What's new",
+      "rating": "Customer rating",
+      "discount": "Discount",
+    };
+
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: whiteColor,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 20.sp),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // ---------- HEADER ----------
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "SORT BY",
+                    style: TextStyle(
+                      fontFamily: "Franklin Gothic",
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                      color: blackColor,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Get.back(),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 8),
+
+              // ---------- SORT OPTIONS ----------
+              Obx(() => Column(
+                    children: sortOptions.entries.map((entry) {
+                      return RadioListTile<String>(
+                        value: entry.key,
+                        groupValue: selectedOption.value,
+                        activeColor: appBarColor,
+                        title: Text(
+                          entry.value,
+                          style: const TextStyle(
+                            fontFamily: "Franklin Gothic Regular",
+                            fontSize: 15,
+                            color: blackColor,
+                          ),
+                        ),
+                        onChanged: (value) =>
+                            selectedOption.value = value ?? "recommended",
+                      );
+                    }).toList(),
+                  )),
+
+              const SizedBox(height: 8),
+
+              // ---------- ACTION BUTTONS ----------
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Get.back(),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: dividerColor, width: 1.2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 12.sp),
+                      ),
+                      child: const Text(
+                        "CLOSE",
+                        style: TextStyle(
+                          fontFamily: "Franklin Gothic",
+                          color: blackColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: blackColor,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                        padding: EdgeInsets.symmetric(vertical: 12.sp),
+                      ),
+                      onPressed: () async {
+                        final selected = selectedOption.value;
+                        Get.back();
+
+                        if (selected == "recommended") {
+                          getSnackBar("Showing recommended products");
+                          return;
+                        }
+
+                        try {
+                          catalogController.isSorting.value = true;
+
+                          await catalogController.getSortedProducts(
+                            sortOption: selected,
+                            catId: catId,
+                            brandId: brandId,
+                            collectionId: collectionId,
+                          );
+
+                          catalogController.categoryProductList
+                              .assignAll(catalogController.sortedProductList);
+
+                          getSnackBar(
+                            "Sorted by ${sortOptions[selected] ?? 'Option'}",
+                          );
+                        } catch (e) {
+                          getSnackBar("Failed to sort products");
+                          print("Error in sorting: $e");
+                        } finally {
+                          catalogController.isSorting.value = false;
+                        }
+                      },
+                      child: const Text(
+                        "APPLY",
+                        style: TextStyle(
+                          fontFamily: "Franklin Gothic",
+                          color: whiteColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10.sp),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -506,45 +824,42 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     String label, {
     String? subtitle,
     required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
-        child: Column(
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                color: Color(0xFF374151),
-                fontSize: 13,
-                fontFamily: "Franklin Gothic",
-                fontWeight: FontWeight.w500,
-                decoration: TextDecoration.none,
-              ),
-            ),
-            if ((subtitle ?? '').isNotEmpty)
-              Padding(
-                padding: EdgeInsets.only(top: 1.sp),
-                child: Text(
-                  subtitle!,
-                  style: const TextStyle(
-                    decoration: TextDecoration.underline,
-                    fontFamily: "Franklin Gothic Regular",
-                    fontWeight: FontWeight.w400,
-                    color: appBarColor,
-                    fontSize: 10,
-                  ),
+  }) =>
+      GestureDetector(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
+          child: Column(
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Color(0xFF374151),
+                  fontSize: 13,
+                  fontFamily: "Franklin Gothic",
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-          ],
+              if ((subtitle ?? '').isNotEmpty)
+                Padding(
+                  padding: EdgeInsets.only(top: 1.sp),
+                  child: Text(
+                    subtitle!,
+                    style: const TextStyle(
+                      decoration: TextDecoration.underline,
+                      fontFamily: "Franklin Gothic Regular",
+                      fontSize: 10,
+                      color: appBarColor,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 }
 
-/// Card that never overflows.
+/// Product Tile
 class _ProductTileNoOverflow extends StatelessWidget {
   final String? imageUrl;
   final String brand;
@@ -573,11 +888,9 @@ class _ProductTileNoOverflow extends StatelessWidget {
             child: imageUrl != null && imageUrl!.trim().isNotEmpty
                 ? CachedNetworkImage(
                     cacheManager: CacheManager(
-                      Config(
-                        "productGridCache",
-                        stalePeriod: Duration(days: 15),
-                        maxNrOfCacheObjects: 100,
-                      ),
+                      Config("productGridCache",
+                          stalePeriod: const Duration(days: 15),
+                          maxNrOfCacheObjects: 100),
                     ),
                     imageUrl: imageUrl!,
                     fit: BoxFit.cover,
@@ -611,7 +924,6 @@ class _ProductTileNoOverflow extends StatelessWidget {
               color: Color(0xFF6B7280),
               fontSize: 13,
               fontFamily: "Franklin Gothic Regular",
-              fontWeight: FontWeight.w400,
             ),
           ),
         ),
@@ -624,21 +936,16 @@ class _ProductTileNoOverflow extends StatelessWidget {
                   padding: EdgeInsets.only(right: 6.sp),
                   child: Text(
                     fmt(mrp, cents: true),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: Color(0xFF9CA3AF),
                       fontSize: 13,
                       fontFamily: "Franklin Gothic Regular",
-                      fontWeight: FontWeight.w400,
                       decoration: TextDecoration.lineThrough,
                     ),
                   ),
                 ),
               Text(
                 (price == null || price == 0) ? "" : fmt(price, cents: true),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   color: blackColor,
                   fontSize: 15,

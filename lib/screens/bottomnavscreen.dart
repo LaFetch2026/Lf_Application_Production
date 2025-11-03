@@ -125,8 +125,8 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
               label: "Quick",
               selected: _currentIndex == 4,
               onTap: () {
-                _changeTab(4);
-                analytics.logEvent(name: 'quick_page');
+                // _changeTab(4);
+                // analytics.logEvent(name: 'quick_page');
               },
             ),
             _navItem(
