@@ -9,6 +9,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/bottom_sheets/bottomCoupon.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
+import 'package:lafetch/controllers/order_controller.dart';
 import 'package:lafetch/core/constant/constants.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/controllers/product_controller.dart';
@@ -311,11 +312,74 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     setState(() {});
   }
 
-  // =========================================================
-  // Razorpay Handlers
-  // =========================================================
-  void _onPaymentSuccess(PaymentSuccessResponse r) {
-    _snack('Payment successful');
+  void _onPaymentSuccess(PaymentSuccessResponse r) async {
+    print("✅ Payment Successful!");
+    print("Payment ID: ${r.paymentId}");
+    print("Order ID: ${r.orderId}");
+    print("Signature: ${r.signature}");
+
+    _snack('Payment successful! Placing your order...');
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+      final userId = prefs.getInt('user_id');
+      final shippingAddressId = _address?['id'];
+
+      if (userId == null || shippingAddressId == null) {
+        print("⚠️ Missing user or address info.");
+        _snack("Something went wrong: missing user or address.");
+        return;
+      }
+
+      // Build order payload
+      final Map<String, dynamic> orderPayload = {
+        "userId": userId,
+        "shippingAddressId": shippingAddressId,
+        "items": [
+          {
+            "productName": widget.title,
+            "productId": widget.productId,
+            "variantId":
+                0, // TODO: replace with your actual variantId if needed
+            "quantity": widget.quantity,
+            "unitPrice": widget.price,
+            "total": _billTotal,
+            "sku": "",
+            "hsn": ""
+          }
+        ],
+        "totalMRP": widget.mrp,
+        "total": _billTotal,
+        "paymentMethod": "prepaid",
+        "paymentInfo": {
+          "providerPaymentId": r.paymentId,
+          "providerOrderId": r.orderId,
+          "providerSignature": r.signature
+        }
+      };
+
+      print("🧾 Final Payload to send:");
+      print(orderPayload);
+
+      // Hit your API (through your ProductController or API service)
+      print("🌐 Hitting placeOrder API...");
+      final orderController = Get.put(OrderController());
+      final success = await orderController.placeOrder(orderPayload);
+
+      if (success) {
+        print("✅ Order placed successfully!");
+        _snack("Order placed successfully!");
+        // Navigate to success page or order details
+        Get.offAllNamed('/order-success'); // change this route to yours
+      } else {
+        print("❌ Failed to place order!");
+        _snack("Failed to place order. Please contact support.");
+      }
+    } catch (e) {
+      print("🔥 Exception in onPaymentSuccess: $e");
+      _snack("Error placing order: $e");
+    }
   }
 
   void _onPaymentError(PaymentFailureResponse r) {

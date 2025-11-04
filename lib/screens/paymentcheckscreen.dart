@@ -71,7 +71,7 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
       }
 
       _elapsedTime += 5;
-      cartController.callPaymentStatus(widget.orderId, timer);
+
       print('Method executed at $_elapsedTime seconds');
     });
   }

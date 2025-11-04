@@ -239,4 +239,73 @@ class CatalogController extends BaseController {
       isSorting.value = false;
     }
   }
+
+  /// 🆕 Filter Products API
+  /// Filters products by brands, price range, category, brand, and collection
+  /// Add this method to your CatalogController class
+  Future<void> getFilteredProducts({
+    required List<int> brandIds,
+    required String minPrice,
+    required String maxPrice,
+    int? catId,
+    int? brandId,
+    int? collectionId,
+  }) async {
+    isCategory.value = true;
+    final prefs = await SharedPreferences.getInstance();
+
+    try {
+      final uri = Uri.parse("${ApiConstants.baseUrl}/filter-products");
+
+      // ✅ Build request body
+      final body = {
+        "brandIds": brandIds,
+        "minPrice": minPrice,
+        "maxPrice": maxPrice,
+        if (catId != null) "catId": catId,
+        if (brandId != null) "brandId": brandId,
+        if (collectionId != null) "collectionId": collectionId,
+      };
+
+      // ✅ Debug prints
+      print("🔹 Filtering products with:");
+      print("   • brandIds     → $brandIds");
+      print("   • price range  → ₹$minPrice - ₹$maxPrice");
+      print("   • catId        → ${catId ?? 'null'}");
+      print("   • brandId      → ${brandId ?? 'null'}");
+      print("   • collectionId → ${collectionId ?? 'null'}");
+      print("   • API URL      → $uri");
+      print("   • Request Body → ${json.encode(body)}");
+
+      final response = await http.post(
+        uri,
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ${prefs.getString('token')}',
+        },
+        body: json.encode(body),
+      );
+
+      final decoded = json.decode(response.body);
+
+      if (response.statusCode == 200 && decoded["data"] != null) {
+        categoryProductList.assignAll(decoded["data"]);
+        print("✅ Filtered products fetched: ${categoryProductList.length}");
+      } else if (response.statusCode == 401) {
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+        getSnackBar("Authentication failed");
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server error, please try again later");
+      } else {
+        getSnackBar(decoded["message"] ?? "Failed to filter products");
+        print("❌ API Error: ${decoded["message"]}");
+      }
+    } catch (e) {
+      print("🚨 getFilteredProducts error: $e");
+      getSnackBar("Something went wrong while filtering");
+    } finally {
+      isCategory.value = false;
+    }
+  }
 }

@@ -62,29 +62,50 @@ class OrderController extends BaseController {
     isPlacingOrder.value = true;
     apiError.value = "";
     showLoading();
+
     final prefs = await SharedPreferences.getInstance();
+
     try {
+      // ✅ Updated API endpoint
       final uri = Uri.parse("${ApiConstants.baseUrl}/place-order");
+
+      // ✅ Updated payload structure (ensure it matches backend)
+      final updatedPayload = {
+        "userId": payload["userId"],
+        "shippingAddressId": payload["shippingAddressId"],
+        "items": payload["items"],
+        "totalMRP": payload["totalMRP"],
+        "total": payload["total"],
+        "paymentMethod": payload["paymentMethod"], // e.g. 'prepaid' or 'cod'
+        "paymentInfo": {
+          "providerPaymentId": payload["paymentInfo"]["providerPaymentId"],
+          "providerOrderId": payload["paymentInfo"]["providerOrderId"],
+          "providerSignature": payload["paymentInfo"]["providerSignature"],
+        },
+      };
+
       final res = await http.post(
         uri,
         headers: _headersWithToken(prefs.getString('token'), jsonBody: true),
-        body: json.encode(payload),
+        body: json.encode(updatedPayload),
       );
 
+      // Handle token expiry, unauthorized, etc.
       if (_handleAuthGuard(res.statusCode)) return false;
 
       if (res.statusCode == 200 || res.statusCode == 201) {
         getSnackBar("Order placed successfully");
+        print("✅ Order placed: ${res.body}");
         return true;
       } else {
         apiError.value = "Place order failed (${res.statusCode})";
-        print(res.body);
+        print("❌ Response: ${res.body}");
         getSnackBar(apiError.value);
         return false;
       }
     } catch (e) {
       apiError.value = e.toString();
-      print("placeOrder error: $e");
+      print("❌ placeOrder error: $e");
       getSnackBar("Something went wrong");
       return false;
     } finally {

@@ -105,14 +105,6 @@ class CartScreenState extends State<CartScreen> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('applied_coupon_code');
     await prefs.remove('applied_coupon_discount');
-
-    // Verify on backend; then process
-    controller.callProcessPayment(
-      orderId,
-      response.paymentId ?? "",
-      response.orderId ?? "",
-      response.signature ?? "",
-    );
   }
 
   void _onPaymentError(PaymentFailureResponse response) {

@@ -86,8 +86,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
     print("payment id ${response.paymentId}");
     print("singature ${response.signature}");
     print("data ${response.data}");
-    controller.callProcessPayment(widget.cartId, response.paymentId!,
-        response.orderId!, response.signature!);
+
     // Do something when payment succeeds
   }
 
