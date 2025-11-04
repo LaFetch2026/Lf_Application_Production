@@ -1,6 +1,8 @@
 // lib/screens/review_order_screen.dart
 // ignore_for_file: avoid_print
 
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -100,10 +102,96 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   }
 
   Future<void> _confirmAndPay() async {
+    // ✅ Step 1: Validate Address
     if (_address == null) {
       await _pickAddress();
-      if (_address == null) return;
+      if (_address == null) {
+        _snack("Please select a shipping address to continue");
+        return;
+      }
     }
+
+    // ✅ Step 2: Validate Address ID
+    final shippingAddressId = _address?['id'];
+    if (shippingAddressId == null) {
+      _snack("Invalid address selected. Please choose another address.");
+      print("❌ Address ID is null: $_address");
+      return;
+    }
+
+    // ✅ Step 3: Get and Validate User ID from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+
+    // Try both possible keys for userId
+    int? userId = prefs.getInt('userId') ?? prefs.getInt('user_id');
+
+    if (userId == null) {
+      _snack("Please login to continue");
+      print("❌ User ID is null. Redirecting to login...");
+      Get.offAllNamed('/login'); // Redirect to login screen
+      return;
+    }
+
+    // ✅ Step 4: Validate Product Details
+    if (widget.productId <= 0) {
+      _snack("Invalid product. Please try again.");
+      print("❌ Invalid productId: ${widget.productId}");
+      return;
+    }
+
+    if (widget.quantity <= 0) {
+      _snack("Quantity must be at least 1");
+      print("❌ Invalid quantity: ${widget.quantity}");
+      return;
+    }
+
+    if (widget.price <= 0) {
+      _snack("Invalid product price");
+      print("❌ Invalid price: ${widget.price}");
+      return;
+    }
+
+    // ✅ Step 5: Validate Total Amount
+    if (_billTotal <= 0) {
+      _snack("Order total must be greater than zero");
+      print("❌ Invalid bill total: $_billTotal");
+      return;
+    }
+
+    // ✅ Step 6: Build order payload
+    final orderPayload = {
+      "userId": userId,
+      "shippingAddressId": shippingAddressId,
+      "items": [
+        {
+          "productName": widget.title,
+          "productId": widget.productId,
+          "variantId": 0, // TODO: pass actual variantId if available
+          "quantity": widget.quantity,
+          "unitPrice": widget.price,
+          "total": _billTotal,
+          "sku": "",
+          "hsn": ""
+        }
+      ],
+      "totalMRP": widget.mrp,
+      "total": _billTotal,
+      "paymentMethod": "prepaid",
+    };
+
+    // ✅ Step 7: Save order data BEFORE payment (in case app closes)
+    await prefs.setString('pending_order_payload', jsonEncode(orderPayload));
+    await prefs.setInt('pending_order_total', _billTotal.toInt());
+    await prefs.setInt('pending_order_userId', userId);
+    await prefs.setInt('pending_order_shippingAddressId', shippingAddressId);
+
+    print("✅ All validations passed. Opening Razorpay...");
+    print("📦 Order Payload saved:");
+    print("   userId: $userId");
+    print("   shippingAddressId: $shippingAddressId");
+    print("   total: $_billTotal");
+
+    // ✅ Step 8: Open Razorpay
     await _openRazorpayCheckout(orderId: widget.razorpayOrderId);
   }
 
@@ -322,59 +410,106 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token');
-      final userId = prefs.getInt('user_id');
-      final shippingAddressId = _address?['id'];
 
-      if (userId == null || shippingAddressId == null) {
-        print("⚠️ Missing user or address info.");
-        _snack("Something went wrong: missing user or address.");
+      // ✅ Method 1: Try to retrieve saved order payload
+      final savedPayload = prefs.getString('pending_order_payload');
+
+      Map<String, dynamic> orderPayload;
+
+      if (savedPayload != null && savedPayload.isNotEmpty) {
+        // ✅ Use saved payload
+        orderPayload = jsonDecode(savedPayload);
+        print("📦 Using saved order payload");
+      } else {
+        // ✅ Method 2: Rebuild payload from saved individual values
+        print("⚠️ No saved payload found. Rebuilding from stored values...");
+
+        final userId = prefs.getInt('pending_order_userId') ??
+            prefs.getInt('userId') ??
+            prefs.getInt('user_id');
+
+        final shippingAddressId =
+            prefs.getInt('pending_order_shippingAddressId') ?? _address?['id'];
+
+        if (userId == null || shippingAddressId == null) {
+          print("❌ Critical data missing!");
+          print("   userId: $userId");
+          print("   shippingAddressId: $shippingAddressId");
+          _snack(
+              "Order data not found. Please contact support with Payment ID: ${r.paymentId}");
+          return;
+        }
+
+        // Rebuild the payload
+        orderPayload = {
+          "userId": userId,
+          "shippingAddressId": shippingAddressId,
+          "items": [
+            {
+              "productName": widget.title,
+              "productId": widget.productId,
+              "variantId": 0,
+              "quantity": widget.quantity,
+              "unitPrice": widget.price,
+              "total": _billTotal,
+              "sku": "",
+              "hsn": ""
+            }
+          ],
+          "totalMRP": widget.mrp,
+          "total": _billTotal,
+          "paymentMethod": "prepaid",
+        };
+      }
+
+      // ✅ Final validation before API call
+      if (orderPayload['userId'] == null) {
+        _snack("User information missing. Please login again.");
+        print("❌ userId is null in payload");
         return;
       }
 
-      // Build order payload
-      final Map<String, dynamic> orderPayload = {
-        "userId": userId,
-        "shippingAddressId": shippingAddressId,
-        "items": [
-          {
-            "productName": widget.title,
-            "productId": widget.productId,
-            "variantId":
-                0, // TODO: replace with your actual variantId if needed
-            "quantity": widget.quantity,
-            "unitPrice": widget.price,
-            "total": _billTotal,
-            "sku": "",
-            "hsn": ""
-          }
-        ],
-        "totalMRP": widget.mrp,
-        "total": _billTotal,
-        "paymentMethod": "prepaid",
-        "paymentInfo": {
-          "providerPaymentId": r.paymentId,
-          "providerOrderId": r.orderId,
-          "providerSignature": r.signature
-        }
+      if (orderPayload['shippingAddressId'] == null) {
+        _snack("Address information missing. Please try again.");
+        print("❌ shippingAddressId is null in payload");
+        return;
+      }
+
+      // ✅ Add payment info
+      orderPayload['paymentInfo'] = {
+        "providerPaymentId": r.paymentId,
+        "providerOrderId": r.orderId,
+        "providerSignature": r.signature,
       };
 
       print("🧾 Final Payload to send:");
-      print(orderPayload);
+      print("   userId: ${orderPayload['userId']}");
+      print("   shippingAddressId: ${orderPayload['shippingAddressId']}");
+      print("   paymentId: ${r.paymentId}");
+      print(jsonEncode(orderPayload));
 
-      // Hit your API (through your ProductController or API service)
+      // ✅ Hit your API
       print("🌐 Hitting placeOrder API...");
       final orderController = Get.put(OrderController());
       final success = await orderController.placeOrder(orderPayload);
 
       if (success) {
         print("✅ Order placed successfully!");
+
+        // ✅ Clear saved data after successful order
+        await prefs.remove('pending_order_payload');
+        await prefs.remove('pending_order_total');
+        await prefs.remove('pending_order_userId');
+        await prefs.remove('pending_order_shippingAddressId');
+        await prefs.remove('applied_coupon_code');
+        await prefs.remove('applied_coupon_discount');
+
         _snack("Order placed successfully!");
-        // Navigate to success page or order details
-        Get.offAllNamed('/order-success'); // change this route to yours
+        Get.offAllNamed('/order-success');
       } else {
         print("❌ Failed to place order!");
-        _snack("Failed to place order. Please contact support.");
+        _snack(
+            "Failed to place order. Please contact support with Payment ID: ${r.paymentId}");
       }
     } catch (e) {
       print("🔥 Exception in onPaymentSuccess: $e");

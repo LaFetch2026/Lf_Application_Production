@@ -22,7 +22,11 @@ class OrderController extends BaseController {
   RxBool isReturnHistory = false.obs;
 
   RxString apiError = "".obs;
-
+// Inside ProductController
+  RxBool isEstimateDate = false.obs;
+  RxString estimatedDate = "".obs;
+  RxString estimatedDays = "".obs;
+  RxString courierName = "".obs;
   // Lists & details
   List orderHistory = [].obs; // from /order-history/{userId}
   List exchangeHistory = [].obs; // from /exchange-history/{userId}
@@ -55,9 +59,6 @@ class OrderController extends BaseController {
     return false;
   }
 
-  // ---------- 1) PLACE ORDER ----------
-  /// Calls: POST {{laFetchBaseUrl}}/place-order
-  /// [payload] must match your new API body.
   Future<bool> placeOrder(Map<String, dynamic> payload) async {
     isPlacingOrder.value = true;
     apiError.value = "";
@@ -66,23 +67,63 @@ class OrderController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
 
     try {
-      // ✅ Updated API endpoint
+      // ✅ Validate required fields before making API call
+      if (payload["userId"] == null) {
+        apiError.value = "User ID is required";
+        getSnackBar("Please login to place order");
+        print("❌ userId is null");
+        return false;
+      }
+
+      if (payload["shippingAddressId"] == null) {
+        apiError.value = "Shipping address is required";
+        getSnackBar("Please select a shipping address");
+        print("❌ shippingAddressId is null");
+        return false;
+      }
+
+      if (payload["items"] == null || (payload["items"] as List).isEmpty) {
+        apiError.value = "Cart is empty";
+        getSnackBar("Please add items to cart");
+        print("❌ items is null or empty");
+        return false;
+      }
+
       final uri = Uri.parse("${ApiConstants.baseUrl}/place-order");
 
-      // ✅ Updated payload structure (ensure it matches backend)
+      // ✅ Construct payload matching the required structure
       final updatedPayload = {
         "userId": payload["userId"],
         "shippingAddressId": payload["shippingAddressId"],
-        "items": payload["items"],
-        "totalMRP": payload["totalMRP"],
-        "total": payload["total"],
-        "paymentMethod": payload["paymentMethod"], // e.g. 'prepaid' or 'cod'
+        "items": (payload["items"] as List).map((item) {
+          return {
+            "productName": item["productName"] ?? "",
+            "productId": item["productId"],
+            "variantId": item["variantId"],
+            "quantity": item["quantity"] ?? 1,
+            "unitPrice": item["unitPrice"] ?? 0.0,
+            "total": item["total"] ?? 0.0,
+            "sku": item["sku"] ?? "",
+            "hsn": item["hsn"] ?? "",
+          };
+        }).toList(),
+        "totalMRP": payload["totalMRP"] ?? 0.0,
+        "total": payload["total"] ?? 0.0,
+        "paymentMethod": payload["paymentMethod"] ?? "prepaid",
         "paymentInfo": {
-          "providerPaymentId": payload["paymentInfo"]["providerPaymentId"],
-          "providerOrderId": payload["paymentInfo"]["providerOrderId"],
-          "providerSignature": payload["paymentInfo"]["providerSignature"],
+          "providerPaymentId":
+              payload["paymentInfo"]?["providerPaymentId"] ?? "",
+          "providerOrderId": payload["paymentInfo"]?["providerOrderId"] ?? "",
+          "providerSignature":
+              payload["paymentInfo"]?["providerSignature"] ?? "",
         },
       };
+
+      print("📤 Placing order with payload:");
+      print("   userId: ${updatedPayload['userId']}");
+      print("   shippingAddressId: ${updatedPayload['shippingAddressId']}");
+      print("   items count: ${(updatedPayload['items'] as List).length}");
+      print("   paymentMethod: ${updatedPayload['paymentMethod']}");
 
       final res = await http.post(
         uri,
@@ -90,23 +131,36 @@ class OrderController extends BaseController {
         body: json.encode(updatedPayload),
       );
 
+      print("📥 Response status: ${res.statusCode}");
+      print("📥 Response body: ${res.body}");
+
       // Handle token expiry, unauthorized, etc.
       if (_handleAuthGuard(res.statusCode)) return false;
 
       if (res.statusCode == 200 || res.statusCode == 201) {
+        final responseData = json.decode(res.body);
         getSnackBar("Order placed successfully");
-        print("✅ Order placed: ${res.body}");
+        print("✅ Order placed successfully: $responseData");
         return true;
       } else {
-        apiError.value = "Place order failed (${res.statusCode})";
-        print("❌ Response: ${res.body}");
+        // Parse error message from response if available
+        try {
+          final errorData = json.decode(res.body);
+          apiError.value = errorData['message'] ??
+              errorData['error'] ??
+              "Place order failed (${res.statusCode})";
+        } catch (e) {
+          apiError.value = "Place order failed (${res.statusCode})";
+        }
+
+        print("❌ Order placement failed: ${res.body}");
         getSnackBar(apiError.value);
         return false;
       }
     } catch (e) {
-      apiError.value = e.toString();
+      apiError.value = "Network error: ${e.toString()}";
       print("❌ placeOrder error: $e");
-      getSnackBar("Something went wrong");
+      getSnackBar("Something went wrong. Please try again.");
       return false;
     } finally {
       hideLoading();
@@ -384,5 +438,60 @@ class OrderController extends BaseController {
       return false;
     }
     return true;
+  }
+
+  Future<void> checkServiceability(int variantId, String postalCode) async {
+    isEstimateDate.value = true;
+
+    try {
+      print(
+          "🚚 Checking serviceability for variantId: $variantId, pincode: $postalCode");
+
+      final uri = Uri.parse("${ApiConstants.baseUrl}/check-serviceability");
+      final res = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          "variantId": variantId,
+          "deliveryPostalCode": postalCode,
+        }),
+      );
+
+      print("📥 Response status: ${res.statusCode}");
+      print("📥 Response body: ${res.body}");
+
+      if (res.statusCode == 200) {
+        final responseData = json.decode(res.body);
+        final data = responseData["data"];
+
+        if (data != null) {
+          estimatedDate.value = data["estimatedDate"] ?? "";
+          estimatedDays.value = data["estimatedDays"] ?? "";
+          courierName.value = data["courier"] ?? "";
+
+          print("✅ Serviceable location:");
+          print("   📦 Estimated Date: ${estimatedDate.value}");
+          print("   ⏱️ Estimated Days: ${estimatedDays.value}");
+          print("   🚚 Courier: ${courierName.value}");
+        } else {
+          print("⚠️ Response has no data field.");
+          estimatedDate.value = "";
+          estimatedDays.value = "";
+          courierName.value = "";
+        }
+      } else {
+        print("❌ Serviceability check failed (${res.statusCode})");
+        estimatedDate.value = "";
+        estimatedDays.value = "";
+        courierName.value = "";
+      }
+    } catch (e) {
+      print("🔥 Error fetching serviceability: $e");
+      estimatedDate.value = "";
+      estimatedDays.value = "";
+      courierName.value = "";
+    } finally {
+      isEstimateDate.value = false;
+    }
   }
 }
