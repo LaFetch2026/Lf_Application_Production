@@ -1215,24 +1215,17 @@ class ProductController extends BaseController {
     }
   }
 
-  /// ✅ Check if product variant is deliverable to given postal code
   Future<Map?> checkServiceability({
     required int variantId,
     required String deliveryPostalCode,
   }) async {
-    isEstimateDate.value = true; // show loader
+    isEstimateDate.value = true;
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
     final uri = Uri.parse("${ApiConstants.baseUrl}/check-serviceability");
 
     try {
-      // 🧾 Debug info
-      print("🔹 Checking serviceability...");
-      print("   → Variant ID: $variantId");
-      print("   → Pincode: $deliveryPostalCode");
-      print("   → API: $uri");
-
       final body = {
         "variantId": variantId,
         "deliveryPostalCode": deliveryPostalCode,
@@ -1250,85 +1243,41 @@ class ProductController extends BaseController {
           )
           .timeout(const Duration(seconds: 20));
 
-      // 🧾 Log response
       print("🔹 Response Code: ${response.statusCode}");
       print("🔹 Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
-        if (data is Map) {
-          print("✅ Serviceability API Response Parsed");
+        if (data is Map && data['data'] != null && data['data'] is Map) {
+          final delivery = data['data'];
+          final date = delivery['estimatedDate']?.toString() ?? "";
+          final days = delivery['estimatedDays']?.toString() ?? "";
 
-          // Reset previous values
-          serviceabilityMessage.value = "";
-          courierName.value = "";
-          estimatedDate.value = "";
-          estimatedDays.value = "";
-          isServiceable.value = false;
+          estimatedDate.value = date;
+          estimatedDays.value = days;
+          isServiceable.value = true;
 
-          // 🧩 Extract delivery info from "data"
-          if (data['data'] != null && data['data'] is Map) {
-            final inner = data['data'];
+          // ✅ Only show delivery info
+          serviceabilityMessage.value = "Delivery by $date ($days Days)";
 
-            courierName.value = inner['courier']?.toString() ?? "";
-            estimatedDate.value = inner['estimatedDate']?.toString() ?? "";
-            estimatedDays.value = inner['estimatedDays']?.toString() ?? "";
-
-            // Consider serviceable if estimated date is present
-            if (estimatedDate.value.isNotEmpty) {
-              isServiceable.value = true;
-              serviceabilityMessage.value = "Available for delivery";
-            } else {
-              isServiceable.value = false;
-              serviceabilityMessage.value =
-                  "Service not available for this pincode";
-            }
-
-            print(
-                "✅ Courier: ${courierName.value}, Date: ${estimatedDate.value}, Days: ${estimatedDays.value}");
-          } else {
-            // if no data present
-            serviceabilityMessage.value =
-                "Service not available for this pincode";
-            isServiceable.value = false;
-            print("✗ No delivery data found in response");
-          }
-
+          print("✅ Showing: ${serviceabilityMessage.value}");
           return data;
+        } else {
+          isServiceable.value = false;
+          serviceabilityMessage.value =
+              "Service not available for this pincode";
         }
-      } else if (response.statusCode == 400) {
-        final err = json.decode(response.body);
-        final msg = err["message"] ?? "Invalid pincode or variant";
-        getSnackBar(msg);
-        serviceabilityMessage.value = msg;
-        isServiceable.value = false;
-        print("✗ 400 Error: $msg");
-      } else if (response.statusCode == 401) {
-        Get.offAll(() => const LoginScreen(initialTab: 0));
-        getSnackBar("Authentication failed");
-      } else if (response.statusCode == 404) {
-        serviceabilityMessage.value = "Service not available for this area";
-        isServiceable.value = false;
-        getSnackBar("Service not available for this area");
       } else {
-        serviceabilityMessage.value = "Failed to check serviceability";
         isServiceable.value = false;
-        print("✗ Serviceability check failed: ${response.statusCode}");
-        getSnackBar("Failed to check serviceability");
+        serviceabilityMessage.value = "Failed to check serviceability";
       }
-    } on TimeoutException {
-      getSnackBar("Request timed out. Please try again.");
-      serviceabilityMessage.value = "Request timed out. Please try again.";
-      isServiceable.value = false;
-      print("⏱ checkServiceability timeout");
     } catch (e) {
       print("💥 checkServiceability error: $e");
-      getSnackBar("Error checking serviceability");
-      serviceabilityMessage.value = "Error checking serviceability";
       isServiceable.value = false;
+      serviceabilityMessage.value = "Error checking serviceability";
     } finally {
-      isEstimateDate.value = false; // hide loader
+      isEstimateDate.value = false;
     }
 
     return null;

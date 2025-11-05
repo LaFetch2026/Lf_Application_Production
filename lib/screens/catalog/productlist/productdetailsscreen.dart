@@ -1426,31 +1426,47 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               );
 
                                               if (result != null) {
-                                                productController
-                                                        .isServiceable.value =
-                                                    result["status"] == true;
-                                                productController
-                                                        .serviceabilityMessage
-                                                        .value =
-                                                    result["message"] ?? "";
+                                                final data = result["data"];
+                                                if (data != null &&
+                                                    data is Map) {
+                                                  final date =
+                                                      data["estimatedDate"]
+                                                              ?.toString() ??
+                                                          "";
+                                                  final days =
+                                                      data["estimatedDays"]
+                                                              ?.toString() ??
+                                                          "";
+                                                  final courier =
+                                                      data["courier"]
+                                                              ?.toString() ??
+                                                          "";
 
-                                                if (result["data"] != null &&
-                                                    result["data"] is Map) {
-                                                  final d = result["data"];
                                                   productController.courierName
-                                                      .value = d["courier"]
-                                                          ?.toString() ??
-                                                      "";
+                                                      .value = courier;
                                                   productController
-                                                          .estimatedDate.value =
-                                                      d["estimatedDate"]
-                                                              ?.toString() ??
-                                                          "";
+                                                      .estimatedDate
+                                                      .value = date;
                                                   productController
-                                                          .estimatedDays.value =
-                                                      d["estimatedDays"]
-                                                              ?.toString() ??
-                                                          "";
+                                                      .estimatedDays
+                                                      .value = days;
+                                                  productController
+                                                      .isServiceable
+                                                      .value = true;
+
+                                                  // ✅ Show proper delivery info
+                                                  productController
+                                                          .serviceabilityMessage
+                                                          .value =
+                                                      "Delivery by $date ($days Days)";
+                                                } else {
+                                                  productController
+                                                      .isServiceable
+                                                      .value = false;
+                                                  productController
+                                                          .serviceabilityMessage
+                                                          .value =
+                                                      "Service not available for this pincode";
                                                 }
                                               }
 
@@ -1501,184 +1517,45 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 ),
                               ),
 
-                              /// Result Section
                               Obx(() {
                                 final msg = productController
                                     .serviceabilityMessage.value;
-                                final courier =
-                                    productController.courierName.value;
-                                final date =
-                                    productController.estimatedDate.value;
-                                final days =
-                                    productController.estimatedDays.value;
                                 final isOk =
                                     productController.isServiceable.value;
 
-                                if (msg.isEmpty &&
-                                    courier.isEmpty &&
-                                    date.isEmpty) {
-                                  return const SizedBox.shrink();
-                                }
+                                if (msg.isEmpty) return const SizedBox.shrink();
 
                                 return Padding(
                                   padding: EdgeInsets.only(
                                       left: 12.sp, right: 12.sp, top: 10.sp),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  child: Row(
                                     children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            isOk
-                                                ? Icons.check_circle_outline
-                                                : Icons.error_outline,
-                                            color: isOk
-                                                ? Colors.green
-                                                : Colors.red,
-                                            size: 18.sp,
-                                          ),
-                                          SizedBox(width: 8.sp),
-                                          Expanded(
-                                            child: AppSpacingText(
-                                              text: msg,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                              color: isOk
-                                                  ? Colors.green
-                                                  : Colors.red,
-                                              fontSize: 13,
-                                            ),
-                                          ),
-                                        ],
+                                      Icon(
+                                        isOk
+                                            ? Icons.check_circle_outline
+                                            : Icons.error_outline,
+                                        color: isOk ? Colors.green : Colors.red,
+                                        size: 18.sp,
                                       ),
-                                      if (isOk) ...[
-                                        SizedBox(height: 6.sp),
-                                        Row(
-                                          children: [
-                                            Icon(Icons.local_shipping_outlined,
-                                                color: appBarColor,
-                                                size: 16.sp),
-                                            SizedBox(width: 6.sp),
-                                            AppSpacingText(
-                                              text: courier,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                              color: appBarColor,
-                                              fontSize: 13,
-                                            ),
-                                          ],
+                                      SizedBox(width: 8.sp),
+                                      Expanded(
+                                        child: AppSpacingText(
+                                          text: msg,
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w500,
+                                          color: isOk
+                                              ? Colors.green.shade700
+                                              : Colors.red,
+                                          fontSize: 13,
                                         ),
-                                        SizedBox(height: 4.sp),
-                                        Row(
-                                          children: [
-                                            Icon(Icons.calendar_today_outlined,
-                                                color: appBarColor,
-                                                size: 16.sp),
-                                            SizedBox(width: 6.sp),
-                                            AppSpacingText(
-                                              text:
-                                                  "Delivery by $date ($days Days)",
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.green.shade700,
-                                              fontSize: 13,
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                      ),
                                     ],
                                   ),
                                 );
-                              }),
+                              })
                             ],
                           ),
                         ),
-
-                        Obx(() {
-                          final message =
-                              productController.serviceabilityMessage.value;
-                          final courier = productController.courierName.value;
-                          final date = productController.estimatedDate.value;
-                          final days = productController.estimatedDays.value;
-
-                          if (message.isEmpty) return const SizedBox.shrink();
-
-                          return Padding(
-                            padding: EdgeInsets.only(
-                                left: 12.sp, right: 12.sp, top: 8.sp),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      productController.isServiceable.value
-                                          ? Icons.check_circle_outline
-                                          : Icons.error_outline,
-                                      color:
-                                          productController.isServiceable.value
-                                              ? Colors.green
-                                              : Colors.red,
-                                      size: 18.sp,
-                                    ),
-                                    SizedBox(width: 8.sp),
-                                    Expanded(
-                                      child: AppSpacingText(
-                                        text: message,
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        color: productController
-                                                .isServiceable.value
-                                            ? Colors.green
-                                            : Colors.red,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                /// ✅ Only show courier & ETA if serviceable
-                                if (productController.isServiceable.value) ...[
-                                  SizedBox(height: 6.sp),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.local_shipping_outlined,
-                                          color: Colors.black54, size: 16.sp),
-                                      SizedBox(width: 6.sp),
-                                      AppSpacingText(
-                                        text: "Courier: $courier",
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        color: appBarColor,
-                                        fontSize: 13,
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 4.sp),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.calendar_today_outlined,
-                                          color: Colors.black54, size: 16.sp),
-                                      SizedBox(width: 6.sp),
-                                      AppSpacingText(
-                                        text:
-                                            "Delivery by $date (${days} Days)",
-                                        fontFamily: "Franklin Gothic Regular",
-                                        fontWeight: FontWeight.w400,
-                                        color: appBarColor,
-                                        fontSize: 13,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ],
-                            ),
-                          );
-                        }),
 
                         // ------- collapsibles (description / composition / returns / brand) -------
                         Obx(
@@ -1737,43 +1614,43 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   return const SizedBox(height: 0);
                 }
 
-                // final totalStock = _totalStockCount();
-                // if (totalStock == 1) {
-                //   return SizedBox(
-                //     height: 50.sp,
-                //     child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.center,
-                //       children: [
-                //         Padding(
-                //           padding: EdgeInsets.only(right: 8.0.sp),
-                //           child: SvgPicture.asset(
-                //             cartSvgImage,
-                //             color: widget.backgroundcolor == whiteColor
-                //                 ? homeAppBarColor
-                //                 : productSubtitleColor,
-                //             height: 18.sp,
-                //             width: 18.sp,
-                //           ),
-                //         ),
-                //         // Container(
-                //         //   alignment: Alignment.bottomCenter,
-                //         //   height: 18.sp,
-                //         //   child: AppSpacingText(
-                //         //     text: "Out of stock".toUpperCase(),
-                //         //     fontFamily: "Franklin Gothic",
-                //         //     fontWeight: FontWeight.w500,
-                //         //     color: widget.backgroundcolor == whiteColor
-                //         //         ? homeAppBarColor
-                //         //         : productSubtitleColor,
-                //         //     maxLines: 2,
-                //         //     textAlign: TextAlign.center,
-                //         //     fontSize: 13,
-                //         //   ),
-                //         // ),
-                //       ],
-                //     ),
-                //   );
-                // }
+                final totalStock = _totalStockCount();
+                if (totalStock == 1) {
+                  return SizedBox(
+                    height: 50.sp,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(right: 8.0.sp),
+                          child: SvgPicture.asset(
+                            cartSvgImage,
+                            color: widget.backgroundcolor == whiteColor
+                                ? homeAppBarColor
+                                : productSubtitleColor,
+                            height: 18.sp,
+                            width: 18.sp,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.bottomCenter,
+                          height: 18.sp,
+                          child: AppSpacingText(
+                            text: "Out of stock".toUpperCase(),
+                            fontFamily: "Franklin Gothic",
+                            fontWeight: FontWeight.w500,
+                            color: widget.backgroundcolor == whiteColor
+                                ? homeAppBarColor
+                                : productSubtitleColor,
+                            maxLines: 2,
+                            textAlign: TextAlign.center,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
 
                 final isInCartFlow = productController.addToCart.value;
 
@@ -1895,151 +1772,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   // ---------- tiny helpers to keep build() tidy ----------
-
-  Widget _pincodeInput() {
-    return Padding(
-      padding: EdgeInsets.only(top: 12.sp, left: 12.sp, right: 12.sp),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: double.infinity,
-            height: 44.sp,
-            child: RawKeyboardListener(
-              focusNode: FocusNode(),
-              onKey: (value) {},
-              child: TextField(
-                controller: productController.pincodeController,
-                keyboardType: TextInputType.number,
-                maxLength: 6,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: whiteColor,
-                  suffixIcon: Obx(() => TextButton(
-                        onPressed: () async {
-                          if (productController.checkPinvalidation(
-                            productController.pincodeController.text.trim(),
-                          )) {
-                            productController.serviceabilityMessage.value = "";
-                            productController.isServiceable.value = false;
-
-                            final result =
-                                await productController.checkServiceability(
-                              variantId:
-                                  productController.sizeInventoryId.value,
-                              deliveryPostalCode: productController
-                                  .pincodeController.text
-                                  .trim(),
-                            );
-
-                            if (result != null) {
-                              productController.isServiceable.value =
-                                  result["status"] == true;
-                              productController.serviceabilityMessage.value =
-                                  result["message"] ??
-                                      "Unable to check serviceability";
-                            }
-
-                            FocusScope.of(context).unfocus();
-                            await analytics.logEvent(
-                              name: 'check_pincode_productdetails',
-                              parameters: <String, Object>{
-                                'page_name': 'check_pincode_productdetails'
-                              },
-                            );
-                          }
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.only(bottom: 0.sp),
-                          child: productController.isEstimateDate.value
-                              ? SizedBox(
-                                  height: 14.sp,
-                                  width: 14.sp,
-                                  child: const Center(
-                                      child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  )),
-                                )
-                              : Container(
-                                  color: homeAppBarColor,
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 10.sp, vertical: 6.sp),
-                                    child: AppSpacingText(
-                                      text: "Check".toUpperCase(),
-                                      textAlign: TextAlign.center,
-                                      fontFamily: "Franklin Gothic",
-                                      fontWeight: FontWeight.w500,
-                                      color: whiteColor,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ),
-                        ),
-                      )),
-                  focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: borderColor)),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(1.sp)),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: borderColor),
-                  ),
-                  counterText: "",
-                  contentPadding: const EdgeInsets.only(left: 10),
-                  hintText: 'Enter pincode',
-                  hintStyle: TextStyle(
-                    fontSize: 14.sp,
-                    color: textHintColor,
-                    fontFamily: "Franklin Gothic",
-                  ),
-                ),
-                style: TextStyle(
-                  color: blackColor,
-                  fontSize: 16.sp,
-                  fontFamily: "Franklin Gothic",
-                ),
-              ),
-            ),
-          ),
-
-          /// ✅ Serviceability response (success or error)
-          Obx(() {
-            final message = productController.serviceabilityMessage.value;
-            if (message.isEmpty) return const SizedBox.shrink();
-
-            return Padding(
-              padding: EdgeInsets.only(top: 8.sp),
-              child: Row(
-                children: [
-                  Icon(
-                    productController.isServiceable.value
-                        ? Icons.check_circle_outline
-                        : Icons.error_outline,
-                    color: productController.isServiceable.value
-                        ? Colors.green
-                        : Colors.red,
-                    size: 18.sp,
-                  ),
-                  SizedBox(width: 6.sp),
-                  Expanded(
-                    child: AppSpacingText(
-                      text: message,
-                      fontFamily: "Franklin Gothic Regular",
-                      fontWeight: FontWeight.w400,
-                      color: productController.isServiceable.value
-                          ? Colors.green
-                          : Colors.red,
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
 
   Widget _collapsiblesSection() {
     return Padding(

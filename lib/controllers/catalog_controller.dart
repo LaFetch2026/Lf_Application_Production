@@ -57,7 +57,6 @@ class CatalogController extends BaseController {
       }
     } catch (e) {
       print("getCatalogData error: $e");
-      getSnackBar("Something went wrong");
     } finally {
       isCatalog.value = false;
     }
@@ -93,7 +92,6 @@ class CatalogController extends BaseController {
       }
     } catch (e) {
       print("getCatagoryData error: $e");
-      getSnackBar("Something went wrong");
     } finally {
       isCatalogCategory.value = false;
     }
@@ -131,7 +129,6 @@ class CatalogController extends BaseController {
       }
     } catch (e) {
       print("getCategoryProductData error: $e");
-      getSnackBar("Something went wrong");
     } finally {
       isCategory.value = false;
     }
@@ -170,7 +167,6 @@ class CatalogController extends BaseController {
       }
     } catch (e) {
       print("callAddProductToWishlist error: $e");
-      getSnackBar("Something went wrong");
     }
   }
 
@@ -234,7 +230,6 @@ class CatalogController extends BaseController {
       }
     } catch (e) {
       print("🚨 getSortedProducts error: $e");
-      getSnackBar("Something went wrong");
     } finally {
       isSorting.value = false;
     }
