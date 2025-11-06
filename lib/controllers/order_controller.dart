@@ -59,7 +59,9 @@ class OrderController extends BaseController {
     return false;
   }
 
-  Future<bool> placeOrder(Map<String, dynamic> payload) async {
+// ---------- INITIATE PAYMENT ----------
+  Future<Map<String, dynamic>?> initiatePayment(
+      Map<String, dynamic> body) async {
     isPlacingOrder.value = true;
     apiError.value = "";
     showLoading();
@@ -67,100 +69,148 @@ class OrderController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
 
     try {
-      // ✅ Validate required fields before making API call
-      if (payload["userId"] == null) {
-        apiError.value = "User ID is required";
-        getSnackBar("Please login to place order");
-        print("❌ userId is null");
-        return false;
-      }
+      final uri = Uri.parse("${ApiConstants.baseUrl}/initiate-payment");
 
-      if (payload["shippingAddressId"] == null) {
-        apiError.value = "Shipping address is required";
-        getSnackBar("Please select a shipping address");
-        print("❌ shippingAddressId is null");
-        return false;
-      }
-
-      if (payload["items"] == null || (payload["items"] as List).isEmpty) {
-        apiError.value = "Cart is empty";
-        getSnackBar("Please add items to cart");
-        print("❌ items is null or empty");
-        return false;
-      }
-
-      final uri = Uri.parse("${ApiConstants.baseUrl}/place-order");
-
-      // ✅ Construct payload matching the required structure
-      final updatedPayload = {
-        "userId": payload["userId"],
-        "shippingAddressId": payload["shippingAddressId"],
-        "items": (payload["items"] as List).map((item) {
-          return {
-            "productName": item["productName"] ?? "",
-            "productId": item["productId"],
-            "variantId": item["variantId"],
-            "quantity": item["quantity"] ?? 1,
-            "unitPrice": item["unitPrice"] ?? 0.0,
-            "total": item["total"] ?? 0.0,
-            "sku": item["sku"] ?? "",
-            "hsn": item["hsn"] ?? "",
-          };
-        }).toList(),
-        "totalMRP": payload["totalMRP"] ?? 0.0,
-        "total": payload["total"] ?? 0.0,
-        "paymentMethod": payload["paymentMethod"] ?? "prepaid",
-        "paymentInfo": {
-          "providerPaymentId":
-              payload["paymentInfo"]?["providerPaymentId"] ?? "",
-          "providerOrderId": payload["paymentInfo"]?["providerOrderId"] ?? "",
-          "providerSignature":
-              payload["paymentInfo"]?["providerSignature"] ?? "",
-        },
-      };
-
-      print("📤 Placing order with payload:");
-      print("   userId: ${updatedPayload['userId']}");
-      print("   shippingAddressId: ${updatedPayload['shippingAddressId']}");
-      print("   items count: ${(updatedPayload['items'] as List).length}");
-      print("   paymentMethod: ${updatedPayload['paymentMethod']}");
+      print("📤 Initiating payment with body:");
+      print(jsonEncode(body));
 
       final res = await http.post(
         uri,
         headers: _headersWithToken(prefs.getString('token'), jsonBody: true),
-        body: json.encode(updatedPayload),
+        body: jsonEncode(body),
       );
 
       print("📥 Response status: ${res.statusCode}");
       print("📥 Response body: ${res.body}");
 
-      // Handle token expiry, unauthorized, etc.
+      if (_handleAuthGuard(res.statusCode)) return null;
+
+      // ✅ Handle successful status codes (201 created or 200 ok)
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        final decoded = jsonDecode(res.body);
+
+        if (decoded is! Map || !decoded.containsKey("data")) {
+          print("⚠️ Unexpected API response format: $decoded");
+          getSnackBar("Unexpected response from server.");
+          return null;
+        }
+
+        final data = decoded["data"] as Map<String, dynamic>?;
+
+        if (data == null || data.isEmpty) {
+          print("⚠️ Data field missing in response: $decoded");
+          getSnackBar("Payment initiation failed. Please try again.");
+          return null;
+        }
+
+        // ✅ Extract IDs safely
+        final orderId = data["orderId"];
+        final providerOrderId = data["providerOrderId"];
+        final paymentId = data["paymentId"];
+
+        if (orderId == null || providerOrderId == null) {
+          print("⚠️ Missing orderId or providerOrderId in response.");
+          getSnackBar("Invalid payment response. Please try again.");
+          return null;
+        }
+
+        // ✅ Save local orderId for later use in place-order
+        await prefs.setInt("orderId", orderId);
+        print("💾 Saved local orderId: $orderId");
+
+        print(
+            "✅ Payment initiated successfully with providerOrderId: $providerOrderId");
+
+        getSnackBar("Payment initiated successfully");
+        return {
+          "orderId": orderId,
+          "paymentId": paymentId,
+          "providerOrderId": providerOrderId,
+        };
+      }
+
+      // ❌ Handle failure responses
+      try {
+        final error = jsonDecode(res.body);
+        apiError.value = error["message"] ??
+            error["error"] ??
+            "Payment initiation failed (${res.statusCode})";
+      } catch (_) {
+        apiError.value = "Payment initiation failed (${res.statusCode})";
+      }
+
+      print("❌ Payment initiation failed: ${res.body}");
+      getSnackBar(apiError.value);
+      return null;
+    } catch (e) {
+      apiError.value = "Network error: ${e.toString()}";
+      print("🔥 initiatePayment error: $e");
+      getSnackBar("Network error. Please check your internet connection.");
+      return null;
+    } finally {
+      hideLoading();
+      isPlacingOrder.value = false;
+    }
+  }
+
+  Future<bool> confirmPlaceOrder({
+    required String providerOrderId,
+    required String providerPaymentId,
+    required String providerSignature,
+  }) async {
+    isPlacingOrder.value = true;
+    apiError.value = "";
+    showLoading();
+
+    final prefs = await SharedPreferences.getInstance();
+
+    try {
+      // ✅ Get locally saved backend orderId (from initiatePayment)
+      final localOrderId = prefs.getInt("orderId");
+      if (localOrderId == null) {
+        print("❌ Missing local orderId. Cannot place order.");
+        getSnackBar("Order ID missing. Please try again.");
+        return false;
+      }
+
+      final uri = Uri.parse("${ApiConstants.baseUrl}/place-order");
+
+      final body = {
+        "orderId": localOrderId, // ← your backend order ID
+        "paymentInfo": {
+          "providerOrderId": providerOrderId, // Razorpay Order ID
+          "providerPaymentId": providerPaymentId, // Razorpay Payment ID
+          "providerSignature": providerSignature, // Razorpay Signature
+        },
+      };
+
+      print("📤 Placing order with body: $body");
+
+      final res = await http.post(
+        uri,
+        headers: _headersWithToken(prefs.getString('token'), jsonBody: true),
+        body: json.encode(body),
+      );
+
+      print("📥 Response status: ${res.statusCode}");
+      print("📥 Response body: ${res.body}");
+
       if (_handleAuthGuard(res.statusCode)) return false;
 
       if (res.statusCode == 200 || res.statusCode == 201) {
-        final responseData = json.decode(res.body);
         getSnackBar("Order placed successfully");
-        print("✅ Order placed successfully: $responseData");
         return true;
       } else {
-        // Parse error message from response if available
-        try {
-          final errorData = json.decode(res.body);
-          apiError.value = errorData['message'] ??
-              errorData['error'] ??
-              "Place order failed (${res.statusCode})";
-        } catch (e) {
-          apiError.value = "Place order failed (${res.statusCode})";
-        }
-
-        print("❌ Order placement failed: ${res.body}");
+        final responseData = json.decode(res.body);
+        apiError.value = responseData["message"] ?? "Order placement failed";
+        print("❌ Failed to place order: ${apiError.value}");
         getSnackBar(apiError.value);
         return false;
       }
     } catch (e) {
-      apiError.value = "Network error: ${e.toString()}";
-      print("❌ placeOrder error: $e");
-      getSnackBar("Something went wrong. Please try again.");
+      print("🔥 confirmPlaceOrder error: $e");
+      apiError.value = e.toString();
+      getSnackBar("Something went wrong while placing order.");
       return false;
     } finally {
       hideLoading();
@@ -492,6 +542,91 @@ class OrderController extends BaseController {
       courierName.value = "";
     } finally {
       isEstimateDate.value = false;
+    }
+  }
+
+  // ---------- 8) GET ORDER HISTORY (by userId) ----------
+  /// Calls: GET {{laFetchBaseUrl}}/order-history/{userId}
+  Future<void> getOrderHistoryByUser(int userId) async {
+    isOrderHistory.value = true;
+    apiError.value = "";
+    showLoading();
+
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final uri = Uri.parse("${ApiConstants.baseUrl}/order-history/$userId");
+      print("📦 Fetching order history for userId: $userId");
+
+      final res = await http.get(
+        uri,
+        headers: _headersWithToken(prefs.getString('token')),
+      );
+
+      print("📥 Response status: ${res.statusCode}");
+      print("📥 Response body: ${res.body}");
+
+      if (_handleAuthGuard(res.statusCode)) return;
+
+      if (res.statusCode == 200) {
+        final data = json.decode(res.body);
+        // store list or wrapped data
+        orderHistory = (data is List) ? data : (data["data"] ?? []);
+        print("✅ Order history loaded (${orderHistory.length} orders)");
+      } else {
+        apiError.value = "Failed to fetch order history (${res.statusCode})";
+        print("❌ ${res.body}");
+        getSnackBar(apiError.value);
+      }
+    } catch (e) {
+      apiError.value = e.toString();
+      print("🔥 getOrderHistoryByUser error: $e");
+      getSnackBar("Failed to load order history");
+    } finally {
+      hideLoading();
+      isOrderHistory.value = false;
+    }
+  }
+
+  // ---------- 9) VIEW SINGLE ORDER HISTORY (by orderId) ----------
+  /// Calls: GET {{laFetchBaseUrl}}/view-order-history/{orderId}
+  Future<Map<String, dynamic>?> viewOrderHistoryById(int orderId) async {
+    apiError.value = "";
+    showLoading();
+
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final uri =
+          Uri.parse("${ApiConstants.baseUrl}/view-order-history/$orderId");
+      print("📦 Viewing order details for orderId: $orderId");
+
+      final res = await http.get(
+        uri,
+        headers: _headersWithToken(prefs.getString('token')),
+      );
+
+      print("📥 Response status: ${res.statusCode}");
+      print("📥 Response body: ${res.body}");
+
+      if (_handleAuthGuard(res.statusCode)) return null;
+
+      if (res.statusCode == 200) {
+        final data = json.decode(res.body);
+        final details = (data is Map) ? (data["data"] ?? data) : {};
+        print("✅ Order details loaded successfully");
+        return details;
+      } else {
+        apiError.value = "Failed to fetch order details (${res.statusCode})";
+        print("❌ ${res.body}");
+        getSnackBar(apiError.value);
+        return null;
+      }
+    } catch (e) {
+      apiError.value = e.toString();
+      print("🔥 viewOrderHistoryById error: $e");
+      getSnackBar("Failed to load order details");
+      return null;
+    } finally {
+      hideLoading();
     }
   }
 }

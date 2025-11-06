@@ -15,6 +15,7 @@ import 'package:lafetch/controllers/order_controller.dart';
 import 'package:lafetch/core/constant/constants.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/controllers/product_controller.dart';
+import 'package:lafetch/screens/orders/order_status_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
@@ -22,6 +23,7 @@ class ReviewOrderScreen extends StatefulWidget {
   final int productId;
   final String title;
   final String brandName;
+  final int variantId; // ✅ add this
   final String imageUrl;
   final String sizeLabel;
   final int quantity;
@@ -34,6 +36,7 @@ class ReviewOrderScreen extends StatefulWidget {
     super.key,
     required this.productId,
     required this.title,
+    required this.variantId,
     required this.brandName,
     required this.imageUrl,
     required this.sizeLabel,
@@ -49,7 +52,7 @@ class ReviewOrderScreen extends StatefulWidget {
 }
 
 class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
-  static const String _razorpayKey = "rzp_live_rhkxLWkaUrRAHO";
+  static const String _razorpayKey = ApiConstants.razorPayKey;
 
   final productController = Get.put(ProductController());
 
@@ -74,7 +77,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
 
     _rzp = Razorpay();
     _rzp!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onPaymentSuccess);
-    _rzp!.on(Razorpay.EVENT_PAYMENT_ERROR, _onPaymentError);
+    _rzp!.on(Razorpay.EVENT_PAYMENT_ERROR, _onPaymentError); // ← add this line
     _rzp!.on(Razorpay.EVENT_EXTERNAL_WALLET, _onExternalWallet);
 
     // Load coupons on screen open
@@ -121,14 +124,12 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
 
     // ✅ Step 3: Get and Validate User ID from SharedPreferences
     final prefs = await SharedPreferences.getInstance();
-
-    // Try both possible keys for userId
     int? userId = prefs.getInt('userId') ?? prefs.getInt('user_id');
 
     if (userId == null) {
       _snack("Please login to continue");
       print("❌ User ID is null. Redirecting to login...");
-      Get.offAllNamed('/login'); // Redirect to login screen
+      Get.offAllNamed('/login');
       return;
     }
 
@@ -158,7 +159,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
       return;
     }
 
-    // ✅ Step 6: Build order payload
+    // ✅ Step 6: Build payload for initiate-payment
     final orderPayload = {
       "userId": userId,
       "shippingAddressId": shippingAddressId,
@@ -166,7 +167,8 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
         {
           "productName": widget.title,
           "productId": widget.productId,
-          "variantId": 0, // TODO: pass actual variantId if available
+          "variantId":
+              widget.variantId ?? 0, // TODO: pass actual variantId if available
           "quantity": widget.quantity,
           "unitPrice": widget.price,
           "total": _billTotal,
@@ -179,59 +181,124 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
       "paymentMethod": "prepaid",
     };
 
-    // ✅ Step 7: Save order data BEFORE payment (in case app closes)
+    // ✅ Step 7: Save local backup in case app closes mid-payment
     await prefs.setString('pending_order_payload', jsonEncode(orderPayload));
     await prefs.setInt('pending_order_total', _billTotal.toInt());
     await prefs.setInt('pending_order_userId', userId);
     await prefs.setInt('pending_order_shippingAddressId', shippingAddressId);
 
-    print("✅ All validations passed. Opening Razorpay...");
-    print("📦 Order Payload saved:");
-    print("   userId: $userId");
-    print("   shippingAddressId: $shippingAddressId");
-    print("   total: $_billTotal");
+    print("✅ All validations passed. Initiating payment...");
+    print("📦 Payload: ${jsonEncode(orderPayload)}");
 
-    // ✅ Step 8: Open Razorpay
-    await _openRazorpayCheckout(orderId: widget.razorpayOrderId);
+    // ✅ Step 8: Call initiate-payment API
+    final orderController = Get.put(OrderController());
+    final paymentInitData = await orderController.initiatePayment(orderPayload);
+
+    if (paymentInitData == null) {
+      _snack("Failed to initiate payment. Please try again.");
+      return;
+    }
+
+    final razorpayOrderId = paymentInitData["providerOrderId"];
+    print(
+        "✅ Payment initiated successfully. Razorpay Order ID: $razorpayOrderId");
+
+    // ✅ Step 9: Open Razorpay Checkout with providerOrderId
+    await _openRazorpayCheckout(orderId: razorpayOrderId);
   }
 
   Future<void> _openRazorpayCheckout({String? orderId}) async {
+    if (orderId == null || orderId.isEmpty) {
+      _snack("Payment could not be started. Missing Razorpay Order ID.");
+      print("❌ Razorpay order_id is null/empty");
+      return;
+    }
+
     final num cartTotalInRupees = _billTotal;
     final int amountInPaise = (cartTotalInRupees * 100).round();
 
     final prefs = await SharedPreferences.getInstance();
     final String userName = (prefs.getString('user_name') ?? '').trim();
     final String userEmail = (prefs.getString('email') ?? '').trim();
-    final String rawPhone =
-        (prefs.getString('phonenumber') ?? '').trim(); // ✅ consistent key
-
+    final String rawPhone = (prefs.getString('phonenumber') ?? '').trim();
     final String phone = _sanitizeIndianPhone(rawPhone);
 
-    final options = <String, dynamic>{
+    final options = {
       'key': _razorpayKey,
       'amount': amountInPaise,
       'currency': 'INR',
-      if (orderId != null && orderId.isNotEmpty) 'order_id': orderId,
+      'order_id': orderId,
       'name': 'Lafetch',
       'description': '${widget.title} • Qty ${widget.quantity}',
-      'prefill': <String, dynamic>{
-        if (userName.isNotEmpty) 'name': userName,
-        if (userEmail.isNotEmpty) 'email': userEmail,
+      'prefill': {
+        'name': userName.isEmpty ? 'Customer' : userName,
+        'email': userEmail.isEmpty ? 'customer@example.com' : userEmail,
         'contact': phone.length == 10 ? '+91$phone' : '+919999999999',
       },
       'theme': {'color': '#070707'},
-      'notes': {
-        'product_id': widget.productId.toString(),
-        if (_address != null) 'address': _prettyAddress(_address!),
-      },
     };
 
     try {
-      _rzp?.open(options);
+      print("💳 Opening Razorpay Checkout...");
+      print("Options: $options");
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        try {
+          _rzp?.open(options);
+          print("🚀 Razorpay Checkout opened successfully (post frame)");
+        } catch (e) {
+          print('❌ Razorpay open error inside callback: $e');
+          _snack('Unable to start payment: ${e.toString()}');
+        }
+      });
     } catch (e) {
-      print('Razorpay error: $e');
-      _snack('Unable to start payment: $e');
+      print('🔥 Razorpay open outer error: $e');
+      _snack('Unable to start payment: ${e.toString()}');
     }
+  }
+
+  void _onPaymentSuccess(PaymentSuccessResponse r) async {
+    print("✅ Payment Successful!");
+    print("Payment ID: ${r.paymentId}");
+    print("Order ID: ${r.orderId}");
+    print("Signature: ${r.signature}");
+
+    // ✅ Instantly show Success Screen
+    Get.offAll(() => const OrderStatusScreen(status: 'success'),
+        transition: Transition.fadeIn,
+        duration: const Duration(milliseconds: 400));
+
+    // ✅ Run confirmPlaceOrder silently in background
+    try {
+      final orderController = Get.put(OrderController());
+
+      await orderController.confirmPlaceOrder(
+        providerOrderId: r.orderId ?? '',
+        providerPaymentId: r.paymentId ?? '',
+        providerSignature: r.signature ?? '',
+      );
+
+      print("✅ confirmPlaceOrder called successfully in background");
+    } catch (e) {
+      print("⚠️ Background confirmPlaceOrder failed: $e");
+    }
+
+    // ✅ Cleanup shared prefs to clear pending order data
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('pending_order_payload');
+    await prefs.remove('pending_order_total');
+    await prefs.remove('pending_order_userId');
+    await prefs.remove('pending_order_shippingAddressId');
+    await prefs.remove('applied_coupon_code');
+    await prefs.remove('applied_coupon_discount');
+  }
+
+  void _onPaymentError(PaymentFailureResponse r) {
+    print("❌ Razorpay Payment Error: ${r.code} → ${r.message}");
+    // ✅ Show Payment Failed Screen instead of Snackbar
+    Get.offAll(() => const OrderStatusScreen(status: 'failed'),
+        transition: Transition.fadeIn,
+        duration: const Duration(milliseconds: 400));
   }
 
   // =========================================================
@@ -398,127 +465,6 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
 
     _snack("Coupon removed");
     setState(() {});
-  }
-
-  void _onPaymentSuccess(PaymentSuccessResponse r) async {
-    print("✅ Payment Successful!");
-    print("Payment ID: ${r.paymentId}");
-    print("Order ID: ${r.orderId}");
-    print("Signature: ${r.signature}");
-
-    _snack('Payment successful! Placing your order...');
-
-    try {
-      final prefs = await SharedPreferences.getInstance();
-
-      // ✅ Method 1: Try to retrieve saved order payload
-      final savedPayload = prefs.getString('pending_order_payload');
-
-      Map<String, dynamic> orderPayload;
-
-      if (savedPayload != null && savedPayload.isNotEmpty) {
-        // ✅ Use saved payload
-        orderPayload = jsonDecode(savedPayload);
-        print("📦 Using saved order payload");
-      } else {
-        // ✅ Method 2: Rebuild payload from saved individual values
-        print("⚠️ No saved payload found. Rebuilding from stored values...");
-
-        final userId = prefs.getInt('pending_order_userId') ??
-            prefs.getInt('userId') ??
-            prefs.getInt('user_id');
-
-        final shippingAddressId =
-            prefs.getInt('pending_order_shippingAddressId') ?? _address?['id'];
-
-        if (userId == null || shippingAddressId == null) {
-          print("❌ Critical data missing!");
-          print("   userId: $userId");
-          print("   shippingAddressId: $shippingAddressId");
-          _snack(
-              "Order data not found. Please contact support with Payment ID: ${r.paymentId}");
-          return;
-        }
-
-        // Rebuild the payload
-        orderPayload = {
-          "userId": userId,
-          "shippingAddressId": shippingAddressId,
-          "items": [
-            {
-              "productName": widget.title,
-              "productId": widget.productId,
-              "variantId": 0,
-              "quantity": widget.quantity,
-              "unitPrice": widget.price,
-              "total": _billTotal,
-              "sku": "",
-              "hsn": ""
-            }
-          ],
-          "totalMRP": widget.mrp,
-          "total": _billTotal,
-          "paymentMethod": "prepaid",
-        };
-      }
-
-      // ✅ Final validation before API call
-      if (orderPayload['userId'] == null) {
-        _snack("User information missing. Please login again.");
-        print("❌ userId is null in payload");
-        return;
-      }
-
-      if (orderPayload['shippingAddressId'] == null) {
-        _snack("Address information missing. Please try again.");
-        print("❌ shippingAddressId is null in payload");
-        return;
-      }
-
-      // ✅ Add payment info
-      orderPayload['paymentInfo'] = {
-        "providerPaymentId": r.paymentId,
-        "providerOrderId": r.orderId,
-        "providerSignature": r.signature,
-      };
-
-      print("🧾 Final Payload to send:");
-      print("   userId: ${orderPayload['userId']}");
-      print("   shippingAddressId: ${orderPayload['shippingAddressId']}");
-      print("   paymentId: ${r.paymentId}");
-      print(jsonEncode(orderPayload));
-
-      // ✅ Hit your API
-      print("🌐 Hitting placeOrder API...");
-      final orderController = Get.put(OrderController());
-      final success = await orderController.placeOrder(orderPayload);
-
-      if (success) {
-        print("✅ Order placed successfully!");
-
-        // ✅ Clear saved data after successful order
-        await prefs.remove('pending_order_payload');
-        await prefs.remove('pending_order_total');
-        await prefs.remove('pending_order_userId');
-        await prefs.remove('pending_order_shippingAddressId');
-        await prefs.remove('applied_coupon_code');
-        await prefs.remove('applied_coupon_discount');
-
-        _snack("Order placed successfully!");
-        Get.offAllNamed('/order-success');
-      } else {
-        print("❌ Failed to place order!");
-        _snack(
-            "Failed to place order. Please contact support with Payment ID: ${r.paymentId}");
-      }
-    } catch (e) {
-      print("🔥 Exception in onPaymentSuccess: $e");
-      _snack("Error placing order: $e");
-    }
-  }
-
-  void _onPaymentError(PaymentFailureResponse r) {
-    _snack('Payment failed: ${r.message ?? r.code}');
   }
 
   void _onExternalWallet(ExternalWalletResponse r) {

@@ -6,15 +6,90 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
 import 'package:lafetch/core/constant/constants.dart';
+import 'package:lafetch/controllers/order_controller.dart';
 import 'package:lafetch/screens/orders/cancel_order.dart';
 
-class ConfirmOrderDetailsScreen extends StatelessWidget {
+class ConfirmOrderDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> order;
 
   const ConfirmOrderDetailsScreen({super.key, required this.order});
 
   @override
+  State<ConfirmOrderDetailsScreen> createState() =>
+      _ConfirmOrderDetailsScreenState();
+}
+
+class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
+  final OrderController orderController = Get.put(OrderController());
+  Map<String, dynamic>? detailedOrder;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchOrderDetails();
+  }
+
+  Future<void> _fetchOrderDetails() async {
+    final orderId = widget.order['id'];
+    if (orderId == null) {
+      Get.snackbar("Error", "Invalid order ID");
+      return;
+    }
+
+    final data = await orderController.viewOrderHistoryById(orderId);
+    if (mounted) {
+      setState(() {
+        detailedOrder = data ?? widget.order;
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        backgroundColor: whiteColor,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final data = detailedOrder?['data'] ?? detailedOrder ?? widget.order;
+
+    // ✅ Extract nested objects safely
+    final order = data['order'] ?? {};
+    final product = data['product'] ?? {};
+
+    // ✅ Handle product image and info
+    final imageList = (product['imageUrls'] ?? []) as List;
+    final imageUrl = imageList.isNotEmpty
+        ? imageList.first
+        : 'https://via.placeholder.com/200';
+
+    final productName =
+        (product['title'] ?? product['name'] ?? 'Unknown Product').toString();
+    final size = (product['product_matrix_size_name'] ?? '-').toString();
+    final quantity = (data['quantity'] ?? 1).toString();
+    final status = (order['status'] ?? 'Pending').toString().toLowerCase();
+
+    // ✅ Price values
+    final total = double.tryParse(order['total']?.toString() ?? '0') ?? 0.0;
+    final totalMRP =
+        double.tryParse(order['totalMRP']?.toString() ?? '$total') ?? total;
+    final shipping =
+        double.tryParse(order['shippingCost']?.toString() ?? '0') ?? 0.0;
+    final coupon =
+        double.tryParse(order['couponDiscount']?.toString() ?? '0') ?? 0.0;
+    final tax = double.tryParse(order['tax']?.toString() ?? '0') ?? 0.0;
+
+    // ✅ Status color
+    final statusColor = status.contains('cancel')
+        ? const Color(0xFFEF4444)
+        : status.contains('pending')
+            ? const Color(0xFFF59E0B)
+            : const Color(0xFF10B981);
+
     return Scaffold(
       backgroundColor: whiteColor,
       appBar: AppBar(
@@ -22,11 +97,7 @@ class ConfirmOrderDetailsScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: SvgPicture.asset(
-            arrowBack, // ✅ Using constant from const.dart
-            height: 18,
-            width: 18,
-          ),
+          icon: SvgPicture.asset(arrowBack, height: 18, width: 18),
           onPressed: () => Get.back(),
         ),
         title: const AppText(
@@ -45,30 +116,33 @@ class ConfirmOrderDetailsScreen extends StatelessWidget {
             // ✅ Product Image
             ClipRRect(
               borderRadius: BorderRadius.circular(6.sp),
-              child: _buildProductImage(order),
+              child: CachedNetworkImage(
+                cacheManager: CacheManager(
+                  Config("orderDetailsCache",
+                      stalePeriod: const Duration(days: 10),
+                      maxNrOfCacheObjects: 50),
+                ),
+                imageUrl: imageUrl,
+                height: 200.sp,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorWidget: (_, __, ___) =>
+                    Image.asset(dummyWishlistImage, fit: BoxFit.cover),
+              ),
             ),
             SizedBox(height: 12.sp),
 
-            // Product Info
+            // ✅ Product Info
             AppText(
-              text: order['productName'] ?? 'Product Name',
+              text: productName,
               fontFamily: "Franklin Gothic",
               fontWeight: FontWeight.w700,
               color: nameText,
               fontSize: 16,
             ),
-            SizedBox(height: 4.sp),
-            AppText(
-              text: order['productDescription'] ?? 'Product description',
-              fontFamily: "Franklin Gothic Regular",
-              fontWeight: FontWeight.w400,
-              color: subtitleColor,
-              fontSize: 13,
-            ),
             SizedBox(height: 6.sp),
             AppText(
-              text:
-                  "Size: ${order['size'] ?? 'M'}   Qty: ${order['quantity'] ?? '1'}",
+              text: "Size: $size   Qty: $quantity",
               fontFamily: "Franklin Gothic Regular",
               fontWeight: FontWeight.w400,
               color: subtitleColor,
@@ -76,72 +150,60 @@ class ConfirmOrderDetailsScreen extends StatelessWidget {
             ),
             SizedBox(height: 12.sp),
 
-            // Delivery Status
-            AppText(
-              text: order['statusSubtext'] ??
-                  "Arriving by Tue, 28 Oct 2025", // dynamic fallback
-              fontFamily: "Franklin Gothic",
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF10B981),
-              fontSize: 14,
-            ),
-            SizedBox(height: 2.sp),
-            AppText(
-              text: "Your item has been packed",
-              fontFamily: "Franklin Gothic Regular",
-              fontWeight: FontWeight.w400,
-              color: subtitleColor,
-              fontSize: 12,
-            ),
-            SizedBox(height: 20.sp),
-
-            // ✅ Order Progress Timeline
+            // ✅ Status
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildStep("Confirmed", "14 Oct", true),
-                _buildConnector(true),
-                _buildStep("Shipped", "16 Oct", false),
-                _buildConnector(false),
-                _buildStep("Delivery", "28 Oct by 11 PM", false, isLast: true),
+                AppText(
+                  text: "Status: ",
+                  fontFamily: "Franklin Gothic",
+                  fontWeight: FontWeight.w600,
+                  color: blackColor,
+                  fontSize: 13,
+                ),
+                AppText(
+                  text: status.capitalizeFirst ?? status,
+                  fontFamily: "Franklin Gothic",
+                  fontWeight: FontWeight.w700,
+                  color: statusColor,
+                  fontSize: 13,
+                ),
               ],
             ),
             SizedBox(height: 20.sp),
 
-            // ✅ Cancel Item Button
-            GestureDetector(
-              onTap: () {
-                Get.to(() => CancelOrderScreen(order: order));
-              },
-              child: Container(
-                width: double.infinity,
-                height: 45.sp,
-                decoration: BoxDecoration(
-                  border: Border.all(color: blackColor, width: 1),
-                  borderRadius: BorderRadius.circular(4.sp),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.close, color: blackColor, size: 18),
-                    SizedBox(width: 6.sp),
-                    const AppText(
-                      text: "CANCEL ITEM",
-                      fontFamily: "Franklin Gothic",
-                      fontWeight: FontWeight.w600,
-                      color: blackColor,
-                      fontSize: 13,
-                    ),
-                  ],
+            // ✅ Cancel Button
+            if (status == "pending" || status == "confirmed") ...[
+              GestureDetector(
+                onTap: () => Get.to(() => CancelOrderScreen(order: order)),
+                child: Container(
+                  width: double.infinity,
+                  height: 45.sp,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: blackColor, width: 1),
+                    borderRadius: BorderRadius.circular(4.sp),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.close, color: blackColor, size: 18),
+                      SizedBox(width: 6.sp),
+                      const AppText(
+                        text: "CANCEL ITEM",
+                        fontFamily: "Franklin Gothic",
+                        fontWeight: FontWeight.w600,
+                        color: blackColor,
+                        fontSize: 13,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
+              SizedBox(height: 28.sp),
+            ],
 
-            SizedBox(height: 28.sp),
-
-            // ✅ Delivery Details
+            // ✅ Order Summary
             const AppText(
-              text: "DELIVERY DETAILS",
+              text: "ORDER SUMMARY",
               fontFamily: "Franklin Gothic",
               fontWeight: FontWeight.w700,
               color: blackColor,
@@ -151,53 +213,20 @@ class ConfirmOrderDetailsScreen extends StatelessWidget {
             Divider(color: dividerColor),
             SizedBox(height: 8.sp),
 
-            const AppText(
-              text: "Apartment",
-              fontFamily: "Franklin Gothic",
-              fontWeight: FontWeight.w700,
-              color: blackColor,
-              fontSize: 13,
-            ),
-            SizedBox(height: 4.sp),
-            const AppText(
-              text:
-                  "B3, 402, street name, close to landmarks\nABC Street, Mumbai, Maharashtra...",
-              fontFamily: "Franklin Gothic Regular",
-              fontWeight: FontWeight.w400,
-              color: subtitleColor,
-              fontSize: 12,
-            ),
-
-            SizedBox(height: 20.sp),
-
-            // ✅ Order Price Section
-            const AppText(
-              text: "ORDER PRICE",
-              fontFamily: "Franklin Gothic",
-              fontWeight: FontWeight.w700,
-              color: blackColor,
-              fontSize: 14,
-            ),
-            SizedBox(height: 8.sp),
+            _priceRow("Total MRP", "₹${totalMRP.toStringAsFixed(2)}"),
+            _priceRow("Shipping Cost", "₹${shipping.toStringAsFixed(2)}"),
+            _priceRow("Tax", "₹${tax.toStringAsFixed(2)}"),
+            if (coupon > 0)
+              _priceRow("Coupon Discount", "- ₹${coupon.toStringAsFixed(2)}",
+                  color: Colors.green),
             Divider(color: dividerColor),
             SizedBox(height: 8.sp),
 
-            _priceRow("Total MRP", "₹3336.32"),
-            _priceRow("Delivery Charges", "₹112.32"),
-            _priceRow("Discount on MRP", "- ₹36", color: Colors.green),
-            _priceRow("Coupon Discount", "- ₹56",
-                color: const Color(0xFF8B5CF6)),
-            _priceRow("Convenience Fee", "Free ₹250",
-                color: Colors.green, isFree: true),
-            _priceRow("Tax & Charges", "₹36"),
-
-            Divider(color: dividerColor),
-            SizedBox(height: 8.sp),
-
+            // ✅ Total
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                AppText(
+              children: [
+                const AppText(
                   text: "BILL TOTAL",
                   fontFamily: "Franklin Gothic",
                   fontWeight: FontWeight.w700,
@@ -205,7 +234,7 @@ class ConfirmOrderDetailsScreen extends StatelessWidget {
                   fontSize: 14,
                 ),
                 AppText(
-                  text: "₹3336.32",
+                  text: "₹${total.toStringAsFixed(2)}",
                   fontFamily: "Franklin Gothic",
                   fontWeight: FontWeight.w700,
                   color: blackColor,
@@ -216,78 +245,6 @@ class ConfirmOrderDetailsScreen extends StatelessWidget {
             SizedBox(height: 30.sp),
           ],
         ),
-      ),
-    );
-  }
-
-  /// ✅ Safely handles image loading (network or asset)
-  Widget _buildProductImage(Map<String, dynamic> order) {
-    final imageUrl = order['imageUrl'];
-    final isNetwork =
-        imageUrl != null && imageUrl.toString().startsWith('http');
-
-    if (isNetwork) {
-      return CachedNetworkImage(
-        cacheManager: CacheManager(
-          Config("orderDetailsCache",
-              stalePeriod: const Duration(days: 10), maxNrOfCacheObjects: 50),
-        ),
-        imageUrl: imageUrl,
-        height: 200.sp,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        errorWidget: (_, __, ___) =>
-            Image.asset(dummyWishlistImage, fit: BoxFit.cover),
-      );
-    } else {
-      return Image.asset(
-        dummyWishlistImage,
-        height: 200.sp,
-        width: double.infinity,
-        fit: BoxFit.cover,
-      );
-    }
-  }
-
-  Widget _buildStep(String title, String date, bool isDone,
-      {bool isLast = false}) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 12.sp,
-          backgroundColor:
-              isDone ? const Color(0xFF10B981) : const Color(0xFFD1D5DB),
-          child: Icon(
-            isDone ? Icons.check : Icons.local_shipping,
-            size: 14.sp,
-            color: Colors.white,
-          ),
-        ),
-        SizedBox(height: 6.sp),
-        AppText(
-          text: title,
-          fontFamily: "Franklin Gothic",
-          fontWeight: FontWeight.w600,
-          color: blackColor,
-          fontSize: 12,
-        ),
-        SizedBox(height: 2.sp),
-        AppText(
-          text: date,
-          fontFamily: "Franklin Gothic Regular",
-          fontWeight: FontWeight.w400,
-          color: subtitleColor,
-          fontSize: 11,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildConnector(bool active) {
-    return Expanded(
-      child: Container(
-        height: 2.sp,
-        color: active ? const Color(0xFF10B981) : const Color(0xFFD1D5DB),
       ),
     );
   }

@@ -7,7 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
-import 'package:lafetch/screens/orderdetailsscreen.dart';
+
 import 'package:lafetch/screens/wishlistscreen.dart';
 
 import '../common/widget/appbar/shopwishlist_appbar.dart';

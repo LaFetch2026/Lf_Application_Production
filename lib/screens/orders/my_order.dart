@@ -4,13 +4,13 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/screens/accountscreen.dart';
+import 'package:lafetch/screens/bottomnavscreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
 import 'package:lafetch/core/constant/constants.dart';
-import 'package:lafetch/screens/orders/cancel_order.dart';
+import 'package:lafetch/controllers/order_controller.dart';
 import 'package:lafetch/screens/orders/confirm_orderdetails.dart';
-import 'package:lafetch/screens/orders/exchange_request.dart';
-import 'package:lafetch/screens/orders/return_request.dart';
-import 'package:lafetch/screens/orders/rate_productscreen.dart';
 
 class MyOrdersScreen extends StatefulWidget {
   const MyOrdersScreen({super.key});
@@ -19,54 +19,36 @@ class MyOrdersScreen extends StatefulWidget {
   State<MyOrdersScreen> createState() => _MyOrdersScreenState();
 }
 
-class _MyOrdersScreenState extends State<MyOrdersScreen> {
-  // Mock order list for testing
-  final List<Map<String, dynamic>> orders = [
-    {
-      'status': 'Confirmed',
-      'statusSubtext': 'Arriving by Tue, 28 Nov 2025',
-      'statusIcon': Icons.check_circle,
-      'statusColor': Color(0xFF10B981),
-      'productName': 'THE CLOTHING FACTORY',
-      'productDescription': 'Garfield: Grumpy Printed...',
-      'size': 'M',
-      'quantity': '1',
-      'price': 2630.00,
-      'imageUrl': 'https://via.placeholder.com/80',
-      'primaryAction': 'VIEW DETAILS',
-      'secondaryAction': 'CANCEL ITEM',
-      'showReview': false,
-    },
-    {
-      'status': 'Delivered',
-      'statusSubtext': 'On Wed, 23 May 2025',
-      'statusIcon': Icons.check_circle,
-      'statusColor': Color(0xFF10B981),
-      'productName': 'LA DOUBLEJ',
-      'productDescription': 'Embroidered double-brea...',
-      'size': 'M',
-      'quantity': '1',
-      'price': 2630.00,
-      'imageUrl': 'https://via.placeholder.com/80',
-      'primaryAction': 'RETURN',
-      'secondaryAction': 'EXCHANGE',
-      'showReview': true,
-    },
-    {
-      'status': 'Cancelled',
-      'statusSubtext': 'Mon, 21 Oct 2025',
-      'statusIcon': Icons.cancel,
-      'statusColor': Color(0xFFEF4444),
-      'productName': 'LA DOUBLEJ',
-      'productDescription': 'Embroidered double-brea...',
-      'size': 'M',
-      'quantity': '1',
-      'price': 2630.00,
-      'imageUrl': 'https://via.placeholder.com/80',
-      'primaryAction': 'VIEW DETAILS',
-      'showReview': false,
-    },
-  ];
+class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
+  final OrderController orderController = Get.put(OrderController());
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOrderHistory();
+  }
+
+  // ✅ Refresh every time screen becomes visible again
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadOrderHistory();
+    });
+  }
+
+  Future<void> _loadOrderHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final int? userId = prefs.getInt('userId') ?? prefs.getInt('user_id');
+
+    if (userId == null) {
+      Get.snackbar("Error", "Please login again");
+      return;
+    }
+
+    print("📦 Fetching order history for userId: $userId");
+    await orderController.getOrderHistoryByUser(userId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,12 +58,8 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
         backgroundColor: whiteColor,
         elevation: 0,
         leading: IconButton(
-          icon: SvgPicture.asset(
-            arrowBack, // ✅ from constants.dart
-            height: 18,
-            width: 18,
-          ),
-          onPressed: () => Get.back(),
+          icon: SvgPicture.asset(arrowBack, height: 18, width: 18),
+          onPressed: () => Get.offAll(() => const BottomNavScreen(index: 3)),
         ),
         centerTitle: true,
         title: const AppText(
@@ -92,26 +70,65 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
           fontSize: 16,
         ),
       ),
-      body: ListView.separated(
-        padding: EdgeInsets.symmetric(vertical: 8.sp),
-        itemCount: orders.length,
-        separatorBuilder: (_, __) => Divider(
-          color: Color(0xFFE5E7EB),
-          thickness: 1,
-          height: 1,
-        ),
-        itemBuilder: (context, index) => _buildOrderItem(orders[index]),
-      ),
+      body: Obx(() {
+        if (orderController.isOrderHistory.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final orders = orderController.orderHistory;
+        if (orders.isEmpty) {
+          return const Center(
+            child: AppText(
+              text: "No orders found",
+              fontFamily: "Franklin Gothic Regular",
+              fontWeight: FontWeight.w400,
+              color: subtitleColor,
+              fontSize: 14,
+            ),
+          );
+        }
+
+        return RefreshIndicator(
+          onRefresh: _loadOrderHistory,
+          child: ListView.separated(
+            padding: EdgeInsets.symmetric(vertical: 8.sp),
+            itemCount: orders.length,
+            separatorBuilder: (_, __) => Divider(
+              color: const Color(0xFFE5E7EB),
+              thickness: 1,
+              height: 1,
+            ),
+            itemBuilder: (context, index) => _buildOrderItem(orders[index]),
+          ),
+        );
+      }),
     );
   }
 
   Widget _buildOrderItem(Map<String, dynamic> order) {
+    // ✅ Extract first order item
+    final List<dynamic> items = order['order_items'] ?? [];
+    final item = items.isNotEmpty ? items.first : {};
+
+    // ✅ Get product details
+    final product = item['product'] ?? {};
+    final imageList = (product['imageUrls'] ?? []) as List;
+    final imageUrl = imageList.isNotEmpty
+        ? imageList.first
+        : 'https://via.placeholder.com/80';
+
+    final productName = product['title'] ?? 'Unknown Product';
+    final size = product['product_matrix_size_name'] ?? '-';
+    final quantity = item['quantity']?.toString() ?? '1';
+    final price = double.tryParse(item['total']?.toString() ?? '0') ?? 0.0;
+    final status = order['status'] ?? 'Pending';
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 16.sp),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildStatusHeader(order),
+          _buildStatusHeader(status),
           SizedBox(height: 12.sp),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,11 +144,13 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                   borderRadius: BorderRadius.circular(4.sp),
                   child: CachedNetworkImage(
                     cacheManager: CacheManager(
-                      Config("orderCache",
-                          stalePeriod: const Duration(days: 15),
-                          maxNrOfCacheObjects: 100),
+                      Config(
+                        "orderCache",
+                        stalePeriod: const Duration(days: 15),
+                        maxNrOfCacheObjects: 100,
+                      ),
                     ),
-                    imageUrl: order['imageUrl'],
+                    imageUrl: imageUrl,
                     fit: BoxFit.cover,
                     errorWidget: (_, __, ___) =>
                         Image.asset(dummyWishlistImage, fit: BoxFit.cover),
@@ -144,7 +163,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AppText(
-                      text: order['productName'],
+                      text: productName,
                       fontFamily: "Franklin Gothic",
                       fontWeight: FontWeight.w600,
                       color: nameText,
@@ -153,16 +172,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                     ),
                     SizedBox(height: 4.sp),
                     AppText(
-                      text: order['productDescription'],
-                      fontFamily: "Franklin Gothic Regular",
-                      fontWeight: FontWeight.w400,
-                      color: subtitleColor,
-                      fontSize: 12,
-                      maxLines: 2,
-                    ),
-                    SizedBox(height: 8.sp),
-                    AppText(
-                      text: 'Size ${order['size']}  Qty: ${order['quantity']}',
+                      text: 'Size: $size  Qty: $quantity',
                       fontFamily: "Franklin Gothic Regular",
                       fontWeight: FontWeight.w400,
                       color: subtitleColor,
@@ -170,7 +180,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                     ),
                     SizedBox(height: 8.sp),
                     AppText(
-                      text: '₹${order['price'].toStringAsFixed(2)}',
+                      text: '₹${price.toStringAsFixed(2)}',
                       fontFamily: "Franklin Gothic",
                       fontWeight: FontWeight.w700,
                       color: nameText,
@@ -181,85 +191,49 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
               ),
             ],
           ),
-          if (order['showReview'] == true) ...[
-            SizedBox(height: 12.sp),
-            _buildReviewLink(order),
-          ],
           SizedBox(height: 16.sp),
-          _buildActionButtons(order),
+          _buildButton(
+            text: "VIEW DETAILS",
+            isPrimary: false,
+            onTap: () => _handleViewDetails(order),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildStatusHeader(Map<String, dynamic> order) {
+  Widget _buildStatusHeader(String status) {
+    final lower = status.toLowerCase();
+    IconData iconData;
+    Color iconColor;
+
+    if (lower.contains("cancel")) {
+      iconData = Icons.cancel_outlined;
+      iconColor = const Color(0xFFEF4444); // 🔴 Cancelled
+    } else if (lower.contains("pending")) {
+      iconData = Icons.timelapse_outlined;
+      iconColor = const Color(0xFFF59E0B); // 🟠 Pending
+    } else if (lower.contains("confirmed") ||
+        lower.contains("delivered") ||
+        lower.contains("shipped")) {
+      iconData = Icons.check_circle_rounded;
+      iconColor = const Color(0xFF10B981); // ✅ Success
+    } else {
+      iconData = Icons.info_outline_rounded;
+      iconColor = const Color(0xFF9CA3AF); // ⚪ Neutral
+    }
+
     return Row(
       children: [
-        Icon(order['statusIcon'], color: order['statusColor'], size: 16.sp),
+        Icon(iconData, color: iconColor, size: 18.sp),
         SizedBox(width: 8.sp),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AppText(
-              text: order['status'],
-              fontFamily: "Franklin Gothic",
-              fontWeight: FontWeight.w600,
-              color: nameText,
-              fontSize: 13,
-            ),
-            SizedBox(height: 2.sp),
-            AppText(
-              text: order['statusSubtext'],
-              fontFamily: "Franklin Gothic Regular",
-              fontWeight: FontWeight.w400,
-              color: subtitleColor,
-              fontSize: 11,
-            ),
-          ],
+        AppText(
+          text: status.capitalizeFirst ?? status,
+          fontFamily: "Franklin Gothic",
+          fontWeight: FontWeight.w600,
+          color: nameText,
+          fontSize: 13,
         ),
-      ],
-    );
-  }
-
-  Widget _buildReviewLink(Map<String, dynamic> order) {
-    return Row(
-      children: [
-        Icon(Icons.star_border, color: const Color(0xFF8B5CF6), size: 14.sp),
-        SizedBox(width: 4.sp),
-        GestureDetector(
-          onTap: () => Get.to(() => RateProductScreen(product: order)),
-          child: const AppText(
-            text: 'Rate & Review Product',
-            fontFamily: "Franklin Gothic",
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF8B5CF6),
-            fontSize: 12,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildActionButtons(Map<String, dynamic> order) {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildButton(
-            text: order['primaryAction'],
-            isPrimary: order['secondaryAction'] == null,
-            onTap: () => _handlePrimaryAction(order),
-          ),
-        ),
-        if (order['secondaryAction'] != null) ...[
-          SizedBox(width: 12.sp),
-          Expanded(
-            child: _buildButton(
-              text: order['secondaryAction'],
-              isPrimary: true,
-              onTap: () => _handleSecondaryAction(order),
-            ),
-          ),
-        ],
       ],
     );
   }
@@ -294,32 +268,12 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
     );
   }
 
-  // ✅ Handle Navigation Logic
-  void _handlePrimaryAction(Map<String, dynamic> order) {
-    final action = order['primaryAction'];
-    switch (action) {
-      case 'VIEW DETAILS':
-        Get.to(() => ConfirmOrderDetailsScreen(order: order));
-        break;
-      case 'RETURN':
-        Get.to(() => ReturnRequestScreen(order: order));
-        break;
-      default:
-        Get.to(() => ConfirmOrderDetailsScreen(order: order));
+  void _handleViewDetails(Map<String, dynamic> order) {
+    final orderId = order['id'];
+    if (orderId == null) {
+      Get.snackbar("Error", "Invalid order data");
+      return;
     }
-  }
-
-  void _handleSecondaryAction(Map<String, dynamic> order) {
-    final action = order['secondaryAction'];
-    switch (action) {
-      case 'CANCEL ITEM':
-        Get.to(() => CancelOrderScreen(order: order));
-        break;
-      case 'EXCHANGE':
-        Get.to(() => ExchangeRequestScreen(order: order));
-        break;
-      default:
-        Get.snackbar("Action", "Feature coming soon");
-    }
+    Get.to(() => ConfirmOrderDetailsScreen(order: order));
   }
 }

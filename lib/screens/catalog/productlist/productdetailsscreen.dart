@@ -324,30 +324,40 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   // ===================== RAZORPAY FLOW =====================
 
   Future<void> _onBuyNowPressed({required bool isCartFlow}) async {
-    // validate size/color etc.
+    // ✅ Step 1: Validate size/color etc.
     if (!productController.checkDetailsValidation()) return;
 
     _logBuyNowAction(action: "BUY NOW", isCartFlow: isCartFlow);
 
-    // Gather what we need to show on the review page
-    final _sel = _selSize();
+    // ✅ Step 2: Extract selected size/variant info
+    final _sel = _selSize(); // your selected variant map
     final sizeLabel =
-        (_sel?['product_matrix_size_name'] ?? _sel?['title'] ?? ''); // optional
+        (_sel?['product_matrix_size_name'] ?? _sel?['title'] ?? '');
+
+    // ✅ Step 3: Get variantId safely
+    final int variantId = (_sel?['id'] ??
+        _sel?['variantId'] ??
+        productController.selectedProductSize?['id'] ??
+        0) as int;
+
+    if (variantId <= 0) {
+      print("❌ Missing variantId in selected product: $_sel");
+      return;
+    }
+
+    // ✅ Step 4: Choose image
     final firstImg = productController.imageList.isNotEmpty
         ? (productController.imageList.first['name']?.toString() ?? '')
         : '';
 
-// inside ProductDetailsScreen when BUY NOW is tapped and validation passed:
+    // ✅ Step 5: Navigate to ReviewOrderScreen with variantId
     Get.to(() => ReviewOrderScreen(
           productId: widget.productId,
+          variantId: variantId, // ✅ CRITICAL: pass variantId
           title: _titleText(),
           brandName: _brandText(),
-          imageUrl: _imagesOnly().isNotEmpty ? _imagesOnly().first : '',
-          sizeLabel: (productController.selectedProductSize is Map)
-              ? (productController
-                      .selectedProductSize['product_matrix_size_name'] ??
-                  '')
-              : '',
+          imageUrl: _imagesOnly().isNotEmpty ? _imagesOnly().first : firstImg,
+          sizeLabel: sizeLabel,
           quantity: 1,
           price: _displayPrice().toDouble(),
           mrp: _displayMrp().toDouble(),

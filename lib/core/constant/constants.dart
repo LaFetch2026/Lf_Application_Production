@@ -267,6 +267,9 @@ const shipSvgImage = 'assets/images/ship_svg.svg';
 const deliverSvgImage = 'assets/images/deliver_svg.svg';
 const sandLoader = 'assets/images/sand_loader.json';
 const cancelorder = 'assets/cancelpng.png';
+const payfield = 'assets/images/paymentfield.png';
+const paysuccess = 'assets/images/paymentsucess.svg';
+const somethingwentwrong = 'assets/images/somewrong.png';
 
 class ApiConstants {
   ApiConstants._();
@@ -276,7 +279,7 @@ class ApiConstants {
 
   // static const String baseUrl = "http://192.168.1.69:8080/api"; //local nordjs
 
-  static const String razorPayKey = "rzp_live_rhkxLWkaUrRAHO"; //production
+  static const String razorPayKey = "rzp_live_Rby9HMBpupINLp"; //production
 
   static const String baseUrl = "http://65.0.153.196:8080/api"; //staging
 
