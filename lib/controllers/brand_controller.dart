@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -183,53 +184,53 @@ class BrandController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
 
     try {
+      final token = prefs.getString('token') ?? '';
       final url = "${ApiConstants.baseUrl}/view-brand/$id";
-      print("➡️ Brand details URL: $url");
+      print("➡️ Fetching brand details: $url");
 
       final response = await http.get(
         Uri.parse(url),
         headers: {
-          'Accept': 'application/json; charset=UTF-8',
-          'Authorization': "Bearer ${prefs.getString('token') ?? ''}",
+          'Accept': 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
         },
       );
 
       print("⬅️ Status Code: ${response.statusCode}");
-      print("📦 Raw Response Body:\n${response.body}");
-
-      final responseData = json.decode(response.body);
+      print("📦 Raw Response:\n${response.body}");
 
       if (response.statusCode == 200) {
-        final data = responseData["data"] ?? {};
+        final Map<String, dynamic> jsonRes = json.decode(response.body);
+        final data = jsonRes['data'] ?? {};
 
-        // ✅ Store full data object (brandInfo + products)
-        brandDetails.value = data;
+        brandDetails.value = data; // store entire response
 
-        // Clear & update brand category list
-        brand_category_List.clear();
-        if (data["brandInfo"]?["categories"] is List) {
-          for (var item in data["brandInfo"]["categories"]) {
-            brand_category_List.add(item["id"]);
-          }
-        }
+        // Parse categories
+        final brandInfo = data['brandInfo'] ?? {};
+        final List<dynamic> categories = brandInfo['categories'] ?? [];
 
-        // Clear & update brand product list
-        brandProductDetailsList.clear();
-        if (data["products"] is List) {
-          brandProductDetailsList.addAll(data["products"]);
-        }
+        brand_category_List
+          ..clear()
+          ..addAll(categories
+              .whereType<Map>()
+              .map((item) => item['id'])
+              .whereType<int>()
+              .toList());
+
+        // Parse products
+        final List<dynamic> products = data['products'] ?? [];
+        brandProductDetailsList
+          ..clear()
+          ..addAll(products.whereType<Map>());
 
         print(
-            "✅ Brand details fetched. ${brand_category_List.length} categories, ${(data["products"] as List).length} products.");
+            "✅ Brand details fetched: ${brand_category_List.length} categories, ${brandProductDetailsList.length} products.");
       } else if (response.statusCode == 401) {
         getSnackBar("Session expired. Please log in again.");
         Get.offAll(() => const LoginScreen(initialTab: 0));
-      } else if (response.statusCode == 500) {
-        getSnackBar("Server error. Please try again later.");
       } else {
-        final msg = responseData["message"] ?? "Unknown error";
-        print("❌ Brand fetch failed: $msg");
-        getSnackBar("Failed to fetch brand details: $msg");
+        getSnackBar("Failed to fetch brand details.");
       }
     } catch (e) {
       print("❌ Exception in getBrandDetails: $e");

@@ -119,7 +119,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
         x.endsWith('.bmp');
   }
 
-  // Normalize API -> BrandProductList expected shape
   List<Map<String, dynamic>> _normalizedProducts() {
     final raw = (brandController.brandDetails["products"] as List?) ?? const [];
     final brandName =
@@ -128,28 +127,24 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     return raw.map<Map<String, dynamic>>((e) {
       final m = Map<String, dynamic>.from(e as Map);
       final id = m['id'];
-      final title = (m['name'] ?? m['title'] ?? '').toString();
-      final price = m['price'] ??
-          m['msp'] ??
-          m['lfMsp'] ??
-          m['mrp'] ??
-          m['basePrice'] ??
-          0;
-      final mrp = m['mrp'] ?? 0;
+      final title = (m['title'] ?? m['name'] ?? '').toString();
 
-      // images: List<Map>{name:url}
-      final imageUrls = (m['images'] ?? m['imageUrls']) as List? ?? const [];
+      // ✅ Always prefer basePrice, fallback to mrp if missing
+      final double price = (m['basePrice'] ?? m['mrp'] ?? 0).toDouble();
+      final double mrp = (m['mrp'] ?? price).toDouble();
+
+      // ✅ Map imageUrls from API
+      final List<dynamic> imageUrls = m['imageUrls'] ?? [];
       final images = imageUrls
-          .map((it) => it is String
-              ? {'name': it}
-              : Map<String, dynamic>.from(it as Map))
+          .map((url) => {'name': url.toString()})
+          .where((img) => img['name']!.isNotEmpty)
           .toList();
 
       return {
         'id': id,
         'name': title,
         'brand_name': brandName,
-        'price': price,
+        'price': price, // 👈 maps basePrice here
         'mrp': mrp,
         'images': images,
       };
@@ -291,9 +286,15 @@ class AllBrandScreenState extends State<AllBrandScreen> {
               Get.close(1);
             },
             onPressedShare: () async {
-              Share.share(
-                brandController.brandDetails["brandInfo"]?["websiteLink"] ?? "",
-              );
+              final website = (brandController.brandDetails["brandInfo"]
+                          ?["websiteLink"] ??
+                      "")
+                  .toString();
+              if (website.isNotEmpty) {
+                Share.share(website);
+              } else {
+                getSnackBar("No website link available for this brand.");
+              }
               await analytics.logEvent(
                 name: 'share_brand_click',
                 parameters: <String, Object>{'page_name': 'share_brand_click'},
@@ -357,6 +358,10 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                     .brandDetails["brandInfo"]?["video"] ??
                                 "")
                             .toString();
+                        final fallbackImage = (brandController
+                                    .brandDetails["brandInfo"]?["logo"] ??
+                                "")
+                            .toString();
 
                         // Show real video
                         if (mediaUrl.isNotEmpty &&
@@ -371,35 +376,25 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
                         // Show image banner (PNG/JPG/etc.)
                         if (mediaUrl.isNotEmpty && _looksLikeImage(mediaUrl)) {
-                          return CachedNetworkImage(
-                            cacheManager: CacheManager(
-                              Config(
-                                "brandHeaderCache",
-                                stalePeriod: const Duration(days: 15),
-                                maxNrOfCacheObjects: 50,
-                              ),
-                            ),
-                            imageUrl: mediaUrl,
-                            height: 211.sp,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorWidget: (_, __, ___) => Image.asset(
-                              brandback, // fallback asset
-                              height: 211.sp,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                            placeholder: (_, __) => Container(
-                              height: 211.sp,
-                              width: double.infinity,
-                              color: cardBg,
-                              child: const Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          );
+                          return fallbackImage.isNotEmpty
+                              ? CachedNetworkImage(
+                                  imageUrl: fallbackImage,
+                                  height: 211.sp,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorWidget: (_, __, ___) => Image.asset(
+                                    brandback,
+                                    height: 211.sp,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : Image.asset(
+                                  brandback,
+                                  height: 211.sp,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                );
                         }
 
                         // Fallback asset
@@ -513,10 +508,11 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                           color: cardBg,
                                         )
                                       : Text(
-                                          (brandController
-                                                      .brandDetails["brandInfo"]
-                                                  ?["description"] ??
-                                              ""),
+                                          (brandController.brandDetails[
+                                                          "brandInfo"]
+                                                      ?["description"] ??
+                                                  "No description available")
+                                              .toString(),
                                           textAlign: TextAlign.justify,
                                           style: TextStyle(
                                             color: productSubtitleColor,
