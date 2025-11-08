@@ -71,9 +71,11 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
         (product['title'] ?? product['name'] ?? 'Unknown Product').toString();
     final size = (product['product_matrix_size_name'] ?? '-').toString();
     final quantity = (data['quantity'] ?? 1).toString();
-    final status = (order['status'] ?? 'Pending').toString().toLowerCase();
 
-    // ✅ Price values
+    // ✅ Use top-level status ("returned", "cancelled", etc.)
+    final status = (data['status'] ?? 'pending').toString().toLowerCase();
+
+    // ✅ Price values from nested order
     final total = double.tryParse(order['total']?.toString() ?? '0') ?? 0.0;
     final totalMRP =
         double.tryParse(order['totalMRP']?.toString() ?? '$total') ?? total;
@@ -83,12 +85,18 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
         double.tryParse(order['couponDiscount']?.toString() ?? '0') ?? 0.0;
     final tax = double.tryParse(order['tax']?.toString() ?? '0') ?? 0.0;
 
-    // ✅ Status color
+    // ✅ Dynamic status color mapping
     final statusColor = status.contains('cancel')
-        ? const Color(0xFFEF4444)
+        ? const Color(0xFFEF4444) // 🔴 Cancelled
         : status.contains('pending')
-            ? const Color(0xFFF59E0B)
-            : const Color(0xFF10B981);
+            ? const Color(0xFFF59E0B) // 🟠 Pending
+            : status.contains('confirmed')
+                ? const Color(0xFF10B981) // 🟢 Confirmed
+                : status.contains('returned')
+                    ? const Color(0xFF3B82F6) // 🟦 Returned
+                    : status.contains('delivered')
+                        ? const Color(0xFF16A34A) // ✅ Delivered
+                        : const Color(0xFF9CA3AF); // ⚪ Default gray
 
     return Scaffold(
       backgroundColor: whiteColor,
@@ -150,7 +158,7 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
             ),
             SizedBox(height: 12.sp),
 
-            // ✅ Status
+            // ✅ Status Display
             Row(
               children: [
                 AppText(
@@ -171,7 +179,7 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
             ),
             SizedBox(height: 20.sp),
 
-            // ✅ Cancel Button
+            // ✅ Cancel Button (only for pending/confirmed)
             if (status == "pending" || status == "confirmed") ...[
               GestureDetector(
                 onTap: () => Get.to(() => CancelOrderScreen(order: order)),

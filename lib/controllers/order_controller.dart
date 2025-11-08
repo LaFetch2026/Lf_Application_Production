@@ -553,6 +553,7 @@ class OrderController extends BaseController {
     showLoading();
 
     final prefs = await SharedPreferences.getInstance();
+
     try {
       final uri = Uri.parse("${ApiConstants.baseUrl}/order-history/$userId");
       print("📦 Fetching order history for userId: $userId");
@@ -568,12 +569,21 @@ class OrderController extends BaseController {
       if (_handleAuthGuard(res.statusCode)) return;
 
       if (res.statusCode == 200) {
-        final data = json.decode(res.body);
-        // store list or wrapped data
-        orderHistory = (data is List) ? data : (data["data"] ?? []);
-        print("✅ Order history loaded (${orderHistory.length} orders)");
+        final body = json.decode(res.body);
+
+        if (body["status"] == 200 && body["data"] != null) {
+          final List<dynamic> dataList = body["data"];
+          orderHistory = dataList;
+
+          print("✅ Order history loaded (${orderHistory.length} orders)");
+        } else {
+          apiError.value = body["message"] ?? "No order history found";
+          print("⚠️ ${apiError.value}");
+          getSnackBar(apiError.value);
+        }
       } else {
-        apiError.value = "Failed to fetch order history (${res.statusCode})";
+        apiError.value =
+            "Failed to fetch order history (${res.statusCode}) — ${res.reasonPhrase}";
         print("❌ ${res.body}");
         getSnackBar(apiError.value);
       }

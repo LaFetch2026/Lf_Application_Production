@@ -4,7 +4,6 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/accountscreen.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
@@ -28,7 +27,6 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
     _loadOrderHistory();
   }
 
-  // ✅ Refresh every time screen becomes visible again
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -98,37 +96,44 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
               thickness: 1,
               height: 1,
             ),
-            itemBuilder: (context, index) => _buildOrderItem(orders[index]),
+            itemBuilder: (context, index) =>
+                _buildOrderItem(orders[index] as Map<String, dynamic>),
           ),
         );
       }),
     );
   }
 
-  Widget _buildOrderItem(Map<String, dynamic> order) {
-    // ✅ Extract first order item
-    final List<dynamic> items = order['order_items'] ?? [];
-    final item = items.isNotEmpty ? items.first : {};
+  Widget _buildOrderItem(Map<String, dynamic> orderItem) {
+    final order = orderItem['order'] ?? {};
+    final product = orderItem['product'] ?? {};
 
-    // ✅ Get product details
-    final product = item['product'] ?? {};
+    // ✅ Use status from top-level orderItem (e.g., returned / cancelled / pending)
+    final status = orderItem['status']?.toString() ?? 'pending';
+
+    // ✅ Show top-level item id
+    final orderItemId = orderItem['id']?.toString() ?? '-';
+
+    // ✅ Use ordered date from nested order object
+    final date = order['orderedAt'] != null
+        ? order['orderedAt'].toString().split('T')[0]
+        : '';
+
+    // ✅ Product details
     final imageList = (product['imageUrls'] ?? []) as List;
     final imageUrl = imageList.isNotEmpty
         ? imageList.first
         : 'https://via.placeholder.com/80';
-
     final productName = product['title'] ?? 'Unknown Product';
-    final size = product['product_matrix_size_name'] ?? '-';
-    final quantity = item['quantity']?.toString() ?? '1';
-    final price = double.tryParse(item['total']?.toString() ?? '0') ?? 0.0;
-    final status = order['status'] ?? 'Pending';
+    final quantity = orderItem['quantity']?.toString() ?? '1';
+    final price = double.tryParse(orderItem['total']?.toString() ?? '0') ?? 0.0;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 16.sp),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildStatusHeader(status),
+          _buildStatusHeader(status, orderItemId, date),
           SizedBox(height: 12.sp),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,11 +173,11 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
                       fontWeight: FontWeight.w600,
                       color: nameText,
                       fontSize: 14,
-                      maxLines: 1,
+                      maxLines: 2,
                     ),
                     SizedBox(height: 4.sp),
                     AppText(
-                      text: 'Size: $size  Qty: $quantity',
+                      text: 'Qty: $quantity',
                       fontFamily: "Franklin Gothic Regular",
                       fontWeight: FontWeight.w400,
                       color: subtitleColor,
@@ -195,14 +200,14 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
           _buildButton(
             text: "VIEW DETAILS",
             isPrimary: false,
-            onTap: () => _handleViewDetails(order),
+            onTap: () => _handleViewDetails(orderItem),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildStatusHeader(String status) {
+  Widget _buildStatusHeader(String status, String orderItemId, String date) {
     final lower = status.toLowerCase();
     IconData iconData;
     Color iconColor;
@@ -224,15 +229,27 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
     }
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Icon(iconData, color: iconColor, size: 18.sp),
-        SizedBox(width: 8.sp),
+        Row(
+          children: [
+            Icon(iconData, color: iconColor, size: 18.sp),
+            SizedBox(width: 8.sp),
+            AppText(
+              text: status.capitalizeFirst ?? status,
+              fontFamily: "Franklin Gothic",
+              fontWeight: FontWeight.w600,
+              color: nameText,
+              fontSize: 13,
+            ),
+          ],
+        ),
         AppText(
-          text: status.capitalizeFirst ?? status,
-          fontFamily: "Franklin Gothic",
-          fontWeight: FontWeight.w600,
-          color: nameText,
-          fontSize: 13,
+          text: "ID #$orderItemId • $date",
+          fontFamily: "Franklin Gothic Regular",
+          fontWeight: FontWeight.w400,
+          color: subtitleColor,
+          fontSize: 12,
         ),
       ],
     );
@@ -268,12 +285,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
     );
   }
 
-  void _handleViewDetails(Map<String, dynamic> order) {
-    final orderId = order['id'];
-    if (orderId == null) {
-      Get.snackbar("Error", "Invalid order data");
-      return;
-    }
-    Get.to(() => ConfirmOrderDetailsScreen(order: order));
+  void _handleViewDetails(Map<String, dynamic> orderItem) {
+    Get.to(() => ConfirmOrderDetailsScreen(order: orderItem));
   }
 }
