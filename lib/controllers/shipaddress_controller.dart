@@ -356,7 +356,6 @@ class ShipAddressController extends BaseController {
     }
   }
 
-// ADD ADDRESS
   Future<bool> callSaveAddress({
     required double latitude,
     required double longitude,
@@ -365,17 +364,18 @@ class ShipAddressController extends BaseController {
     showLoading();
     final prefs = await SharedPreferences.getInstance();
 
-    final url = Uri.parse("${ApiConstants.baseUrl}/profile/address/");
-    final token = prefs.getString('token') ?? '';
+    final String url = "${ApiConstants.baseUrl}/profile/address/";
+    final String token = prefs.getString('token') ?? '';
+    final int? userId = prefs.getInt('userId');
+
+    if (userId == null) {
+      hideLoading();
+      getSnackBar("User not logged in.");
+      return false;
+    }
 
     try {
-      final userId = prefs.getInt('userId');
-      if (userId == null) {
-        getSnackBar("User not logged in.");
-        return false;
-      }
-
-      // Build request body EXACTLY as per your required schema
+      // ✅ Prepare payload
       final Map<String, dynamic> sendData = {
         "userId": userId,
         "contactName": nameController.text.trim(),
@@ -389,78 +389,93 @@ class ShipAddressController extends BaseController {
         "isDefaultAddress": isCheck.value == true,
         "latitude": latitude,
         "longitude": longitude,
-        "type": (typeValue.isNotEmpty
+        "type": typeValue.isNotEmpty
             ? typeValue
-            : addressTypeController.text.trim()), // <- guarantee
+            : addressTypeController.text.trim().toLowerCase(),
       };
 
-// helpful prints
+      // ✅ Logging for debugging (pretty JSON)
       const pretty = JsonEncoder.withIndent('  ');
-      debugPrint("📤 /profile/address/ body:\n${pretty.convert(sendData)}");
-
-      // Pretty JSON for logs
-      debugPrint("📦 [ADD] POST $url");
+      debugPrint("📦 [ADD ADDRESS] POST $url");
       debugPrint("🔐 Token present: ${token.isNotEmpty}");
       debugPrint("📤 Request Body:\n${pretty.convert(sendData)}");
 
-      final sw = Stopwatch()..start();
-      final resp = await http.post(
-        url,
+      // ✅ Send request
+      final Stopwatch sw = Stopwatch()..start();
+      final response = await http.post(
+        Uri.parse(url),
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': "Bearer $token",
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
         },
         body: json.encode(sendData),
       );
       sw.stop();
 
-      Map<String, dynamic> body = {};
-      try {
-        if (resp.body.isNotEmpty) {
-          body = json.decode(resp.body) as Map<String, dynamic>;
+      // ✅ Decode response safely
+      Map<String, dynamic> responseBody = {};
+      if (response.body.isNotEmpty) {
+        try {
+          responseBody = json.decode(response.body) as Map<String, dynamic>;
+        } catch (e) {
+          debugPrint("⚠️ Invalid JSON response: $e");
         }
-      } catch (_) {
-        // keep body as {} if server doesn't return JSON
       }
 
       debugPrint(
-        "📥 [ADD] (${resp.statusCode}) in ${sw.elapsedMilliseconds}ms\n"
-        "${resp.body.isEmpty ? '<no body>' : pretty.convert(body)}",
+        "📥 [ADD ADDRESS] (${response.statusCode}) in ${sw.elapsedMilliseconds}ms\n"
+        "${response.body.isEmpty ? '<empty body>' : pretty.convert(responseBody)}",
       );
 
-      if (resp.statusCode == 200 || resp.statusCode == 201) {
-        // Try to read new ID from common shapes
-        int? newId;
-        if (body['id'] is int) {
-          newId = body['id'] as int;
-        } else if (body['data'] is Map && (body['data']['id'] is int)) {
-          newId = body['data']['id'] as int;
-        } else if (body['address'] is Map && (body['address']['id'] is int)) {
-          newId = body['address']['id'] as int;
+      // ✅ Handle success responses
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Try multiple possible shapes for ID
+        int? newAddressId;
+        final data = responseBody['data'];
+        if (data is Map && data['id'] is int) {
+          newAddressId = data['id'];
+        } else if (responseBody['id'] is int) {
+          newAddressId = responseBody['id'];
+        } else if (responseBody['address'] is Map &&
+            responseBody['address']['id'] is int) {
+          newAddressId = responseBody['address']['id'];
         }
 
-        if (newId != null) {
-          addressId.value = newId;
+        if (newAddressId != null) {
+          addressId.value = newAddressId;
+          debugPrint("✅ New address ID: $newAddressId");
+          // Optional: link to cart if cart exists
           if (cartId.value != 0) {
             await callCartAddressUpdate("create");
           }
         }
 
-        getSnackBar(body['message']?.toString() ?? "Address added.");
+        getSnackBar(responseBody['message']?.toString() ?? "Address added.");
         if (Get.isOverlaysOpen) {
           try {
             Get.close(2);
           } catch (_) {}
         }
         return true;
-      } else {
-        handleErrorResponse(resp, body);
-        return false;
       }
+
+      // ✅ Handle known errors
+      if (response.statusCode == 400) {
+        getSnackBar(responseBody['message'] ?? "Invalid address data.");
+      } else if (response.statusCode == 401) {
+        getSnackBar("Session expired. Please login again.");
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server error. Please try again later.");
+      } else {
+        getSnackBar(
+            "Failed to add address. (${response.statusCode}) ${responseBody['message'] ?? ''}");
+      }
+
+      return false;
     } catch (e, st) {
       debugPrint("❌ Exception in callSaveAddress: $e\n$st");
-      getSnackBar("Something went wrong: $e");
+      getSnackBar("Something went wrong. Please try again.");
       return false;
     } finally {
       hideLoading();

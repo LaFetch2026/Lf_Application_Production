@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
 import 'package:lafetch/core/constant/constants.dart';
+import 'package:lafetch/controllers/order_controller.dart';
 import 'cancel_success.dart';
 
 class CancelOrderScreen extends StatefulWidget {
@@ -15,23 +16,42 @@ class CancelOrderScreen extends StatefulWidget {
 }
 
 class _CancelOrderScreenState extends State<CancelOrderScreen> {
+  final OrderController orderController = Get.put(OrderController());
   int? selectedReason;
   final TextEditingController otherReason = TextEditingController();
 
-  final List<String> reasons = [
-    'Ordered by mistake',
-    'Found a better price elsewhere',
-    'Change style/ color',
-    'Forgot to apply coupon/ offers',
-    'Change size',
-    'Want to change product',
-    'Delivery date is too late',
-    'Change address',
-    'Other'
-  ];
+  // ✅ Centralized reasons map
+  final Map<int, String> cancelReason = const {
+    25: "Other",
+    26: "Changed my mind",
+    27: "Does not fit",
+    28: "Size not as expected",
+    29: "Item is damaged",
+    30: "Received wrong item",
+    31: "Parcel damaged on arrival",
+    32: "Quality not as expected",
+    33: "Missing item or accessories",
+    34: "Performance not adequate",
+    35: "Not as described",
+    36: "Arrived too late",
+  };
 
   @override
   Widget build(BuildContext context) {
+    final orderItem = widget.order;
+    final product = orderItem['product'] ?? {};
+    final order = orderItem['order'] ?? {};
+
+    final imageUrls = (product['imageUrls'] ?? []) as List;
+    final imageUrl = imageUrls.isNotEmpty ? imageUrls.first : null;
+    final productName = product['title'] ?? 'Unknown Product';
+    final productDescription = product['description'] ?? '';
+    final size = orderItem['size'] ?? product['size'] ?? '-';
+    final quantity = orderItem['quantity']?.toString() ?? '1';
+    final price = double.tryParse(orderItem['total']?.toString() ?? '0') ?? 0.0;
+
+    final List<String> reasons = cancelReason.values.toList();
+
     return Scaffold(
       backgroundColor: whiteColor,
       appBar: AppBar(
@@ -39,11 +59,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
         backgroundColor: whiteColor,
         centerTitle: true,
         leading: IconButton(
-          icon: SvgPicture.asset(
-            arrowBack,
-            height: 18,
-            width: 18,
-          ),
+          icon: SvgPicture.asset(arrowBack, height: 18, width: 18),
           onPressed: () => Get.back(),
         ),
         title: const AppText(
@@ -59,13 +75,13 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ✅ Product Info
+            // ✅ Product info
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(4.sp),
-                  child: _buildProductImage(widget.order),
+                  child: _buildProductImage(imageUrl),
                 ),
                 SizedBox(width: 10.sp),
                 Expanded(
@@ -73,31 +89,40 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AppText(
-                        text: widget.order['productName'] ??
-                            'The Clothing Factory',
+                        text: productName,
                         fontFamily: "Franklin Gothic",
                         fontWeight: FontWeight.w700,
                         color: blackColor,
                         fontSize: 14,
+                        maxLines: 2,
                       ),
                       SizedBox(height: 2.sp),
                       AppText(
-                        text: widget.order['productDescription'] ??
-                            "Garfield: Grumpy Printed Men’s Overs...",
+                        text: productDescription.isNotEmpty
+                            ? productDescription
+                            : "Product details unavailable",
                         fontFamily: "Franklin Gothic Regular",
                         fontWeight: FontWeight.w400,
                         color: subtitleColor,
                         fontSize: 12,
                         maxLines: 1,
+                        // overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(height: 6.sp),
                       AppText(
-                        text:
-                            "Size: ${widget.order['size'] ?? 'M'}   Qty: ${widget.order['quantity'] ?? '1'}",
+                        text: "Size: $size   Qty: $quantity",
                         fontFamily: "Franklin Gothic Regular",
                         fontWeight: FontWeight.w400,
                         color: subtitleColor,
                         fontSize: 12,
+                      ),
+                      SizedBox(height: 6.sp),
+                      AppText(
+                        text: "₹${price.toStringAsFixed(2)}",
+                        fontFamily: "Franklin Gothic",
+                        fontWeight: FontWeight.w700,
+                        color: blackColor,
+                        fontSize: 14,
                       ),
                     ],
                   ),
@@ -118,7 +143,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
             ),
             SizedBox(height: 10.sp),
 
-            // ✅ Minimalist reason list
+            // ✅ Reason list
             Expanded(
               child: ListView.separated(
                 physics: const BouncingScrollPhysics(),
@@ -177,7 +202,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
               ),
             ),
 
-            // ✅ "Other" reason input
+            // ✅ "Other" reason text input
             if (selectedReason == reasons.length - 1)
               Padding(
                 padding: EdgeInsets.only(top: 10.sp, bottom: 12.sp),
@@ -232,12 +257,26 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                 ),
                 Expanded(
                   child: GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       if (selectedReason == null) {
                         Get.snackbar('Alert', 'Please select a reason.');
-                      } else {
-                        Get.to(() => CancelSuccessScreen(order: widget.order));
+                        return;
                       }
+
+                      final reasonText = selectedReason == reasons.length - 1 &&
+                              otherReason.text.trim().isNotEmpty
+                          ? otherReason.text.trim()
+                          : reasons[selectedReason!];
+
+                      await orderController.requestCancel(
+                        userId: order['userId'],
+                        orderItemId: orderItem['id'],
+                        reason: reasonText,
+                        shipRocketId:
+                            order['shiprocketOrderId']?.toString() ?? "",
+                      );
+
+                      Get.to(() => CancelSuccessScreen(order: widget.order));
                     },
                     child: Container(
                       height: 48.sp,
@@ -262,13 +301,9 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
     );
   }
 
-  /// ✅ Safe Image Loader (60x60 per Figma)
-  Widget _buildProductImage(Map<String, dynamic> order) {
-    final imageUrl = order['imageUrl'];
-    final isNetwork =
-        imageUrl != null && imageUrl.toString().startsWith('http');
-
-    if (isNetwork) {
+  /// ✅ Safe Image loader
+  Widget _buildProductImage(String? imageUrl) {
+    if (imageUrl != null && imageUrl.startsWith('http')) {
       return Image.network(
         imageUrl,
         height: 60.sp,

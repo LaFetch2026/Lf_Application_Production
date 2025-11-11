@@ -1705,11 +1705,19 @@ class _FeaturedBrandsRow extends StatelessWidget {
                     onTap: () async {
                       brandController.brandbackground.value = bgImage;
 
-                      Get.to(AllBrandScreen(
-                        id: brand["id"],
-                        screen: "home",
-                        slug: "",
-                      ))?.then((value) {
+                      final id = brand["id"];
+                      final safeId = (id is int)
+                          ? id
+                          : int.tryParse(id?.toString() ?? '0') ??
+                              0; // fallback to 0
+
+                      Get.to(
+                        () => AllBrandScreen(
+                          id: safeId,
+                          screen: "home",
+                          slug: "",
+                        ),
+                      )?.then((value) {
                         SystemChrome.setSystemUIOverlayStyle(
                           const SystemUiOverlayStyle(
                             statusBarColor: whiteColor,
@@ -1719,13 +1727,6 @@ class _FeaturedBrandsRow extends StatelessWidget {
                           ),
                         );
                       });
-
-                      await analytics.logEvent(
-                        name: 'homepage_featurebrandclick',
-                        parameters: const {
-                          'page_name': 'homepage_featurebrandclick',
-                        },
-                      );
                     },
                     child: Padding(
                       padding: EdgeInsets.only(left: 16.sp),

@@ -86,17 +86,17 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
     final tax = double.tryParse(order['tax']?.toString() ?? '0') ?? 0.0;
 
     // ✅ Dynamic status color mapping
-    final statusColor = status.contains('cancel')
-        ? const Color(0xFFEF4444) // 🔴 Cancelled
-        : status.contains('pending')
-            ? const Color(0xFFF59E0B) // 🟠 Pending
-            : status.contains('confirmed')
-                ? const Color(0xFF10B981) // 🟢 Confirmed
-                : status.contains('returned')
-                    ? const Color(0xFF3B82F6) // 🟦 Returned
-                    : status.contains('delivered')
-                        ? const Color(0xFF16A34A) // ✅ Delivered
-                        : const Color(0xFF9CA3AF); // ⚪ Default gray
+    final statusColor = status == 'cancelled'
+        ? const Color(0xFFEF4444)
+        : status == 'returned'
+            ? const Color(0xFF3B82F6)
+            : status == 'pending'
+                ? const Color(0xFFF59E0B)
+                : status == 'confirmed'
+                    ? const Color(0xFF10B981)
+                    : status == 'delivered'
+                        ? const Color(0xFF16A34A)
+                        : const Color(0xFF9CA3AF);
 
     return Scaffold(
       backgroundColor: whiteColor,
@@ -161,7 +161,7 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
             // ✅ Status Display
             Row(
               children: [
-                AppText(
+                const AppText(
                   text: "Status: ",
                   fontFamily: "Franklin Gothic",
                   fontWeight: FontWeight.w600,

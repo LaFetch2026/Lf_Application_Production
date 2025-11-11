@@ -8,10 +8,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lafetch/common/widget/bottom_sheets/bottomCoupon.dart';
+import 'package:lafetch/controllers/order_controller.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/loginscreen.dart';
+import 'package:lafetch/screens/orders/order_status_screen.dart';
 import 'package:lafetch/screens/paymentcheckscreen.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
 import 'package:lafetch/screens/wishlist/newboardscreen.dart';
@@ -54,12 +56,13 @@ class CartScreenState extends State<CartScreen> {
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final orderController = Get.put(OrderController());
 
   List<String> qtyList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   // ⚠️ Use build-time config; do not hardcode live key in production.
-  static const String _razorpayKey = "rzp_live_rhkxLWkaUrRAHO";
+  static const String _razorpayKey = ApiConstants.razorPayKey;
 
   late Razorpay _razorpay;
 
@@ -96,38 +99,40 @@ class CartScreenState extends State<CartScreen> {
 
   // ---------- Razorpay Handlers ----------
 
-  void _onPaymentSuccess(PaymentSuccessResponse response) async {
-    final int orderId = (controller.cartDetails["id"] is num)
-        ? (controller.cartDetails["id"] as num).toInt()
-        : int.tryParse("${controller.cartDetails["id"]}") ?? 0;
+  void _onPaymentSuccess(PaymentSuccessResponse r) async {
+    print("✅ Payment Successful!");
+    print("Payment ID: ${r.paymentId}");
+    print("Order ID: ${r.orderId}");
+    print("Signature: ${r.signature}");
 
-    // ✅ Clear saved coupon after successful payment
+    // Show Success Screen instantly
+    Get.offAll(() => const OrderStatusScreen(status: 'success'),
+        transition: Transition.fadeIn,
+        duration: const Duration(milliseconds: 400));
+
+    // Confirm order in background
+    try {
+      await orderController.confirmPlaceOrder(
+        providerOrderId: r.orderId ?? '',
+        providerPaymentId: r.paymentId ?? '',
+        providerSignature: r.signature ?? '',
+      );
+      print("✅ confirmPlaceOrder called successfully");
+    } catch (e) {
+      print("⚠️ confirmPlaceOrder failed: $e");
+    }
+
+    // Cleanup
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('applied_coupon_code');
     await prefs.remove('applied_coupon_discount');
   }
 
-  void _onPaymentError(PaymentFailureResponse response) {
-    // Typical cancel flows from Razorpay return code == 2 on Android/iOS.
-    // Fallback to message-text checks just in case.
-    final msg = (response.message ?? '').toLowerCase();
-    final bool isUserCancelled = response.code == 2 ||
-        msg.contains('cancelled') ||
-        msg.contains('canceled');
-
-    if (isUserCancelled) {
-      // Stay on CartScreen and show a snackbar/toast
-      getSnackBar("Payment declined by user");
-      return;
-    }
-
-    // For any other kind of failure, keep your existing fallback
-    final int orderId = (controller.cartDetails["id"] is num)
-        ? (controller.cartDetails["id"] as num).toInt()
-        : int.tryParse("${controller.cartDetails["id"]}") ?? 0;
-
-    getSnackBar("Payment failed. Please try again.");
-    Get.to(PaymentCheckScreen(orderId: orderId));
+  void _onPaymentError(PaymentFailureResponse r) {
+    print("❌ Razorpay Payment Error: ${r.code} → ${r.message}");
+    Get.offAll(() => const OrderStatusScreen(status: 'failed'),
+        transition: Transition.fadeIn,
+        duration: const Duration(milliseconds: 400));
   }
 
   void _onExternalWallet(ExternalWalletResponse response) {
@@ -167,35 +172,87 @@ class CartScreenState extends State<CartScreen> {
   }
 
   Future<void> _handleCheckout() async {
-    final readyToPay = controller.cartDetails["address"] != null ||
-        _pendingSelectedAddress != null;
+    try {
+      // ✅ Step 1: Validate address
+      final address =
+          controller.cartDetails["address"] ?? _pendingSelectedAddress;
+      if (address == null) {
+        _handleAddressSelection();
+        getSnackBar("Please select a shipping address to continue");
+        return;
+      }
 
-    if (!readyToPay) {
-      _handleAddressSelection();
-      return;
+      final shippingAddressId = address["id"];
+      if (shippingAddressId == null) {
+        getSnackBar("Invalid address selected. Please choose another address.");
+        return;
+      }
+
+      // ✅ Step 2: Validate user ID
+      final prefs = await SharedPreferences.getInstance();
+      int? userId = prefs.getInt('userId') ?? prefs.getInt('user_id');
+      if (userId == null) {
+        getSnackBar("Please login to continue");
+        Get.offAllNamed('/login');
+        return;
+      }
+
+      // ✅ Step 3: Validate cart total
+      final totalAmount = _computeCartTotalInRupees();
+      if (totalAmount <= 0) {
+        getSnackBar("Cart total must be greater than zero");
+        return;
+      }
+
+      // ✅ Step 4: Build payload for initiate-payment
+      final List<Map<String, dynamic>> items = [];
+      for (final item in controller.orderList) {
+        final product = (item["product"] ?? {}) as Map<String, dynamic>;
+        final inventory = (item["inventory"] ?? {}) as Map<String, dynamic>;
+
+        items.add({
+          "productName": product["name"] ?? "",
+          "productId": product["id"],
+          "variantId": inventory["id"],
+          "quantity": item["quantity"] ?? 1,
+          "unitPrice": _asNum(product["price"]),
+          "total": _asNum(product["price"]) * _asNum(item["quantity"]),
+          "sku": "",
+          "hsn": "",
+        });
+      }
+
+      final orderPayload = {
+        "userId": userId,
+        "shippingAddressId": shippingAddressId,
+        "items": items,
+        "totalMRP": _asNum(controller.cartDetails["total_mrp"]),
+        "total": totalAmount,
+        "paymentMethod": "prepaid",
+      };
+
+      // ✅ Step 5: Call initiate-payment API
+      final paymentInitData =
+          await orderController.initiatePayment(orderPayload);
+      if (paymentInitData == null) {
+        getSnackBar("Failed to initiate payment. Please try again.");
+        return;
+      }
+
+      final razorpayOrderId = paymentInitData["providerOrderId"];
+      if (razorpayOrderId == null || razorpayOrderId.isEmpty) {
+        getSnackBar("Unable to start payment (missing Razorpay Order ID).");
+        return;
+      }
+
+      print("✅ Payment initiated. Razorpay Order ID: $razorpayOrderId");
+
+      // ✅ Step 6: Open Razorpay checkout
+      await _openRazorpayCheckout(orderId: razorpayOrderId);
+    } catch (e) {
+      print("🔥 Checkout error: $e");
+      getSnackBar("Something went wrong. Please try again.");
     }
-
-    // Validate phone number before opening Razorpay
-    final prefs = await SharedPreferences.getInstance();
-
-    // ✅ FIX: Use 'phonenumber' (lowercase, no underscore)
-    String rawPhone =
-        prefs.getString('phonenumber') ?? controller.userNumber.value;
-
-    rawPhone = rawPhone.trim();
-
-    print('Raw phone: $rawPhone');
-
-    final String phone = _sanitizeIndianPhone(rawPhone);
-
-    print('Sanitized phone: $phone (length: ${phone.length})');
-
-    if (phone.length != 10) {
-      getSnackBar('Please update your phone number in profile to continue');
-      return;
-    }
-
-    await _openRazorpayCheckout();
   }
 
   String _sanitizeIndianPhone(String? raw) {
@@ -221,72 +278,41 @@ class CartScreenState extends State<CartScreen> {
     return sanitized.length == 10;
   }
 
-  Future<void> _openRazorpayCheckout() async {
+  Future<void> _openRazorpayCheckout({String? orderId}) async {
+    if (orderId == null || orderId.isEmpty) {
+      getSnackBar("Payment could not be started. Missing Razorpay Order ID.");
+      return;
+    }
+
     final num cartTotalInRupees = _computeCartTotalInRupees();
     final int amountInPaise = (cartTotalInRupees * 100).round();
 
-    // Read user info for prefill
     final prefs = await SharedPreferences.getInstance();
     final String userName = (prefs.getString('user_name') ?? '').trim();
     final String userEmail = (prefs.getString('email') ?? '').trim();
-
-    // ✅ FIX: Use 'phonenumber' (lowercase, no underscore)
-    String rawPhone =
-        prefs.getString('phonenumber') ?? controller.userNumber.value;
-
-    rawPhone = rawPhone.trim();
+    final String rawPhone = (prefs.getString('phonenumber') ?? '').trim();
     final String phone = _sanitizeIndianPhone(rawPhone);
 
-    // Debug logging (remove in production)
-    print('=== RAZORPAY CHECKOUT ===');
-    print('Raw phone: $rawPhone');
-    print('Sanitized phone: $phone');
-    print('Phone length: ${phone.length}');
-    print('========================');
-
-    final String? orderId =
-        controller.cartDetails['payment']?['transaction_id'];
-
-    final options = <String, dynamic>{
+    final options = {
       'key': _razorpayKey,
       'amount': amountInPaise,
       'currency': 'INR',
-      if (orderId != null && orderId.isNotEmpty) 'order_id': orderId,
-
-      // BRANDING
+      'order_id': orderId,
       'name': 'Lafetch',
-      'description': 'Order #${controller.cartDetails["id"] ?? ""}',
-
-      // USER PREFILL - Contact is mandatory with +91 prefix
-      'prefill': <String, dynamic>{
-        if (userName.isNotEmpty) 'name': userName,
-        if (userEmail.isNotEmpty) 'email': userEmail,
-        // ⚠️ CRITICAL: Always include +91 prefix for Indian numbers
-        if (phone.length == 10) 'contact': '+91$phone',
+      'description': 'Cart Payment',
+      'prefill': {
+        'name': userName.isEmpty ? 'Customer' : userName,
+        'email': userEmail.isEmpty ? 'customer@example.com' : userEmail,
+        'contact': phone.length == 10 ? '+91$phone' : '+919999999999',
       },
-
-      // Lock fields if we have valid data
-      'readonly': <String, dynamic>{
-        if (userName.isNotEmpty) 'name': true,
-        if (userEmail.isNotEmpty) 'email': true,
-        if (phone.length == 10) 'contact': true,
-      },
-
-      'remember_customer': true,
-      if (phone.length == 10) 'send_sms_hash': true,
-      'retry': {'enabled': true, 'max_count': 1},
       'theme': {'color': '#070707'},
-
-      'notes': {
-        'cart_id': '${controller.cartDetails["id"] ?? ""}',
-      },
     };
 
     try {
       _razorpay.open(options);
     } catch (e) {
-      print('Razorpay error: $e');
-      getSnackBar("Unable to start payment: $e");
+      print('🔥 Razorpay open error: $e');
+      getSnackBar('Unable to start payment: $e');
     }
   }
 

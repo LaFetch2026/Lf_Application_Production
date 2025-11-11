@@ -476,8 +476,19 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     }
 
     final variants = productController.sizeInventoryList
-        .where((v) => (int.tryParse(v['stocks']?.toString() ?? '0') ?? 0) > 0)
-        .toList();
+        .where((v) => v['product_matrix_size_name'] != null)
+        .toList()
+      ..sort((a, b) {
+        const sizeOrder = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+        final aLabel =
+            (a['product_matrix_size_name'] ?? '').toString().toUpperCase();
+        final bLabel =
+            (b['product_matrix_size_name'] ?? '').toString().toUpperCase();
+        final aIndex = sizeOrder.indexOf(aLabel);
+        final bIndex = sizeOrder.indexOf(bLabel);
+        return (aIndex == -1 ? 99 : aIndex)
+            .compareTo(bIndex == -1 ? 99 : bIndex);
+      });
 
     if (variants.isEmpty) return const SizedBox.shrink();
 
@@ -515,70 +526,70 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 final isSelected = (id == selectedId);
                 final label = _sizeLabel(i).toUpperCase();
                 final isFree = label == 'FREE SIZE';
+                final stock = int.tryParse(i['stocks']?.toString() ?? '0') ?? 0;
+                final isOutOfStock = stock <= 0;
 
-                return Column(
-                  children: [
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () async {
-                        _setSelectedSize(Map<String, dynamic>.from(i));
-                        _curr = 0;
-                        setState(() {});
-                        await analytics.logEvent(
-                          name: 'productDetails_sizeSelect',
-                          parameters: {
-                            'page_name': 'productDetails_sizeSelect'
+                return Opacity(
+                  opacity: isOutOfStock ? 0.4 : 1.0, // blur effect
+                  child: IgnorePointer(
+                    ignoring: isOutOfStock, // disable tap
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            _setSelectedSize(Map<String, dynamic>.from(i));
+                            _curr = 0;
+                            setState(() {});
                           },
-                        );
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: widget.backgroundcolor == whiteColor
-                                ? btnTextColor
-                                : searchTextColor,
-                            width: 1.sp,
-                          ),
-                          color: isSelected
-                              ? (widget.backgroundcolor == whiteColor
-                                  ? colorPrimary
-                                  : lightPurpleColor)
-                              : (widget.backgroundcolor == whiteColor
-                                  ? whiteColor
-                                  : homeAppBarColor),
-                        ),
-                        child: SizedBox(
-                          width: isFree ? 70.sp : 44.sp,
-                          height: 42.sp,
-                          child: Center(
-                            child: AppSpacingText(
-                              text: label,
-                              fontFamily: "Franklin Gothic Regular",
-                              fontWeight: FontWeight.w400,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: widget.backgroundcolor == whiteColor
+                                    ? btnTextColor
+                                    : searchTextColor,
+                                width: 1.sp,
+                              ),
                               color: isSelected
-                                  ? whiteColor
+                                  ? (widget.backgroundcolor == whiteColor
+                                      ? colorPrimary
+                                      : lightPurpleColor)
                                   : (widget.backgroundcolor == whiteColor
-                                      ? btnTextColor
-                                      : searchTextColor),
-                              fontSize: 12,
+                                      ? whiteColor
+                                      : homeAppBarColor),
+                            ),
+                            child: SizedBox(
+                              width: isFree ? 70.sp : 44.sp,
+                              height: 42.sp,
+                              child: Center(
+                                child: AppSpacingText(
+                                  text: label,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                  color: isSelected
+                                      ? whiteColor
+                                      : (widget.backgroundcolor == whiteColor
+                                          ? btnTextColor
+                                          : searchTextColor),
+                                  fontSize: 12,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    ((int.tryParse(i['stocks']?.toString() ?? '0') ?? 0) > 1)
-                        ? const SizedBox.shrink()
-                        : Padding(
+                        if (stock <= 1 && stock > 0)
+                          Padding(
                             padding: EdgeInsets.only(top: 0),
                             child: AppSpacingText(
-                              text: 'Only ${i['stocks'] ?? 0} left',
+                              text: 'Only $stock left',
                               fontFamily: "Franklin Gothic Regular",
                               fontWeight: FontWeight.w400,
                               color: redColor,
                               fontSize: 11,
                             ),
                           ),
-                  ],
+                      ],
+                    ),
+                  ),
                 );
               }),
           ],
@@ -929,27 +940,17 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           bottom: 12.sp,
                                           right: 12.sp,
                                           child: Obx(() {
-                                            final reviews =
-                                                productController.reviewList;
-                                            double avgRating = 4.2; // default
+                                            final avgRating = productController
+                                                .averageRating.value;
 
-                                            if (reviews.isNotEmpty) {
-                                              final sum = reviews.fold<double>(
-                                                0.0,
-                                                (prev, review) =>
-                                                    prev +
-                                                    ((review['rating'] as num?)
-                                                            ?.toDouble() ??
-                                                        0),
-                                              );
-                                              avgRating = sum / reviews.length;
-                                            }
+                                            if (avgRating <= 0)
+                                              return const SizedBox
+                                                  .shrink(); // hide if no rating
 
                                             return Container(
                                               padding: EdgeInsets.symmetric(
-                                                horizontal: 8.sp,
-                                                vertical: 5.sp,
-                                              ),
+                                                  horizontal: 8.sp,
+                                                  vertical: 5.sp),
                                               decoration: BoxDecoration(
                                                 color: whiteColor,
                                                 borderRadius:
@@ -969,7 +970,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 children: [
                                                   Icon(
                                                     Icons.star,
-                                                    color: Color(0xFFFFA500),
+                                                    color:
+                                                        const Color(0xFFFFA500),
                                                     size: 14.sp,
                                                   ),
                                                   SizedBox(width: 3.sp),
@@ -2037,18 +2039,18 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       final totalReviews = productController.totalReview.value;
       final isLoading = productController.isFetchingReviews.value;
 
-      // Calculate average rating from reviews
-      double avgRating = 4.2; // default
+      // ✅ Compute average rating dynamically
+      double avgRating = 0;
       if (reviews.isNotEmpty) {
         final sum = reviews.fold<double>(
           0.0,
           (prev, review) =>
               prev + ((review['rating'] as num?)?.toDouble() ?? 0),
         );
-        avgRating = reviews.isNotEmpty ? sum / reviews.length : 0;
+        avgRating = sum / reviews.length;
       }
 
-      // If no reviews exist, don't show the section
+      // ✅ Hide section if no reviews and not loading
       if (!isLoading && reviews.isEmpty && totalReviews == 0) {
         return const SizedBox.shrink();
       }
@@ -2056,13 +2058,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section Header
+          // ---------- Header ----------
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 16.sp),
             child: AppSpacingText(
               text: 'RATINGS & REVIEWS',
               fontFamily: "Franklin Gothic",
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               color: widget.backgroundcolor == whiteColor
                   ? blackColor
                   : whiteColor,
@@ -2070,12 +2072,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ),
           ),
 
-          // Rating Summary with Trustpilot-style badge
+          // ---------- Average Rating + Count ----------
           Padding(
-            padding: EdgeInsets.only(left: 12.sp, right: 12.sp, bottom: 16.sp),
+            padding: EdgeInsets.only(left: 12.sp, right: 12.sp, bottom: 12.sp),
             child: Row(
               children: [
-                // Trustpilot-like badge
                 Container(
                   padding:
                       EdgeInsets.symmetric(horizontal: 8.sp, vertical: 4.sp),
@@ -2115,29 +2116,37 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ),
           ),
 
-          // Loading State
+          // ---------- Loader ----------
           if (isLoading)
             Padding(
               padding: EdgeInsets.symmetric(vertical: 20.sp),
               child: const Center(child: CircularProgressIndicator()),
             ),
 
-          // Individual Reviews (show first 3)
+          // ---------- Review List ----------
           if (!isLoading && reviews.isNotEmpty)
             ...reviews.take(3).map((review) {
+              final user = review['user'] ?? {};
+              final variant = review['product_variant'] ?? {};
+
+              final userName =
+                  (user['fullName'] ?? user['name'] ?? 'Anonymous').toString();
+              final comment = (review['comment'] ?? '').toString();
+              final rating = (review['rating'] as num?)?.toInt() ?? 0;
+              final createdAt = review['createdAt'] ?? '';
+              final variantTitle = variant['title']?.toString();
+
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildReviewItem(
-                    name: (review['userName'] ??
-                            review['user']?['name'] ??
-                            'Anonymous')
-                        .toString()
-                        .toUpperCase(),
-                    date: _formatReviewDate(
-                        review['createdAt'] ?? review['date']),
-                    rating: (review['rating'] as num?)?.toInt() ?? 0,
-                    review: (review['comment'] ?? review['review'] ?? '')
-                        .toString(),
+                    name: userName.toUpperCase(),
+                    date: _formatReviewDate(createdAt),
+                    rating: rating,
+                    review:
+                        comment.isNotEmpty ? comment : "No comment provided",
+                    variant:
+                        variantTitle != null ? "Size: $variantTitle" : null,
                   ),
                   if (review != reviews.take(3).last)
                     Padding(
@@ -2154,7 +2163,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
               );
             }).toList(),
 
-          // "No reviews yet" message
+          // ---------- No Reviews Message ----------
           if (!isLoading && reviews.isEmpty)
             Padding(
               padding: EdgeInsets.symmetric(vertical: 20.sp, horizontal: 12.sp),
@@ -2171,15 +2180,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
               ),
             ),
 
-          // See All Reviews Button (only if more than 3 reviews)
+          // ---------- See All ----------
           if (!isLoading && reviews.length > 3)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 16.sp),
               child: Center(
                 child: InkWell(
                   onTap: () {
-                    // TODO: Navigate to all reviews screen
-                    // Get.to(() => AllReviewsScreen(productId: widget.productId));
+                    // TODO: Navigate to full review page
                     print('Navigate to all reviews - Total: $totalReviews');
                   },
                   child: Container(
@@ -2219,69 +2227,77 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     required String date,
     required int rating,
     required String review,
+    String? variant,
   }) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 8.sp),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Name
-          Text(
-            name,
-            style: TextStyle(
-              fontFamily: "Franklin Gothic",
-              fontWeight: FontWeight.w500,
-              color: widget.backgroundcolor == whiteColor
-                  ? blackColor
-                  : whiteColor,
-              fontSize: 13.sp,
-            ),
-          ),
-          SizedBox(height: 6.sp),
-
-          // Stars and Date
+          // Header
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Star Rating
-              Row(
-                children: List.generate(5, (index) {
-                  return Icon(
-                    index < rating ? Icons.star : Icons.star_border,
-                    color: const Color(0xFFFFA500),
-                    size: 14.sp,
-                  );
-                }),
+              Text(
+                name,
+                style: TextStyle(
+                  fontFamily: "Franklin Gothic",
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13.sp,
+                  color: nameText,
+                ),
               ),
-              Spacer(),
               Text(
                 date,
                 style: TextStyle(
                   fontFamily: "Franklin Gothic Regular",
                   fontWeight: FontWeight.w400,
-                  color: widget.backgroundcolor == whiteColor
-                      ? subtitleColor
-                      : searchTextColor,
                   fontSize: 11.sp,
+                  color: subtitleColor,
                 ),
               ),
             ],
           ),
-          SizedBox(height: 8.sp),
 
-          // Review Text
+          SizedBox(height: 4.sp),
+
+          // Stars
+          Row(
+            children: List.generate(
+              5,
+              (index) => Icon(
+                index < rating ? Icons.star : Icons.star_border,
+                size: 14.sp,
+                color: const Color(0xFFFFB800),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 6.sp),
+
+          // Variant info
+          if (variant != null)
+            Text(
+              variant,
+              style: TextStyle(
+                fontFamily: "Franklin Gothic Regular",
+                fontWeight: FontWeight.w400,
+                fontSize: 12.sp,
+                color: subtitleColor,
+              ),
+            ),
+
+          SizedBox(height: 4.sp),
+
+          // Review text
           Text(
             review,
             style: TextStyle(
               fontFamily: "Franklin Gothic Regular",
               fontWeight: FontWeight.w400,
-              color: widget.backgroundcolor == whiteColor
-                  ? subtitleColor
-                  : searchTextColor,
               fontSize: 12.sp,
-              height: 1.4,
+              color: nameText,
             ),
-            maxLines: 4,
-            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

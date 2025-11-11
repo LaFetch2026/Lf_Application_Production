@@ -6,6 +6,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
 import 'package:lafetch/core/constant/constants.dart';
+import 'package:lafetch/controllers/product_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RateProductScreen extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -17,8 +19,10 @@ class RateProductScreen extends StatefulWidget {
 }
 
 class _RateProductScreenState extends State<RateProductScreen> {
-  int _rating = 0;
+  final ProductController productController = Get.put(ProductController());
   final TextEditingController _reviewController = TextEditingController();
+  int _rating = 0;
+  bool _isSubmitting = false;
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +35,7 @@ class _RateProductScreenState extends State<RateProductScreen> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: SvgPicture.asset(
-            arrowBack, // ✅ Using constant from const.dart
-            height: 18,
-            width: 18,
-          ),
+          icon: SvgPicture.asset(arrowBack, height: 18, width: 18),
           onPressed: () => Get.back(),
         ),
         title: const AppText(
@@ -117,7 +117,6 @@ class _RateProductScreenState extends State<RateProductScreen> {
               fontSize: 14,
             ),
             SizedBox(height: 8.sp),
-
             Row(
               children: List.generate(5, (index) {
                 final starIndex = index + 1;
@@ -127,8 +126,8 @@ class _RateProductScreenState extends State<RateProductScreen> {
                     Icons.star,
                     size: 30.sp,
                     color: starIndex <= _rating
-                        ? const Color(0xFFFACC15) // Yellow
-                        : const Color(0xFFD1D5DB), // Grey
+                        ? const Color(0xFFFACC15)
+                        : const Color(0xFFD1D5DB),
                   ),
                 );
               }),
@@ -145,7 +144,6 @@ class _RateProductScreenState extends State<RateProductScreen> {
               fontSize: 14,
             ),
             SizedBox(height: 8.sp),
-
             TextField(
               controller: _reviewController,
               maxLines: 5,
@@ -200,24 +198,26 @@ class _RateProductScreenState extends State<RateProductScreen> {
                 ),
                 Expanded(
                   child: GestureDetector(
-                    onTap: _submitReview,
+                    onTap: _isSubmitting ? null : _submitReview,
                     child: Container(
                       height: 48.sp,
                       decoration: BoxDecoration(
-                        color: blackColor,
+                        color: _isSubmitting ? Colors.grey : blackColor,
                         borderRadius: BorderRadius.only(
                           topRight: Radius.circular(4.sp),
                           bottomRight: Radius.circular(4.sp),
                         ),
                       ),
-                      child: const Center(
-                        child: AppText(
-                          text: "SUBMIT",
-                          fontFamily: "Franklin Gothic",
-                          fontWeight: FontWeight.w700,
-                          color: whiteColor,
-                          fontSize: 13,
-                        ),
+                      child: Center(
+                        child: _isSubmitting
+                            ? const CircularProgressIndicator(color: whiteColor)
+                            : const AppText(
+                                text: "SUBMIT",
+                                fontFamily: "Franklin Gothic",
+                                fontWeight: FontWeight.w700,
+                                color: whiteColor,
+                                fontSize: 13,
+                              ),
                       ),
                     ),
                   ),
@@ -230,7 +230,6 @@ class _RateProductScreenState extends State<RateProductScreen> {
     );
   }
 
-  /// ✅ Safe Product Image Loader
   Widget _buildProductImage(Map<String, dynamic> product) {
     final imageUrl = product['imageUrl'];
     final isNetwork =
@@ -259,38 +258,50 @@ class _RateProductScreenState extends State<RateProductScreen> {
     }
   }
 
-  /// ✅ Handle Submit Logic
-  void _submitReview() {
+  /// ✅ Call API on Submit
+  Future<void> _submitReview() async {
     if (_rating == 0) {
-      Get.snackbar(
-        'Alert',
-        'Please select a star rating before submitting.',
-        backgroundColor: Colors.redAccent.withOpacity(0.1),
-        colorText: Colors.redAccent,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Alert', 'Please select a star rating before submitting.',
+          backgroundColor: Colors.redAccent.withOpacity(0.1),
+          colorText: Colors.redAccent,
+          snackPosition: SnackPosition.BOTTOM);
       return;
     }
 
     if (_reviewController.text.trim().isEmpty) {
-      Get.snackbar(
-        'Alert',
-        'Please write a short review before submitting.',
-        backgroundColor: Colors.orangeAccent.withOpacity(0.1),
-        colorText: Colors.orangeAccent,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar('Alert', 'Please write a short review before submitting.',
+          backgroundColor: Colors.orangeAccent.withOpacity(0.1),
+          colorText: Colors.orangeAccent,
+          snackPosition: SnackPosition.BOTTOM);
       return;
     }
 
-    Get.snackbar(
-      'Thank you!',
-      'Your review has been submitted successfully.',
-      backgroundColor: Colors.green.withOpacity(0.1),
-      colorText: Colors.green.shade800,
-      snackPosition: SnackPosition.BOTTOM,
+    setState(() => _isSubmitting = true);
+
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('user_id') ?? prefs.getInt('userId') ?? 0;
+
+    final success = await productController.submitProductReview(
+      userId: userId,
+      orderItemId: widget.product["id"], // ✅ from order item
+      variantId: widget.product["variantId"], // ✅ from API
+      rating: _rating,
+      comment: _reviewController.text.trim(),
     );
 
-    Get.back();
+    setState(() => _isSubmitting = false);
+
+    if (success) {
+      Get.snackbar('Success', 'Your review has been submitted successfully.',
+          backgroundColor: Colors.green.withOpacity(0.1),
+          colorText: Colors.green.shade800,
+          snackPosition: SnackPosition.BOTTOM);
+      Get.back();
+    } else {
+      Get.snackbar('Error', 'Failed to submit review. Please try again.',
+          backgroundColor: Colors.redAccent.withOpacity(0.1),
+          colorText: Colors.redAccent,
+          snackPosition: SnackPosition.BOTTOM);
+    }
   }
 }

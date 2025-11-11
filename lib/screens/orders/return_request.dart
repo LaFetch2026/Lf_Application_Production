@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
 import 'package:lafetch/core/constant/constants.dart';
+import 'package:lafetch/controllers/order_controller.dart';
 import 'return_status.dart';
 
 class ReturnRequestScreen extends StatefulWidget {
@@ -15,18 +17,40 @@ class ReturnRequestScreen extends StatefulWidget {
 }
 
 class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
+  final OrderController orderController = Get.put(OrderController());
   String? selectedReason;
 
-  final List<String> reasons = [
-    'Product not as described',
-    'Received damaged item',
-    'Wrong product delivered',
-    'Size/fit issue',
-    'Quality not satisfactory',
-  ];
+  final Map<int, String> reasons = const {
+    25: "Other",
+    26: "Changed my mind",
+    27: "Does not fit",
+    28: "Size not as expected",
+    29: "Item is damaged",
+    30: "Received wrong item",
+    31: "Parcel damaged on arrival",
+    32: "Quality not as expected",
+    33: "Missing item or accessories",
+    34: "Performance not adequate",
+    35: "Not as described",
+    36: "Arrived too late",
+  };
 
   @override
   Widget build(BuildContext context) {
+    final orderItem = widget.order;
+    final product = orderItem['product'] ?? {};
+    final order = orderItem['order'] ?? {};
+
+    final productName = product['title'] ?? 'Unknown Product';
+    final description =
+        product['shortDescription'] ?? product['description'] ?? '';
+    final size = orderItem['size'] ?? 'M';
+    final quantity = orderItem['quantity']?.toString() ?? '1';
+
+    final imageList = (product['imageUrls'] ?? []) as List;
+    final imageUrl =
+        imageList.isNotEmpty ? imageList.first : dummyWishlistImage;
+
     return Scaffold(
       backgroundColor: whiteColor,
       appBar: AppBar(
@@ -35,7 +59,7 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: SvgPicture.asset(
-            arrowBack, // ✅ Using constant
+            arrowBack,
             height: 18,
             width: 18,
           ),
@@ -59,7 +83,7 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(6.sp),
-                  child: _buildProductImage(),
+                  child: _buildProductImage(imageUrl),
                 ),
                 SizedBox(width: 10.sp),
                 Expanded(
@@ -67,7 +91,7 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AppText(
-                        text: widget.order['productName'] ?? 'Product Name',
+                        text: productName,
                         fontFamily: "Franklin Gothic",
                         fontWeight: FontWeight.w700,
                         color: blackColor,
@@ -75,17 +99,16 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
                       ),
                       SizedBox(height: 2.sp),
                       AppText(
-                        text: widget.order['productDescription'] ??
-                            'Product description',
+                        text: description,
                         fontFamily: "Franklin Gothic Regular",
                         fontWeight: FontWeight.w400,
                         color: subtitleColor,
                         fontSize: 12,
+                        maxLines: 2,
                       ),
                       SizedBox(height: 4.sp),
                       AppText(
-                        text:
-                            "Size: ${widget.order['size'] ?? 'M'}  Qty: ${widget.order['quantity'] ?? '1'}",
+                        text: "Size: $size   Qty: $quantity",
                         fontFamily: "Franklin Gothic Regular",
                         fontWeight: FontWeight.w400,
                         color: subtitleColor,
@@ -111,7 +134,7 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
             DropdownButtonFormField<String>(
               value: selectedReason,
               dropdownColor: whiteColor,
-              items: reasons
+              items: reasons.values
                   .map((reason) => DropdownMenuItem(
                         value: reason,
                         child: Text(
@@ -145,25 +168,6 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
             ),
             SizedBox(height: 20.sp),
 
-            // ✅ Pickup Address
-            const AppText(
-              text: "PICKUP ADDRESS",
-              fontFamily: "Franklin Gothic",
-              fontWeight: FontWeight.w700,
-              color: blackColor,
-              fontSize: 13,
-            ),
-            SizedBox(height: 6.sp),
-            const AppText(
-              text:
-                  "B3, 402, street name, close to landmarks\nABC Street, Mumbai, Maharashtra...",
-              fontFamily: "Franklin Gothic Regular",
-              fontWeight: FontWeight.w400,
-              color: subtitleColor,
-              fontSize: 12,
-            ),
-            SizedBox(height: 20.sp),
-
             // ✅ Info Note
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,13 +198,7 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
                     onTap: () => Get.back(),
                     child: Container(
                       height: 48.sp,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF9FAFB),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(4.sp),
-                          bottomLeft: Radius.circular(4.sp),
-                        ),
-                      ),
+                      color: const Color(0xFFF9FAFB),
                       child: const Center(
                         child: AppText(
                           text: "CANCEL",
@@ -215,7 +213,7 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
                 ),
                 Expanded(
                   child: GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       if (selectedReason == null) {
                         Get.snackbar(
                           "Select Reason",
@@ -224,19 +222,30 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
                           colorText: Colors.redAccent,
                           snackPosition: SnackPosition.BOTTOM,
                         );
-                      } else {
-                        Get.to(() => ReturnStatusScreen(order: widget.order));
+                        return;
+                      }
+
+                      final orderItemId = orderItem['id'] ?? 0;
+                      final userId = order['userId'] ?? 0;
+                      final addressId = order['shippingAddressId'] ?? 0;
+                      final shipRocketId =
+                          order['shiprocketOrderId']?.toString() ?? '';
+
+                      final success = await orderController.requestReturn(
+                        orderItemId: orderItemId,
+                        userId: userId,
+                        reason: selectedReason!,
+                        addressId: addressId,
+                        shipRocketId: shipRocketId,
+                      );
+
+                      if (success) {
+                        Get.off(() => ReturnStatusScreen(order: widget.order));
                       }
                     },
                     child: Container(
                       height: 48.sp,
-                      decoration: BoxDecoration(
-                        color: blackColor,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(4.sp),
-                          bottomRight: Radius.circular(4.sp),
-                        ),
-                      ),
+                      color: blackColor,
                       child: const Center(
                         child: AppText(
                           text: "RETURN ITEM",
@@ -258,21 +267,18 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
   }
 
   /// ✅ Safe Product Image Loader
-  Widget _buildProductImage() {
-    final imageUrl = widget.order['imageUrl'];
-    final isNetwork =
-        imageUrl != null && imageUrl.toString().startsWith('http');
-
+  Widget _buildProductImage(String imageUrl) {
+    final isNetwork = imageUrl.startsWith('http');
     if (isNetwork) {
       return Image.network(
         imageUrl,
-        height: 60.sp,
-        width: 60.sp,
+        height: 70.sp,
+        width: 70.sp,
         fit: BoxFit.cover,
         errorBuilder: (_, __, ___) => Image.asset(
           dummyWishlistImage,
-          height: 60.sp,
-          width: 60.sp,
+          height: 70.sp,
+          width: 70.sp,
           fit: BoxFit.cover,
         ),
       );

@@ -253,20 +253,17 @@ class OrderController extends BaseController {
 
   // ---------- 3) REQUEST CANCEL ----------
   /// Calls: POST {{laFetchBaseUrl}}/request-cancel
-  /// Body:
-  /// {
-  ///   "userId": 2,
-  ///   "orderItemId": 1,
-  ///   "reason": "..."
-  /// }
+
   Future<bool> requestCancel({
     required int userId,
     required int orderItemId,
     required String reason,
+    required String shipRocketId,
   }) async {
     isRequestingCancel.value = true;
     apiError.value = "";
     showLoading();
+
     final prefs = await SharedPreferences.getInstance();
     try {
       final uri = Uri.parse("${ApiConstants.baseUrl}/request-cancel");
@@ -274,6 +271,7 @@ class OrderController extends BaseController {
         "userId": userId,
         "orderItemId": orderItemId,
         "reason": reason,
+        "shipRocketId": shipRocketId,
       };
 
       final res = await http.post(
@@ -285,11 +283,13 @@ class OrderController extends BaseController {
       if (_handleAuthGuard(res.statusCode)) return false;
 
       if (res.statusCode == 200 || res.statusCode == 201) {
-        getSnackBar("Cancellation requested");
+        final data = json.decode(res.body);
+        final message = data['message'] ?? "Order cancelled successfully!";
+        getSnackBar(message);
         return true;
       } else {
         apiError.value = "Cancel request failed (${res.statusCode})";
-        print(res.body);
+        print("API Error Response: ${res.body}");
         getSnackBar(apiError.value);
         return false;
       }
@@ -306,13 +306,7 @@ class OrderController extends BaseController {
 
   // ---------- 4) REQUEST EXCHANGE ----------
   /// Calls: POST {{laFetchBaseUrl}}/request-exchange
-  /// Body:
-  /// {
-  ///   "orderItemId": 1,
-  ///   "userId": 2,
-  ///   "newVariantId": 2,
-  ///   "reason": "size not fit"
-  /// }
+
   Future<bool> requestExchange({
     required int orderItemId,
     required int userId,
@@ -393,28 +387,28 @@ class OrderController extends BaseController {
   }
 
   // ---------- 6) REQUEST RETURN ----------
-  /// Calls: POST {{laFetchBaseUrl}}/request-return
-  /// Body:
-  /// {
-  ///   "orderItemId": 1,
-  ///   "userId": 2,
-  ///   "reason": "test"
-  /// }
+
   Future<bool> requestReturn({
     required int orderItemId,
     required int userId,
     required String reason,
+    required int addressId,
+    required String shipRocketId,
   }) async {
     isRequestingReturn.value = true;
     apiError.value = "";
     showLoading();
+
     final prefs = await SharedPreferences.getInstance();
+
     try {
       final uri = Uri.parse("${ApiConstants.baseUrl}/request-return");
       final body = {
         "orderItemId": orderItemId,
         "userId": userId,
         "reason": reason,
+        "addressId": addressId,
+        "shipRocketId": shipRocketId,
       };
 
       final res = await http.post(
@@ -426,11 +420,15 @@ class OrderController extends BaseController {
       if (_handleAuthGuard(res.statusCode)) return false;
 
       if (res.statusCode == 200 || res.statusCode == 201) {
-        getSnackBar("Return requested");
+        final data = json.decode(res.body);
+        final message =
+            data['message'] ?? "Return request submitted successfully!";
+        getSnackBar(message);
+        print("Return Response: ${res.body}");
         return true;
       } else {
         apiError.value = "Return request failed (${res.statusCode})";
-        print(res.body);
+        print("API Error Response: ${res.body}");
         getSnackBar(apiError.value);
         return false;
       }

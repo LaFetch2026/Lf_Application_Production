@@ -209,6 +209,7 @@ class ProductController extends BaseController {
   RxString courierName = "".obs;
   RxString estimatedDate = "".obs;
   RxString estimatedDays = "".obs;
+  final RxDouble averageRating = 0.0.obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -539,11 +540,12 @@ class ProductController extends BaseController {
         imageList.assignAll(imgs.map((u) => {'name': u}).toList());
 
         // ---------- Sizes ----------
-        // (Your API has no inventoryQuantity, so we'll assume in-stock = true)
         sizeInventoryList.assignAll(
           variants.map((v) {
             final vPrice = _num(v['price']).toDouble();
             final vMrp = _num(v['compareAtPrice']).toDouble();
+
+            // extract size name
             String sizeLabel = '';
             if (v['selectedOptions'] is List) {
               for (final opt in v['selectedOptions']) {
@@ -554,26 +556,45 @@ class ProductController extends BaseController {
                 }
               }
             }
+
+            // ✅ pick availableStock from nested inventory object
+            final inventory = v['inventory'] is Map
+                ? Map<String, dynamic>.from(v['inventory'])
+                : <String, dynamic>{};
+            final availableStock =
+                _num(inventory['availableStock']).toInt(); // real stock
+
             return {
               'id': v['id'] ?? v['shopifyVariantId'] ?? 0,
               'product_matrix_size_name': sizeLabel,
-              'stocks': 10, // dummy stock (since API doesn’t provide it)
+              'stocks': availableStock, // ✅ REAL STOCK VALUE
               'price': vPrice,
               'compareAtPrice': vMrp,
               'product_matrix_available_colors': <Map<String, dynamic>>[],
+              'selectedOptions': v['selectedOptions'] ?? [],
             };
           }).toList(),
         );
 
+        // Debug print
+        print("==== Variant Stock Summary ====");
+        for (final v in sizeInventoryList) {
+          print("${v['product_matrix_size_name']} => stocks: ${v['stocks']}");
+        }
+
         // ---------- Default size selection ----------
         if (sizeInventoryId.value == 0 && sizeInventoryList.isNotEmpty) {
-          final first = sizeInventoryList.first;
+          final firstInStock = sizeInventoryList.firstWhere(
+            (e) => (_num(e['stocks']) > 0),
+            orElse: () => sizeInventoryList.first,
+          );
+
           sizeInventoryId.value =
-              int.tryParse(first['id']?.toString() ?? '0') ?? 0;
+              int.tryParse(firstInStock['id']?.toString() ?? '0') ?? 0;
           try {
-            (selectedProductSize as dynamic).value = first;
+            (selectedProductSize as dynamic).value = firstInStock;
           } catch (_) {
-            selectedProductSize = first;
+            selectedProductSize = firstInStock;
           }
         }
 
@@ -596,7 +617,7 @@ class ProductController extends BaseController {
       errorMsg.value = 'Error fetching product: $e';
     } finally {
       isDetails.value = false; // loader off
-      update(); // update UI
+      update(); // refresh UI
     }
   }
 
@@ -931,8 +952,9 @@ class ProductController extends BaseController {
   }
 
   Future<bool> submitProductReview({
-    required int orderId,
-    required int productId,
+    required int userId,
+    required int orderItemId,
+    required int variantId,
     required int rating,
     required String comment,
   }) async {
@@ -940,7 +962,6 @@ class ProductController extends BaseController {
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
-    final userId = prefs.getInt('user_id') ?? 0; // Assuming user_id is stored
 
     if (token.isEmpty) {
       getSnackBar("Please login to submit a review");
@@ -951,8 +972,8 @@ class ProductController extends BaseController {
     try {
       final Map<String, dynamic> sendData = {
         "userId": userId,
-        "orderId": orderId,
-        "productId": productId,
+        "orderItemId": orderItemId,
+        "variantId": variantId,
         "rating": rating,
         "comment": comment,
       };
@@ -972,10 +993,13 @@ class ProductController extends BaseController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = json.decode(response.body);
         print("✓ Review submitted successfully: $responseData");
-        getSnackBar("Review submitted successfully");
+        getSnackBar(responseData["message"] ?? "Review submitted successfully");
 
-        // Refresh reviews list after submission
-        await getProductReviews(productId);
+        // Optionally refresh product reviews
+        final variant = responseData["data"]?["product_variant"];
+        if (variant != null && variant["productId"] != null) {
+          await getProductReviews(variant["productId"]);
+        }
 
         return true;
       } else if (response.statusCode == 400) {
@@ -992,7 +1016,7 @@ class ProductController extends BaseController {
         getSnackBar("Server error, please try again later");
         return false;
       } else {
-        getSnackBar("Failed to submit review");
+        getSnackBar("Failed to submit review (${response.statusCode})");
         print("✗ Review submission failed: ${response.statusCode}");
         return false;
       }
@@ -1000,9 +1024,9 @@ class ProductController extends BaseController {
       getSnackBar("Request timeout. Please try again.");
       print("✗ Review submission timeout");
       return false;
-    } catch (e) {
+    } catch (e, s) {
       getSnackBar("Error submitting review");
-      print("✗ Error submitting review: $e");
+      print("✗ Error submitting review: $e\n$s");
       return false;
     } finally {
       isSubmittingReview.value = false;
@@ -1031,7 +1055,7 @@ class ProductController extends BaseController {
 
       final response = await http.get(
         uri,
-        headers: <String, String>{
+        headers: {
           'Accept': 'application/json; charset=UTF-8',
           if (token.isNotEmpty) 'Authorization': "Bearer $token",
         },
@@ -1040,57 +1064,54 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
 
-        if (responseData != null) {
-          // Handle different response structures
-          if (responseData is Map) {
-            // Structure: { data: [...], total: n, page: n }
-            if (responseData["data"] != null) {
-              reviewList.assignAll(responseData["data"]);
-              totalReview.value = responseData["total"] ?? reviewList.length;
-            }
-            // Structure: { reviews: [...], totalReviews: n }
-            else if (responseData["reviews"] != null) {
-              reviewList.assignAll(responseData["reviews"]);
-              totalReview.value =
-                  responseData["totalReviews"] ?? reviewList.length;
-            }
-            // Direct array in data field
-            else {
-              reviewList.assignAll([responseData]);
-              totalReview.value = 1;
-            }
-          }
-          // Direct array response
-          else if (responseData is List) {
-            reviewList.assignAll(responseData);
-            totalReview.value = responseData.length;
-          }
-
-          print("✓ Reviews loaded: ${reviewList.length} reviews");
-        } else {
+        if (responseData is! Map || responseData['data'] == null) {
           reviewList.clear();
           totalReview.value = 0;
+          averageRating.value = 0.0;
           print("✓ No reviews found for product $productId");
+          return;
         }
+
+        final List<dynamic> reviews = responseData['data'] as List<dynamic>;
+
+        // ✅ Update review list
+        reviewList.assignAll(reviews);
+        totalReview.value = reviews.length;
+
+        // ✅ Calculate average rating
+        if (reviews.isNotEmpty) {
+          final totalRating = reviews.fold<double>(
+            0.0,
+            (sum, review) =>
+                sum + ((review['rating'] as num?)?.toDouble() ?? 0.0),
+          );
+          averageRating.value = totalRating / reviews.length;
+        } else {
+          averageRating.value = 0.0;
+        }
+
+        print(
+            "✓ Reviews loaded: ${reviews.length} | Avg Rating: ${averageRating.value.toStringAsFixed(1)}");
       } else if (response.statusCode == 404) {
         reviewList.clear();
         totalReview.value = 0;
-        print("✓ No reviews found for product $productId");
+        averageRating.value = 0.0;
+        print("✓ No reviews found (404) for product $productId");
       } else if (response.statusCode == 401) {
         Get.offAll(() => const LoginScreen(initialTab: 0));
-        getSnackBar("Authentication failed");
-      } else if (response.statusCode == 500) {
-        getSnackBar("Server error, please try again later");
-        print("✗ Server error fetching reviews");
+        getSnackBar("Session expired. Please log in again.");
+      } else if (response.statusCode >= 500) {
+        getSnackBar("Server error. Please try again later.");
+        print("✗ Server error fetching reviews: ${response.statusCode}");
       } else {
-        getSnackBar("Failed to load reviews");
-        print("✗ Failed to load reviews: ${response.statusCode}");
+        getSnackBar("Failed to load reviews (${response.statusCode})");
+        print("✗ Unexpected response: ${response.statusCode}");
       }
     } on TimeoutException {
-      getSnackBar("Request timeout. Please try again.");
+      getSnackBar("Request timed out. Please try again.");
       print("✗ Reviews fetch timeout");
-    } catch (e) {
-      print("✗ Error fetching reviews: $e");
+    } catch (e, s) {
+      print("✗ Error fetching reviews: $e\n$s");
       getSnackBar("Error loading reviews");
     } finally {
       isFetchingReviews.value = false;
