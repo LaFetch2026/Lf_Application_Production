@@ -125,8 +125,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
               label: "Quick",
               selected: _currentIndex == 4,
               onTap: () {
-                // _changeTab(4);
-                // analytics.logEvent(name: 'quick_page');
+                _showQuickDialog(context);
               },
             ),
             _navItem(
@@ -154,6 +153,110 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showQuickDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.sp),
+          ),
+          insetPadding: EdgeInsets.symmetric(horizontal: 12.sp),
+          backgroundColor: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.sp),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF5B5399), Color(0xFF171717)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            padding: EdgeInsets.symmetric(vertical: 32.sp, horizontal: 20.sp),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // ⚡ Lightning-like custom icon using Flutter’s built-in shapes
+                Container(
+                  width: 64.sp,
+                  height: 40.sp,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(12.sp),
+                  ),
+                  child: Center(
+                    child: Image.asset(
+                      bagLogoImage, // ✅ constant from your constants.dart
+                      width: 48.sp,
+                      height: 48.sp,
+                      fit: BoxFit.contain,
+                      color: Colors.white, // makes it white-tinted if needed
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 24.sp),
+
+                // 🟣 Title Text
+                const Text(
+                  "Brace yourself.",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontFamily: "Franklin Gothic",
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+                SizedBox(height: 6.sp),
+
+                // 🟣 Subtitle Text
+                Text(
+                  "Arriving sooner than expected",
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.85),
+                    fontSize: 14,
+                    fontFamily: "Franklin Gothic Regular",
+                    fontWeight: FontWeight.w400,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 28.sp),
+
+                // ✅ DONE Button
+                GestureDetector(
+                  onTap: () => Get.back(),
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(vertical: 14.sp),
+                    decoration: BoxDecoration(
+                      // borderRadius: BorderRadius.circular(8.sp),
+                      border: Border.all(color: Colors.white, width: 1),
+                      color: Colors.transparent,
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "DONE",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: "Franklin Gothic",
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
