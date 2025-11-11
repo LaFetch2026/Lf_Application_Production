@@ -148,7 +148,6 @@ class SearchScreenState extends State<SearchScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      controller.searchController.clear();
       await _loadRecent();
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: statusBarColor,
@@ -160,7 +159,11 @@ class SearchScreenState extends State<SearchScreen> {
   @override
   void dispose() {
     _debounceSuggest?.cancel();
-    Get.delete<SearchScreenController>();
+    if (Get.isRegistered<SearchScreenController>()) {
+      final ctrl = Get.find<SearchScreenController>();
+      ctrl.searchController.dispose(); // ensure disposed once
+      Get.delete<SearchScreenController>();
+    }
     super.dispose();
   }
 

@@ -51,7 +51,13 @@ class SearchScreenController extends BaseController {
 
   @override
   void onClose() {
-    searchController.dispose();
+    try {
+      if (searchController.hasListeners) {
+        searchController.dispose();
+      }
+    } catch (e) {
+      debugPrint('⚠️ searchController already disposed: $e');
+    }
     super.onClose();
   }
 

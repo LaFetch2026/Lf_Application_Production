@@ -8,7 +8,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../controllers/cart_controller.dart';
 import '../controllers/product_controller.dart';
 import '../controllers/profile_controller.dart';

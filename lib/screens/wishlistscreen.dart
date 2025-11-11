@@ -171,6 +171,84 @@ class WishlistScreenState extends State<WishlistScreen> {
     );
   }
 
+  /// 🧩 Small grid of up to 4 product thumbnails
+  /// ✅ Properly builds up to 4 thumbnails from a board’s products
+  Widget _buildBoardThumbnails(Map<String, dynamic> item) {
+    final products = item['products'];
+    if (products is! List || products.isEmpty) return const SizedBox.shrink();
+
+    final List<String> imageUrls = [];
+
+    for (final productItem in products) {
+      Map<String, dynamic>? productMap;
+
+      // Handle nested cases like: { product: { imageUrls: [...] } }
+      if (productItem is Map && productItem['product'] is Map) {
+        productMap = Map<String, dynamic>.from(productItem['product']);
+      } else if (productItem is Map) {
+        productMap = Map<String, dynamic>.from(productItem);
+      }
+
+      if (productMap == null) continue;
+
+      // Try multiple fields in flexible order
+      final imgUrls = productMap['imageUrls'] ??
+          productMap['images'] ??
+          productMap['thumbnails'] ??
+          [];
+
+      if (imgUrls is List && imgUrls.isNotEmpty) {
+        for (final img in imgUrls) {
+          final url = img.toString();
+          if (_isImageUrl(url)) {
+            imageUrls.add(_normalizeUrl(url));
+            break; // take the first valid one per product
+          }
+        }
+      } else if (productMap['image'] is String &&
+          _isImageUrl(productMap['image'])) {
+        imageUrls.add(_normalizeUrl(productMap['image']));
+      }
+
+      if (imageUrls.length >= 4) break; // only show 4 thumbnails
+    }
+
+    if (imageUrls.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: EdgeInsets.only(top: 8.sp, left: 8.sp, right: 8.sp),
+      child: Row(
+        children: List.generate(
+          imageUrls.length,
+          (index) => Expanded(
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 2.sp),
+              height: 60.sp,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6.sp),
+                color: const Color(0xFFEFF1F3),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(6.sp),
+                child: CachedNetworkImage(
+                  imageUrl: imageUrls[index],
+                  fit: BoxFit.cover,
+                  placeholder: (_, __) => Container(
+                    color: const Color(0xFFEFF1F3),
+                  ),
+                  errorWidget: (_, __, ___) => Image.asset(
+                    dummyWishlistImage,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   // ---------- Boards Grid ----------
   Widget _buildWishlistGrid(BuildContext context) {
     return Column(
@@ -282,6 +360,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
+                        _buildBoardThumbnails(item), // ✅ add this line here
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 10.sp),
                           child: AppText(
