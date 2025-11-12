@@ -23,7 +23,10 @@ class BrandController extends BaseController {
   ScrollController brandListController = ScrollController();
   RxString queryText = "".obs;
   RxBool isBrand = false.obs;
-  List brandList = [].obs;
+
+  /// ✅ Reactive list of brands
+  RxList<Map<String, dynamic>> brandList = <Map<String, dynamic>>[].obs;
+
   RxString brandName = "".obs;
   RxString brandlogo = "".obs;
   RxString brandbackground = "".obs;
@@ -31,7 +34,7 @@ class BrandController extends BaseController {
   RxString text = "Expand All".obs;
   RxBool showAllBrand = false.obs;
   RxBool isDetails = false.obs;
-  var brandDetails = <String, dynamic>{}.obs; // ✅ correct: reactive Map
+  var brandDetails = <String, dynamic>{}.obs;
 
   RxBool isCategory = false.obs;
   RxBool isProductBrand = false.obs;
@@ -41,20 +44,20 @@ class BrandController extends BaseController {
   RxInt selectIndex = 0.obs;
   List<bool> selected = List.generate(50, (i) => false).obs;
 
+  /// ================================================================
+  /// ✅ Fetch Brands (Featured or All)
+  /// ================================================================
   Future<void> getBrandData(String type) async {
     isBrand.value = true;
     final prefs = await SharedPreferences.getInstance();
 
     try {
-      // Build base = laFetchBaseUrl (your sample shows this host)
-      final base = ApiConstants.baseUrl; // ← use laFetch here per your API
+      final base = ApiConstants.baseUrl;
       final baseUri = Uri.parse(base);
 
-      // Only append isFeatured (present in your payload). Avoid unknown params.
+      // Optional param: isFeatured=true
       final queryParams = <String, String>{};
-      if (type == "featured") {
-        queryParams["isFeatured"] = "true";
-      }
+      if (type == "featured") queryParams["isFeatured"] = "true";
 
       final uri = baseUri.replace(
         path: baseUri.path.endsWith('/')
@@ -63,38 +66,34 @@ class BrandController extends BaseController {
         queryParameters: queryParams.isEmpty ? null : queryParams,
       );
 
-      final headers = <String, String>{
+      final headers = {
         'Accept': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ${prefs.getString('token') ?? ''}',
       };
-      final token = prefs.getString('token');
-      if (token != null && token.trim().isNotEmpty) {
-        headers['Authorization'] = 'Bearer $token';
-      }
 
+      print("➡️ Brand API URL: $uri");
       final response = await http
           .get(uri, headers: headers)
           .timeout(const Duration(seconds: 20));
 
-      print("➡️ Brand API URL: $uri");
       print("⬅️ Status Code: ${response.statusCode}");
 
-      // Handle non-200 early
+      // Handle expired session
       if (response.statusCode == 401) {
         getSnackBar("Session expired. Please log in again.");
         Get.offAll(() => const LoginScreen(initialTab: 0));
         return;
       }
+
       if (response.statusCode != 200) {
-        // Try to parse the error payload to show message if any
+        String msg = "Failed to fetch brands (${response.statusCode}).";
         try {
           final err = json.decode(response.body);
-          final msg = (err is Map && err["message"] is String)
-              ? err["message"] as String
-              : "Unknown error";
-          getSnackBar("Failed to fetch brands: $msg");
-        } catch (_) {
-          getSnackBar("Failed to fetch brands (${response.statusCode}).");
-        }
+          if (err is Map && err["message"] is String) {
+            msg = err["message"];
+          }
+        } catch (_) {}
+        getSnackBar(msg);
         return;
       }
 
@@ -106,71 +105,49 @@ class BrandController extends BaseController {
         return;
       }
 
-      // Decode payload: { status, message, data: [ {...}, ... ] }
-      dynamic decoded;
-      try {
-        decoded = json.decode(response.body);
-      } catch (e) {
-        print("❌ JSON decode error: $e");
-        getSnackBar("Something went wrong while fetching brands.");
-        return;
-      }
-
+      final decoded = json.decode(response.body);
       final List<dynamic> allBrandsRaw =
           (decoded is Map && decoded['data'] is List)
               ? decoded['data'] as List
               : const [];
 
-      // Client-side search filter (API sample doesn't show ?q= support)
-      final q = (queryText.value).trim().toLowerCase();
+      // Filter by query text if user searched
+      final q = queryText.value.trim().toLowerCase();
       final filtered = q.isEmpty
           ? allBrandsRaw
           : allBrandsRaw.where((b) {
-              final name =
-                  (b is Map && b['name'] != null) ? b['name'].toString() : '';
-              return name.toLowerCase().contains(q);
+              final name = (b is Map && b['name'] != null)
+                  ? b['name'].toString().toLowerCase()
+                  : '';
+              return name.contains(q);
             }).toList();
 
-      // Group & sort alphabetically
-      final Map<String, List<Map<String, dynamic>>> grouped = {};
+      // ✅ Sort alphabetically by brand name
+      filtered.sort((a, b) {
+        final aName = (a['name'] ?? '').toString().toLowerCase();
+        final bName = (b['name'] ?? '').toString().toLowerCase();
+        return aName.compareTo(bName);
+      });
 
-      for (final item in filtered) {
-        if (item is! Map) continue;
-        final name = (item['name'] ?? '').toString().trim();
-        // Fall back group key if name missing/empty
-        final String key = name.isEmpty ? '#' : name[0].toUpperCase();
-        (grouped[key] ??= <Map<String, dynamic>>[]).add(
-          // make sure map has String keys
-          item.map((k, v) => MapEntry(k.toString(), v)),
-        );
-      }
+      // ✅ Update reactive list directly (no reassigning)
+      brandList.clear();
+      brandList.addAll(
+        filtered
+            .whereType<Map<String, dynamic>>()
+            .map((b) => b.map((k, v) => MapEntry(k.toString(), v)))
+            .toList(),
+      );
 
-      // Sort groups by letter, and items inside by name
-      final sortedGroups = grouped.entries.toList()
-        ..sort((a, b) => a.key.compareTo(b.key));
-
-      brandList = []; // Clear and rebuild
-      for (final entry in sortedGroups) {
-        final letter = entry.key;
-        final items = entry.value
-          ..sort((a, b) => (a['name'] ?? '')
-              .toString()
-              .toLowerCase()
-              .compareTo((b['name'] ?? '').toString().toLowerCase()));
-        // Insert group heading followed by items
-        brandList.add({"alphabet": letter});
-        brandList.addAll(items);
-      }
-
-      // Selection states aligned to new length
+      // Update selection list length
       selected.clear();
       selected = List<bool>.generate(brandList.length, (_) => false);
 
-      print(
-          "✅ Brands loaded: ${filtered.length} | Groups: ${sortedGroups.length}");
+      print("✅ Brands loaded: ${brandList.length}");
+      print("🪪 Names: ${brandList.map((b) => b['name']).toList()}");
     } on TimeoutException {
-      print("⏳ Brand API timeout");
       getSnackBar("Brands request timed out. Please try again.");
+    } on SocketException {
+      getSnackBar("No internet connection. Please check your network.");
     } catch (e) {
       print("❌ Error fetching brand data: $e");
       getSnackBar("Something went wrong while fetching brands.");
@@ -179,6 +156,9 @@ class BrandController extends BaseController {
     }
   }
 
+  /// ================================================================
+  /// ✅ Fetch Brand Details by ID
+  /// ================================================================
   Future<void> getBrandDetails(int id, String slug) async {
     isDetails.value = true;
     final prefs = await SharedPreferences.getInstance();
@@ -198,40 +178,44 @@ class BrandController extends BaseController {
       );
 
       print("⬅️ Status Code: ${response.statusCode}");
-      print("📦 Raw Response:\n${response.body}");
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonRes = json.decode(response.body);
-        final data = jsonRes['data'] ?? {};
-
-        brandDetails.value = data; // store entire response
-
-        // Parse categories
-        final brandInfo = data['brandInfo'] ?? {};
-        final List<dynamic> categories = brandInfo['categories'] ?? [];
-
-        brand_category_List
-          ..clear()
-          ..addAll(categories
-              .whereType<Map>()
-              .map((item) => item['id'])
-              .whereType<int>()
-              .toList());
-
-        // Parse products
-        final List<dynamic> products = data['products'] ?? [];
-        brandProductDetailsList
-          ..clear()
-          ..addAll(products.whereType<Map>());
-
-        print(
-            "✅ Brand details fetched: ${brand_category_List.length} categories, ${brandProductDetailsList.length} products.");
-      } else if (response.statusCode == 401) {
+      if (response.statusCode == 401) {
         getSnackBar("Session expired. Please log in again.");
         Get.offAll(() => const LoginScreen(initialTab: 0));
-      } else {
-        getSnackBar("Failed to fetch brand details.");
+        return;
       }
+
+      if (response.statusCode != 200) {
+        getSnackBar("Failed to fetch brand details.");
+        return;
+      }
+
+      final decoded = json.decode(response.body);
+      final data = decoded["data"] ?? {};
+
+      brandDetails.value = data;
+
+      // Extract categories
+      final brandInfo = data["brandInfo"] ?? {};
+      final List<dynamic> categories = brandInfo["categories"] ?? [];
+      brand_category_List
+        ..clear()
+        ..addAll(
+          categories
+              .whereType<Map>()
+              .map((item) => item["id"])
+              .whereType<int>()
+              .toList(),
+        );
+
+      // Extract products
+      final List<dynamic> products = data["products"] ?? [];
+      brandProductDetailsList
+        ..clear()
+        ..addAll(products.whereType<Map>());
+
+      print(
+          "✅ Brand details fetched: ${brand_category_List.length} categories, ${brandProductDetailsList.length} products.");
     } catch (e) {
       print("❌ Exception in getBrandDetails: $e");
       getSnackBar("Something went wrong while fetching brand details.");

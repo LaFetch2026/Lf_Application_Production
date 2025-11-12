@@ -202,7 +202,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 
                 // 🟣 Title Text
                 const Text(
-                  "Brace yourself.",
+                  "Currently out of your area’s league. ",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -215,7 +215,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 
                 // 🟣 Subtitle Text
                 Text(
-                  "Arriving sooner than expected",
+                  " Manifest LaFetch harder.",
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.85),
                     fontSize: 14,
@@ -239,7 +239,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                     ),
                     child: const Center(
                       child: Text(
-                        "DONE",
+                        "OK",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,

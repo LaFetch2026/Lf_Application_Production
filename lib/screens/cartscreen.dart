@@ -145,11 +145,16 @@ class CartScreenState extends State<CartScreen> {
   }
 
   num _computeCartTotalInRupees() {
-    final dynamic total = controller.cartDetails["final_amount"] ??
-        controller.cartDetails["total"];
-    if (total is num) return total;
-    if (total is String) return num.tryParse(total) ?? 0;
-    return 0;
+    final num total = _asNum(controller.cartDetails["total"]);
+    final num couponDiscount =
+        _asNum(controller.cartDetails["coupon_discount"]);
+    final num deliveryCharges =
+        _asNum(controller.cartDetails["shipping_cost"]) +
+            _asNum(controller.cartDetails["express_delivery_charges"]);
+
+    // 🧮 Final payable = selling total - coupon + delivery
+    final num finalPayable = (total - couponDiscount) + deliveryCharges;
+    return finalPayable < 0 ? 0 : finalPayable;
   }
 
   Future<void> _debugPhoneNumber() async {
@@ -284,13 +289,20 @@ class CartScreenState extends State<CartScreen> {
       return;
     }
 
+    // ✅ Now includes coupon discount automatically
     final num cartTotalInRupees = _computeCartTotalInRupees();
     final int amountInPaise = (cartTotalInRupees * 100).round();
+
+    print("🧾 Razorpay payable (after coupon): ₹$cartTotalInRupees");
 
     final prefs = await SharedPreferences.getInstance();
     final String userName = (prefs.getString('user_name') ?? '').trim();
     final String userEmail = (prefs.getString('email') ?? '').trim();
-    final String rawPhone = (prefs.getString('phonenumber') ?? '').trim();
+    final String rawPhone = (prefs.getString('phonenumber') ??
+            prefs.getString('phone_number') ??
+            '')
+        .trim();
+
     final String phone = _sanitizeIndianPhone(rawPhone);
 
     final options = {
@@ -1238,16 +1250,27 @@ class CartScreenState extends State<CartScreen> {
 
                     showModalBottomSheet(
                       context: context,
-                      isScrollControlled: true,
                       backgroundColor: Colors.transparent,
+                      isScrollControlled: true,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(16)),
+                      ),
                       builder: (ctx) {
-                        return BottomCoupon(
-                          list: productController.couponList, // ✅ from API
-                          backColor: widget.backgroundcolor,
-                          onPressed: (code) {
-                            Navigator.pop(ctx);
-                            _applyCoupon(code); // ✅ use live API logic
-                          },
+                        return FractionallySizedBox(
+                          heightFactor: 0.7, // 👈 Only covers 70% of the screen
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(16)),
+                            child: BottomCoupon(
+                              list: productController.couponList,
+                              backColor: widget.backgroundcolor,
+                              onPressed: (code) {
+                                Navigator.pop(ctx);
+                                _applyCoupon(code);
+                              },
+                            ),
+                          ),
                         );
                       },
                     );
@@ -1287,15 +1310,12 @@ class CartScreenState extends State<CartScreen> {
     );
   }
 
-// ---------- Apply Coupon via API ----------
   Future<void> _applyCoupon(String code) async {
     try {
-      // Load latest coupons
       if (productController.couponList.isEmpty) {
         await productController.getCoupons();
       }
 
-      // Find coupon by code
       final coupon = productController.couponList.firstWhere(
         (c) =>
             (c['code']?.toString().toUpperCase() ?? '') == code.toUpperCase(),
@@ -1307,40 +1327,38 @@ class CartScreenState extends State<CartScreen> {
         return;
       }
 
-      // Calculate discount
-      final num total = _asNum(controller.cartDetails["total"]) != 0
-          ? _asNum(controller.cartDetails["total"])
-          : 0;
-
-      num discountValue = 0;
-      final type = (coupon['type'] ?? '').toString().toLowerCase();
-
-      if (type == 'percentage') {
-        final discountPercent =
-            num.tryParse(coupon['discount']?.toString() ?? '0') ?? 0;
-        discountValue = (total * (discountPercent / 100)).round();
-      } else if (type == 'flat') {
-        discountValue =
-            num.tryParse(coupon['discount']?.toString() ?? '0') ?? 0;
+      final num total = _asNum(controller.cartDetails["total"]);
+      final num minCart = _asNum(coupon['minCartValue']);
+      if (total < minCart) {
+        getSnackBar(
+            "Coupon requires a minimum cart value of ₹${minCart.toStringAsFixed(0)}");
+        return;
       }
 
-      final maxDiscount =
-          num.tryParse(coupon['max_discount']?.toString() ?? '0') ?? 0;
+      // Parse discount
+      final discountType =
+          (coupon['discountType'] ?? '').toString().toLowerCase();
+      num discountValue = 0;
+      if (discountType.contains('%')) {
+        final percent =
+            num.tryParse(discountType.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
+        discountValue = (total * percent / 100).round();
+      } else {
+        discountValue =
+            num.tryParse(discountType.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
+      }
+
+      // Cap discount
+      final maxDiscount = _asNum(coupon['maxDiscountCap']);
       if (maxDiscount > 0 && discountValue > maxDiscount) {
         discountValue = maxDiscount;
       }
 
-      // Update cart
+      // Update state
       controller.couponText.value = code;
       controller.cartDetails["coupon_discount"] = discountValue;
       controller.cartDetails["discount"] = true;
 
-      controller.cartDetails["total_mrp"] ??= total;
-      controller.cartDetails["total"] ??= total;
-      controller.cartDetails["shipping_cost"] ??= 0;
-      controller.cartDetails["express_delivery_charges"] ??= 0;
-
-      // Save locally
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('applied_coupon_code', code);
       await prefs.setInt('applied_coupon_discount', discountValue.toInt());

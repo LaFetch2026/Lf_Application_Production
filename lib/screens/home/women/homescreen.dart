@@ -128,6 +128,14 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (brandController.brandList.isEmpty && !brandController.isBrand.value) {
+      brandController.getBrandData("featured");
+    }
+  }
+
   // ---- helpers ----
 
   List<dynamic> _currentBannerList() {
@@ -1656,8 +1664,8 @@ class _FeaturedBrandsRow extends StatelessWidget {
                   );
                 },
                 child: Padding(
-                  padding: EdgeInsets.only(
-                      top: 2.sp, right: 12.sp, left: 20.sp, bottom: 2.sp),
+                  padding:
+                      EdgeInsets.only(top: 2.sp, right: 12.sp, left: 20.sp),
                   child: SvgPicture.asset(
                     arrowViewAllImage,
                     height: 11.sp,
@@ -1674,13 +1682,17 @@ class _FeaturedBrandsRow extends StatelessWidget {
           child: SizedBox(
             height: 100.sp,
             child: Obx(() {
-              // Local snapshot to prevent mid-frame reactive list changes
-              final brands =
-                  List<Map<String, dynamic>>.from(homeController.brandList);
-
-              if (homeController.isBrand.value) {
+              if (brandController.isBrand.value) {
                 return const Center(child: CircularProgressIndicator());
               }
+
+              // ✅ Get only real brand entries (ignore grouping maps)
+              final brands = brandController.brandList
+                  .where((b) =>
+                      b is Map &&
+                      b.containsKey("id") &&
+                      (b["name"]?.toString().isNotEmpty ?? false))
+                  .toList();
 
               if (brands.isEmpty) {
                 return const Center(child: Text("No featured brands yet"));
@@ -1691,25 +1703,19 @@ class _FeaturedBrandsRow extends StatelessWidget {
                 itemCount: brands.length,
                 physics: const BouncingScrollPhysics(),
                 itemBuilder: (ctx, index) {
-                  // ✅ Safety check to prevent RangeError
-                  if (index < 0 || index >= brands.length) {
-                    return const SizedBox.shrink();
-                  }
-
                   final brand = brands[index];
-                  final logo = brand["logo"];
-                  final name = brand["name"];
-                  final bgImage = brand["background_image"] ?? "";
+                  final logo = (brand["logo"] ?? "").toString().trim();
+                  final name = (brand["name"] ?? "").toString().trim();
+                  final bgImage =
+                      (brand["background_image"] ?? "").toString().trim();
 
                   return GestureDetector(
                     onTap: () async {
                       brandController.brandbackground.value = bgImage;
-
                       final id = brand["id"];
                       final safeId = (id is int)
                           ? id
-                          : int.tryParse(id?.toString() ?? '0') ??
-                              0; // fallback to 0
+                          : int.tryParse(id?.toString() ?? '0') ?? 0;
 
                       Get.to(
                         () => AllBrandScreen(
@@ -1717,12 +1723,11 @@ class _FeaturedBrandsRow extends StatelessWidget {
                           screen: "home",
                           slug: "",
                         ),
-                      )?.then((value) {
+                      )?.then((_) {
                         SystemChrome.setSystemUIOverlayStyle(
                           const SystemUiOverlayStyle(
                             statusBarColor: whiteColor,
                             statusBarIconBrightness: Brightness.dark,
-                            statusBarBrightness: Brightness.light,
                             systemNavigationBarColor: whiteColor,
                           ),
                         );
@@ -1747,35 +1752,24 @@ class _FeaturedBrandsRow extends StatelessWidget {
                               ),
                             ),
                             child: ClipOval(
-                              child: logo != null && logo.isNotEmpty
+                              child: logo.isNotEmpty
                                   ? CachedNetworkImage(
+                                      imageUrl: logo,
                                       height: 64.sp,
                                       width: 64.sp,
-                                      cacheManager: CacheManager(
-                                        Config(
-                                          "customCacheKey",
-                                          stalePeriod: const Duration(days: 15),
-                                          maxNrOfCacheObjects: 100,
-                                        ),
+                                      fit: BoxFit.cover,
+                                      fadeInDuration:
+                                          const Duration(milliseconds: 300),
+                                      placeholder: (_, __) => Container(
+                                        color: Colors.black.withOpacity(0.05),
                                       ),
-                                      fit: BoxFit.contain,
-                                      imageUrl: logo,
-                                      placeholder: (context, url) =>
-                                          const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          Image.asset(
+                                      errorWidget: (_, __, ___) => Image.asset(
                                         downloadImage,
                                         fit: BoxFit.contain,
-                                        height: 64.sp,
-                                        width: 64.sp,
                                       ),
                                     )
                                   : Image.asset(
                                       dummyWishlistImage,
-                                      height: 64.sp,
-                                      width: 64.sp,
                                       fit: BoxFit.cover,
                                     ),
                             ),
@@ -1784,7 +1778,7 @@ class _FeaturedBrandsRow extends StatelessWidget {
                           SizedBox(
                             width: 64.sp,
                             child: Text(
-                              name ?? 'Unnamed',
+                              name.isNotEmpty ? name : 'Unnamed',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
@@ -1803,7 +1797,7 @@ class _FeaturedBrandsRow extends StatelessWidget {
               );
             }),
           ),
-        )
+        ),
       ],
     );
   }

@@ -16,14 +16,14 @@ import 'package:lafetch/core/constant/constants.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/controllers/product_controller.dart';
 import 'package:lafetch/screens/orders/order_status_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReviewOrderScreen extends StatefulWidget {
   final int productId;
   final String title;
   final String brandName;
-  final int variantId; // ✅ add this
+  final int variantId;
   final String imageUrl;
   final String sizeLabel;
   final int quantity;
@@ -55,20 +55,33 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   static const String _razorpayKey = ApiConstants.razorPayKey;
 
   final productController = Get.put(ProductController());
+  final orderController = Get.put(OrderController());
 
   Razorpay? _rzp;
   Map<String, dynamic>? _address;
 
-  RxString couponText = "Apply Coupon".obs;
-  RxBool hasDiscount = false.obs;
-  double couponDiscount = 0;
+  // --- coupon state (matches CartScreen semantics) ---
+  String _couponCode = "Apply Coupon";
+  bool _hasDiscount = false;
+  num _couponDiscount = 0;
 
+  // --- totals ---
   double get _totalPrice =>
-      widget.price * (widget.quantity <= 0 ? 1 : widget.quantity);
-  double get _delivery => 0;
-  double get _convenience => 0;
-  double get _billTotal =>
-      _totalPrice - couponDiscount + _delivery + _convenience;
+      (widget.price * (widget.quantity <= 0 ? 1 : widget.quantity)).toDouble();
+  final double _delivery = 0; // if you add charges later, UI adapts
+  final double _convenience = 0;
+
+  num _asNum(dynamic v) {
+    if (v is num) return v;
+    return num.tryParse('$v'.replaceAll(',', '').trim()) ?? 0;
+  }
+
+  num _computePayable() {
+    final num total = _totalPrice;
+    final num payable =
+        (total - _couponDiscount) + _asNum(_delivery) + _asNum(_convenience);
+    return payable < 0 ? 0 : payable;
+  }
 
   @override
   void initState() {
@@ -77,13 +90,27 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
 
     _rzp = Razorpay();
     _rzp!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onPaymentSuccess);
-    _rzp!.on(Razorpay.EVENT_PAYMENT_ERROR, _onPaymentError); // ← add this line
+    _rzp!.on(Razorpay.EVENT_PAYMENT_ERROR, _onPaymentError);
     _rzp!.on(Razorpay.EVENT_EXTERNAL_WALLET, _onExternalWallet);
 
-    // Load coupons on screen open
+    // Load available coupons + restore persisted coupon state (like CartScreen)
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await productController.getCoupons();
+      await _restoreCouponFromPrefs();
     });
+  }
+
+  Future<void> _restoreCouponFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedCode = prefs.getString('applied_coupon_code');
+    final savedDiscount = prefs.getInt('applied_coupon_discount');
+    if (savedCode != null && savedDiscount != null && savedDiscount > 0) {
+      setState(() {
+        _couponCode = savedCode;
+        _couponDiscount = savedDiscount;
+        _hasDiscount = true;
+      });
+    }
   }
 
   @override
@@ -94,9 +121,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     super.dispose();
   }
 
-  // =========================================================
-  // Address
-  // =========================================================
+  // ================= Address =================
   Future<void> _pickAddress() async {
     final result = await Get.to(() => const SavedAddressScreen(type: 'select'));
     if (result is Map) {
@@ -104,8 +129,9 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     }
   }
 
+  // ================= Checkout flow =================
   Future<void> _confirmAndPay() async {
-    // ✅ Step 1: Validate Address
+    // 1) address
     if (_address == null) {
       await _pickAddress();
       if (_address == null) {
@@ -113,53 +139,35 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
         return;
       }
     }
-
-    // ✅ Step 2: Validate Address ID
     final shippingAddressId = _address?['id'];
     if (shippingAddressId == null) {
       _snack("Invalid address selected. Please choose another address.");
-      print("❌ Address ID is null: $_address");
       return;
     }
 
-    // ✅ Step 3: Get and Validate User ID from SharedPreferences
+    // 2) user id
     final prefs = await SharedPreferences.getInstance();
     int? userId = prefs.getInt('userId') ?? prefs.getInt('user_id');
-
     if (userId == null) {
       _snack("Please login to continue");
-      print("❌ User ID is null. Redirecting to login...");
       Get.offAllNamed('/login');
       return;
     }
 
-    // ✅ Step 4: Validate Product Details
-    if (widget.productId <= 0) {
-      _snack("Invalid product. Please try again.");
-      print("❌ Invalid productId: ${widget.productId}");
+    // 3) product sanity
+    if (widget.productId <= 0 || widget.quantity <= 0 || widget.price <= 0) {
+      _snack("Invalid product data. Please try again.");
       return;
     }
 
-    if (widget.quantity <= 0) {
-      _snack("Quantity must be at least 1");
-      print("❌ Invalid quantity: ${widget.quantity}");
-      return;
-    }
-
-    if (widget.price <= 0) {
-      _snack("Invalid product price");
-      print("❌ Invalid price: ${widget.price}");
-      return;
-    }
-
-    // ✅ Step 5: Validate Total Amount
-    if (_billTotal <= 0) {
+    // 4) total validation
+    final payable = _computePayable();
+    if (payable <= 0) {
       _snack("Order total must be greater than zero");
-      print("❌ Invalid bill total: $_billTotal");
       return;
     }
 
-    // ✅ Step 6: Build payload for initiate-payment
+    // 5) build payload (note: send **final total** in `total`)
     final orderPayload = {
       "userId": userId,
       "shippingAddressId": shippingAddressId,
@@ -167,54 +175,43 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
         {
           "productName": widget.title,
           "productId": widget.productId,
-          "variantId":
-              widget.variantId ?? 0, // TODO: pass actual variantId if available
+          "variantId": widget.variantId,
           "quantity": widget.quantity,
           "unitPrice": widget.price,
-          "total": _billTotal,
+          "total": payable, // final payable for this line
           "sku": "",
           "hsn": ""
         }
       ],
       "totalMRP": widget.mrp,
-      "total": _billTotal,
+      "total": payable,
       "paymentMethod": "prepaid",
     };
 
-    // ✅ Step 7: Save local backup in case app closes mid-payment
+    // 6) local backup
     await prefs.setString('pending_order_payload', jsonEncode(orderPayload));
-    await prefs.setInt('pending_order_total', _billTotal.toInt());
+    await prefs.setInt('pending_order_total', payable.toInt());
     await prefs.setInt('pending_order_userId', userId);
     await prefs.setInt('pending_order_shippingAddressId', shippingAddressId);
 
-    print("✅ All validations passed. Initiating payment...");
-    print("📦 Payload: ${jsonEncode(orderPayload)}");
-
-    // ✅ Step 8: Call initiate-payment API
-    final orderController = Get.put(OrderController());
+    // 7) initiate payment
     final paymentInitData = await orderController.initiatePayment(orderPayload);
-
     if (paymentInitData == null) {
       _snack("Failed to initiate payment. Please try again.");
       return;
     }
-
     final razorpayOrderId = paymentInitData["providerOrderId"];
-    print(
-        "✅ Payment initiated successfully. Razorpay Order ID: $razorpayOrderId");
-
-    // ✅ Step 9: Open Razorpay Checkout with providerOrderId
-    await _openRazorpayCheckout(orderId: razorpayOrderId);
-  }
-
-  Future<void> _openRazorpayCheckout({String? orderId}) async {
-    if (orderId == null || orderId.isEmpty) {
-      _snack("Payment could not be started. Missing Razorpay Order ID.");
-      print("❌ Razorpay order_id is null/empty");
+    if ((razorpayOrderId ?? '').toString().isEmpty) {
+      _snack("Unable to start payment (missing Razorpay Order ID).");
       return;
     }
 
-    final num cartTotalInRupees = _billTotal;
+    // 8) open Razorpay with **discounted** amount
+    await _openRazorpayCheckout(orderId: razorpayOrderId);
+  }
+
+  Future<void> _openRazorpayCheckout({required String orderId}) async {
+    final num cartTotalInRupees = _computePayable();
     final int amountInPaise = (cartTotalInRupees * 100).round();
 
     final prefs = await SharedPreferences.getInstance();
@@ -239,51 +236,33 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     };
 
     try {
-      print("💳 Opening Razorpay Checkout...");
-      print("Options: $options");
-
       WidgetsBinding.instance.addPostFrameCallback((_) {
         try {
           _rzp?.open(options);
-          print("🚀 Razorpay Checkout opened successfully (post frame)");
         } catch (e) {
-          print('❌ Razorpay open error inside callback: $e');
           _snack('Unable to start payment: ${e.toString()}');
         }
       });
     } catch (e) {
-      print('🔥 Razorpay open outer error: $e');
       _snack('Unable to start payment: ${e.toString()}');
     }
   }
 
   void _onPaymentSuccess(PaymentSuccessResponse r) async {
-    print("✅ Payment Successful!");
-    print("Payment ID: ${r.paymentId}");
-    print("Order ID: ${r.orderId}");
-    print("Signature: ${r.signature}");
-
-    // ✅ Instantly show Success Screen
     Get.offAll(() => const OrderStatusScreen(status: 'success'),
         transition: Transition.fadeIn,
         duration: const Duration(milliseconds: 400));
 
-    // ✅ Run confirmPlaceOrder silently in background
     try {
-      final orderController = Get.put(OrderController());
-
       await orderController.confirmPlaceOrder(
         providerOrderId: r.orderId ?? '',
         providerPaymentId: r.paymentId ?? '',
         providerSignature: r.signature ?? '',
       );
-
-      print("✅ confirmPlaceOrder called successfully in background");
     } catch (e) {
-      print("⚠️ Background confirmPlaceOrder failed: $e");
+      print("confirmPlaceOrder failed: $e");
     }
 
-    // ✅ Cleanup shared prefs to clear pending order data
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('pending_order_payload');
     await prefs.remove('pending_order_total');
@@ -294,16 +273,16 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   }
 
   void _onPaymentError(PaymentFailureResponse r) {
-    print("❌ Razorpay Payment Error: ${r.code} → ${r.message}");
-    // ✅ Show Payment Failed Screen instead of Snackbar
     Get.offAll(() => const OrderStatusScreen(status: 'failed'),
         transition: Transition.fadeIn,
         duration: const Duration(milliseconds: 400));
   }
 
-  // =========================================================
-  // Coupon Section (Live API Integration)
-  // =========================================================
+  void _onExternalWallet(ExternalWalletResponse r) {
+    _snack('External wallet: ${r.walletName}');
+  }
+
+  // ================= Coupon section (CartScreen rules) =================
   Widget _buildCouponSection() {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 24.sp, horizontal: 16.sp),
@@ -314,89 +293,96 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
           borderRadius: BorderRadius.circular(4),
         ),
         padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 8.sp),
-        child: Obx(() {
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SvgPicture.asset(
-                couponSvgImage,
-                color: titleColor,
-                height: 20.sp,
-                width: 20.sp,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              couponSvgImage,
+              color: titleColor,
+              height: 20.sp,
+              width: 20.sp,
+            ),
+            SizedBox(width: 8.sp),
+            Expanded(
+              child: Text(
+                _couponCode,
+                style: TextStyle(
+                  fontFamily: "Franklin Gothic Regular",
+                  fontWeight: FontWeight.w500,
+                  color: titleColor,
+                  fontSize: 14.sp,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(width: 8.sp),
-              Expanded(
+            ),
+            SizedBox(width: 8.sp),
+            SizedBox(
+              width: 90.sp,
+              height: 30.sp,
+              child: ElevatedButton(
+                onPressed: () async {
+                  if (_hasDiscount) {
+                    _removeAppliedCoupon();
+                    return;
+                  }
+
+                  await productController.getCoupons();
+                  if (productController.couponList.isEmpty) {
+                    _snack("No coupons available right now");
+                    return;
+                  }
+
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(16)),
+                    ),
+                    builder: (ctx) {
+                      return FractionallySizedBox(
+                        heightFactor: 0.7,
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(16)),
+                          child: BottomCoupon(
+                            list: productController.couponList,
+                            backColor: whiteColor,
+                            onPressed: (code) {
+                              Navigator.pop(ctx);
+                              _applyCoupon(code);
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor:
+                      _hasDiscount ? Colors.transparent : homeAppBarColor,
+                  side: BorderSide(
+                    color: _hasDiscount ? redColor : btnTextColor,
+                    width: 1.sp,
+                  ),
+                  padding: EdgeInsets.zero,
+                ),
                 child: Text(
-                  couponText.value,
+                  _hasDiscount ? "REMOVE" : "SELECT",
                   style: TextStyle(
-                    fontFamily: "Franklin Gothic Regular",
+                    color: _hasDiscount ? redColor : whiteColor,
+                    fontSize: 12.sp,
+                    fontFamily: "Franklin Gothic",
                     fontWeight: FontWeight.w500,
-                    color: titleColor,
-                    fontSize: 14.sp,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              SizedBox(width: 8.sp),
-              SizedBox(
-                width: 90.sp,
-                height: 30.sp,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (hasDiscount.value) {
-                      _removeAppliedCoupon();
-                      return;
-                    }
-
-                    await productController.getCoupons();
-
-                    if (productController.couponList.isEmpty) {
-                      _snack("No coupons available right now");
-                      return;
-                    }
-
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (ctx) {
-                        return BottomCoupon(
-                          list: productController.couponList,
-                          backColor: whiteColor,
-                          onPressed: (code) {
-                            Navigator.pop(ctx);
-                            _applyCoupon(code);
-                          },
-                        );
-                      },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: hasDiscount.value
-                        ? Colors.transparent
-                        : homeAppBarColor,
-                    side: BorderSide(
-                      color: hasDiscount.value ? redColor : btnTextColor,
-                      width: 1.sp,
-                    ),
-                    padding: EdgeInsets.zero,
-                  ),
-                  child: Text(
-                    hasDiscount.value ? "REMOVE" : "SELECT",
-                    style: TextStyle(
-                      color: hasDiscount.value ? redColor : whiteColor,
-                      fontSize: 12.sp,
-                      fontFamily: "Franklin Gothic",
-                      fontWeight: FontWeight.w500,
-                    ),
                   ),
                 ),
               ),
-            ],
-          );
-        }),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -418,30 +404,39 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
         return;
       }
 
-      num discountValue = 0;
-      final type = (coupon['type'] ?? '').toString().toLowerCase();
-      final num total = _totalPrice;
-
-      if (type == 'percentage') {
-        final discountPercent =
-            num.tryParse(coupon['discount']?.toString() ?? '0') ?? 0;
-        discountValue = (total * (discountPercent / 100)).round();
-      } else if (type == 'flat') {
-        discountValue =
-            num.tryParse(coupon['discount']?.toString() ?? '0') ?? 0;
+      // Requirements from CartScreen:
+      final num total = _asNum(_totalPrice);
+      final num minCart = _asNum(coupon['minCartValue']);
+      if (total < minCart) {
+        _snack(
+            "Coupon requires a minimum cart value of ₹${minCart.toStringAsFixed(0)}");
+        return;
       }
 
-      final maxDiscount =
-          num.tryParse(coupon['max_discount']?.toString() ?? '0') ?? 0;
+      // discountType examples: "10%" or "500"
+      final discountType =
+          (coupon['discountType'] ?? '').toString().toLowerCase();
+      num discountValue = 0;
+      if (discountType.contains('%')) {
+        final percent =
+            num.tryParse(discountType.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
+        discountValue = (total * percent / 100).round();
+      } else {
+        discountValue =
+            num.tryParse(discountType.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
+      }
+
+      // Cap
+      final maxDiscount = _asNum(coupon['maxDiscountCap']);
       if (maxDiscount > 0 && discountValue > maxDiscount) {
         discountValue = maxDiscount;
       }
 
       setState(() {
-        couponDiscount = discountValue.toDouble();
+        _couponCode = code;
+        _couponDiscount = discountValue;
+        _hasDiscount = discountValue > 0;
       });
-      couponText.value = code;
-      hasDiscount.value = true;
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('applied_coupon_code', code);
@@ -454,26 +449,21 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     }
   }
 
-  void _removeAppliedCoupon() async {
-    couponText.value = "Apply Coupon";
-    hasDiscount.value = false;
-    couponDiscount = 0;
+  Future<void> _removeAppliedCoupon() async {
+    setState(() {
+      _couponCode = "Apply Coupon";
+      _couponDiscount = 0;
+      _hasDiscount = false;
+    });
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('applied_coupon_code');
     await prefs.remove('applied_coupon_discount');
 
     _snack("Coupon removed");
-    setState(() {});
   }
 
-  void _onExternalWallet(ExternalWalletResponse r) {
-    _snack('External wallet: ${r.walletName}');
-  }
-
-  // =========================================================
-  // UI
-  // =========================================================
+  // ================= UI =================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -591,6 +581,13 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   }
 
   Widget _buildOrderDetails() {
+    final num subtotal = _totalPrice;
+    final num payable = _computePayable();
+
+    // discount on MRP (like Bag screen shows sometimes)
+    final num discountOnMrp = (widget.mrp - _totalPrice);
+    final bool hasMrpDiscount = discountOnMrp > 0;
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.sp),
       child: Column(
@@ -604,13 +601,69 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
             fontSize: 14,
           ),
           SizedBox(height: 10.sp),
-          _kv("Total Price", "₹${_totalPrice.toStringAsFixed(2)}"),
-          if (couponDiscount > 0)
-            _kv("Coupon Discount", "- ₹${couponDiscount.toStringAsFixed(2)}"),
-          _kv("Delivery Charges", "₹${_delivery.toStringAsFixed(2)}"),
-          _kv("Convenience Fee", "₹${_convenience.toStringAsFixed(2)}"),
+
+          // Total MRP
+          _kv("Total MRP", "₹${widget.mrp.toStringAsFixed(2)}"),
+
+          // Discount on MRP (if any)
+          if (hasMrpDiscount)
+            _kvGreen(
+                "Discount on MRP", "- ₹${discountOnMrp.toStringAsFixed(2)}"),
+
+          // Subtotal (selling)
+          _kv("Subtotal", "₹${subtotal.toStringAsFixed(2)}"),
+
+          // Coupon discount (green)
+          if (_couponDiscount > 0)
+            _kvGreen(
+                "Coupon Discount", "- ₹${_couponDiscount.toStringAsFixed(2)}"),
+
+          // Delivery charges (Free in green)
+          Row(
+            children: [
+              const AppText(
+                text: "Delivery Charges",
+                fontFamily: "Franklin Gothic Regular",
+                fontWeight: FontWeight.w400,
+                color: subtitleColor,
+                fontSize: 12,
+              ),
+              const Spacer(),
+              AppText(
+                text: _delivery == 0
+                    ? "Free"
+                    : "₹${_delivery.toStringAsFixed(2)}",
+                fontFamily: "Franklin Gothic Regular",
+                fontWeight: FontWeight.w600,
+                color:
+                    _delivery == 0 ? const Color(0xff059669) : homeAppBarColor,
+                fontSize: 12,
+              ),
+            ],
+          ),
+
           Divider(color: colorSecondary, height: 30.sp),
-          _kv("Total Payable", "₹${_billTotal.toStringAsFixed(2)}"),
+
+          // TOTAL AMOUNT
+          Row(
+            children: [
+              const AppText(
+                text: "TOTAL AMOUNT",
+                fontFamily: "Franklin Gothic",
+                fontWeight: FontWeight.w700,
+                color: blackColor,
+                fontSize: 13,
+              ),
+              const Spacer(),
+              AppText(
+                text: "₹${payable.toStringAsFixed(2)}",
+                fontFamily: "Franklin Gothic",
+                fontWeight: FontWeight.w700,
+                color: blackColor,
+                fontSize: 13,
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -673,39 +726,62 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     );
   }
 
-  static String _prettyAddress(Map<String, dynamic> a) {
-    final parts = <String>[
-      a['full']?.toString() ??
-          [
-            a['name'],
-            a['line1'] ?? a['address'],
-            a['city'],
-            a['state'],
-            a['pincode'] ?? a['zip']
-          ].where((e) => (e?.toString().trim() ?? '').isNotEmpty).join(', ')
-    ].where((e) => (e?.toString().trim() ?? '').isNotEmpty).toList();
-    return parts.join(', ');
-  }
-
   Widget _kv(String k, String v) {
     return Padding(
       padding: EdgeInsets.only(top: 8.sp, bottom: 4.sp),
       child: Row(
         children: [
-          AppText(
-            text: k,
+          const AppText(
+            text: "",
             fontFamily: "Franklin Gothic Regular",
             fontWeight: FontWeight.w400,
             color: subtitleColor,
             fontSize: 12,
           ),
-          const Spacer(),
+          // The key
+          Expanded(
+            child: AppText(
+              text: k,
+              fontFamily: "Franklin Gothic Regular",
+              fontWeight: FontWeight.w400,
+              color: subtitleColor,
+              fontSize: 12,
+            ),
+          ),
           AppText(
             text: v,
             fontFamily: "Franklin Gothic Regular",
             fontWeight: FontWeight.w400,
             color: homeAppBarColor,
             fontSize: 12,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _kvGreen(String k, String v) {
+    return Padding(
+      padding: EdgeInsets.only(top: 8.sp, bottom: 4.sp),
+      child: Row(
+        children: [
+          Expanded(
+            child: AppText(
+              text: k,
+              fontFamily: "Franklin Gothic Regular",
+              fontWeight: FontWeight.w400,
+              color: subtitleColor,
+              fontSize: 12,
+            ),
+          ),
+          Text(
+            v,
+            style: TextStyle(
+              color: const Color(0xff059669),
+              fontSize: 12.sp,
+              fontFamily: "Franklin Gothic Regular",
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

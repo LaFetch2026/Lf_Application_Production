@@ -19,14 +19,14 @@ class OrderStatusScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: whiteColor,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100.sp),
-        child: ProductdetailsAppbar(
-          dark: false,
-          onPressedHeart: () => print('❤️ Heart pressed'),
-          onPressedShare: () => print('🔗 Share pressed'),
-        ),
-      ),
+      // appBar: PreferredSize(
+      //   preferredSize: Size.fromHeight(100.sp),
+      //   child: ProductdetailsAppbar(
+      //     dark: false,
+      //     onPressedHeart: () => print('❤️ Heart pressed'),
+      //     onPressedShare: () => print('🔗 Share pressed'),
+      //   ),
+      // ),
       body: Center(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.sp),
@@ -105,10 +105,11 @@ class OrderStatusScreen extends StatelessWidget {
         return {
           "image": payfield,
           "title": "PAYMENT FAILED",
-          "subtitle": null,
+          "subtitle": "Something went wrong while processing your payment.",
           "buttonText": "TRY AGAIN",
-          "onTap": () => Get.back(),
+          "onTap": () => Navigator.of(Get.context!).maybePop(),
         };
+
       default:
         return {
           "image": somethingwentwrong,

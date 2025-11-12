@@ -1198,21 +1198,18 @@ class ProductController extends BaseController {
         },
       ).timeout(const Duration(seconds: 20));
 
-      if (response.statusCode == 200) {
+      print("Response: ${response.statusCode} => ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final decoded = json.decode(response.body);
 
         if (decoded is Map && decoded['data'] is List) {
           final List<Map<String, dynamic>> data =
-              List<Map<String, dynamic>>.from(
-                  (decoded['data'] as List).whereType<Map>());
+              List<Map<String, dynamic>>.from(decoded['data']);
           couponList.assignAll(data);
           print("✓ Coupons loaded: ${couponList.length}");
-        } else if (decoded is List) {
-          couponList.assignAll(
-              List<Map<String, dynamic>>.from(decoded.whereType<Map>()));
-          print("✓ Coupons loaded (list response): ${couponList.length}");
         } else {
-          print("✗ Unexpected coupon response: ${response.body}");
+          print("✗ Unexpected response: ${response.body}");
           getSnackBar("Unexpected response from coupons API");
         }
       } else if (response.statusCode == 401) {
@@ -1223,12 +1220,14 @@ class ProductController extends BaseController {
         getSnackBar("No coupons available");
       } else if (response.statusCode == 500) {
         getSnackBar("Server error while fetching coupons");
+      } else {
+        getSnackBar("Unexpected error: ${response.statusCode}");
       }
     } on TimeoutException {
       getSnackBar("Request timed out while fetching coupons");
-    } catch (e) {
+    } catch (e, stacktrace) {
+      print("✗ Error fetching coupons: $e\n$stacktrace");
       getSnackBar("Error loading coupons");
-      print("✗ Error fetching coupons: $e");
     } finally {
       isCoupons.value = false;
     }
