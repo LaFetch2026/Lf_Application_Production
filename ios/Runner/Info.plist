@@ -2,6 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+
     <!-- General App Info -->
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
@@ -41,7 +42,7 @@
     <!-- Associated Domains for Universal Links (using AppsFlyer) -->
     <key>AssociatedDomains</key>
     <array>
-        <string>applinks:lafetch.onelink.me</string> <!-- Make sure your domain is configured in AppsFlyer -->
+        <string>applinks:lafetch.onelink.me</string>
     </array>
 
     <!-- Facebook Configuration -->
@@ -65,36 +66,40 @@
     <key>NSUserTrackingUsageDescription</key>
     <string>This identifier will be used to show you quick delivery products near you and deliver it to your location.</string>
 
-    <!-- Privacy Settings and Permissions -->
-    <key>NSCameraUsageDescription</key>
-    <string>To choose user profile picture</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Lafetch requires your location to provide personalized delivery options, including express delivery within 4 hours and seamless address selection for accurate deliveries.</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>Lafetch uses your location to enhance delivery services, including showing products eligible for quick delivery and optimizing delivery addresses.</string>
+    <!-- ✅ Location Permissions (critical order for iOS) -->
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Lafetch uses your location to show products available for quick delivery within 4 hours and to streamline adding delivery addresses.</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Used to capture audio for image picker</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>To take user profile picture</string>
 
-    <!-- App Transport Security (ATS) Settings -->
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Lafetch requires your location to provide personalized delivery options, including express delivery within 4 hours and seamless address selection for accurate deliveries.</string>
+
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>Lafetch uses your location to enhance delivery services, including showing products eligible for quick delivery and optimizing delivery addresses.</string>
+
+    <!-- Other Privacy Permissions -->
+    <key>NSCameraUsageDescription</key>
+    <string>To choose your profile picture.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Used to capture audio for image picker.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>To access photos for selecting a profile picture.</string>
+
+    <!-- App Transport Security -->
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>
         <true/>
     </dict>
 
-    <!-- UI and Background Modes -->
+    <!-- Background & UI -->
     <key>UIApplicationSupportsIndirectInputEvents</key>
     <true/>
     <key>UIBackgroundModes</key>
     <array>
-        <string>remote-notification</string> <!-- Enable for push notifications in background -->
+        <string>remote-notification</string>
     </array>
     <key>UIFileSharingEnabled</key>
-    <true/> <!-- Enable file sharing -->
+    <true/>
 
     <!-- Launch & Main Storyboard -->
     <key>UILaunchStoryboardName</key>
@@ -102,7 +107,7 @@
     <key>UIMainStoryboardFile</key>
     <string>Main</string>
 
-    <!-- Supported Interface Orientations -->
+    <!-- Supported Orientations -->
     <key>UISupportedInterfaceOrientations</key>
     <array>
         <string>UIInterfaceOrientationPortrait</string>
@@ -111,7 +116,7 @@
         <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
 
-    <!-- Status Bar Appearance -->
+    <!-- Status Bar -->
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
 
@@ -125,7 +130,7 @@
     <key>AppID</key>
     <string>6739497338</string>
 
-    <!-- Disable Frame Duration on Phone for better performance -->
+    <!-- Performance -->
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
 </dict>

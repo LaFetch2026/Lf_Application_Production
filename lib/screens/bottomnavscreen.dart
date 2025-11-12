@@ -18,6 +18,7 @@ import '../screens/cartscreen.dart';
 import '../screens/catalog/women_catalog.dart';
 import '../screens/home/women/homescreen.dart';
 import '../screens/quickscreen.dart';
+import 'package:geolocator/geolocator.dart';
 
 class BottomNavScreen extends StatefulWidget {
   final int? index;
@@ -87,6 +88,44 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     }
   }
 
+  Future<bool> _handleLocationPermission(BuildContext context) async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check service enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return false;
+    }
+
+    permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.denied) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Location permission denied")),
+      );
+      return false;
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              "Location permission permanently denied. Enable from settings."),
+        ),
+      );
+      await Geolocator.openAppSettings();
+      return false;
+    }
+
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,8 +162,24 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
               icon: _currentIndex == 4 ? quickSelectedSvgImage : quickSvgImage,
               label: "Quick",
               selected: _currentIndex == 4,
-              onTap: () {
-                _showQuickDialog(context);
+              onTap: () async {
+                // ✅ Start asking for location permission (async, system popup will appear)
+                _handleLocationPermission(context);
+
+                // ✅ Immediately show your custom Quick dialog (without waiting)
+                Future.delayed(const Duration(milliseconds: 300), () {
+                  _showQuickDialog(context);
+                });
+
+                // (Optional) You can still try to fetch location in background
+                try {
+                  final pos = await Geolocator.getCurrentPosition(
+                    desiredAccuracy: LocationAccuracy.high,
+                  );
+                  print("📍 Lat: ${pos.latitude}, Lng: ${pos.longitude}");
+                } catch (e) {
+                  print("⚠️ Could not get location: $e");
+                }
               },
             ),
             _navItem(
