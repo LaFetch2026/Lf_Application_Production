@@ -8,6 +8,7 @@ import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/orders/cancel_order.dart';
 import 'package:lafetch/screens/orders/exchange_request.dart';
 import 'package:lafetch/screens/orders/rate_productscreen.dart';
+import 'package:lafetch/screens/orders/return_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
 import 'package:lafetch/core/constant/constants.dart';
@@ -226,12 +227,9 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
                   child: _buildButton(
                     text: "RETURN",
                     isPrimary: true,
-                    onTap: () => orderController.requestReturn(
-                      userId: order['userId'],
-                      orderItemId: orderItem['id'],
-                      reason: "Return requested",
-                      addressId: order['shippingAddressId'],
-                      shipRocketId: order['shiprocketOrderId'].toString(),
+                    onTap: () => Get.to(
+                      () => ReturnRequestScreen(order: orderItem),
+                      transition: Transition.rightToLeft,
                     ),
                   ),
                 ),

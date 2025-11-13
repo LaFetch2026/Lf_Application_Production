@@ -20,6 +20,30 @@ class ExchangeStatusScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ----------- SAME EXTRACTION LOGIC AS ReturnStatus + CancelSuccess -------------
+    final data = order['data'] ?? order;
+
+    final product = data['product'] ?? {};
+    final orderInfo = data['order'] ?? {};
+    final variant = data['variant'] ?? {};
+
+    final imageList = (product['imageUrls'] ?? []) as List;
+    final imageUrl =
+        imageList.isNotEmpty ? imageList.first : dummyWishlistImage;
+
+    final productName =
+        product['title'] ?? product['name'] ?? 'Unknown Product';
+
+    final description = product['shortDescription'] ??
+        product['description'] ??
+        "No description available";
+
+    final size = variant['size'] ?? product['product_matrix_size_name'] ?? "-";
+
+    final quantity = data['quantity'] ?? 1;
+
+    // ---------------------------------------------------------------------
+
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
       appBar: AppBar(
@@ -28,7 +52,7 @@ class ExchangeStatusScreen extends StatelessWidget {
         centerTitle: true,
         leading: IconButton(
           icon: SvgPicture.asset(
-            arrowBack, // ✅ Using constant
+            arrowBack,
             height: 18,
             width: 18,
           ),
@@ -47,7 +71,6 @@ class ExchangeStatusScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ✅ Header
             const AppText(
               text: "TRACK EXCHANGE STATUS",
               fontFamily: "Franklin Gothic",
@@ -57,27 +80,39 @@ class ExchangeStatusScreen extends StatelessWidget {
             ),
             SizedBox(height: 20.sp),
 
-            // ✅ Product Info Section
+            // ===== PRODUCT CARD (Same UI as ReturnStatusScreen) =====
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.sp),
                 color: whiteColor,
+                borderRadius: BorderRadius.circular(8.sp),
                 border: Border.all(color: dividerColor),
               ),
               padding: EdgeInsets.all(10.sp),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(6.sp),
-                    child: _buildProductImage(),
+                    child: Image.network(
+                      imageUrl,
+                      height: 60.sp,
+                      width: 60.sp,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Image.asset(
+                        dummyWishlistImage,
+                        height: 60.sp,
+                        width: 60.sp,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
-                  SizedBox(width: 10.sp),
+                  SizedBox(width: 12.sp),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         AppText(
-                          text: order['productName'] ?? 'Product Name',
+                          text: productName,
                           fontFamily: "Franklin Gothic",
                           fontWeight: FontWeight.w700,
                           color: blackColor,
@@ -85,18 +120,16 @@ class ExchangeStatusScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 2.sp),
                         AppText(
-                          text: order['productDescription'] ??
-                              'Product description',
+                          text: description,
                           fontFamily: "Franklin Gothic Regular",
                           fontWeight: FontWeight.w400,
                           color: subtitleColor,
                           fontSize: 11,
                           maxLines: 2,
                         ),
-                        SizedBox(height: 4.sp),
+                        SizedBox(height: 6.sp),
                         AppText(
-                          text:
-                              "Size: ${order['size'] ?? 'M'}  Qty: ${order['quantity'] ?? '1'}",
+                          text: "Size: $size   Qty: $quantity",
                           fontFamily: "Franklin Gothic Regular",
                           fontWeight: FontWeight.w400,
                           color: subtitleColor,
@@ -111,7 +144,6 @@ class ExchangeStatusScreen extends StatelessWidget {
 
             SizedBox(height: 28.sp),
 
-            // ✅ Status Timeline
             const AppText(
               text: "EXCHANGE TIMELINE",
               fontFamily: "Franklin Gothic",
@@ -121,16 +153,16 @@ class ExchangeStatusScreen extends StatelessWidget {
             ),
             SizedBox(height: 16.sp),
 
+            // ===== TIMELINE =====
             Column(
               children: List.generate(steps.length, (index) {
                 final step = steps[index];
-                final isCompleted = index <= 2; // simulate current status
+                final isCompleted = index <= 2; // simulated
                 final isLast = index == steps.length - 1;
 
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ✅ Step Indicator
                     Column(
                       children: [
                         Container(
@@ -143,7 +175,7 @@ class ExchangeStatusScreen extends StatelessWidget {
                                 : Colors.grey.shade400,
                           ),
                           child: Icon(
-                            isCompleted ? Icons.check : Icons.circle,
+                            Icons.check,
                             color: whiteColor,
                             size: 10.sp,
                           ),
@@ -159,8 +191,6 @@ class ExchangeStatusScreen extends StatelessWidget {
                       ],
                     ),
                     SizedBox(width: 12.sp),
-
-                    // ✅ Step Details
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -191,9 +221,9 @@ class ExchangeStatusScreen extends StatelessWidget {
 
             SizedBox(height: 40.sp),
 
-            // ✅ Bottom CTA
+            // ===== BACK TO ORDERS =====
             GestureDetector(
-              onTap: () => Get.to(MyOrdersScreen()),
+              onTap: () => Get.offAll(() => MyOrdersScreen()),
               child: Container(
                 width: double.infinity,
                 height: 48.sp,
@@ -217,34 +247,5 @@ class ExchangeStatusScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  /// ✅ Safe Product Image
-  Widget _buildProductImage() {
-    final imageUrl = order['imageUrl'];
-    final isNetwork =
-        imageUrl != null && imageUrl.toString().startsWith('http');
-
-    if (isNetwork) {
-      return Image.network(
-        imageUrl,
-        height: 60.sp,
-        width: 60.sp,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Image.asset(
-          dummyWishlistImage,
-          height: 60.sp,
-          width: 60.sp,
-          fit: BoxFit.cover,
-        ),
-      );
-    } else {
-      return Image.asset(
-        dummyWishlistImage,
-        height: 70.sp,
-        width: 70.sp,
-        fit: BoxFit.cover,
-      );
-    }
   }
 }
