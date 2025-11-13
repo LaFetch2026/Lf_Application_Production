@@ -52,11 +52,11 @@ Future<void> main() async {
     return true;
   };
 
-  // --- Analytics (Release mode only) ---
-  if (kReleaseMode) {
-    AnalyticsHelper.logAppInstall();
-    AnalyticsHelper.logAppLaunch();
-  }
+  // // --- Analytics (Release mode only) ---
+  // if (kReleaseMode) {
+  //   AnalyticsHelper.logAppInstall();
+  //   AnalyticsHelper.logAppLaunch();
+  // }
 
   // --- FCM setup ---
   final prefs = await SharedPreferences.getInstance();

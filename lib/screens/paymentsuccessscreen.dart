@@ -48,10 +48,10 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
 
     if (widget.text1 == "Order Placed Successfully") {
       // Log Facebook Purchase event
-      AnalyticsHelper.logPurchase(
-        productId: widget.orderId.toString(),
-        value: 0.0, // or correct total value
-      );
+      // AnalyticsHelper.logPurchase(
+      //   productId: widget.orderId.toString(),
+      //   value: 0.0, // or correct total value
+      // );
 
       // Log Firebase Analytics event
       analytics.logEvent(

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../common/widget/other/common_widget.dart';
@@ -73,18 +73,20 @@ class ProfileController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     nameController.text = prefs.getString('name') ?? '';
     emailController.text = prefs.getString('email') ?? '';
-    phoneController.text = (prefs.getString('phonenumber') ?? '').replaceAll("+91", '');
-
+    phoneController.text =
+        (prefs.getString('phonenumber') ?? '').replaceAll("+91", '');
 
     final storedGenderId = prefs.getInt('gender');
     if (storedGenderId != null) {
       genderId.value = storedGenderId;
-      gerderController.text = genderList[(storedGenderId - 1).clamp(0, genderList.length - 1)];
+      gerderController.text =
+          genderList[(storedGenderId - 1).clamp(0, genderList.length - 1)];
     }
 
     isOrder.value = prefs.getBool('order_notification_enabled') ?? false;
     isOffer.value = prefs.getBool('offer_notification_enabled') ?? false;
-    isPermotion.value = prefs.getBool('promotional_notification_enabled') ?? true;
+    isPermotion.value =
+        prefs.getBool('promotional_notification_enabled') ?? true;
 
     orderValue.value = isOrder.value ? 1 : 0;
     offerValue.value = isOffer.value ? 1 : 0;
@@ -167,25 +169,24 @@ class ProfileController extends BaseController {
     };
   }
 
-Future<void> safeInitProfile({bool redirectIfMissing = false}) async {
-  final prefs = await SharedPreferences.getInstance();
-  final userId = prefs.getInt('userId');
-  final token = prefs.getString('token');
+  Future<void> safeInitProfile({bool redirectIfMissing = false}) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('userId');
+    final token = prefs.getString('token');
 
-  // If there’s no session, optionally redirect to Welcome/Login
-  if (userId == null || token == null || token.isEmpty) {
-    debugPrint("⚠️ safeInitProfile(): no valid session.");
-    if (redirectIfMissing) {
-      await prefs.clear();
-      Get.offAll(() => const LoginScreen(initialTab: 0));
+    // If there’s no session, optionally redirect to Welcome/Login
+    if (userId == null || token == null || token.isEmpty) {
+      debugPrint("⚠️ safeInitProfile(): no valid session.");
+      if (redirectIfMissing) {
+        await prefs.clear();
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+      }
+      return;
     }
-    return;
+
+    // We have something that looks like a session → verify with server
+    await getProfileData();
   }
-
-  // We have something that looks like a session → verify with server
-  await getProfileData();
-}
-
 
   Future<void> getProfileData() async {
     isProfile.value = true;
@@ -207,27 +208,28 @@ Future<void> safeInitProfile({bool redirectIfMissing = false}) async {
         headers: headers,
       );
 
-  if (resp.statusCode == 401) {
-  getSnackBar("Session expired. Please login again.");
-  await prefs.clear(); // ✅ make sure next launch sees no session
-  Get.offAll(() => const LoginScreen(initialTab: 0));
-  return;
-}
+      if (resp.statusCode == 401) {
+        getSnackBar("Session expired. Please login again.");
+        await prefs.clear(); // ✅ make sure next launch sees no session
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+        return;
+      }
 
-if (resp.statusCode == 404) {
-  debugPrint("❌ 404 - User not found.");
-  getSnackBar("Your account no longer exists. Please log in.");
-  await prefs.clear(); // ✅ clear stale session
-  Get.offAll(() => const LoginScreen(initialTab: 0));
-  return;
-}
-
+      if (resp.statusCode == 404) {
+        debugPrint("❌ 404 - User not found.");
+        getSnackBar("Your account no longer exists. Please log in.");
+        await prefs.clear(); // ✅ clear stale session
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+        return;
+      }
 
       if (resp.statusCode != 200) {
-        debugPrint("❌ Error fetching profile (${resp.statusCode}): ${resp.body}");
+        debugPrint(
+            "❌ Error fetching profile (${resp.statusCode}): ${resp.body}");
         try {
           final error = jsonDecode(resp.body);
-          getSnackBar("Failed: ${error['message'] ?? 'Error ${resp.statusCode}'}");
+          getSnackBar(
+              "Failed: ${error['message'] ?? 'Error ${resp.statusCode}'}");
         } catch (_) {
           getSnackBar("Failed to fetch profile. Try again later.");
         }
@@ -285,112 +287,114 @@ if (resp.statusCode == 404) {
     }
   }
 
+  Future<void> updateBasicProfile({required bool isInitialSetup}) async {
+    if (!validateBasicProfileFields()) return;
+    showLoading();
 
+    try {
+      final prefs = await SharedPreferences.getInstance();
 
-Future<void> updateBasicProfile({required bool isInitialSetup}) async {
-  if (!validateBasicProfileFields()) return;
-  showLoading();
+      final rawPhone = phoneController.text.trim().isNotEmpty
+          ? phoneController.text.trim()
+          : prefs.getString('phonenumber') ?? '';
 
-  try {
-    final prefs = await SharedPreferences.getInstance();
+      final phoneWithCode =
+          rawPhone.startsWith('+91') ? rawPhone : '+91$rawPhone';
 
-    final rawPhone = phoneController.text.trim().isNotEmpty
-        ? phoneController.text.trim()
-        : prefs.getString('phonenumber') ?? '';
+      final Map<String, dynamic> sendData = {
+        "fullName": nameController.text.trim(),
+        "email": emailController.text.trim(),
+        "gender": _getGenderString(genderId.value),
+        "phone": phoneWithCode,
+        "type": "signup", // Add this as per your request payload
+      };
 
-    final phoneWithCode = rawPhone.startsWith('+91') ? rawPhone : '+91$rawPhone';
+      debugPrint(
+          "➡️ Sending to /auth/update-user-profile: ${json.encode(sendData)}");
 
-    final Map<String, dynamic> sendData = {
-      "fullName": nameController.text.trim(),
-      "email": emailController.text.trim(),
-      "gender": _getGenderString(genderId.value),
-      "phone": phoneWithCode,
-      "type": "signup", // Add this as per your request payload
-    };
+      final headers = await _getHeaders();
+      final response = await http.put(
+        Uri.parse("${ApiConstants.baseUrl}/auth/update-user-profile"),
+        headers: headers,
+        body: json.encode(sendData),
+      );
 
-    debugPrint("➡️ Sending to /auth/update-user-profile: ${json.encode(sendData)}");
+      debugPrint("⬅️ Status: ${response.statusCode}");
+      debugPrint("⬅️ Response: ${response.body}");
 
-    final headers = await _getHeaders();
-    final response = await http.put(
-      Uri.parse("${ApiConstants.baseUrl}/auth/update-user-profile"),
-      headers: headers,
-      body: json.encode(sendData),
-    );
-
-    debugPrint("⬅️ Status: ${response.statusCode}");
-    debugPrint("⬅️ Response: ${response.body}");
-
-    if (response.statusCode == 401) {
-      getSnackBar("Session expired. Please login again.");
-      Get.offAll(() => const LoginScreen(initialTab: 0));
-      return;
-    }
-
-    if (response.body.isEmpty) {
-      getSnackBar("Empty response from server.");
-      return;
-    }
-
-    final data = json.decode(response.body);
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final userData = data['data'];
-
-      if (userData is Map<String, dynamic>) {
-        final fullName = userData['fullName'] ?? nameController.text.trim();
-        final email = userData['email'] ?? emailController.text.trim();
-        final displayPhone = userData['phone']?.toString().replaceAll("+91", "") ??
-            phoneWithCode.replaceAll("+91", "");
-        final userId = userData['id'];
-        final role = userData['role'];
-        final token = userData['token'];
-        final refreshToken = userData['refreshToken'];
-
-        await prefs.setString('name', fullName);
-        await prefs.setString('email', email);
-        await prefs.setString('phonenumber', displayPhone);
-        await prefs.setInt('gender', genderId.value);
-
-        if (userId != null) {
-          await prefs.setInt('userId', userId);
-          debugPrint("✅ userId saved: $userId");
-        }
-
-        if (role != null) await prefs.setInt('role', role);
-        if (token != null) await prefs.setString('token', token);
-        if (refreshToken != null) await prefs.setString('refreshToken', refreshToken);
-      } else {
-        debugPrint("⚠️ Invalid or missing 'data' in response.");
-        getSnackBar("Profile updated, but user info is missing.");
+      if (response.statusCode == 401) {
+        getSnackBar("Session expired. Please login again.");
+        Get.offAll(() => const LoginScreen(initialTab: 0));
         return;
       }
 
-      getSnackBar("Profile updated successfully!");
-
-      await getProfileData();
-
-      if (isInitialSetup) {
-        Get.offAll(() => const BottomNavScreen());
-      } else {
-        Get.back(result: "profile_updated");
+      if (response.body.isEmpty) {
+        getSnackBar("Empty response from server.");
+        return;
       }
 
-    } else if (response.statusCode == 400) {
-      _handleProfileUpdateErrors(data);
-    } else {
-      getSnackBar("Profile update failed: ${data['message'] ?? 'Unknown error'}");
-    }
+      final data = json.decode(response.body);
 
-  } catch (e, st) {
-    debugPrint("❌ Profile update error: $e\n$st");
-    getSnackBar("An error occurred during profile update.");
-  } finally {
-    hideLoading();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final userData = data['data'];
+
+        if (userData is Map<String, dynamic>) {
+          final fullName = userData['fullName'] ?? nameController.text.trim();
+          final email = userData['email'] ?? emailController.text.trim();
+          final displayPhone =
+              userData['phone']?.toString().replaceAll("+91", "") ??
+                  phoneWithCode.replaceAll("+91", "");
+          final userId = userData['id'];
+          final role = userData['role'];
+          final token = userData['token'];
+          final refreshToken = userData['refreshToken'];
+
+          await prefs.setString('name', fullName);
+          await prefs.setString('email', email);
+          await prefs.setString('phonenumber', displayPhone);
+          await prefs.setInt('gender', genderId.value);
+
+          if (userId != null) {
+            await prefs.setInt('userId', userId);
+            debugPrint("✅ userId saved: $userId");
+          }
+
+          if (role != null) await prefs.setInt('role', role);
+          if (token != null) await prefs.setString('token', token);
+          if (refreshToken != null)
+            await prefs.setString('refreshToken', refreshToken);
+        } else {
+          debugPrint("⚠️ Invalid or missing 'data' in response.");
+          getSnackBar("Profile updated, but user info is missing.");
+          return;
+        }
+
+        getSnackBar("Profile updated successfully!");
+
+        await getProfileData();
+
+        if (isInitialSetup) {
+          Get.offAll(() => const BottomNavScreen());
+        } else {
+          Get.back(result: "profile_updated");
+        }
+      } else if (response.statusCode == 400) {
+        _handleProfileUpdateErrors(data);
+      } else {
+        getSnackBar(
+            "Profile update failed: ${data['message'] ?? 'Unknown error'}");
+      }
+    } catch (e, st) {
+      debugPrint("❌ Profile update error: $e\n$st");
+      getSnackBar("An error occurred during profile update.");
+    } finally {
+      hideLoading();
+    }
   }
-}
 
   /// Updates user's phone number, potentially requiring OTP verification.
-  Future<void> updatePhoneNumberWithOtp({required String phone, String? otp}) async {
+  Future<void> updatePhoneNumberWithOtp(
+      {required String phone, String? otp}) async {
     if (!validatePhoneNumber(phone)) {
       return;
     }
@@ -399,7 +403,8 @@ Future<void> updateBasicProfile({required bool isInitialSetup}) async {
     try {
       final Map<String, dynamic> sendData = {
         "phone": phone,
-        if (otp != null && otp.isNotEmpty) "otp": otp, // Include OTP if provided
+        if (otp != null && otp.isNotEmpty)
+          "otp": otp, // Include OTP if provided
       };
 
       // Use _apiClient.put to the general profile endpoint
@@ -420,7 +425,8 @@ Future<void> updateBasicProfile({required bool isInitialSetup}) async {
       } else if (response.statusCode == 400) {
         _handleProfileUpdateErrors(responseData);
       } else {
-        getSnackBar("Phone number update failed: ${responseData['message'] ?? 'Unknown error'}");
+        getSnackBar(
+            "Phone number update failed: ${responseData['message'] ?? 'Unknown error'}");
       }
     } catch (e) {
       print("Error updating phone number: $e");
@@ -431,81 +437,84 @@ Future<void> updateBasicProfile({required bool isInitialSetup}) async {
   }
 
   /// Fetches user addresses using the provided query text.
-Future<void> getAddressData() async {
-  try {
-    isAddress.value = true;
+  Future<void> getAddressData() async {
+    try {
+      isAddress.value = true;
 
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token') ?? '';
-    final userId = prefs.getInt('userId');
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+      final userId = prefs.getInt('userId');
 
-    if (userId == null) {
-      getSnackBar("User not logged in.");
-      return;
-    }
-
-    final uri = Uri.parse('${ApiConstants.baseUrl}/profile/addresses/$userId');
-
-    final headers = <String, String>{
-      'Accept': 'application/json',
-      if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-    };
-
-    final resp = await http.get(uri, headers: headers);
-
-    if (resp.statusCode == 200) {
-      Map<String, dynamic> body;
-      try {
-        body = json.decode(resp.body) as Map<String, dynamic>;
-      } catch (e) {
-        debugPrint("getAddressData() JSON parse error: $e");
-        getSnackBar("Failed to read addresses. Please try again.");
+      if (userId == null) {
+        getSnackBar("User not logged in.");
         return;
       }
 
-      final List<dynamic> data = (body['data'] as List?) ?? const [];
+      final uri =
+          Uri.parse('${ApiConstants.baseUrl}/profile/addresses/$userId');
 
-      // Normalize to what the UI expects.
-      // Backend keys: id, userId, cityId, line1, line2, postalCode, isDefaultAddress, latitude, longitude, ...
-      final List<Map<String, dynamic>> normalized = data.map<Map<String, dynamic>>((a) {
-        final cityId = a['cityId'] ?? 0;
-        return {
-          'id': a['id'] ?? 0,
-          'type': (a['type'] ?? '').toString(), // backend may not send it
-          'address': (a['line1'] ?? '').toString(),
-          'locality': (a['line2'] ?? '').toString(),
-          'city': {'id': cityId, 'name': (a['cityName'] ?? '').toString()},
-          'zip': (a['postalCode'] ?? '').toString(),
-          'default_shipping': a['isDefaultAddress'] == true,
-          'latitude': (a['latitude'] ?? '0').toString(),
-          'longitude': (a['longitude'] ?? '0').toString(),
-          // Optional fields your UI sometimes reads:
-          'name': (a['name'] ?? '').toString(),
-          'phone': (a['phone'] ?? '').toString(),
-        };
-      }).toList();
+      final headers = <String, String>{
+        'Accept': 'application/json',
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+      };
 
-      addressList
-        ..clear()
-        ..addAll(normalized);
-    } else if (resp.statusCode == 401) {
-      getSnackBar("Session expired. Please login again.");
-      Get.offAll(() => const LoginScreen(initialTab: 0));
-    } else {
-      // Don’t decode (likely HTML). Log a small preview.
-      final preview = resp.body.isNotEmpty
-          ? resp.body.substring(0, resp.body.length.clamp(0, 200))
-          : '<empty>';
-      debugPrint("getAddressData() non-200 ${resp.statusCode} body: $preview");
-      getSnackBar("Failed to fetch addresses (HTTP ${resp.statusCode}).");
+      final resp = await http.get(uri, headers: headers);
+
+      if (resp.statusCode == 200) {
+        Map<String, dynamic> body;
+        try {
+          body = json.decode(resp.body) as Map<String, dynamic>;
+        } catch (e) {
+          debugPrint("getAddressData() JSON parse error: $e");
+          getSnackBar("Failed to read addresses. Please try again.");
+          return;
+        }
+
+        final List<dynamic> data = (body['data'] as List?) ?? const [];
+
+        // Normalize to what the UI expects.
+        // Backend keys: id, userId, cityId, line1, line2, postalCode, isDefaultAddress, latitude, longitude, ...
+        final List<Map<String, dynamic>> normalized =
+            data.map<Map<String, dynamic>>((a) {
+          final cityId = a['cityId'] ?? 0;
+          return {
+            'id': a['id'] ?? 0,
+            'type': (a['type'] ?? '').toString(), // backend may not send it
+            'address': (a['line1'] ?? '').toString(),
+            'locality': (a['line2'] ?? '').toString(),
+            'city': {'id': cityId, 'name': (a['cityName'] ?? '').toString()},
+            'zip': (a['postalCode'] ?? '').toString(),
+            'default_shipping': a['isDefaultAddress'] == true,
+            'latitude': (a['latitude'] ?? '0').toString(),
+            'longitude': (a['longitude'] ?? '0').toString(),
+            // Optional fields your UI sometimes reads:
+            'name': (a['name'] ?? '').toString(),
+            'phone': (a['phone'] ?? '').toString(),
+          };
+        }).toList();
+
+        addressList
+          ..clear()
+          ..addAll(normalized);
+      } else if (resp.statusCode == 401) {
+        getSnackBar("Session expired. Please login again.");
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+      } else {
+        // Don’t decode (likely HTML). Log a small preview.
+        final preview = resp.body.isNotEmpty
+            ? resp.body.substring(0, resp.body.length.clamp(0, 200))
+            : '<empty>';
+        debugPrint(
+            "getAddressData() non-200 ${resp.statusCode} body: $preview");
+        getSnackBar("Failed to fetch addresses (HTTP ${resp.statusCode}).");
+      }
+    } catch (e) {
+      debugPrint("Error fetching addresses: $e");
+      getSnackBar("Error fetching addresses.");
+    } finally {
+      isAddress.value = false;
     }
-  } catch (e) {
-    debugPrint("Error fetching addresses: $e");
-    getSnackBar("Error fetching addresses.");
-  } finally {
-    isAddress.value = false;
   }
-}
 
   /// Removes an address by its ID.
   Future<void> callRemoveAddress(int addressId) async {
@@ -521,7 +530,8 @@ Future<void> getAddressData() async {
         getSnackBar("Address removed successfully!");
         getAddressData(); // Refresh the list
       } else {
-        getSnackBar("Failed to remove address: ${responseData['message'] ?? 'Unknown error'}");
+        getSnackBar(
+            "Failed to remove address: ${responseData['message'] ?? 'Unknown error'}");
       }
     } catch (e) {
       print("Error removing address: $e");
@@ -555,11 +565,13 @@ Future<void> getAddressData() async {
         final prefs = await SharedPreferences.getInstance();
         prefs.setBool('order_notification_enabled', orderValue.value == 1);
         prefs.setBool('offer_notification_enabled', offerValue.value == 1);
-        prefs.setBool('promotional_notification_enabled', permotionValue.value == 1);
+        prefs.setBool(
+            'promotional_notification_enabled', permotionValue.value == 1);
         getProfileData(); // Refresh profile to get updated settings
         Get.back();
       } else {
-        getSnackBar("Failed to update notification settings: ${responseData['message'] ?? 'Unknown error'}");
+        getSnackBar(
+            "Failed to update notification settings: ${responseData['message'] ?? 'Unknown error'}");
       }
     } catch (e) {
       print("Error updating notification settings: $e");
@@ -571,79 +583,73 @@ Future<void> getAddressData() async {
 
   /// Logs out the user from the application by invalidating the current session.
   /// Clears local data and redirects to login screen.
-Future<void> callLogout() async {
-  showLoading();
+  Future<void> callLogout() async {
+    showLoading();
 
-  final prefs = await SharedPreferences.getInstance();
-  final int? userId = prefs.getInt('userId');
+    final prefs = await SharedPreferences.getInstance();
+    final int? userId = prefs.getInt('userId');
 
-  // If we don't have a userId, clean locally and route to login.
-  if (userId == null) {
-    getSnackBar("User ID not found. Logging out locally.");
-    try {
-      await _localLogoutCleanup(prefs);
-    } finally {
-      hideLoading();
-      Get.offAll(() => const LoginScreen(initialTab: 0));
-    }
-    return;
-  }
-
-  try {
-    final base = ApiConstants.baseUrl; // ensure this has no trailing spaces
-    final url = Uri.parse('$base/auth/sign-out/$userId');
-
-    final response = await http
-        .post(
-          url,
-          // headers: {'Authorization': 'Bearer ${prefs.getString('token')}'},
-        )
-        .timeout(const Duration(seconds: 12));
-
-    Map<String, dynamic>? responseData;
-    try {
-      // Only parse JSON if there's a body
-      if (response.body.isNotEmpty) {
-        responseData = json.decode(response.body) as Map<String, dynamic>?;
+    // If we don't have a userId, clean locally and route to login.
+    if (userId == null) {
+      getSnackBar("User ID not found. Logging out locally.");
+      try {
+        await _localLogoutCleanup(prefs);
+      } finally {
+        hideLoading();
+        Get.offAll(() => const LoginScreen(initialTab: 0));
       }
-    } catch (_) {
-      // Body wasn’t valid JSON; ignore
-      responseData = null;
+      return;
     }
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      debugPrint("✅ Logout successful: ${responseData ?? 'no body'}");
-      getSnackBar("Logged out successfully!");
-    } else {
-      final serverMsg = responseData?['message'] ?? 'Unknown error';
-      getSnackBar("Logout failed on server ($serverMsg). Logging out locally.");
-    }
-  } on TimeoutException {
-    getSnackBar("Logout request timed out. Logging out locally.");
-  } catch (e) {
-    debugPrint("❌ Error during logout API call: $e");
-    getSnackBar("An error occurred during logout. Logging out locally.");
-  } finally {
     try {
-      await _localLogoutCleanup(prefs);
+      final base = ApiConstants.baseUrl; // ensure this has no trailing spaces
+      final url = Uri.parse('$base/auth/sign-out/$userId');
+
+      final response = await http
+          .post(
+            url,
+            // headers: {'Authorization': 'Bearer ${prefs.getString('token')}'},
+          )
+          .timeout(const Duration(seconds: 12));
+
+      Map<String, dynamic>? responseData;
+      try {
+        // Only parse JSON if there's a body
+        if (response.body.isNotEmpty) {
+          responseData = json.decode(response.body) as Map<String, dynamic>?;
+        }
+      } catch (_) {
+        // Body wasn’t valid JSON; ignore
+        responseData = null;
+      }
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        debugPrint("✅ Logout successful: ${responseData ?? 'no body'}");
+        getSnackBar("Logged out successfully!");
+      } else {
+        final serverMsg = responseData?['message'] ?? 'Unknown error';
+        getSnackBar(
+            "Logout failed on server ($serverMsg). Logging out locally.");
+      }
+    } on TimeoutException {
+      getSnackBar("Logout request timed out. Logging out locally.");
+    } catch (e) {
+      debugPrint("❌ Error during logout API call: $e");
+      getSnackBar("An error occurred during logout. Logging out locally.");
     } finally {
-      hideLoading();
-      Get.offAll(() => const LoginScreen(initialTab: 0));
+      try {
+        await _localLogoutCleanup(prefs);
+      } finally {
+        hideLoading();
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+      }
     }
   }
-}
 
-Future<void> _localLogoutCleanup(SharedPreferences prefs) async {
-  // Clear local session/preferences
-  await prefs.clear();
-
-  // Best-effort Google sign-out (ignore errors)
-  try {
-    final googleSignIn = GoogleSignIn();
-    await googleSignIn.signOut();
-  } catch (_) {}
-}
-
+  Future<void> _localLogoutCleanup(SharedPreferences prefs) async {
+    // Clear local session/preferences
+    await prefs.clear();
+  }
 
   /// Initiates the account deletion process for the current user.
   /// Uses DELETE method to /auth/delete-account/{userId}.
@@ -653,27 +659,30 @@ Future<void> _localLogoutCleanup(SharedPreferences prefs) async {
     int? userId = prefs.getInt('userId');
 
     if (userId == null) {
-      getSnackBar("User ID not found for account deletion. Please log in again.");
+      getSnackBar(
+          "User ID not found for account deletion. Please log in again.");
       hideLoading();
       Get.offAll(() => const LoginScreen(initialTab: 0));
       return;
     }
 
     try {
-      final url = Uri.parse("${ApiConstants.baseUrl}/auth/delete-account/$userId");
+      final url =
+          Uri.parse("${ApiConstants.baseUrl}/auth/delete-account/$userId");
       final response = await _apiClient.delete(url);
       final responseData = json.decode(response.body);
 
       if (response.statusCode == 200) {
         getSnackBar("Account deleted successfully!");
         await prefs.clear();
-        GoogleSignIn googleSignIn = GoogleSignIn();
-        await googleSignIn.signOut();
+
         Get.offAll(() => const ConfirmDeleteScreen());
       } else if (response.statusCode == 400) {
-        getSnackBar("Account deletion failed: ${responseData['message'] ?? responseData['errors']?.values.first[0] ?? 'Bad request.'}");
+        getSnackBar(
+            "Account deletion failed: ${responseData['message'] ?? responseData['errors']?.values.first[0] ?? 'Bad request.'}");
       } else {
-        getSnackBar("Account deletion failed: ${responseData['message'] ?? 'Unknown error'}");
+        getSnackBar(
+            "Account deletion failed: ${responseData['message'] ?? 'Unknown error'}");
       }
     } catch (e) {
       print("❌ Error deleting account: $e");
@@ -687,7 +696,8 @@ Future<void> _localLogoutCleanup(SharedPreferences prefs) async {
   /// Handles and displays specific validation errors from profile update API responses.
   void _handleProfileUpdateErrors(Map<String, dynamic> responseData) {
     if (responseData['errors'] != null) {
-      if (responseData['errors']['fullName'] != null) { // Changed 'name' to 'fullName'
+      if (responseData['errors']['fullName'] != null) {
+        // Changed 'name' to 'fullName'
         nameError.value = responseData['errors']['fullName'][0];
       }
       if (responseData['errors']['email'] != null) {
@@ -700,7 +710,8 @@ Future<void> _localLogoutCleanup(SharedPreferences prefs) async {
         phoneError.value = responseData['errors']['phone'][0];
       }
       if (responseData['errors']['otp'] != null) {
-        phoneError.value = responseData['errors']['otp'][0]; // Assuming OTP errors are shown under phone field
+        phoneError.value = responseData['errors']['otp']
+            [0]; // Assuming OTP errors are shown under phone field
       }
       if (responseData['message'] == null && responseData['errors'].isEmpty) {
         // Fallback for generic 400 if no specific field errors

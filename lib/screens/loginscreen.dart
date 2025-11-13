@@ -129,10 +129,10 @@ class LoginScreenState extends State<LoginScreen> {
                 hideBack: widget.hideBack,
                 onPressedSkip: () async {
                   try {
-                    AnalyticsHelper.logInitiateCheckout(
-                      productId: 'guest_login',
-                      value: 0.0,
-                    );
+                    // AnalyticsHelper.logInitiateCheckout(
+                    //   productId: 'guest_login',
+                    //   value: 0.0,
+                    // );
                     await analytics.logEvent(
                       name: 'login_skip',
                       parameters: {'page_name': 'login_skip'},

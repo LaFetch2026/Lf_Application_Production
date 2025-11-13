@@ -1,7 +1,6 @@
 import UIKit
 import Flutter
 import GoogleMaps
-import FBSDKCoreKit
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -9,12 +8,11 @@ import FBSDKCoreKit
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    
     GMSServices.provideAPIKey("AIzaSyCBFuMTFiBOwMOAbiCNJFInpiknSupbfEc")
 
-    ApplicationDelegate.shared.application(
-      application,
-      didFinishLaunchingWithOptions: launchOptions
-    )
+    // REMOVE Facebook SDK initialization (you no longer use Facebook)
+    // ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
 
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
@@ -25,9 +23,12 @@ import FBSDKCoreKit
     open url: URL,
     options: [UIApplication.OpenURLOptionsKey : Any] = [:]
   ) -> Bool {
-    if ApplicationDelegate.shared.application(app, open: url, options: options) {
-      return true
-    }
+
+    // REMOVE Facebook URL handler
+    // if ApplicationDelegate.shared.application(app, open: url, options: options) {
+    //   return true
+    // }
+
     return super.application(app, open: url, options: options)
   }
 }

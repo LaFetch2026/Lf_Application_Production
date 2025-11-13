@@ -827,11 +827,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               // Close bottom sheet
                               Get.back();
 
-                              AnalyticsHelper.logAddToWishlist(
-                                productId: productId.toString(),
-                                contentType: 'product',
-                                value: _displayPrice().toDouble(),
-                              );
+                              // AnalyticsHelper.logAddToWishlist(
+                              //   productId: productId.toString(),
+                              //   contentType: 'product',
+                              //   value: _displayPrice().toDouble(),
+                              // );
                             },
                           ));
                 },
@@ -1692,11 +1692,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             },
                           );
 
-                          AnalyticsHelper.logAddToCart(
-                            productId: pid,
-                            contentType: 'product',
-                            value: price,
-                          );
+                          // AnalyticsHelper.logAddToCart(
+                          //   productId: pid,
+                          //   contentType: 'product',
+                          //   value: price,
+                          // );
 
                           productController.addToCart.value = false;
 

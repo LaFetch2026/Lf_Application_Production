@@ -62,7 +62,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
+    // _scrollController.addListener(_onScroll);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -229,30 +229,30 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     );
   }
 
-  void _onScroll() {
-    if (!_scrollController.hasClients) return;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.position.pixels;
-    final scrollPercentage =
-        maxScroll == 0 ? 100.0 : (currentScroll / maxScroll) * 100;
+  // void _onScroll() {
+  //   if (!_scrollController.hasClients) return;
+  //   final maxScroll = _scrollController.position.maxScrollExtent;
+  //   final currentScroll = _scrollController.position.pixels;
+  //   final scrollPercentage =
+  //       maxScroll == 0 ? 100.0 : (currentScroll / maxScroll) * 100;
 
-    if (scrollPercentage >= 25 && !_triggeredScrolls.contains('25%')) {
-      AnalyticsHelper.logScrollEvent('25%');
-      _triggeredScrolls.add('25%');
-    }
-    if (scrollPercentage >= 50 && !_triggeredScrolls.contains('50%')) {
-      AnalyticsHelper.logScrollEvent('50%');
-      _triggeredScrolls.add('50%');
-    }
-    if (scrollPercentage >= 75 && !_triggeredScrolls.contains('75%')) {
-      AnalyticsHelper.logScrollEvent('75%');
-      _triggeredScrolls.add('75%');
-    }
-    if (scrollPercentage >= 100 && !_triggeredScrolls.contains('100%')) {
-      AnalyticsHelper.logScrollEvent('100%');
-      _triggeredScrolls.add('100%');
-    }
-  }
+  //   if (scrollPercentage >= 25 && !_triggeredScrolls.contains('25%')) {
+  //     AnalyticsHelper.logScrollEvent('25%');
+  //     _triggeredScrolls.add('25%');
+  //   }
+  //   if (scrollPercentage >= 50 && !_triggeredScrolls.contains('50%')) {
+  //     AnalyticsHelper.logScrollEvent('50%');
+  //     _triggeredScrolls.add('50%');
+  //   }
+  //   if (scrollPercentage >= 75 && !_triggeredScrolls.contains('75%')) {
+  //     AnalyticsHelper.logScrollEvent('75%');
+  //     _triggeredScrolls.add('75%');
+  //   }
+  //   if (scrollPercentage >= 100 && !_triggeredScrolls.contains('100%')) {
+  //     AnalyticsHelper.logScrollEvent('100%');
+  //     _triggeredScrolls.add('100%');
+  //   }
+  // }
 
   @override
   void dispose() {

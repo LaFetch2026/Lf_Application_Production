@@ -1,9 +1,0 @@
-com.lafetch.customer.app-pngs-0 /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/build/generated/res/pngs/release
-com.lafetch.customer.app-res-1 /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/build/generated/res/processReleaseGoogleServices
-com.lafetch.customer.app-resValues-2 /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/build/generated/res/resValues/release
-com.lafetch.customer.app-packageReleaseResources-3 /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/build/intermediates/incremental/release/packageReleaseResources/merged.dir
-com.lafetch.customer.app-packageReleaseResources-4 /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/build/intermediates/incremental/release/packageReleaseResources/stripped.dir
-com.lafetch.customer.app-merged-not-compiled-resources-5 /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/build/intermediates/merged-not-compiled-resources/release
-com.lafetch.customer.app-merged_res-6 /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/build/intermediates/merged_res/release
-com.lafetch.customer.app-main-7 /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/res
-com.lafetch.customer.app-release-8 /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/release/res

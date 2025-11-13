@@ -77,7 +77,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
   void initState() {
     super.initState();
 
-    _scrollController.addListener(_onScroll);
+    // _scrollController.addListener(_onScroll);
 
     // Status bar styling
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -178,29 +178,29 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
   }
 
   // ---------- search / scroll analytics ----------
-  void _onScroll() {
-    if (!_scrollController.hasClients) return;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final current = _scrollController.position.pixels;
-    final pct = maxScroll == 0 ? 100.0 : (current / maxScroll) * 100;
+  // void _onScroll() {
+  //   if (!_scrollController.hasClients) return;
+  //   final maxScroll = _scrollController.position.maxScrollExtent;
+  //   final current = _scrollController.position.pixels;
+  //   final pct = maxScroll == 0 ? 100.0 : (current / maxScroll) * 100;
 
-    if (pct >= 25 && !_triggeredScrolls.contains('25%')) {
-      AnalyticsHelper.logScrollEvent('25%');
-      _triggeredScrolls.add('25%');
-    }
-    if (pct >= 50 && !_triggeredScrolls.contains('50%')) {
-      AnalyticsHelper.logScrollEvent('50%');
-      _triggeredScrolls.add('50%');
-    }
-    if (pct >= 75 && !_triggeredScrolls.contains('75%')) {
-      AnalyticsHelper.logScrollEvent('75%');
-      _triggeredScrolls.add('75%');
-    }
-    if (pct >= 100 && !_triggeredScrolls.contains('100%')) {
-      AnalyticsHelper.logScrollEvent('100%');
-      _triggeredScrolls.add('100%');
-    }
-  }
+  //   if (pct >= 25 && !_triggeredScrolls.contains('25%')) {
+  //     AnalyticsHelper.logScrollEvent('25%');
+  //     _triggeredScrolls.add('25%');
+  //   }
+  //   if (pct >= 50 && !_triggeredScrolls.contains('50%')) {
+  //     AnalyticsHelper.logScrollEvent('50%');
+  //     _triggeredScrolls.add('50%');
+  //   }
+  //   if (pct >= 75 && !_triggeredScrolls.contains('75%')) {
+  //     AnalyticsHelper.logScrollEvent('75%');
+  //     _triggeredScrolls.add('75%');
+  //   }
+  //   if (pct >= 100 && !_triggeredScrolls.contains('100%')) {
+  //     AnalyticsHelper.logScrollEvent('100%');
+  //     _triggeredScrolls.add('100%');
+  //   }
+  // }
 
   void _onSearchChanged(String _) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();

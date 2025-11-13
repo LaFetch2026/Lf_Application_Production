@@ -375,12 +375,12 @@ class HomeScreenState extends State<HomeScreen> {
           HomeAppbar(
             onPressedSearch: () async {
               final searchQuery = searchController.searchController.text;
-              AnalyticsHelper.logSearch(
-                searchQuery: searchQuery,
-                contentType: 'product',
-                value: 0.0,
-                productId: productController.id.toString(),
-              );
+              // AnalyticsHelper.logSearch(
+              //   searchQuery: searchQuery,
+              //   contentType: 'product',
+              //   value: 0.0,
+              //   productId: productController.id.toString(),
+              // );
               await analytics.logEvent(
                 name: 'search_page',
                 parameters: {'search_string': searchQuery},
@@ -398,10 +398,10 @@ class HomeScreenState extends State<HomeScreen> {
               });
             },
             onPressedHeart: () async {
-              facebookAppEvents.logEvent(
-                name: 'fb_view_wishlist_page',
-                parameters: {'page_name': 'wishlist_page'},
-              );
+              // facebookAppEvents.logEvent(
+              //   name: 'fb_view_wishlist_page',
+              //   parameters: {'page_name': 'wishlist_page'},
+              // );
               await analytics.logEvent(
                 name: 'wishlist_page',
                 parameters: {'page_name': 'wishlist_page'},
@@ -414,10 +414,10 @@ class HomeScreenState extends State<HomeScreen> {
               });
             },
             onPressedCart: () async {
-              facebookAppEvents.logEvent(
-                name: 'fb_view_cart_page',
-                parameters: {'page_name': 'cart_page'},
-              );
+              // facebookAppEvents.logEvent(
+              //   name: 'fb_view_cart_page',
+              //   parameters: {'page_name': 'cart_page'},
+              // );
               await analytics.logEvent(
                 name: 'cart_page',
                 parameters: {'page_name': 'cart_page'},
