@@ -1,0 +1,86 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.lafetch.customer.app-merged_res-6:/values-night-v8_values-night-v8.arsc.flat",
+            "map": [
+                {
+                    "source": "/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/res/values-night/styles.xml",
+                    "from": {
+                        "startLines": "3,14",
+                        "startColumns": "4,4",
+                        "startOffsets": "172,817",
+                        "endLines": "7,16",
+                        "endColumns": "12,12",
+                        "endOffsets": "475,981"
+                    },
+                    "to": {
+                        "startLines": "2,6",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,236",
+                        "endLines": "5,8",
+                        "endColumns": "12,12",
+                        "endOffsets": "231,400"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "com.lafetch.customer.app-merged_res-6:/values_values.arsc.flat",
+            "map": [
+                {
+                    "source": "/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/res/values/string.xml",
+                    "from": {
+                        "startLines": "2,3,5,4",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,100,231,160",
+                        "endColumns": "44,59,82,70",
+                        "endOffsets": "95,155,309,226"
+                    },
+                    "to": {
+                        "startLines": "2,4,5,6",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,244,304,387",
+                        "endColumns": "44,59,82,70",
+                        "endOffsets": "95,299,382,453"
+                    }
+                },
+                {
+                    "source": "/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/build/generated/res/processReleaseGoogleServices/values/values.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8",
+                        "startColumns": "4,4,4,4,4,4,4",
+                        "startOffsets": "55,199,281,385,494,614,712",
+                        "endColumns": "143,81,103,108,119,97,74",
+                        "endOffsets": "194,276,380,489,609,707,782"
+                    },
+                    "to": {
+                        "startLines": "3,7,8,9,10,11,12",
+                        "startColumns": "4,4,4,4,4,4,4",
+                        "startOffsets": "100,458,540,644,753,873,971",
+                        "endColumns": "143,81,103,108,119,97,74",
+                        "endOffsets": "239,535,639,748,868,966,1041"
+                    }
+                },
+                {
+                    "source": "/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/res/values/styles.xml",
+                    "from": {
+                        "startLines": "3,14",
+                        "startColumns": "4,4",
+                        "startOffsets": "173,818",
+                        "endLines": "7,16",
+                        "endColumns": "12,12",
+                        "endOffsets": "476,982"
+                    },
+                    "to": {
+                        "startLines": "13,17",
+                        "startColumns": "4,4",
+                        "startOffsets": "1046,1227",
+                        "endLines": "16,19",
+                        "endColumns": "12,12",
+                        "endOffsets": "1222,1391"
+                    }
+                }
+            ]
+        }
+    ]
+}

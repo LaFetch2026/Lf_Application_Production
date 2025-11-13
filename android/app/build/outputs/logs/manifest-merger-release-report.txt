@@ -1,0 +1,203 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:1:1-116:12
+INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:1:1-116:12
+INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:1:1-116:12
+INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:1:1-116:12
+INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:1:1-116:12
+INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:1:1-116:12
+INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:1:1-116:12
+	package
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:2:5-35
+		INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:1:1-116:12
+		INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:1:1-116:12
+		INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:1:11-69
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:5:5-81
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:5:22-78
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:6:5-79
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:6:22-76
+uses-permission#android.permission.INTERNET
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:7:5-67
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:7:22-64
+uses-permission#android.permission.FOREGROUND_SERVICE
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:8:5-77
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:8:22-74
+uses-permission#com.google.android.gms.permission.AD_ID
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:9:5-79
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:9:22-76
+uses-permission#android.permission.ACCESS_BACKGROUND_LOCATION
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:10:5-84
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:10:22-82
+queries
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:14:5-19:15
+intent#action:name:android.intent.action.VIEW+data:scheme:https
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:15:9-18:18
+action#android.intent.action.VIEW
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:16:13-65
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:16:21-62
+data
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:17:13-44
+	android:scheme
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:17:19-41
+application
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:21:5-115:19
+	android:label
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:22:9-32
+	android:icon
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:23:9-45
+	android:usesCleartextTraffic
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:24:9-44
+meta-data#com.google.android.geo.API_KEY
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:27:9-29:71
+	android:value
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:29:13-68
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:28:13-58
+meta-data#firebase_crashlytics_collection_enabled
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:32:9-34:37
+	android:value
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:34:13-34
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:33:13-67
+meta-data#flutterEmbedding
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:37:9-39:33
+	android:value
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:39:13-30
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:38:13-44
+meta-data#io.flutter.embedding.android.NormalTheme
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:40:9-42:53
+	android:resource
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:42:13-50
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:41:13-68
+meta-data#flutter_deeplinking_enabled
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:43:9-45:36
+	android:value
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:45:13-33
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:44:13-55
+meta-data#com.facebook.sdk.ApplicationId
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:48:9-50:55
+	android:value
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:50:13-52
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:49:13-58
+meta-data#com.facebook.sdk.ClientToken
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:51:9-53:61
+	android:value
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:53:13-58
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:52:13-56
+meta-data#com.facebook.sdk.AutoLogAppEventsEnabled
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:54:9-56:36
+	android:value
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:56:13-33
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:55:13-68
+meta-data#com.facebook.sdk.AdvertiserIDCollectionEnabled
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:57:9-59:36
+	android:value
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:59:13-33
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:58:13-74
+meta-data#com.facebook.sdk.CodelessDebugLogEnabled
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:60:9-62:36
+	android:value
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:62:13-33
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:61:13-68
+activity#com.lafetch.customer.MainActivity
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:65:9-88:20
+	android:launchMode
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:68:13-44
+	android:hardwareAccelerated
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:71:13-47
+	android:windowSoftInputMode
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:72:13-55
+	android:exported
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:67:13-36
+	android:configChanges
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:70:13-163
+	android:theme
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:69:13-47
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:66:13-41
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:73:13-76:29
+action#android.intent.action.MAIN
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:74:17-69
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:74:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:75:17-77
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:75:27-74
+intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:scheme:lafetch
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:79:13-87:29
+	android:autoVerify
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:79:28-53
+category#android.intent.category.DEFAULT
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:82:17-76
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:82:27-73
+category#android.intent.category.BROWSABLE
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:83:17-78
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:83:27-75
+activity#com.facebook.FacebookActivity
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:91:9-94:48
+	android:label
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:94:13-45
+	android:configChanges
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:93:13-96
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:92:13-57
+activity#com.facebook.CustomTabActivity
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:97:9-108:20
+	android:exported
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:99:13-36
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:98:13-58
+intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:scheme:@string/fb_login_protocol_scheme
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:100:13-107:29
+provider#com.facebook.FacebookContentProvider
+ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:111:9-114:39
+	android:authorities
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:113:13-90
+	android:exported
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:114:13-36
+	android:name
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:112:13-64
+uses-sdk
+INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+		ADDED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml

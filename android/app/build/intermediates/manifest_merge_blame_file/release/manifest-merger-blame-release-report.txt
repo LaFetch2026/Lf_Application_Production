@@ -1,0 +1,222 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.lafetch.customer"
+4    android:versionCode="45"
+5    android:versionName="1.1.6" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="23"
+8-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+9        android:targetSdkVersion="34" />
+9-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml
+10
+11    <!-- Permissions -->
+12    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+12-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:5:5-81
+12-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:5:22-78
+13    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+13-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:6:5-79
+13-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:6:22-76
+14    <uses-permission android:name="android.permission.INTERNET" />
+14-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:7:5-67
+14-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:7:22-64
+15    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+15-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:8:5-77
+15-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:8:22-74
+16    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+16-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:9:5-79
+16-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:9:22-76
+17    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+17-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:10:5-84
+17-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:10:22-82
+18
+19    <!-- Allow deep linking -->
+20    <queries>
+20-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:14:5-19:15
+21        <intent>
+21-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:15:9-18:18
+22            <action android:name="android.intent.action.VIEW" />
+22-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:16:13-65
+22-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:16:21-62
+23
+24            <data android:scheme="https" />
+24-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:17:13-44
+24-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:17:19-41
+25        </intent>
+26    </queries>
+27
+28    <application
+28-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:21:5-115:19
+29        android:extractNativeLibs="false"
+30        android:icon="@mipmap/launcher_icon"
+30-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:23:9-45
+31        android:label="LaFetch"
+31-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:22:9-32
+32        android:usesCleartextTraffic="true" >
+32-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:24:9-44
+33
+34        <!-- Google Maps API Key -->
+35        <meta-data
+35-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:27:9-29:71
+36            android:name="com.google.android.geo.API_KEY"
+36-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:28:13-58
+37            android:value="AIzaSyCBFuMTFiBOwMOAbiCNJFInpiknSupbfEc" />
+37-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:29:13-68
+38
+39        <!-- Firebase Crashlytics -->
+40        <meta-data
+40-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:32:9-34:37
+41            android:name="firebase_crashlytics_collection_enabled"
+41-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:33:13-67
+42            android:value="false" />
+42-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:34:13-34
+43
+44        <!-- Flutter Meta -->
+45        <meta-data
+45-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:37:9-39:33
+46            android:name="flutterEmbedding"
+46-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:38:13-44
+47            android:value="2" />
+47-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:39:13-30
+48        <meta-data
+48-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:40:9-42:53
+49            android:name="io.flutter.embedding.android.NormalTheme"
+49-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:41:13-68
+50            android:resource="@style/NormalTheme" />
+50-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:42:13-50
+51        <meta-data
+51-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:43:9-45:36
+52            android:name="flutter_deeplinking_enabled"
+52-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:44:13-55
+53            android:value="true" />
+53-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:45:13-33
+54
+55        <!-- Facebook SDK Meta -->
+56        <meta-data
+56-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:48:9-50:55
+57            android:name="com.facebook.sdk.ApplicationId"
+57-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:49:13-58
+58            android:value="@string/facebook_app_id" />
+58-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:50:13-52
+59        <meta-data
+59-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:51:9-53:61
+60            android:name="com.facebook.sdk.ClientToken"
+60-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:52:13-56
+61            android:value="@string/facebook_client_token" />
+61-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:53:13-58
+62        <meta-data
+62-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:54:9-56:36
+63            android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
+63-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:55:13-68
+64            android:value="true" />
+64-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:56:13-33
+65        <meta-data
+65-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:57:9-59:36
+66            android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
+66-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:58:13-74
+67            android:value="true" />
+67-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:59:13-33
+68        <meta-data
+68-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:60:9-62:36
+69            android:name="com.facebook.sdk.CodelessDebugLogEnabled"
+69-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:61:13-68
+70            android:value="true" />
+70-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:62:13-33
+71
+72        <!-- Main Flutter Activity -->
+73        <activity
+73-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:65:9-88:20
+74            android:name="com.lafetch.customer.MainActivity"
+74-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:66:13-41
+75            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+75-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:70:13-163
+76            android:exported="true"
+76-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:67:13-36
+77            android:hardwareAccelerated="true"
+77-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:71:13-47
+78            android:launchMode="singleTask"
+78-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:68:13-44
+79            android:theme="@style/LaunchTheme"
+79-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:69:13-47
+80            android:windowSoftInputMode="adjustResize" >
+80-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:72:13-55
+81            <intent-filter>
+81-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:73:13-76:29
+82                <action android:name="android.intent.action.MAIN" />
+82-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:74:17-69
+82-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:74:25-66
+83
+84                <category android:name="android.intent.category.LAUNCHER" />
+84-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:75:17-77
+84-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:75:27-74
+85            </intent-filter>
+86
+87            <!-- Deep linking -->
+88            <intent-filter android:autoVerify="true" >
+88-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:79:13-87:29
+88-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:79:28-53
+89                <action android:name="android.intent.action.VIEW" />
+89-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:16:13-65
+89-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:16:21-62
+90
+91                <category android:name="android.intent.category.DEFAULT" />
+91-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:82:17-76
+91-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:82:27-73
+92                <category android:name="android.intent.category.BROWSABLE" />
+92-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:83:17-78
+92-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:83:27-75
+93
+94                <data android:scheme="lafetch" />
+94-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:17:13-44
+94-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:17:19-41
+95            </intent-filter>
+96        </activity>
+97
+98        <!-- Facebook Login Activity -->
+99        <activity
+99-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:91:9-94:48
+100            android:name="com.facebook.FacebookActivity"
+100-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:92:13-57
+101            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+101-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:93:13-96
+102            android:label="@string/app_name" />
+102-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:94:13-45
+103
+104        <!-- Facebook Custom Tab Activity -->
+105        <activity
+105-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:97:9-108:20
+106            android:name="com.facebook.CustomTabActivity"
+106-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:98:13-58
+107            android:exported="true" >
+107-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:99:13-36
+108            <intent-filter>
+108-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:100:13-107:29
+109                <action android:name="android.intent.action.VIEW" />
+109-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:16:13-65
+109-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:16:21-62
+110
+111                <category android:name="android.intent.category.DEFAULT" />
+111-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:82:17-76
+111-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:82:27-73
+112                <category android:name="android.intent.category.BROWSABLE" />
+112-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:83:17-78
+112-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:83:27-75
+113
+114                <data android:scheme="@string/fb_login_protocol_scheme" />
+114-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:17:13-44
+114-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:17:19-41
+115            </intent-filter>
+116        </activity>
+117
+118        <!-- Facebook Content Provider -->
+119        <provider
+119-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:111:9-114:39
+120            android:name="com.facebook.FacebookContentProvider"
+120-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:112:13-64
+121            android:authorities="com.facebook.app.FacebookContentProvider915626513880487"
+121-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:113:13-90
+122            android:exported="true" />
+122-->/Users/admin/Desktop/Algorithmx/la-fetch-customer-app_new/android/app/src/main/AndroidManifest.xml:114:13-36
+123    </application>
+124
+125</manifest>

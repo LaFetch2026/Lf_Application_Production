@@ -1,0 +1,4 @@
+-keep class com.facebook.CustomTabActivity { <init>(); }
+-keep class com.facebook.FacebookActivity { <init>(); }
+-keep class com.facebook.FacebookContentProvider { <init>(); }
+-keep class com.lafetch.customer.MainActivity { <init>(); }

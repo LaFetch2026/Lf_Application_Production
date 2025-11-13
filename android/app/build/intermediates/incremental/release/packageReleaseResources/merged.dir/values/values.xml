@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lafetch</string>
+    <string name="default_web_client_id" translatable="false">656354073125-ianmmj41p3ghu148uaspbhdk6j3fa6p4.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">915626513880487</string>
+    <string name="facebook_client_token">bc1c2ad93de1bfbe0f46761e9c26a956</string>
+    <string name="fb_login_protocol_scheme">fb915626513880487</string>
+    <string name="gcm_defaultSenderId" translatable="false">656354073125</string>
+    <string name="google_api_key" translatable="false">AIzaSyCKveQDCOONBp6t6KOSrbg6fhoQWp8t-n0</string>
+    <string name="google_app_id" translatable="false">1:656354073125:android:ba443aa700205a2286fdcc</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyCKveQDCOONBp6t6KOSrbg6fhoQWp8t-n0</string>
+    <string name="google_storage_bucket" translatable="false">la-fetch-3b250.appspot.com</string>
+    <string name="project_id" translatable="false">la-fetch-3b250</string>
+    <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        
+        <item name="android:windowBackground">@drawable/launch_background</item>
+    </style>
+    <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        <item name="android:windowBackground">?android:colorBackground</item>
+    </style>
+</resources>
