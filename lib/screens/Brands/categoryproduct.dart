@@ -8,6 +8,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
@@ -261,50 +262,47 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           ),
 
           /// ✅ Bottom bar
-          SafeArea(
-            top: false,
-            child: Container(
-              color: statusBarColor,
-              child: Column(
-                children: [
-                  Container(height: 1.sp, color: dividerColor),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.sp),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _activeBottomButton(
-                          icon: sortBySvgImage,
-                          label: "SORT BY",
-                          onTap: () async {
-                            await _showSortBottomSheet(
-                              context,
-                              catId: widget.categoryId,
-                              brandId: widget.brandId,
-                              collectionId: widget.genderType,
-                            );
-                          },
-                        ),
-                        _divider(),
-                        _activeTextOnlyButton(
-                          "CATEGORY",
-                          subtitle: widget.genderName.toUpperCase(),
-                          onTap: () {},
-                        ),
-                        _divider(),
-                        _activeBottomButton(
-                          icon: filterSvgImage,
-                          label: "FILTERS",
-                          vector: true,
-                          onTap: () async {
-                            await _showFilterBottomSheet(context);
-                          },
-                        ),
-                      ],
-                    ),
+          Container(
+            color: statusBarColor,
+            child: Column(
+              children: [
+                Container(height: 1.sp, color: dividerColor),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _activeBottomButton(
+                        icon: sortBySvgImage,
+                        label: "SORT BY",
+                        onTap: () async {
+                          await _showSortBottomSheet(
+                            context,
+                            catId: widget.categoryId,
+                            brandId: widget.brandId,
+                            collectionId: widget.genderType,
+                          );
+                        },
+                      ),
+                      _divider(),
+                      _activeTextOnlyButton(
+                        "CATEGORY",
+                        subtitle: widget.genderName.toUpperCase(),
+                        onTap: () {},
+                      ),
+                      _divider(),
+                      _activeBottomButton(
+                        icon: filterSvgImage,
+                        label: "FILTERS",
+                        vector: true,
+                        onTap: () async {
+                          await _showFilterBottomSheet(context);
+                        },
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
