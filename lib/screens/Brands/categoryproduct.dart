@@ -184,7 +184,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               if (catalogController.isCategory.value ||
                   catalogController.isSorting.value) {
                 return const Padding(
-                  padding: EdgeInsets.only(top: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 10),
                   child: DummyGridList(size: 2),
                 );
               }
@@ -193,13 +193,13 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               if (items.isEmpty) return _emptyView();
 
               return GridView.builder(
-                padding: EdgeInsets.fromLTRB(16.sp, 8.sp, 16.sp, 20.sp),
+                padding: EdgeInsets.symmetric(horizontal: 10.sp),
                 itemCount: items.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.56,
-                  crossAxisSpacing: 16.sp,
-                  mainAxisSpacing: 18.sp,
+                  mainAxisSpacing: 10.sp,
+                  crossAxisSpacing: 10.sp,
+                  childAspectRatio: 0.62,
                 ),
                 itemBuilder: (context, index) {
                   final m = items[index] as Map<String, dynamic>;
@@ -261,47 +261,50 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           ),
 
           /// ✅ Bottom bar
-          Container(
-            color: statusBarColor,
-            child: Column(
-              children: [
-                Container(height: 1.sp, color: dividerColor),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.sp),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _activeBottomButton(
-                        icon: sortBySvgImage,
-                        label: "SORT BY",
-                        onTap: () async {
-                          await _showSortBottomSheet(
-                            context,
-                            catId: widget.categoryId,
-                            brandId: widget.brandId,
-                            collectionId: widget.genderType,
-                          );
-                        },
-                      ),
-                      _divider(),
-                      _activeTextOnlyButton(
-                        "CATEGORY",
-                        subtitle: widget.genderName.toUpperCase(),
-                        onTap: () {},
-                      ),
-                      _divider(),
-                      _activeBottomButton(
-                        icon: filterSvgImage,
-                        label: "FILTERS",
-                        vector: true,
-                        onTap: () async {
-                          await _showFilterBottomSheet(context);
-                        },
-                      ),
-                    ],
+          SafeArea(
+            top: false,
+            child: Container(
+              color: statusBarColor,
+              child: Column(
+                children: [
+                  Container(height: 1.sp, color: dividerColor),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _activeBottomButton(
+                          icon: sortBySvgImage,
+                          label: "SORT BY",
+                          onTap: () async {
+                            await _showSortBottomSheet(
+                              context,
+                              catId: widget.categoryId,
+                              brandId: widget.brandId,
+                              collectionId: widget.genderType,
+                            );
+                          },
+                        ),
+                        _divider(),
+                        _activeTextOnlyButton(
+                          "CATEGORY",
+                          subtitle: widget.genderName.toUpperCase(),
+                          onTap: () {},
+                        ),
+                        _divider(),
+                        _activeBottomButton(
+                          icon: filterSvgImage,
+                          label: "FILTERS",
+                          vector: true,
+                          onTap: () async {
+                            await _showFilterBottomSheet(context);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -836,22 +839,18 @@ class _ProductTileNoOverflow extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
+        AspectRatio(
+          aspectRatio: 0.88, // same look as your screenshot
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: imageUrl != null && imageUrl!.trim().isNotEmpty
+            child: imageUrl != null
                 ? CachedNetworkImage(
-                    cacheManager: CacheManager(
-                      Config("productGridCache",
-                          stalePeriod: const Duration(days: 15),
-                          maxNrOfCacheObjects: 100),
-                    ),
                     imageUrl: imageUrl!,
                     fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) =>
-                        Image.asset(downloadImage, fit: BoxFit.cover),
                   )
-                : Image.asset(dummyWishlistImage, fit: BoxFit.cover),
+                : Image.asset(
+                    dummyWishlistImage,
+                    fit: BoxFit.cover,
+                  ),
           ),
         ),
         Padding(
