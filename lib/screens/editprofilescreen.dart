@@ -8,7 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:otp_text_field_v2/otp_field_style_v2.dart';
 import 'package:otp_text_field_v2/otp_field_v2.dart';
-import 'package:telephony/telephony.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 import '../common/widget/appbar/backbutton_appbar.dart';
 import '../common/widget/other/common_widget.dart';
@@ -37,8 +37,8 @@ class EditProfileScreen extends StatefulWidget {
   State<EditProfileScreen> createState() => EditProfileScreenState();
 }
 
-class EditProfileScreenState extends State<EditProfileScreen> {
-  final Telephony telephony = Telephony.instance;
+class EditProfileScreenState extends State<EditProfileScreen>
+    with CodeAutoFill {
   final profileController = Get.put(ProfileController());
   final otpController = Get.put(LoginController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
@@ -48,7 +48,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     super.initState();
     otpController.otp.value = "";
     if (Platform.isAndroid) {
-      callReceiveMsg();
+      listenForCode();
     }
 
     profileController.isEditNumber.value = true;
@@ -84,21 +84,25 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     });
   }
 
-  void callReceiveMsg() {
-    telephony.listenIncomingSms(
-      onNewMessage: (SmsMessage message) {
-        if (!mounted) return;
-        if (message.body?.contains('La Fetch') ?? false) {
-          final otpcode = message.body!.replaceAll(RegExp(r'[^0-9]'), '');
-          otpController.otp.value = otpcode;
-          if (mounted) {
-            otpController.controller.value.set(otpcode.split(""));
-            setState(() {});
-          }
+  @override
+  void codeUpdated() {
+    if (code != null && code!.isNotEmpty) {
+      final otpcode = code!.replaceAll(RegExp(r'[^0-9]'), '');
+      if (otpcode.length >= 4) {
+        final otp = otpcode.substring(0, 4);
+        otpController.otp.value = otp;
+        if (mounted) {
+          otpController.controller.value.set(otp.split(""));
+          setState(() {});
         }
-      },
-      listenInBackground: false,
-    );
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    cancel();
+    super.dispose();
   }
 
   @override
