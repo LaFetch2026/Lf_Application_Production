@@ -7,7 +7,6 @@ import '../../../controllers/login_controller.dart';
 import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 
-
 class LoginAppbar extends StatefulWidget {
   final Function? onPressedSkip;
   final bool isSkip;
@@ -41,18 +40,18 @@ class LoginAppbarState extends State<LoginAppbar> {
             children: [
               !widget.hideBack
                   ? InkWell(
-                onTap: () {
-                  Get.back();
-                },
-                child: Container(
-                  padding: EdgeInsets.only(left: 16.sp, bottom: 6.sp),
-                  child: SvgPicture.asset(arrowBack,
-                      height: 15.sp, width: 15.sp, fit: BoxFit.cover),
-                ),
-              )
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: Container(
+                        padding: EdgeInsets.only(left: 16.sp, bottom: 6.sp),
+                        child: SvgPicture.asset(arrowBack,
+                            height: 15.sp, width: 15.sp, fit: BoxFit.cover),
+                      ),
+                    )
                   : SizedBox(
-                width: 24.sp,
-              ),
+                      width: 24.sp,
+                    ),
               const Expanded(
                 child: SizedBox(
                   height: 0,
@@ -76,31 +75,31 @@ class LoginAppbarState extends State<LoginAppbar> {
                   height: 0,
                 ),
               ),
-              Obx(
-                    () => widget.controller.isGuest.value
-                    ? Transform.scale(
-                  scale: 0.3.sp,
-                  child: const CircularProgressIndicator(
-                    color: homeAppBarColor,
-                  ),
-                )
-                    : Visibility(
-                  visible: widget.isSkip,
-                  child: InkWell(
-                    onTap: () {
-                      widget.onPressedSkip?.call();
-                    },
-                    child: AppText(
-                      text: "Skip".toUpperCase(),
-                      textAlign: TextAlign.right,
-                      fontFamily: "Franklin Gothic Semibold",
-                      fontWeight: FontWeight.w600,
-                      color: searchTextColor,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ),
+              // Obx(
+              //       () => widget.controller.isGuest.value
+              //       ? Transform.scale(
+              //     scale: 0.3.sp,
+              //     child: const CircularProgressIndicator(
+              //       color: homeAppBarColor,
+              //     ),
+              //   )
+              //       : Visibility(
+              //     visible: widget.isSkip,
+              //     child: InkWell(
+              //       onTap: () {
+              //         widget.onPressedSkip?.call();
+              //       },
+              //       child: AppText(
+              //         text: "Skip".toUpperCase(),
+              //         textAlign: TextAlign.right,
+              //         fontFamily: "Franklin Gothic Semibold",
+              //         fontWeight: FontWeight.w600,
+              //         color: searchTextColor,
+              //         fontSize: 12,
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/controllers/SplashController.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
@@ -13,7 +12,7 @@ import '../common/widget/other/common_widget.dart';
 import '../common/widget/text/app_text.dart';
 import '../controllers/login_controller.dart';
 import '../core/constant/constants.dart';
-import 'bottomnavscreen.dart'; // ← navigate into the app
+import 'bottomnavscreen.dart';
 import 'loginscreen.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -68,29 +67,32 @@ class WelcomeScreenState extends State<WelcomeScreen>
     if (mounted) _videoController.play();
   }
 
+  /// ✅ Handle SKIP button - Navigate to BottomNavScreen as guest
   Future<void> _handleSkip() async {
-    if (_skipBusy.value) return;
+    if (_skipBusy.value) return; // Prevent double tap
+
     _skipBusy.value = true;
 
     try {
+      // ✅ Save guest flag to SharedPreferences
       final prefs = await SharedPreferences.getInstance();
-
-      // ✅ Mark user as guest
       await prefs.setBool('skip', true);
-      await prefs.setBool('isGuest', true);
-      await prefs.setBool('isLoggedIn', false);
-      await prefs.remove('token');
 
-      print("🟢 Guest mode activated — navigating to home...");
+      // ✅ Log analytics event
+      await analytics.logEvent(
+        name: 'welcome_page_skip',
+        parameters: <String, Object>{
+          'page_name': 'welcome_page_skip',
+          'user_type': 'guest',
+        },
+      );
 
-      // 🧩 Hard stop SplashController
-      SplashController.abortSplashFlow = true;
-
-      // ✅ Navigate to home
-      Get.offAll(() => const BottomNavScreen());
+      // ✅ Navigate to BottomNavScreen
+      // Start at Home tab (index: 0)
+      Get.offAll(() => const BottomNavScreen(index: 0));
     } catch (e) {
-      print("❌ Skip error: $e");
-      getSnackBar("Something went wrong, please try again.");
+      print("❌ Error during skip: $e");
+      // Show error message if needed
     } finally {
       _skipBusy.value = false;
     }
@@ -230,37 +232,38 @@ class WelcomeScreenState extends State<WelcomeScreen>
                   ),
                 ),
 
-                // SKIP
+                // SKIP - ✅ Updated with guest navigation
                 Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: _handleSkip,
-                      child: Obx(() => _skipBusy.value
-                          ? Center(
-                              child: Transform.scale(
-                                scale: 0.3.sp,
-                                child: const CircularProgressIndicator(
-                                    color: whiteColor),
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: _handleSkip, // ✅ Call the skip handler
+                    child: Obx(() => _skipBusy.value
+                        ? Center(
+                            child: Transform.scale(
+                              scale: 0.3.sp,
+                              child: const CircularProgressIndicator(
+                                  color: whiteColor),
+                            ),
+                          )
+                        : Padding(
+                            padding: EdgeInsets.only(
+                                top: 24.sp,
+                                left: 12.sp,
+                                right: 12.sp,
+                                bottom: 40.sp),
+                            child: Center(
+                              child: AppText(
+                                text: "SKIP",
+                                textAlign: TextAlign.center,
+                                fontFamily: "Franklin Gothic Semibold",
+                                fontWeight: FontWeight.w600,
+                                color: searchTextColor,
+                                fontSize: 12,
                               ),
-                            )
-                          : Padding(
-                              padding: EdgeInsets.only(
-                                  top: 24.sp,
-                                  left: 12.sp,
-                                  right: 12.sp,
-                                  bottom: 40.sp),
-                              child: Center(
-                                child: AppText(
-                                  text: "SKIP",
-                                  textAlign: TextAlign.center,
-                                  fontFamily: "Franklin Gothic Semibold",
-                                  fontWeight: FontWeight.w600,
-                                  color: searchTextColor,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            )),
-                    )),
+                            ),
+                          )),
+                  ),
+                ),
               ],
             ),
           ),

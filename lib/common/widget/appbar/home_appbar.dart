@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../controllers/cart_controller.dart';
 import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
@@ -31,29 +32,41 @@ class HomeAppbar extends StatefulWidget {
 
 class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
   final CartController cartController = Get.put(CartController());
+  bool isGuest = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    // ✅ Ensure fresh cart count on first load
+    // ✅ Check guest status and fetch cart only for logged-in users
     Future.delayed(Duration.zero, () async {
-      await cartController.getCartData();
+      final prefs = await SharedPreferences.getInstance();
+      isGuest = prefs.getBool('skip') ?? false;
+
+      if (!isGuest) {
+        await cartController.getCartData();
+      } else {
+        print("👤 Guest user - skipping cart data fetch in appbar");
+      }
+
+      if (mounted) setState(() {});
     });
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // ✅ Re-fetch when widget becomes active again
-    cartController.getCartData();
+    // ✅ Only re-fetch for logged-in users
+    if (!isGuest) {
+      cartController.getCartData();
+    }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // ✅ Refresh when app resumes
-    if (state == AppLifecycleState.resumed) {
+    // ✅ Refresh when app resumes (only for logged-in users)
+    if (state == AppLifecycleState.resumed && !isGuest) {
       cartController.getCartData();
     }
   }
@@ -102,12 +115,15 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
             // ---- ICONS (Search / Wishlist / Cart) ----
             Row(
               children: [
+                // ✅ Search - Available for everyone
                 if (widget.showSearch)
                   InkWell(
                     onTap: () async {
                       await widget.onPressedSearch?.call();
-                      // refresh count when returning from search
-                      cartController.getCartData();
+                      // refresh count when returning from search (only for logged-in)
+                      if (!isGuest) {
+                        cartController.getCartData();
+                      }
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(
@@ -120,10 +136,14 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                       ),
                     ),
                   ),
+
+                // ✅ Wishlist - Blocked for guests
                 InkWell(
                   onTap: () async {
                     await widget.onPressedHeart?.call();
-                    cartController.getCartData();
+                    if (!isGuest) {
+                      cartController.getCartData();
+                    }
                   },
                   child: Padding(
                     padding:
@@ -136,10 +156,14 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                     ),
                   ),
                 ),
+
+                // ✅ Cart - Blocked for guests, no badge shown
                 InkWell(
                   onTap: () async {
                     await widget.onPressedCart?.call();
-                    await cartController.getCartData();
+                    if (!isGuest) {
+                      await cartController.getCartData();
+                    }
                   },
                   child: Padding(
                     padding: EdgeInsets.only(
@@ -153,35 +177,38 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                           width: 20.sp,
                           fit: BoxFit.cover,
                         ),
-                        Positioned(
-                          right: -5.sp,
-                          top: 8.sp,
-                          child: Obx(() {
-                            final count = cartController.cartTotalValue.value;
-                            if (count == 0) return const SizedBox.shrink();
-                            return Container(
-                              padding: EdgeInsets.all(2.sp),
-                              constraints: BoxConstraints(
-                                minWidth: 14.sp,
-                                minHeight: 14.sp,
-                              ),
-                              decoration: const BoxDecoration(
-                                color: homeAppBarColor,
-                                shape: BoxShape.circle,
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                count.toString(),
-                                style: TextStyle(
-                                  fontSize: 8.sp,
-                                  color: whiteColor,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w500,
+
+                        // ✅ Only show badge for logged-in users
+                        if (!isGuest)
+                          Positioned(
+                            right: -5.sp,
+                            top: 8.sp,
+                            child: Obx(() {
+                              final count = cartController.cartTotalValue.value;
+                              if (count == 0) return const SizedBox.shrink();
+                              return Container(
+                                padding: EdgeInsets.all(2.sp),
+                                constraints: BoxConstraints(
+                                  minWidth: 14.sp,
+                                  minHeight: 14.sp,
                                 ),
-                              ),
-                            );
-                          }),
-                        ),
+                                decoration: const BoxDecoration(
+                                  color: homeAppBarColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  count.toString(),
+                                  style: TextStyle(
+                                    fontSize: 8.sp,
+                                    color: whiteColor,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              );
+                            }),
+                          ),
                       ],
                     ),
                   ),

@@ -64,6 +64,8 @@ class HomeScreenState extends State<HomeScreen> {
 
   final PageController _pageController = PageController(initialPage: 0);
   Timer? timer;
+// Add this at the top of your HomeScreen class
+  bool isGuest = false;
 
   @override
   void initState() {
@@ -96,6 +98,10 @@ class HomeScreenState extends State<HomeScreen> {
         systemNavigationBarIconBrightness: Brightness.dark,
       ));
 
+      // ✅ Check if user is guest
+      final prefs = await SharedPreferences.getInstance();
+      isGuest = prefs.getBool('skip') ?? false;
+
       homeController.showGenderList.value = false;
       homeController.currentPage.value = 0;
       productController.current.value = 50;
@@ -107,6 +113,8 @@ class HomeScreenState extends State<HomeScreen> {
           homeController.homeGenderValue.value;
 
       await checkUserConnection();
+
+      // ✅ These APIs don't require JWT - safe for guest users
       homeController.getBannerData(1);
       homeController.getBannerData(2);
       homeController.getBannerData(3);
@@ -124,7 +132,13 @@ class HomeScreenState extends State<HomeScreen> {
       catalogController.getCatalogData(homeController.homeGenderValue.value);
       homeController.getDeviceName();
       initPlatformState();
-      profileController.safeInitProfile(redirectIfMissing: true);
+
+      // ✅ Only initialize profile if NOT a guest user
+      if (!isGuest) {
+        profileController.safeInitProfile(redirectIfMissing: true);
+      } else {
+        print("👤 Guest user - skipping profile initialization");
+      }
     });
   }
 

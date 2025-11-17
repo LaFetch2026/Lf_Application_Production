@@ -18,6 +18,7 @@ import '../screens/cartscreen.dart';
 import '../screens/catalog/women_catalog.dart';
 import '../screens/home/women/homescreen.dart';
 import '../screens/quickscreen.dart';
+import '../screens/loginscreen.dart'; // ✅ Add this import
 import 'package:geolocator/geolocator.dart';
 
 class BottomNavScreen extends StatefulWidget {
@@ -60,12 +61,22 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 
     _loadGuestFlag();
 
-    // Init profile safely
+    // ✅ Only initialize profile for logged-in users
     Future.microtask(() async {
-      try {
-        final profileController = Get.find<ProfileController>();
-        await profileController.safeInitProfile();
-      } catch (_) {}
+      final prefs = await SharedPreferences.getInstance();
+      final isGuestUser = prefs.getBool("skip") ?? false;
+
+      if (!isGuestUser) {
+        try {
+          final profileController = Get.find<ProfileController>();
+          await profileController.safeInitProfile();
+        } catch (e) {
+          print("⚠️ Profile initialization error: $e");
+        }
+      } else {
+        print(
+            "👤 Guest user detected - skipping profile, cart, and wishlist initialization");
+      }
     });
   }
 
@@ -80,9 +91,22 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     setState(() => _currentIndex = index);
   }
 
+  // ✅ Updated to show SnackBar and navigate to login
   void _handleProtectedNavigation(VoidCallback onAllowed) {
     if (isGuest) {
-      // Get.to(() => const LoginScreen(initialTab: 0, hideBack: true));
+      // ✅ Show snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please sign in to access your profile"),
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+
+      // ✅ Navigate to login after delay
+      Future.delayed(const Duration(milliseconds: 500), () {
+        Get.to(() => const LoginScreen(initialTab: 0));
+      });
     } else {
       onAllowed();
     }
@@ -234,7 +258,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // ⚡ Lightning-like custom icon using Flutter’s built-in shapes
+                // ⚡ Lightning-like custom icon using Flutter's built-in shapes
                 Container(
                   width: 64.sp,
                   height: 40.sp,
@@ -257,7 +281,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 
                 // 🟣 Title Text
                 const Text(
-                  "Currently out of your area’s league. ",
+                  "Currently out of your area's league. ",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,

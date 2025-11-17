@@ -220,6 +220,36 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     final String rawPhone = (prefs.getString('phonenumber') ?? '').trim();
     final String phone = _sanitizeIndianPhone(rawPhone);
 
+    // ---------------------- DEBUG PRINTS ----------------------
+    print("--------------- RAZORPAY DEBUG ---------------");
+    print("Razorpay Key        : $_razorpayKey");
+    print("Razorpay Order ID   : $orderId");
+    print("Cart Total (₹)      : $cartTotalInRupees");
+    print("Amount in Paise     : $amountInPaise");
+    print("User Name           : $userName");
+    print("User Email          : $userEmail");
+    print("Raw Phone           : $rawPhone");
+    print("Final Phone Digits  : $phone");
+    print("----------------------------------------------");
+
+    if (orderId.isEmpty) {
+      print("❌ ERROR: orderId is EMPTY → Cannot open Razorpay");
+      _snack("Invalid Razorpay Payment Order ID");
+      return;
+    }
+
+    if (_razorpayKey.isEmpty) {
+      print("❌ ERROR: Razorpay key missing!");
+      _snack("Payment configuration missing (Key)");
+      return;
+    }
+
+    if (amountInPaise <= 0) {
+      print("❌ ERROR: amount is ZERO → Razorpay cannot open");
+      _snack("Invalid payable amount");
+      return;
+    }
+
     final options = {
       'key': _razorpayKey,
       'amount': amountInPaise,
@@ -230,23 +260,25 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
       'prefill': {
         'name': userName.isEmpty ? 'Customer' : userName,
         'email': userEmail.isEmpty ? 'customer@example.com' : userEmail,
-        'contact': phone.length == 10 ? '+91$phone' : '+919999999999',
+
+        // ONLY PHONE DIGITS for Razorpay
+        'contact': phone.isNotEmpty ? phone : '9999999999',
       },
       'theme': {'color': '#070707'},
     };
 
+    print("Razorpay Options → $options");
+    print("------------------------------------------------");
+
     try {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        try {
-          _rzp?.open(options);
-        } catch (e) {
-          _snack('Unable to start payment: ${e.toString()}');
-        }
-      });
+      _rzp?.open(options);
+      print("✔ Razorpay checkout opened successfully!");
     } catch (e) {
+      print("❌ ERROR opening Razorpay → $e");
       _snack('Unable to start payment: ${e.toString()}');
     }
   }
+
 
   void _onPaymentSuccess(PaymentSuccessResponse r) async {
     Get.offAll(() => const OrderStatusScreen(status: 'success'),
