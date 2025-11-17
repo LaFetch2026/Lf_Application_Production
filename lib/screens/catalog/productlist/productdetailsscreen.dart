@@ -479,7 +479,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
         .where((v) => v['product_matrix_size_name'] != null)
         .toList()
       ..sort((a, b) {
-        const sizeOrder = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+        const sizeOrder = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+
         final aLabel =
             (a['product_matrix_size_name'] ?? '').toString().toUpperCase();
         final bLabel =
@@ -1507,7 +1508,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   padding: EdgeInsets.symmetric(
                                                       horizontal: 12.sp,
                                                       vertical: 8.sp),
-                                                  child: AppSpacingText(
+                                                  child: const AppSpacingText(
                                                     text: "CHECK",
                                                     textAlign: TextAlign.center,
                                                     fontFamily:
