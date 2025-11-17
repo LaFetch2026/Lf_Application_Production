@@ -406,7 +406,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         );
                       }),
 
-                      // Brand Logo (use proper URL validation)
+                      // Brand Logo (use proper URL validation) - FIXED VERSION
                       Obx(() {
                         if (brandController.isDetails.value) {
                           return const SizedBox(height: 0);
@@ -454,13 +454,29 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                           ),
                                         ),
                                       ),
+                                      // ✅ ADD THIS ERROR HANDLER
+                                      errorWidget: (context, url, error) =>
+                                          Container(
+                                        color: Colors.white,
+                                        child: Icon(
+                                          Icons.storefront,
+                                          size: 40.sp,
+                                          color: colorPrimary,
+                                        ),
+                                      ),
                                     )
-                                  : const SizedBox(),
+                                  : Container(
+                                      color: Colors.white,
+                                      child: Icon(
+                                        Icons.storefront,
+                                        size: 40.sp,
+                                        color: colorPrimary,
+                                      ),
+                                    ),
                             ),
                           ),
                         );
                       }),
-
                       // Brand Name
                       Container(
                         margin: EdgeInsets.only(top: 260.sp),
