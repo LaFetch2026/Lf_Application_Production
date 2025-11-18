@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/core/utils/share_link_generator.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
@@ -111,7 +113,29 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
 
                 // share
                 InkWell(
-                  onTap: () => widget.onPressedShare?.call(),
+                  onTap: () async {
+                    final p = productController.productDetails;
+
+                    if (p.isEmpty) {
+                      Get.snackbar("Error", "Product not loaded yet");
+                      return;
+                    }
+
+                    final link =
+                        await ShareLinkGenerator.createProductShareLink(
+                      productId: p["id"] ?? 0,
+                      productName: p["title"] ?? "",
+                      type: p["type"] ?? "",
+                      brandName: p["brand_name"] ?? "",
+                    );
+
+                    if (link.isEmpty) {
+                      Get.snackbar("Error", "Unable to generate link");
+                      return;
+                    }
+
+                    Share.share("$link\n\n${p["title"]}");
+                  },
                   child: Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),

@@ -210,6 +210,10 @@ class ProductController extends BaseController {
   RxString estimatedDate = "".obs;
   RxString estimatedDays = "".obs;
   final RxDouble averageRating = 0.0.obs;
+  // ---- SIZE CHART ----
+  RxBool isSizeChartLoading = false.obs;
+  RxMap sizeChart = <String, dynamic>{}.obs;
+  RxList<Map<String, dynamic>> sizeChartData = <Map<String, dynamic>>[].obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -270,6 +274,92 @@ class ProductController extends BaseController {
     }
 
     return isValid;
+  }
+
+  /// ----------------------------------------------------------
+  /// FETCH SIZE CHART (brandId + superCatId + catId + subCatId)
+  /// ----------------------------------------------------------
+  Future<void> fetchSizeChart({
+    required int brandId,
+    required int superCatId,
+    required int catId,
+    required int subCatId,
+  }) async {
+    print("=== SIZE CHART PARAMS ===");
+    print("brandId     → $brandId");
+    print("superCatId  → $superCatId");
+    print("catId       → $catId");
+    print("subCatId    → $subCatId");
+    print("==========================");
+
+    isSizeChartLoading.value = true;
+    sizeChart.clear();
+    sizeChartData.clear();
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token") ?? "";
+
+    final url =
+        "${ApiConstants.baseUrl}/fetch-size-chart?brandId=$brandId&superCatId=$superCatId&catId=$catId&subCatId=$subCatId";
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          "Accept": "application/json; charset=UTF-8",
+          if (token.isNotEmpty) "Authorization": "Bearer $token",
+        },
+      ).timeout(const Duration(seconds: 20));
+
+      print("FULL SIZE CHART RESPONSE → ${response.body}");
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body);
+        final data = decoded["data"];
+
+        if (data == null) {
+          print("⚠️ Size chart data is NULL from API");
+          return;
+        }
+
+        sizeChart.assignAll(Map<String, dynamic>.from(data));
+
+        final rawImg = data["sizeGuideImage"];
+        if (rawImg != null && rawImg.toString().trim().isNotEmpty) {
+          print("✓ Using sizeGuideImage");
+        }
+
+        final raw = data["sizeChartData"];
+        if (raw == null || raw.toString().trim().isEmpty) {
+          print("⚠️ sizeChartData is empty");
+          return;
+        }
+
+        dynamic parsed;
+        try {
+          parsed = json.decode(raw);
+        } catch (e) {
+          print("⚠️ JSON parse error: $e");
+          return;
+        }
+
+        if (parsed is List) {
+          sizeChartData.assignAll(
+            List<Map<String, dynamic>>.from(parsed),
+          );
+        } else if (parsed is Map) {
+          sizeChartData.assignAll([Map<String, dynamic>.from(parsed)]);
+        }
+
+        print("✓ Final sizeChartData length = ${sizeChartData.length}");
+      } else {
+        print("✗ Size chart API failed: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("✗ Size Chart Error: $e");
+    } finally {
+      isSizeChartLoading.value = false;
+    }
   }
 
   Future<void> getHomeProduct(int gender) async {
@@ -339,86 +429,9 @@ class ProductController extends BaseController {
     }
   }
 
-  Future<void> getProductByCatId({
-    required int gender,
-    required int catId,
-  }) async {
-    isCatProducts.value = true;
-    catProductList.clear();
-
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token') ?? '';
-
-    final base = ApiConstants.baseUrl; // <-- laFetch base
-    final baseUri = Uri.parse(base);
-
-    // {base}/products?gender=<g>&catId=<id>
-    final uri = baseUri.replace(
-      path: baseUri.path.endsWith('/')
-          ? '${baseUri.path}products'
-          : '${baseUri.path}/products',
-      queryParameters: {
-        'gender': '$gender',
-        'catId': '$catId',
-      },
-    );
-
-    try {
-      final res = await http.get(
-        uri,
-        headers: {
-          'Accept': 'application/json; charset=UTF-8',
-          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-        },
-      ).timeout(const Duration(seconds: 20));
-
-      if (res.statusCode != 200) {
-        catProductList.clear();
-        print(
-            '✗ getProductByCatId failed: ${res.statusCode} ${res.reasonPhrase}');
-        return;
-      }
-
-      dynamic decoded;
-      try {
-        decoded = json.decode(res.body);
-      } catch (e) {
-        catProductList.clear();
-        print('✗ getProductByCatId JSON decode error: $e');
-        return;
-      }
-
-      // Expect: { status, message, data: [...] }
-      final List<Map<String, dynamic>> items =
-          (decoded is Map && decoded['data'] is List)
-              ? List<Map<String, dynamic>>.from(
-                  (decoded['data'] as List).whereType<Map>())
-              : <Map<String, dynamic>>[];
-
-      // Normalize nullable arrays so UI is safe
-      for (final m in items) {
-        m['imageUrls'] ??= <String>[];
-        m['tags'] ??= <dynamic>[];
-        m['targetGenders'] ??= <dynamic>[];
-        m['fabrics'] ??= <dynamic>[];
-        m['colorPatterns'] ??= <dynamic>[];
-      }
-
-      catProductList.assignAll(items);
-      print('✓ getProductByCatId loaded: ${catProductList.length}');
-    } on TimeoutException {
-      catProductList.clear();
-      print('✗ getProductByCatId timeout: $uri');
-    } catch (e) {
-      catProductList.clear();
-      print('✗ getProductByCatId error: $e');
-    } finally {
-      isCatProducts.value = false;
-    }
-  }
-
   Future<void> getProductById(int id) async {
-    isDetails.value = true; // loader on
+    isDetails.value = true;
+
     try {
       errorMsg.value = "";
       productDetails = <String, dynamic>{};
@@ -440,184 +453,173 @@ class ProductController extends BaseController {
         },
       ).timeout(const Duration(seconds: 20));
 
-      if (resp.statusCode == 200) {
-        final decoded = json.decode(resp.body);
+      if (resp.statusCode != 200) {
+        errorMsg.value = 'Failed to load product (${resp.statusCode})';
+        return;
+      }
 
-        if (decoded is! Map || decoded['data'] is! Map) {
-          errorMsg.value = 'Unexpected product payload.';
-          return;
-        }
+      final decoded = json.decode(resp.body);
+      if (decoded is! Map || decoded['data'] is! Map) {
+        errorMsg.value = 'Unexpected product payload.';
+        return;
+      }
 
-        final Map<String, dynamic> data =
-            Map<String, dynamic>.from(decoded['data'] as Map);
+      final Map<String, dynamic> data =
+          Map<String, dynamic>.from(decoded['data']);
 
-        // ---------- Helpers ----------
-        num _num(dynamic v) =>
-            (v is num) ? v : num.tryParse(v?.toString() ?? '') ?? 0;
-        String _str(dynamic v) => (v ?? '').toString();
-        List<String> _strList(dynamic v) => (v is List)
-            ? v
-                .map((e) => e?.toString() ?? '')
-                .where((s) => s.isNotEmpty)
-                .toList()
-            : const <String>[];
+      // ---------------- HELPERS ----------------
+      num _num(dynamic v) =>
+          (v is num) ? v : num.tryParse(v?.toString() ?? '') ?? 0;
+      String _str(dynamic v) => (v ?? '').toString();
+      List<String> _strList(dynamic v) => (v is List)
+          ? v
+              .map((e) => e?.toString() ?? '')
+              .where((s) => s.isNotEmpty)
+              .toList()
+          : const <String>[];
 
-        // ---------- Base price & MRP ----------
-        final productLevelPrice = _num(data['price'] ??
-            data['msp'] ??
-            data['lfMsp'] ??
-            data['mrp'] ??
-            data['basePrice']);
-        final productLevelMrp = _num(data['mrp']);
+      // ---------------- CATEGORY ID FIX ----------------
+      // Your API might send category IDs in different formats.
+      final superCatId = data["superCatId"] ??
+          data["super_category_id"] ??
+          data["superCategoryId"] ??
+          (data["category"]?["superCatId"]) ??
+          0;
 
-        // ---------- Variants ----------
-        final List<Map<String, dynamic>> variants = (data['variants'] is List)
-            ? List<Map<String, dynamic>>.from(
-                (data['variants'] as List).whereType<Map>())
-            : <Map<String, dynamic>>[];
+      final catId = data["catId"] ??
+          data["category_id"] ??
+          data["categoryId"] ??
+          (data["category"]?["catId"]) ??
+          0;
 
-        // Derive prices
-        final variantPrices = variants
-            .map((v) => _num(v['price']).toDouble())
-            .where((p) => p > 0)
-            .toList();
-        final variantMrps = variants
-            .map((v) => _num(v['compareAtPrice']).toDouble())
-            .where((p) => p > 0)
-            .toList();
+      final subCatId = data["subCatId"] ??
+          data["sub_category_id"] ??
+          data["subCategoryId"] ??
+          (data["category"]?["subCatId"]) ??
+          0;
 
-        double displayPrice =
-            productLevelPrice > 0 ? productLevelPrice.toDouble() : 0;
-        double displayMrp =
-            productLevelMrp > 0 ? productLevelMrp.toDouble() : 0;
+      print("📌 Extracted Product Category IDs:");
+      print("superCatId = $superCatId");
+      print("catId      = $catId");
+      print("subCatId   = $subCatId");
 
-        if (displayPrice <= 0 && variantPrices.isNotEmpty) {
-          displayPrice = variantPrices.first;
-        }
-        if (displayMrp <= 0 && variantMrps.isNotEmpty) {
-          displayMrp = variantMrps.first;
-        }
+      // ---------------- PRICE CALCULATIONS ----------------
+      final productLevelPrice = _num(data['price'] ??
+          data['msp'] ??
+          data['lfMsp'] ??
+          data['mrp'] ??
+          data['basePrice']);
 
-        // ---------- Totals / discount ----------
-        final discountPct = (displayMrp > 0 && displayPrice < displayMrp)
-            ? '${(((displayMrp - displayPrice) / displayMrp) * 100).toStringAsFixed(0)}%'
-            : '0%';
+      final productLevelMrp = _num(data['mrp']);
 
-        final rating = _num(data['rating']);
-        final hasCOD = data['hasCOD'] == true;
-        final hasExchange = data['hasExchange'] == true;
-        final exchangeDays = _num(data['exchangeDays']).toInt();
+      final List<Map<String, dynamic>> variants = (data['variants'] is List)
+          ? List<Map<String, dynamic>>.from(
+              (data['variants'] as List).whereType<Map>())
+          : <Map<String, dynamic>>[];
 
-        // ---------- Product Details ----------
-        productDetails = {
-          'id': data['id'],
-          'type': _str(data['type']),
-          'title': _str(data['title']),
-          'description': _str(data['description']),
-          'tags': _strList(data['tags']),
-          'imageUrls': _strList(data['imageUrls']),
-          'brand': data['brand'],
-          'hasExchange': hasExchange,
-          'exchangeDays': exchangeDays,
-          'hasCOD': hasCOD,
-          'brand_name':
-              (data['brand'] is Map ? _str(data['brand']['name']) : ''),
-          'name': _str(data['name'] ?? data['title']),
-          'price': displayPrice,
-          'mrp': displayMrp,
-          'discount_percentage': discountPct,
-          'aggregated_rating': rating,
-          'has_cod': hasCOD,
-          'has_exchange': hasExchange,
-          'exchange_days': exchangeDays,
-          'total_stock_count': variants.length,
-          'cart_inventory_ids': <int>[],
-          'share_link': '',
-        };
+      final variantPrices = variants
+          .map((v) => _num(v['price']).toDouble())
+          .where((p) => p > 0)
+          .toList();
 
-        // ---------- Gallery ----------
-        final imgs = _strList(data['imageUrls']);
-        imageList.assignAll(imgs.map((u) => {'name': u}).toList());
+      final variantMrps = variants
+          .map((v) => _num(v['compareAtPrice']).toDouble())
+          .where((p) => p > 0)
+          .toList();
 
-        // ---------- Sizes ----------
-        sizeInventoryList.assignAll(
-          variants.map((v) {
-            final vPrice = _num(v['price']).toDouble();
-            final vMrp = _num(v['compareAtPrice']).toDouble();
+      double displayPrice =
+          productLevelPrice > 0 ? productLevelPrice.toDouble() : 0;
+      double displayMrp = productLevelMrp > 0 ? productLevelMrp.toDouble() : 0;
 
-            // extract size name
-            String sizeLabel = '';
-            if (v['selectedOptions'] is List) {
-              for (final opt in v['selectedOptions']) {
-                if (opt is Map &&
-                    opt['name'].toString().toLowerCase() == 'size') {
-                  sizeLabel = opt['value']?.toString() ?? '';
-                  break;
-                }
+      if (displayPrice <= 0 && variantPrices.isNotEmpty) {
+        displayPrice = variantPrices.first;
+      }
+      if (displayMrp <= 0 && variantMrps.isNotEmpty) {
+        displayMrp = variantMrps.first;
+      }
+
+      final discountPct = (displayMrp > 0 && displayPrice < displayMrp)
+          ? '${(((displayMrp - displayPrice) / displayMrp) * 100).toStringAsFixed(0)}%'
+          : '0%';
+
+      // ---------------- PRODUCT DETAILS ----------------
+      productDetails = {
+        'id': data['id'],
+        'type': _str(data['type']),
+        'title': _str(data['title']),
+        'description': _str(data['description']),
+        'tags': _strList(data['tags']),
+        'imageUrls': _strList(data['imageUrls']),
+        'brand': data['brand'],
+
+        // ⭐ IMPORTANT FOR SIZE CHART API
+        'superCatId': superCatId,
+        'catId': catId,
+        'subCatId': subCatId,
+
+        'brand_name': (data['brand'] is Map) ? _str(data['brand']['name']) : '',
+        'name': _str(data['name'] ?? data['title']),
+        'price': displayPrice,
+        'mrp': displayMrp,
+        'discount_percentage': discountPct,
+        'aggregated_rating': _num(data['rating']),
+        'hasCOD': data['hasCOD'] == true,
+        'hasExchange': data['hasExchange'] == true,
+        'exchangeDays': _num(data['exchangeDays']),
+        'total_stock_count': variants.length,
+        'cart_inventory_ids': <int>[],
+      };
+
+      // ---------------- GALLERY ----------------
+      final imgs = _strList(data['imageUrls']);
+      imageList.assignAll(imgs.map((u) => {'name': u}));
+
+      // ---------------- SIZES ----------------
+      sizeInventoryList.assignAll(
+        variants.map((v) {
+          final inventory = v['inventory'] is Map
+              ? Map<String, dynamic>.from(v['inventory'])
+              : <String, dynamic>{};
+
+          String sizeLabel = "";
+          if (v['selectedOptions'] is List) {
+            for (final opt in v['selectedOptions']) {
+              if (opt is Map &&
+                  opt['name']?.toString().toLowerCase() == 'size') {
+                sizeLabel = opt['value']?.toString() ?? "";
+                break;
               }
             }
+          }
 
-            // ✅ pick availableStock from nested inventory object
-            final inventory = v['inventory'] is Map
-                ? Map<String, dynamic>.from(v['inventory'])
-                : <String, dynamic>{};
-            final availableStock =
-                _num(inventory['availableStock']).toInt(); // real stock
+          return {
+            'id': v['id'] ?? v['shopifyVariantId'] ?? 0,
+            'product_matrix_size_name': sizeLabel,
+            'stocks': _num(inventory['availableStock']).toInt(),
+            'price': _num(v['price']).toDouble(),
+            'compareAtPrice': _num(v['compareAtPrice']).toDouble(),
+          };
+        }).toList(),
+      );
 
-            return {
-              'id': v['id'] ?? v['shopifyVariantId'] ?? 0,
-              'product_matrix_size_name': sizeLabel,
-              'stocks': availableStock, // ✅ REAL STOCK VALUE
-              'price': vPrice,
-              'compareAtPrice': vMrp,
-              'product_matrix_available_colors': <Map<String, dynamic>>[],
-              'selectedOptions': v['selectedOptions'] ?? [],
-            };
-          }).toList(),
+      // ---------------- SELECT DEFAULT SIZE ----------------
+      if (sizeInventoryList.isNotEmpty) {
+        final firstInStock = sizeInventoryList.firstWhere(
+          (e) => _num(e['stocks']) > 0,
+          orElse: () => sizeInventoryList.first,
         );
 
-        // Debug print
-        print("==== Variant Stock Summary ====");
-        for (final v in sizeInventoryList) {
-          print("${v['product_matrix_size_name']} => stocks: ${v['stocks']}");
-        }
+        sizeInventoryId.value =
+            int.tryParse(firstInStock['id']?.toString() ?? '0') ?? 0;
 
-        // ---------- Default size selection ----------
-        if (sizeInventoryId.value == 0 && sizeInventoryList.isNotEmpty) {
-          final firstInStock = sizeInventoryList.firstWhere(
-            (e) => (_num(e['stocks']) > 0),
-            orElse: () => sizeInventoryList.first,
-          );
-
-          sizeInventoryId.value =
-              int.tryParse(firstInStock['id']?.toString() ?? '0') ?? 0;
-          try {
-            (selectedProductSize as dynamic).value = firstInStock;
-          } catch (_) {
-            selectedProductSize = firstInStock;
-          }
-        }
-
-        colorInventoryList.clear();
-      } else if (resp.statusCode == 404) {
-        errorMsg.value = 'Product not found.';
-      } else if (resp.statusCode == 401) {
-        errorMsg.value = 'Session expired. Please login again.';
-      } else {
-        try {
-          final err = json.decode(resp.body);
-          errorMsg.value = (err is Map && err['message'] != null)
-              ? err['message'].toString()
-              : 'Failed: ${resp.statusCode}';
-        } catch (_) {
-          errorMsg.value = 'Failed to load product. (${resp.statusCode})';
-        }
+        selectedProductSize = firstInStock;
       }
     } catch (e) {
-      errorMsg.value = 'Error fetching product: $e';
+      print("❌ ERROR getProductById → $e");
+      errorMsg.value = 'Error fetching product details.';
     } finally {
-      isDetails.value = false; // loader off
-      update(); // refresh UI
+      isDetails.value = false;
+      update();
     }
   }
 

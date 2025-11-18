@@ -774,6 +774,93 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     super.initState();
   }
 
+  void _openSizeChartDialog() async {
+    await productController.fetchSizeChart(
+      brandId: productController.productDetails["brand"]?["id"] ?? 0,
+      superCatId: productController.productDetails["superCatId"] ?? 0,
+      catId: productController.productDetails["catId"] ?? 0,
+      subCatId: productController.productDetails["subCatId"] ?? 0,
+    );
+
+    final chart = productController.sizeChart;
+    final chartData = productController.sizeChartData;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          insetPadding: EdgeInsets.all(16.sp),
+          backgroundColor: Colors.white, // ⭐ light purple color
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.sp),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(16.sp),
+            width: double.infinity,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// ---------- Title ----------
+                  Text(
+                    chart["title"]?.toString() ?? "Size Chart",
+                    style: TextStyle(
+                      fontFamily: "Franklin Gothic",
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18.sp,
+                    ),
+                  ),
+                  SizedBox(height: 14.sp),
+
+                  /// ---------- Prefer Image ----------
+                  if (chart["sizeGuideImage"] != null &&
+                      chart["sizeGuideImage"].toString().isNotEmpty)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8.sp),
+                      child: CachedNetworkImage(
+                        imageUrl: chart["sizeGuideImage"],
+                        width: double.infinity,
+                        height: 300.sp,
+                        fit: BoxFit.contain,
+                      ),
+                    )
+                  else
+                    _buildSizeTable(chartData),
+
+                  SizedBox(height: 18.sp),
+
+                  /// Close Button
+                  Align(
+                    alignment: Alignment.center,
+                    child: ElevatedButton(
+                      onPressed: () => Get.back(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black, // ⭐ Proper dark button
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.sp),
+                        ),
+                        minimumSize: Size(180.sp, 48.sp),
+                      ),
+                      child: Text(
+                        "Close",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: "Franklin Gothic",
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     try {
@@ -1269,6 +1356,23 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                     ? blackColor
                                                     : productSubtitleColor,
                                                 fontSize: 16,
+                                              ),
+
+                                              /// ⭐⭐⭐ View Size Chart Button
+                                              GestureDetector(
+                                                onTap: _openSizeChartDialog,
+                                                child: Text(
+                                                  "View Size Chart",
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                        "Franklin Gothic",
+                                                    fontWeight: FontWeight.w600,
+                                                    color: colorPrimary,
+                                                    fontSize: 13.sp,
+                                                    decoration: TextDecoration
+                                                        .underline,
+                                                  ),
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -2028,6 +2132,87 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
               ],
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSizeTable(List<Map<String, dynamic>> chartData) {
+    if (chartData.isEmpty)
+      return Text("No size info", style: TextStyle(color: Colors.black));
+
+    final headers = chartData.first.keys.toList();
+
+    return Table(
+      border: TableBorder.all(color: Colors.grey.shade300),
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+      children: [
+        /// ---------- Header Row ----------
+        TableRow(
+          decoration: BoxDecoration(color: Colors.white),
+          children: headers.map((h) {
+            return Padding(
+              padding: EdgeInsets.all(8.sp),
+              child: Text(
+                h.toUpperCase(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black, // ⭐ BLACK
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12.sp,
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+
+        /// ---------- Values ----------
+        ...chartData.map((row) {
+          return TableRow(
+            decoration: BoxDecoration(color: Colors.white),
+            children: headers.map((h) {
+              return Padding(
+                padding: EdgeInsets.all(8.sp),
+                child: Text(
+                  row[h]?.toString() ?? "-",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.black, // ⭐ BLACK
+                    fontSize: 12.sp,
+                  ),
+                ),
+              );
+            }).toList(),
+          );
+        })
+      ],
+    );
+  }
+
+  Widget _tableHeader(String text) {
+    return Padding(
+      padding: EdgeInsets.all(8.sp),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontFamily: "Franklin Gothic",
+          fontWeight: FontWeight.w600,
+          fontSize: 12.sp,
+        ),
+      ),
+    );
+  }
+
+  Widget _tableCell(String text) {
+    return Padding(
+      padding: EdgeInsets.all(8.sp),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontFamily: "Franklin Gothic Regular",
+          fontSize: 12.sp,
+        ),
       ),
     );
   }
