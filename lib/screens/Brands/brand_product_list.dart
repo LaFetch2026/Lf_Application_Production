@@ -118,42 +118,49 @@ class BrandProductList extends StatelessWidget {
                               ),
 
                               // ⭐ ------- PRICE SECTION (Updated) ------- ⭐
+                              /// PRICE ROW (MRP + Selling Price)
                               Padding(
                                 padding: EdgeInsets.only(top: 8.sp),
                                 child: Row(
-                                  mainAxisAlignment: radius == 0
-                                      ? MainAxisAlignment.center
-                                      : MainAxisAlignment.start,
+                                  mainAxisAlignment: (list[index]
+                                              ["displayMrp"] ==
+                                          null)
+                                      ? MainAxisAlignment
+                                          .start // Price alone → normal left alignment
+                                      : MainAxisAlignment
+                                          .start, // MRP + Price → normal left alignment
                                   children: [
-                                    // ⭐ Show ONLY if mrp exists
-                                    if (mrp != null)
-                                      Text(
-                                        "\u{20B9} $mrp",
-                                        style: TextStyle(
-                                          color: searchTextColor,
-                                          fontSize: 11.sp,
-                                          decoration:
-                                              TextDecoration.lineThrough,
-                                          fontFamily: "Franklin Gothic Regular",
-                                          fontWeight: FontWeight.w400,
+                                    // ---------- MRP ----------
+                                    if (list[index]["displayMrp"] != null)
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 6.sp),
+                                        child: Text(
+                                          "₹ ${list[index]["displayMrp"]}",
+                                          style: TextStyle(
+                                            color: searchTextColor,
+                                            fontSize: 11.sp,
+                                            decoration:
+                                                TextDecoration.lineThrough,
+                                            fontFamily:
+                                                "Franklin Gothic Regular",
+                                            fontWeight: FontWeight.w400,
+                                          ),
                                         ),
                                       ),
 
-                                    // ⭐ Add space ONLY if MRP exists
-                                    if (mrp != null) SizedBox(width: 6.sp),
-
-                                    // ⭐ Always show price
-                                    AppText(
-                                      text: "\u{20B9} $price",
-                                      color: whiteColor,
-                                      maxLines: 2,
-                                      fontSize: 11,
-                                      fontFamily: "Franklin Gothic",
-                                      fontWeight: FontWeight.w500,
+                                    // ---------- PRICE ----------
+                                    Text(
+                                      "₹ ${list[index]["displayPrice"]}",
+                                      style: TextStyle(
+                                        color: whiteColor,
+                                        fontSize: 11.sp,
+                                        fontFamily: "Franklin Gothic",
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ],
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),

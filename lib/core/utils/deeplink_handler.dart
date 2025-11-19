@@ -66,8 +66,7 @@ class DeepLinkHandler {
       // Default fallback → Home screen
       Get.offAll(() => WelcomeScreen());
     } catch (e) {
-      print("DeepLink error: $e");
-      Get.offAll(() => WelcomeScreen());
+      print("❌ Deep Link Handling Error: $e");
     }
   }
 }
