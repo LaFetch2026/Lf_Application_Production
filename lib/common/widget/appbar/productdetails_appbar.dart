@@ -2,19 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/core/utils/share_link_generator.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
+import '../../../core/utils/share_link_generator.dart';
 
 class ProductdetailsAppbar extends StatefulWidget {
+  final int productId; // NEW
+  final String type; // NEW
+  final String brandName; // NEW
+  final String slug; // NEW
+
   final Function? onPressedShare;
   final Function? onPressedHeart;
-  final bool dark; // <-- set true if background is dark
+  final bool dark;
 
   const ProductdetailsAppbar({
+    required this.productId,
+    required this.type,
+    required this.brandName,
+    required this.slug,
     this.onPressedShare,
     this.onPressedHeart,
     this.dark = false,
@@ -31,14 +40,12 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
 
   @override
   Widget build(BuildContext context) {
-    final iconColor =
-        widget.dark ? Colors.white : Colors.black; // auto-pick color
+    final iconColor = widget.dark ? Colors.white : Colors.black;
 
     return Container(
       width: MediaQuery.of(context).size.width,
       color: statusBarColor,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Padding(
             padding: EdgeInsets.only(
@@ -47,10 +54,9 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
               bottom: 8.sp,
             ),
             child: Row(
-              mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                // back
+                // BACK BUTTON
                 InkWell(
                   onTap: () => Get.back(),
                   child: Padding(
@@ -60,15 +66,14 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
                       arrowBack,
                       height: 15.sp,
                       width: 15.sp,
-                      fit: BoxFit.cover,
                       colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
                     ),
                   ),
                 ),
 
-                const Expanded(child: SizedBox.shrink()),
+                const Expanded(child: SizedBox()),
 
-                // logo
+                // CENTER LOGO
                 Padding(
                   padding: EdgeInsets.only(left: 40.sp, right: 10.sp),
                   child: Image.asset(
@@ -79,62 +84,44 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
                   ),
                 ),
 
-                const Expanded(child: SizedBox.shrink()),
+                const Expanded(child: SizedBox()),
 
-                // heart
-                // Replace this section in ProductdetailsAppbar
+                // HEART ICON
                 InkWell(
                   onTap: () => widget.onPressedHeart?.call(),
                   child: Obx(
-                    () {
-                      // Remove the isLoading check, just show the icon
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 8.sp, vertical: 8.sp),
-                        child: wishlistController.isWishlisted.value
-                            ? SvgPicture.asset(
-                                redHeartSvgImage,
-                                height: 18.sp,
-                                width: 18.sp,
-                                fit: BoxFit.cover,
-                              )
-                            : SvgPicture.asset(
-                                heartSvgImage,
-                                height: 18.sp,
-                                width: 18.sp,
-                                fit: BoxFit.cover,
-                                colorFilter: ColorFilter.mode(
-                                    iconColor, BlendMode.srcIn),
-                              ),
-                      );
-                    },
+                    () => Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 8.sp, vertical: 8.sp),
+                      child: wishlistController.isWishlisted.value
+                          ? SvgPicture.asset(
+                              redHeartSvgImage,
+                              height: 18.sp,
+                              width: 18.sp,
+                            )
+                          : SvgPicture.asset(
+                              heartSvgImage,
+                              height: 18.sp,
+                              width: 18.sp,
+                              colorFilter:
+                                  ColorFilter.mode(iconColor, BlendMode.srcIn),
+                            ),
+                    ),
                   ),
                 ),
 
-                // share
+                // SHARE BUTTON
                 InkWell(
                   onTap: () async {
-                    final p = productController.productDetails;
-
-                    if (p.isEmpty) {
-                      Get.snackbar("Error", "Product not loaded yet");
-                      return;
-                    }
-
                     final link =
-                        await ShareLinkGenerator.createProductShareLink(
-                      productId: p["id"] ?? 0,
-                      productName: p["title"] ?? "",
-                      type: p["type"] ?? "",
-                      brandName: p["brand_name"] ?? "",
+                        await ShareLinkGenerator.generateProductShareLink(
+                      productId: widget.productId,
+                      slug: widget.slug,
+                      brandName: widget.brandName,
+                      type: widget.type,
                     );
 
-                    if (link.isEmpty) {
-                      Get.snackbar("Error", "Unable to generate link");
-                      return;
-                    }
-
-                    Share.share("$link\n\n${p["title"]}");
+                    Share.share("Lafetch:\n$link");
                   },
                   child: Padding(
                     padding:
@@ -145,7 +132,6 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
                         shareSvgImage,
                         height: 18.sp,
                         width: 18.sp,
-                        fit: BoxFit.cover,
                         colorFilter:
                             ColorFilter.mode(iconColor, BlendMode.srcIn),
                       ),

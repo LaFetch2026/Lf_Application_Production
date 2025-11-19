@@ -375,6 +375,27 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     // Get.off(() => OrderSuccessScreen(...));
   }
 
+  Future<String> generateProductShareLink() async {
+    final productId =
+        productController.productDetails["id"] ?? widget.productId;
+    final slug = productController.productDetails["slug"] ?? "";
+
+    // Build your link with parameters
+    final Uri link = Uri.https(
+      "lafetch.onelink.me",
+      "/rxDU",
+      {
+        "product_id": productId.toString(),
+        "slug": slug.toString(),
+        "af_dp": "productdetails",
+        "af_channel": "product_share",
+        "c": "product_share",
+      },
+    );
+
+    return link.toString();
+  }
+
   void _onPaymentError(PaymentFailureResponse r) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Payment failed: ${r.message ?? r.code}')),
@@ -890,6 +911,15 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
             Visibility(
               visible: widget.backgroundcolor == whiteColor,
               child: ProductdetailsAppbar(
+                productId:
+                    productController.productDetails["id"] ?? widget.productId,
+                type:
+                    productController.productDetails["type"]?.toString() ?? "",
+                brandName: productController.productDetails["brand_name"]
+                        ?.toString() ??
+                    "",
+                slug:
+                    productController.productDetails["slug"]?.toString() ?? "",
                 dark: false,
                 onPressedHeart: () async {
                   final firstImg = productController.imageList.isNotEmpty
@@ -902,30 +932,25 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       (productController.productDetails["id"] as int?) ??
                           widget.productId;
 
-                  scaffoldKey.currentState
-                      ?.showBottomSheet((context) => BottomWishlist(
-                            controller: wishlistController,
-                            wishlistList: wishlistController.wishlistList,
-                            productImage: firstImg,
-                            onPressedBoard: () {/* open create board screen */},
-                            onPressed: (boardId) async {
-                              await wishlistController.addProductToBoard(
-                                  boardId, productId);
+                  scaffoldKey.currentState?.showBottomSheet(
+                    (context) => BottomWishlist(
+                      controller: wishlistController,
+                      wishlistList: wishlistController.wishlistList,
+                      productImage: firstImg,
+                      onPressedBoard: () {/* open create board screen */},
+                      onPressed: (boardId) async {
+                        await wishlistController.addProductToBoard(
+                            boardId, productId);
 
-                              // Close bottom sheet
-                              Get.back();
-
-                              // AnalyticsHelper.logAddToWishlist(
-                              //   productId: productId.toString(),
-                              //   contentType: 'product',
-                              //   value: _displayPrice().toDouble(),
-                              // );
-                            },
-                          ));
+                        Get.back();
+                      },
+                    ),
+                  );
                 },
                 onPressedShare: () async {
-                  final t = _titleText();
-                  Share.share(t.isNotEmpty ? t : "Check this product");
+                  final title = _titleText();
+                  Share.share(title.isNotEmpty ? title : "Check this product");
+
                   await analytics.logEvent(
                     name: 'share_product',
                     parameters: <String, Object>{'page_name': 'share_product'},
@@ -1891,247 +1916,222 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   // ---------- tiny helpers to keep build() tidy ----------
 
   Widget _collapsiblesSection() {
+    final product = productController.productDetails;
+
+    final returnPolicy = product["returnPolicy"];
+    final brandData = product["brand"];
+
     return Padding(
       padding: EdgeInsets.only(top: 20.sp),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Description
-          Builder(builder: (_) {
-            final desc = (productController.productDetails['description'] ?? "")
-                .toString();
-            if (desc.isEmpty) return const SizedBox(height: 0);
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.sp),
-                  child: Divider(
-                    color: widget.backgroundcolor == whiteColor
-                        ? colorSecondary
-                        : titleColor,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.sp),
-                  child: Theme(
-                    data: Theme.of(context)
-                        .copyWith(dividerColor: Colors.transparent),
-                    child: ExpansionTile(
-                      collapsedIconColor: widget.backgroundcolor == whiteColor
-                          ? appBarColor
-                          : whiteColor,
-                      iconColor: widget.backgroundcolor == whiteColor
-                          ? appBarColor
-                          : whiteColor,
-                      title: AppSpacingText(
-                        text: 'More Details',
-                        fontFamily: "Franklin Gothic Regular",
-                        fontWeight: FontWeight.w500,
-                        color: widget.backgroundcolor == whiteColor
-                            ? colorPrimary
-                            : productSubtitleColor,
-                        fontSize: 16,
-                      ),
-                      tilePadding: EdgeInsets.all(0.sp),
-                      childrenPadding: EdgeInsets.symmetric(vertical: 4.0.sp),
-                      children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: AppSpacingText(
-                            text: desc,
-                            fontFamily: "Franklin Gothic Regular",
-                            maxLines: 20,
-                            fontWeight: FontWeight.w500,
-                            color: widget.backgroundcolor == whiteColor
-                                ? colorPrimary
-                                : productSubtitleColor,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }),
+          // ---------- More Details ----------
+          Builder(
+            builder: (_) {
+              final desc = (product["description"] ?? "").toString().trim();
 
+              if (desc.isEmpty) return const SizedBox.shrink();
+
+              return _buildCollapsible(
+                title: "More Details",
+                content: desc,
+              );
+            },
+          ),
+
+          // ---------- Composition & Care ----------
           if (productController.compositionDetails != null &&
               productController.compositionDetails != "")
-            Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.sp),
-                  child: Divider(
-                    color: widget.backgroundcolor == whiteColor
-                        ? colorSecondary
-                        : titleColor,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.sp),
-                  child: Theme(
-                    data: Theme.of(context)
-                        .copyWith(dividerColor: Colors.transparent),
-                    child: ExpansionTile(
-                      collapsedIconColor: widget.backgroundcolor == whiteColor
-                          ? appBarColor
-                          : whiteColor,
-                      iconColor: widget.backgroundcolor == whiteColor
-                          ? appBarColor
-                          : whiteColor,
-                      title: AppSpacingText(
-                        text: 'Composition & Care',
-                        fontFamily: "Franklin Gothic Regular",
-                        fontWeight: FontWeight.w500,
-                        color: widget.backgroundcolor == whiteColor
-                            ? colorPrimary
-                            : productSubtitleColor,
-                        fontSize: 16,
-                      ),
-                      tilePadding: EdgeInsets.all(0.sp),
-                      childrenPadding: EdgeInsets.symmetric(vertical: 4.0.sp),
-                      children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: AppSpacingText(
-                            text: (productController
-                                        .compositionDetails["description"] ??
-                                    "")
-                                .toString(),
-                            fontFamily: "Franklin Gothic Regular",
-                            maxLines: 20,
-                            fontWeight: FontWeight.w500,
-                            color: widget.backgroundcolor == whiteColor
-                                ? colorPrimary
-                                : productSubtitleColor,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+            _buildCollapsible(
+              title: "Composition & Care",
+              content:
+                  (productController.compositionDetails["description"] ?? "")
+                      .toString(),
             ),
 
-          if (productController.returnPolicyDetails.value.isNotEmpty)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.sp),
-                  child: Divider(
-                    color: widget.backgroundcolor == whiteColor
-                        ? colorSecondary
-                        : titleColor,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.sp),
-                  child: Theme(
-                    data: Theme.of(context)
-                        .copyWith(dividerColor: Colors.transparent),
-                    child: ExpansionTile(
-                      collapsedIconColor: widget.backgroundcolor == whiteColor
-                          ? appBarColor
-                          : whiteColor,
-                      iconColor: widget.backgroundcolor == whiteColor
-                          ? appBarColor
-                          : whiteColor,
-                      title: AppSpacingText(
-                        text: 'Delivery & Returns',
-                        fontFamily: "Franklin Gothic Regular",
-                        fontWeight: FontWeight.w500,
-                        color: widget.backgroundcolor == whiteColor
-                            ? colorPrimary
-                            : productSubtitleColor,
-                        fontSize: 16,
-                      ),
-                      tilePadding: EdgeInsets.all(0.sp),
-                      childrenPadding: EdgeInsets.symmetric(vertical: 4.0.sp),
-                      children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: AppSpacingText(
-                            text: productController.returnPolicyDetails.value,
-                            fontFamily: "Franklin Gothic Regular",
-                            maxLines: 20,
-                            fontWeight: FontWeight.w500,
-                            color: widget.backgroundcolor == whiteColor
-                                ? colorPrimary
-                                : productSubtitleColor,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          // ---------- Delivery & Return ----------
+          _buildCollapsible(
+            title: "Delivery & Return",
+            content: returnPolicy != null
+                ? (returnPolicy["description"] ?? "").toString().trim()
+                : "No return policy available",
+          ),
 
-          if (productController.brandDetails != null &&
-              productController.brandDetails != "")
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.sp),
-                  child: Divider(
-                    color: widget.backgroundcolor == whiteColor
-                        ? colorSecondary
-                        : titleColor,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.sp),
-                  child: Theme(
-                    data: Theme.of(context)
-                        .copyWith(dividerColor: Colors.transparent),
-                    child: ExpansionTile(
-                      collapsedIconColor: widget.backgroundcolor == whiteColor
-                          ? appBarColor
-                          : whiteColor,
-                      iconColor: widget.backgroundcolor == whiteColor
-                          ? appBarColor
-                          : whiteColor,
-                      title: AppSpacingText(
-                        text: 'About the Brand',
-                        fontFamily: "Franklin Gothic Regular",
-                        fontWeight: FontWeight.w500,
-                        color: widget.backgroundcolor == whiteColor
-                            ? colorPrimary
-                            : productSubtitleColor,
-                        fontSize: 16,
-                      ),
-                      tilePadding: EdgeInsets.all(0.sp),
-                      childrenPadding: EdgeInsets.symmetric(vertical: 4.0.sp),
-                      children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: AppSpacingText(
-                            text: (productController
-                                        .brandDetails["description"] ??
-                                    "")
-                                .toString(),
-                            fontFamily: "Franklin Gothic Regular",
-                            maxLines: 20,
-                            fontWeight: FontWeight.w500,
-                            color: widget.backgroundcolor == whiteColor
-                                ? colorPrimary
-                                : productSubtitleColor,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          // ---------- About Brand ----------
+          _buildCollapsible(
+            title: "About the Brand",
+            content:
+                (brandData?["description"] ?? "No brand description available")
+                    .toString(),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCollapsible({
+    required String title,
+    required String content,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.sp),
+          child: Divider(
+            color: widget.backgroundcolor == whiteColor
+                ? colorSecondary
+                : titleColor,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.sp),
+          child: Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              collapsedIconColor: widget.backgroundcolor == whiteColor
+                  ? appBarColor
+                  : whiteColor,
+              iconColor: widget.backgroundcolor == whiteColor
+                  ? appBarColor
+                  : whiteColor,
+              title: AppSpacingText(
+                text: title,
+                fontFamily: "Franklin Gothic Regular",
+                fontWeight: FontWeight.w500,
+                color: widget.backgroundcolor == whiteColor
+                    ? colorPrimary
+                    : productSubtitleColor,
+                fontSize: 16,
+              ),
+              tilePadding: EdgeInsets.all(0.sp),
+              childrenPadding: EdgeInsets.symmetric(vertical: 4.0.sp),
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: AppSpacingText(
+                    text: content,
+                    fontFamily: "Franklin Gothic Regular",
+                    maxLines: 20,
+                    fontWeight: FontWeight.w500,
+                    color: widget.backgroundcolor == whiteColor
+                        ? colorPrimary
+                        : productSubtitleColor,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget collapsibleSection(BuildContext context) {
+    final product = productController.productDetails;
+
+    final desc = product['description']?.toString().trim() ?? "";
+    final returnPolicy = product['returnPolicy'];
+    final brand = product['brand'];
+
+    return Padding(
+      padding: EdgeInsets.only(top: 20.sp),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// MORE DETAILS
+          if (desc.isNotEmpty) ...[
+            _divider(),
+            _expansionTile(
+              context,
+              title: "More Details",
+              content: desc,
+            ),
+          ],
+
+          /// COMPOSITION AND CARE
+          if (productController.compositionDetails != null &&
+              productController.compositionDetails != "") ...[
+            _divider(),
+            _expansionTile(
+              context,
+              title: "Composition & Care",
+              content: productController.compositionDetails["description"]
+                      ?.toString()
+                      .trim() ??
+                  "",
+            ),
+          ],
+
+          /// DELIVERY & RETURNS
+          _divider(),
+          _expansionTile(
+            context,
+            title: "Delivery & Returns",
+            content: (returnPolicy != null)
+                ? (returnPolicy["description"] ?? "No return policy available")
+                : "No return policy available",
+          ),
+
+          /// ABOUT BRAND
+          if (brand != null &&
+              brand is Map &&
+              (brand["description"]?.toString().isNotEmpty ?? false)) ...[
+            _divider(),
+            _expansionTile(
+              context,
+              title: "About the Brand",
+              content: brand["description"]?.toString() ?? "",
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _divider() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12.sp),
+      child: Divider(color: colorSecondary),
+    );
+  }
+
+  Widget _expansionTile(
+    BuildContext context, {
+    required String title,
+    required String content,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12.sp),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          collapsedIconColor: appBarColor,
+          iconColor: appBarColor,
+          title: AppSpacingText(
+            text: title,
+            fontFamily: "Franklin Gothic Regular",
+            fontWeight: FontWeight.w500,
+            color: colorPrimary,
+            fontSize: 16,
+          ),
+          tilePadding: EdgeInsets.zero,
+          childrenPadding: EdgeInsets.symmetric(vertical: 4.sp),
+          children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: AppSpacingText(
+                text: content,
+                maxLines: 20,
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
+                color: productSubtitleColor,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

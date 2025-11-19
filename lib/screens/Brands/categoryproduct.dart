@@ -204,25 +204,31 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                 ),
                 itemBuilder: (context, index) {
                   final m = items[index] as Map<String, dynamic>;
+
+                  /// -------- Brand / Title / Description ----------
                   final brand = (m['brand_name'] ?? m['brandName'] ?? '')
                       .toString()
                       .trim();
+
                   final title =
                       (m['title'] ?? m['name'] ?? m['productTitle'] ?? '')
                           .toString()
                           .trim();
+
                   final shortDesc =
                       (m['shortDescription'] ?? m['short_description'] ?? '')
                           .toString()
                           .trim();
+
+                  /// -------- Image ----------
                   final img = _imageFrom(m);
 
-                  num? price = _parseNum(m['basePrice'] ??
-                      m['base_price'] ??
-                      m['baseprice'] ??
-                      m['price']);
-                  num? mrp = _parseNum(m['mrp']);
+                  /// -------- Correct Price Logic ----------
+                  num? price = _parseNum(m['displayPrice']);
+                  num? mrp = _parseNum(
+                      m['displayMrp']); // null when mrp==0 or ==basePrice
 
+                  /// -------- Product ID ----------
                   final int pid = int.tryParse(m['id']?.toString() ?? '') ?? 0;
 
                   return GestureDetector(
@@ -231,6 +237,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                         getSnackBar("Product not available");
                         return;
                       }
+
                       Get.to(
                         ProductDetailsScreen(
                           brandName: brand.isEmpty ? title : brand,
@@ -242,6 +249,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           type: "add",
                         ),
                       )?.then((_) => cartController.getCartData());
+
                       await analytics.logEvent(
                         name: 'category_product_details',
                         parameters: {'page_name': 'category_product_details'},

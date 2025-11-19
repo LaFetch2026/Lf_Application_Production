@@ -97,14 +97,16 @@ class CatalogController extends BaseController {
     }
   }
 
-  /// Fetch category products
   Future<void> getCategoryProductData(int categoryId, int type) async {
     isCategory.value = true;
     final prefs = await SharedPreferences.getInstance();
 
     try {
       final uri = Uri.parse("${ApiConstants.baseUrl}/products")
-          .replace(queryParameters: {"catId": categoryId.toString()});
+          .replace(queryParameters: {
+        "catId": categoryId.toString(),
+        "page": type.toString(), // page number
+      });
 
       final response = await http.get(
         uri,
@@ -117,8 +119,27 @@ class CatalogController extends BaseController {
       final decoded = json.decode(response.body);
 
       if (response.statusCode == 200 && decoded["data"] != null) {
-        final List data = decoded["data"];
-        categoryProductList.assignAll(data.whereType<Map<String, dynamic>>());
+        final data = decoded["data"];
+
+        final List rawProducts = data["products"] ?? [];
+
+        /// -----------------------------
+        /// Transform Products
+        /// -----------------------------
+        final transformed = rawProducts.map<Map<String, dynamic>>((p) {
+          final base = p["basePrice"] ?? 0;
+          final mrp = p["mrp"] ?? 0;
+
+          bool hideMrp = (mrp == 0 || mrp == base);
+
+          return {
+            ...p,
+            "displayPrice": base,
+            "displayMrp": hideMrp ? null : mrp,
+          };
+        }).toList();
+
+        categoryProductList.assignAll(transformed);
       } else if (response.statusCode == 401) {
         Get.offAll(() => const LoginScreen(initialTab: 0));
         getSnackBar("Authentication failed");

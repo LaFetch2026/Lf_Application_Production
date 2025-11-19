@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
-
 import 'package:lafetch/controllers/product_controller.dart';
 import 'package:lafetch/core/constant/constants.dart';
 
@@ -34,129 +33,135 @@ class BrandProductList extends StatelessWidget {
             height: 220.sp,
             child: GetBuilder<ProductController>(
               builder: (value) => ListView.builder(
-                  shrinkWrap: true,
-                  primary: false,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: list.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (ctx, index) {
-                    return Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            onPressed?.call(
-                                list[index]["id"], list[index]["name"]);
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            margin: EdgeInsets.only(
-                                left: 16.sp,
-                                right: list.length - 1 == index ? 16.sp : 0.sp),
-                            width: 136.sp,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                (list[index]["images"] != null &&
-                                        list[index]["images"].isNotEmpty)
-                                    ? ClipRRect(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(radius.sp),
-                                          topRight: Radius.circular(radius.sp),
-                                        ),
-                                        child: Container(
-                                          height: 170.sp,
-                                          width: 136.sp,
-                                          child: CachedNetworkImage(
-                                            cacheManager: CacheManager(Config(
-                                              "customCacheKey",
-                                              stalePeriod:
-                                                  const Duration(days: 15),
-                                              maxNrOfCacheObjects: 100,
-                                            )),
-                                            fit: BoxFit.cover,
-                                            fadeOutCurve: Curves.ease,
-                                            fadeOutDuration:
-                                                Duration(milliseconds: 100),
-                                            imageUrl: isImage(list[index]
-                                                    ["images"][0]["name"])
-                                                ? list[index]["images"][0]
-                                                    ["name"]
-                                                : list[index]["images"][0]
-                                                    ["name"],
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    Image.asset(
-                                              downloadImage,
-                                              fit: BoxFit.cover,
-                                              height: 170.sp,
-                                              width: 136.sp,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : Image.asset(
-                                        dummyWishlistImage,
+                shrinkWrap: true,
+                primary: false,
+                physics: const BouncingScrollPhysics(),
+                itemCount: list.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (ctx, index) {
+                  final item = list[index];
+
+                  final id = item["id"];
+                  final name = item["name"] ?? "";
+
+                  // ⭐ NEW PRICE FIELDS ⭐
+                  final num price = item["displayPrice"] ?? 0;
+                  final num? mrp = item["displayMrp"]; // null → hide MRP
+
+                  return Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          onPressed?.call(id, name);
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          margin: EdgeInsets.only(
+                            left: 16.sp,
+                            right: list.length - 1 == index ? 16.sp : 0.sp,
+                          ),
+                          width: 136.sp,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // ------- IMAGE -------
+                              (item["images"] != null &&
+                                      item["images"].isNotEmpty)
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(radius.sp),
+                                        topRight: Radius.circular(radius.sp),
+                                      ),
+                                      child: SizedBox(
                                         height: 170.sp,
                                         width: 136.sp,
-                                        fit: BoxFit.cover,
-                                      ),
-                                Padding(
-                                  padding: EdgeInsets.only(top: 8.sp),
-                                  child: AppText(
-                                    text: "${list[index]["name"]}\n",
-                                    color: productSubtitleColor,
-                                    maxLines: 1,
-                                    fontSize: 11,
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(top: 8.sp),
-                                  child: Row(
-                                    mainAxisAlignment: radius == 0
-                                        ? MainAxisAlignment.center
-                                        : MainAxisAlignment.start,
-                                    children: [
-                                      Visibility(
-                                        visible: list[index]["mrp"] != null
-                                            ? true
-                                            : false,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(right: 6.sp),
-                                          child: Text(
-                                            "\u{20B9} ${list[index]["mrp"] ?? ""}",
-                                            style: TextStyle(
-                                              color: searchTextColor,
-                                              fontSize: 11.sp,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                            ),
+                                        child: CachedNetworkImage(
+                                          cacheManager: CacheManager(Config(
+                                            "customCacheKey",
+                                            stalePeriod:
+                                                const Duration(days: 15),
+                                            maxNrOfCacheObjects: 100,
+                                          )),
+                                          fit: BoxFit.cover,
+                                          fadeOutCurve: Curves.ease,
+                                          fadeOutDuration:
+                                              const Duration(milliseconds: 100),
+                                          imageUrl: item["images"][0]["name"],
+                                          errorWidget: (_, __, ___) =>
+                                              Image.asset(
+                                            downloadImage,
+                                            fit: BoxFit.cover,
+                                            height: 170.sp,
+                                            width: 136.sp,
                                           ),
                                         ),
                                       ),
-                                      AppText(
-                                        text:
-                                            "\u{20B9} ${list[index]["price"] ?? ""}",
-                                        color: whiteColor,
-                                        maxLines: 2,
-                                        fontSize: 11,
-                                        fontFamily: "Franklin Gothic",
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ],
-                                  ),
+                                    )
+                                  : Image.asset(
+                                      dummyWishlistImage,
+                                      height: 170.sp,
+                                      width: 136.sp,
+                                      fit: BoxFit.cover,
+                                    ),
+
+                              // ------- PRODUCT NAME -------
+                              Padding(
+                                padding: EdgeInsets.only(top: 8.sp),
+                                child: AppText(
+                                  text: "$name\n",
+                                  color: productSubtitleColor,
+                                  maxLines: 1,
+                                  fontSize: 11,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w500,
                                 ),
-                              ],
-                            ),
+                              ),
+
+                              // ⭐ ------- PRICE SECTION (Updated) ------- ⭐
+                              Padding(
+                                padding: EdgeInsets.only(top: 8.sp),
+                                child: Row(
+                                  mainAxisAlignment: radius == 0
+                                      ? MainAxisAlignment.center
+                                      : MainAxisAlignment.start,
+                                  children: [
+                                    // ⭐ Show ONLY if mrp exists
+                                    if (mrp != null)
+                                      Text(
+                                        "\u{20B9} $mrp",
+                                        style: TextStyle(
+                                          color: searchTextColor,
+                                          fontSize: 11.sp,
+                                          decoration:
+                                              TextDecoration.lineThrough,
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+
+                                    // ⭐ Add space ONLY if MRP exists
+                                    if (mrp != null) SizedBox(width: 6.sp),
+
+                                    // ⭐ Always show price
+                                    AppText(
+                                      text: "\u{20B9} $price",
+                                      color: whiteColor,
+                                      maxLines: 2,
+                                      fontSize: 11,
+                                      fontFamily: "Franklin Gothic",
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
                         ),
-                      ],
-                    );
-                  }),
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ),

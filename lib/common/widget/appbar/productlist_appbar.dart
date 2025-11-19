@@ -52,9 +52,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
             children: [
               InkWell(
                 onTap: () {
-                  // Always navigate back to HomeScreen
-
-                  Get.offAll(() => const BottomNavScreen());
+                  Get.back(); // this will pop current screen
                 },
                 child: Container(
                   alignment: Alignment.bottomCenter,

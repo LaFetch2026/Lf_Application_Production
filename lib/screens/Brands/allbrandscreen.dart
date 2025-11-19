@@ -126,27 +126,34 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
     return raw.map<Map<String, dynamic>>((e) {
       final m = Map<String, dynamic>.from(e as Map);
-      final id = m['id'];
-      final title = (m['title'] ?? m['name'] ?? '').toString();
 
-      // ✅ Always prefer basePrice, fallback to mrp if missing
-      final double price = (m['basePrice'] ?? m['mrp'] ?? 0).toDouble();
-      final double mrp = (m['mrp'] ?? price).toDouble();
+      final id = m["id"];
+      final title = (m["title"] ?? m["name"] ?? "").toString();
 
-      // ✅ Map imageUrls from API
-      final List<dynamic> imageUrls = m['imageUrls'] ?? [];
+      // -------- BASE & MRP --------
+      final num base = (m["basePrice"] ?? m["mrp"] ?? 0);
+      final num mrpVal = (m["mrp"] ?? 0);
+
+      // -------- APPLY SAME RULE --------
+      bool hideMrp = (mrpVal == 0 || mrpVal == base);
+
+      final num displayPrice = base;
+      final num? displayMrp = hideMrp ? null : mrpVal;
+
+      // -------- IMAGES --------
+      final List<dynamic> imageUrls = m["imageUrls"] ?? [];
       final images = imageUrls
-          .map((url) => {'name': url.toString()})
-          .where((img) => img['name']!.isNotEmpty)
+          .map((url) => {"name": url.toString()})
+          .where((img) => img["name"]!.isNotEmpty)
           .toList();
 
       return {
-        'id': id,
-        'name': title,
-        'brand_name': brandName,
-        'price': price, // 👈 maps basePrice here
-        'mrp': mrp,
-        'images': images,
+        "id": id,
+        "name": title,
+        "brand_name": brandName,
+        "displayPrice": displayPrice,
+        "displayMrp": displayMrp,
+        "images": images,
       };
     }).toList();
   }
@@ -515,33 +522,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Center(
-                                child: Obx(
-                                  () => brandController.isDetails.value
-                                      ? Container(
-                                          height: 20.sp,
-                                          width: double.infinity,
-                                          color: cardBg,
-                                        )
-                                      : Text(
-                                          (brandController.brandDetails[
-                                                          "brandInfo"]
-                                                      ?["description"] ??
-                                                  "No description available")
-                                              .toString(),
-                                          textAlign: TextAlign.justify,
-                                          style: TextStyle(
-                                            color: productSubtitleColor,
-                                            overflow: TextOverflow.ellipsis,
-                                            fontSize: 14.sp,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                          maxLines: showDescription ? 12 : 2,
-                                        ),
-                                ),
-                              ),
                               Obx(
                                 () => brandController.isDetails.value
                                     ? const SizedBox(height: 0)
@@ -551,40 +531,94 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                         ?["description"] ??
                                                     "") as String)
                                                 .length >
-                                            100,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(top: 4.sp),
-                                          child: InkWell(
-                                            onTap: () => setState(() =>
-                                                showDescription =
-                                                    !showDescription),
-                                            child: Row(
-                                              children: [
-                                                AppText(
-                                                  text: showDescription
-                                                      ? "Show less"
-                                                      : "Show more",
-                                                  color: productSubtitleColor,
-                                                  fontSize: 12,
-                                                  fontFamily: "Franklin Gothic",
+                                            80,
+                                        child: Obx(() {
+                                          if (brandController.isDetails.value) {
+                                            return Container(
+                                              height: 20.sp,
+                                              width: double.infinity,
+                                              color: cardBg,
+                                            );
+                                          }
+
+                                          final desc =
+                                              (brandController.brandDetails[
+                                                              "brandInfo"]
+                                                          ?["description"] ??
+                                                      "")
+                                                  .toString()
+                                                  .trim();
+
+                                          return Column(
+                                            children: [
+                                              // ⭐ Description (exactly 2 lines when collapsed)
+                                              Text(
+                                                desc,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: Colors.white
+                                                      .withOpacity(0.9),
+                                                  fontSize: 15.sp,
+                                                  height: 1.45,
+                                                  letterSpacing: 0.2,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
                                                   fontWeight: FontWeight.w400,
                                                 ),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right: 20.sp, left: 5.sp),
-                                                  child: SvgPicture.asset(
-                                                    showDescription
-                                                        ? upDropDownSvgImage
-                                                        : dropdownSvgImage,
-                                                    color: productSubtitleColor,
-                                                    height: 5.sp,
-                                                    width: 7.sp,
+                                                maxLines: showDescription
+                                                    ? null
+                                                    : 2, // ⭐ Only 2 lines!
+                                                overflow: showDescription
+                                                    ? TextOverflow.visible
+                                                    : TextOverflow.ellipsis,
+                                              ),
+
+                                              // ⭐ Show More / Less
+                                              if (desc.length > 80)
+                                                InkWell(
+                                                  onTap: () => setState(() =>
+                                                      showDescription =
+                                                          !showDescription),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 6.sp),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Text(
+                                                          showDescription
+                                                              ? "Show less"
+                                                              : "Show more",
+                                                          style: TextStyle(
+                                                            color: Colors.white
+                                                                .withOpacity(
+                                                                    0.75),
+                                                            fontSize: 12.sp,
+                                                            fontFamily:
+                                                                "Franklin Gothic",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 4.sp),
+                                                        SvgPicture.asset(
+                                                          showDescription
+                                                              ? upDropDownSvgImage
+                                                              : dropdownSvgImage,
+                                                          color: Colors.white
+                                                              .withOpacity(
+                                                                  0.75),
+                                                          height: 6.sp,
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
+                                            ],
+                                          );
+                                        }),
                                       ),
                               ),
                               Padding(
@@ -604,11 +638,11 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                     ],
                   ),
 
-                  // Product list (normalized)
+                  // Product list (normalized with displayPrice & displayMrp)
                   Obx(
                     () {
                       if (brandController.isProductBrand.value) {
-                        // shimmer
+                        // shimmer while loading
                         return Padding(
                           padding: EdgeInsets.symmetric(vertical: 16.sp),
                           child: SizedBox(
@@ -641,14 +675,16 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                     child: Row(
                                       children: [
                                         Container(
-                                            color: cardBg,
-                                            height: 16.sp,
-                                            width: 40.sp),
+                                          color: cardBg,
+                                          height: 16.sp,
+                                          width: 40.sp,
+                                        ),
                                         SizedBox(width: 6.sp),
                                         Container(
-                                            color: cardBg,
-                                            height: 16.sp,
-                                            width: 40.sp),
+                                          color: cardBg,
+                                          height: 16.sp,
+                                          width: 40.sp,
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -659,18 +695,26 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         );
                       }
 
-                      final normalized = _normalizedProducts();
+                      /// Normalized product list with price rule applied
+                      ///
+                      /// Each product now contains:
+                      ///  - displayPrice (basePrice)
+                      ///  - displayMrp   (null OR mrp)
+                      final List<Map<String, dynamic>> normalized =
+                          _normalizedProducts();
+
                       return BrandProductList(
                         radius: 0,
                         list: normalized,
                         scrollDirection: Axis.vertical,
+
+                        /// On Product Click
                         onPressed: (productId, bName) async {
-                          // Pause header media if any
                           try {
                             if (!hasVideoError) videoController.pause();
                           } catch (_) {}
 
-                          // Loader while fetching product
+                          // Loader
                           Get.dialog(
                             const Center(child: CircularProgressIndicator()),
                             barrierDismissible: false,
@@ -785,6 +829,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       ),
                     ),
                   ),
+
                   SizedBox(height: 20.sp),
                 ],
               ),

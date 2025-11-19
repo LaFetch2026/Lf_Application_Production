@@ -438,6 +438,8 @@ class ProductController extends BaseController {
       imageList.clear();
       sizeInventoryList.clear();
       colorInventoryList.clear();
+      returnPolicyDetails.value = "";
+      brandDetails = {};
 
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';
@@ -467,10 +469,12 @@ class ProductController extends BaseController {
       final Map<String, dynamic> data =
           Map<String, dynamic>.from(decoded['data']);
 
-      // ---------------- HELPERS ----------------
+      // ---------- HELPERS ----------
       num _num(dynamic v) =>
           (v is num) ? v : num.tryParse(v?.toString() ?? '') ?? 0;
+
       String _str(dynamic v) => (v ?? '').toString();
+
       List<String> _strList(dynamic v) => (v is List)
           ? v
               .map((e) => e?.toString() ?? '')
@@ -478,106 +482,26 @@ class ProductController extends BaseController {
               .toList()
           : const <String>[];
 
-      // ---------------- CATEGORY ID FIX ----------------
-      // Your API might send category IDs in different formats.
-      final superCatId = data["superCatId"] ??
-          data["super_category_id"] ??
-          data["superCategoryId"] ??
-          (data["category"]?["superCatId"]) ??
-          0;
+      // CATEGORY FIX
+      final superCatId = data["superCatId"] ?? 0;
+      final catId = data["catId"] ?? 0;
+      final subCatId = data["subCatId"] ?? 0;
 
-      final catId = data["catId"] ??
-          data["category_id"] ??
-          data["categoryId"] ??
-          (data["category"]?["catId"]) ??
-          0;
+      // ---------- PRICE ----------
+      final basePrice = _num(data['basePrice']);
+      final mrpPrice = _num(data['mrp']);
 
-      final subCatId = data["subCatId"] ??
-          data["sub_category_id"] ??
-          data["subCategoryId"] ??
-          (data["category"]?["subCatId"]) ??
-          0;
+      num displayPrice = basePrice;
+      num displayMrp = (mrpPrice == basePrice || mrpPrice == 0) ? 0 : mrpPrice;
 
-      print("📌 Extracted Product Category IDs:");
-      print("superCatId = $superCatId");
-      print("catId      = $catId");
-      print("subCatId   = $subCatId");
-
-      // ---------------- PRICE CALCULATIONS ----------------
-      final productLevelPrice = _num(data['price'] ??
-          data['msp'] ??
-          data['lfMsp'] ??
-          data['mrp'] ??
-          data['basePrice']);
-
-      final productLevelMrp = _num(data['mrp']);
-
+      // ---------- VARIANTS ----------
       final List<Map<String, dynamic>> variants = (data['variants'] is List)
-          ? List<Map<String, dynamic>>.from(
-              (data['variants'] as List).whereType<Map>())
-          : <Map<String, dynamic>>[];
+          ? List<Map<String, dynamic>>.from(data['variants'].whereType<Map>())
+          : [];
 
-      final variantPrices = variants
-          .map((v) => _num(v['price']).toDouble())
-          .where((p) => p > 0)
-          .toList();
-
-      final variantMrps = variants
-          .map((v) => _num(v['compareAtPrice']).toDouble())
-          .where((p) => p > 0)
-          .toList();
-
-      double displayPrice =
-          productLevelPrice > 0 ? productLevelPrice.toDouble() : 0;
-      double displayMrp = productLevelMrp > 0 ? productLevelMrp.toDouble() : 0;
-
-      if (displayPrice <= 0 && variantPrices.isNotEmpty) {
-        displayPrice = variantPrices.first;
-      }
-      if (displayMrp <= 0 && variantMrps.isNotEmpty) {
-        displayMrp = variantMrps.first;
-      }
-
-      final discountPct = (displayMrp > 0 && displayPrice < displayMrp)
-          ? '${(((displayMrp - displayPrice) / displayMrp) * 100).toStringAsFixed(0)}%'
-          : '0%';
-
-      // ---------------- PRODUCT DETAILS ----------------
-      productDetails = {
-        'id': data['id'],
-        'type': _str(data['type']),
-        'title': _str(data['title']),
-        'description': _str(data['description']),
-        'tags': _strList(data['tags']),
-        'imageUrls': _strList(data['imageUrls']),
-        'brand': data['brand'],
-
-        // ⭐ IMPORTANT FOR SIZE CHART API
-        'superCatId': superCatId,
-        'catId': catId,
-        'subCatId': subCatId,
-
-        'brand_name': (data['brand'] is Map) ? _str(data['brand']['name']) : '',
-        'name': _str(data['name'] ?? data['title']),
-        'price': displayPrice,
-        'mrp': displayMrp,
-        'discount_percentage': discountPct,
-        'aggregated_rating': _num(data['rating']),
-        'hasCOD': data['hasCOD'] == true,
-        'hasExchange': data['hasExchange'] == true,
-        'exchangeDays': _num(data['exchangeDays']),
-        'total_stock_count': variants.length,
-        'cart_inventory_ids': <int>[],
-      };
-
-      // ---------------- GALLERY ----------------
-      final imgs = _strList(data['imageUrls']);
-      imageList.assignAll(imgs.map((u) => {'name': u}));
-
-      // ---------------- SIZES ----------------
       sizeInventoryList.assignAll(
         variants.map((v) {
-          final inventory = v['inventory'] is Map
+          final inv = v['inventory'] is Map
               ? Map<String, dynamic>.from(v['inventory'])
               : <String, dynamic>{};
 
@@ -585,7 +509,7 @@ class ProductController extends BaseController {
           if (v['selectedOptions'] is List) {
             for (final opt in v['selectedOptions']) {
               if (opt is Map &&
-                  opt['name']?.toString().toLowerCase() == 'size') {
+                  (opt['name']?.toString().toLowerCase() == "size")) {
                 sizeLabel = opt['value']?.toString() ?? "";
                 break;
               }
@@ -595,28 +519,78 @@ class ProductController extends BaseController {
           return {
             'id': v['id'] ?? v['shopifyVariantId'] ?? 0,
             'product_matrix_size_name': sizeLabel,
-            'stocks': _num(inventory['availableStock']).toInt(),
-            'price': _num(v['price']).toDouble(),
-            'compareAtPrice': _num(v['compareAtPrice']).toDouble(),
+            'stocks': _num(inv['availableStock']).toInt(),
+            'price': _num(v['price']),
+            'compareAtPrice': _num(v['compareAtPrice']),
           };
         }).toList(),
       );
 
-      // ---------------- SELECT DEFAULT SIZE ----------------
+      // Sort sizes properly (XXS, XS, S, M, L, XL, XXL, XXXL)
+      final sortOrder = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+
+      sizeInventoryList.sort((a, b) {
+        final sa = a['product_matrix_size_name'];
+        final sb = b['product_matrix_size_name'];
+        return sortOrder.indexOf(sa).compareTo(sortOrder.indexOf(sb));
+      });
+
+      // Pick default size
       if (sizeInventoryList.isNotEmpty) {
         final firstInStock = sizeInventoryList.firstWhere(
-          (e) => _num(e['stocks']) > 0,
-          orElse: () => sizeInventoryList.first,
-        );
+            (e) => _num(e['stocks']) > 0,
+            orElse: () => sizeInventoryList.first);
 
         sizeInventoryId.value =
-            int.tryParse(firstInStock['id']?.toString() ?? '0') ?? 0;
+            int.tryParse(firstInStock['id'].toString()) ?? 0;
 
         selectedProductSize = firstInStock;
       }
+
+      // ---------- IMAGE LIST ----------
+      final imgs = _strList(data['imageUrls']);
+      imageList.assignAll(imgs.map((u) => {'name': u}));
+
+      // ---------- RETURN POLICY ----------
+      final rp = data["returnPolicy"];
+      if (rp == null) {
+        returnPolicyDetails.value = "No return policy available";
+      } else {
+        returnPolicyDetails.value = rp["description"]?.toString().trim() ??
+            "No return policy available";
+      }
+
+      // ---------- BRAND ----------
+      final brand = data["brand"];
+      if (brand != null && brand is Map) {
+        brandDetails = {
+          "name": brand["name"] ?? "",
+          "description": brand["description"] ?? "",
+        };
+      }
+
+      // ---------- PRODUCT DETAILS ----------
+      productDetails = {
+        'id': data['id'],
+        'title': _str(data['title']),
+        'name': _str(data['title']),
+        'description': _str(data['description']),
+        'tags': _strList(data['tags']),
+        'imageUrls': imgs,
+        'price': displayPrice,
+        'mrp': displayMrp,
+        'superCatId': superCatId,
+        'catId': catId,
+        'subCatId': subCatId,
+        'brand': brand,
+        'brand_name': brand?["name"]?.toString() ?? "",
+        'returnPolicy': data["returnPolicy"],
+        'hasCOD': data['hasCOD'],
+        'hasExchange': data['hasExchange'],
+        'exchangeDays': data['exchangeDays'],
+      };
     } catch (e) {
-      print("❌ ERROR getProductById → $e");
-      errorMsg.value = 'Error fetching product details.';
+      errorMsg.value = "Error fetching product details.";
     } finally {
       isDetails.value = false;
       update();
