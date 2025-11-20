@@ -67,8 +67,10 @@ class ProductController extends BaseController {
   RxInt current = 50.obs;
   RxInt totalExpress = 0.obs;
   List inventoryList = [].obs;
-  RxList<Map<String, dynamic>> sizeInventoryList = <Map<String, dynamic>>[].obs;
-  List colorInventoryList = [].obs;
+  RxList<Map<String, dynamic>> selectedVariants = <Map<String, dynamic>>[].obs;
+
+  RxList<String> colorInventoryList = <String>[].obs;
+
   List fabricInventoryList = [].obs;
   List reviewList = [].obs;
   List recommendedList = [].obs;
@@ -214,6 +216,9 @@ class ProductController extends BaseController {
   RxBool isSizeChartLoading = false.obs;
   RxMap sizeChart = <String, dynamic>{}.obs;
   RxList<Map<String, dynamic>> sizeChartData = <Map<String, dynamic>>[].obs;
+  RxList<String> sizeInventoryList = <String>[].obs;
+  RxString selectedColor = "".obs;
+  RxString selectedSize = "".obs;
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -434,167 +439,112 @@ class ProductController extends BaseController {
 
     try {
       errorMsg.value = "";
-      productDetails = <String, dynamic>{};
+      productDetails = {};
       imageList.clear();
-      sizeInventoryList.clear();
-      colorInventoryList.clear();
-      returnPolicyDetails.value = "";
-      brandDetails = {};
 
+      /// --- NEW CORE FIX ---
+      sizeInventoryList.clear(); // sizes grouped list
+      colorInventoryList.clear(); // colors for selected size
+      selectedVariants.clear(); // full variant list
+
+      // --------------------------- API CALL ----------------------------
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';
 
-      final base = ApiConstants.baseUrl;
-      final uri = Uri.parse('$base/product/$id');
-
-      final resp = await http.get(
-        uri,
-        headers: {
-          'Accept': 'application/json; charset=UTF-8',
-          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-        },
-      ).timeout(const Duration(seconds: 20));
+      final uri = Uri.parse('${ApiConstants.baseUrl}/product/$id');
+      final resp = await http.get(uri, headers: {
+        'Accept': 'application/json',
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token'
+      });
 
       if (resp.statusCode != 200) {
-        errorMsg.value = 'Failed to load product (${resp.statusCode})';
+        errorMsg.value = "Failed to load product";
         return;
       }
 
       final decoded = json.decode(resp.body);
-      if (decoded is! Map || decoded['data'] is! Map) {
-        errorMsg.value = 'Unexpected product payload.';
-        return;
-      }
+      final data = decoded["data"];
 
-      final Map<String, dynamic> data =
-          Map<String, dynamic>.from(decoded['data']);
+      final variants =
+          List<Map<String, dynamic>>.from(data["variants"].whereType<Map>());
 
-      // ---------- HELPERS ----------
-      num _num(dynamic v) =>
-          (v is num) ? v : num.tryParse(v?.toString() ?? '') ?? 0;
+      //--------------------------------------------------------------------
+      // 1️⃣ BUILD PROPER VARIANT LIST: size + color combined
+      //--------------------------------------------------------------------
+      final List<Map<String, dynamic>> parsedVariants = [];
 
-      String _str(dynamic v) => (v ?? '').toString();
+      for (final v in variants) {
+        String size = "";
+        String color = "";
 
-      List<String> _strList(dynamic v) => (v is List)
-          ? v
-              .map((e) => e?.toString() ?? '')
-              .where((s) => s.isNotEmpty)
-              .toList()
-          : const <String>[];
-
-      // CATEGORY FIX
-      final superCatId = data["superCatId"] ?? 0;
-      final catId = data["catId"] ?? 0;
-      final subCatId = data["subCatId"] ?? 0;
-
-      // ---------- PRICE ----------
-      final basePrice = _num(data['basePrice']);
-      final mrpPrice = _num(data['mrp']);
-
-      num displayPrice = basePrice;
-      num displayMrp = (mrpPrice == basePrice || mrpPrice == 0) ? 0 : mrpPrice;
-
-      // ---------- VARIANTS ----------
-      final List<Map<String, dynamic>> variants = (data['variants'] is List)
-          ? List<Map<String, dynamic>>.from(data['variants'].whereType<Map>())
-          : [];
-
-      sizeInventoryList.assignAll(
-        variants.map((v) {
-          final inv = v['inventory'] is Map
-              ? Map<String, dynamic>.from(v['inventory'])
-              : <String, dynamic>{};
-
-          String sizeLabel = "";
-          if (v['selectedOptions'] is List) {
-            for (final opt in v['selectedOptions']) {
-              if (opt is Map &&
-                  (opt['name']?.toString().toLowerCase() == "size")) {
-                sizeLabel = opt['value']?.toString() ?? "";
-                break;
-              }
+        if (v["selectedOptions"] is List) {
+          for (final opt in v["selectedOptions"]) {
+            if (opt["name"].toString().toLowerCase() == "size") {
+              size = opt["value"].toString();
+            }
+            if (opt["name"].toString().toLowerCase() == "color") {
+              color = opt["value"].toString();
             }
           }
+        }
 
-          return {
-            'id': v['id'] ?? v['shopifyVariantId'] ?? 0,
-            'product_matrix_size_name': sizeLabel,
-            'stocks': _num(inv['availableStock']).toInt(),
-            'price': _num(v['price']),
-            'compareAtPrice': _num(v['compareAtPrice']),
-          };
-        }).toList(),
-      );
-
-      // Sort sizes properly (XXS, XS, S, M, L, XL, XXL, XXXL)
-      final sortOrder = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"];
-
-      sizeInventoryList.sort((a, b) {
-        final sa = a['product_matrix_size_name'];
-        final sb = b['product_matrix_size_name'];
-        return sortOrder.indexOf(sa).compareTo(sortOrder.indexOf(sb));
-      });
-
-      // Pick default size
-      if (sizeInventoryList.isNotEmpty) {
-        final firstInStock = sizeInventoryList.firstWhere(
-            (e) => _num(e['stocks']) > 0,
-            orElse: () => sizeInventoryList.first);
-
-        sizeInventoryId.value =
-            int.tryParse(firstInStock['id'].toString()) ?? 0;
-
-        selectedProductSize = firstInStock;
+        parsedVariants.add({
+          "id": v["id"],
+          "size": size,
+          "color": color,
+          "price": v["price"],
+          "stocks": v["inventory"]?["availableStock"] ?? 0,
+          "variant": v
+        });
       }
 
-      // ---------- IMAGE LIST ----------
-      final imgs = _strList(data['imageUrls']);
-      imageList.assignAll(imgs.map((u) => {'name': u}));
+      selectedVariants.assignAll(parsedVariants);
 
-      // ---------- RETURN POLICY ----------
-      final rp = data["returnPolicy"];
-      if (rp == null) {
-        returnPolicyDetails.value = "No return policy available";
-      } else {
-        returnPolicyDetails.value = rp["description"]?.toString().trim() ??
-            "No return policy available";
+      //--------------------------------------------------------------------
+      // 2️⃣ CREATE UNIQUE SIZE LIST
+      //--------------------------------------------------------------------
+      final List<String> uniqueSizes =
+          parsedVariants.map((e) => e["size"].toString()).toSet().toList();
+
+      uniqueSizes.sort((a, b) =>
+          a.length == b.length ? a.compareTo(b) : a.length.compareTo(b.length));
+
+      sizeInventoryList.assignAll(uniqueSizes);
+
+      //--------------------------------------------------------------------
+      // 3️⃣ AUTO-SELECT FIRST SIZE
+      //--------------------------------------------------------------------
+      final firstSize = uniqueSizes.first;
+      selectedSize.value = firstSize;
+
+      //--------------------------------------------------------------------
+      // 4️⃣ LOAD COLORS FOR SELECTED SIZE
+      //--------------------------------------------------------------------
+      loadColorsForSize(firstSize);
+
+      //--------------------------------------------------------------------
+      // 5️⃣ SELECT FIRST COLOR OF SELECTED SIZE
+      //--------------------------------------------------------------------
+      if (colorInventoryList.isNotEmpty) {
+        selectedColor.value = colorInventoryList.first;
       }
-
-      // ---------- BRAND ----------
-      final brand = data["brand"];
-      if (brand != null && brand is Map) {
-        brandDetails = {
-          "name": brand["name"] ?? "",
-          "description": brand["description"] ?? "",
-        };
-      }
-
-      // ---------- PRODUCT DETAILS ----------
-      productDetails = {
-        'id': data['id'],
-        'title': _str(data['title']),
-        'name': _str(data['title']),
-        'description': _str(data['description']),
-        'tags': _strList(data['tags']),
-        'imageUrls': imgs,
-        'price': displayPrice,
-        'mrp': displayMrp,
-        'superCatId': superCatId,
-        'catId': catId,
-        'subCatId': subCatId,
-        'brand': brand,
-        'brand_name': brand?["name"]?.toString() ?? "",
-        'returnPolicy': data["returnPolicy"],
-        'hasCOD': data['hasCOD'],
-        'hasExchange': data['hasExchange'],
-        'exchangeDays': data['exchangeDays'],
-      };
     } catch (e) {
-      errorMsg.value = "Error fetching product details.";
+      errorMsg.value = "Error fetching product.";
     } finally {
       isDetails.value = false;
       update();
     }
+  }
+
+  void loadColorsForSize(String size) {
+    final colors = selectedVariants
+        .where((v) => v["size"] == size)
+        .map((v) => v["color"].toString())
+        .where((c) => c.trim().isNotEmpty)
+        .toSet()
+        .toList();
+
+    colorInventoryList.assignAll(colors);
   }
 
   Future<void> getProductData(int gender) async {

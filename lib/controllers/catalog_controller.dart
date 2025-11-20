@@ -105,7 +105,6 @@ class CatalogController extends BaseController {
       final uri = Uri.parse("${ApiConstants.baseUrl}/products")
           .replace(queryParameters: {
         "catId": categoryId.toString(),
-        "page": type.toString(), // page number
       });
 
       final response = await http.get(

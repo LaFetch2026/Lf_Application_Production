@@ -77,10 +77,18 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   }
 
   num _computePayable() {
-    final num total = _totalPrice;
-    final num payable =
-        (total - _couponDiscount) + _asNum(_delivery) + _asNum(_convenience);
-    return payable < 0 ? 0 : payable;
+    final num sellingPrice = _totalPrice;
+
+    // GST on selling price: always 18%
+    final num gstAmount = sellingPrice * 0.18;
+
+    // Apply coupon on selling
+    final num discountedPrice = sellingPrice - _couponDiscount;
+
+    // Final total = discounted price + GST + delivery + convenience
+    final num total = discountedPrice + gstAmount + _delivery + _convenience;
+
+    return total < 0 ? 0 : total;
   }
 
   @override
@@ -279,9 +287,11 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     }
   }
 
-
   void _onPaymentSuccess(PaymentSuccessResponse r) async {
-    Get.offAll(() => const OrderStatusScreen(status: 'success'),
+    Get.offAll(
+        () => const OrderStatusScreen(
+              status: 'success',
+            ),
         transition: Transition.fadeIn,
         duration: const Duration(milliseconds: 400));
 
@@ -305,7 +315,10 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   }
 
   void _onPaymentError(PaymentFailureResponse r) {
-    Get.offAll(() => const OrderStatusScreen(status: 'failed'),
+    Get.offAll(
+        () => const OrderStatusScreen(
+              status: 'failed',
+            ),
         transition: Transition.fadeIn,
         duration: const Duration(milliseconds: 400));
   }
@@ -615,6 +628,9 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   Widget _buildOrderDetails() {
     final num subtotal = _totalPrice;
     final num payable = _computePayable();
+    final num sellingPrice = _totalPrice; // price * qty
+    final num gstAmount = sellingPrice * 0.18; // 18% GST
+    final num discountMrpSelling = widget.mrp - sellingPrice;
 
     // discount on MRP (like Bag screen shows sometimes)
     final num discountOnMrp = (widget.mrp - _totalPrice);
@@ -636,6 +652,8 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
 
           // Total MRP
           _kv("Total MRP", "₹${widget.mrp.toStringAsFixed(2)}"),
+// Total MRP
+          _kv("Total MRP", "₹${widget.mrp.toStringAsFixed(2)}"),
 
           // Discount on MRP (if any)
           if (hasMrpDiscount)
@@ -644,6 +662,8 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
 
           // Subtotal (selling)
           _kv("Subtotal", "₹${subtotal.toStringAsFixed(2)}"),
+// GST on selling price
+          _kv("GST (18%)", "₹${gstAmount.toStringAsFixed(2)}"),
 
           // Coupon discount (green)
           if (_couponDiscount > 0)
@@ -677,10 +697,11 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
           Divider(color: colorSecondary, height: 30.sp),
 
           // TOTAL AMOUNT
+          // TOTAL AMOUNT (including GST)
           Row(
             children: [
               const AppText(
-                text: "TOTAL AMOUNT",
+                text: "TOTAL AMOUNT (Incl. 18% GST)",
                 fontFamily: "Franklin Gothic",
                 fontWeight: FontWeight.w700,
                 color: blackColor,
@@ -695,7 +716,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                 fontSize: 13,
               ),
             ],
-          ),
+          )
         ],
       ),
     );

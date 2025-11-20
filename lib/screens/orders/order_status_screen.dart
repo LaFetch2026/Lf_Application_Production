@@ -107,7 +107,7 @@ class OrderStatusScreen extends StatelessWidget {
           "title": "PAYMENT FAILED",
           "subtitle": "Something went wrong while processing your payment.",
           "buttonText": "TRY AGAIN",
-          "onTap": () => Navigator.of(Get.context!).maybePop(),
+          "onTap": () => Get.offAll(() => MyOrdersScreen()),
         };
 
       default:

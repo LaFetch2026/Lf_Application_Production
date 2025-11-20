@@ -993,11 +993,15 @@ class CartScreenState extends State<CartScreen> {
     final deliveryCharges = _asNum(controller.cartDetails["shipping_cost"]) +
         _asNum(controller.cartDetails["express_delivery_charges"]);
 
-    // Discount on MRP = difference between MRP and selling price
+    // Discount on MRP = MRP - selling price
     final discountOnMrp = totalMrp - sellingTotal;
 
-    // Final amount = selling price - coupon discount + delivery charges
-    final finalTotal = (sellingTotal - couponDiscount) + deliveryCharges;
+    // 🟡 GST = 18% on selling price (same as review order)
+    final gstAmount = sellingTotal * 0.18;
+
+    // Final Total = selling - coupon + delivery + GST
+    final finalTotal =
+        (sellingTotal - couponDiscount) + deliveryCharges + gstAmount;
 
     return Container(
       color: widget.backgroundcolor,
@@ -1031,14 +1035,14 @@ class CartScreenState extends State<CartScreen> {
               ),
             ),
 
-            // 🟣 Total MRP
+            // Total MRP
             _buildPriceRow(
               "Total MRP",
               "₹${totalMrp.toStringAsFixed(0)}",
               false,
             ),
 
-            // 🟢 Discount on MRP (Green with minus sign)
+            // Discount on MRP
             if (discountOnMrp > 0)
               _buildPriceRow(
                 "Discount on MRP",
@@ -1046,7 +1050,6 @@ class CartScreenState extends State<CartScreen> {
                 false,
               ),
 
-            // Divider before Subtotal
             if (discountOnMrp > 0)
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 10.sp),
@@ -1057,7 +1060,7 @@ class CartScreenState extends State<CartScreen> {
                 ),
               ),
 
-            // 🔵 Subtotal (Selling Price)
+            // 🟦 Subtotal (Selling Price)
             Padding(
               padding: EdgeInsets.only(top: 12.sp),
               child: Row(
@@ -1085,7 +1088,35 @@ class CartScreenState extends State<CartScreen> {
               ),
             ),
 
-            // 🟡 Coupon Discount (ALWAYS SHOW IF > 0)
+            // 🟧 GST 18%
+            Padding(
+              padding: EdgeInsets.only(top: 12.sp),
+              child: Row(
+                children: [
+                  AppText(
+                    text: "GST (18%)",
+                    fontFamily: "Franklin Gothic Regular",
+                    fontWeight: FontWeight.w400,
+                    color: widget.backgroundcolor == whiteColor
+                        ? subtitleColor
+                        : productSubtitleColor,
+                    fontSize: 12,
+                  ),
+                  const Spacer(),
+                  AppText(
+                    text: "₹${gstAmount.toStringAsFixed(2)}",
+                    fontFamily: "Franklin Gothic",
+                    fontWeight: FontWeight.w500,
+                    color: widget.backgroundcolor == whiteColor
+                        ? homeAppBarColor
+                        : whiteColor,
+                    fontSize: 12,
+                  ),
+                ],
+              ),
+            ),
+
+            // Coupon Discount
             if (couponDiscount > 0)
               Padding(
                 padding: EdgeInsets.only(top: 12.sp),
@@ -1105,14 +1136,14 @@ class CartScreenState extends State<CartScreen> {
                       text: "- ₹${couponDiscount.toStringAsFixed(0)}",
                       fontFamily: "Franklin Gothic Regular",
                       fontWeight: FontWeight.w400,
-                      color: const Color(0xff059669), // Green color
+                      color: const Color(0xff059669),
                       fontSize: 12,
                     ),
                   ],
                 ),
               ),
 
-            // 🟠 Delivery Charges
+            // Delivery Charges
             Padding(
               padding: EdgeInsets.only(top: 12.sp),
               child: Row(
@@ -1134,7 +1165,7 @@ class CartScreenState extends State<CartScreen> {
                     fontFamily: "Franklin Gothic Regular",
                     fontWeight: FontWeight.w400,
                     color: deliveryCharges == 0
-                        ? const Color(0xff059669) // Green for Free
+                        ? const Color(0xff059669)
                         : (widget.backgroundcolor == whiteColor
                             ? homeAppBarColor
                             : whiteColor),
@@ -1144,7 +1175,6 @@ class CartScreenState extends State<CartScreen> {
               ),
             ),
 
-            // Divider before Total
             Padding(
               padding: EdgeInsets.symmetric(vertical: 10.sp),
               child: Container(
@@ -1154,11 +1184,11 @@ class CartScreenState extends State<CartScreen> {
               ),
             ),
 
-            // 🔵 Final Total
+            // 🔥 FINAL TOTAL (including GST)
             Row(
               children: [
                 AppText(
-                  text: "TOTAL AMOUNT",
+                  text: "TOTAL AMOUNT (Incl. 18% GST)",
                   fontFamily: "Franklin Gothic",
                   fontWeight: FontWeight.w500,
                   color: widget.backgroundcolor == whiteColor
@@ -1168,7 +1198,7 @@ class CartScreenState extends State<CartScreen> {
                 ),
                 const Spacer(),
                 AppText(
-                  text: "₹${finalTotal.toStringAsFixed(0)}",
+                  text: "₹${finalTotal.toStringAsFixed(2)}",
                   fontFamily: "Franklin Gothic",
                   fontWeight: FontWeight.w500,
                   color: widget.backgroundcolor == whiteColor
