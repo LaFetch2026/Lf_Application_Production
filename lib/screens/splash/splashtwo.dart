@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controllers/SplashController.dart';
-
 import '../../core/constant/constants.dart';
 
 class SplashTwoScreen extends StatefulWidget {
@@ -14,16 +13,17 @@ class SplashTwoScreen extends StatefulWidget {
 }
 
 class _SplashTwoScreenState extends State<SplashTwoScreen> {
-  late final SplashController _controller;
-
   @override
   void initState() {
     super.initState();
-    _controller = Get.put(SplashController()); // no permanent:true
 
-    Future.delayed(const Duration(seconds: 2), () async {
-      await _controller.handleNavigation(); // ✅ now accessible
-    });
+    // 🔥 FIX 1: Always delete old controller (hot restart safety)
+    if (Get.isRegistered<SplashController>()) {
+      Get.delete<SplashController>(force: true);
+    }
+
+    // 🔥 FIX 2: Create fresh controller (handles navigation internally)
+    Get.put(SplashController());
   }
 
   @override

@@ -496,16 +496,22 @@ class AccountScreenState extends State<AccountScreen> {
                                 SupportWidgets(
                                   visibilty: false,
                                   onPressedAboutUs: () async {
-                                    launchUrl(Uri.parse(
-                                        "https://la-fetch.com/about-us/"));
+                                    launchUrl(
+                                      Uri.parse(
+                                          "https://www.la-fetch.com/about"),
+                                      mode: LaunchMode.externalApplication,
+                                    );
                                     await analytics.logEvent(
                                       name: 'about_us',
                                       parameters: {'page_name': 'about_us'},
                                     );
                                   },
                                   onPressedTC: () async {
-                                    launchUrl(Uri.parse(
-                                        "https://la-fetch.com/terms-and-conditions/"));
+                                    launchUrl(
+                                      Uri.parse(
+                                          "https://www.la-fetch.com/terms-and-conditions"),
+                                      mode: LaunchMode.externalApplication,
+                                    );
                                     await analytics.logEvent(
                                       name: 'teams_condition',
                                       parameters: {
@@ -514,8 +520,11 @@ class AccountScreenState extends State<AccountScreen> {
                                     );
                                   },
                                   onPressedPrivacy: () async {
-                                    launchUrl(Uri.parse(
-                                        "https://la-fetch.com/privacy-policy/"));
+                                    launchUrl(
+                                      Uri.parse(
+                                          "https://www.la-fetch.com/privacy-policy"),
+                                      mode: LaunchMode.externalApplication,
+                                    );
                                     await analytics.logEvent(
                                       name: 'privacy_policy',
                                       parameters: {
@@ -524,8 +533,11 @@ class AccountScreenState extends State<AccountScreen> {
                                     );
                                   },
                                   onPressedCancelation: () async {
-                                    launchUrl(Uri.parse(
-                                        "https://www.la-fetch.com/cancellation-policy/"));
+                                    launchUrl(
+                                      Uri.parse(
+                                          "https://www.la-fetch.com/cancellation-policy"),
+                                      mode: LaunchMode.externalApplication,
+                                    );
                                     await analytics.logEvent(
                                       name: 'cancellation_policy',
                                       parameters: {
@@ -534,8 +546,11 @@ class AccountScreenState extends State<AccountScreen> {
                                     );
                                   },
                                   onPressedShiping: () async {
-                                    launchUrl(Uri.parse(
-                                        "https://www.la-fetch.com/shipping-policy/"));
+                                    launchUrl(
+                                      Uri.parse(
+                                          "https://www.la-fetch.com/shipping-policy"),
+                                      mode: LaunchMode.externalApplication,
+                                    );
                                     await analytics.logEvent(
                                       name: 'shiping_policy',
                                       parameters: {

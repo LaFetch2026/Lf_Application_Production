@@ -147,9 +147,7 @@ class LoginScreenState extends State<LoginScreen> {
                     await prefs.remove('token');
 
                     // ✅ Abort SplashController navigation if still running
-                    if (Get.isRegistered<SplashController>()) {
-                      SplashController.abortSplashFlow = true;
-                    }
+                    if (Get.isRegistered<SplashController>()) {}
 
                     print("🟢 Guest mode (from LoginScreen) → BottomNavScreen");
                   } catch (e) {
