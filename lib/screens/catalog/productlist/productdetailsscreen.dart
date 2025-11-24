@@ -113,34 +113,49 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
         path.endsWith('.gif');
   }
 
-  /// Images-only list from API items (strings)
   List<String> _imagesOnly() {
-    return productController.imageList
-        .map((e) => (e['name']?.toString() ?? '').trim())
-        .where((u) => u.isNotEmpty && _isImageUrl(u))
-        .toList();
+    // ✅ Use currentDisplayImages from controller (color-specific)
+    if (productController.currentDisplayImages.isNotEmpty) {
+      final images = productController.currentDisplayImages
+          .where((u) => u.isNotEmpty && _isImageUrl(u))
+          .toList();
+
+      if (images.isNotEmpty) {
+        print("✅ Using currentDisplayImages: ${images.length} images");
+        return images;
+      }
+    }
+
+    // Fallback: imageList
+    if (productController.imageList.isNotEmpty) {
+      final images = productController.imageList
+          .map((e) => (e['name']?.toString() ?? '').trim())
+          .where((u) => u.isNotEmpty && _isImageUrl(u))
+          .toList();
+
+      if (images.isNotEmpty) {
+        print("✅ Using imageList: ${images.length} images");
+        return images;
+      }
+    }
+
+    // Fallback: imageUrls from productDetails
+    final imageUrls = productController.productDetails['imageUrls'];
+    if (imageUrls is List && imageUrls.isNotEmpty) {
+      final images = imageUrls
+          .map((url) => url.toString().trim())
+          .where((u) => u.isNotEmpty && _isImageUrl(u))
+          .toList();
+
+      print("✅ Using imageUrls from productDetails: ${images.length} images");
+      return images;
+    }
+
+    print("⚠️ No images found!");
+    return [];
   }
 
   int _imageCount() => _imagesOnly().length;
-
-  void _ensureSelectedSize() {
-    if (_selSize() != null) return;
-
-    final variants = productController.sizeInventoryList;
-    if (variants.isEmpty) return;
-
-    Map<String, dynamic>? firstInStock;
-    for (final v in variants) {
-      final q = int.tryParse(v['stocks']?.toString() ?? '0') ?? 0;
-      if (q > 0) {
-        firstInStock = v;
-        break;
-      }
-    }
-    firstInStock ??= variants.first;
-
-    _setSelectedSize(firstInStock!);
-  }
 
   Map<String, dynamic>? _selSize() {
     final s = productController.selectedProductSize;
@@ -165,59 +180,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     return null;
   }
 
-  int _colorIdOf(Map c) {
-    final key = (c['id'] ?? c['color_code'] ?? c['name'] ?? '').toString();
-    return key.hashCode;
-  }
-
-  void _setSelectedSize(Map<String, dynamic> v) {
-    try {
-      if (productController.selectedProductSize is RxMap) {
-        (productController.selectedProductSize as RxMap).assignAll(v);
-      } else if (productController.selectedProductSize is Rx) {
-        (productController.selectedProductSize as dynamic).value = v;
-      } else {
-        productController.selectedProductSize = v;
-      }
-    } catch (e) {
-      print("Error setting selected size: $e");
-      productController.selectedProductSize = v;
-    }
-
-    final idRaw = v['id'];
-    productController.sizeInventoryId.value =
-        (idRaw is int) ? idRaw : int.tryParse(idRaw?.toString() ?? '0') ?? 0;
-
-    final colors = (v['product_matrix_available_colors'] is List)
-        ? List<Map<String, dynamic>>.from(
-            (v['product_matrix_available_colors'] as List).whereType<Map>())
-        : <Map<String, dynamic>>[];
-
-    productController.colorInventoryList.assignAll(colors);
-
-    if (colors.isNotEmpty) {
-      final first = colors.first;
-      try {
-        (productController.selectedProductColor as dynamic).value = first;
-      } catch (_) {
-        productController.selectedProductColor = first;
-      }
-      productController.colorInventoryId.value = _colorIdOf(first);
-    } else {
-      productController.colorInventoryId.value = 0;
-      try {
-        (productController.selectedProductColor as dynamic).value = {};
-      } catch (_) {
-        productController.selectedProductColor = {};
-      }
-    }
-
-    productController.productImageindex.value = 0;
-    productController.colorInventoryId.refresh();
-
-    setState(() {});
-  }
-
   Map<String, dynamic> _pd() {
     final raw = productController.productDetails;
     if (raw is Map) return Map<String, dynamic>.from(raw as Map);
@@ -228,25 +190,28 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     return <String, dynamic>{};
   }
 
-  /// price from selected variant, else productDetails['price'/'basePrice']
   num _displayPrice() {
-    final sel = _selSize();
-    if (sel != null && sel['price'] is num) return sel['price'] as num;
+    // Try to get from selected variant
+    final variant = productController.getSelectedVariant();
+    if (variant != null && variant['price'] is num) {
+      return variant['price'] as num;
+    }
 
-    final m = productController.productDetails;
-    final v =
-        m['price'] ?? m['msp'] ?? m['lfMsp'] ?? m['mrp'] ?? m['basePrice'];
-    if (v is num) return v;
-    return num.tryParse(v?.toString() ?? '') ?? 0;
+    // Fallback to product details
+    final pd = productController.productDetails;
+    final price =
+        pd['basePrice'] ?? pd['netAmount'] ?? pd['price'] ?? pd['msp'];
+
+    if (price is num && price > 0) return price;
+    return num.tryParse(price?.toString() ?? '0') ?? 0;
   }
 
-  /// MRP/compare at
   num _displayMrp() {
-    final sel = _selSize();
-    final cap = sel?['compareAtPrice'];
-    if (cap is num && cap > 0) return cap;
-    final mrp = productController.productDetails['mrp'];
-    return (mrp is num && mrp > 0) ? mrp : 0;
+    final pd = productController.productDetails;
+    final mrp = pd['mrp'] ?? pd['manufacturingAmount'];
+
+    if (mrp is num && mrp > 0) return mrp;
+    return num.tryParse(mrp?.toString() ?? '0') ?? 0;
   }
 
   String _discountPctStr() {
@@ -259,27 +224,24 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     return "0%";
   }
 
-  int _totalStockCount() {
-    return productController.sizeInventoryList.fold<int>(
-      0,
-      (sum, v) {
-        final q = int.tryParse(v['stocks']?.toString() ?? '0') ?? 0;
-        return sum + q;
-      },
-    );
-  }
-
   String _brandText() {
     final m = _pd();
+
+    // Try multiple sources
     final b1 = m['brand_name'];
     final b2 = (m['brand'] is Map ? m['brand']['name'] : null);
     final b3 = widget.brandName;
-    return (b1 ?? b2 ?? b3 ?? "").toString();
+
+    final brand = (b1 ?? b2 ?? b3 ?? "").toString();
+    print("🏷️ Brand name: $brand");
+    return brand;
   }
 
   String _titleText() {
     final m = _pd();
-    return (m['name'] ?? m['title'] ?? "").toString();
+    final title = m['name'] ?? m['title'] ?? "";
+    print("📝 Product title: $title");
+    return title.toString();
   }
 
   // Product Logger Helper Method
@@ -313,9 +275,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     print("Slug: ${widget.Slug}");
     print("Board ID: ${widget.boardId}");
     print("Wishlist Product ID: ${widget.wishlistProductId}");
-    print("Total Stock: ${_totalStockCount()}");
-    print("Has Sizes: ${_hasSizes()}");
-    print("Has Colors: ${_hasColors()}");
+    // print("Total Stock: ${_totalStockCount()}");
+
     print("Product Details Keys: ${_pd().keys.toList()}");
     print("Timestamp: ${DateTime.now()}");
     print("${"=" * (action.length + 20)}");
@@ -324,43 +285,49 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   // ===================== RAZORPAY FLOW =====================
 
   Future<void> _onBuyNowPressed({required bool isCartFlow}) async {
-    // ✅ Step 1: Validate size/color etc.
-    if (!productController.checkDetailsValidation()) return;
-
-    _logBuyNowAction(action: "BUY NOW", isCartFlow: isCartFlow);
-
-    // ✅ Step 2: Extract selected size/variant info
-    final _sel = _selSize(); // your selected variant map
-    final sizeLabel =
-        (_sel?['product_matrix_size_name'] ?? _sel?['title'] ?? '');
-
-    // ✅ Step 3: Get variantId safely
-    final int variantId = (_sel?['id'] ??
-        _sel?['variantId'] ??
-        productController.selectedProductSize?['id'] ??
-        0) as int;
-
-    if (variantId <= 0) {
-      print("❌ Missing variantId in selected product: $_sel");
+    // Validate selection
+    if (!productController.checkDetailsValidation()) {
       return;
     }
 
-    // ✅ Step 4: Choose image
-    final firstImg = productController.imageList.isNotEmpty
-        ? (productController.imageList.first['name']?.toString() ?? '')
-        : '';
+    _logBuyNowAction(action: "BUY NOW", isCartFlow: isCartFlow);
 
-    // ✅ Step 5: Navigate to ReviewOrderScreen with variantId
+    // Get selected variant
+    final variant = productController.getSelectedVariant();
+    if (variant == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select size and color')),
+      );
+      return;
+    }
+
+    final variantId = variant['id'] as int;
+    final stock = int.tryParse(variant['stocks']?.toString() ?? '0') ?? 0;
+
+    if (stock <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selected variant is out of stock')),
+      );
+      return;
+    }
+
+    final firstImg = _imagesOnly().isNotEmpty ? _imagesOnly().first : '';
+
+    final sizeLabel = "${productController.selectedSize.value}" +
+        (productController.selectedColor.value.isNotEmpty
+            ? " / ${productController.selectedColor.value}"
+            : "");
+
     Get.to(() => ReviewOrderScreen(
           productId: widget.productId,
-          variantId: variantId, // ✅ CRITICAL: pass variantId
+          variantId: variantId,
           title: _titleText(),
           brandName: _brandText(),
-          imageUrl: _imagesOnly().isNotEmpty ? _imagesOnly().first : firstImg,
+          imageUrl: firstImg,
           sizeLabel: sizeLabel,
           quantity: 1,
-          price: _displayPrice().toDouble(),
-          mrp: _displayMrp().toDouble(),
+          price: productController.getDisplayPrice().toDouble(),
+          mrp: productController.getDisplayMrp().toDouble(),
           initialAddress:
               _addressSelected ? _addressResult as Map<String, dynamic>? : null,
         ));
@@ -466,256 +433,210 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     return list;
   }
 
-  bool _hasSizes() {
-    final list = productController.sizeInventoryList;
-    if (list.isEmpty) return false;
-    for (final e in list) {
-      final n = int.tryParse((e['stocks'] ?? '0').toString()) ?? 0;
-      if (n > 0) return true;
-    }
-    return false;
+  Widget getListForProductSize() {
+    return Obx(() {
+      final sizes = productController.sizeInventoryList;
+
+      if (sizes.isEmpty) return const SizedBox.shrink();
+
+      return SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: gL, vertical: 6),
+          child: Wrap(
+            spacing: gM,
+            runSpacing: gS,
+            children: sizes.map((size) {
+              final isSelected = productController.selectedSize.value == size;
+
+              // Get stock count for this size across all colors
+              final sizeStock = productController.selectedVariants
+                  .where((v) => v["size"] == size)
+                  .fold<int>(
+                      0,
+                      (sum, v) =>
+                          sum +
+                          (int.tryParse(v['stocks']?.toString() ?? '0') ?? 0));
+
+              final isOutOfStock = sizeStock <= 0;
+              final isFreeSize = size.toUpperCase() == 'FREE SIZE';
+
+              return Opacity(
+                opacity: isOutOfStock ? 0.4 : 1.0,
+                child: IgnorePointer(
+                  ignoring: isOutOfStock,
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          productController.selectedSize.value = size;
+                          productController.loadColorsForSize(size);
+                          if (_pageController.hasClients) {
+                            _pageController.jumpToPage(0);
+                          }
+                          setState(() {});
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: widget.backgroundcolor == whiteColor
+                                  ? btnTextColor
+                                  : searchTextColor,
+                              width: 1.sp,
+                            ),
+                            color: isSelected
+                                ? (widget.backgroundcolor == whiteColor
+                                    ? colorPrimary
+                                    : lightPurpleColor)
+                                : (widget.backgroundcolor == whiteColor
+                                    ? whiteColor
+                                    : homeAppBarColor),
+                          ),
+                          child: SizedBox(
+                            width: isFreeSize ? 70.sp : 44.sp,
+                            height: 42.sp,
+                            child: Center(
+                              child: AppSpacingText(
+                                text: size.toUpperCase(),
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
+                                color: isSelected
+                                    ? whiteColor
+                                    : (widget.backgroundcolor == whiteColor
+                                        ? btnTextColor
+                                        : searchTextColor),
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (sizeStock <= 2 && sizeStock > 0)
+                        Padding(
+                          padding: EdgeInsets.only(top: 4.sp),
+                          child: AppSpacingText(
+                            text: 'Only $sizeStock left',
+                            fontFamily: "Franklin Gothic Regular",
+                            fontWeight: FontWeight.w400,
+                            color: redColor,
+                            fontSize: 10,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      );
+    });
   }
 
-  SizedBox getListForProductSize() {
-    int _asInt(dynamic x) =>
-        x is int ? x : int.tryParse(x?.toString() ?? '0') ?? 0;
+  Widget getListForProductColor() {
+    return Obx(() {
+      final colors = productController.colorInventoryList;
 
-    String _sizeLabel(Map m) {
-      final a = m['product_matrix_size_name'];
-      final b = m['title'];
-      String c = '';
-      final so = m['selectedOptions'];
-      if (so is List) {
-        for (final o in so.whereType<Map>()) {
-          if ((o['name']?.toString().toLowerCase() ?? '') == 'size') {
-            c = o['value']?.toString() ?? '';
-            break;
-          }
-        }
-      }
-      return (a ?? b ?? c ?? '').toString();
-    }
+      if (colors.isEmpty) return const SizedBox.shrink();
 
-    final variants = productController.sizeInventoryList
-        .where((v) => v['product_matrix_size_name'] != null)
-        .toList()
-      ..sort((a, b) {
-        const sizeOrder = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+      return SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: gL, vertical: 8.sp),
+          child: Wrap(
+            spacing: gM,
+            runSpacing: gS,
+            children: colors.map((color) {
+              final isSelected = productController.selectedColor.value == color;
 
-        final aLabel =
-            (a['product_matrix_size_name'] ?? '').toString().toUpperCase();
-        final bLabel =
-            (b['product_matrix_size_name'] ?? '').toString().toUpperCase();
-        final aIndex = sizeOrder.indexOf(aLabel);
-        final bIndex = sizeOrder.indexOf(bLabel);
-        return (aIndex == -1 ? 99 : aIndex)
-            .compareTo(bIndex == -1 ? 99 : bIndex);
-      });
+              // Get stock
+              Map<String, dynamic>? variant;
+              if (productController.sizeInventoryList.isEmpty) {
+                variant = productController.selectedVariants
+                    .firstWhereOrNull((v) => v["color"] == color);
+              } else {
+                variant = productController.selectedVariants.firstWhereOrNull(
+                    (v) =>
+                        v["size"] == productController.selectedSize.value &&
+                        v["color"] == color);
+              }
 
-    if (variants.isEmpty) return const SizedBox.shrink();
+              final stock =
+                  int.tryParse(variant?['stocks']?.toString() ?? '0') ?? 0;
 
-    int selectedId = productController.sizeInventoryId.value;
-    if (selectedId == 0) {
-      try {
-        final s = productController.selectedProductSize;
-        if (s is Map) {
-          selectedId = _asInt(s['id']);
-        } else if (s is Rx && s.value is Map) {
-          selectedId = _asInt((s.value as Map)['id']);
-        }
-      } catch (_) {}
-    }
+              final isOutOfStock = stock <= 0;
 
-    if (selectedId == 0 && variants.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _setSelectedSize(variants.first);
-        setState(() {});
-      });
-    }
+              return Opacity(
+                opacity: isOutOfStock ? 0.4 : 1.0,
+                child: IgnorePointer(
+                  ignoring: isOutOfStock,
+                  child: GestureDetector(
+                    onTap: () {
+                      productController.selectedColor.value = color;
+                      productController.updateImagesForSelectedColor();
 
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: gL, vertical: 6),
-        child: Wrap(
-          spacing: gM,
-          runSpacing: gS,
-          children: [
-            for (final raw in variants)
-              Builder(builder: (_) {
-                final i = raw as Map;
-                final id = _asInt(i['id']);
-                final isSelected = (id == selectedId);
-                final label = _sizeLabel(i).toUpperCase();
-                final isFree = label == 'FREE SIZE';
-                final stock = int.tryParse(i['stocks']?.toString() ?? '0') ?? 0;
-                final isOutOfStock = stock <= 0;
+                      if (_pageController.hasClients) {
+                        _pageController.jumpToPage(0);
+                      }
 
-                return Opacity(
-                  opacity: isOutOfStock ? 0.4 : 1.0, // blur effect
-                  child: IgnorePointer(
-                    ignoring: isOutOfStock, // disable tap
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            _setSelectedSize(Map<String, dynamic>.from(i));
-                            _curr = 0;
-                            setState(() {});
-                          },
-                          child: Container(
+                      setState(() {});
+                    },
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            height: 40.sp,
+                            width: 60.sp,
+                            alignment: Alignment.center,
                             decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              color: widget.backgroundcolor == whiteColor
+                                  ? Colors.white
+                                  : Colors.black.withOpacity(0.15),
                               border: Border.all(
-                                color: widget.backgroundcolor == whiteColor
-                                    ? btnTextColor
-                                    : searchTextColor,
-                                width: 1.sp,
+                                color:
+                                    isSelected ? colorPrimary : searchTextColor,
+                                width: isSelected ? 2.sp : 1.sp,
                               ),
-                              color: isSelected
-                                  ? (widget.backgroundcolor == whiteColor
-                                      ? colorPrimary
-                                      : lightPurpleColor)
-                                  : (widget.backgroundcolor == whiteColor
-                                      ? whiteColor
-                                      : homeAppBarColor),
                             ),
-                            child: SizedBox(
-                              width: isFree ? 70.sp : 44.sp,
-                              height: 42.sp,
-                              child: Center(
-                                child: AppSpacingText(
-                                  text: label,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: isSelected
-                                      ? whiteColor
-                                      : (widget.backgroundcolor == whiteColor
-                                          ? btnTextColor
-                                          : searchTextColor),
-                                  fontSize: 12,
+                            child: Center(
+                              child: Text(
+                                color.toUpperCase(),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: "Franklin Gothic",
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 9.sp,
+                                  color: widget.backgroundcolor == whiteColor
+                                      ? Colors.black
+                                      : Colors.white,
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        if (stock <= 1 && stock > 0)
-                          Padding(
-                            padding: EdgeInsets.only(top: 0),
-                            child: AppSpacingText(
-                              text: 'Only $stock left',
-                              fontFamily: "Franklin Gothic Regular",
-                              fontWeight: FontWeight.w400,
-                              color: redColor,
-                              fontSize: 11,
+                          SizedBox(height: 4.sp),
+                          if (stock <= 2 && stock > 0)
+                            Text(
+                              'Only $stock left',
+                              style: TextStyle(
+                                fontSize: 9.sp,
+                                color: redColor,
+                                fontFamily: "Franklin Gothic",
+                              ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                );
-              }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  bool _hasColors() {
-    final list = productController.colorInventoryList;
-    if (list.isEmpty) return false;
-    for (final e in list) {
-      final n =
-          int.tryParse((e is Map ? e['stocks'] : null)?.toString() ?? '0') ?? 0;
-      if (n > 0) return true;
-    }
-    return false;
-  }
-
-  SizedBox getListForProductColor() {
-    Color _parse(dynamic raw) {
-      String s = (raw?.toString() ?? '').trim();
-      if (s.isEmpty) return const Color(0xFF000000);
-      if (s.startsWith('#')) s = s.substring(1);
-      if (s.startsWith('0x') || s.startsWith('0X')) s = s.substring(2);
-      if (s.length == 6) s = 'FF$s';
-      final v = int.tryParse(s, radix: 16);
-      return v == null ? const Color(0xFF000000) : Color(v);
-    }
-
-    final colors = productController.colorInventoryList;
-    if (colors.isEmpty) return const SizedBox.shrink();
-
-    final selectedId = productController.colorInventoryId.value;
-
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: gL, vertical: 0),
-        child: Wrap(
-          spacing: gM,
-          runSpacing: gS,
-          children: [
-            for (final c in colors)
-              GestureDetector(
-                onTap: () {
-                  try {
-                    (productController.selectedProductColor as dynamic).value =
-                        c;
-                  } catch (_) {
-                    productController.selectedProductColor = c;
-                  }
-                  productController.colorInventoryId.value = (c is Map)
-                      ? (c['id']?.hashCode ?? _parse(c['color_code']).value)
-                      : 0;
-                  setState(() {});
-                },
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          height: 38.sp,
-                          width: 38.sp,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border:
-                                Border.all(color: searchTextColor, width: 1),
-                            color: _parse((c as Map)['color_code']),
-                          ),
-                        ),
-                        if ((c is Map
-                                ? c['id']?.hashCode ??
-                                    _parse(c['color_code']).value
-                                : 0) ==
-                            selectedId)
-                          CircleAvatar(
-                            radius: 10.sp,
-                            backgroundColor: Colors.white.withOpacity(0.85),
-                            child: Icon(Icons.check,
-                                size: 14.sp, color: homeAppBarColor),
-                          ),
-                      ],
-                    ),
-                    SizedBox(height: gXS),
-                    AppSpacingText(
-                      text: '${(c as Map)['name']?.toString() ?? ''}'
-                          .toUpperCase(),
-                      fontFamily: "Franklin Gothic",
-                      fontWeight: FontWeight.w500,
-                      color: widget.backgroundcolor == whiteColor
-                          ? blackColor
-                          : whiteColor,
-                      fontSize: 10,
-                    ),
-                  ],
                 ),
-              ),
-          ],
+              );
+            }).toList(),
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   void setStatusBarColor() {
@@ -743,56 +664,35 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       productController.errorMsg.value = "";
-      productController.brandDetails = "";
-      productController.defaultAddress = "";
-      productController.pincodeController.clear();
-      productController.sizeInventoryId.value = 0;
-      productController.productImageindex.value = 0;
-      productController.colorInventoryId.value = 0;
-      productController.addToCart.value = false;
-      productController.showSizeList.value = true;
-      _didEnsureSize = false;
-
-      try {
-        (productController.selectedProductSize as dynamic).value = null;
-      } catch (_) {
-        productController.selectedProductSize = null;
-      }
-      try {
-        (productController.selectedProductColor as dynamic).value = null;
-      } catch (_) {
-        productController.selectedProductColor = null;
-      }
-
-      productController.isExpressDelivery.value = false;
-      productController.expressValue.value = widget.expressValue;
       productController.errorSizeMsg.value = "";
       productController.errorColorMsg.value = "";
+      productController.selectedSize.value = "";
+      productController.selectedColor.value = "";
+      productController.sizeInventoryList.clear();
+      productController.colorInventoryList.clear();
+      productController.selectedVariants.clear();
 
-      // Load product details
+      print("🚀 Loading product ID: ${widget.productId}");
+
       productController.getProductById(widget.productId).then((_) {
+        print("✅ Product loaded successfully");
+        print(
+            "📦 Product Details: ${productController.productDetails.keys.toList()}");
+        print("🖼️ Image List: ${productController.imageList.length} images");
+        print("📏 Sizes: ${productController.sizeInventoryList.toList()}");
+        print("🎨 Colors: ${productController.colorInventoryList.toList()}");
+        print("✅ Selected Size: ${productController.selectedSize.value}");
+        print("✅ Selected Color: ${productController.selectedColor.value}");
+
         final productId =
             productController.productDetails["id"] as int? ?? widget.productId;
 
-        // Check if wishlisted
         wishlistController.checkIfWishlisted(productId);
-
-        // ✅ NEW: Load reviews for this product
         productController.getProductReviews(productId);
       });
     });
 
-    // Load wishlist boards data
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => wishlistController.getWishlistData());
-
-    // Razorpay listeners
-    _razorpay = Razorpay();
-    _razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onPaymentSuccess);
-    _razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, _onPaymentError);
-    _razorpay!.on(Razorpay.EVENT_EXTERNAL_WALLET, _onExternalWallet);
-
-    super.initState();
+    // ... rest of init code
   }
 
   void _openSizeChartDialog() async {
@@ -959,10 +859,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
               ),
             ),
 
-            // Visibility(
-            //   visible: widget.backgroundcolor == blackColor,
-            //   child: Container(height: 1.sp, color: dividerColor),
-            // ),
+            Visibility(
+              visible: widget.backgroundcolor == blackColor,
+              child: Container(height: 1.sp, color: dividerColor),
+            ),
 
             // ================= BODY =================
             Expanded(
@@ -1144,16 +1044,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         Obx(() {
                           final loading = productController.isDetails.value;
 
-                          if (!loading && !_didEnsureSize) {
-                            WidgetsBinding.instance.addPostFrameCallback(
-                                (_) => _ensureSelectedSize());
-                            _didEnsureSize = true;
-                          }
-
                           if (loading) return const DummyProductDetails();
-
-                          final showSizes = _hasSizes();
-                          final showColors = _hasColors();
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1187,32 +1078,26 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 "")
                                         ? GestureDetector(
                                             onTap: () async {
-                                              await analytics.logEvent(
-                                                name:
-                                                    'productdetails_explorebrand',
-                                                parameters: <String, Object>{
-                                                  'page_name':
-                                                      'productdetails_explorebrand'
-                                                },
-                                              );
-                                              brandController.brandbackground
-                                                  .value = productController
-                                                      .brandDetails[
-                                                  "background_image"];
-                                              Navigator.of(context)
-                                                  .push(
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          AllBrandScreen(
-                                                        id: productController
-                                                            .brandDetails["id"],
-                                                        screen: "search",
-                                                        slug: "",
-                                                      ),
-                                                    ),
-                                                  )
-                                                  .then((_) =>
-                                                      setStatusBarColor());
+                                              final brandId = productController
+                                                          .productDetails[
+                                                      "brand"]?["id"] as int? ??
+                                                  0;
+
+                                              if (brandId > 0) {
+                                                await analytics.logEvent(
+                                                  name: 'view_brand',
+                                                  parameters: <String, Object>{
+                                                    'brand_id': brandId,
+                                                  },
+                                                );
+
+                                                Get.to(() => AllBrandScreen(
+                                                      id: brandId,
+                                                      screen: 'brand',
+                                                      slug:
+                                                          '${productController.productDetails["brand"]?["slug"] ?? ''}',
+                                                    ));
+                                              }
                                             },
                                             child: Container(
                                               color: const Color(0xFFDFDBFF),
@@ -1250,7 +1135,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ],
                                 ),
                               ),
-
                               Visibility(
                                 visible: _titleText().isNotEmpty,
                                 child: Padding(
@@ -1268,80 +1152,79 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ),
                                 ),
                               ),
+                              // Price Display Section
+                              Obx(() {
+                                final price =
+                                    productController.getDisplayPrice();
+                                final mrp = productController.getDisplayMrp();
+                                final hasDiscount = mrp > price && mrp > 0;
 
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    top: 8.0.sp, left: 12.sp, right: 12.sp),
-                                child: Row(
-                                  children: [
-                                    Builder(builder: (_) {
-                                      final p = _displayPrice();
-                                      final m = _displayMrp();
-                                      return (m > p && m > 0)
-                                          ? Padding(
-                                              padding:
-                                                  EdgeInsets.only(right: 10.sp),
-                                              child: Text(
-                                                "₹ ${m.toStringAsFixed(0)}",
-                                                style: TextStyle(
-                                                  color: searchTextColor,
-                                                  letterSpacing: 0.65,
-                                                  fontSize: 16.sp,
-                                                  decoration: TextDecoration
-                                                      .lineThrough,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                            )
-                                          : const SizedBox.shrink();
-                                    }),
-                                    Padding(
-                                      padding: EdgeInsets.only(right: 10.0.sp),
-                                      child: AppSpacingText(
-                                        text:
-                                            "₹ ${_displayPrice().toStringAsFixed(0)}",
-                                        color:
-                                            widget.backgroundcolor == whiteColor
-                                                ? nameText
-                                                : whiteColor,
-                                        fontSize: 16,
-                                        fontFamily: "Franklin Gothic",
-                                        fontWeight: FontWeight.w500,
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 8.sp, left: 12.sp, right: 12.sp),
+                                  child: Row(
+                                    children: [
+                                      // MRP (strikethrough)
+                                      if (hasDiscount)
+                                        Padding(
+                                          padding:
+                                              EdgeInsets.only(right: 10.sp),
+                                          child: Text(
+                                            "₹${mrp.toStringAsFixed(0)}",
+                                            style: TextStyle(
+                                              color: searchTextColor,
+                                              letterSpacing: 0.65,
+                                              fontSize: 16.sp,
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                              fontFamily:
+                                                  "Franklin Gothic Regular",
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ),
+
+                                      // Selling Price
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 10.sp),
+                                        child: AppSpacingText(
+                                          text: "₹${price.toStringAsFixed(0)}",
+                                          color: widget.backgroundcolor ==
+                                                  whiteColor
+                                              ? nameText
+                                              : whiteColor,
+                                          fontSize: 16,
+                                          fontFamily: "Franklin Gothic",
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
-                                    ),
-                                    Builder(builder: (_) {
-                                      final disc = _discountPctStr();
-                                      return (disc != "0%")
-                                          ? Container(
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xffA7F3D0),
-                                                borderRadius:
-                                                    BorderRadius.circular(18),
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 8.sp, right: 8.sp),
-                                                child: AppSpacingText(
-                                                  text: "$disc OFF",
-                                                  color:
-                                                      widget.backgroundcolor ==
-                                                              whiteColor
-                                                          ? expressText
-                                                          : homeAppBarColor,
-                                                  fontSize: 12,
-                                                  fontFamily: "Franklin Gothic",
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            )
-                                          : const SizedBox.shrink();
-                                    }),
-                                  ],
-                                ),
-                              ),
 
+                                      // Discount Badge
+                                      if (hasDiscount)
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xffA7F3D0),
+                                            borderRadius:
+                                                BorderRadius.circular(18),
+                                          ),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8.sp, vertical: 2.sp),
+                                          child: AppSpacingText(
+                                            text:
+                                                "${((mrp - price) / mrp * 100).toStringAsFixed(0)}% OFF",
+                                            color: widget.backgroundcolor ==
+                                                    whiteColor
+                                                ? expressText
+                                                : homeAppBarColor,
+                                            fontSize: 12,
+                                            fontFamily: "Franklin Gothic",
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                );
+                              }),
                               Padding(
                                 padding: EdgeInsets.only(
                                     top: 8.sp, left: 12.sp, right: 16.sp),
@@ -1355,132 +1238,144 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
+                              // Inside your build method, replace the existing size/color section with:
 
+// ---------- SIZES ----------
                               // ---------- SIZES ----------
-                              _hasSizes()
-                                  ? Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 16.0.sp,
-                                              left: 12.sp,
-                                              right: 12.sp),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              AppSpacingText(
-                                                text:
-                                                    'Select size'.toUpperCase(),
-                                                fontFamily: "Franklin Gothic",
-                                                fontWeight: FontWeight.w500,
-                                                color: widget.backgroundcolor ==
-                                                        whiteColor
-                                                    ? blackColor
-                                                    : productSubtitleColor,
-                                                fontSize: 16,
-                                              ),
+                              Obx(() {
+                                final hasSizes = productController
+                                    .sizeInventoryList.isNotEmpty;
 
-                                              /// ⭐⭐⭐ View Size Chart Button
-                                              GestureDetector(
-                                                onTap: _openSizeChartDialog,
-                                                child: Text(
-                                                  "View Size Chart",
-                                                  style: TextStyle(
-                                                    fontFamily:
-                                                        "Franklin Gothic",
-                                                    fontWeight: FontWeight.w600,
-                                                    color: colorPrimary,
-                                                    fontSize: 13.sp,
-                                                    decoration: TextDecoration
-                                                        .underline,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
+                                // ✅ Hide size section if no sizes
+                                if (!hasSizes) return const SizedBox.shrink();
+
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 16.sp,
+                                          left: 12.sp,
+                                          right: 12.sp),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          AppSpacingText(
+                                            text: 'SELECT SIZE',
+                                            fontFamily: "Franklin Gothic",
+                                            fontWeight: FontWeight.w500,
+                                            color: widget.backgroundcolor ==
+                                                    whiteColor
+                                                ? blackColor
+                                                : productSubtitleColor,
+                                            fontSize: 16,
                                           ),
-                                        ),
-                                        if (productController
-                                            .errorSizeMsg.value.isNotEmpty)
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 8.0.sp, left: 12.sp),
-                                            child: AppSpacingText(
-                                              text: productController
-                                                  .errorSizeMsg.value,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                              color: redColor,
-                                              fontSize: 14,
+                                          GestureDetector(
+                                            onTap: _openSizeChartDialog,
+                                            child: Text(
+                                              "View Size Chart",
+                                              style: TextStyle(
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w600,
+                                                color: colorPrimary,
+                                                fontSize: 13.sp,
+                                                decoration:
+                                                    TextDecoration.underline,
+                                              ),
                                             ),
                                           ),
-                                        getListForProductSize(),
-                                      ],
-                                    )
-                                  : const SizedBox(height: 0),
+                                        ],
+                                      ),
+                                    ),
+                                    if (productController
+                                        .errorSizeMsg.value.isNotEmpty)
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 8.sp, left: 12.sp),
+                                        child: AppSpacingText(
+                                          text: productController
+                                              .errorSizeMsg.value,
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: redColor,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    getListForProductSize(),
+                                  ],
+                                );
+                              }),
 
+// ---------- COLORS (Shows only after size selection) ----------
                               // ---------- COLORS ----------
-                              (productController
-                                          .colorInventoryList.isNotEmpty &&
-                                      _hasColors())
-                                  ? Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 14.0, horizontal: 12),
-                                          child: Divider(
-                                              color: widget.backgroundcolor ==
-                                                      whiteColor
-                                                  ? colorSecondary
-                                                  : titleColor),
+                              Obx(() {
+                                final hasColors = productController
+                                    .colorInventoryList.isNotEmpty;
+                                final hasSizes = productController
+                                    .sizeInventoryList.isNotEmpty;
+                                final sizeSelected = productController
+                                    .selectedSize.value.isNotEmpty;
+
+                                // ✅ For products with sizes: show colors only after size is selected
+                                // ✅ For products without sizes: show colors immediately
+                                if (!hasColors) return const SizedBox.shrink();
+                                if (hasSizes && !sizeSelected)
+                                  return const SizedBox.shrink();
+
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // ✅ Only show divider if there are sizes above
+                                    if (hasSizes)
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 14.sp, horizontal: 12.sp),
+                                        child: Divider(
+                                          color: widget.backgroundcolor ==
+                                                  whiteColor
+                                              ? colorSecondary
+                                              : titleColor,
                                         ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: 0.0.sp,
-                                              left: 12.sp,
-                                              right: 12.sp),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              AppSpacingText(
-                                                text: 'Select Color'
-                                                    .toUpperCase(),
-                                                fontFamily: "Franklin Gothic",
-                                                fontWeight: FontWeight.w500,
-                                                color: widget.backgroundcolor ==
-                                                        whiteColor
-                                                    ? blackColor
-                                                    : productSubtitleColor,
-                                                fontSize: 16,
-                                              ),
-                                            ],
-                                          ),
+                                      )
+                                    else
+                                      SizedBox(
+                                          height: 16
+                                              .sp), // Just spacing for color-only products
+
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 12.sp, right: 12.sp),
+                                      child: AppSpacingText(
+                                        text: 'SELECT COLOR',
+                                        fontFamily: "Franklin Gothic",
+                                        fontWeight: FontWeight.w500,
+                                        color:
+                                            widget.backgroundcolor == whiteColor
+                                                ? blackColor
+                                                : productSubtitleColor,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    if (productController
+                                        .errorColorMsg.value.isNotEmpty)
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 10.sp, left: 12.sp),
+                                        child: AppSpacingText(
+                                          text: productController
+                                              .errorColorMsg.value,
+                                          fontFamily: "Franklin Gothic Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: redColor,
+                                          fontSize: 14,
                                         ),
-                                        if (productController
-                                            .errorColorMsg.value.isNotEmpty)
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 10.0.sp, left: 12.sp),
-                                            child: AppSpacingText(
-                                              text: productController
-                                                  .errorColorMsg.value,
-                                              fontFamily:
-                                                  "Franklin Gothic Regular",
-                                              fontWeight: FontWeight.w400,
-                                              color: redColor,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        getListForProductColor(),
-                                      ],
-                                    )
-                                  : const SizedBox(height: 0),
+                                      ),
+                                    getListForProductColor(),
+                                  ],
+                                );
+                              }),
+                              SizedBox(height: 0),
                             ],
                           );
                         }),
@@ -1756,44 +1651,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   return const SizedBox(height: 0);
                 }
 
-                final totalStock = _totalStockCount();
-                if (totalStock == 1) {
-                  return SizedBox(
-                    height: 50.sp,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(right: 8.0.sp),
-                          child: SvgPicture.asset(
-                            cartSvgImage,
-                            color: widget.backgroundcolor == whiteColor
-                                ? homeAppBarColor
-                                : productSubtitleColor,
-                            height: 18.sp,
-                            width: 18.sp,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.bottomCenter,
-                          height: 18.sp,
-                          child: AppSpacingText(
-                            text: "Out of stock".toUpperCase(),
-                            fontFamily: "Franklin Gothic",
-                            fontWeight: FontWeight.w500,
-                            color: widget.backgroundcolor == whiteColor
-                                ? homeAppBarColor
-                                : productSubtitleColor,
-                            maxLines: 2,
-                            textAlign: TextAlign.center,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
                 final isInCartFlow = productController.addToCart.value;
 
                 return isInCartFlow
@@ -1821,12 +1678,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               'page_name': 'productDetails_btnGotocart'
                             },
                           );
-
-                          // AnalyticsHelper.logAddToCart(
-                          //   productId: pid,
-                          //   contentType: 'product',
-                          //   value: price,
-                          // );
 
                           productController.addToCart.value = false;
 

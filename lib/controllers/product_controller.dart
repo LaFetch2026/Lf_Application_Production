@@ -219,6 +219,201 @@ class ProductController extends BaseController {
   RxList<String> sizeInventoryList = <String>[].obs;
   RxString selectedColor = "".obs;
   RxString selectedSize = "".obs;
+// Add this observable for tracking current display images
+  RxList<String> currentDisplayImages = <String>[].obs;
+
+// Method to update images based on selected color
+  void updateImagesForSelectedColor() {
+    // ✅ For COLOR ONLY products
+    if (sizeInventoryList.isEmpty && selectedColor.value.isNotEmpty) {
+      final variant = selectedVariants
+          .firstWhereOrNull((v) => v["color"] == selectedColor.value);
+
+      if (variant != null && variant['imageSrc'] != null) {
+        final variantImage = variant['imageSrc'].toString();
+
+        if (variantImage.isNotEmpty && variantImage != 'null') {
+          final allImages = productDetails['imageUrls'] is List
+              ? List<String>.from((productDetails['imageUrls'] as List)
+                  .map((url) => url.toString()))
+              : <String>[];
+
+          allImages.remove(variantImage);
+          currentDisplayImages.assignAll([variantImage, ...allImages]);
+
+          print("🎨 Updated images for color ${selectedColor.value}");
+          print("🖼️ First image: $variantImage");
+          update();
+          return;
+        }
+      }
+    }
+
+    // ✅ For SIZE + COLOR products
+    if (selectedColor.value.isEmpty || selectedSize.value.isEmpty) {
+      if (productDetails['imageUrls'] is List) {
+        currentDisplayImages.assignAll((productDetails['imageUrls'] as List)
+            .map((url) => url.toString())
+            .toList());
+      }
+      update();
+      return;
+    }
+
+    final variant = selectedVariants.firstWhereOrNull((v) =>
+        v["size"] == selectedSize.value && v["color"] == selectedColor.value);
+
+    if (variant != null && variant['imageSrc'] != null) {
+      final variantImage = variant['imageSrc'].toString();
+
+      if (variantImage.isNotEmpty && variantImage != 'null') {
+        final allImages = productDetails['imageUrls'] is List
+            ? List<String>.from((productDetails['imageUrls'] as List)
+                .map((url) => url.toString()))
+            : <String>[];
+
+        allImages.remove(variantImage);
+        currentDisplayImages.assignAll([variantImage, ...allImages]);
+
+        print(
+            "🎨 Updated images for size ${selectedSize.value}, color ${selectedColor.value}");
+      } else {
+        if (productDetails['imageUrls'] is List) {
+          currentDisplayImages.assignAll((productDetails['imageUrls'] as List)
+              .map((url) => url.toString())
+              .toList());
+        }
+      }
+    } else {
+      if (productDetails['imageUrls'] is List) {
+        currentDisplayImages.assignAll((productDetails['imageUrls'] as List)
+            .map((url) => url.toString())
+            .toList());
+      }
+    }
+
+    update();
+  }
+
+// Get selected variant based on size + color
+  Map<String, dynamic>? getSelectedVariant() {
+    print("🔍 Finding variant for:");
+    print("   Size: ${selectedSize.value}");
+    print("   Color: ${selectedColor.value}");
+
+    // ✅ COLOR ONLY products (accessories)
+    if (sizeInventoryList.isEmpty && colorInventoryList.isNotEmpty) {
+      final variant = selectedVariants
+          .firstWhereOrNull((v) => v["color"] == selectedColor.value);
+
+      if (variant != null) {
+        print("✅ Found color-only variant: ${variant['id']}");
+      }
+      return variant;
+    }
+
+    // ✅ SIZE + COLOR products (clothing)
+    if (sizeInventoryList.isNotEmpty && colorInventoryList.isNotEmpty) {
+      final variant = selectedVariants.firstWhereOrNull((v) =>
+          v["size"] == selectedSize.value && v["color"] == selectedColor.value);
+
+      if (variant != null) {
+        print("✅ Found size+color variant: ${variant['id']}");
+      }
+      return variant;
+    }
+
+    // ✅ SIZE ONLY products
+    if (sizeInventoryList.isNotEmpty && colorInventoryList.isEmpty) {
+      final variant = selectedVariants
+          .firstWhereOrNull((v) => v["size"] == selectedSize.value);
+
+      if (variant != null) {
+        print("✅ Found size-only variant: ${variant['id']}");
+      }
+      return variant;
+    }
+
+    // ✅ Single variant products (no size, no color)
+    if (selectedVariants.isNotEmpty) {
+      print("✅ Using single variant: ${selectedVariants.first['id']}");
+      return selectedVariants.first;
+    }
+
+    print("❌ No variant found");
+    return null;
+  }
+
+// Get display price from selected variant or product details
+  num getDisplayPrice() {
+    final variant = getSelectedVariant();
+
+    if (variant != null) {
+      final price = variant['price'];
+      if (price is num && price > 0) return price;
+    }
+
+    // Fallback to product details
+    final pd = productDetails;
+    final price =
+        pd['price'] ?? pd['basePrice'] ?? pd['netAmount'] ?? pd['msp'];
+    if (price is num && price > 0) return price;
+
+    return num.tryParse(price?.toString() ?? '0') ?? 0;
+  }
+
+// Get MRP
+  num getDisplayMrp() {
+    final variant = getSelectedVariant();
+
+    // Try to get compareAtPrice from variant
+    final compareAt = variant?['compareAtPrice'];
+    if (compareAt is num && compareAt > 0) return compareAt;
+
+    // Fallback to product MRP
+    final mrp = productDetails['mrp'] ?? productDetails['manufacturingAmount'];
+    if (mrp is num && mrp > 0) return mrp;
+
+    return num.tryParse(mrp?.toString() ?? '0') ?? 0;
+  }
+
+// Get stock for selected variant
+  int getSelectedStock() {
+    final variant = getSelectedVariant();
+    if (variant == null) return 0;
+
+    final stocks = variant['stocks'];
+    return int.tryParse(stocks?.toString() ?? '0') ?? 0;
+  }
+
+  void loadColorsForSize(String size) {
+    print("🎨 Loading colors for size: $size");
+
+    final colors = selectedVariants
+        .where((v) => v["size"] == size)
+        .map((v) => v["color"].toString())
+        .where((c) => c.trim().isNotEmpty)
+        .toSet()
+        .toList();
+
+    print("🎨 Found colors: $colors");
+
+    colorInventoryList.assignAll(colors);
+
+    // Auto-select first color if available
+    if (colors.isNotEmpty) {
+      selectedColor.value = colors.first;
+      print("✅ Auto-selected color: ${colors.first}");
+
+      // ✅ Update images for selected color
+      updateImagesForSelectedColor();
+    } else {
+      selectedColor.value = '';
+      print("⚠️ No colors available for size $size");
+    }
+
+    update();
+  }
 
   bool checkPinvalidation(String pin) {
     if (pin.isEmpty) {
@@ -236,49 +431,51 @@ class ProductController extends BaseController {
     return true;
   }
 
+// Validation method
   bool checkDetailsValidation() {
-    bool isValid = true;
-
-    // Reset previous errors
     errorSizeMsg.value = "";
     errorColorMsg.value = "";
+    errorMsg.value = "";
 
     final hasSizes = sizeInventoryList.isNotEmpty;
     final hasColors = colorInventoryList.isNotEmpty;
 
-    // Check size selection
-    if (hasSizes) {
-      final selectedSize =
-          (selectedProductSize is Map && selectedProductSize.isNotEmpty)
-              ? selectedProductSize
-              : (selectedProductSize is Rx &&
-                      (selectedProductSize as Rx).value is Map)
-                  ? (selectedProductSize as Rx).value
-                  : null;
+    print("🔍 Validation Check:");
+    print("   Has Sizes: $hasSizes");
+    print("   Has Colors: $hasColors");
+    print("   Selected Size: ${selectedSize.value}");
+    print("   Selected Color: ${selectedColor.value}");
 
-      if (selectedSize == null || selectedSize.isEmpty) {
-        errorSizeMsg.value = "Please select a size.";
-        isValid = false;
-      }
+    // ✅ If product has sizes, validate size selection
+    if (hasSizes && selectedSize.value.isEmpty) {
+      errorSizeMsg.value = "Please select a size";
+      return false;
     }
 
-    // Check color selection
-    if (hasColors) {
-      final selectedColor =
-          (selectedProductColor is Map && selectedProductColor.isNotEmpty)
-              ? selectedProductColor
-              : (selectedProductColor is Rx &&
-                      (selectedProductColor as Rx).value is Map)
-                  ? (selectedProductColor as Rx).value
-                  : null;
-
-      if (selectedColor == null || selectedColor.isEmpty) {
-        errorColorMsg.value = "Please select a color.";
-        isValid = false;
-      }
+    // ✅ If product has colors, validate color selection
+    if (hasColors && selectedColor.value.isEmpty) {
+      errorColorMsg.value = "Please select a color";
+      return false;
     }
 
-    return isValid;
+    // ✅ Get selected variant
+    final variant = getSelectedVariant();
+    if (variant == null) {
+      errorMsg.value = "Selected combination is not available";
+      print(
+          "❌ No variant found for: Size=${selectedSize.value}, Color=${selectedColor.value}");
+      return false;
+    }
+
+    // ✅ Check stock
+    final stock = int.tryParse(variant['stocks']?.toString() ?? '0') ?? 0;
+    if (stock <= 0) {
+      errorMsg.value = "Selected variant is out of stock";
+      return false;
+    }
+
+    print("✅ Validation passed!");
+    return true;
   }
 
   /// ----------------------------------------------------------
@@ -439,15 +636,15 @@ class ProductController extends BaseController {
 
     try {
       errorMsg.value = "";
-      productDetails = {};
+      productDetails.clear();
       imageList.clear();
+      sizeInventoryList.clear();
+      colorInventoryList.clear();
+      selectedVariants.clear();
+      selectedSize.value = "";
+      selectedColor.value = "";
+      currentDisplayImages.clear();
 
-      /// --- NEW CORE FIX ---
-      sizeInventoryList.clear(); // sizes grouped list
-      colorInventoryList.clear(); // colors for selected size
-      selectedVariants.clear(); // full variant list
-
-      // --------------------------- API CALL ----------------------------
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';
 
@@ -465,13 +662,31 @@ class ProductController extends BaseController {
       final decoded = json.decode(resp.body);
       final data = decoded["data"];
 
+      // ✅ Store complete product details
+      productDetails = Map<String, dynamic>.from(data);
+
+      // ✅ Process imageUrls
+      if (data["imageUrls"] is List) {
+        imageList.assignAll((data["imageUrls"] as List)
+            .map((url) => {"name": url.toString()})
+            .toList());
+
+        currentDisplayImages.assignAll(
+            (data["imageUrls"] as List).map((url) => url.toString()).toList());
+      }
+
+      // ✅ Store brand details
+      if (data["brand"] != null) {
+        brandDetails = data["brand"];
+      }
+
+      // ✅ Process variants
       final variants =
           List<Map<String, dynamic>>.from(data["variants"].whereType<Map>());
 
-      //--------------------------------------------------------------------
-      // 1️⃣ BUILD PROPER VARIANT LIST: size + color combined
-      //--------------------------------------------------------------------
       final List<Map<String, dynamic>> parsedVariants = [];
+      bool hasSize = false;
+      bool hasColor = false;
 
       for (final v in variants) {
         String size = "";
@@ -479,72 +694,121 @@ class ProductController extends BaseController {
 
         if (v["selectedOptions"] is List) {
           for (final opt in v["selectedOptions"]) {
-            if (opt["name"].toString().toLowerCase() == "size") {
+            final optName = opt["name"].toString().toLowerCase();
+            if (optName == "size") {
               size = opt["value"].toString();
+              hasSize = true;
             }
-            if (opt["name"].toString().toLowerCase() == "color") {
+            if (optName == "color" || optName == "colour") {
               color = opt["value"].toString();
+              hasColor = true;
             }
           }
         }
+
+        final inventory = v["inventory"];
+        final stock =
+            inventory != null ? (inventory["availableStock"] ?? 0) : 0;
 
         parsedVariants.add({
           "id": v["id"],
           "size": size,
           "color": color,
           "price": v["price"],
-          "stocks": v["inventory"]?["availableStock"] ?? 0,
-          "variant": v
+          "stocks": stock,
+          "variant": v,
+          "imageSrc": v["imageSrc"],
         });
       }
 
       selectedVariants.assignAll(parsedVariants);
 
-      //--------------------------------------------------------------------
-      // 2️⃣ CREATE UNIQUE SIZE LIST
-      //--------------------------------------------------------------------
-      final List<String> uniqueSizes =
-          parsedVariants.map((e) => e["size"].toString()).toSet().toList();
+      print("🔍 Product Type Detection:");
+      print("   Has Size: $hasSize");
+      print("   Has Color: $hasColor");
 
-      uniqueSizes.sort((a, b) =>
-          a.length == b.length ? a.compareTo(b) : a.length.compareTo(b.length));
+      // ✅ Handle products with ONLY COLOR (no size)
+      if (!hasSize && hasColor) {
+        print("📦 Product Type: COLOR ONLY (Accessory)");
 
-      sizeInventoryList.assignAll(uniqueSizes);
+        // Get unique colors
+        final List<String> uniqueColors = parsedVariants
+            .map((e) => e["color"].toString())
+            .where((c) => c.isNotEmpty)
+            .toSet()
+            .toList();
 
-      //--------------------------------------------------------------------
-      // 3️⃣ AUTO-SELECT FIRST SIZE
-      //--------------------------------------------------------------------
-      final firstSize = uniqueSizes.first;
-      selectedSize.value = firstSize;
+        colorInventoryList.assignAll(uniqueColors);
 
-      //--------------------------------------------------------------------
-      // 4️⃣ LOAD COLORS FOR SELECTED SIZE
-      //--------------------------------------------------------------------
-      loadColorsForSize(firstSize);
+        // Auto-select first color
+        if (uniqueColors.isNotEmpty) {
+          selectedColor.value = uniqueColors.first;
+          updateImagesForSelectedColor();
 
-      //--------------------------------------------------------------------
-      // 5️⃣ SELECT FIRST COLOR OF SELECTED SIZE
-      //--------------------------------------------------------------------
-      if (colorInventoryList.isNotEmpty) {
-        selectedColor.value = colorInventoryList.first;
+          print("✅ Colors available: $uniqueColors");
+          print("✅ Auto-selected color: ${uniqueColors.first}");
+        }
       }
-    } catch (e) {
-      errorMsg.value = "Error fetching product.";
+      // ✅ Handle products with SIZE + COLOR (clothing)
+      else if (hasSize) {
+        print("📦 Product Type: SIZE + COLOR (Clothing)");
+
+        final List<String> uniqueSizes = parsedVariants
+            .map((e) => e["size"].toString())
+            .where((s) => s.isNotEmpty)
+            .toSet()
+            .toList();
+
+        final sizeOrder = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+        uniqueSizes.sort((a, b) {
+          final aIndex = sizeOrder.indexOf(a.toUpperCase());
+          final bIndex = sizeOrder.indexOf(b.toUpperCase());
+          if (aIndex == -1 && bIndex == -1) return a.compareTo(b);
+          if (aIndex == -1) return 1;
+          if (bIndex == -1) return -1;
+          return aIndex.compareTo(bIndex);
+        });
+
+        sizeInventoryList.assignAll(uniqueSizes);
+
+        if (uniqueSizes.isNotEmpty) {
+          final firstSize = uniqueSizes.first;
+          selectedSize.value = firstSize;
+
+          loadColorsForSize(firstSize);
+          updateImagesForSelectedColor();
+
+          print("✅ Sizes available: $uniqueSizes");
+          print("✅ Colors for $firstSize: ${colorInventoryList.toList()}");
+        }
+      }
+      // ✅ Handle products with ONLY SIZE (no color)
+      else if (hasSize && !hasColor) {
+        print("📦 Product Type: SIZE ONLY");
+
+        final List<String> uniqueSizes = parsedVariants
+            .map((e) => e["size"].toString())
+            .where((s) => s.isNotEmpty)
+            .toSet()
+            .toList();
+
+        sizeInventoryList.assignAll(uniqueSizes);
+
+        if (uniqueSizes.isNotEmpty) {
+          selectedSize.value = uniqueSizes.first;
+          print("✅ Auto-selected size: ${uniqueSizes.first}");
+        }
+      }
+
+      print("🖼️ Display images count: ${currentDisplayImages.length}");
+    } catch (e, stackTrace) {
+      errorMsg.value = "Error fetching product: $e";
+      print("❌ getProductById error: $e");
+      print("Stack trace: $stackTrace");
     } finally {
       isDetails.value = false;
       update();
     }
-  }
-
-  void loadColorsForSize(String size) {
-    final colors = selectedVariants
-        .where((v) => v["size"] == size)
-        .map((v) => v["color"].toString())
-        .where((c) => c.trim().isNotEmpty)
-        .toSet()
-        .toList();
-
-    colorInventoryList.assignAll(colors);
   }
 
   Future<void> getProductData(int gender) async {
