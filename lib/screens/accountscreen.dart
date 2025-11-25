@@ -235,77 +235,7 @@ class AccountScreenState extends State<AccountScreen> {
                                             ),
                                             const Expanded(child: SizedBox()),
                                             GestureDetector(
-                                              onTap: () async {
-                                                if (profileData.isNotEmpty) {
-                                                  String? genderStr =
-                                                      profileData["gender"]
-                                                          ?.toString()
-                                                          .toLowerCase();
-                                                  if (genderStr == "male") {
-                                                  } else if (genderStr ==
-                                                      "female") {
-                                                  } else if (genderStr ==
-                                                      "non-binary") {}
-
-                                                  // run async work first
-                                                  SystemChrome
-                                                      .setSystemUIOverlayStyle(
-                                                    const SystemUiOverlayStyle(
-                                                      statusBarColor:
-                                                          whiteColor,
-                                                    ),
-                                                  );
-                                                  await controller
-                                                      .getProfileData();
-                                                  controller.isEditNumber
-                                                      .value = true;
-                                                  controller.isPhoneNumber
-                                                      .value = false;
-
-                                                  final prefs =
-                                                      await SharedPreferences
-                                                          .getInstance();
-                                                  if (prefs.getInt('gender') !=
-                                                      null) {
-                                                    int id =
-                                                        prefs.getInt('gender')!;
-                                                    if (id == 1) {
-                                                      homeController
-                                                          .homeGenderValue
-                                                          .value = 2;
-                                                      homeController.genderText
-                                                          .value = "Men";
-                                                    } else if (id == 2) {
-                                                      homeController
-                                                          .homeGenderValue
-                                                          .value = 3;
-                                                      homeController.genderText
-                                                          .value = "Women";
-                                                    } else {
-                                                      homeController
-                                                          .homeGenderValue
-                                                          .value = 0;
-                                                      homeController.genderText
-                                                          .value = "Other";
-                                                    }
-                                                  }
-
-                                                  if (mounted) {
-                                                    setState(() {});
-                                                  }
-
-                                                  await analytics.logEvent(
-                                                    name: 'edit_profile_page',
-                                                    parameters: {
-                                                      'page_name':
-                                                          'edit_profile_page'
-                                                    },
-                                                  );
-                                                } else {
-                                                  getSnackBar(
-                                                      "Profile data not loaded yet. Please wait.");
-                                                }
-                                              },
+                                              onTap: () async {},
                                               child: Padding(
                                                 padding: EdgeInsets.only(
                                                     bottom: 16.sp),
