@@ -673,6 +673,16 @@ class CartScreenState extends State<CartScreen> {
 
   Widget _buildProductImage(
       Map product, String? imgUrl, bool outOfStock, int index) {
+    // 🔥 Priority: show variant image if available
+    final item = controller.orderList[index];
+    final variant = item["product_variant"] ?? {};
+    final String? colorImage = variant["imageSrc"];
+
+    // Decide which image to show
+    final String finalImage = (colorImage != null && colorImage.isNotEmpty)
+        ? colorImage
+        : (imgUrl ?? "");
+
     return GestureDetector(
       onTap: () => _navigateToProductDetails(index),
       child: Opacity(
@@ -680,30 +690,23 @@ class CartScreenState extends State<CartScreen> {
         child: SizedBox(
           height: 130.sp,
           width: 100.sp,
-          child: imgUrl != null
-              ? CachedNetworkImage(
-                  cacheManager: CacheManager(
-                    Config(
-                      "customCacheKey",
-                      stalePeriod: const Duration(days: 15),
-                      maxNrOfCacheObjects: 100,
-                    ),
-                  ),
-                  fit: BoxFit.cover,
-                  imageUrl: imgUrl,
-                  errorWidget: (context, url, error) => Image.asset(
-                    downloadImage,
-                    fit: BoxFit.cover,
-                    height: 130.sp,
-                    width: 100.sp,
-                  ),
-                )
-              : Image.asset(
-                  dummyWishlistImage,
-                  height: 130.sp,
-                  width: 100.sp,
-                  fit: BoxFit.cover,
-                ),
+          child: CachedNetworkImage(
+            cacheManager: CacheManager(
+              Config(
+                "customCacheKey",
+                stalePeriod: const Duration(days: 15),
+                maxNrOfCacheObjects: 100,
+              ),
+            ),
+            fit: BoxFit.cover,
+            imageUrl: finalImage,
+            errorWidget: (_, __, ___) => Image.asset(
+              downloadImage,
+              height: 130.sp,
+              width: 100.sp,
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
       ),
     );
@@ -756,91 +759,147 @@ class CartScreenState extends State<CartScreen> {
               ),
             ),
           ),
-
           Opacity(
             opacity: outOfStock ? 0.5 : 1,
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 4.sp),
-              child: Row(
+              child: Wrap(
+                spacing: 8.sp,
+                runSpacing: 8.sp, // prevents overflow
                 children: [
-                  // 👇 Size box shown as non-clickable (disabled)
-                  if (inventory["product_matrix_name_size"] != null &&
-                      inventory["product_matrix_name_size"]
-                          .toString()
-                          .isNotEmpty)
-                    Padding(
-                      padding: EdgeInsets.only(top: 5.sp, bottom: 5.sp),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: widget.backgroundcolor == whiteColor
-                              ? const Color(0xffF3F4F6)
-                              : const Color(0xFFDFDBFF),
-                          border: Border.all(
-                            width: 1,
-                            color: widget.backgroundcolor == whiteColor
-                                ? const Color(0xFFE5E7EB)
-                                : titleColor,
-                          ),
-                        ),
-                        height: 30.sp,
-                        width: 85.sp,
-                        alignment: Alignment.center,
-                        child: AppText(
-                          text:
-                              "Size : ${inventory["product_matrix_name_size"].toString()}",
-                          color: titleColor,
-                          fontSize: 10,
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
+                  Builder(
+                    builder: (_) {
+                      final variant = item["product_variant"] ?? {};
+                      final selectedOptions = variant["selectedOptions"] ?? [];
 
-                  // 👇 Only this (Qty) can be changed
-                  GestureDetector(
-                    onTap: () => _showQuantityBottomSheet(index),
-                    child: Padding(
-                      padding:
-                          EdgeInsets.only(left: 10.sp, top: 5.sp, bottom: 5.sp),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: widget.backgroundcolor == whiteColor
-                              ? const Color(0xffF3F4F6)
-                              : const Color(0xFFDFDBFF),
-                          border: Border.all(
-                            width: 1,
-                            color: widget.backgroundcolor == whiteColor
-                                ? const Color(0xFFE5E7EB)
-                                : titleColor,
-                          ),
-                        ),
-                        height: 30.sp,
-                        width: 85.sp,
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 5.sp, horizontal: 8.sp),
+                      String sizeName = "";
+                      String colorName = "";
+
+                      if (selectedOptions is List) {
+                        for (final o in selectedOptions) {
+                          final name =
+                              o["name"]?.toString().toLowerCase() ?? "";
+                          final value = o["value"]?.toString() ?? "";
+                          if (name == "size") sizeName = value;
+                          if (name == "color") colorName = value;
+                        }
+                      }
+
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // -----------------------------
+                          // SIZE BOX
+                          // -----------------------------
+                          if (sizeName.isNotEmpty)
+                            Container(
+                              height: 30.sp,
+                              padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: widget.backgroundcolor == whiteColor
+                                    ? const Color(0xffF3F4F6)
+                                    : const Color(0xFFDFDBFF),
+                                border: Border.all(
+                                  width: 1,
+                                  color: widget.backgroundcolor == whiteColor
+                                      ? const Color(0xFFE5E7EB)
+                                      : titleColor,
+                                ),
+                              ),
                               child: AppText(
-                                text: "Qty : ${item["quantity"] ?? "0"}",
+                                text: "Size : $sizeName",
                                 color: titleColor,
                                 fontSize: 10,
                                 fontFamily: "Franklin Gothic Regular",
-                                fontWeight: FontWeight.w400,
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  left: 2.sp, top: 2.sp, right: 2.sp),
-                              child: SvgPicture.asset(
-                                dropdownSvgImage,
-                                color: titleColor,
-                                height: 5.sp,
-                                width: 8.sp,
-                              ),
-                            ),
-                          ],
+                        ],
+                      );
+                    },
+                  ),
+
+                  // Builder(
+                  //   builder: (_) {
+                  //     final variant = item["product_variant"] ?? {};
+                  //     final selectedOptions = variant["selectedOptions"] ?? [];
+
+                  //     String colorName = "";
+
+                  //     if (selectedOptions is List) {
+                  //       for (final o in selectedOptions) {
+                  //         final name =
+                  //             o["name"]?.toString().toLowerCase() ?? "";
+                  //         if (name == "color") colorName = o["value"] ?? "";
+                  //       }
+                  //     }
+
+                  //     return Row(
+                  //       mainAxisSize: MainAxisSize.min,
+                  //       children: [
+                  //         if (colorName.isNotEmpty)
+                  //           Container(
+                  //             height: 30.sp,
+                  //             padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                  //             alignment: Alignment.center,
+                  //             decoration: BoxDecoration(
+                  //               color: widget.backgroundcolor == whiteColor
+                  //                   ? const Color(0xffF3F4F6)
+                  //                   : const Color(0xFFDFDBFF),
+                  //               border: Border.all(
+                  //                 width: 1,
+                  //                 color: widget.backgroundcolor == whiteColor
+                  //                     ? const Color(0xFFE5E7EB)
+                  //                     : titleColor,
+                  //               ),
+                  //             ),
+                  //             child: AppText(
+                  //               text: "Color : $colorName",
+                  //               color: titleColor,
+                  //               fontSize: 10,
+                  //               fontFamily: "Franklin Gothic Regular",
+                  //             ),
+                  //           ),
+                  //       ],
+                  //     );
+                  //   },
+                  // ),
+
+                  // -----------------------------
+                  // QTY BOX
+                  // -----------------------------
+                  GestureDetector(
+                    onTap: () => _showQuantityBottomSheet(index),
+                    child: Container(
+                      height: 30.sp,
+                      padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                      decoration: BoxDecoration(
+                        color: widget.backgroundcolor == whiteColor
+                            ? const Color(0xffF3F4F6)
+                            : const Color(0xFFDFDBFF),
+                        border: Border.all(
+                          width: 1,
+                          color: widget.backgroundcolor == whiteColor
+                              ? const Color(0xFFE5E7EB)
+                              : titleColor,
                         ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AppText(
+                            text: "Qty : ${item["quantity"] ?? "0"}",
+                            color: titleColor,
+                            fontSize: 10,
+                            fontFamily: "Franklin Gothic Regular",
+                          ),
+                          SizedBox(width: 6.sp),
+                          SvgPicture.asset(
+                            dropdownSvgImage,
+                            color: titleColor,
+                            height: 6.sp,
+                          ),
+                        ],
                       ),
                     ),
                   ),

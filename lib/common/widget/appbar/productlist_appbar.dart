@@ -52,7 +52,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
             children: [
               InkWell(
                 onTap: () {
-                  Get.back(); // this will pop current screen
+                  Get.back();
                 },
                 child: Container(
                   alignment: Alignment.bottomCenter,

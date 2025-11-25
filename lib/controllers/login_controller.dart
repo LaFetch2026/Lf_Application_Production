@@ -165,10 +165,19 @@ class LoginController extends BaseController {
       final data = jsonDecode(response.body);
       if (response.statusCode == 200) {
         number.value = phoneNumber;
+
+        // ⬇️⬇️ NEW: PRINT OTP HERE
+        final otpFromApi = data["data"]?["otp"] ?? data["otp"];
+        if (otpFromApi != null) {
+          print("🔐 OTP (Debug Only): $otpFromApi");
+        }
+
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('phonenumber', phoneNumber);
         await prefs.setString('authType', currentAuthFlowType.value);
+
         Get.to(() => OTPVerficationScreen(phoneMunber: phoneNumber));
+
         getSnackBar("OTP sent successfully!");
       } else {
         final errorField = isLogin ? loginError : registerError;

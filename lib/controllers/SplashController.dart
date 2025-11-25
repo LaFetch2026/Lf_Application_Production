@@ -32,14 +32,20 @@ class SplashController extends GetxController {
   }
 
   Future<void> _initSplashFlow() async {
-    // Short binding wait
-    await Future.delayed(const Duration(milliseconds: 200));
+    // Small delay to allow bindings
+    // await Future.delayed(const Duration(milliseconds: 200));
 
-    // Check if user is already in guest mode before anything
     final prefs = await SharedPreferences.getInstance();
-    if ((prefs.getBool('isGuest') ?? false) ||
-        (prefs.getBool('skip') ?? false)) {
-      if (kDebugMode) print('🚫 Splash aborted — Guest mode detected early');
+    final bool isGuest = prefs.getBool('isGuest') ?? false;
+    final bool skip = prefs.getBool('skip') ?? false;
+
+    // ============================================
+    //   FIXED — Guest / Skip should NAVIGATE,
+    //   NOT abort the splash flow.
+    // ============================================
+    if (isGuest || skip) {
+      if (kDebugMode) print('🟢 Guest mode detected — navigating instantly');
+      await handleNavigation(); // Immediate navigation
       return;
     }
 
@@ -49,7 +55,7 @@ class SplashController extends GetxController {
       if (ctx != null) await DeepLinkHandler.init(ctx);
     } catch (_) {}
 
-    // Splash delay
+    // Normal splash delay
     _delayTimer = Timer(const Duration(seconds: 3), () async {
       if (abortSplashFlow) {
         if (kDebugMode) print('🚫 Splash aborted mid-delay (Skip pressed)');
@@ -65,14 +71,21 @@ class SplashController extends GetxController {
 
     final prefs = await SharedPreferences.getInstance();
 
-    // ✅ Hard guest mode check before doing anything
-    if ((prefs.getBool('isGuest') ?? false) ||
-        (prefs.getBool('skip') ?? false)) {
+    final bool isGuest = prefs.getBool('isGuest') ?? false;
+    final bool skip = prefs.getBool('skip') ?? false;
+
+    // ==================================================
+    //   GUEST / SKIP → Direct to BottomNavScreen
+    // ==================================================
+    if (isGuest || skip) {
       if (kDebugMode) print('🟢 Guest mode → BottomNavScreen (no flicker)');
       _goTo(const BottomNavScreen());
       return;
     }
 
+    // ==================================================
+    //               AUTHENTICATION FLOW
+    // ==================================================
     final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
     final String? token = prefs.getString('token');
     final String? name = prefs.getString('name');
@@ -92,16 +105,21 @@ class SplashController extends GetxController {
       return;
     }
 
+    // ==================================================
+    //                DEFAULT → WELCOME
+    // ==================================================
     if (kDebugMode) print('🔴 No login/guest → WelcomeScreen');
     _goTo(const WelcomeScreen());
   }
 
   void _goTo(Widget screen) {
     Future.microtask(() async {
-      if (abortSplashFlow) return; // skip pressed mid-transition
+      if (abortSplashFlow) return;
+
       if (Get.isRegistered<SplashController>()) {
         Get.delete<SplashController>(force: true);
       }
+
       Get.offAll(() => screen);
     });
   }

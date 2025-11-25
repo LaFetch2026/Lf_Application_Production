@@ -160,7 +160,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
       bottomNavigationBar: BottomAppBar(
         padding: EdgeInsets.zero,
         color: whiteColor,
-        height: Platform.isIOS ? 50.sp : 60.sp,
+        height: Platform.isIOS ? 55.sp : 60.sp,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

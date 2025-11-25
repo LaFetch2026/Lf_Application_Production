@@ -63,26 +63,15 @@ class WishlistScreenState extends State<WishlistScreen> {
       body: Column(
         children: [
           ProductAppbar(
-            text: "Wishlist",
-            onPressedSearch: () async {
-              Get.to(() => SearchScreen())?.then((_) => setState(() {}));
-              analytics.logEvent(
-                name: "search_page",
-                parameters: {"page_name": "search_page"},
-              );
-            },
-            isHandPicked: true,
+            backColor: statusBarColor,
+            text: "",
             isWishlist: false,
-            onPressedCart: () async {
-              Get.to(() => CartScreen())?.then((_) {
-                setState(() {
-                  cartController.getCartData();
-                });
-              });
-              analytics.logEvent(
-                name: "cart_page",
-                parameters: {"page_name": "cart_page"},
-              );
+            isCart: false,
+            onPressedSearch: () {
+              Get.to(() => const SearchScreen());
+            },
+            onPressedCart: () {
+              Get.to(() => const CartScreen());
             },
           ),
           Expanded(
