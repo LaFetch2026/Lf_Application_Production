@@ -868,39 +868,31 @@ class CartScreenState extends State<CartScreen> {
                   // -----------------------------
                   // QTY BOX
                   // -----------------------------
-                  GestureDetector(
-                    onTap: () => _showQuantityBottomSheet(index),
-                    child: Container(
-                      height: 30.sp,
-                      padding: EdgeInsets.symmetric(horizontal: 10.sp),
-                      decoration: BoxDecoration(
+                  Container(
+                    height: 30.sp,
+                    padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                    decoration: BoxDecoration(
+                      color: widget.backgroundcolor == whiteColor
+                          ? const Color(0xffF3F4F6)
+                          : const Color(0xFFDFDBFF),
+                      border: Border.all(
+                        width: 1,
                         color: widget.backgroundcolor == whiteColor
-                            ? const Color(0xffF3F4F6)
-                            : const Color(0xFFDFDBFF),
-                        border: Border.all(
-                          width: 1,
-                          color: widget.backgroundcolor == whiteColor
-                              ? const Color(0xFFE5E7EB)
-                              : titleColor,
+                            ? const Color(0xFFE5E7EB)
+                            : titleColor,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AppText(
+                          text: "Qty : ${item["quantity"] ?? "0"}",
+                          color: titleColor,
+                          fontSize: 10,
+                          fontFamily: "Franklin Gothic Regular",
                         ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          AppText(
-                            text: "Qty : ${item["quantity"] ?? "0"}",
-                            color: titleColor,
-                            fontSize: 10,
-                            fontFamily: "Franklin Gothic Regular",
-                          ),
-                          SizedBox(width: 6.sp),
-                          SvgPicture.asset(
-                            dropdownSvgImage,
-                            color: titleColor,
-                            height: 6.sp,
-                          ),
-                        ],
-                      ),
+                        SizedBox(width: 6.sp),
+                      ],
                     ),
                   ),
                 ],
@@ -1802,59 +1794,6 @@ class CartScreenState extends State<CartScreen> {
       name: 'cart_product_details',
       parameters: <String, Object>{'page_name': 'cart_product_details'},
     );
-  }
-
-  void _showQuantityBottomSheet(int index) async {
-    final item = controller.orderList[index];
-    if (item["inventory"]["stocks"] == 0) return;
-
-    if (item["product"]["express_delivery"] == true) {
-      controller.qtyProductId.value = item["product"]["id"];
-      controller.qtyText.value =
-          "For express delivery product, quantity cant be updated.";
-      controller.update();
-      return;
-    }
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      constraints: BoxConstraints(
-        maxWidth: double.infinity,
-        maxHeight: 230.sp,
-      ),
-      builder: (ctx) {
-        return BottomQuantity(
-          qtyList: qtyList,
-          selectedQty: item["quantity"].toString(),
-          controller: controller,
-          stock: item["inventory"]["stocks"] > 10
-              ? qtyList.length
-              : item["inventory"]["stocks"],
-          onPressed: (quantity) {
-            controller.callAddtoCart(
-              quantity,
-              "quantity",
-              item["inventory"]["id"],
-              item["product"]["id"],
-              item["product"]["express_delivery"] ? 1 : 0,
-              1,
-              widget.backgroundcolor,
-              item["inventory"]["id"],
-            );
-          },
-        );
-      },
-    );
-
-    await analytics.logEvent(
-      name: 'cart_product_updateqtyClick',
-      parameters: <String, Object>{'page_name': 'cart_product_updateqtyClick'},
-    );
-
-    controller.qtyProductId.value = 0;
-    controller.qtyText.value = "";
-    controller.update();
   }
 
   void _showRemoveDialog(Map item) async {

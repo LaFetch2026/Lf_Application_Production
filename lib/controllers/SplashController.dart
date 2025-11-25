@@ -56,7 +56,7 @@ class SplashController extends GetxController {
     } catch (_) {}
 
     // Normal splash delay
-    _delayTimer = Timer(const Duration(seconds: 3), () async {
+    _delayTimer = Timer(const Duration(seconds: 1), () async {
       if (abortSplashFlow) {
         if (kDebugMode) print('🚫 Splash aborted mid-delay (Skip pressed)');
         return;

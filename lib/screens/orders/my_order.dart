@@ -25,6 +25,28 @@ class MyOrdersScreen extends StatefulWidget {
 class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
   final OrderController orderController = Get.put(OrderController());
 
+  /// 🔥 Smart date extractor based on status
+  DateTime _extractOrderDate(Map<String, dynamic> item) {
+    final status = item["status"]?.toString().toLowerCase() ?? "";
+
+    String? dateStr;
+
+    if (status == "cancelled") {
+      dateStr = item["cancelledAt"];
+    } else if (status == "delivered") {
+      dateStr = item["deliveredAt"];
+    } else if (status == "returned") {
+      dateStr = item["returnedAt"];
+    } else if (item["order"]?["orderedAt"] != null) {
+      dateStr = item["order"]["orderedAt"];
+    } else {
+      dateStr = item["createdAt"];
+    }
+
+    if (dateStr == null) return DateTime(1970);
+    return DateTime.tryParse(dateStr) ?? DateTime(1970);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -77,7 +99,15 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final orders = orderController.orderHistory;
+        final orders = [...orderController.orderHistory];
+
+        /// 🔥 Sort orders by correct date DESC
+        orders.sort((a, b) {
+          final dateA = _extractOrderDate(a);
+          final dateB = _extractOrderDate(b);
+          return dateB.compareTo(dateA);
+        });
+
         if (orders.isEmpty) {
           return const Center(
             child: AppText(
@@ -115,9 +145,9 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
 
     final status = (orderItem['status'] ?? 'pending').toString().toLowerCase();
     final orderItemId = orderItem['id'] ?? 0;
-    final date = order['orderedAt'] != null
-        ? order['orderedAt'].toString().split('T')[0]
-        : '';
+
+    /// 🔥 Correct date shown in UI also
+    final date = _extractOrderDate(orderItem).toIso8601String().split("T")[0];
 
     final imageList = (product['imageUrls'] ?? []) as List;
     final imageUrl = imageList.isNotEmpty
@@ -302,10 +332,12 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
             ),
           ],
         ),
+
+        /// RIGHT SIDE
         isDelivered
             ? GestureDetector(
                 onTap: () {
-                  // ✅ Build product data for RateProductScreen
+                  // Build product data for RateProductScreen
                   final productData = {
                     "id": orderItemId,
                     "variantId": orderItem['variantId'] ?? 0,

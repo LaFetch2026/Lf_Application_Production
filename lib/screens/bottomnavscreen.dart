@@ -358,7 +358,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SvgPicture.asset(icon, height: 20.sp, color: color),
+              SvgPicture.asset(icon, height: 19.sp, color: color),
               SizedBox(height: 6.sp),
               Text(
                 label.toUpperCase(),

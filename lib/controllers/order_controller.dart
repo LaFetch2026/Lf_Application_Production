@@ -571,18 +571,44 @@ class OrderController extends BaseController {
 
         if (body["status"] == 200 && body["data"] != null) {
           final List<dynamic> dataList = body["data"];
+
+          // ✅ Sort by status-specific date
+          dataList.sort((a, b) {
+            DateTime parseDate(dynamic item) {
+              final status = item["status"]?.toString().toLowerCase() ?? "";
+
+              String? dateStr;
+
+              if (status == "cancelled") {
+                dateStr = item["cancelledAt"];
+              } else if (status == "delivered") {
+                dateStr = item["deliveredAt"];
+              } else if (status == "returned") {
+                dateStr = item["returnedAt"];
+              } else if (item["order"]?["orderedAt"] != null) {
+                dateStr = item["order"]["orderedAt"];
+              } else {
+                dateStr = item["createdAt"];
+              }
+
+              if (dateStr == null) return DateTime(1970);
+              return DateTime.tryParse(dateStr) ?? DateTime(1970);
+            }
+
+            return parseDate(b).compareTo(parseDate(a)); // DESC
+          });
+
           orderHistory = dataList;
 
-          print("✅ Order history loaded (${orderHistory.length} orders)");
+          print(
+              "✅ Order history loaded & sorted (${orderHistory.length} items)");
         } else {
           apiError.value = body["message"] ?? "No order history found";
-          print("⚠️ ${apiError.value}");
           getSnackBar(apiError.value);
         }
       } else {
         apiError.value =
             "Failed to fetch order history (${res.statusCode}) — ${res.reasonPhrase}";
-        print("❌ ${res.body}");
         getSnackBar(apiError.value);
       }
     } catch (e) {
