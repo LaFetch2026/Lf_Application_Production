@@ -59,44 +59,51 @@ class LoginController extends BaseController {
   /// Load token & guest flag from SharedPreferences.
   Future<void> _loadTokenFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
+
     final t = prefs.getString('token') ?? '';
     final skipped = prefs.getBool('skip') ?? false;
 
     _token.value = t;
 
+    // 🟢 FIX: Do NOT modify isLoggedIn here — SplashController handles it
     if (t.isNotEmpty) {
-      isGuest.value = false;
-      await prefs.setBool('isLoggedIn', true);
+      isGuest.value = false; // logged in
     } else {
-      isGuest.value = skipped;
-      await prefs.setBool('isLoggedIn', false);
+      isGuest.value = skipped; // guest only if skip==true
     }
   }
 
   /// Persist token to prefs and update controller state.
   Future<void> setToken(String? newToken) async {
     final prefs = await SharedPreferences.getInstance();
+
     if (newToken != null && newToken.isNotEmpty) {
       await prefs.setString('token', newToken);
       await prefs.setBool('isLoggedIn', true);
-      await prefs.remove('skip'); // authenticated user isn't a guest
+      await prefs.remove('skip');
+
       _token.value = newToken;
       isGuest.value = false;
     } else {
+      // 🟢 FIX: reset token without touching guest/skip flag
       await prefs.remove('token');
-      await prefs.setBool('isLoggedIn', false);
       _token.value = '';
-      // leave isGuest as-is; caller decides
+
+      // don't touch skip here
     }
   }
 
   /// Clear all auth/session info for a clean logout.
   Future<void> clearTokenAndSession() async {
     final prefs = await SharedPreferences.getInstance();
+
     await prefs.remove('token');
     await prefs.setBool('isLoggedIn', false);
+    await prefs.remove('phonenumber');
+    await prefs.remove('name');
+
     _token.value = '';
-    isGuest.value = false; // explicit logout -> neutral state
+    isGuest.value = false; // explicit logout -> normal state
   }
 
   Future<void> logout() async {
@@ -166,7 +173,6 @@ class LoginController extends BaseController {
       if (response.statusCode == 200) {
         number.value = phoneNumber;
 
-        // ⬇️⬇️ NEW: PRINT OTP HERE
         final otpFromApi = data["data"]?["otp"] ?? data["otp"];
         if (otpFromApi != null) {
           print("🔐 OTP (Debug Only): $otpFromApi");
@@ -204,6 +210,7 @@ class LoginController extends BaseController {
       }
 
       final isLoginFlow = currentAuthFlowType.value == "login";
+
       final body = {
         'phone': phone,
         'otp': otp.value,
@@ -230,14 +237,12 @@ class LoginController extends BaseController {
             return;
           }
 
-          // Persist token & update state
           await setToken(accessToken);
           await prefs.setBool('isLoggedIn', true);
           await prefs.setString('phonenumber', phone);
           await prefs.setString('authType', currentAuthFlowType.value);
           await prefs.setInt('userId', userData?['id'] ?? 0);
 
-          // Optional profile fields
           final name = userData?['name'];
           final gender = userData?['gender'];
           final email = userData?['email'];
@@ -245,17 +250,16 @@ class LoginController extends BaseController {
           if (email != null) await prefs.setString('email', email);
           if (gender != null) _mapGenderToPrefs(gender, prefs);
 
-          // Clear guest marker once authenticated
+          // Guest mode OFF when logged in
           await prefs.remove('skip');
           isGuest.value = false;
 
           Get.offAll(() => const BottomNavScreen());
         } else {
-          // Signup flow → go to details (no token yet)
           await prefs.setString('phonenumber', phone);
           await prefs.setString('authType', currentAuthFlowType.value);
 
-          // Make sure we are NOT considered logged in or guest here
+          // user continues signup
           await setToken(null);
           await prefs.remove('skip');
           isGuest.value = false;
@@ -317,24 +321,18 @@ class LoginController extends BaseController {
     }
   }
 
-  /// Enter guest mode (no login). Persists `skip=true`, clears token,
-  /// and marks controller state accordingly.
+  /// Enter guest mode (no login). Persists `skip=true`
   Future<GuestResult> enterGuestMode() async {
     if (_busyGuestEnter.value) {
       return const GuestResult.failure('Busy');
     }
     _busyGuestEnter.value = true;
+
     try {
       final prefs = await SharedPreferences.getInstance();
 
-      // Clear any existing auth token/session
-      await setToken(null);
-      await prefs.setBool('isLoggedIn', false);
-
-      // Mark this device/session as "skipped login"
+      // Do NOT clear token/reset login state
       await prefs.setBool('skip', true);
-
-      // Reflect in controller state
       isGuest.value = true;
 
       return const GuestResult.success();

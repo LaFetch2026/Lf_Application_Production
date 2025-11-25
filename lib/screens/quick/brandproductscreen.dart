@@ -689,241 +689,241 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
             ),
 
             // Bottom bar (local sort/filter)
-            Container(height: 1.sp, width: double.infinity, color: titleColor),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5.sp),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  // SORT BY
-                  InkWell(
-                    onTap: () {
-                      setState(() => isBottomSheet = true);
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        constraints: BoxConstraints(
-                          maxWidth: double.infinity,
-                          maxHeight: 340.sp,
-                        ),
-                        builder: (ctx) => BottomSortBy(
-                          backgroundColor: homeAppBarColor,
-                          onPressedButton: (val) {
-                            // map expected labels to local flags
-                            if (val.toLowerCase().contains("low")) {
-                              _sortBy = "price_asc";
-                            } else if (val.toLowerCase().contains("high")) {
-                              _sortBy = "price_desc";
-                            } else if (val.toLowerCase().contains("new")) {
-                              _sortBy = "newest";
-                            } else {
-                              _sortBy = "";
-                            }
-                            setState(() {});
-                          },
-                        ),
-                      ).whenComplete(
-                          () => setState(() => isBottomSheet = false));
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10.sp, horizontal: 5.sp),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            sortBySvgImage,
-                            color: whiteColor,
-                            height: 19.sp,
-                            width: 15.sp,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                            child: Text(
-                              "SORT BY",
-                              style: TextStyle(
-                                color: whiteColor,
-                                fontSize: 13.sp,
-                                fontFamily: "Franklin Gothic",
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+            // Container(height: 1.sp, width: double.infinity, color: titleColor),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 5.sp),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //     children: [
+            //       // SORT BY
+            //       InkWell(
+            //         onTap: () {
+            //           setState(() => isBottomSheet = true);
+            //           showModalBottomSheet(
+            //             context: context,
+            //             isScrollControlled: true,
+            //             constraints: BoxConstraints(
+            //               maxWidth: double.infinity,
+            //               maxHeight: 340.sp,
+            //             ),
+            //             builder: (ctx) => BottomSortBy(
+            //               backgroundColor: homeAppBarColor,
+            //               onPressedButton: (val) {
+            //                 // map expected labels to local flags
+            //                 if (val.toLowerCase().contains("low")) {
+            //                   _sortBy = "price_asc";
+            //                 } else if (val.toLowerCase().contains("high")) {
+            //                   _sortBy = "price_desc";
+            //                 } else if (val.toLowerCase().contains("new")) {
+            //                   _sortBy = "newest";
+            //                 } else {
+            //                   _sortBy = "";
+            //                 }
+            //                 setState(() {});
+            //               },
+            //             ),
+            //           ).whenComplete(
+            //               () => setState(() => isBottomSheet = false));
+            //         },
+            //         child: Padding(
+            //           padding: EdgeInsets.symmetric(
+            //               vertical: 10.sp, horizontal: 5.sp),
+            //           child: Row(
+            //             children: [
+            //               SvgPicture.asset(
+            //                 sortBySvgImage,
+            //                 color: whiteColor,
+            //                 height: 19.sp,
+            //                 width: 15.sp,
+            //               ),
+            //               Padding(
+            //                 padding: EdgeInsets.symmetric(horizontal: 5.sp),
+            //                 child: Text(
+            //                   "SORT BY",
+            //                   style: TextStyle(
+            //                     color: whiteColor,
+            //                     fontSize: 13.sp,
+            //                     fontFamily: "Franklin Gothic",
+            //                     fontWeight: FontWeight.w500,
+            //                   ),
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //       ),
 
-                  Container(width: 1.sp, color: titleColor, height: 46.sp),
+            //       Container(width: 1.sp, color: titleColor, height: 46.sp),
 
-                  // CATEGORY
-                  InkWell(
-                    onTap: () {
-                      setState(() => isBottomSheet = true);
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        constraints: BoxConstraints(
-                          maxWidth: double.infinity,
-                          maxHeight: 270.sp,
-                        ),
-                        builder: (ctx) => BottomCategory(
-                          backgroundColor: homeAppBarColor,
-                          gender: widget.genderName,
-                          onPressedButton: (picked) {
-                            // Map your existing labels to superCatId
-                            if (picked == "Women") {
-                              _categoryFilter = 1;
-                            } else if (picked == "Men") {
-                              _categoryFilter = 2;
-                            } else {
-                              _categoryFilter = 0;
-                            }
-                            setState(() {});
-                          },
-                          onPressedFilter: () {
-                            Get.back();
-                            setState(() => isBottomSheet = true);
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              constraints: BoxConstraints(
-                                maxWidth: double.infinity,
-                                maxHeight: 500.sp,
-                              ),
-                              builder: (ctx) => BottomFilters(
-                                backgroundColor: homeAppBarColor,
-                                btnclearAll: () async {
-                                  _lowPrice = null;
-                                  _highPrice = null;
-                                  _sortBy = "";
-                                  _categoryFilter = 0;
-                                  final prefs =
-                                      await SharedPreferences.getInstance();
-                                  prefs.remove("brandList");
-                                  prefs.remove("colorList");
-                                  prefs.remove("sizeList");
-                                  prefs.remove("upper");
-                                  prefs.remove("lower");
-                                  prefs.remove("sortby");
-                                  prefs.remove("category");
-                                  setState(() {});
-                                },
-                                onClick: (low, high) {
-                                  _lowPrice = low;
-                                  _highPrice = high;
-                                  setState(() {});
-                                },
-                              ),
-                            ).whenComplete(
-                                () => setState(() => isBottomSheet = false));
-                          },
-                        ),
-                      ).whenComplete(
-                          () => setState(() => isBottomSheet = false));
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10.sp, horizontal: 5.sp),
-                      child: Column(
-                        children: [
-                          Text(
-                            "CATEGORY",
-                            style: TextStyle(
-                              color: whiteColor,
-                              fontSize: 13.sp,
-                              fontFamily: "Franklin Gothic",
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          if (_categoryFilter != 0)
-                            Padding(
-                              padding: EdgeInsets.only(top: 1.sp),
-                              child: Text(
-                                (_categoryFilter == 1 ? "WOMEN" : "MEN"),
-                                style: TextStyle(
-                                  decoration: TextDecoration.underline,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: lightgreyColor,
-                                  fontSize: 10.sp,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
+            //       // CATEGORY
+            //       InkWell(
+            //         onTap: () {
+            //           setState(() => isBottomSheet = true);
+            //           showModalBottomSheet(
+            //             context: context,
+            //             isScrollControlled: true,
+            //             constraints: BoxConstraints(
+            //               maxWidth: double.infinity,
+            //               maxHeight: 270.sp,
+            //             ),
+            //             builder: (ctx) => BottomCategory(
+            //               backgroundColor: homeAppBarColor,
+            //               gender: widget.genderName,
+            //               onPressedButton: (picked) {
+            //                 // Map your existing labels to superCatId
+            //                 if (picked == "Women") {
+            //                   _categoryFilter = 1;
+            //                 } else if (picked == "Men") {
+            //                   _categoryFilter = 2;
+            //                 } else {
+            //                   _categoryFilter = 0;
+            //                 }
+            //                 setState(() {});
+            //               },
+            //               onPressedFilter: () {
+            //                 Get.back();
+            //                 setState(() => isBottomSheet = true);
+            //                 showModalBottomSheet(
+            //                   context: context,
+            //                   isScrollControlled: true,
+            //                   constraints: BoxConstraints(
+            //                     maxWidth: double.infinity,
+            //                     maxHeight: 500.sp,
+            //                   ),
+            //                   builder: (ctx) => BottomFilters(
+            //                     backgroundColor: homeAppBarColor,
+            //                     btnclearAll: () async {
+            //                       _lowPrice = null;
+            //                       _highPrice = null;
+            //                       _sortBy = "";
+            //                       _categoryFilter = 0;
+            //                       final prefs =
+            //                           await SharedPreferences.getInstance();
+            //                       prefs.remove("brandList");
+            //                       prefs.remove("colorList");
+            //                       prefs.remove("sizeList");
+            //                       prefs.remove("upper");
+            //                       prefs.remove("lower");
+            //                       prefs.remove("sortby");
+            //                       prefs.remove("category");
+            //                       setState(() {});
+            //                     },
+            //                     onClick: (low, high) {
+            //                       _lowPrice = low;
+            //                       _highPrice = high;
+            //                       setState(() {});
+            //                     },
+            //                   ),
+            //                 ).whenComplete(
+            //                     () => setState(() => isBottomSheet = false));
+            //               },
+            //             ),
+            //           ).whenComplete(
+            //               () => setState(() => isBottomSheet = false));
+            //         },
+            //         child: Padding(
+            //           padding: EdgeInsets.symmetric(
+            //               vertical: 10.sp, horizontal: 5.sp),
+            //           child: Column(
+            //             children: [
+            //               Text(
+            //                 "CATEGORY",
+            //                 style: TextStyle(
+            //                   color: whiteColor,
+            //                   fontSize: 13.sp,
+            //                   fontFamily: "Franklin Gothic",
+            //                   fontWeight: FontWeight.w500,
+            //                 ),
+            //               ),
+            //               if (_categoryFilter != 0)
+            //                 Padding(
+            //                   padding: EdgeInsets.only(top: 1.sp),
+            //                   child: Text(
+            //                     (_categoryFilter == 1 ? "WOMEN" : "MEN"),
+            //                     style: TextStyle(
+            //                       decoration: TextDecoration.underline,
+            //                       fontFamily: "Franklin Gothic Regular",
+            //                       fontWeight: FontWeight.w400,
+            //                       color: lightgreyColor,
+            //                       fontSize: 10.sp,
+            //                     ),
+            //                   ),
+            //                 ),
+            //             ],
+            //           ),
+            //         ),
+            //       ),
 
-                  Container(width: 1.sp, color: titleColor, height: 46.sp),
+            //       Container(width: 1.sp, color: titleColor, height: 46.sp),
 
-                  // FILTERS (price range only, local)
-                  InkWell(
-                    onTap: () {
-                      setState(() => isBottomSheet = true);
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        constraints: BoxConstraints(
-                          maxWidth: double.infinity,
-                          maxHeight: 500.sp,
-                        ),
-                        builder: (ctx) => BottomFilters(
-                          backgroundColor: homeAppBarColor,
-                          btnclearAll: () async {
-                            _lowPrice = null;
-                            _highPrice = null;
-                            _sortBy = "";
-                            _categoryFilter = 0;
-                            final prefs = await SharedPreferences.getInstance();
-                            prefs.remove("brandList");
-                            prefs.remove("colorList");
-                            prefs.remove("sizeList");
-                            prefs.remove("upper");
-                            prefs.remove("lower");
-                            prefs.remove("sortby");
-                            prefs.remove("category");
-                            setState(() {});
-                          },
-                          onClick: (low, high) {
-                            _lowPrice = low;
-                            _highPrice = high;
-                            setState(() {});
-                          },
-                        ),
-                      ).whenComplete(
-                          () => setState(() => isBottomSheet = false));
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 10.sp, horizontal: 5.sp),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            filterSvgImage,
-                            color: whiteColor,
-                            height: 11.sp,
-                            width: 17.sp,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                            child: Text(
-                              "FILTERS",
-                              style: TextStyle(
-                                color: whiteColor,
-                                fontSize: 13.sp,
-                                fontFamily: "Franklin Gothic",
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(height: 1.sp, width: double.infinity, color: titleColor),
+            //       // FILTERS (price range only, local)
+            //       InkWell(
+            //         onTap: () {
+            //           setState(() => isBottomSheet = true);
+            //           showModalBottomSheet(
+            //             context: context,
+            //             isScrollControlled: true,
+            //             constraints: BoxConstraints(
+            //               maxWidth: double.infinity,
+            //               maxHeight: 500.sp,
+            //             ),
+            //             builder: (ctx) => BottomFilters(
+            //               backgroundColor: homeAppBarColor,
+            //               btnclearAll: () async {
+            //                 _lowPrice = null;
+            //                 _highPrice = null;
+            //                 _sortBy = "";
+            //                 _categoryFilter = 0;
+            //                 final prefs = await SharedPreferences.getInstance();
+            //                 prefs.remove("brandList");
+            //                 prefs.remove("colorList");
+            //                 prefs.remove("sizeList");
+            //                 prefs.remove("upper");
+            //                 prefs.remove("lower");
+            //                 prefs.remove("sortby");
+            //                 prefs.remove("category");
+            //                 setState(() {});
+            //               },
+            //               onClick: (low, high) {
+            //                 _lowPrice = low;
+            //                 _highPrice = high;
+            //                 setState(() {});
+            //               },
+            //             ),
+            //           ).whenComplete(
+            //               () => setState(() => isBottomSheet = false));
+            //         },
+            //         child: Padding(
+            //           padding: EdgeInsets.symmetric(
+            //               vertical: 10.sp, horizontal: 5.sp),
+            //           child: Row(
+            //             children: [
+            //               SvgPicture.asset(
+            //                 filterSvgImage,
+            //                 color: whiteColor,
+            //                 height: 11.sp,
+            //                 width: 17.sp,
+            //               ),
+            //               Padding(
+            //                 padding: EdgeInsets.symmetric(horizontal: 5.sp),
+            //                 child: Text(
+            //                   "FILTERS",
+            //                   style: TextStyle(
+            //                     color: whiteColor,
+            //                     fontSize: 13.sp,
+            //                     fontFamily: "Franklin Gothic",
+            //                     fontWeight: FontWeight.w500,
+            //                   ),
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // Container(height: 1.sp, width: double.infinity, color: titleColor),
           ],
         ),
       ),

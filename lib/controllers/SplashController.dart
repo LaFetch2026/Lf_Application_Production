@@ -1,132 +1,67 @@
-import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../controllers/home_controller.dart';
-import '../../core/utils/deeplink_handler.dart';
 import '../screens/bottomnavscreen.dart';
 import '../screens/userdetails.dart';
 import '../screens/welcomescreen.dart';
 
 class SplashController extends GetxController {
-  static bool abortSplashFlow = false; // shared guard
-  static bool _bootstrapped = false;
-
   bool _navigated = false;
-  Timer? _delayTimer;
-
-  late final HomeController homeController = Get.isRegistered<HomeController>()
-      ? Get.find<HomeController>()
-      : Get.put(HomeController(), permanent: true);
 
   @override
   void onReady() {
     super.onReady();
-
-    if (_bootstrapped) return;
-    _bootstrapped = true;
-
-    _initSplashFlow();
+    _start();
   }
 
-  Future<void> _initSplashFlow() async {
-    // Small delay to allow bindings
-    // await Future.delayed(const Duration(milliseconds: 200));
-
+  Future<void> _start() async {
     final prefs = await SharedPreferences.getInstance();
-    final bool isGuest = prefs.getBool('isGuest') ?? false;
-    final bool skip = prefs.getBool('skip') ?? false;
 
-    // ============================================
-    //   FIXED — Guest / Skip should NAVIGATE,
-    //   NOT abort the splash flow.
-    // ============================================
-    if (isGuest || skip) {
-      if (kDebugMode) print('🟢 Guest mode detected — navigating instantly');
-      await handleNavigation(); // Immediate navigation
-      return;
+    // Allow prefs to fully load
+    await Future.delayed(const Duration(milliseconds: 80));
+
+    final bool skipped = prefs.getBool("skip") ?? false;
+    final bool isLoggedIn = prefs.getBool("isLoggedIn") ?? false;
+    final String? token = prefs.getString("token");
+
+    // -------------------------
+    // GUEST MODE
+    // -------------------------
+    if (skipped && !isLoggedIn && (token == null || token.isEmpty)) {
+      return _go(const BottomNavScreen());
     }
 
-    // Try deep link init safely
-    try {
-      final ctx = Get.key.currentContext ?? Get.overlayContext;
-      if (ctx != null) await DeepLinkHandler.init(ctx);
-    } catch (_) {}
+    // -------------------------
+    // LOGGED-IN USER
+    // -------------------------
+    if (isLoggedIn && token != null && token.isNotEmpty) {
+      final name = prefs.getString("name");
+      final phone = prefs.getString("phonenumber");
 
-    // Normal splash delay
-    _delayTimer = Timer(const Duration(seconds: 1), () async {
-      if (abortSplashFlow) {
-        if (kDebugMode) print('🚫 Splash aborted mid-delay (Skip pressed)');
-        return;
+      if (name != null && name.isNotEmpty) {
+        return _go(const BottomNavScreen());
       }
-      await handleNavigation();
-    });
+
+      if (phone != null && phone.isNotEmpty) {
+        return _go(const UserDetailsScreen());
+      }
+
+      return _go(const WelcomeScreen());
+    }
+
+    // -------------------------
+    // NEW USER
+    // -------------------------
+    _go(const WelcomeScreen());
   }
 
-  Future<void> handleNavigation() async {
-    if (_navigated || abortSplashFlow) return;
+  void _go(Widget screen) {
+    if (_navigated) return;
     _navigated = true;
 
-    final prefs = await SharedPreferences.getInstance();
-
-    final bool isGuest = prefs.getBool('isGuest') ?? false;
-    final bool skip = prefs.getBool('skip') ?? false;
-
-    // ==================================================
-    //   GUEST / SKIP → Direct to BottomNavScreen
-    // ==================================================
-    if (isGuest || skip) {
-      if (kDebugMode) print('🟢 Guest mode → BottomNavScreen (no flicker)');
-      _goTo(const BottomNavScreen());
-      return;
-    }
-
-    // ==================================================
-    //               AUTHENTICATION FLOW
-    // ==================================================
-    final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-    final String? token = prefs.getString('token');
-    final String? name = prefs.getString('name');
-    final String? phone = prefs.getString('phonenumber');
-
-    if (isLoggedIn && token != null && token.isNotEmpty) {
-      if (name != null && name.isNotEmpty) {
-        if (kDebugMode) print('✅ Authenticated → BottomNavScreen');
-        _goTo(const BottomNavScreen());
-      } else if (phone != null && phone.isNotEmpty) {
-        if (kDebugMode) print('🟡 Incomplete profile → UserDetailsScreen');
-        _goTo(const UserDetailsScreen());
-      } else {
-        if (kDebugMode) print('⚠️ Missing user info → WelcomeScreen');
-        _goTo(const WelcomeScreen());
-      }
-      return;
-    }
-
-    // ==================================================
-    //                DEFAULT → WELCOME
-    // ==================================================
-    if (kDebugMode) print('🔴 No login/guest → WelcomeScreen');
-    _goTo(const WelcomeScreen());
-  }
-
-  void _goTo(Widget screen) {
-    Future.microtask(() async {
-      if (abortSplashFlow) return;
-
-      if (Get.isRegistered<SplashController>()) {
-        Get.delete<SplashController>(force: true);
-      }
-
+    Future.microtask(() {
       Get.offAll(() => screen);
     });
-  }
-
-  @override
-  void onClose() {
-    _delayTimer?.cancel();
-    super.onClose();
   }
 }

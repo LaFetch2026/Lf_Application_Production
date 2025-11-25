@@ -2,7 +2,19 @@ import 'dart:async';
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 
 class ShareLinkGenerator {
-  static final AppsflyerSdk _af = AppsflyerSdk(null);
+  static late final AppsflyerSdk _af;
+
+  static Future<void> init() async {
+    final AppsFlyerOptions options = AppsFlyerOptions(
+      afDevKey: "tzivSReYr7ZyuqVbEP6z6d",
+      appId: "6739497338",
+      showDebug: true,
+      timeToWaitForATTUserAuthorization: 15,
+    );
+
+    _af = AppsflyerSdk(options);
+    await _af.initSdk();
+  }
 
   static Future<String> generateProductShareLink({
     required int productId,
@@ -22,7 +34,7 @@ class ShareLinkGenerator {
         "slug": slug,
         "brand_name": brandName,
         "type": type,
-        "deep_link_value": "product_details"
+        "deep_link_value": "product_details",
       },
     );
 

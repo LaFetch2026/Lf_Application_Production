@@ -32,35 +32,18 @@
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />
 
-        <!-- Flutter Meta -->
-        <meta-data
-            android:name="flutterEmbedding"
-            android:value="2" />
-        <meta-data
-            android:name="io.flutter.embedding.android.NormalTheme"
-            android:resource="@style/NormalTheme" />
-        <meta-data
-            android:name="flutter_deeplinking_enabled"
-            android:value="true" />
+        <meta-data android:name="flutterEmbedding" android:value="2" />
+        <meta-data android:name="io.flutter.embedding.android.NormalTheme" android:resource="@style/NormalTheme" />
+        <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
 
         <!-- Facebook SDK Meta -->
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
-        <meta-data
-            android:name="com.facebook.sdk.ClientToken"
-            android:value="@string/facebook_client_token" />
-        <meta-data
-            android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
-            android:value="true" />
-        <meta-data
-            android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
-            android:value="true" />
-        <meta-data
-            android:name="com.facebook.sdk.CodelessDebugLogEnabled"
-            android:value="true" />
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id" />
+        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token" />
+        <meta-data android:name="com.facebook.sdk.AutoLogAppEventsEnabled" android:value="true" />
+        <meta-data android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled" android:value="true" />
+        <meta-data android:name="com.facebook.sdk.CodelessDebugLogEnabled" android:value="true" />
 
-        <!-- Main Flutter Activity -->
+        <!-- Flutter Main Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -69,21 +52,57 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
+
+            <!-- Launcher -->
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Deep linking -->
+            <!-- ========================= -->
+            <!-- ⭐ CUSTOM SCHEME DEEPLINKS -->
+            <!--  lafetch://product/1234   -->
+            <!-- ========================= -->
+<intent-filter android:autoVerify="true">
+    <action android:name="android.intent.action.VIEW" />
+
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+
+    <!-- Deep link scheme -->
+    <data android:scheme="lafetch" />
+
+    <!-- App Links (HTTPS) -->
+    <data
+        android:scheme="https"
+        android:host="lafetch.com"
+        android:pathPrefix="/" />
+</intent-filter>
+
+
+            <!-- ============================= -->
+            <!-- ⭐ UNIVERSAL LINKS (HTTPS)     -->
+            <!-- https://lafetch.onelink.me/... -->
+            <!-- https://lafetch.com/product   -->
+            <!-- ============================= -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="lafetch" />
+                <!-- AppsFlyer OneLink -->
+                <data
+                    android:scheme="https"
+                    android:host="lafetch.onelink.me" />
 
+                <!-- Your main domain -->
+                <data
+                    android:scheme="https"
+                    android:host="lafetch.com"
+                    android:pathPrefix="/product" />
             </intent-filter>
+
         </activity>
 
         <!-- Facebook Login Activity -->
@@ -92,16 +111,14 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
 
-        <!-- Facebook Custom Tab Activity -->
+        <!-- Facebook Custom Tab -->
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
+                <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
+                <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
@@ -111,5 +128,7 @@
             android:name="com.facebook.FacebookContentProvider"
             android:authorities="com.facebook.app.FacebookContentProvider915626513880487"
             android:exported="true" />
+
     </application>
+
 </manifest>

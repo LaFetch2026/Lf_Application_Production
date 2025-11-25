@@ -7,12 +7,14 @@ class AuthApiClient extends http.BaseClient {
   final http.Client _inner;
   AuthApiClient(this._inner);
 
+  static bool ignore401 = true; // 🟢 <— prevents unwanted logout
+
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final prefs = await SharedPreferences.getInstance();
     final accessToken = prefs.getString('token');
 
-    if (accessToken != null) {
+    if (accessToken != null && accessToken.isNotEmpty) {
       request.headers['Authorization'] = 'Bearer $accessToken';
     }
 
@@ -28,13 +30,19 @@ class AuthApiClient extends http.BaseClient {
       throw Exception("Network error: $e");
     }
 
+    // 🛑 Previously this would trigger Splash logout indirectly!
     if (response.statusCode == 401) {
       print("🛑 401 Unauthorized for ${request.method} ${request.url}");
 
       final bodyString = await _readResponseAsString(response);
       print("🔍 401 body: $bodyString");
 
-      // Just pass the response as-is — no refresh or redirect
+      // 🟢 FIX: Ignore 401 unless REAL logout is required
+      if (!ignore401) {
+        // Here you may force logout or refresh token
+      }
+
+      // Pass response normally (no forced logout)
     }
 
     return response;
@@ -99,6 +107,6 @@ class AuthApiClient extends http.BaseClient {
   String _serializeBody(Object body) {
     if (body is String) return body;
     if (body is List<int>) return utf8.decode(body);
-    return jsonEncode(body); // treat as Map
+    return jsonEncode(body);
   }
 }
