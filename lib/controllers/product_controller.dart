@@ -224,73 +224,69 @@ class ProductController extends BaseController {
 
 // Method to update images based on selected color
   void updateImagesForSelectedColor() {
-    // ✅ For COLOR ONLY products
-    if (sizeInventoryList.isEmpty && selectedColor.value.isNotEmpty) {
-      final variant = selectedVariants
-          .firstWhereOrNull((v) => v["color"] == selectedColor.value);
+    final pd = productDetails;
+    final color = selectedColor.value.trim().toLowerCase();
+    final size = selectedSize.value.trim().toLowerCase();
 
-      if (variant != null && variant['imageSrc'] != null) {
-        final variantImage = variant['imageSrc'].toString();
+    print("🎨 Updating images for Color=$color | Size=$size");
 
-        if (variantImage.isNotEmpty && variantImage != 'null') {
-          final allImages = productDetails['imageUrls'] is List
-              ? List<String>.from((productDetails['imageUrls'] as List)
-                  .map((url) => url.toString()))
-              : <String>[];
+    final variants = (pd["variants"] ?? []) as List;
 
-          allImages.remove(variantImage);
-          currentDisplayImages.assignAll([variantImage, ...allImages]);
+    // FIND VARIANT MATCHING COLOR + SIZE (prefer exact match)
+    Map? variant = variants.firstWhereOrNull((v) {
+      final opts = (v["selectedOptions"] ?? []) as List;
+      final hasColor = opts.any((o) =>
+          o["name"].toString().toLowerCase() == "color" &&
+          o["value"].toString().toLowerCase() == color);
 
-          print("🎨 Updated images for color ${selectedColor.value}");
-          print("🖼️ First image: $variantImage");
-          update();
-          return;
-        }
-      }
-    }
+      final hasSize = opts.any((o) =>
+          o["name"].toString().toLowerCase() == "size" &&
+          o["value"].toString().toLowerCase() == size);
 
-    // ✅ For SIZE + COLOR products
-    if (selectedColor.value.isEmpty || selectedSize.value.isEmpty) {
-      if (productDetails['imageUrls'] is List) {
-        currentDisplayImages.assignAll((productDetails['imageUrls'] as List)
-            .map((url) => url.toString())
-            .toList());
+      if (size.isEmpty) return hasColor;
+      return hasColor && hasSize;
+    });
+
+    if (variant == null) {
+      print("⚠ No variant matched color/size. Showing default images.");
+      if (pd["imageUrls"] is List) {
+        currentDisplayImages.assignAll(
+          (pd["imageUrls"] as List).map((e) => e.toString()).toList(),
+        );
       }
       update();
       return;
     }
 
-    final variant = selectedVariants.firstWhereOrNull((v) =>
-        v["size"] == selectedSize.value && v["color"] == selectedColor.value);
+    // Shopify Variant IMAGES (Correct)
+    final variantMedia = variant["images"] ??
+        variant["media"] ??
+        []; // some APIs return "media" instead of "images"
 
-    if (variant != null && variant['imageSrc'] != null) {
-      final variantImage = variant['imageSrc'].toString();
+    List<String> images = [];
 
-      if (variantImage.isNotEmpty && variantImage != 'null') {
-        final allImages = productDetails['imageUrls'] is List
-            ? List<String>.from((productDetails['imageUrls'] as List)
-                .map((url) => url.toString()))
-            : <String>[];
-
-        allImages.remove(variantImage);
-        currentDisplayImages.assignAll([variantImage, ...allImages]);
-
-        print(
-            "🎨 Updated images for size ${selectedSize.value}, color ${selectedColor.value}");
-      } else {
-        if (productDetails['imageUrls'] is List) {
-          currentDisplayImages.assignAll((productDetails['imageUrls'] as List)
-              .map((url) => url.toString())
-              .toList());
-        }
-      }
-    } else {
-      if (productDetails['imageUrls'] is List) {
-        currentDisplayImages.assignAll((productDetails['imageUrls'] as List)
-            .map((url) => url.toString())
-            .toList());
-      }
+    if (variantMedia is List) {
+      images = variantMedia
+          .map((e) =>
+              e["src"]?.toString() ?? e["url"]?.toString() ?? e.toString())
+          .where((e) => e.isNotEmpty)
+          .toList();
     }
+
+    if (images.isEmpty) {
+      // fallback to imageSrc fallback
+      final fallbackImg = variant["imageSrc"]?.toString() ?? "";
+      if (fallbackImg.isNotEmpty && fallbackImg != "null")
+        images.add(fallbackImg);
+    }
+
+    // if still empty → main product images
+    if (images.isEmpty && pd["imageUrls"] is List) {
+      images = (pd["imageUrls"] as List).map((e) => e.toString()).toList();
+    }
+
+    currentDisplayImages.assignAll(images);
+    print("🖼 Final images loaded (${images.length}): $images");
 
     update();
   }
