@@ -6,9 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
 import '../wishlistscreen.dart';
-
 import '../../common/widget/appbar/backbutton_appbar.dart';
 import '../../common/widget/bottom_sheets/bottomsheetboard.dart';
 import '../../common/widget/lists/dummy_grid_list.dart';

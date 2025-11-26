@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:lafetch/common/widget/appbar/wishlistappbar.dart';
 
 import 'cartscreen.dart';
 import 'searchscreen.dart';
@@ -35,11 +36,24 @@ class WishlistScreenState extends State<WishlistScreen> {
   final cartController = Get.put(CartController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
+  late ScrollController wishlistScroll; // ✅ FIX added
+
   @override
   void initState() {
     super.initState();
+    wishlistScroll = ScrollController();
+
+    wishlistScroll.addListener(() {
+      final pos = wishlistScroll.position;
+      if (pos.pixels >= pos.maxScrollExtent - 16 &&
+          wishlistController.hasnextpage.value &&
+          !wishlistController.loadMore.value) {
+        // paging (if needed)
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // ✅ put back the original logic here
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: statusBarColor,
         systemNavigationBarColor: statusBarColor,
@@ -51,9 +65,15 @@ class WishlistScreenState extends State<WishlistScreen> {
       wishlistController.isWishlist.value = false;
       wishlistController.page.value = 1;
 
-      // new API: fetch all boards for the user
+      // 🔥 this actually loads your boards
       wishlistController.listBoardsForUser();
     });
+  }
+
+  @override
+  void dispose() {
+    wishlistScroll.dispose();
+    super.dispose();
   }
 
   @override
@@ -62,17 +82,14 @@ class WishlistScreenState extends State<WishlistScreen> {
       backgroundColor: whiteColor,
       body: Column(
         children: [
-          ProductAppbar(
+          WishlistAppbar(
+            showBack: true,
             backColor: statusBarColor,
             text: "",
             isWishlist: false,
             isCart: false,
-            onPressedSearch: () {
-              Get.to(() => const SearchScreen());
-            },
-            onPressedCart: () {
-              Get.to(() => const CartScreen());
-            },
+            onPressedSearch: () => Get.to(() => const SearchScreen()),
+            onPressedCart: () => Get.to(() => const CartScreen()),
           ),
           Expanded(
             child: SingleChildScrollView(
@@ -478,7 +495,7 @@ class WishlistScreenState extends State<WishlistScreen> {
           final boardName = result["boardName"];
 
           if (boardId != null && boardName != null) {
-            Get.off(() => BoardScreen(
+            Get.to(() => BoardScreen(
                   boardId:
                       boardId is int ? boardId : int.tryParse('$boardId') ?? 0,
                   boardName: boardName.toString(),

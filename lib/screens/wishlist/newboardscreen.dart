@@ -5,6 +5,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/screens/bottomnavscreen.dart';
 
 import '../../common/widget/appbar/backbutton_appbar.dart';
 import '../../common/widget/other/common_widget.dart';
@@ -88,7 +89,7 @@ class _NewBoardScreenState extends State<NewBoardScreen> {
 
       // Route to Wishlist (fresh list after create)
       if (!mounted) return;
-      Get.offAll(() => const WishlistScreen());
+      Get.off(() => WishlistScreen());
       _submitting = false;
       return;
     }

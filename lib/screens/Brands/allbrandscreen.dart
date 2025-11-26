@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/Brands/brand_product_list.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
@@ -58,12 +58,13 @@ class AllBrandScreenState extends State<AllBrandScreen> {
   late VideoPlayerController videoController;
   bool hasVideoError = false;
   String videoErrorMessage = '';
+  bool _isMuted = false; // Define the mute state
+  late VideoPlayerController _videoPlayerController;
 
   @override
   void initState() {
     super.initState();
-    // _scrollController.addListener(_onScroll);
-
+    // Initialize video player
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: homeAppBarColor,
@@ -72,16 +73,13 @@ class AllBrandScreenState extends State<AllBrandScreen> {
         systemNavigationBarColor: homeAppBarColor,
       ));
 
-      // reset some shared UI state
       brandController.brandProductDetailsList.clear();
       productController.productSortBy.value = "";
       productController.filterProductEnable.value = false;
       productController.categoryFilter.value = 0;
 
-      // ✅ Fetch brand details from your new API
       await brandController.getBrandDetails(widget.id, widget.slug);
 
-      // Decide header media
       final mediaUrl =
           brandController.brandDetails["brandInfo"]?["video"]?.toString() ?? "";
       if (mediaUrl.isNotEmpty && _looksLikeVideo(mediaUrl)) {
@@ -89,8 +87,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
         hasVideoError = false;
         videoErrorMessage = '';
       } else {
-        // It's not a video; we'll show it as an image in the build method
-        hasVideoError = true; // this disables the video widget branch
+        hasVideoError = true;
         videoErrorMessage = 'Using image banner';
       }
 
@@ -98,7 +95,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     });
   }
 
-  // ---------- Helpers ----------
   bool _looksLikeVideo(String u) {
     final x = u.toLowerCase();
     return x.endsWith('.mp4') ||
@@ -119,8 +115,88 @@ class AllBrandScreenState extends State<AllBrandScreen> {
         x.endsWith('.bmp');
   }
 
+  void _initializeMainVideo(String videoUrl) {
+    try {
+      _videoPlayerController =
+          VideoPlayerController.networkUrl(Uri.parse(videoUrl));
+      _initializeVideoPlayerFuture =
+          _videoPlayerController.initialize().then((_) {
+        _videoPlayerController.setLooping(true);
+        _videoPlayerController.setVolume(1.0);
+        _videoPlayerController.play();
+      }).catchError((error) {
+        setState(() {
+          hasVideoError = true;
+          videoErrorMessage = 'Failed to load video: $error';
+        });
+      });
+
+      _videoPlayerController.addListener(() {
+        if (_videoPlayerController.value.hasError) {
+          setState(() {
+            hasVideoError = true;
+            videoErrorMessage = _videoPlayerController.value.errorDescription ??
+                'Unknown video error';
+          });
+        }
+      });
+    } catch (e) {
+      hasVideoError = true;
+      videoErrorMessage = 'Video controller creation error: $e';
+    }
+  }
+
+  Widget _buildMainVideoWidget() {
+    if (hasVideoError || _initializeVideoPlayerFuture == null) {
+      return _buildVideoErrorWidget(
+        videoErrorMessage.isNotEmpty
+            ? videoErrorMessage
+            : 'Video not initialized yet',
+      );
+    }
+
+    return FutureBuilder(
+      future: _initializeVideoPlayerFuture,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return _buildVideoErrorWidget(
+              'Video loading failed: ${snapshot.error}');
+        }
+        if (snapshot.connectionState == ConnectionState.done &&
+            !hasVideoError) {
+          return AspectRatio(
+            aspectRatio: _videoPlayerController.value.aspectRatio,
+            child: VideoPlayer(_videoPlayerController),
+          );
+        }
+        return Container(
+          height: 211.sp,
+          width: double.infinity,
+          color: cardBg,
+          child: const Center(
+            child: CircularProgressIndicator(color: Colors.white),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildVideoErrorWidget(String errorMessage) {
+    return Container(
+      height: 211.sp,
+      width: double.infinity,
+      color: cardBg,
+      child: Center(
+        child: Text(
+          ' ', // Empty space to show an image instead
+          style: TextStyle(color: Colors.white70, fontSize: 16.sp),
+        ),
+      ),
+    );
+  }
+
   List<Map<String, dynamic>> _normalizedProducts() {
-    final raw = (brandController.brandDetails["products"] as List?) ?? const [];
+    final raw = (brandController.brandDetails["products"] as List?) ?? [];
     final brandName =
         (brandController.brandDetails["brandInfo"]?["name"] ?? '').toString();
 
@@ -158,115 +234,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     }).toList();
   }
 
-  void _initializeMainVideo(String videoUrl) {
-    try {
-      videoController = VideoPlayerController.networkUrl(Uri.parse(videoUrl));
-      _initializeVideoPlayerFuture = videoController.initialize().then((_) {
-        videoController.setLooping(true);
-        videoController.setVolume(1.0);
-        videoController.play();
-      }).catchError((error) {
-        setState(() {
-          hasVideoError = true;
-          videoErrorMessage = 'Failed to load video: $error';
-        });
-      });
-
-      videoController.addListener(() {
-        if (videoController.value.hasError) {
-          setState(() {
-            hasVideoError = true;
-            videoErrorMessage =
-                videoController.value.errorDescription ?? 'Unknown video error';
-          });
-        }
-      });
-    } catch (e) {
-      hasVideoError = true;
-      videoErrorMessage = 'Video controller creation error: $e';
-    }
-  }
-
-  Widget _buildMainVideoWidget() {
-    if (hasVideoError || _initializeVideoPlayerFuture == null) {
-      return _buildVideoErrorWidget(
-        videoErrorMessage.isNotEmpty
-            ? videoErrorMessage
-            : 'Video not initialized yet',
-      );
-    }
-
-    return FutureBuilder(
-      future: _initializeVideoPlayerFuture,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return _buildVideoErrorWidget(
-              'Video loading failed: ${snapshot.error}');
-        }
-        if (snapshot.connectionState == ConnectionState.done &&
-            !hasVideoError) {
-          return AspectRatio(
-            aspectRatio: videoController.value.aspectRatio,
-            child: VideoPlayer(videoController),
-          );
-        }
-        return Container(
-          height: 211.sp,
-          width: double.infinity,
-          color: cardBg,
-          child: const Center(
-            child: CircularProgressIndicator(color: Colors.white),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildVideoErrorWidget(String errorMessage) {
-    return Container(
-      height: 211.sp,
-      width: double.infinity,
-      color: cardBg,
-      child: Center(
-        child: Text(
-          ' ', // keep it empty; we’ll show an image instead in the build
-          style: TextStyle(color: Colors.white70, fontSize: 16.sp),
-        ),
-      ),
-    );
-  }
-
-  // void _onScroll() {
-  //   if (!_scrollController.hasClients) return;
-  //   final maxScroll = _scrollController.position.maxScrollExtent;
-  //   final currentScroll = _scrollController.position.pixels;
-  //   final scrollPercentage =
-  //       maxScroll == 0 ? 100.0 : (currentScroll / maxScroll) * 100;
-
-  //   if (scrollPercentage >= 25 && !_triggeredScrolls.contains('25%')) {
-  //     AnalyticsHelper.logScrollEvent('25%');
-  //     _triggeredScrolls.add('25%');
-  //   }
-  //   if (scrollPercentage >= 50 && !_triggeredScrolls.contains('50%')) {
-  //     AnalyticsHelper.logScrollEvent('50%');
-  //     _triggeredScrolls.add('50%');
-  //   }
-  //   if (scrollPercentage >= 75 && !_triggeredScrolls.contains('75%')) {
-  //     AnalyticsHelper.logScrollEvent('75%');
-  //     _triggeredScrolls.add('75%');
-  //   }
-  //   if (scrollPercentage >= 100 && !_triggeredScrolls.contains('100%')) {
-  //     AnalyticsHelper.logScrollEvent('100%');
-  //     _triggeredScrolls.add('100%');
-  //   }
-  // }
-
   @override
   void dispose() {
     try {
       if (!hasVideoError) {
-        videoController.pause();
-        videoController.dispose();
+        _videoPlayerController.pause();
+        _videoPlayerController.dispose();
       }
     } catch (e) {
       print('Error disposing main video controller: $e');
@@ -277,9 +250,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String brandName =
+    final brandName =
         (brandController.brandDetails["brandInfo"]?["name"] ?? '').toString();
-
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: homeAppBarColor,
@@ -288,7 +260,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
           AllBrandAppbar(
             onPressedBack: () {
               try {
-                if (!hasVideoError) videoController.pause();
+                if (!hasVideoError) _videoPlayerController.pause();
               } catch (_) {}
               Get.close(1);
             },
@@ -303,9 +275,10 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                 getSnackBar("No website link available for this brand.");
               }
               await analytics.logEvent(
-                name: 'share_brand_click',
-                parameters: <String, Object>{'page_name': 'share_brand_click'},
-              );
+                  name: 'share_brand_click',
+                  parameters: <String, Object>{
+                    'page_name': 'share_brand_click'
+                  });
             },
             onPressedHeart: () async {
               Get.to(const WishlistScreen())?.then((_) {
@@ -317,9 +290,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                 ));
               });
               await analytics.logEvent(
-                name: 'wishlist_page',
-                parameters: <String, Object>{'page_name': 'wishlist_page'},
-              );
+                  name: 'wishlist_page',
+                  parameters: <String, Object>{'page_name': 'wishlist_page'});
             },
             onPressedCart: () async {
               Get.to(const CartScreen())?.then((_) {
@@ -331,9 +303,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                 ));
               });
               await analytics.logEvent(
-                name: 'cart_page',
-                parameters: <String, Object>{'page_name': 'cart_page'},
-              );
+                  name: 'cart_page',
+                  parameters: <String, Object>{'page_name': 'cart_page'});
             },
           ),
           Expanded(
@@ -351,7 +322,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         child: Image.asset(circleBack),
                       ),
 
-                      // Header media (Video if real video, otherwise Image)
                       Obx(() {
                         if (brandController.isDetails.value) {
                           return Container(
@@ -377,7 +347,42 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           return SizedBox(
                             height: 211.sp,
                             width: double.infinity,
-                            child: _buildMainVideoWidget(),
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                _buildMainVideoWidget(), // Your video player widget here
+                                Positioned(
+                                  top: 16.sp,
+                                  right: 16.sp,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        // Toggle mute/unmute state
+                                        _isMuted = !_isMuted;
+                                        // Mute or unmute the video player here
+                                        _videoPlayerController
+                                            .setVolume(_isMuted ? 0.0 : 1.0);
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(8.sp),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.5),
+                                        borderRadius:
+                                            BorderRadius.circular(50.sp),
+                                      ),
+                                      child: Icon(
+                                        _isMuted
+                                            ? Icons.volume_off
+                                            : Icons.volume_up,
+                                        color: Colors.white,
+                                        size: 24.sp,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           );
                         }
 
@@ -413,7 +418,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         );
                       }),
 
-                      // Brand Logo (use proper URL validation) - FIXED VERSION
+                      // Brand Logo (use proper URL validation)
                       Obx(() {
                         if (brandController.isDetails.value) {
                           return const SizedBox(height: 0);
@@ -461,7 +466,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                           ),
                                         ),
                                       ),
-                                      // ✅ ADD THIS ERROR HANDLER
                                       errorWidget: (context, url, error) =>
                                           Container(
                                         color: Colors.white,
@@ -484,6 +488,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           ),
                         );
                       }),
+
                       // Brand Name
                       Container(
                         margin: EdgeInsets.only(top: 260.sp),
@@ -551,7 +556,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
                                           return Column(
                                             children: [
-                                              // ⭐ Description (exactly 2 lines when collapsed)
                                               Text(
                                                 desc,
                                                 textAlign: TextAlign.center,
@@ -567,13 +571,11 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                 ),
                                                 maxLines: showDescription
                                                     ? null
-                                                    : 2, // ⭐ Only 2 lines!
+                                                    : 2, // Only 2 lines
                                                 overflow: showDescription
                                                     ? TextOverflow.visible
                                                     : TextOverflow.ellipsis,
                                               ),
-
-                                              // ⭐ Show More / Less
                                               if (desc.length > 80)
                                                 InkWell(
                                                   onTap: () => setState(() =>
@@ -696,10 +698,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       }
 
                       /// Normalized product list with price rule applied
-                      ///
-                      /// Each product now contains:
-                      ///  - displayPrice (basePrice)
-                      ///  - displayMrp   (null OR mrp)
                       final List<Map<String, dynamic>> normalized =
                           _normalizedProducts();
 
@@ -707,14 +705,11 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         radius: 0,
                         list: normalized,
                         scrollDirection: Axis.vertical,
-
-                        /// On Product Click
                         onPressed: (productId, bName) async {
                           try {
-                            if (!hasVideoError) videoController.pause();
+                            if (!hasVideoError) _videoPlayerController.pause();
                           } catch (_) {}
 
-                          // Loader
                           Get.dialog(
                             const Center(child: CircularProgressIndicator()),
                             barrierDismissible: false,
@@ -728,7 +723,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           if (err.isNotEmpty) {
                             getSnackBar(err);
                             try {
-                              if (!hasVideoError) videoController.play();
+                              if (!hasVideoError) _videoPlayerController.play();
                             } catch (_) {}
                             return;
                           }
@@ -741,7 +736,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                 type: "add",
                               ))?.then((_) {
                             try {
-                              if (!hasVideoError) videoController.play();
+                              if (!hasVideoError) _videoPlayerController.play();
                             } catch (_) {}
 
                             SystemChrome.setSystemUIOverlayStyle(
@@ -764,7 +759,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       );
                     },
                   ),
-
                   // Explore All
                   InkWell(
                     onTap: () async {
@@ -781,7 +775,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       productController.categoryFilter.value = 0;
 
                       try {
-                        if (!hasVideoError) videoController.pause();
+                        if (!hasVideoError) _videoPlayerController.pause();
                       } catch (_) {}
 
                       Navigator.push(
@@ -802,7 +796,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         productController.filterProductEnable.value = false;
                         productController.categoryFilter.value = 0;
                         try {
-                          if (!hasVideoError) videoController.play();
+                          if (!hasVideoError) _videoPlayerController.play();
                         } catch (_) {}
                       });
 
@@ -829,7 +823,6 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       ),
                     ),
                   ),
-
                   SizedBox(height: 20.sp),
                 ],
               ),
