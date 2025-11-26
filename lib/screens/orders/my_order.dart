@@ -25,10 +25,8 @@ class MyOrdersScreen extends StatefulWidget {
 class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
   final OrderController orderController = Get.put(OrderController());
 
-  /// 🔥 Smart date extractor based on status
   DateTime _extractOrderDate(Map<String, dynamic> item) {
     final status = item["status"]?.toString().toLowerCase() ?? "";
-
     String? dateStr;
 
     if (status == "cancelled") {
@@ -47,6 +45,8 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
     return DateTime.tryParse(dateStr) ?? DateTime(1970);
   }
 
+  String selectedFilter = "All";
+
   @override
   void initState() {
     super.initState();
@@ -56,9 +56,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadOrderHistory();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadOrderHistory());
   }
 
   Future<void> _loadOrderHistory() async {
@@ -70,7 +68,6 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
       return;
     }
 
-    print("📦 Fetching order history for userId: $userId");
     await orderController.getOrderHistoryByUser(userId);
   }
 
@@ -101,72 +98,99 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
 
         final orders = [...orderController.orderHistory];
 
-        /// 🔥 Sort orders by correct date DESC
         orders.sort((a, b) {
           final dateA = _extractOrderDate(a);
           final dateB = _extractOrderDate(b);
           return dateB.compareTo(dateA);
         });
 
-        if (orders.isEmpty) {
-          return const Center(
-            child: AppText(
-              text: "No orders found",
-              fontFamily: "Franklin Gothic Regular",
-              fontWeight: FontWeight.w400,
-              color: subtitleColor,
-              fontSize: 14,
-            ),
+        List<Map<String, dynamic>> filteredOrders;
+
+        if (selectedFilter == "All") {
+          filteredOrders = orders.cast<Map<String, dynamic>>();
+        } else {
+          filteredOrders = orders
+              .where((order) {
+                String status =
+                    (order["status"] ?? "").toString().toLowerCase();
+
+                if (selectedFilter == "Exchanged") {
+                  return status.contains("exchange") ||
+                      status.contains("exchanged");
+                }
+
+                return status.contains(selectedFilter.toLowerCase());
+              })
+              .cast<Map<String, dynamic>>()
+              .toList();
+        }
+
+        if (filteredOrders.isEmpty) {
+          return Column(
+            children: [
+              _buildFilterBar(),
+              const Expanded(
+                child: Center(
+                  child: AppText(
+                    text: "No orders found",
+                    fontSize: 14,
+                    color: subtitleColor,
+                  ),
+                ),
+              ),
+            ],
           );
         }
 
         return RefreshIndicator(
           onRefresh: _loadOrderHistory,
-          child: ListView.separated(
-            padding: EdgeInsets.symmetric(vertical: 8.sp),
-            itemCount: orders.length,
-            separatorBuilder: (_, __) => Divider(
-              color: const Color(0xFFE5E7EB),
-              thickness: 1,
-              height: 1,
-            ),
-            itemBuilder: (context, index) =>
-                _buildOrderItem(orders[index] as Map<String, dynamic>),
+          child: Column(
+            children: [
+              _buildFilterBar(),
+              Expanded(
+                child: ListView.separated(
+                  padding: EdgeInsets.symmetric(vertical: 8.sp),
+                  itemCount: filteredOrders.length,
+                  separatorBuilder: (_, __) => Divider(
+                    color: const Color(0xFFE5E7EB),
+                    thickness: 1,
+                  ),
+                  itemBuilder: (_, index) =>
+                      _buildOrderItem(filteredOrders[index]),
+                ),
+              ),
+            ],
           ),
         );
       }),
     );
   }
 
-  /// 🧩 Build each order item card
   Widget _buildOrderItem(Map<String, dynamic> orderItem) {
     final order = orderItem['order'] ?? {};
     final product = orderItem['product'] ?? {};
 
-    final status = (orderItem['status'] ?? 'pending').toString().toLowerCase();
+    final status = (orderItem["status"] ?? "").toString().toLowerCase();
     final orderItemId = orderItem['id'] ?? 0;
 
-    /// 🔥 Correct date shown in UI also
     final date = _extractOrderDate(orderItem).toIso8601String().split("T")[0];
 
     final imageList = (product['imageUrls'] ?? []) as List;
     final imageUrl = imageList.isNotEmpty
         ? imageList.first
-        : 'https://via.placeholder.com/100';
-    final productName = product['title'] ?? 'Unknown Product';
-    final quantity = orderItem['quantity']?.toString() ?? '1';
-    final price = double.tryParse(orderItem['total']?.toString() ?? '0') ?? 0.0;
+        : "https://via.placeholder.com/100";
+
+    final productName = product['title'] ?? "Unknown Product";
+    final quantity = orderItem['quantity']?.toString() ?? "1";
+    final price = double.tryParse(orderItem['total']?.toString() ?? "0") ?? 0.0;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 16.sp),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ✅ Status header
           _buildStatusHeader(status, orderItemId, date, orderItem, product),
           SizedBox(height: 12.sp),
-
-          // ✅ Product info card
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -181,16 +205,16 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
                   borderRadius: BorderRadius.circular(4.sp),
                   child: CachedNetworkImage(
                     cacheManager: CacheManager(
-                      Config(
-                        "orderCache",
-                        stalePeriod: const Duration(days: 15),
-                        maxNrOfCacheObjects: 100,
-                      ),
+                      Config("orderCache",
+                          stalePeriod: const Duration(days: 15),
+                          maxNrOfCacheObjects: 150),
                     ),
                     imageUrl: imageUrl,
                     fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) =>
-                        Image.asset(dummyWishlistImage, fit: BoxFit.cover),
+                    errorWidget: (_, __, ___) => Image.asset(
+                      dummyWishlistImage,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
@@ -201,27 +225,21 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
                   children: [
                     AppText(
                       text: productName,
-                      fontFamily: "Franklin Gothic",
-                      fontWeight: FontWeight.w600,
-                      color: nameText,
                       fontSize: 14,
                       maxLines: 2,
+                      fontWeight: FontWeight.w600,
                     ),
                     SizedBox(height: 4.sp),
                     AppText(
-                      text: 'Qty: $quantity',
-                      fontFamily: "Franklin Gothic Regular",
-                      fontWeight: FontWeight.w400,
-                      color: subtitleColor,
+                      text: "Qty: $quantity",
                       fontSize: 12,
+                      color: subtitleColor,
                     ),
                     SizedBox(height: 8.sp),
                     AppText(
-                      text: '₹${price.toStringAsFixed(2)}',
-                      fontFamily: "Franklin Gothic",
-                      fontWeight: FontWeight.w700,
-                      color: nameText,
+                      text: "₹${price.toStringAsFixed(2)}",
                       fontSize: 16,
+                      fontWeight: FontWeight.w700,
                     ),
                   ],
                 ),
@@ -229,8 +247,6 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
             ],
           ),
           SizedBox(height: 16.sp),
-
-          // ✅ Bottom action buttons
           Row(
             children: [
               if (status == "confirmed" || status == "processing") ...[
@@ -248,7 +264,6 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
                     isPrimary: true,
                     onTap: () => Get.to(
                       () => CancelOrderScreen(order: orderItem),
-                      transition: Transition.rightToLeft,
                     ),
                   ),
                 ),
@@ -259,7 +274,6 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
                     isPrimary: true,
                     onTap: () => Get.to(
                       () => ReturnRequestScreen(order: orderItem),
-                      transition: Transition.rightToLeft,
                     ),
                   ),
                 ),
@@ -270,7 +284,6 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
                     isPrimary: true,
                     onTap: () => Get.to(
                       () => ExchangeRequestScreen(order: orderItem),
-                      transition: Transition.rightToLeft,
                     ),
                   ),
                 ),
@@ -290,7 +303,6 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
     );
   }
 
-  /// 🟣 Build Status Header Row
   Widget _buildStatusHeader(String status, int orderItemId, String date,
       Map<String, dynamic> orderItem, Map<String, dynamic> product) {
     final lower = status.toLowerCase();
@@ -306,6 +318,9 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
     } else if (lower.contains("returned")) {
       iconData = Icons.refresh_rounded;
       iconColor = const Color(0xFF3B82F6);
+    } else if (lower.contains("exchange")) {
+      iconData = Icons.swap_horiz_rounded; // 🔥 EXCHANGED
+      iconColor = const Color(0xFF6366F1); // Indigo
     } else if (lower.contains("delivered") || lower.contains("confirmed")) {
       iconData = Icons.check_circle_rounded;
       iconColor = const Color(0xFF10B981);
@@ -325,23 +340,19 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
             SizedBox(width: 8.sp),
             AppText(
               text: status.capitalizeFirst ?? status,
-              fontFamily: "Franklin Gothic",
               fontWeight: FontWeight.w600,
               color: iconColor,
               fontSize: 13,
             ),
           ],
         ),
-
-        /// RIGHT SIDE
         isDelivered
             ? GestureDetector(
                 onTap: () {
-                  // Build product data for RateProductScreen
                   final productData = {
                     "id": orderItemId,
                     "variantId": orderItem['variantId'] ?? 0,
-                    "productName": product['title'] ?? 'Unknown Product',
+                    "productName": product['title'] ?? '',
                     "productDescription": product['description'] ?? '',
                     "size": product['size'] ??
                         (orderItem['variant']?['title'] ?? '-'),
@@ -350,26 +361,21 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
                             orderItem['total']?.toString() ?? '0') ??
                         0,
                     "imageUrl": (product['imageUrls'] is List &&
-                            (product['imageUrls'] as List).isNotEmpty)
+                            product['imageUrls'].isNotEmpty)
                         ? product['imageUrls'][0]
-                        : 'https://via.placeholder.com/100',
+                        : '',
                   };
 
-                  Get.to(() => RateProductScreen(product: productData),
-                      transition: Transition.rightToLeft);
+                  Get.to(() => RateProductScreen(product: productData));
                 },
                 child: AppText(
                   text: "Rate & Review Product",
-                  fontFamily: "Franklin Gothic Regular",
-                  fontWeight: FontWeight.w500,
                   color: const Color(0xFF8B5CF6),
                   fontSize: 12,
                 ),
               )
             : AppText(
                 text: "ID #$orderItemId",
-                fontFamily: "Franklin Gothic Regular",
-                fontWeight: FontWeight.w400,
                 color: subtitleColor,
                 fontSize: 12,
               ),
@@ -377,38 +383,68 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
     );
   }
 
-  /// 🔘 Reusable button
+  Widget _buildFilterBar() {
+    final filters = [
+      "All",
+      "Pending",
+      "Delivered",
+      "Cancelled",
+      "Returned",
+      "Exchanged"
+    ];
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
+      child: Row(
+        children: filters.map((filter) {
+          final isSelected = selectedFilter == filter;
+          return Padding(
+            padding: EdgeInsets.only(right: 10.sp),
+            child: ChoiceChip(
+              label: Text(filter),
+              selected: isSelected,
+              selectedColor: homeAppBarColor,
+              labelStyle: TextStyle(
+                color: isSelected ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w600,
+              ),
+              onSelected: (_) {
+                setState(() => selectedFilter = filter);
+              },
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   Widget _buildButton({
     required String text,
     required bool isPrimary,
     required VoidCallback onTap,
     bool isDisabled = false,
   }) {
-    final Color primaryColor = homeAppBarColor;
-    final Color borderColor =
-        isPrimary ? primaryColor : const Color(0xFFE5E7EB);
-    final Color backgroundColor = isPrimary ? primaryColor : whiteColor;
-    final Color textColor =
+    final primaryColor = homeAppBarColor;
+    final borderColor = isPrimary ? primaryColor : const Color(0xFFE5E7EB);
+    final backgroundColor = isPrimary ? primaryColor : whiteColor;
+    final textColor =
         isPrimary ? whiteColor : nameText.withOpacity(isDisabled ? 0.5 : 1);
 
     return Opacity(
-      opacity: isDisabled ? 0.6 : 1,
+      opacity: isDisabled ? 0.5 : 1,
       child: InkWell(
         onTap: isDisabled ? null : onTap,
-        borderRadius: BorderRadius.circular(6.sp),
-        splashColor: primaryColor.withOpacity(0.15),
-        highlightColor: Colors.transparent,
         child: Ink(
           height: 44.sp,
           decoration: BoxDecoration(
-            color: backgroundColor,
-            border: Border.all(color: borderColor, width: 1),
             borderRadius: BorderRadius.circular(6.sp),
+            color: backgroundColor,
+            border: Border.all(color: borderColor),
           ),
           child: Center(
             child: AppText(
               text: text,
-              fontFamily: "Franklin Gothic",
               fontWeight: FontWeight.w600,
               color: textColor,
               fontSize: 12,

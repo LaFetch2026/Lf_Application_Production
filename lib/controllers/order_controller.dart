@@ -403,6 +403,8 @@ class OrderController extends BaseController {
 
     try {
       final uri = Uri.parse("${ApiConstants.baseUrl}/request-return");
+
+      /// MATCH EXACT API BODY ❗
       final body = {
         "orderItemId": orderItemId,
         "userId": userId,
@@ -421,9 +423,8 @@ class OrderController extends BaseController {
 
       if (res.statusCode == 200 || res.statusCode == 201) {
         final data = json.decode(res.body);
-        final message =
-            data['message'] ?? "Return request submitted successfully!";
-        getSnackBar(message);
+        getSnackBar(
+            data['message'] ?? "Return request submitted successfully!");
         print("Return Response: ${res.body}");
         return true;
       } else {

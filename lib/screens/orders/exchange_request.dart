@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
+import 'package:lafetch/controllers/product_controller.dart';
 import 'package:lafetch/core/constant/constants.dart';
 import 'package:lafetch/controllers/order_controller.dart';
 import 'exchange_status.dart';
@@ -19,10 +20,11 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
   final OrderController orderController = Get.put(OrderController());
 
   String? selectedSize;
+  String? selectedColor;
   int? selectedVariantId;
   String? selectedReason;
 
-  /// Reason ID -> Text mapping (as per backend)
+  /// Reason ID -> Text mapping (Backend expects ID)
   final Map<int, String> reasons = const {
     25: "Other",
     26: "Changed my mind",
@@ -38,63 +40,152 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
     36: "Arrived too late",
   };
 
-  late List<Map<String, dynamic>> sizeOptions;
+  /// Variants extracted from product object
+  List<Map<String, dynamic>> variantOptions = [];
+
+  List<String> colorOptions = [];
+  List<String> sizeOptions = [];
 
   @override
   void initState() {
     super.initState();
-    _initSizes();
+    _loadFullProductDetails();
   }
 
-  /// ✅ Dynamically builds size options from product variants.
-  void _initSizes() {
+  /// --------------------------------------------
+  /// 🔥 UPDATED VARIANT LOGIC
+  /// --------------------------------------------
+  Future<void> _loadFullProductDetails() async {
+    final productId = widget.order['product']?['id'];
+
+    if (productId == null) {
+      print("❌ productId missing in order!");
+      return;
+    }
+
+    final fullProduct =
+        await Get.find<ProductController>().fetchProductDetails(productId);
+
+    if (fullProduct == null) {
+      print("❌ Failed to load full product details!");
+      return;
+    }
+
+    // Replace order.product with latest full product
+    widget.order['product'] = fullProduct;
+
+    // FIRST BUILD VARIANTS 🔥
+    _initVariants();
+
+    // Then resolve correct variant id
+    _resolveVariantId();
+
+    setState(() {});
+  }
+
+  void _initVariants() {
     final product = widget.order['product'] ?? {};
     final variants = (product['variants'] ?? []) as List;
 
-    if (variants.isNotEmpty) {
-      sizeOptions = variants.map((variant) {
-        String sizeValue = '';
-        if (variant['selectedOptions'] is List) {
-          final selectedOpt = (variant['selectedOptions'] as List).firstWhere(
-            (opt) => opt['name'].toString().toLowerCase() == 'size',
-            orElse: () => {},
-          );
-          sizeValue = selectedOpt['value']?.toString() ?? '';
+    variantOptions.clear();
+
+    for (final raw in variants) {
+      if (raw is! Map) continue;
+      final v = raw;
+
+      String size = "";
+      String color = "";
+
+      if (v["selectedOptions"] is List) {
+        for (final opt in v["selectedOptions"]) {
+          final n = opt["name"].toString().toLowerCase();
+          if (n == "size") size = opt["value"];
+          if (n == "color" || n == "colour") color = opt["value"];
         }
+      }
 
-        final availableStock = variant['inventory']?['availableStock'] ??
-            variant['available'] ??
-            0;
+      final stock =
+          int.tryParse("${v["inventory"]?["availableStock"] ?? 0}") ?? 0;
 
-        return {
-          'id': variant['id'] ?? variant['shopifyVariantId'] ?? 0,
-          'size': sizeValue,
-          'availableStock': availableStock is int ? availableStock : 0,
-        };
-      }).toList();
-    } else {
-      // fallback only if product has no variant data
-      sizeOptions = [
-        {'id': 0, 'size': 'S', 'availableStock': 5},
-        {'id': 0, 'size': 'M', 'availableStock': 5},
-        {'id': 0, 'size': 'L', 'availableStock': 5},
-        {'id': 0, 'size': 'XL', 'availableStock': 0},
-      ];
+      variantOptions.add({
+        "id": v["id"],
+        "size": size,
+        "color": color,
+        "stocks": stock,
+      });
+    }
+
+    // Color list
+    colorOptions = variantOptions
+        .map((e) => e["color"].toString())
+        .where((c) => c.isNotEmpty)
+        .toSet()
+        .toList();
+
+    // Size list
+    sizeOptions = variantOptions
+        .map((e) => e["size"].toString())
+        .where((s) => s.isNotEmpty)
+        .toSet()
+        .toList();
+  }
+
+  void _resolveVariantId() {
+    if (selectedColor == null || selectedSize == null) return;
+
+    final match = variantOptions.firstWhere(
+      (v) => v['color'] == selectedColor && v['size'] == selectedSize,
+      orElse: () => {},
+    );
+
+    if (match.isNotEmpty) {
+      selectedVariantId = match['id'];
     }
   }
 
+  /// --------------------------------------------
+  /// 🔥 GET REASON ID FROM TEXT
+  /// --------------------------------------------
+  int _getReasonId(String reasonText) {
+    return reasons.entries.firstWhere((e) => e.value == reasonText).key;
+  }
+
+  /// --------------------------------------------
+  /// UI BUILDING
+  /// --------------------------------------------
   @override
   Widget build(BuildContext context) {
     final product = widget.order['product'] ?? {};
     final imageList = (product['imageUrls'] ?? []) as List;
     final imageUrl =
-        imageList.isNotEmpty ? imageList.first : dummyWishlistImage;
+        imageList.isNotEmpty ? imageList.first.toString() : dummyWishlistImage;
+
     final productName = product['title'] ?? "Unknown Product";
     final description = product['shortDescription'] ??
         product['description'] ??
         "No description available";
-    final currentSize = widget.order['size'] ?? "M";
+
     final qty = widget.order['quantity']?.toString() ?? "1";
+
+    /// Display safe values
+    final rawSize = widget.order['size']?.toString();
+    final rawColor =
+        widget.order['color']?.toString() ?? widget.order['colour']?.toString();
+
+    final currentSize =
+        (rawSize == null || rawSize == "null" || rawSize.isEmpty)
+            ? selectedSize ?? "-"
+            : rawSize;
+
+    final currentColor =
+        (rawColor == null || rawColor == "null" || rawColor.isEmpty)
+            ? selectedColor ?? "-"
+            : rawColor;
+
+    /// Sizes available for selected color
+    final sizeOptionsForColor = selectedColor == null
+        ? []
+        : variantOptions.where((v) => v['color'] == selectedColor).toList();
 
     return Scaffold(
       backgroundColor: whiteColor,
@@ -103,11 +194,7 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: SvgPicture.asset(
-            arrowBack,
-            height: 18,
-            width: 18,
-          ),
+          icon: SvgPicture.asset(arrowBack, height: 18, width: 18),
           onPressed: () => Get.back(),
         ),
         title: const AppText(
@@ -118,12 +205,16 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
           fontSize: 16,
         ),
       ),
+
+      // ------------------------------------------------------
+      // BODY
+      // ------------------------------------------------------
       body: Padding(
         padding: EdgeInsets.all(16.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ✅ Product Info
+            /// PRODUCT HEADER
             Row(
               children: [
                 ClipRRect(
@@ -137,96 +228,176 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
                     children: [
                       AppText(
                         text: productName,
-                        fontFamily: "Franklin Gothic",
-                        fontWeight: FontWeight.w700,
-                        color: blackColor,
                         fontSize: 14,
+                        color: blackColor,
+                        fontWeight: FontWeight.w700,
                       ),
                       SizedBox(height: 2.sp),
                       AppText(
                         text: description,
-                        fontFamily: "Franklin Gothic Regular",
-                        fontWeight: FontWeight.w400,
-                        color: subtitleColor,
                         fontSize: 12,
                         maxLines: 2,
+                        color: subtitleColor,
                       ),
                       SizedBox(height: 4.sp),
                       AppText(
-                        text: "Size: $currentSize   Qty: $qty",
-                        fontFamily: "Franklin Gothic Regular",
-                        fontWeight: FontWeight.w400,
-                        color: subtitleColor,
+                        text:
+                            "Size: $currentSize   Color: $currentColor   Qty: $qty",
                         fontSize: 12,
+                        color: subtitleColor,
                       ),
                     ],
                   ),
                 ),
               ],
             ),
+
             SizedBox(height: 20.sp),
 
-            // ✅ Size Selection
+            /// COLOR SELECTOR -------------------------------------
             const AppText(
-              text: "CHOOSE THE NEW SIZE",
-              fontFamily: "Franklin Gothic",
+              text: "CHOOSE THE COLOR",
               fontWeight: FontWeight.w700,
-              color: blackColor,
               fontSize: 13,
             ),
             SizedBox(height: 10.sp),
 
-            Wrap(
-              spacing: 8.sp,
-              runSpacing: 8.sp,
-              children: sizeOptions.map((opt) {
-                final s = opt['size'] ?? '';
-                final availableStock = opt['availableStock'] ?? 0;
-                final isSelected = selectedSize == s;
-                final isOutOfStock = availableStock == 0;
+            if (colorOptions.isEmpty)
+              const AppText(
+                text: "No colors available for exchange.",
+                color: subtitleColor,
+                fontSize: 12,
+              )
+            else
+              Wrap(
+                spacing: 8.sp,
+                runSpacing: 8.sp,
+                children: colorOptions.map((c) {
+                  final isSelected = selectedColor == c;
 
-                return GestureDetector(
-                  onTap: isOutOfStock
-                      ? null
-                      : () => setState(() {
-                            selectedSize = s;
-                            selectedVariantId = opt['id'];
-                          }),
-                  child: Opacity(
-                    opacity: isOutOfStock ? 0.4 : 1,
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedColor = c;
+
+                        /// Filter sizes for this color
+                        final allowedSizes = variantOptions
+                            .where((v) => v["color"] == c)
+                            .map((v) => v["size"])
+                            .toList();
+
+                        if (!allowedSizes.contains(selectedSize)) {
+                          selectedSize = null;
+                        }
+
+                        selectedVariantId = null;
+                      });
+                    },
                     child: Container(
-                      width: 48.sp,
-                      height: 40.sp,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 12.sp, vertical: 8.sp),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4.sp),
+                        borderRadius: BorderRadius.circular(20.sp),
+                        color: isSelected ? blackColor : whiteColor,
                         border: Border.all(
                           color: isSelected ? blackColor : Colors.grey.shade300,
                         ),
-                        color: isSelected ? blackColor : whiteColor,
                       ),
-                      child: Center(
-                        child: AppText(
-                          text: s,
-                          fontFamily: "Franklin Gothic",
-                          fontWeight: FontWeight.w700,
-                          color: isSelected ? whiteColor : blackColor,
-                          fontSize: 13,
-                        ),
+                      child: AppText(
+                        text: c,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: isSelected ? whiteColor : blackColor,
                       ),
                     ),
-                  ),
-                );
-              }).toList(),
-            ),
+                  );
+                }).toList(),
+              ),
 
             SizedBox(height: 20.sp),
 
-            // ✅ Reason Dropdown
+            /// SIZE SELECTOR -------------------------------------
+            const AppText(
+              text: "CHOOSE THE NEW SIZE",
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+            ),
+            SizedBox(height: 10.sp),
+
+            if (selectedColor == null)
+              const AppText(
+                text: "Please select a color first.",
+                color: subtitleColor,
+                fontSize: 12,
+              )
+            else if (sizeOptionsForColor.isEmpty)
+              const AppText(
+                text: "No sizes available for the selected color.",
+                color: subtitleColor,
+                fontSize: 12,
+              )
+            else
+              Wrap(
+                spacing: 8.sp,
+                runSpacing: 8.sp,
+                children: sizeOptionsForColor.map((opt) {
+                  final s = opt["size"].toString();
+                  final stk = opt["stocks"] ?? 0;
+
+                  final isSelected = selectedSize == s;
+                  final out = stk == 0;
+
+                  return GestureDetector(
+                    onTap: out
+                        ? null
+                        : () {
+                            setState(() {
+                              selectedSize = s;
+
+                              final match = variantOptions.firstWhere(
+                                (v) =>
+                                    v["color"] == selectedColor &&
+                                    v["size"] == s,
+                                orElse: () => {},
+                              );
+
+                              if (match.isNotEmpty) {
+                                selectedVariantId = match["id"];
+                              }
+                            });
+                          },
+                    child: Opacity(
+                      opacity: out ? 0.3 : 1,
+                      child: Container(
+                        width: 48.sp,
+                        height: 40.sp,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color:
+                                isSelected ? blackColor : Colors.grey.shade300,
+                          ),
+                          color: isSelected ? blackColor : whiteColor,
+                          borderRadius: BorderRadius.circular(4.sp),
+                        ),
+                        child: AppText(
+                          text: s,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: isSelected ? whiteColor : blackColor,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+
+            SizedBox(height: 20.sp),
+
+            /// REASON DROPDOWN -------------------------------------
             const AppText(
               text: "REASON FOR EXCHANGE",
-              fontFamily: "Franklin Gothic",
               fontWeight: FontWeight.w700,
-              color: blackColor,
               fontSize: 13,
             ),
             SizedBox(height: 10.sp),
@@ -235,51 +406,37 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
               value: selectedReason,
               dropdownColor: whiteColor,
               items: reasons.values
-                  .map((reason) => DropdownMenuItem(
-                        value: reason,
+                  .map((r) => DropdownMenuItem(
+                        value: r,
                         child: Text(
-                          reason,
-                          style: const TextStyle(
-                            fontFamily: "Franklin Gothic Regular",
-                            fontSize: 12,
-                            color: blackColor,
-                          ),
+                          r,
+                          style:
+                              const TextStyle(color: blackColor, fontSize: 12),
                         ),
                       ))
                   .toList(),
-              onChanged: (value) => setState(() => selectedReason = value),
+              onChanged: (v) => setState(() => selectedReason = v),
               decoration: InputDecoration(
                 hintText: "Select a reason",
-                hintStyle: const TextStyle(
-                  fontFamily: "Franklin Gothic Regular",
-                  fontSize: 12,
-                  color: subtitleColor,
-                ),
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 12.sp, vertical: 10.sp),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4.sp),
-                  borderSide: const BorderSide(color: dividerColor),
-                ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: homeAppBarColor),
                 ),
               ),
             ),
+
             SizedBox(height: 20.sp),
 
-            // ✅ Info Text
+            /// INFO NOTE
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.info_outline, color: subtitleColor, size: 18.sp),
+                Icon(Icons.info_outline, size: 18.sp, color: subtitleColor),
                 SizedBox(width: 6.sp),
                 const Expanded(
                   child: AppText(
                     text:
                         "Your replacement will be shipped once the item passes quality check. This typically takes 2–3 business days.",
-                    fontFamily: "Franklin Gothic Regular",
-                    fontWeight: FontWeight.w400,
                     color: subtitleColor,
                     fontSize: 11,
                     maxLines: 3,
@@ -290,94 +447,87 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
 
             const Spacer(),
 
-            // ✅ Bottom Buttons
+            /// FOOTER BUTTONS -------------------------------------
             Row(
               children: [
                 Expanded(
                   child: GestureDetector(
                     onTap: () => Get.back(),
                     child: Container(
+                      alignment: Alignment.center,
                       height: 48.sp,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFF9FAFB),
-                      ),
-                      child: const Center(
-                        child: AppText(
-                          text: "CANCEL",
-                          fontFamily: "Franklin Gothic",
-                          fontWeight: FontWeight.w700,
-                          color: subtitleColor,
-                          fontSize: 13,
-                        ),
+                      color: const Color(0xFFF9FAFB),
+                      child: const AppText(
+                        text: "CANCEL",
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                        color: subtitleColor,
                       ),
                     ),
                   ),
                 ),
                 Expanded(
                   child: GestureDetector(
-                    onTap: () async {
-                      if (selectedVariantId == null) {
-                        Get.snackbar("Select Size",
-                            "Please select a new size to continue",
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.redAccent.withOpacity(0.1),
-                            colorText: Colors.redAccent);
-                        return;
-                      }
-
-                      if (selectedReason == null) {
-                        Get.snackbar("Select Reason",
-                            "Please select a reason before continuing",
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.redAccent.withOpacity(0.1),
-                            colorText: Colors.redAccent);
-                        return;
-                      }
-
-                      final orderItemId = widget.order['id'] ?? 0;
-                      final userId = widget.order['order']?['userId'] ?? 0;
-
-                      final success = await orderController.requestExchange(
-                        orderItemId: orderItemId,
-                        userId: userId,
-                        newVariantId: selectedVariantId!,
-                        reason: selectedReason!,
-                      );
-
-                      if (success) {
-                        Get.off(
-                            () => ExchangeStatusScreen(order: widget.order));
-                      }
-                    },
+                    onTap: _submitExchange,
                     child: Container(
+                      alignment: Alignment.center,
                       height: 48.sp,
                       color: blackColor,
-                      child: const Center(
-                        child: AppText(
-                          text: "EXCHANGE ITEM",
-                          fontFamily: "Franklin Gothic",
-                          fontWeight: FontWeight.w700,
-                          color: whiteColor,
-                          fontSize: 13,
-                        ),
+                      child: const AppText(
+                        text: "EXCHANGE ITEM",
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                        color: whiteColor,
                       ),
                     ),
                   ),
                 ),
               ],
-            ),
+            )
           ],
         ),
       ),
     );
   }
 
-  /// ✅ Safe Product Image with fallback
-  Widget _buildProductImage(String imageUrl) {
-    final isNetwork = imageUrl.startsWith('http');
-    if (isNetwork) {
+  /// --------------------------------------------
+  /// SUBMIT EXCHANGE REQUEST (NOW FIXED)
+  /// --------------------------------------------
+  Future<void> _submitExchange() async {
+    if (selectedColor == null) {
+      Get.snackbar("Select Color", "Please select a color");
+      return;
+    }
+    if (selectedSize == null || selectedVariantId == null) {
+      Get.snackbar("Select Size", "Please select a size");
+      return;
+    }
+    if (selectedReason == null) {
+      Get.snackbar("Select Reason", "Please select a reason");
+      return;
+    }
+
+    final reasonId = _getReasonId(selectedReason!); // int
+
+    final success = await orderController.requestExchange(
+      orderItemId: widget.order["id"],
+      userId: widget.order["order"]["userId"],
+      newVariantId: selectedVariantId!,
+      reason: reasonId.toString(), // 🔥 FIXED — backend expects STRING
+    );
+
+    if (success) {
+      Get.off(() => ExchangeStatusScreen(order: widget.order));
+    }
+  }
+
+  /// --------------------------------------------
+  /// IMAGE BUILDER
+  /// --------------------------------------------
+  Widget _buildProductImage(String url) {
+    if (url.startsWith("http")) {
       return Image.network(
-        imageUrl,
+        url,
         height: 70.sp,
         width: 70.sp,
         fit: BoxFit.cover,
@@ -385,16 +535,13 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
           dummyWishlistImage,
           height: 70.sp,
           width: 70.sp,
-          fit: BoxFit.cover,
         ),
       );
-    } else {
-      return Image.asset(
-        dummyWishlistImage,
-        height: 70.sp,
-        width: 70.sp,
-        fit: BoxFit.cover,
-      );
     }
+    return Image.asset(
+      dummyWishlistImage,
+      height: 70.sp,
+      width: 70.sp,
+    );
   }
 }

@@ -288,23 +288,38 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   }
 
   void _onPaymentSuccess(PaymentSuccessResponse r) async {
-    Get.offAll(
-        () => const OrderStatusScreen(
-              status: 'success',
-            ),
-        transition: Transition.fadeIn,
-        duration: const Duration(milliseconds: 400));
-
     try {
-      await orderController.confirmPlaceOrder(
+      final result = await orderController.confirmPlaceOrder(
         providerOrderId: r.orderId ?? '',
         providerPaymentId: r.paymentId ?? '',
         providerSignature: r.signature ?? '',
       );
+
+      if (result == true) {
+        // Navigate ONLY after order is confirmed
+        Get.offAll(
+          () => const OrderStatusScreen(status: 'success'),
+          transition: Transition.fadeIn,
+          duration: Duration(milliseconds: 400),
+        );
+      } else {
+        // If API failed → show failed screen
+        Get.offAll(
+          () => const OrderStatusScreen(status: 'failed'),
+          transition: Transition.fadeIn,
+          duration: Duration(milliseconds: 400),
+        );
+      }
     } catch (e) {
-      print("confirmPlaceOrder failed: $e");
+      print("Order confirmation failed: $e");
+      Get.offAll(
+        () => const OrderStatusScreen(status: 'failed'),
+        transition: Transition.fadeIn,
+        duration: Duration(milliseconds: 400),
+      );
     }
 
+    // Cleanup local cache AFTER navigation
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('pending_order_payload');
     await prefs.remove('pending_order_total');

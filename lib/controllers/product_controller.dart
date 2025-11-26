@@ -811,6 +811,31 @@ class ProductController extends BaseController {
     }
   }
 
+  Future<Map<String, dynamic>?> fetchProductDetails(int id) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+
+      final uri = Uri.parse('${ApiConstants.baseUrl}/product/$id');
+      final resp = await http.get(uri, headers: {
+        'Accept': 'application/json',
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token'
+      });
+
+      if (resp.statusCode != 200) {
+        print("❌ Product fetch failed: ${resp.statusCode}");
+        return null;
+      }
+
+      final decoded = json.decode(resp.body);
+
+      return Map<String, dynamic>.from(decoded["data"]);
+    } catch (e) {
+      print("❌ fetchProductDetails error: $e");
+      return null;
+    }
+  }
+
   Future<void> getProductData(int gender) async {
     isProduct.value = true;
     final prefs = await SharedPreferences.getInstance();

@@ -1,7 +1,9 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
 import 'package:lafetch/core/constant/constants.dart';
@@ -41,6 +43,20 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
     final product = orderItem['product'] ?? {};
     final order = orderItem['order'] ?? {};
 
+    /// REQUIRED FOR API (NO MORE ERRORS)
+    final int orderItemId = orderItem['id'] ?? 0;
+    final int userId = order['userId'] ?? 0;
+    final int addressId = order['shippingAddressId'] ?? 0;
+    final String shipRocketId = order['shiprocketOrderId']?.toString() ?? "0";
+
+    // 🔥 Safety Log
+    print("----- RETURN API PARAMS ------");
+    print("orderItemId = $orderItemId");
+    print("userId      = $userId");
+    print("addressId   = $addressId");
+    print("shipRocketId = $shipRocketId");
+    print("-------------------------------");
+
     final productName = product['title'] ?? 'Unknown Product';
     final description =
         product['shortDescription'] ?? product['description'] ?? '';
@@ -58,11 +74,7 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: SvgPicture.asset(
-            arrowBack,
-            height: 18,
-            width: 18,
-          ),
+          icon: SvgPicture.asset(arrowBack, height: 18, width: 18),
           onPressed: () => Get.back(),
         ),
         title: const AppText(
@@ -78,7 +90,6 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ✅ Product Info
             Row(
               children: [
                 ClipRRect(
@@ -92,27 +103,22 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
                     children: [
                       AppText(
                         text: productName,
-                        fontFamily: "Franklin Gothic",
                         fontWeight: FontWeight.w700,
                         color: blackColor,
                         fontSize: 14,
                       ),
-                      SizedBox(height: 2.sp),
+                      SizedBox(height: 4.sp),
                       AppText(
                         text: description,
-                        fontFamily: "Franklin Gothic Regular",
-                        fontWeight: FontWeight.w400,
-                        color: subtitleColor,
-                        fontSize: 12,
                         maxLines: 2,
+                        fontSize: 12,
+                        color: subtitleColor,
                       ),
                       SizedBox(height: 4.sp),
                       AppText(
                         text: "Size: $size   Qty: $quantity",
-                        fontFamily: "Franklin Gothic Regular",
-                        fontWeight: FontWeight.w400,
-                        color: subtitleColor,
                         fontSize: 12,
+                        color: subtitleColor,
                       ),
                     ],
                   ),
@@ -120,77 +126,44 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
               ],
             ),
             SizedBox(height: 20.sp),
-
-            // ✅ Reason Dropdown
             const AppText(
               text: "REASON FOR RETURN",
-              fontFamily: "Franklin Gothic",
               fontWeight: FontWeight.w700,
-              color: blackColor,
               fontSize: 13,
             ),
             SizedBox(height: 10.sp),
-
             DropdownButtonFormField<String>(
               value: selectedReason,
-              dropdownColor: whiteColor,
               items: reasons.values
-                  .map((reason) => DropdownMenuItem(
-                        value: reason,
-                        child: Text(
-                          reason,
-                          style: const TextStyle(
-                            fontFamily: "Franklin Gothic Regular",
-                            fontSize: 12,
-                            color: blackColor,
-                          ),
-                        ),
-                      ))
+                  .map((r) => DropdownMenuItem(value: r, child: Text(r)))
                   .toList(),
-              onChanged: (value) => setState(() => selectedReason = value),
+              onChanged: (v) => setState(() => selectedReason = v),
               decoration: InputDecoration(
                 hintText: "Select a reason",
-                hintStyle: const TextStyle(
-                  fontFamily: "Franklin Gothic Regular",
-                  fontSize: 12,
-                  color: subtitleColor,
-                ),
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 12.sp, vertical: 10.sp),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4.sp),
-                  borderSide: const BorderSide(color: dividerColor),
-                ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: homeAppBarColor),
                 ),
               ),
             ),
             SizedBox(height: 20.sp),
-
-            // ✅ Info Note
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.info_outline, color: subtitleColor, size: 18.sp),
+                Icon(Icons.info_outline, size: 18.sp, color: subtitleColor),
                 SizedBox(width: 6.sp),
                 const Expanded(
                   child: AppText(
                     text:
-                        "Once the item is picked up and verified, the refund will be processed to your original payment method within 5–7 business days.",
-                    fontFamily: "Franklin Gothic Regular",
-                    fontWeight: FontWeight.w400,
-                    color: subtitleColor,
-                    fontSize: 11,
+                        "Once the item is picked up and verified, refund will be processed within 5–7 working days.",
                     maxLines: 3,
+                    fontSize: 11,
+                    color: subtitleColor,
                   ),
                 ),
               ],
             ),
-
             const Spacer(),
-
-            // ✅ Bottom Buttons
             Row(
               children: [
                 Expanded(
@@ -202,10 +175,8 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
                       child: const Center(
                         child: AppText(
                           text: "CANCEL",
-                          fontFamily: "Franklin Gothic",
-                          fontWeight: FontWeight.w700,
                           color: subtitleColor,
-                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
@@ -215,21 +186,10 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
                   child: GestureDetector(
                     onTap: () async {
                       if (selectedReason == null) {
-                        Get.snackbar(
-                          "Select Reason",
-                          "Please select a reason before submitting return request.",
-                          backgroundColor: Colors.redAccent.withOpacity(0.1),
-                          colorText: Colors.redAccent,
-                          snackPosition: SnackPosition.BOTTOM,
-                        );
+                        Get.snackbar("Select Reason",
+                            "Please choose a reason before submitting.");
                         return;
                       }
-
-                      final orderItemId = orderItem['id'] ?? 0;
-                      final userId = order['userId'] ?? 0;
-                      final addressId = order['shippingAddressId'] ?? 0;
-                      final shipRocketId =
-                          order['shiprocketOrderId']?.toString() ?? '';
 
                       final success = await orderController.requestReturn(
                         orderItemId: orderItemId,
@@ -249,46 +209,31 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
                       child: const Center(
                         child: AppText(
                           text: "RETURN ITEM",
-                          fontFamily: "Franklin Gothic",
-                          fontWeight: FontWeight.w700,
                           color: whiteColor,
-                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
                   ),
                 ),
               ],
-            ),
+            )
           ],
         ),
       ),
     );
   }
 
-  /// ✅ Safe Product Image Loader
-  Widget _buildProductImage(String imageUrl) {
-    final isNetwork = imageUrl.startsWith('http');
-    if (isNetwork) {
-      return Image.network(
-        imageUrl,
-        height: 70.sp,
-        width: 70.sp,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Image.asset(
-          dummyWishlistImage,
+  Widget _buildProductImage(String url) {
+    if (url.startsWith("http")) {
+      return Image.network(url,
           height: 70.sp,
           width: 70.sp,
           fit: BoxFit.cover,
-        ),
-      );
-    } else {
-      return Image.asset(
-        dummyWishlistImage,
-        height: 70.sp,
-        width: 70.sp,
-        fit: BoxFit.cover,
-      );
+          errorBuilder: (_, __, ___) =>
+              Image.asset(dummyWishlistImage, height: 70.sp, width: 70.sp));
     }
+    return Image.asset(dummyWishlistImage,
+        height: 70.sp, width: 70.sp, fit: BoxFit.cover);
   }
 }

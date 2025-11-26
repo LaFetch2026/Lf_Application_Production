@@ -203,24 +203,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                   childAspectRatio: 0.62,
                 ),
                 itemBuilder: (context, index) {
-                  final m = items[index] as Map<String, dynamic>;
+                  final m = normalizeProduct(items[index]);
 
-                  /// -------- Brand / Title / Description ----------
-                  final brand = (m['brand_name'] ?? m['brandName'] ?? '')
-                      .toString()
-                      .trim();
-
-                  final title =
-                      (m['title'] ?? m['name'] ?? m['productTitle'] ?? '')
-                          .toString()
-                          .trim();
-
+                  final brand = (m['brandName'] ?? '').toString().trim();
+                  final title = (m['title'] ?? '').toString().trim();
                   final shortDesc =
-                      (m['shortDescription'] ?? m['short_description'] ?? '')
-                          .toString()
-                          .trim();
-
-                  /// -------- Image ----------
+                      (m['shortDescription'] ?? title).toString().trim();
                   final img = _imageFrom(m);
 
                   /// -------- Correct Price Logic ----------
@@ -322,6 +310,27 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     if (v is num) return v;
     if (v is String) return num.tryParse(v);
     return null;
+  }
+
+  Map<String, dynamic> normalizeProduct(Map<String, dynamic> m) {
+    return {
+      "id": m["id"],
+      "title": m["title"] ?? m["name"] ?? "",
+      "brandName": m["brand_name"] ?? m["brandName"] ?? "",
+      "shortDescription": m["shortDescription"] ??
+          m["description"] ??
+          m["short_description"] ??
+          "",
+      "imageUrls": m["imageUrls"] is List
+          ? m["imageUrls"]
+          : (m["images"] is List ? m["images"] : []),
+      "displayPrice": m["displayPrice"] ??
+          m["price"] ??
+          m["selling_price"] ??
+          m["mrp"] ??
+          0,
+      "displayMrp": m["displayMrp"] ?? m["mrp"] ?? m["original_price"] ?? 0,
+    };
   }
 
   Widget _emptyView() => Center(
