@@ -242,17 +242,29 @@ class WishlistController extends BaseController {
         Uri.parse(ApiEndpoints.boardsByUser(userId)),
         headers: _headers(token),
       );
+
       final decoded = _safeJsonDecode(resp.body);
 
       if (resp.statusCode == 200 && decoded != null) {
-        final data =
-            decoded is List ? decoded : (decoded['data'] as List? ?? const []);
-        final boards = List<Map<String, dynamic>>.from(
-          data.map((e) => Map<String, dynamic>.from(e)),
-        );
+        final List data = decoded['data'] is List ? decoded['data'] : [];
+
+        final boards = data.map<Map<String, dynamic>>((e) {
+          final item = Map<String, dynamic>.from(e);
+
+          // Normalize productCount to int
+          item['productCount'] =
+              int.tryParse(item['productCount']?.toString() ?? "0") ?? 0;
+
+          // Normalize thumbnail (replace null with empty string)
+          item['thumbnail'] = item['thumbnail'] ?? "";
+
+          return item;
+        }).toList();
+
         wishlistList.assignAll(boards);
         totalBoard.value = boards.length;
         isWishlist.value = false;
+
         print("✅ Boards loaded: ${boards.length}");
       } else {
         wishlistList.clear();
