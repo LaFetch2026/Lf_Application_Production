@@ -962,7 +962,7 @@ String? firstImageUrlFromProduct(Map<String, dynamic> m) {
 }
 
 class _SectionStrip extends StatelessWidget {
-  final List<Map<String, dynamic>> products; // typed
+  final List<Map<String, dynamic>> products;
   final bool dark;
   final void Function(int productId) onProductTap;
   final VoidCallback onExploreAll;
@@ -976,29 +976,67 @@ class _SectionStrip extends StatelessWidget {
     required this.seed,
   });
 
+  // ---------- BRAND NAME RESOLVER ----------
+  String resolveBrandName(Map<String, dynamic> p) {
+    // Case 1: full brand object exists
+    if (p['brand'] is Map && p['brand']?['name'] != null) {
+      return p['brand']['name'].toString();
+    }
+
+    // Case 2: brandId exists → search brand list
+    final brandId = p['brandId'] is int
+        ? p['brandId']
+        : int.tryParse(p['brandId']?.toString() ?? '') ?? 0;
+
+    if (brandId != 0) {
+      final homeController = Get.find<HomeController>();
+      try {
+        final brand = homeController.brandList.firstWhere(
+          (b) => b["id"].toString() == brandId.toString(),
+          orElse: () => null,
+        );
+        return brand?["name"]?.toString() ?? "";
+      } catch (_) {
+        return "";
+      }
+    }
+
+    return "";
+  }
+
+  // ---------- PRICE RESOLVER ----------
+  String resolvePrice(Map<String, dynamic> p) {
+    return (p['price'] ??
+            p['salePrice'] ??
+            p['sale_price'] ??
+            p['basePrice'] ??
+            p['base_price'] ??
+            p['netAmount'] ??
+            p['mrp'] ??
+            '')
+        .toString();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final items = List<Map<String, dynamic>>.from(products);
-    items.shuffle(Random(seed));
+    final items = List<Map<String, dynamic>>.from(products)
+      ..shuffle(Random(seed));
 
-    // show up to 4 items + 1 explore tile
     final pick = items.take(4).toList();
     final itemCount = pick.length + 1;
 
-    // Choose a thumbnail for Explore tile:
-    // Prefer the next (5th) shuffled item; fallback to first available.
-    Map<String, dynamic>? exploreCandidate;
-    if (items.length > pick.length) {
-      exploreCandidate = items[pick.length];
-    } else if (items.isNotEmpty) {
-      exploreCandidate = items.first;
-    }
-    final String? exploreImageUrl = exploreCandidate != null
+    Map<String, dynamic>? exploreCandidate = items.length > pick.length
+        ? items[pick.length]
+        : items.isNotEmpty
+            ? items.first
+            : null;
+
+    final exploreImageUrl = exploreCandidate != null
         ? firstImageUrlFromProduct(exploreCandidate)
         : null;
 
     return SizedBox(
-      height: 260.sp,
+      height: 225.sp, // Perfect height for (170sp image + texts)
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
@@ -1007,7 +1045,6 @@ class _SectionStrip extends StatelessWidget {
         separatorBuilder: (_, __) => SizedBox(width: 16.sp),
         itemBuilder: (context, index) {
           if (index == pick.length) {
-            // Explore tile with a real thumbnail 👇
             return _ExploreTile(
               dark: dark,
               onTap: onExploreAll,
@@ -1016,20 +1053,18 @@ class _SectionStrip extends StatelessWidget {
           }
 
           final p = pick[index];
-          final int id = p['id'] is int
-              ? p['id'] as int
+          final id = p['id'] is int
+              ? p['id']
               : int.tryParse(p['id']?.toString() ?? '') ?? 0;
 
-          final String title = p['title']?.toString() ?? '';
+          final title = p['title']?.toString() ?? '';
+          final brandName = resolveBrandName(p);
+          final price = resolvePrice(p);
 
-          String imageUrl = '';
+          String imageUrl = "";
           if (p['imageUrls'] is List && (p['imageUrls'] as List).isNotEmpty) {
-            imageUrl = ((p['imageUrls'] as List).first).toString();
+            imageUrl = p['imageUrls'][0].toString();
           }
-          final String subtitle =
-              (p['shortDescription']?.toString().trim().isNotEmpty ?? false)
-                  ? p['shortDescription'].toString()
-                  : p['type']?.toString() ?? '';
 
           return GestureDetector(
             onTap: () => onProductTap(id),
@@ -1038,36 +1073,28 @@ class _SectionStrip extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // ---------- PRODUCT IMAGE ----------
                   ClipRRect(
                     borderRadius: BorderRadius.circular(4.sp),
                     child: imageUrl.isNotEmpty
                         ? CachedNetworkImage(
                             imageUrl: imageUrl,
-                            height: 200.sp,
-                            width: 170.sp,
+                            height: 160.sp, // Perfect height
+                            width: 150.sp,
                             fit: BoxFit.cover,
-                            placeholder: (_, __) => Container(
-                              height: 180.sp,
-                              width: 170.sp,
-                              color: Colors.black.withOpacity(0.06),
-                            ),
-                            errorWidget: (_, __, ___) => Container(
-                              height: 180.sp,
-                              width: 170.sp,
-                              color: Colors.black.withOpacity(0.06),
-                              child: const Icon(Icons.image_not_supported),
-                            ),
                           )
                         : Container(
-                            height: 180.sp,
-                            width: 170.sp,
+                            height: 170.sp,
+                            width: 150.sp,
                             color: Colors.black.withOpacity(0.06),
-                            child: const Icon(Icons.image_not_supported),
                           ),
                   ),
+
                   SizedBox(height: 8.sp),
+
+                  // ---------- PRODUCT NAME ----------
                   Text(
-                    title.toUpperCase(),
+                    title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -1076,17 +1103,31 @@ class _SectionStrip extends StatelessWidget {
                       color: dark ? Colors.white : Colors.black,
                     ),
                   ),
-                  if (subtitle.isNotEmpty)
+
+                  // ---------- BRAND NAME ----------
+                  if (brandName.isNotEmpty)
                     Text(
-                      subtitle,
+                      brandName,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: "Franklin Gothic",
-                        fontSize: 12.sp,
+                        fontSize: 11.sp,
                         color: dark
                             ? Colors.white.withOpacity(0.85)
-                            : Colors.black.withOpacity(0.85),
+                            : Colors.black.withOpacity(0.7),
+                      ),
+                    ),
+
+                  // ---------- PRICE ----------
+                  if (price.isNotEmpty)
+                    Text(
+                      "₹$price",
+                      style: TextStyle(
+                        fontFamily: "Franklin Gothic Semibold",
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.bold,
+                        color: dark ? Colors.white : Colors.black,
                       ),
                     ),
                 ],
