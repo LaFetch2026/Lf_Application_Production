@@ -74,20 +74,18 @@ dependencies:
   appsflyer_sdk: ^6.15.2
   sms_autofill: ^2.4.1
   go_router: ^16.1.0
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: "^0.13.1"
   flutter_lints: ^2.0.0
 
 flutter_launcher_icons:
-  android: "launcher_icon"
   ios: true
-  image_path: "assets/images/logo_image.png"
-  adaptive_icon_foreground: "assets/images/logo_image.png"
-  adaptive_icon_background: "assets/images/logo_image.png"
-  min_sdk_android: 21
+  android: true # Also generate Android icons
+  image_path: "assets/icon/IMG_1367.PNG"
+  remove_alpha_ios: true
 
 flutter:
   uses-material-design: true
