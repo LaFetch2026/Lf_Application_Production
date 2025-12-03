@@ -1049,6 +1049,24 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Visibility(
+                                visible: _titleText().isNotEmpty,
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 12.sp, vertical: 8.sp),
+                                  child: AppSpacingText(
+                                    text: _titleText(),
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w600,
+                                    color: widget.backgroundcolor == whiteColor
+                                        ? blackColor
+                                        : productSubtitleColor,
+                                    maxLines: 2,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+
                               Padding(
                                 padding:
                                     EdgeInsets.only(left: 12.sp, right: 12.sp),
@@ -1064,13 +1082,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             ? "${_brandText()}\n".toUpperCase()
                                             : "",
                                         fontFamily: "Franklin Gothic",
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.w400,
                                         color:
                                             widget.backgroundcolor == whiteColor
-                                                ? blackColor
+                                                ? subtitleColor
                                                 : whiteColor,
                                         maxLines: 1,
-                                        fontSize: 16,
+                                        fontSize: 14,
                                       ),
                                     ),
                                     (productController.brandDetails != null &&
@@ -1135,23 +1153,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ],
                                 ),
                               ),
-                              Visibility(
-                                visible: _titleText().isNotEmpty,
-                                child: Padding(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 12.sp),
-                                  child: AppSpacingText(
-                                    text: _titleText(),
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: widget.backgroundcolor == whiteColor
-                                        ? subtitleColor
-                                        : productSubtitleColor,
-                                    maxLines: 2,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
+
                               // Price Display Section
                               Obx(() {
                                 final price =
