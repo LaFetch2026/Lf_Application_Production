@@ -114,6 +114,53 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     }
   }
 
+  List<int> _appliedBrandIds = [];
+  String _appliedMinPrice = "100";
+  String _appliedMaxPrice = "50000";
+  String _appliedSortOption = "recommended";
+  bool _hasActiveFilters = false;
+
+  Future<void> _applyFiltersAndSort() async {
+    try {
+      catalogController.isCategory.value = true;
+
+      // If filters are active, apply them first
+      if (_hasActiveFilters) {
+        await catalogController.getFilteredProducts(
+          brandIds: _appliedBrandIds,
+          minPrice: _appliedMinPrice,
+          maxPrice: _appliedMaxPrice,
+          catId: widget.categoryId,
+          brandId: widget.brandId,
+          collectionId: widget.genderType,
+        );
+      } else {
+        // No filters, reload category products
+        await catalogController.getCategoryProductData(
+          widget.categoryId,
+          widget.genderType,
+        );
+      }
+
+      // Then apply sort if not recommended
+      if (_appliedSortOption != "recommended") {
+        await catalogController.getSortedProducts(
+          sortOption: _appliedSortOption,
+          catId: widget.categoryId,
+          brandId: widget.brandId,
+          collectionId: widget.genderType,
+        );
+        catalogController.categoryProductList
+            .assignAll(catalogController.sortedProductList);
+      }
+    } catch (e) {
+      print("❌ Error applying filters/sort: $e");
+      getSnackBar("Failed to apply filters");
+    } finally {
+      catalogController.isCategory.value = false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -131,9 +178,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       }
       await _clearPref();
 
-      // Load brands for filter
+      // ✅ Load brands BEFORE loading products
       await brandController.getBrandData("all");
 
+      // ✅ Load initial products
       await catalogController.getCategoryProductData(
         widget.categoryId,
         widget.genderType,
@@ -399,13 +447,22 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         ),
       );
 
-  // ✅ FIXED FILTER BOTTOM SHEET - Using StatefulBuilder + BrandController API
   Future<void> _showFilterBottomSheet(BuildContext context) async {
     String selectedFilter = "Brand";
+
+    // ✅ Initialize with currently applied filters
     List<String> selectedBrands = [];
-    RangeValues priceRange = const RangeValues(100, 50000);
+    RangeValues priceRange = RangeValues(
+      double.parse(_appliedMinPrice),
+      double.parse(_appliedMaxPrice),
+    );
 
     final List<String> filterCategories = ["Brand", "Price Range"];
+
+    // ✅ Wait for brands to load if still loading
+    if (brandController.isBrand.value) {
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
 
     // Get brands from BrandController (excluding alphabet headers)
     final allBrands = brandController.brandList
@@ -414,7 +471,24 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         .where((name) => name.isNotEmpty)
         .toList();
 
-    // Add "Select All" at the beginning
+    if (allBrands.isEmpty) {
+      getSnackBar("No brands available for filtering");
+      return;
+    }
+
+    // ✅ Pre-populate selected brands from applied filters
+    for (final id in _appliedBrandIds) {
+      final brandData = brandController.brandList.firstWhereOrNull((item) =>
+          item['alphabet'] == null &&
+          int.tryParse(item['id']?.toString() ?? '') == id);
+      if (brandData != null) {
+        final name = brandData['name']?.toString().trim();
+        if (name != null && name.isNotEmpty) {
+          selectedBrands.add(name);
+        }
+      }
+    }
+
     final brands = ["Select All", ...allBrands];
 
     await showModalBottomSheet(
@@ -509,67 +583,50 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: 16.sp, vertical: 10.sp),
                               child: selectedFilter == "Brand"
-                                  ? brandController.isBrand.value
-                                      ? const Center(
-                                          child: CircularProgressIndicator(
-                                              color: appBarColor))
-                                      : brands.isEmpty
-                                          ? const Center(
-                                              child: Text("No brands available",
-                                                  style: TextStyle(
-                                                      fontFamily:
-                                                          "Franklin Gothic Regular",
-                                                      color:
-                                                          Color(0xFF6B7280))))
-                                          : ListView.builder(
-                                              itemCount: brands.length,
-                                              itemBuilder: (context, i) {
-                                                final b = brands[i];
-                                                final isSelectAll =
-                                                    b == "Select All";
-                                                final allSelected =
-                                                    selectedBrands.length ==
-                                                        brands.length - 1;
-                                                final checked = isSelectAll
-                                                    ? allSelected
-                                                    : selectedBrands
-                                                        .contains(b);
+                                  ? ListView.builder(
+                                      itemCount: brands.length,
+                                      itemBuilder: (context, i) {
+                                        final b = brands[i];
+                                        final isSelectAll = b == "Select All";
+                                        final allSelected =
+                                            selectedBrands.length ==
+                                                brands.length - 1;
+                                        final checked = isSelectAll
+                                            ? allSelected
+                                            : selectedBrands.contains(b);
 
-                                                return CheckboxListTile(
-                                                  dense: true,
-                                                  activeColor: appBarColor,
-                                                  value: checked,
-                                                  title: Text(b,
-                                                      style: const TextStyle(
-                                                          fontFamily:
-                                                              "Franklin Gothic Regular",
-                                                          color: blackColor)),
-                                                  onChanged: (val) {
-                                                    setModalState(() {
-                                                      if (isSelectAll) {
-                                                        if (val == true) {
-                                                          selectedBrands = brands
-                                                              .where((x) =>
-                                                                  x !=
-                                                                  "Select All")
-                                                              .toList();
-                                                        } else {
-                                                          selectedBrands
-                                                              .clear();
-                                                        }
-                                                      } else {
-                                                        if (val == true) {
-                                                          selectedBrands.add(b);
-                                                        } else {
-                                                          selectedBrands
-                                                              .remove(b);
-                                                        }
-                                                      }
-                                                    });
-                                                  },
-                                                );
-                                              },
-                                            )
+                                        return CheckboxListTile(
+                                          dense: true,
+                                          activeColor: appBarColor,
+                                          value: checked,
+                                          title: Text(b,
+                                              style: const TextStyle(
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  color: blackColor)),
+                                          onChanged: (val) {
+                                            setModalState(() {
+                                              if (isSelectAll) {
+                                                if (val == true) {
+                                                  selectedBrands = brands
+                                                      .where((x) =>
+                                                          x != "Select All")
+                                                      .toList();
+                                                } else {
+                                                  selectedBrands.clear();
+                                                }
+                                              } else {
+                                                if (val == true) {
+                                                  selectedBrands.add(b);
+                                                } else {
+                                                  selectedBrands.remove(b);
+                                                }
+                                              }
+                                            });
+                                          },
+                                        );
+                                      },
+                                    )
                                   : Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -654,29 +711,30 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                 }
                               }
 
+                              // ✅ Store applied filters
+                              setState(() {
+                                _appliedBrandIds = selectedBrandIds;
+                                _appliedMinPrice =
+                                    priceRange.start.toInt().toString();
+                                _appliedMaxPrice =
+                                    priceRange.end.toInt().toString();
+                                _hasActiveFilters =
+                                    selectedBrandIds.isNotEmpty ||
+                                        priceRange.start > 100 ||
+                                        priceRange.end < 50000;
+                              });
+
                               print("✅ Applied Filters:");
                               print("Brands: ${selectedBrands.join(', ')}");
                               print("Brand IDs: $selectedBrandIds");
                               print(
                                   "Price: ₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()}");
 
-                              // Apply filters via API
-                              try {
-                                await catalogController.getFilteredProducts(
-                                  brandIds: selectedBrandIds,
-                                  minPrice: priceRange.start.toInt().toString(),
-                                  maxPrice: priceRange.end.toInt().toString(),
-                                  catId: widget.categoryId,
-                                  brandId: widget.brandId,
-                                  collectionId: widget.genderType,
-                                );
+                              // ✅ Apply filters with current sort
+                              await _applyFiltersAndSort();
 
-                                getSnackBar(
-                                    "Filtered by ${selectedBrands.length} brand(s), ₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
-                              } catch (e) {
-                                print("❌ Filter error: $e");
-                                getSnackBar("Failed to apply filters");
-                              }
+                              getSnackBar(
+                                  "Filtered by ${selectedBrands.length} brand(s), ₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
                             },
                             child: const Text("APPLY",
                                 style: TextStyle(
@@ -696,9 +754,11 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     );
   }
 
+  // ✅ REPLACE YOUR _showSortBottomSheet WITH THIS:
   Future<void> _showSortBottomSheet(BuildContext context,
       {int? catId, int? brandId, int? collectionId}) async {
-    final RxString selectedOption = "recommended".obs;
+    // ✅ Initialize with currently applied sort
+    final RxString selectedOption = _appliedSortOption.obs;
 
     final Map<String, String> sortOptions = {
       "price_asc": "Price - low to high",
@@ -770,20 +830,25 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                         onPressed: () async {
                           final selected = selectedOption.value;
                           Get.back();
+
+                          // ✅ Store applied sort
+                          setState(() {
+                            _appliedSortOption = selected;
+                          });
+
                           if (selected == "recommended") {
                             getSnackBar("Showing recommended products");
+                            // ✅ Reset to filtered results or original
+                            await _applyFiltersAndSort();
                             return;
                           }
+
                           try {
                             catalogController.isSorting.value = true;
-                            await catalogController.getSortedProducts(
-                              sortOption: selected,
-                              catId: catId,
-                              brandId: brandId,
-                              collectionId: collectionId,
-                            );
-                            catalogController.categoryProductList
-                                .assignAll(catalogController.sortedProductList);
+
+                            // ✅ Apply sort to current filtered results
+                            await _applyFiltersAndSort();
+
                             getSnackBar(
                                 "Sorted by ${sortOptions[selected] ?? 'Option'}");
                           } catch (e) {
