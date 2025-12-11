@@ -1,6 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,9 +30,17 @@ class CatalogController extends BaseController {
   /// Fetch catalog by gender
   Future<void> getCatalogData(int gender) async {
     isCatalog.value = true;
-    final prefs = await SharedPreferences.getInstance();
 
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      if (token == null || token.isEmpty) {
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+        getSnackBar("Please login to continue");
+        return;
+      }
+
       final url = Uri.parse(
         "${ApiConstants.baseUrl}/categories?gender=$gender&type=category",
       );
@@ -39,24 +49,42 @@ class CatalogController extends BaseController {
         url,
         headers: {
           'Accept': 'application/json; charset=UTF-8',
-          'Authorization': "Bearer ${prefs.getString('token')}",
+          'Authorization': "Bearer $token",
+        },
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw Exception('Request timeout');
         },
       );
 
       final responseData = json.decode(response.body);
 
-      if (response.statusCode == 200 && responseData["data"] != null) {
-        catalogList.assignAll(responseData["data"]);
+      if (response.statusCode == 200) {
+        if (responseData["data"] != null && responseData["data"] is List) {
+          catalogList.assignAll(responseData["data"]);
+        } else {
+          catalogList.clear();
+          getSnackBar("No categories available");
+        }
       } else if (response.statusCode == 401) {
+        await prefs.remove('token'); // Clear invalid token
         Get.offAll(() => const LoginScreen(initialTab: 0));
-        getSnackBar("Authentication failed");
+        getSnackBar("Session expired, please login again");
       } else if (response.statusCode == 500) {
         getSnackBar("Server error, please try again later");
       } else {
         getSnackBar(responseData["message"] ?? "Failed to fetch categories");
       }
+    } on SocketException {
+      getSnackBar("No internet connection");
+    } on TimeoutException {
+      getSnackBar("Request timeout, please try again");
+    } on FormatException {
+      getSnackBar("Invalid response format");
     } catch (e) {
       print("getCatalogData error: $e");
+      getSnackBar("Something went wrong, please try again");
     } finally {
       isCatalog.value = false;
     }

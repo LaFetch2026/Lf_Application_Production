@@ -3,9 +3,12 @@ import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 
 class ShareLinkGenerator {
   static late final AppsflyerSdk _af;
+  static bool _initialized = false;
 
   static Future<void> init() async {
-    final AppsFlyerOptions options = AppsFlyerOptions(
+    if (_initialized) return;
+
+    final options = AppsFlyerOptions(
       afDevKey: "tzivSReYr7ZyuqVbEP6z6d",
       appId: "6739497338",
       showDebug: true,
@@ -14,6 +17,7 @@ class ShareLinkGenerator {
 
     _af = AppsflyerSdk(options);
     await _af.initSdk();
+    _initialized = true;
   }
 
   static Future<String> generateProductShareLink({
@@ -22,6 +26,8 @@ class ShareLinkGenerator {
     required String brandName,
     required String type,
   }) async {
+    if (!_initialized) await init(); // <-- Fix
+
     Completer<String> completer = Completer<String>();
 
     final params = AppsFlyerInviteLinkParams(
@@ -41,12 +47,8 @@ class ShareLinkGenerator {
     _af.generateInviteLink(
       params,
       (result) {
-        try {
-          final url = result["payload"]["userInviteURL"]?.toString() ?? "";
-          completer.complete(url);
-        } catch (e) {
-          completer.completeError("Invalid success response");
-        }
+        final url = result["payload"]["userInviteURL"]?.toString() ?? "";
+        completer.complete(url);
       },
       (error) {
         completer.completeError("AppsFlyer Link Error: $error");

@@ -53,18 +53,23 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
   bool showDescription = false;
 
-  // --- Header media (video / image) ---
-  Future<void>? _initializeVideoPlayerFuture;
-  late VideoPlayerController videoController;
-  bool hasVideoError = false;
-  String videoErrorMessage = '';
-  bool _isMuted = false; // Define the mute state
-  late VideoPlayerController _videoPlayerController;
+  // --- Optimized video handling ---
+  VideoPlayerController? _videoPlayerController;
+  bool _isVideoInitialized = false;
+  bool _hasVideoError = false;
+  String _videoErrorMessage = '';
+  bool _isMuted = false;
+  String? _cachedVideoUrl;
+  String? _cachedLogoUrl;
+  String? _cachedBrandName;
 
   @override
   void initState() {
     super.initState();
-    // Initialize video player
+    _initializeScreen();
+  }
+
+  Future<void> _initializeScreen() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: homeAppBarColor,
@@ -78,20 +83,32 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       productController.filterProductEnable.value = false;
       productController.categoryFilter.value = 0;
 
+      // Fetch brand details first
       await brandController.getBrandDetails(widget.id, widget.slug);
 
+      // Cache values to avoid repeated map lookups
+      _cachedBrandName =
+          (brandController.brandDetails["brandInfo"]?["name"] ?? '').toString();
+      _cachedLogoUrl =
+          (brandController.brandDetails["brandInfo"]?["logo"] ?? '').toString();
       final mediaUrl =
-          brandController.brandDetails["brandInfo"]?["video"]?.toString() ?? "";
-      if (mediaUrl.isNotEmpty && _looksLikeVideo(mediaUrl)) {
-        _initializeMainVideo(mediaUrl);
-        hasVideoError = false;
-        videoErrorMessage = '';
-      } else {
-        hasVideoError = true;
-        videoErrorMessage = 'Using image banner';
-      }
+          (brandController.brandDetails["brandInfo"]?["video"]?.toString() ??
+              "");
 
       if (mounted) setState(() {});
+
+      // Initialize video asynchronously after UI is rendered
+      if (mediaUrl.isNotEmpty && _looksLikeVideo(mediaUrl)) {
+        _cachedVideoUrl = mediaUrl;
+        // Delay video initialization to prioritize UI rendering
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted) _initializeVideo(mediaUrl);
+        });
+      } else {
+        _hasVideoError = true;
+        _videoErrorMessage = 'Using image banner';
+        if (mounted) setState(() {});
+      }
     });
   }
 
@@ -115,108 +132,165 @@ class AllBrandScreenState extends State<AllBrandScreen> {
         x.endsWith('.bmp');
   }
 
-  void _initializeMainVideo(String videoUrl) {
+  Future<void> _initializeVideo(String videoUrl) async {
     try {
-      _videoPlayerController =
-          VideoPlayerController.networkUrl(Uri.parse(videoUrl));
-      _initializeVideoPlayerFuture =
-          _videoPlayerController.initialize().then((_) {
-        _videoPlayerController.setLooping(true);
-        _videoPlayerController.setVolume(1.0);
-        _videoPlayerController.play();
-      }).catchError((error) {
-        setState(() {
-          hasVideoError = true;
-          videoErrorMessage = 'Failed to load video: $error';
-        });
-      });
+      _videoPlayerController = VideoPlayerController.networkUrl(
+        Uri.parse(videoUrl),
+        videoPlayerOptions: VideoPlayerOptions(
+          mixWithOthers: true,
+          allowBackgroundPlayback: false,
+        ),
+      );
 
-      _videoPlayerController.addListener(() {
-        if (_videoPlayerController.value.hasError) {
-          setState(() {
-            hasVideoError = true;
-            videoErrorMessage = _videoPlayerController.value.errorDescription ??
-                'Unknown video error';
-          });
-        }
-      });
+      await _videoPlayerController!.initialize();
+
+      if (mounted) {
+        setState(() {
+          _isVideoInitialized = true;
+          _hasVideoError = false;
+        });
+
+        // Start playing after initialization
+        _videoPlayerController!.setLooping(true);
+        _videoPlayerController!.setVolume(1.0);
+        _videoPlayerController!.play();
+      }
+
+      // Add error listener
+      _videoPlayerController!.addListener(_videoListener);
     } catch (e) {
-      hasVideoError = true;
-      videoErrorMessage = 'Video controller creation error: $e';
+      if (mounted) {
+        setState(() {
+          _hasVideoError = true;
+          _videoErrorMessage = 'Video load failed: $e';
+        });
+      }
     }
   }
 
-  Widget _buildMainVideoWidget() {
-    if (hasVideoError || _initializeVideoPlayerFuture == null) {
-      return _buildVideoErrorWidget(
-        videoErrorMessage.isNotEmpty
-            ? videoErrorMessage
-            : 'Video not initialized yet',
-      );
+  void _videoListener() {
+    if (_videoPlayerController?.value.hasError ?? false) {
+      if (mounted) {
+        setState(() {
+          _hasVideoError = true;
+          _videoErrorMessage =
+              _videoPlayerController?.value.errorDescription ?? 'Unknown error';
+        });
+      }
+    }
+  }
+
+  Widget _buildVideoWidget() {
+    // Show placeholder while loading
+    if (!_isVideoInitialized ||
+        _hasVideoError ||
+        _videoPlayerController == null) {
+      return _buildVideoPlaceholder();
     }
 
-    return FutureBuilder(
-      future: _initializeVideoPlayerFuture,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return _buildVideoErrorWidget(
-              'Video loading failed: ${snapshot.error}');
-        }
-        if (snapshot.connectionState == ConnectionState.done &&
-            !hasVideoError) {
-          return AspectRatio(
-            aspectRatio: _videoPlayerController.value.aspectRatio,
-            child: VideoPlayer(_videoPlayerController),
-          );
-        }
-        return Container(
+    return SizedBox(
+      height: 211.sp,
+      width: double.infinity,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          AspectRatio(
+            aspectRatio: _videoPlayerController!.value.aspectRatio,
+            child: VideoPlayer(_videoPlayerController!),
+          ),
+          Positioned(
+            top: 16.sp,
+            right: 16.sp,
+            child: GestureDetector(
+              onTap: _toggleMute,
+              child: Container(
+                padding: EdgeInsets.all(8.sp),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(50.sp),
+                ),
+                child: Icon(
+                  _isMuted ? Icons.volume_off : Icons.volume_up,
+                  color: Colors.white,
+                  size: 24.sp,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _toggleMute() {
+    if (_videoPlayerController != null) {
+      setState(() {
+        _isMuted = !_isMuted;
+        _videoPlayerController!.setVolume(_isMuted ? 0.0 : 1.0);
+      });
+    }
+  }
+
+  Widget _buildVideoPlaceholder() {
+    // Show cached logo as placeholder
+    if (_cachedLogoUrl != null && _cachedLogoUrl!.isNotEmpty) {
+      return CachedNetworkImage(
+        imageUrl: _cachedLogoUrl!,
+        height: 211.sp,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => Container(
           height: 211.sp,
           width: double.infinity,
           color: cardBg,
           child: const Center(
             child: CircularProgressIndicator(color: Colors.white),
           ),
-        );
-      },
-    );
-  }
+        ),
+        errorWidget: (_, __, ___) => Container(
+          height: 211.sp,
+          width: double.infinity,
+          color: cardBg,
+        ),
+      );
+    }
 
-  Widget _buildVideoErrorWidget(String errorMessage) {
     return Container(
       height: 211.sp,
       width: double.infinity,
       color: cardBg,
-      child: Center(
-        child: Text(
-          ' ', // Empty space to show an image instead
-          style: TextStyle(color: Colors.white70, fontSize: 16.sp),
-        ),
-      ),
+      child: _isVideoInitialized
+          ? null
+          : const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
     );
   }
 
-  List<Map<String, dynamic>> _normalizedProducts() {
-    final raw = (brandController.brandDetails["products"] as List?) ?? [];
-    final brandName =
-        (brandController.brandDetails["brandInfo"]?["name"] ?? '').toString();
+  // Optimized product normalization - cache results
+  List<Map<String, dynamic>>? _cachedNormalizedProducts;
 
-    return raw.map<Map<String, dynamic>>((e) {
+  List<Map<String, dynamic>> _normalizedProducts() {
+    if (_cachedNormalizedProducts != null) {
+      return _cachedNormalizedProducts!;
+    }
+
+    final raw = (brandController.brandDetails["products"] as List?) ?? [];
+    final brandName = _cachedBrandName ?? '';
+
+    _cachedNormalizedProducts = raw.map<Map<String, dynamic>>((e) {
       final m = Map<String, dynamic>.from(e as Map);
 
       final id = m["id"];
       final title = (m["title"] ?? m["name"] ?? "").toString();
 
-      // -------- BASE & MRP --------
       final num base = (m["basePrice"] ?? m["mrp"] ?? 0);
       final num mrpVal = (m["mrp"] ?? 0);
 
-      // -------- APPLY SAME RULE --------
       bool hideMrp = (mrpVal == 0 || mrpVal == base);
-
       final num displayPrice = base;
       final num? displayMrp = hideMrp ? null : mrpVal;
 
-      // -------- IMAGES --------
       final List<dynamic> imageUrls = m["imageUrls"] ?? [];
       final images = imageUrls
           .map((url) => {"name": url.toString()})
@@ -232,26 +306,41 @@ class AllBrandScreenState extends State<AllBrandScreen> {
         "images": images,
       };
     }).toList();
+
+    return _cachedNormalizedProducts!;
+  }
+
+  void _pauseVideo() {
+    try {
+      _videoPlayerController?.pause();
+    } catch (e) {
+      print('Error pausing video: $e');
+    }
+  }
+
+  void _resumeVideo() {
+    try {
+      if (_isVideoInitialized && !_hasVideoError) {
+        _videoPlayerController?.play();
+      }
+    } catch (e) {
+      print('Error resuming video: $e');
+    }
   }
 
   @override
   void dispose() {
-    try {
-      if (!hasVideoError) {
-        _videoPlayerController.pause();
-        _videoPlayerController.dispose();
-      }
-    } catch (e) {
-      print('Error disposing main video controller: $e');
-    }
+    _videoPlayerController?.removeListener(_videoListener);
+    _videoPlayerController?.pause();
+    _videoPlayerController?.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final brandName =
-        (brandController.brandDetails["brandInfo"]?["name"] ?? '').toString();
+    final brandName = _cachedBrandName ?? '';
+
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: homeAppBarColor,
@@ -259,9 +348,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
         children: [
           AllBrandAppbar(
             onPressedBack: () {
-              try {
-                if (!hasVideoError) _videoPlayerController.pause();
-              } catch (_) {}
+              _pauseVideo();
               Get.close(1);
             },
             onPressedShare: () async {
@@ -322,6 +409,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         child: Image.asset(circleBack),
                       ),
 
+                      // Video/Image Banner
                       Obx(() {
                         if (brandController.isDetails.value) {
                           return Container(
@@ -331,85 +419,30 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           );
                         }
 
-                        final mediaUrl = (brandController
-                                    .brandDetails["brandInfo"]?["video"] ??
-                                "")
-                            .toString();
-                        final fallbackImage = (brandController
-                                    .brandDetails["brandInfo"]?["logo"] ??
-                                "")
-                            .toString();
+                        final mediaUrl = _cachedVideoUrl ?? '';
 
-                        // Show real video
-                        if (mediaUrl.isNotEmpty &&
-                            _looksLikeVideo(mediaUrl) &&
-                            !hasVideoError) {
-                          return SizedBox(
+                        // Show video if available and initialized
+                        if (mediaUrl.isNotEmpty && _looksLikeVideo(mediaUrl)) {
+                          return _buildVideoWidget();
+                        }
+
+                        // Show image banner
+                        if (_cachedLogoUrl != null &&
+                            _cachedLogoUrl!.isNotEmpty) {
+                          return CachedNetworkImage(
+                            imageUrl: _cachedLogoUrl!,
                             height: 211.sp,
                             width: double.infinity,
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                _buildMainVideoWidget(), // Your video player widget here
-                                Positioned(
-                                  top: 16.sp,
-                                  right: 16.sp,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        // Toggle mute/unmute state
-                                        _isMuted = !_isMuted;
-                                        // Mute or unmute the video player here
-                                        _videoPlayerController
-                                            .setVolume(_isMuted ? 0.0 : 1.0);
-                                      });
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.all(8.sp),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.5),
-                                        borderRadius:
-                                            BorderRadius.circular(50.sp),
-                                      ),
-                                      child: Icon(
-                                        _isMuted
-                                            ? Icons.volume_off
-                                            : Icons.volume_up,
-                                        color: Colors.white,
-                                        size: 24.sp,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            fit: BoxFit.cover,
+                            errorWidget: (_, __, ___) => Image.asset(
+                              brandback,
+                              height: 211.sp,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
                             ),
                           );
                         }
 
-                        // Show image banner (PNG/JPG/etc.)
-                        if (mediaUrl.isNotEmpty && _looksLikeImage(mediaUrl)) {
-                          return fallbackImage.isNotEmpty
-                              ? CachedNetworkImage(
-                                  imageUrl: fallbackImage,
-                                  height: 211.sp,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                  errorWidget: (_, __, ___) => Image.asset(
-                                    brandback,
-                                    height: 211.sp,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
-                              : Image.asset(
-                                  brandback,
-                                  height: 211.sp,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                );
-                        }
-
-                        // Fallback asset
                         return Image.asset(
                           brandback,
                           height: 211.sp,
@@ -418,15 +451,13 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         );
                       }),
 
-                      // Brand Logo (use proper URL validation)
+                      // Brand Logo
                       Obx(() {
                         if (brandController.isDetails.value) {
                           return const SizedBox(height: 0);
                         }
-                        final logoUrl = (brandController
-                                    .brandDetails["brandInfo"]?["logo"] ??
-                                "")
-                            .toString();
+
+                        final logoUrl = _cachedLogoUrl ?? '';
                         final uri = Uri.tryParse(logoUrl);
                         final isValidUrl =
                             uri != null && uri.hasScheme && uri.host.isNotEmpty;
@@ -436,9 +467,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           margin: EdgeInsets.only(top: 160.sp),
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: homeAppBarColor,
-                              width: 4.0.sp,
-                            ),
+                                color: homeAppBarColor, width: 4.0.sp),
                             color: Colors.white,
                             shape: BoxShape.circle,
                           ),
@@ -469,20 +498,14 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       errorWidget: (context, url, error) =>
                                           Container(
                                         color: Colors.white,
-                                        child: Icon(
-                                          Icons.storefront,
-                                          size: 40.sp,
-                                          color: colorPrimary,
-                                        ),
+                                        child: Icon(Icons.storefront,
+                                            size: 40.sp, color: colorPrimary),
                                       ),
                                     )
                                   : Container(
                                       color: Colors.white,
-                                      child: Icon(
-                                        Icons.storefront,
-                                        size: 40.sp,
-                                        color: colorPrimary,
-                                      ),
+                                      child: Icon(Icons.storefront,
+                                          size: 40.sp, color: colorPrimary),
                                     ),
                             ),
                           ),
@@ -500,15 +523,9 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                   ? Container(
                                       height: 20.sp,
                                       width: 100.sp,
-                                      color: cardBg,
-                                    )
+                                      color: cardBg)
                                   : AppText(
-                                      text: (brandController
-                                                      .brandDetails["brandInfo"]
-                                                  ?["name"] ??
-                                              "")
-                                          .toString()
-                                          .toUpperCase(),
+                                      text: brandName.toUpperCase(),
                                       color: whiteColor,
                                       fontSize: 16,
                                       fontFamily: "Franklin Gothic",
@@ -519,7 +536,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         ),
                       ),
 
-                      // Description + "All Products"
+                      // Description
                       Container(
                         margin: EdgeInsets.only(top: 290.sp),
                         child: Padding(
@@ -527,102 +544,77 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Obx(
-                                () => brandController.isDetails.value
-                                    ? const SizedBox(height: 0)
-                                    : Visibility(
-                                        visible: ((brandController.brandDetails[
-                                                            "brandInfo"]
-                                                        ?["description"] ??
-                                                    "") as String)
-                                                .length >
-                                            80,
-                                        child: Obx(() {
-                                          if (brandController.isDetails.value) {
-                                            return Container(
-                                              height: 20.sp,
-                                              width: double.infinity,
-                                              color: cardBg,
-                                            );
-                                          }
+                              Obx(() {
+                                if (brandController.isDetails.value) {
+                                  return const SizedBox(height: 0);
+                                }
 
-                                          final desc =
-                                              (brandController.brandDetails[
-                                                              "brandInfo"]
-                                                          ?["description"] ??
-                                                      "")
-                                                  .toString()
-                                                  .trim();
+                                final desc =
+                                    (brandController.brandDetails["brandInfo"]
+                                                ?["description"] ??
+                                            "")
+                                        .toString()
+                                        .trim();
 
-                                          return Column(
-                                            children: [
-                                              Text(
-                                                desc,
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color: Colors.white
-                                                      .withOpacity(0.9),
-                                                  fontSize: 15.sp,
-                                                  height: 1.45,
-                                                  letterSpacing: 0.2,
-                                                  fontFamily:
-                                                      "Franklin Gothic Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                                maxLines: showDescription
-                                                    ? null
-                                                    : 2, // Only 2 lines
-                                                overflow: showDescription
-                                                    ? TextOverflow.visible
-                                                    : TextOverflow.ellipsis,
-                                              ),
-                                              if (desc.length > 80)
-                                                InkWell(
-                                                  onTap: () => setState(() =>
-                                                      showDescription =
-                                                          !showDescription),
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        top: 6.sp),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                          showDescription
-                                                              ? "Show less"
-                                                              : "Show more",
-                                                          style: TextStyle(
-                                                            color: Colors.white
-                                                                .withOpacity(
-                                                                    0.75),
-                                                            fontSize: 12.sp,
-                                                            fontFamily:
-                                                                "Franklin Gothic",
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                          ),
-                                                        ),
-                                                        SizedBox(width: 4.sp),
-                                                        SvgPicture.asset(
-                                                          showDescription
-                                                              ? upDropDownSvgImage
-                                                              : dropdownSvgImage,
-                                                          color: Colors.white
-                                                              .withOpacity(
-                                                                  0.75),
-                                                          height: 6.sp,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                            ],
-                                          );
-                                        }),
+                                if (desc.length <= 80) {
+                                  return const SizedBox(height: 0);
+                                }
+
+                                return Column(
+                                  children: [
+                                    Text(
+                                      desc,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.white.withOpacity(0.9),
+                                        fontSize: 15.sp,
+                                        height: 1.45,
+                                        letterSpacing: 0.2,
+                                        fontFamily: "Franklin Gothic Regular",
+                                        fontWeight: FontWeight.w400,
                                       ),
-                              ),
+                                      maxLines: showDescription ? null : 2,
+                                      overflow: showDescription
+                                          ? TextOverflow.visible
+                                          : TextOverflow.ellipsis,
+                                    ),
+                                    InkWell(
+                                      onTap: () => setState(() =>
+                                          showDescription = !showDescription),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(top: 6.sp),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              showDescription
+                                                  ? "Show less"
+                                                  : "Show more",
+                                              style: TextStyle(
+                                                color: Colors.white
+                                                    .withOpacity(0.75),
+                                                fontSize: 12.sp,
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            SizedBox(width: 4.sp),
+                                            SvgPicture.asset(
+                                              showDescription
+                                                  ? upDropDownSvgImage
+                                                  : dropdownSvgImage,
+                                              color: Colors.white
+                                                  .withOpacity(0.75),
+                                              height: 6.sp,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }),
                               Padding(
                                 padding: EdgeInsets.only(top: 24.sp),
                                 child: AppText(
@@ -640,126 +632,112 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                     ],
                   ),
 
-                  // Product list (normalized with displayPrice & displayMrp)
-                  Obx(
-                    () {
-                      if (brandController.isProductBrand.value) {
-                        // shimmer while loading
-                        return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16.sp),
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 220.sp,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: 3,
-                              itemBuilder: (ctx, index) => Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.only(left: 16.sp),
-                                    color: cardBg,
-                                    height: 170.sp,
-                                    width: 136.sp,
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.only(top: 8.sp, left: 16.sp),
-                                    child: Container(
+                  // Product List
+                  Obx(() {
+                    if (brandController.isProductBrand.value) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16.sp),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 220.sp,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: 3,
+                            itemBuilder: (ctx, index) => Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(left: 16.sp),
+                                  color: cardBg,
+                                  height: 170.sp,
+                                  width: 136.sp,
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(top: 8.sp, left: 16.sp),
+                                  child: Container(
                                       color: cardBg,
                                       height: 16.sp,
-                                      width: 100.sp,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.only(top: 8.sp, left: 16.sp),
-                                    child: Row(
-                                      children: [
-                                        Container(
+                                      width: 100.sp),
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(top: 8.sp, left: 16.sp),
+                                  child: Row(
+                                    children: [
+                                      Container(
                                           color: cardBg,
                                           height: 16.sp,
-                                          width: 40.sp,
-                                        ),
-                                        SizedBox(width: 6.sp),
-                                        Container(
+                                          width: 40.sp),
+                                      SizedBox(width: 6.sp),
+                                      Container(
                                           color: cardBg,
                                           height: 16.sp,
-                                          width: 40.sp,
-                                        ),
-                                      ],
-                                    ),
+                                          width: 40.sp),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
-                        );
-                      }
-
-                      /// Normalized product list with price rule applied
-                      final List<Map<String, dynamic>> normalized =
-                          _normalizedProducts();
-
-                      return BrandProductList(
-                        radius: 0,
-                        list: normalized,
-                        scrollDirection: Axis.vertical,
-                        onPressed: (productId, bName) async {
-                          try {
-                            if (!hasVideoError) _videoPlayerController.pause();
-                          } catch (_) {}
-
-                          Get.dialog(
-                            const Center(child: CircularProgressIndicator()),
-                            barrierDismissible: false,
-                          );
-
-                          await productController.getProductById(productId);
-
-                          if (Get.isDialogOpen ?? false) Get.back();
-
-                          final err = productController.errorMsg.value;
-                          if (err.isNotEmpty) {
-                            getSnackBar(err);
-                            try {
-                              if (!hasVideoError) _videoPlayerController.play();
-                            } catch (_) {}
-                            return;
-                          }
-
-                          Get.to(() => ProductDetailsScreen(
-                                expresshour: homeController.expressHour.value,
-                                backgroundcolor: whiteColor,
-                                brandName: bName.isNotEmpty ? bName : brandName,
-                                productId: productId,
-                                type: "add",
-                              ))?.then((_) {
-                            try {
-                              if (!hasVideoError) _videoPlayerController.play();
-                            } catch (_) {}
-
-                            SystemChrome.setSystemUIOverlayStyle(
-                              const SystemUiOverlayStyle(
-                                statusBarColor: homeAppBarColor,
-                                systemNavigationBarColor: homeAppBarColor,
-                                statusBarIconBrightness: Brightness.light,
-                                statusBarBrightness: Brightness.dark,
-                              ),
-                            );
-                          });
-
-                          await analytics.logEvent(
-                            name: 'branddetails_product_details',
-                            parameters: {
-                              'page_name': 'branddetails_product_details'
-                            },
-                          );
-                        },
+                        ),
                       );
-                    },
-                  ),
-                  // Explore All
+                    }
+
+                    final normalized = _normalizedProducts();
+
+                    return BrandProductList(
+                      radius: 0,
+                      list: normalized,
+                      scrollDirection: Axis.vertical,
+                      onPressed: (productId, bName) async {
+                        _pauseVideo();
+
+                        Get.dialog(
+                          const Center(child: CircularProgressIndicator()),
+                          barrierDismissible: false,
+                        );
+
+                        await productController.getProductById(productId);
+
+                        if (Get.isDialogOpen ?? false) Get.back();
+
+                        final err = productController.errorMsg.value;
+                        if (err.isNotEmpty) {
+                          getSnackBar(err);
+                          _resumeVideo();
+                          return;
+                        }
+
+                        Get.to(() => ProductDetailsScreen(
+                              expresshour: homeController.expressHour.value,
+                              backgroundcolor: whiteColor,
+                              brandName: bName.isNotEmpty ? bName : brandName,
+                              productId: productId,
+                              type: "add",
+                            ))?.then((_) {
+                          _resumeVideo();
+                          SystemChrome.setSystemUIOverlayStyle(
+                            const SystemUiOverlayStyle(
+                              statusBarColor: homeAppBarColor,
+                              systemNavigationBarColor: homeAppBarColor,
+                              statusBarIconBrightness: Brightness.light,
+                              statusBarBrightness: Brightness.dark,
+                            ),
+                          );
+                        });
+
+                        await analytics.logEvent(
+                          name: 'branddetails_product_details',
+                          parameters: {
+                            'page_name': 'branddetails_product_details'
+                          },
+                        );
+                      },
+                    );
+                  }),
+
+                  // Explore All Button
                   InkWell(
                     onTap: () async {
                       final prefs = await SharedPreferences.getInstance();
@@ -774,9 +752,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       productController.filterProductEnable.value = false;
                       productController.categoryFilter.value = 0;
 
-                      try {
-                        if (!hasVideoError) _videoPlayerController.pause();
-                      } catch (_) {}
+                      _pauseVideo();
 
                       Navigator.push(
                         context,
@@ -795,9 +771,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         productController.productSortBy.value = "";
                         productController.filterProductEnable.value = false;
                         productController.categoryFilter.value = 0;
-                        try {
-                          if (!hasVideoError) _videoPlayerController.play();
-                        } catch (_) {}
+                        _resumeVideo();
                       });
 
                       await analytics.logEvent(
