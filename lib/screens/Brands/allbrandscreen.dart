@@ -101,7 +101,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       if (mediaUrl.isNotEmpty && _looksLikeVideo(mediaUrl)) {
         _cachedVideoUrl = mediaUrl;
         // Delay video initialization to prioritize UI rendering
-        Future.delayed(const Duration(milliseconds: 300), () {
+        Future.delayed(const Duration(milliseconds: 100), () {
           if (mounted) _initializeVideo(mediaUrl);
         });
       } else {

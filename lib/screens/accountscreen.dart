@@ -452,7 +452,7 @@ class AccountScreenState extends State<AccountScreen> {
                                   onPressedPrivacy: () async {
                                     launchUrl(
                                       Uri.parse(
-                                          "https://www.la-fetch.com/privacy-policy"),
+                                          "https://la-fetch.com/privacy-policy"),
                                       mode: LaunchMode.externalApplication,
                                     );
                                     await analytics.logEvent(
