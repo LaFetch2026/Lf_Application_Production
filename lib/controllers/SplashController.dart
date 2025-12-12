@@ -19,18 +19,10 @@ class SplashController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
 
     // Allow prefs to fully load
-    await Future.delayed(const Duration(milliseconds: 80));
+    await Future.delayed(const Duration(seconds: 3));
 
-    final bool skipped = prefs.getBool("skip") ?? false;
     final bool isLoggedIn = prefs.getBool("isLoggedIn") ?? false;
     final String? token = prefs.getString("token");
-
-    // -------------------------
-    // GUEST MODE
-    // -------------------------
-    if (skipped && !isLoggedIn && (token == null || token.isEmpty)) {
-      return _go(const BottomNavScreen());
-    }
 
     // -------------------------
     // LOGGED-IN USER

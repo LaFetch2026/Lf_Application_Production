@@ -105,6 +105,7 @@
     <key>UIBackgroundModes</key>
     <array>
         <string>remote-notification</string>
+        <string>fetch</string>
     </array>
     <key>UIFileSharingEnabled</key>
     <true/>
@@ -130,6 +131,12 @@
     <!-- Firebase -->
     <key>FirebaseCrashlyticsCollectionEnabled</key>
     <true/>
+    <key>FirebaseAppDelegateProxyEnabled</key>
+    <false/>
+
+    <!-- Push Notifications (CRITICAL) -->
+    <key>aps-environment</key>
+    <string>development</string>
 
     <!-- AppsFlyer -->
     <key>AppsFlyerDevKey</key>

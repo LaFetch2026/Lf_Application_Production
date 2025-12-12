@@ -17,14 +17,16 @@ class _SplashTwoScreenState extends State<SplashTwoScreen> {
   void initState() {
     super.initState();
 
-    // ⭐ Run controller AFTER first frame is drawn — fixes welcome flash & splash delay
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Remove old instance to avoid multiple splash runs
-      if (Get.isRegistered<SplashController>()) {
-        Get.delete<SplashController>(force: true);
+      // Force clean state on every load
+      Get.delete<SplashController>(force: true);
+
+      // Ensure we're at the root route
+      while (Get.currentRoute != '/') {
+        Get.back();
       }
 
-      // Create the controller (will auto-navigate)
+      // Create fresh controller
       Get.put(SplashController());
     });
   }
