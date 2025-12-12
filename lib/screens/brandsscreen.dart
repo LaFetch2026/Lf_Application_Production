@@ -44,15 +44,25 @@ class BrandsScreenState extends State<BrandsScreen> {
   final brandController = Get.put(BrandController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   Timer? debounce;
-  var brandDetails = {}.obs; // holds full brandInfo + products
+  var brandDetails = {}.obs;
   var brandProductDetailsList = <Map<String, dynamic>>[].obs;
   var brand_category_List = <int>[].obs;
   var isDetails = false.obs;
+
+  // ✅ Cache management - prevent unnecessary API calls
+  static DateTime? _lastDataFetch;
+  static const Duration _cacheValidDuration = Duration(minutes: 5);
+  static String? _lastSearchQuery;
 
   onSearchChanged(String query) {
     if (debounce?.isActive ?? false) debounce?.cancel();
     debounce = Timer(const Duration(milliseconds: 500), () async {
       brandController.queryText.value = query;
+
+      // ✅ Reset cache when search query changes
+      _lastDataFetch = null;
+      _lastSearchQuery = query;
+
       brandController.getBrandData("brand");
       await analytics.logEvent(
         name: 'brand_page_search',
@@ -63,7 +73,39 @@ class BrandsScreenState extends State<BrandsScreen> {
     });
   }
 
-  @override
+  // ✅ Helper method to check if data should be fetched
+  bool _shouldFetchData(String currentQuery) {
+    // First time loading
+    if (_lastDataFetch == null) {
+      return true;
+    }
+
+    // Search query changed
+    if (_lastSearchQuery != currentQuery) {
+      return true;
+    }
+
+    // Cache expired
+    final timeSinceLastFetch = DateTime.now().difference(_lastDataFetch!);
+    if (timeSinceLastFetch > _cacheValidDuration) {
+      return true;
+    }
+
+    // Data already loaded and still valid
+    return false;
+  }
+
+  // ✅ Method to force refresh data
+  void forceRefreshData() {
+    setState(() {
+      _lastDataFetch = null;
+    });
+
+    brandController.getBrandData("brand");
+    _lastDataFetch = DateTime.now();
+    _lastSearchQuery = brandController.queryText.value;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -76,8 +118,21 @@ class BrandsScreenState extends State<BrandsScreen> {
       brandController.searchController.clear();
       brandController.queryText.value = "";
 
-      // ✅ This ensures API is called with &type=alphabet
-      await brandController.getBrandData("brand");
+      // ✅ Check if we need to fetch data or use cached data
+      final currentQuery = brandController.queryText.value;
+      final shouldFetch = _shouldFetchData(currentQuery);
+
+      if (shouldFetch) {
+        print("🔄 Fetching fresh brand data...");
+        await brandController.getBrandData("brand");
+
+        // ✅ Update cache timestamp
+        _lastDataFetch = DateTime.now();
+        _lastSearchQuery = currentQuery;
+      } else {
+        print(
+            "✅ Using cached brand data (fetched ${DateTime.now().difference(_lastDataFetch!).inMinutes} minutes ago)");
+      }
     });
 
     if (widget.screen == "search") {
@@ -164,7 +219,13 @@ class BrandsScreenState extends State<BrandsScreen> {
                       print(value);
                       if (value is RawKeyDownEvent) {
                         brandController.queryText.value = "";
+
+                        // ✅ Reset cache when clearing search
+                        _lastDataFetch = null;
+                        _lastSearchQuery = "";
+
                         brandController.getBrandData("brand");
+                        _lastDataFetch = DateTime.now();
                       }
                     },
                     child: TextField(
@@ -221,13 +282,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                           brandController.isBrand.value
                               ? const DummybrandList()
                               : brandController.brandList.isNotEmpty
-                                  ?
-                                  // Replace your current ListView.builder section with this fixed version
-
-// Replace your current ListView.builder section with this version
-// This works with a flat list of brands from your API
-
-                                  Padding(
+                                  ? Padding(
                                       padding: EdgeInsets.only(
                                           bottom: 10.sp, top: 4.sp),
                                       child: GetBuilder<BrandController>(
@@ -339,7 +394,6 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                             GestureDetector(
                                                               onTap: () async {
                                                                 try {
-                                                                  // 🔹 Store base brand info in controller for immediate UI access
                                                                   brandController
                                                                           .brandlogo
                                                                           .value =
@@ -364,14 +418,12 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                       brand[
                                                                           "id"];
 
-                                                                  // 🔹 Fetch full brand details from API before navigation
                                                                   await brandController
                                                                       .getBrandDetails(
                                                                           brand[
                                                                               "id"],
                                                                           "");
 
-                                                                  // 🔹 Navigate to brand detail screen
                                                                   await Get.to(
                                                                       () =>
                                                                           AllBrandScreen(
@@ -382,7 +434,6 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                 widget.screen ?? "",
                                                                           ));
 
-                                                                  // 🔹 Restore system UI colors
                                                                   SystemChrome
                                                                       .setSystemUIOverlayStyle(
                                                                           const SystemUiOverlayStyle(
@@ -398,7 +449,6 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                             .light,
                                                                   ));
 
-                                                                  // 🔹 Log analytics event
                                                                   await analytics
                                                                       .logEvent(
                                                                     name:
@@ -422,7 +472,6 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                             .sp),
                                                                 child: Row(
                                                                   children: [
-                                                                    // Brand logo
                                                                     brand["logo"] !=
                                                                             null
                                                                         ? Container(
@@ -457,12 +506,9 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                             child:
                                                                                 Image.asset(dummyWishlistImage),
                                                                           ),
-
                                                                     SizedBox(
                                                                         width: 12
                                                                             .sp),
-
-                                                                    // Brand name
                                                                     Expanded(
                                                                       child:
                                                                           AppText(
@@ -478,8 +524,6 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                             FontWeight.w400,
                                                                       ),
                                                                     ),
-
-                                                                    // Expand icon
                                                                     InkWell(
                                                                       onTap:
                                                                           () {
@@ -537,24 +581,20 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                 return GestureDetector(
                                                                                   onTap: () async {
                                                                                     try {
-                                                                                      // 🔹 Preload basic brand info
                                                                                       brandController.brandlogo.value = brand["logo"];
                                                                                       brandController.brandbackground.value = brand["background_image"] ?? "";
                                                                                       brandController.brandName.value = brand["name"];
                                                                                       brandController.showAllBrand.value = true;
                                                                                       brandController.brandId.value = brand["id"];
 
-                                                                                      // 🔹 Fetch full details
                                                                                       await brandController.getBrandDetails(brand["id"], "");
 
-                                                                                      // 🔹 Navigate
                                                                                       await Get.to(() => AllBrandScreen(
                                                                                             id: brand["id"],
                                                                                             slug: "",
                                                                                             screen: widget.screen ?? "",
                                                                                           ));
 
-                                                                                      // 🔹 Restore system UI overlay colors
                                                                                       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
                                                                                         statusBarColor: whiteColor,
                                                                                         systemNavigationBarColor: whiteColor,
@@ -562,7 +602,6 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                         statusBarBrightness: Brightness.light,
                                                                                       ));
 
-                                                                                      // 🔹 Log analytics
                                                                                       await analytics.logEvent(
                                                                                         name: 'brand_details',
                                                                                         parameters: {

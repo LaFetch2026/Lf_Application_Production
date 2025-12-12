@@ -65,8 +65,13 @@ class HomeScreenState extends State<HomeScreen> {
 
   final PageController _pageController = PageController(initialPage: 0);
   Timer? timer;
-// Add this at the top of your HomeScreen class
   bool isGuest = false;
+
+  // ✅ Cache management - prevent unnecessary API calls
+  static DateTime? _lastDataFetch;
+  static const Duration _cacheValidDuration =
+      Duration(minutes: 5); // Adjust as needed
+  static int? _lastGenderValue;
 
   @override
   void initState() {
@@ -115,24 +120,39 @@ class HomeScreenState extends State<HomeScreen> {
 
       await checkUserConnection();
 
-      // ✅ ALWAYS hit these APIs (no JWT required)
-      homeController.getBannerData(1);
-      homeController.getBannerData(2);
-      homeController.getBannerData(3);
+      // ✅ Check if we need to fetch data or use cached data
+      final currentGender = homeController.homeGenderValue.value;
+      final shouldFetchData = _shouldFetchData(currentGender);
 
-      catalogController
-          .getCatagoryData(catalogController.selectCategoryGender.value);
+      if (shouldFetchData) {
+        print("🔄 Fetching fresh data...");
 
-      homeController.getBrandData(
-          "featured", homeController.homeGenderValue.value);
+        // ALWAYS hit these APIs (no JWT required)
+        homeController.getBannerData(1);
+        homeController.getBannerData(2);
+        homeController.getBannerData(3);
 
-      productController.getHomeProduct(homeController.homeGenderValue.value);
+        catalogController
+            .getCatagoryData(catalogController.selectCategoryGender.value);
 
-      catalogController.getCatalogData(homeController.homeGenderValue.value);
+        homeController.getBrandData(
+            "featured", homeController.homeGenderValue.value);
 
-      homeController.getDeviceName();
+        productController.getHomeProduct(homeController.homeGenderValue.value);
 
-      initPlatformState(); // OneSignal push notifications
+        catalogController.getCatalogData(homeController.homeGenderValue.value);
+
+        homeController.getDeviceName();
+
+        initPlatformState(); // OneSignal push notifications
+
+        // ✅ Update cache timestamp
+        _lastDataFetch = DateTime.now();
+        _lastGenderValue = currentGender;
+      } else {
+        print(
+            "✅ Using cached data (fetched ${DateTime.now().difference(_lastDataFetch!).inMinutes} minutes ago)");
+      }
 
       // ✅ Fix hot reload visibility issue
       if (catalogController.catalogList.isNotEmpty) {
@@ -146,6 +166,47 @@ class HomeScreenState extends State<HomeScreen> {
         print("👤 Guest user - skipping profile initialization");
       }
     });
+  }
+
+  // ✅ Helper method to check if data should be fetched
+  bool _shouldFetchData(int currentGender) {
+    // First time loading
+    if (_lastDataFetch == null) {
+      return true;
+    }
+
+    // Gender changed
+    if (_lastGenderValue != currentGender) {
+      return true;
+    }
+
+    // Cache expired
+    final timeSinceLastFetch = DateTime.now().difference(_lastDataFetch!);
+    if (timeSinceLastFetch > _cacheValidDuration) {
+      return true;
+    }
+
+    // Data already loaded and still valid
+    return false;
+  }
+
+  // ✅ Method to force refresh data (call this when you know there's new data)
+  void forceRefreshData() {
+    setState(() {
+      _lastDataFetch = null; // Reset cache
+    });
+
+    // Trigger data fetch
+    final currentGender = homeController.homeGenderValue.value;
+    homeController.getBannerData(currentGender);
+    catalogController
+        .getCatagoryData(catalogController.selectCategoryGender.value);
+    homeController.getBrandData("featured", currentGender);
+    productController.getHomeProduct(currentGender);
+    catalogController.getCatalogData(currentGender);
+
+    _lastDataFetch = DateTime.now();
+    _lastGenderValue = currentGender;
   }
 
   @override
@@ -395,12 +456,6 @@ class HomeScreenState extends State<HomeScreen> {
           HomeAppbar(
             onPressedSearch: () async {
               final searchQuery = searchController.searchController.text;
-              // AnalyticsHelper.logSearch(
-              //   searchQuery: searchQuery,
-              //   contentType: 'product',
-              //   value: 0.0,
-              //   productId: productController.id.toString(),
-              // );
               await analytics.logEvent(
                 name: 'search_page',
                 parameters: {'search_string': searchQuery},
@@ -418,7 +473,6 @@ class HomeScreenState extends State<HomeScreen> {
               });
             },
             onPressedHeart: () async {
-              // ✅ Check if guest before opening wishlist
               final prefs = await SharedPreferences.getInstance();
               final isGuest = prefs.getBool('skip') ?? false;
 
@@ -438,7 +492,6 @@ class HomeScreenState extends State<HomeScreen> {
               );
             },
             onPressedCart: () async {
-              // ✅ Check if guest before opening cart
               final prefs = await SharedPreferences.getInstance();
               final isGuest = prefs.getBool('skip') ?? false;
 
@@ -477,12 +530,17 @@ class HomeScreenState extends State<HomeScreen> {
                     final prefs = await SharedPreferences.getInstance();
                     await prefs.setInt('selectedGender', 1);
                     _resetForTab();
-                    homeController.getBannerData(1);
-                    catalogController.getCatalogData(1);
-                    // 🔁 Optional refresh (not strictly needed if featured is global)
-                    homeController.getBrandData(
-                        "featured", homeController.homeGenderValue.value);
-                    productController.getHomeProduct(1);
+
+                    // ✅ Only fetch if gender changed
+                    if (_lastGenderValue != 1) {
+                      homeController.getBannerData(1);
+                      catalogController.getCatalogData(1);
+                      homeController.getBrandData("featured", 1);
+                      productController.getHomeProduct(1);
+                      _lastGenderValue = 1;
+                      _lastDataFetch = DateTime.now();
+                    }
+
                     catalogController.selectCategoryGender.value = 1;
                     catalogController.categoryName.value = "Men";
                     catalogController.getCatagoryData(1);
@@ -495,12 +553,17 @@ class HomeScreenState extends State<HomeScreen> {
                     homeController.genderText.value = "Women";
                     homeController.homeGenderValue.value = 2;
                     _resetForTab();
-                    homeController.getBannerData(2);
-                    catalogController.getCatalogData(2);
-                    // 🔁 Optional refresh
-                    homeController.getBrandData(
-                        "featured", homeController.homeGenderValue.value);
-                    productController.getHomeProduct(2);
+
+                    // ✅ Only fetch if gender changed
+                    if (_lastGenderValue != 2) {
+                      homeController.getBannerData(2);
+                      catalogController.getCatalogData(2);
+                      homeController.getBrandData("featured", 2);
+                      productController.getHomeProduct(2);
+                      _lastGenderValue = 2;
+                      _lastDataFetch = DateTime.now();
+                    }
+
                     catalogController.selectCategoryGender.value = 2;
                     catalogController.categoryName.value = "Women";
                     catalogController.getCatagoryData(2);
@@ -513,12 +576,17 @@ class HomeScreenState extends State<HomeScreen> {
                     homeController.genderText.value = "Accessories";
                     homeController.homeGenderValue.value = 3;
                     _resetForTab();
-                    homeController.getBannerData(3);
-                    catalogController.getCatalogData(3);
-                    // 🔁 Optional refresh
-                    homeController.getBrandData(
-                        "featured", homeController.homeGenderValue.value);
-                    productController.getHomeProduct(3);
+
+                    // ✅ Only fetch if gender changed
+                    if (_lastGenderValue != 3) {
+                      homeController.getBannerData(3);
+                      catalogController.getCatalogData(3);
+                      homeController.getBrandData("featured", 3);
+                      productController.getHomeProduct(3);
+                      _lastGenderValue = 3;
+                      _lastDataFetch = DateTime.now();
+                    }
+
                     catalogController.selectCategoryGender.value = 3;
                     catalogController.categoryName.value = "Accessories";
                     catalogController.getCatagoryData(3);
@@ -653,7 +721,6 @@ class HomeScreenState extends State<HomeScreen> {
                                     catalogController: catalogController,
                                     analytics: analytics,
                                     homeController: homeController,
-                                    // pass the callback from HomeScreen to this section
                                     onPressedViewAll: () =>
                                         widget.onPressed?.call(2),
                                   )
@@ -664,7 +731,6 @@ class HomeScreenState extends State<HomeScreen> {
                           return const DummyHomeBrand();
                         }
                         if (homeController.brandList.isEmpty) {
-                          // Graceful empty state if backend has no featured brands yet
                           return const Padding(
                             padding: EdgeInsets.symmetric(vertical: 12),
                             child: Center(
@@ -704,7 +770,7 @@ class HomeScreenState extends State<HomeScreen> {
                         }
 
                         final int selectedSuperCat =
-                            homeController.homeGenderValue.value; // 1/2/3
+                            homeController.homeGenderValue.value;
 
                         return ListView.separated(
                           physics: const NeverScrollableScrollPhysics(),
@@ -948,9 +1014,8 @@ class HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// ---------- helper sections reused from your file ----------
+// ---------- helper sections ----------
 String? firstImageUrlFromProduct(Map<String, dynamic> m) {
-  // Try an array like imageUrls: ["..."]
   final imgs = m['imageUrls'];
   if (imgs is List) {
     for (final e in imgs) {
@@ -958,7 +1023,6 @@ String? firstImageUrlFromProduct(Map<String, dynamic> m) {
       if (s != null && s.isNotEmpty) return s;
     }
   }
-  // Try common single-image fields
   for (final k in const [
     'image',
     'thumbnail',
@@ -990,14 +1054,11 @@ class _SectionStrip extends StatelessWidget {
     required this.seed,
   });
 
-  // ---------- BRAND NAME RESOLVER ----------
   String resolveBrandName(Map<String, dynamic> p) {
-    // Case 1: full brand object exists
     if (p['brand'] is Map && p['brand']?['name'] != null) {
       return p['brand']['name'].toString();
     }
 
-    // Case 2: brandId exists → search brand list
     final brandId = p['brandId'] is int
         ? p['brandId']
         : int.tryParse(p['brandId']?.toString() ?? '') ?? 0;
@@ -1018,7 +1079,6 @@ class _SectionStrip extends StatelessWidget {
     return "";
   }
 
-  // ---------- PRICE RESOLVER ----------
   String resolvePrice(Map<String, dynamic> p) {
     return (p['price'] ??
             p['salePrice'] ??
@@ -1050,7 +1110,7 @@ class _SectionStrip extends StatelessWidget {
         : null;
 
     return SizedBox(
-      height: 225.sp, // Perfect height for (170sp image + texts)
+      height: 225.sp,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
@@ -1087,13 +1147,12 @@ class _SectionStrip extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ---------- PRODUCT IMAGE ----------
                   ClipRRect(
                     borderRadius: BorderRadius.circular(4.sp),
                     child: imageUrl.isNotEmpty
                         ? CachedNetworkImage(
                             imageUrl: imageUrl,
-                            height: 160.sp, // Perfect height
+                            height: 160.sp,
                             width: 150.sp,
                             fit: BoxFit.cover,
                           )
@@ -1103,10 +1162,7 @@ class _SectionStrip extends StatelessWidget {
                             color: Colors.black.withOpacity(0.06),
                           ),
                   ),
-
                   SizedBox(height: 8.sp),
-
-                  // ---------- PRODUCT NAME ----------
                   Text(
                     title,
                     maxLines: 1,
@@ -1117,8 +1173,6 @@ class _SectionStrip extends StatelessWidget {
                       color: dark ? Colors.white : Colors.black,
                     ),
                   ),
-
-                  // ---------- BRAND NAME ----------
                   if (brandName.isNotEmpty)
                     Text(
                       brandName,
@@ -1132,8 +1186,6 @@ class _SectionStrip extends StatelessWidget {
                             : Colors.black.withOpacity(0.7),
                       ),
                     ),
-
-                  // ---------- PRICE ----------
                   if (price.isNotEmpty)
                     Text(
                       "₹$price",
@@ -1201,7 +1253,6 @@ class _ExploreTile extends StatelessWidget {
                       color: bg,
                     ),
             ),
-            // dark overlay for text legibility
             Container(
               height: 210.sp,
               width: 170.sp,
@@ -1235,8 +1286,6 @@ class _ExploreTile extends StatelessWidget {
     );
   }
 }
-
-// ---------- New: Screen to display products returned by /banner/:id ----------
 
 class BannerProductsScreen extends StatelessWidget {
   final String title;
@@ -1486,14 +1535,10 @@ class _BannerProductTile extends StatelessWidget {
   }
 }
 
-// ---------- Small section widgets ----------
-
 class _ShopByCategorySection extends StatelessWidget {
   final CatalogController catalogController;
   final FirebaseAnalytics analytics;
   final HomeController homeController;
-
-  /// Injected callback coming from HomeScreen
   final VoidCallback onPressedViewAll;
 
   const _ShopByCategorySection({
@@ -1535,7 +1580,6 @@ class _ShopByCategorySection extends StatelessWidget {
                 crossAxisSpacing: 12.sp,
                 mainAxisSpacing: 0.sp,
                 children: List.generate(
-                  // ✅ show only top 6
                   min(6, catalogController.catalogList.length),
                   (index) {
                     final catalog = catalogController.catalogList[index];
@@ -1544,7 +1588,6 @@ class _ShopByCategorySection extends StatelessWidget {
                         final categoryId = catalog["id"];
                         final catalogName = catalog["name"] ?? "Category";
 
-                        // (Optional) prefetch, if you still want to warm the cache/UI:
                         await catalogController.getCategoryProductData(
                           categoryId,
                           homeController.homeGenderValue.value,
@@ -1555,11 +1598,10 @@ class _ShopByCategorySection extends StatelessWidget {
                             categoryName: catalogName,
                             screen: "category",
                             genderName: homeController.genderText.value,
-                            categoryId:
-                                categoryId, // ✅ just pass the picked category id
+                            categoryId: categoryId,
                             brandId: 0,
                             genderType: homeController.homeGenderValue.value,
-                            categoryList: const [], // ✅ no longer needed
+                            categoryList: const [],
                             tagIds: const [],
                             title: '',
                           ),
@@ -1633,7 +1675,6 @@ class _ShopByCategorySection extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () async {
-              // keep the current tab’s gender
               final g = homeController.homeGenderValue.value;
               final gName = g == 1
                   ? "Men"
@@ -1641,18 +1682,14 @@ class _ShopByCategorySection extends StatelessWidget {
                       ? "Women"
                       : "Accessories";
 
-              // set it on the CatalogController so Categories tab reads the right state
               catalogController.selectCategoryGender.value = g;
               catalogController.categoryName.value = gName;
 
-              // optional: pre-load categories for that gender
               await catalogController.getCatagoryData(g);
 
-              // also persist it, in case the Categories screen reads from prefs
               final prefs = await SharedPreferences.getInstance();
               await prefs.setInt('selectedGender', g);
 
-              // now jump to the Categories tab (index 2 in your BottomNav)
               onPressedViewAll();
               await analytics.logEvent(
                 name: 'home_page_btnviewall',
@@ -1755,7 +1792,6 @@ class _FeaturedBrandsRow extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              // ✅ Get only real brand entries (ignore grouping maps)
               final brands = brandController.brandList
                   .where((b) =>
                       b is Map &&

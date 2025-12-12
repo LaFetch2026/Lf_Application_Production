@@ -35,14 +35,23 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen>
     super.initState();
     otpController.showButton.value = false;
     otpController.otpError.value = "";
+    otpController.secondsRemaining.value = 60; // Changed from default to 60
+    otpController.resendAttempts.value = 0; // Reset attempts on init
+
     if (Platform.isAndroid) {
       listenForCode();
     }
+    startTimer();
+  }
+
+  void startTimer() {
+    timer?.cancel();
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (otpController.secondsRemaining.value > 0) {
         otpController.secondsRemaining.value--;
       } else {
         otpController.enableResend.value = true;
+        timer?.cancel();
       }
     });
   }
@@ -213,22 +222,33 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen>
               ),
             ),
             Obx(
-              () => otpController.enableResend.value
+              () => otpController.enableResend.value &&
+                      otpController.resendAttempts.value <
+                          otpController.maxResendAttempts
                   ? Align(
                       alignment: Alignment.center,
                       child: InkWell(
-                        onTap: () {
-                          otpController.callResendOtp(widget.phoneMunber);
+                        onTap: () async {
+                          otpController.resendAttempts.value++;
+                          otpController.enableResend.value = false;
+                          otpController.secondsRemaining.value = 60;
+
+                          await otpController.callResendOtp(widget.phoneMunber);
                           otpController.controller.value.clear();
                           FocusScope.of(context).unfocus();
+
                           if (Platform.isAndroid) {
                             listenForCode();
                           }
+
+                          startTimer();
                         },
                         child: Padding(
                           padding: EdgeInsets.only(bottom: 10.sp),
                           child: AppText(
-                            text: "Resend Code".toUpperCase(),
+                            text:
+                                "Resend Code (${otpController.maxResendAttempts - otpController.resendAttempts.value} left)"
+                                    .toUpperCase(),
                             fontFamily: "Franklin Gothic",
                             fontSize: 14,
                             color: titleColor,
@@ -241,10 +261,16 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen>
                       child: Align(
                         alignment: Alignment.center,
                         child: AppText(
-                          text: '00 : ${otpController.secondsRemaining.value}',
+                          text: otpController.resendAttempts.value >=
+                                  otpController.maxResendAttempts
+                              ? 'Maximum resend attempts reached'
+                              : '00 : ${otpController.secondsRemaining.value.toString().padLeft(2, '0')}',
                           fontFamily: "Franklin Gothic",
                           fontSize: 14,
-                          color: titleColor,
+                          color: otpController.resendAttempts.value >=
+                                  otpController.maxResendAttempts
+                              ? redColor
+                              : titleColor,
                         ),
                       ),
                     ),

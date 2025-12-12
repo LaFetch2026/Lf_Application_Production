@@ -40,7 +40,9 @@ class LoginController extends BaseController {
   RxBool isGuest = false.obs; // true => guest mode (no token)
   RxBool enableResend = false.obs;
   RxString currentAuthFlowType = "signup".obs;
-
+// Add this in your LoginController
+  final resendAttempts = 0.obs;
+  final maxResendAttempts = 3;
   // ---- Auth state ----
   final RxString _token = ''.obs;
   String? get token => _token.value.isNotEmpty ? _token.value : null;
