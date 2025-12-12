@@ -158,11 +158,11 @@ class WishlistController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt("userId");
     final token = prefs.getString("token") ?? '';
-    if (userId == null || token.isEmpty) {
-      getSnackBar("User not logged in.");
-      Get.offAll(() => const LoginScreen(initialTab: 0));
-      return null;
-    }
+    // if (userId == null || token.isEmpty) {
+    //   getSnackBar("User not logged in.");
+    //   Get.offAll(() => const LoginScreen(initialTab: 0));
+    //   return null;
+    // }
     return {"userId": userId, "token": token};
   }
 

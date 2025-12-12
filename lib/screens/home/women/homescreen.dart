@@ -18,6 +18,7 @@ import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/home/women/productviewscreen.dart';
+import 'package:lafetch/screens/loginscreen.dart';
 
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
@@ -114,26 +115,31 @@ class HomeScreenState extends State<HomeScreen> {
 
       await checkUserConnection();
 
-      // ✅ These APIs don't require JWT - safe for guest users
+      // ✅ ALWAYS hit these APIs (no JWT required)
       homeController.getBannerData(1);
       homeController.getBannerData(2);
       homeController.getBannerData(3);
+
       catalogController
           .getCatagoryData(catalogController.selectCategoryGender.value);
+
+      homeController.getBrandData(
+          "featured", homeController.homeGenderValue.value);
+
+      productController.getHomeProduct(homeController.homeGenderValue.value);
+
+      catalogController.getCatalogData(homeController.homeGenderValue.value);
+
+      homeController.getDeviceName();
+
+      initPlatformState(); // OneSignal push notifications
 
       // ✅ Fix hot reload visibility issue
       if (catalogController.catalogList.isNotEmpty) {
         catalogController.update();
       }
 
-      homeController.getBrandData(
-          "featured", homeController.homeGenderValue.value);
-      productController.getHomeProduct(homeController.homeGenderValue.value);
-      catalogController.getCatalogData(homeController.homeGenderValue.value);
-      homeController.getDeviceName();
-      initPlatformState();
-
-      // ✅ Only initialize profile if NOT a guest user
+      // ✅ Only initialize profile if NOT a guest user (requires JWT)
       if (!isGuest) {
         profileController.safeInitProfile(redirectIfMissing: true);
       } else {
@@ -412,36 +418,44 @@ class HomeScreenState extends State<HomeScreen> {
               });
             },
             onPressedHeart: () async {
-              // facebookAppEvents.logEvent(
-              //   name: 'fb_view_wishlist_page',
-              //   parameters: {'page_name': 'wishlist_page'},
-              // );
+              // ✅ Check if guest before opening wishlist
+              final prefs = await SharedPreferences.getInstance();
+              final isGuest = prefs.getBool('skip') ?? false;
+
+              if (isGuest) {
+                getSnackBar("Please login to view your wishlist");
+                Get.offAll(() => LoginScreen(
+                      initialTab: 0,
+                    ));
+                return;
+              }
+
+              Get.to(const WishlistScreen())
+                  ?.then((_) => cartController.getCartData());
               await analytics.logEvent(
-                name: 'wishlist_page',
-                parameters: {'page_name': 'wishlist_page'},
+                name: "wishlist_page",
+                parameters: {"page_name": "wishlist_page"},
               );
-              Get.to(const WishlistScreen())?.then((_) {
-                SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-                  statusBarColor: whiteColor,
-                  systemNavigationBarColor: whiteColor,
-                ));
-              });
             },
             onPressedCart: () async {
-              // facebookAppEvents.logEvent(
-              //   name: 'fb_view_cart_page',
-              //   parameters: {'page_name': 'cart_page'},
-              // );
+              // ✅ Check if guest before opening cart
+              final prefs = await SharedPreferences.getInstance();
+              final isGuest = prefs.getBool('skip') ?? false;
+
+              if (isGuest) {
+                getSnackBar("Please login to view your cart");
+                Get.offAll(() => LoginScreen(
+                      initialTab: 0,
+                    ));
+                return;
+              }
+
+              Get.to(const CartScreen())
+                  ?.then((_) => cartController.getCartData());
               await analytics.logEvent(
-                name: 'cart_page',
-                parameters: {'page_name': 'cart_page'},
+                name: "cart_page",
+                parameters: {"page_name": "cart_page"},
               );
-              Get.to(const CartScreen())?.then((_) {
-                SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-                  statusBarColor: whiteColor,
-                  systemNavigationBarColor: whiteColor,
-                ));
-              });
             },
             onPressedDropDown: () {
               homeController.showGenderList.value =

@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -172,16 +173,28 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         systemNavigationBarIconBrightness: Brightness.dark,
       ));
 
-      await wishlistController.getWishlistData();
-      if (widget.type == "category products") {
-        await cartController.getCartData();
+      // ✅ Check if user is guest
+      final prefs = await SharedPreferences.getInstance();
+      final isGuest = prefs.getBool('skip') ?? false;
+
+      // ✅ Only fetch wishlist and cart if NOT a guest (requires JWT)
+      if (!isGuest) {
+        await wishlistController.getWishlistData();
+
+        if (widget.type == "category products") {
+          await cartController.getCartData();
+        }
+      } else {
+        print("👤 Guest user - skipping wishlist and cart");
       }
+
+      // ✅ Clear preferences (always safe to do)
       await _clearPref();
 
-      // ✅ Load brands BEFORE loading products
+      // ✅ Load brands BEFORE loading products (no JWT required)
       await brandController.getBrandData("all");
 
-      // ✅ Load initial products
+      // ✅ Load initial products (no JWT required)
       await catalogController.getCategoryProductData(
         widget.categoryId,
         widget.genderType,
@@ -209,6 +222,16 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               );
             },
             onPressedHeart: () async {
+              // ✅ Check if guest before opening wishlist
+              final prefs = await SharedPreferences.getInstance();
+              final isGuest = prefs.getBool('skip') ?? false;
+
+              if (isGuest) {
+                getSnackBar("Please login to view your wishlist");
+                Get.toNamed('/login'); // or your login route
+                return;
+              }
+
               Get.to(const WishlistScreen())
                   ?.then((_) => cartController.getCartData());
               await analytics.logEvent(
@@ -217,6 +240,19 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               );
             },
             onPressedCart: () async {
+              // ✅ Check if guest before opening cart
+              final prefs = await SharedPreferences.getInstance();
+              final isGuest = prefs.getBool('skip') ?? false;
+
+              if (isGuest) {
+                getSnackBar("Please login to view your cart");
+                Get.offAll(() => LoginScreen(
+                      initialTab: 0,
+                    ));
+
+                return;
+              }
+
               Get.to(const CartScreen())
                   ?.then((_) => cartController.getCartData());
               await analytics.logEvent(

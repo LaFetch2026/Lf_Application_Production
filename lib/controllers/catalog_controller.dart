@@ -35,11 +35,11 @@ class CatalogController extends BaseController {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
 
-      if (token == null || token.isEmpty) {
-        Get.offAll(() => const LoginScreen(initialTab: 0));
-        getSnackBar("Please login to continue");
-        return;
-      }
+      // if (token == null || token.isEmpty) {
+      //   Get.offAll(() => const LoginScreen(initialTab: 0));
+      //   getSnackBar("Please login to continue");
+      //   return;
+      // }
 
       final url = Uri.parse(
         "${ApiConstants.baseUrl}/categories?gender=$gender&type=category",
