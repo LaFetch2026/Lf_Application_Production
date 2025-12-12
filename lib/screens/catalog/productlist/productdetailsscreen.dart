@@ -9,6 +9,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/controllers/cart_controller.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/ProductImageScreen.dart';
@@ -17,6 +18,7 @@ import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:share_plus/share_plus.dart';
 // ✅ Razorpay import
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../common/widget/appbar/productdetails_appbar.dart';
 import '../../../common/widget/bottom_sheets/bottomwishlist.dart';
@@ -822,6 +824,16 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     productController.productDetails["slug"]?.toString() ?? "",
                 dark: false,
                 onPressedHeart: () async {
+                  // ✅ Check if user is guest
+                  final prefs = await SharedPreferences.getInstance();
+                  final isGuest = prefs.getBool('skip') ?? false;
+
+                  if (isGuest) {
+                    getSnackBar("Please login to add to wishlist");
+                    Get.toNamed('/login'); // or your login route
+                    return;
+                  }
+
                   final firstImg = productController.imageList.isNotEmpty
                       ? (productController.imageList.first['name']
                               ?.toString() ??
@@ -848,6 +860,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   );
                 },
                 onPressedShare: () async {
+                  // ✅ Share doesn't require authentication - safe for guests
                   final title = _titleText();
                   Share.share(title.isNotEmpty ? title : "Check this product");
 
