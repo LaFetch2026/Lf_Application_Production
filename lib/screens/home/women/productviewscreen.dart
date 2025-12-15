@@ -538,38 +538,71 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                   ),
                                   Padding(
                                     padding: EdgeInsets.only(top: 6.sp),
-                                    child: Row(
-                                      children: [
-                                        if (mrp != null &&
-                                            mrp is num &&
-                                            price != null &&
-                                            price < mrp)
-                                          Padding(
-                                            padding:
-                                                EdgeInsets.only(right: 5.sp),
-                                            child: Text(
-                                              "₹ $mrp",
-                                              style: TextStyle(
-                                                color: searchTextColor,
-                                                fontSize: 11.sp,
-                                                decoration:
-                                                    TextDecoration.lineThrough,
-                                                fontFamily:
-                                                    "Franklin Gothic Regular",
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                          ),
-                                        AppText(
-                                          text: "₹ ${price?.toString() ?? ''}",
+                                    child: () {
+                                      final numPrice = price is num ? price : 0;
+                                      final numMrp = mrp is num ? mrp : 0;
+
+                                      // ✅ Case 1: Price is 0 or null - show only MRP (not crossed)
+                                      if (numPrice == 0 && numMrp > 0) {
+                                        return AppText(
+                                          text: "₹ ${numMrp.toString()}",
                                           color: homeAppBarColor,
-                                          maxLines: 2,
+                                          maxLines: 1,
                                           fontSize: 11,
                                           fontFamily: "Franklin Gothic",
                                           fontWeight: FontWeight.w400,
-                                        ),
-                                      ],
-                                    ),
+                                        );
+                                      }
+
+                                      // ✅ Case 2: Both exist and price < mrp - show both
+                                      if (numPrice > 0 &&
+                                          numMrp > 0 &&
+                                          numPrice < numMrp) {
+                                        return Row(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(right: 5.sp),
+                                              child: Text(
+                                                "₹ $numMrp",
+                                                style: TextStyle(
+                                                  color: searchTextColor,
+                                                  fontSize: 11.sp,
+                                                  decoration: TextDecoration
+                                                      .lineThrough,
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            ),
+                                            AppText(
+                                              text: "₹ ${numPrice.toString()}",
+                                              color: homeAppBarColor,
+                                              maxLines: 1,
+                                              fontSize: 11,
+                                              fontFamily: "Franklin Gothic",
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ],
+                                        );
+                                      }
+
+                                      // ✅ Case 3: Only price exists - show price
+                                      if (numPrice > 0) {
+                                        return AppText(
+                                          text: "₹ ${numPrice.toString()}",
+                                          color: homeAppBarColor,
+                                          maxLines: 1,
+                                          fontSize: 11,
+                                          fontFamily: "Franklin Gothic",
+                                          fontWeight: FontWeight.w400,
+                                        );
+                                      }
+
+                                      // ✅ Case 4: Nothing to show
+                                      return const SizedBox.shrink();
+                                    }(),
                                   ),
                                   if (express)
                                     Padding(
