@@ -246,7 +246,7 @@ class SearchScreenState extends State<SearchScreen> {
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(6),
                                   ),
-                                  hintText: "Search for 'Bag'",
+                                  hintText: "Search to Explore More",
                                   hintStyle: const TextStyle(
                                     color: subtitleColor,
                                     fontSize: 14,

@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 
+import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -66,6 +67,30 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // ✅ Cache flags to prevent redundant API calls
+  bool _isWishlistLoaded = false;
+  bool _isCartLoaded = false;
+  bool _isBrandsLoaded = false;
+  bool _isCategoryProductsLoaded = false;
+
+  // ✅ Initial loading state
+  bool _isInitialLoading = true;
+
+  // ✅ Hash tracking for change detection
+  String? _lastProductListHash;
+  String? _lastFilterHash;
+  String? _lastSortHash;
+
+  // ✅ Debounce timer
+  Timer? _debounceTimer;
+
+  // ✅ Current filter/sort state
+  List<int> _appliedBrandIds = [];
+  String _appliedMinPrice = "100";
+  String _appliedMaxPrice = "50000";
+  String _appliedSortOption = "recommended";
+  bool _hasActiveFilters = false;
+
   String _fmtINR(num? v, {bool cents = true}) {
     if (v == null) return '';
     final f = NumberFormat.currency(
@@ -115,18 +140,168 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     }
   }
 
-  List<int> _appliedBrandIds = [];
-  String _appliedMinPrice = "100";
-  String _appliedMaxPrice = "50000";
-  String _appliedSortOption = "recommended";
-  bool _hasActiveFilters = false;
+  // ✅ Generate hash for product list to detect changes
+  String _generateProductHash(List<dynamic> products) {
+    if (products.isEmpty) return 'empty';
+    return products
+        .map((p) => '${p['id']}_${p['displayPrice']}_${p['displayMrp']}')
+        .join('|');
+  }
 
+  // ✅ Generate hash for current filter state
+  String _generateFilterHash() {
+    return '${_appliedBrandIds.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_$_hasActiveFilters';
+  }
+
+  // ✅ Generate hash for current sort state
+  String _generateSortHash() {
+    return _appliedSortOption;
+  }
+
+  // ✅ Check if products list has actually changed
+  bool _hasProductsChanged(List<dynamic> newProducts) {
+    final currentHash =
+        _generateProductHash(catalogController.categoryProductList);
+    final newHash = _generateProductHash(newProducts);
+
+    if (currentHash != newHash) {
+      print("🔄 Products changed: $currentHash → $newHash");
+      return true;
+    }
+
+    print("✅ Products unchanged - skipping update");
+    return false;
+  }
+
+  // ✅ Smart wishlist loader - only loads once
+  Future<void> _loadWishlistIfNeeded() async {
+    if (_isWishlistLoaded) {
+      print("✅ Wishlist already loaded - skipping");
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    final isGuest = prefs.getBool('skip') ?? false;
+
+    if (!isGuest) {
+      await wishlistController.getWishlistData();
+      _isWishlistLoaded = true;
+      print("✅ Wishlist loaded successfully");
+    } else {
+      print("👤 Guest user - skipping wishlist");
+    }
+  }
+
+  // ✅ Smart cart loader - only loads once or when explicitly refreshed
+  Future<void> _loadCartIfNeeded({bool forceRefresh = false}) async {
+    if (_isCartLoaded && !forceRefresh) {
+      print("✅ Cart already loaded - skipping");
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    final isGuest = prefs.getBool('skip') ?? false;
+
+    if (!isGuest && widget.type == "category products") {
+      await cartController.getCartData();
+      _isCartLoaded = true;
+      print("✅ Cart loaded successfully");
+    } else {
+      print("👤 Guest user or non-category screen - skipping cart");
+    }
+  }
+
+  // ✅ Smart brand loader - only loads once
+  Future<void> _loadBrandsIfNeeded() async {
+    if (_isBrandsLoaded) {
+      print("✅ Brands already loaded - skipping");
+      return;
+    }
+
+    await brandController.getBrandData("all");
+    _isBrandsLoaded = true;
+    print("✅ Brands loaded successfully");
+  }
+
+  // ✅ Smart category products loader - only loads once initially
+  Future<void> _loadCategoryProductsIfNeeded() async {
+    if (_isCategoryProductsLoaded) {
+      print("✅ Category products already loaded - skipping");
+      return;
+    }
+
+    await catalogController.getCategoryProductData(
+      widget.categoryId,
+      widget.genderType,
+    );
+
+    // Generate initial hash
+    _lastProductListHash = _generateProductHash(
+      catalogController.categoryProductList,
+    );
+    _lastFilterHash = _generateFilterHash();
+    _lastSortHash = _generateSortHash();
+
+    _isCategoryProductsLoaded = true;
+    print(
+        "✅ Category products loaded successfully (${catalogController.categoryProductList.length} items)");
+  }
+
+  // ✅ Initial load - happens before screen is visible
+  Future<void> _performInitialLoad() async {
+    try {
+      print("🔄 Starting initial load...");
+
+      // Load all data in parallel for faster loading
+      await Future.wait([
+        _loadWishlistIfNeeded(),
+        _loadCartIfNeeded(),
+        _clearPref(),
+        _loadBrandsIfNeeded(),
+        _loadCategoryProductsIfNeeded(),
+      ]);
+
+      print("✅ Initial load complete");
+    } catch (e) {
+      print("❌ Error during initial load: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isInitialLoading = false;
+        });
+      }
+    }
+  }
+
+  // ✅ Optimized filter and sort application
   Future<void> _applyFiltersAndSort() async {
     try {
+      // Check if filter/sort state has actually changed
+      final currentFilterHash = _generateFilterHash();
+      final currentSortHash = _generateSortHash();
+
+      final filterChanged = currentFilterHash != _lastFilterHash;
+      final sortChanged = currentSortHash != _lastSortHash;
+
+      if (!filterChanged && !sortChanged) {
+        print("⚠️ No filter/sort changes detected - skipping API call");
+        return;
+      }
+
+      print("🔄 Applying changes - Filter: $filterChanged, Sort: $sortChanged");
+
       catalogController.isCategory.value = true;
 
-      // If filters are active, apply them first
-      if (_hasActiveFilters) {
+      // Store current products for comparison
+      final previousProducts = List<dynamic>.from(
+        catalogController.categoryProductList,
+      );
+
+      // Apply filters if active and changed
+      if (_hasActiveFilters && filterChanged) {
+        print(
+            "🔍 Applying filters: brands=${_appliedBrandIds.length}, price=$_appliedMinPrice-$_appliedMaxPrice");
+
         await catalogController.getFilteredProducts(
           brandIds: _appliedBrandIds,
           minPrice: _appliedMinPrice,
@@ -135,25 +310,67 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           brandId: widget.brandId,
           collectionId: widget.genderType,
         );
-      } else {
-        // No filters, reload category products
-        await catalogController.getCategoryProductData(
-          widget.categoryId,
-          widget.genderType,
-        );
+
+        // Check if filtered products are different
+        if (!_hasProductsChanged(catalogController.categoryProductList)) {
+          print("⚠️ Filtered products unchanged - reverting");
+          catalogController.categoryProductList.assignAll(previousProducts);
+          return;
+        }
+
+        _lastFilterHash = currentFilterHash;
+        print(
+            "✅ Filters applied - ${catalogController.categoryProductList.length} products");
+      } else if (!_hasActiveFilters && filterChanged) {
+        // Filters cleared - reload original products
+        if (!_isCategoryProductsLoaded) {
+          await catalogController.getCategoryProductData(
+            widget.categoryId,
+            widget.genderType,
+          );
+          _isCategoryProductsLoaded = true;
+        }
+        _lastFilterHash = currentFilterHash;
       }
 
-      // Then apply sort if not recommended
-      if (_appliedSortOption != "recommended") {
+      // Apply sort if not recommended and changed
+      if (_appliedSortOption != "recommended" && sortChanged) {
+        print("🔀 Applying sort: $_appliedSortOption");
+
         await catalogController.getSortedProducts(
           sortOption: _appliedSortOption,
           catId: widget.categoryId,
           brandId: widget.brandId,
           collectionId: widget.genderType,
         );
-        catalogController.categoryProductList
-            .assignAll(catalogController.sortedProductList);
+
+        // Check if sort changed the product order
+        final sortedHash = _generateProductHash(
+          catalogController.sortedProductList,
+        );
+        final currentHash = _generateProductHash(
+          catalogController.categoryProductList,
+        );
+
+        if (sortedHash != currentHash) {
+          catalogController.categoryProductList.assignAll(
+            catalogController.sortedProductList,
+          );
+          _lastProductListHash = sortedHash;
+          _lastSortHash = currentSortHash;
+          print("✅ Sort applied - order changed");
+        } else {
+          print("⚠️ Sort didn't change order - skipping update");
+        }
+      } else if (_appliedSortOption == "recommended" && sortChanged) {
+        // Reset to original order
+        _lastSortHash = currentSortHash;
       }
+
+      // Update final hash
+      _lastProductListHash = _generateProductHash(
+        catalogController.categoryProductList,
+      );
     } catch (e) {
       print("❌ Error applying filters/sort: $e");
       getSnackBar("Failed to apply filters");
@@ -162,44 +379,36 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     }
   }
 
+  // ✅ Debounced filter/sort application
+  Future<void> _applyFiltersAndSortDebounced() async {
+    _debounceTimer?.cancel();
+
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+      _applyFiltersAndSort();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+
+    // ✅ Start loading immediately, before frame is rendered
+    _performInitialLoad();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: statusBarColor,
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: statusBarColor,
         systemNavigationBarIconBrightness: Brightness.dark,
       ));
-
-      // ✅ Check if user is guest
-      final prefs = await SharedPreferences.getInstance();
-      final isGuest = prefs.getBool('skip') ?? false;
-
-      // ✅ Only fetch wishlist and cart if NOT a guest (requires JWT)
-      if (!isGuest) {
-        await wishlistController.getWishlistData();
-
-        if (widget.type == "category products") {
-          await cartController.getCartData();
-        }
-      } else {
-        print("👤 Guest user - skipping wishlist and cart");
-      }
-
-      // ✅ Clear preferences (always safe to do)
-      await _clearPref();
-
-      // ✅ Load brands BEFORE loading products (no JWT required)
-      await brandController.getBrandData("all");
-
-      // ✅ Load initial products (no JWT required)
-      await catalogController.getCategoryProductData(
-        widget.categoryId,
-        widget.genderType,
-      );
     });
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -222,39 +431,36 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               );
             },
             onPressedHeart: () async {
-              // ✅ Check if guest before opening wishlist
               final prefs = await SharedPreferences.getInstance();
               final isGuest = prefs.getBool('skip') ?? false;
 
               if (isGuest) {
                 getSnackBar("Please login to view your wishlist");
-                Get.toNamed('/login'); // or your login route
+                Get.toNamed('/login');
                 return;
               }
 
-              Get.to(const WishlistScreen())
-                  ?.then((_) => cartController.getCartData());
+              Get.to(const WishlistScreen())?.then((_) async {
+                await _loadCartIfNeeded(forceRefresh: true);
+              });
               await analytics.logEvent(
                 name: "wishlist_page",
                 parameters: {"page_name": "wishlist_page"},
               );
             },
             onPressedCart: () async {
-              // ✅ Check if guest before opening cart
               final prefs = await SharedPreferences.getInstance();
               final isGuest = prefs.getBool('skip') ?? false;
 
               if (isGuest) {
                 getSnackBar("Please login to view your cart");
-                Get.offAll(() => LoginScreen(
-                      initialTab: 0,
-                    ));
-
+                Get.offAll(() => LoginScreen(initialTab: 0));
                 return;
               }
 
-              Get.to(const CartScreen())
-                  ?.then((_) => cartController.getCartData());
+              Get.to(const CartScreen())?.then((_) async {
+                await _loadCartIfNeeded(forceRefresh: true);
+              });
               await analytics.logEvent(
                 name: "cart_page",
                 parameters: {"page_name": "cart_page"},
@@ -263,82 +469,89 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           ),
           SizedBox(height: 8.sp),
 
-          /// ✅ Product Grid
+          /// ✅ Product Grid with initial loading state
           Expanded(
-            child: Obx(() {
-              if (catalogController.isCategory.value ||
-                  catalogController.isSorting.value) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: DummyGridList(size: 2),
-                );
-              }
-
-              final items = catalogController.categoryProductList;
-              if (items.isEmpty) return _emptyView();
-
-              return GridView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 10.sp),
-                itemCount: items.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 10.sp,
-                  crossAxisSpacing: 10.sp,
-                  childAspectRatio: 0.62,
-                ),
-                itemBuilder: (context, index) {
-                  final m = normalizeProduct(items[index]);
-
-                  final brand = (m['brandName'] ?? '').toString().trim();
-                  final title = (m['title'] ?? '').toString().trim();
-                  final shortDesc =
-                      (m['shortDescription'] ?? title).toString().trim();
-                  final img = _imageFrom(m);
-
-                  /// -------- Correct Price Logic ----------
-                  num? price = _parseNum(m['displayPrice']);
-                  num? mrp = _parseNum(
-                      m['displayMrp']); // null when mrp==0 or ==basePrice
-
-                  /// -------- Product ID ----------
-                  final int pid = int.tryParse(m['id']?.toString() ?? '') ?? 0;
-
-                  return GestureDetector(
-                    onTap: () async {
-                      if (pid == 0) {
-                        getSnackBar("Product not available");
-                        return;
-                      }
-
-                      Get.to(
-                        ProductDetailsScreen(
-                          brandName: brand.isEmpty ? title : brand,
-                          expressValue: widget.type == "express" ? 1 : 0,
-                          backgroundcolor: widget.type == "express"
-                              ? homeAppBarColor
-                              : whiteColor,
-                          productId: pid,
-                          type: "add",
-                        ),
-                      )?.then((_) => cartController.getCartData());
-
-                      await analytics.logEvent(
-                        name: 'category_product_details',
-                        parameters: {'page_name': 'category_product_details'},
+            child: _isInitialLoading
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: DummyGridList(size: 2),
+                  )
+                : Obx(() {
+                    if (catalogController.isCategory.value ||
+                        catalogController.isSorting.value) {
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: DummyGridList(size: 2),
                       );
-                    },
-                    child: _ProductTileNoOverflow(
-                      imageUrl: img,
-                      brand: brand.isEmpty ? title : brand,
-                      description: shortDesc.isEmpty ? title : shortDesc,
-                      mrp: mrp,
-                      price: price,
-                      fmt: _fmtINR,
-                    ),
-                  );
-                },
-              );
-            }),
+                    }
+
+                    final items = catalogController.categoryProductList;
+                    if (items.isEmpty) return _emptyView();
+
+                    return GridView.builder(
+                      padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                      itemCount: items.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 10.sp,
+                        crossAxisSpacing: 10.sp,
+                        childAspectRatio: 0.62,
+                      ),
+                      itemBuilder: (context, index) {
+                        final m = normalizeProduct(items[index]);
+
+                        final brand = (m['brandName'] ?? '').toString().trim();
+                        final title = (m['title'] ?? '').toString().trim();
+                        final shortDesc =
+                            (m['shortDescription'] ?? title).toString().trim();
+                        final img = _imageFrom(m);
+
+                        num? price = _parseNum(m['displayPrice']);
+                        num? mrp = _parseNum(m['displayMrp']);
+
+                        final int pid =
+                            int.tryParse(m['id']?.toString() ?? '') ?? 0;
+
+                        return GestureDetector(
+                          onTap: () async {
+                            if (pid == 0) {
+                              getSnackBar("Product not available");
+                              return;
+                            }
+
+                            Get.to(
+                              ProductDetailsScreen(
+                                brandName: brand.isEmpty ? title : brand,
+                                expressValue: widget.type == "express" ? 1 : 0,
+                                backgroundcolor: widget.type == "express"
+                                    ? homeAppBarColor
+                                    : whiteColor,
+                                productId: pid,
+                                type: "add",
+                              ),
+                            )?.then((_) async {
+                              await _loadCartIfNeeded(forceRefresh: true);
+                            });
+
+                            await analytics.logEvent(
+                              name: 'category_product_details',
+                              parameters: {
+                                'page_name': 'category_product_details'
+                              },
+                            );
+                          },
+                          child: _ProductTileNoOverflow(
+                            imageUrl: img,
+                            brand: brand.isEmpty ? title : brand,
+                            description: shortDesc.isEmpty ? title : shortDesc,
+                            mrp: mrp,
+                            price: price,
+                            fmt: _fmtINR,
+                          ),
+                        );
+                      },
+                    );
+                  }),
           ),
 
           /// ✅ Bottom bar
@@ -486,7 +699,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   Future<void> _showFilterBottomSheet(BuildContext context) async {
     String selectedFilter = "Brand";
 
-    // ✅ Initialize with currently applied filters
     List<String> selectedBrands = [];
     RangeValues priceRange = RangeValues(
       double.parse(_appliedMinPrice),
@@ -495,12 +707,13 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
     final List<String> filterCategories = ["Brand", "Price Range"];
 
-    // ✅ Wait for brands to load if still loading
+    // ✅ Ensure brands are loaded
+    await _loadBrandsIfNeeded();
+
     if (brandController.isBrand.value) {
       await Future.delayed(const Duration(milliseconds: 500));
     }
 
-    // Get brands from BrandController (excluding alphabet headers)
     final allBrands = brandController.brandList
         .where((item) => item['alphabet'] == null)
         .map((item) => (item['name'] ?? '').toString().trim())
@@ -512,7 +725,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       return;
     }
 
-    // ✅ Pre-populate selected brands from applied filters
+    // ✅ Restore previously applied brands
     for (final id in _appliedBrandIds) {
       final brandData = brandController.brandList.firstWhereOrNull((item) =>
           item['alphabet'] == null &&
@@ -542,7 +755,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                 height: Get.height * 0.8,
                 child: Column(
                   children: [
-                    // ---------- HEADER ----------
                     Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: 20.sp, vertical: 16.sp),
@@ -573,12 +785,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                       ),
                     ),
                     const Divider(thickness: 1, color: dividerColor),
-
-                    // ---------- CONTENT ----------
                     Expanded(
                       child: Row(
                         children: [
-                          // Left Column
                           SizedBox(
                             width: 130,
                             child: ListView.builder(
@@ -612,8 +821,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                               },
                             ),
                           ),
-
-                          // Right Column
                           Expanded(
                             child: Padding(
                               padding: EdgeInsets.symmetric(
@@ -702,8 +909,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                         ],
                       ),
                     ),
-
-                    // ---------- FOOTER ----------
                     Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: 20.sp, vertical: 12.sp),
@@ -732,7 +937,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                             onPressed: () async {
                               Get.back();
 
-                              // Convert selected brand names to brand IDs
                               final selectedBrandIds = <int>[];
                               for (final brandName in selectedBrands) {
                                 final brandData = brandController.brandList
@@ -747,7 +951,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                 }
                               }
 
-                              // ✅ Store applied filters
                               setState(() {
                                 _appliedBrandIds = selectedBrandIds;
                                 _appliedMinPrice =
@@ -760,17 +963,20 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                         priceRange.end < 50000;
                               });
 
-                              print("✅ Applied Filters:");
-                              print("Brands: ${selectedBrands.join(', ')}");
-                              print("Brand IDs: $selectedBrandIds");
+                              print("✅ Filters configured:");
+                              print("  Brands: ${selectedBrands.join(', ')}");
+                              print("  Brand IDs: $selectedBrandIds");
                               print(
-                                  "Price: ₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()}");
+                                  "  Price: ₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()}");
 
-                              // ✅ Apply filters with current sort
-                              await _applyFiltersAndSort();
+                              await _applyFiltersAndSortDebounced();
 
-                              getSnackBar(
-                                  "Filtered by ${selectedBrands.length} brand(s), ₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
+                              if (_hasActiveFilters) {
+                                getSnackBar(
+                                    "Filtered by ${selectedBrands.length} brand(s), ₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
+                              } else {
+                                getSnackBar("Filters cleared");
+                              }
                             },
                             child: const Text("APPLY",
                                 style: TextStyle(
@@ -790,13 +996,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     );
   }
 
-  // ✅ REPLACE YOUR _showSortBottomSheet WITH THIS:
   Future<void> _showSortBottomSheet(BuildContext context,
       {int? catId, int? brandId, int? collectionId}) async {
-    // ✅ Initialize with currently applied sort
     final RxString selectedOption = _appliedSortOption.obs;
 
     final Map<String, String> sortOptions = {
+      "recommended": "Recommended",
       "price_asc": "Price - low to high",
       "price_desc": "Price - high to low",
       "whats_new": "What's new",
@@ -867,32 +1072,16 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           final selected = selectedOption.value;
                           Get.back();
 
-                          // ✅ Store applied sort
                           setState(() {
                             _appliedSortOption = selected;
                           });
 
-                          if (selected == "recommended") {
-                            getSnackBar("Showing recommended products");
-                            // ✅ Reset to filtered results or original
-                            await _applyFiltersAndSort();
-                            return;
-                          }
+                          print("✅ Sort option selected: $selected");
 
-                          try {
-                            catalogController.isSorting.value = true;
+                          await _applyFiltersAndSortDebounced();
 
-                            // ✅ Apply sort to current filtered results
-                            await _applyFiltersAndSort();
-
-                            getSnackBar(
-                                "Sorted by ${sortOptions[selected] ?? 'Option'}");
-                          } catch (e) {
-                            getSnackBar("Failed to sort products");
-                            print("Error in sorting: $e");
-                          } finally {
-                            catalogController.isSorting.value = false;
-                          }
+                          getSnackBar(
+                              "Sorted by ${sortOptions[selected] ?? 'Recommended'}");
                         },
                         child: const Text("APPLY",
                             style: TextStyle(
@@ -956,12 +1145,26 @@ class _ProductTileNoOverflow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AspectRatio(
-          aspectRatio: 0.88, // same look as your screenshot
+          aspectRatio: 0.88,
           child: ClipRRect(
             child: imageUrl != null
                 ? CachedNetworkImage(
                     imageUrl: imageUrl!,
                     fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      color: Colors.grey[200],
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(appBarColor),
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Image.asset(
+                      dummyWishlistImage,
+                      fit: BoxFit.cover,
+                    ),
                   )
                 : Image.asset(
                     dummyWishlistImage,

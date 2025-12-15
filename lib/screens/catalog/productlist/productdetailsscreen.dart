@@ -1240,19 +1240,19 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ),
                                 );
                               }),
-                              // Padding(
-                              //   padding: EdgeInsets.only(
-                              //       top: 8.sp, left: 12.sp, right: 16.sp),
-                              //   child: AppSpacingText(
-                              //     text: "Price inclusive of all taxes",
-                              //     color: widget.backgroundcolor == whiteColor
-                              //         ? subtitleColor
-                              //         : searchTextColor,
-                              //     fontSize: 12,
-                              //     fontFamily: "Franklin Gothic Regular",
-                              //     fontWeight: FontWeight.w400,
-                              //   ),
-                              // ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    top: 8.sp, left: 12.sp, right: 16.sp),
+                                child: AppSpacingText(
+                                  text: "Price inclusive of all taxes",
+                                  color: widget.backgroundcolor == whiteColor
+                                      ? subtitleColor
+                                      : searchTextColor,
+                                  fontSize: 12,
+                                  fontFamily: "Franklin Gothic Regular",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
                               // Inside your build method, replace the existing size/color section with:
 
 // ---------- SIZES ----------

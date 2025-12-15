@@ -246,9 +246,7 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen>
                         child: Padding(
                           padding: EdgeInsets.only(bottom: 10.sp),
                           child: AppText(
-                            text:
-                                "Resend Code (${otpController.maxResendAttempts - otpController.resendAttempts.value} left)"
-                                    .toUpperCase(),
+                            text: "Resend Code ".toUpperCase(),
                             fontFamily: "Franklin Gothic",
                             fontSize: 14,
                             color: titleColor,
