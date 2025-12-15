@@ -1,4 +1,4 @@
-// ProductViewScreen.dart  (complete)
+// ProductViewScreen.dart - Updated with filters and sort
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -13,17 +13,17 @@ import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../common/widget/appbar/productlist_appbar.dart';
-import '../../../common/widget/bottom_sheets/bottomcategory.dart';
-import '../../../common/widget/bottom_sheets/bottomfiltters.dart';
-import '../../../common/widget/bottom_sheets/bottomsortby.dart';
 import '../../../common/widget/lists/dummy_grid_list.dart';
 import '../../../common/widget/other/common_widget.dart';
 import '../../../common/widget/text/app_text.dart';
 import '../../../controllers/cart_controller.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
+import '../../../controllers/brand_controller.dart';
 import '../../../core/constant/constants.dart';
+import 'dart:async';
 
 class ProductViewScreen extends StatefulWidget {
   final String title;
@@ -43,8 +43,23 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   final productController = Get.find<ProductController>();
   final wishlistController = Get.put(WishlistController());
   final controller = Get.put(CartController());
+  final brandController = Get.put(BrandController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
+  // ✅ Filter and Sort State
+  List<int> _appliedBrandIds = [];
+  String _appliedMinPrice = "100";
+  String _appliedMaxPrice = "50000";
+  String _appliedSortOption = "recommended";
+  bool _hasActiveFilters = false;
+  bool _isBrandsLoaded = false;
+
+  // ✅ Debounce timer
+  Timer? _debounceTimer;
+
+  // ✅ Filtered and sorted products
+  List<Map<String, dynamic>> _displayedProducts = [];
 
   // ---- helpers ----
   String _firstImageUrl(Map<String, dynamic> item) {
@@ -82,6 +97,36 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   String _titleOf(Map<String, dynamic> item) {
     return (item['title'] ?? item['name'] ?? '').toString();
   }
+
+  num? _parseNum(dynamic v) {
+    if (v is num) return v;
+    if (v is String) return num.tryParse(v);
+    return null;
+  }
+
+  String? _imageFrom(Map<String, dynamic> m) {
+    final urlList = (m['imageUrls'] as List?)
+            ?.whereType<String>()
+            .where((s) => s.trim().isNotEmpty)
+            .toList() ??
+        [];
+    if (urlList.isNotEmpty) return urlList.first;
+
+    for (final key in const [
+      'image',
+      'thumbnail',
+      'thumb',
+      'cover',
+      'defaultImage',
+      'primaryImage',
+      'img',
+      'photo'
+    ]) {
+      final v = m[key];
+      if (v is String && v.trim().isNotEmpty) return v;
+    }
+    return null;
+  }
   // ---- end helpers ----
 
   @override
@@ -114,13 +159,17 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         systemNavigationBarColor: statusBarColor,
       ));
 
-      // fetch all products in the tapped collection (tagId = collectionId)
-
       controller.getCartData();
 
       productController.handpickedController.addListener(() {
         productController.update();
       });
+
+      // ✅ Load brands for filters
+      _loadBrandsIfNeeded();
+
+      // ✅ Initialize displayed products
+      _updateDisplayedProducts();
     });
 
     _clearPreferenceValue();
@@ -137,12 +186,170 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     prefs.remove("category");
   }
 
-  bool isImage(String url) {
-    final u = url.toLowerCase();
-    return u.endsWith('.jpg') ||
-        u.endsWith('.jpeg') ||
-        u.endsWith('.png') ||
-        u.endsWith('.webp');
+  // ✅ Load brands for filter
+  Future<void> _loadBrandsIfNeeded() async {
+    if (_isBrandsLoaded) {
+      print("✅ Brands already loaded - skipping");
+      return;
+    }
+
+    await brandController.getBrandData("all");
+    _isBrandsLoaded = true;
+    print("✅ Brands loaded successfully");
+  }
+
+  // ✅ Get all products from collections
+  List<Map<String, dynamic>> _getAllProducts() {
+    final int selectedCollectionId = productController.tagId.value;
+    final int superCatId = productController.categoryFilter.value;
+
+    final List<Map<String, dynamic>> collections = productController
+        .homeProductList
+        .whereType<Map<String, dynamic>>()
+        .toList();
+
+    final List<Map<String, dynamic>> allProducts = <Map<String, dynamic>>[];
+
+    for (final c in collections) {
+      final List<Map<String, dynamic>> prods =
+          (c['products'] as List? ?? const [])
+              .whereType<Map<String, dynamic>>()
+              .toList();
+
+      for (final p in prods) {
+        if (selectedCollectionId != 0 &&
+            (p['collectionID'] != selectedCollectionId)) continue;
+
+        final sc = p['superCatId'];
+        if (superCatId != 0 && sc is int && sc != superCatId) continue;
+
+        allProducts.add(p);
+      }
+    }
+
+    return allProducts;
+  }
+
+  // ✅ Apply filters to products
+  List<Map<String, dynamic>> _applyFilters(
+      List<Map<String, dynamic>> products) {
+    if (!_hasActiveFilters) return products;
+
+    return products.where((product) {
+      // Brand filter
+      if (_appliedBrandIds.isNotEmpty) {
+        final brandId = product['brandId'];
+        final productBrandId = brandId is int
+            ? brandId
+            : int.tryParse(brandId?.toString() ?? '') ?? 0;
+
+        if (!_appliedBrandIds.contains(productBrandId)) {
+          return false;
+        }
+      }
+
+      // Price filter
+      final price = _priceOf(product);
+      if (price != null) {
+        final minPrice = double.parse(_appliedMinPrice);
+        final maxPrice = double.parse(_appliedMaxPrice);
+
+        if (price < minPrice || price > maxPrice) {
+          return false;
+        }
+      }
+
+      return true;
+    }).toList();
+  }
+
+  // ✅ Apply sorting to products
+  List<Map<String, dynamic>> _applySort(List<Map<String, dynamic>> products) {
+    final sorted = List<Map<String, dynamic>>.from(products);
+
+    switch (_appliedSortOption) {
+      case "price_asc":
+        sorted.sort((a, b) {
+          final priceA = _priceOf(a) ?? 0;
+          final priceB = _priceOf(b) ?? 0;
+          return priceA.compareTo(priceB);
+        });
+        break;
+
+      case "price_desc":
+        sorted.sort((a, b) {
+          final priceA = _priceOf(a) ?? 0;
+          final priceB = _priceOf(b) ?? 0;
+          return priceB.compareTo(priceA);
+        });
+        break;
+
+      case "whats_new":
+        sorted.sort((a, b) {
+          final dateA = a['createdAt']?.toString() ?? '';
+          final dateB = b['createdAt']?.toString() ?? '';
+          return dateB.compareTo(dateA);
+        });
+        break;
+
+      case "discount":
+        sorted.sort((a, b) {
+          final mrpA = _parseNum(a['mrp']) ?? 0;
+          final priceA = _priceOf(a) ?? mrpA;
+          final discountA = mrpA > 0 ? ((mrpA - priceA) / mrpA * 100) : 0;
+
+          final mrpB = _parseNum(b['mrp']) ?? 0;
+          final priceB = _priceOf(b) ?? mrpB;
+          final discountB = mrpB > 0 ? ((mrpB - priceB) / mrpB * 100) : 0;
+
+          return discountB.compareTo(discountA);
+        });
+        break;
+
+      case "rating":
+        sorted.sort((a, b) {
+          final ratingA = _parseNum(a['rating']) ?? 0;
+          final ratingB = _parseNum(b['rating']) ?? 0;
+          return ratingB.compareTo(ratingA);
+        });
+        break;
+
+      case "recommended":
+      default:
+        // Keep original order
+        break;
+    }
+
+    return sorted;
+  }
+
+// ✅ Update displayed products - NO setState here
+  List<Map<String, dynamic>> _getDisplayedProducts() {
+    var products = _getAllProducts();
+    products = _applyFilters(products);
+    products = _applySort(products);
+    return products;
+  }
+
+// ✅ Update with setState (for use outside build)
+  void _updateDisplayedProducts() {
+    setState(() {
+      _displayedProducts = _getDisplayedProducts();
+    });
+  }
+
+  // ✅ Debounced update - uses setState version
+  void _updateDisplayedProductsDebounced() {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+      _updateDisplayedProducts(); // This one uses setState
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -180,53 +387,23 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                   name: "cart_page", parameters: {"page_name": "cart_page"});
             },
           ),
-          SizedBox(height: 10.sp), // Add some space below the app bar
+          SizedBox(height: 10.sp),
+
           // ===== GRID =====
-          // ===== GRID (replace your entire Obx(...) with this) =====
-          Obx(() {
-            final loading = productController.isHomeProduct.value ||
-                productController.isHandPicked.value;
-            if (loading) {
-              return const Expanded(child: DummyGridList(size: 2));
-            }
+          Expanded(
+            child: Obx(() {
+              final loading = productController.isHomeProduct.value ||
+                  productController.isHandPicked.value;
 
-            final int selectedCollectionId = productController
-                .tagId.value; // collection tapped in "Explore All"
-            final int superCatId = productController
-                .categoryFilter.value; // 1=Men, 2=Women, 3=Accessories
-
-            // flatten collections -> products
-            final List<Map<String, dynamic>> collections = productController
-                .homeProductList
-                .whereType<Map<String, dynamic>>()
-                .toList();
-
-            final List<Map<String, dynamic>> allProducts =
-                <Map<String, dynamic>>[];
-
-            for (final c in collections) {
-              final List<Map<String, dynamic>> prods =
-                  (c['products'] as List? ?? const [])
-                      .whereType<Map<String, dynamic>>()
-                      .toList();
-
-              for (final p in prods) {
-                // keep only the tapped collection (when tagId is set)
-                if (selectedCollectionId != 0 &&
-                    (p['collectionID'] != selectedCollectionId)) continue;
-
-                // keep only current gender tab
-                final sc = p['superCatId'];
-                if (superCatId != 0 && sc is int && sc != superCatId) continue;
-
-                // IMPORTANT: do NOT drop status:false anymore
-                allProducts.add(p);
+              if (loading) {
+                return _buildSkeletonGrid();
               }
-            }
 
-            if (allProducts.isEmpty) {
-              return Expanded(
-                child: Column(
+              // ✅ Calculate displayed products WITHOUT setState
+              final items = _getDisplayedProducts();
+
+              if (items.isEmpty) {
+                return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(errorImage,
@@ -242,28 +419,26 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                       borderColor: colorPrimary,
                     ),
                   ],
-                ),
-              );
-            }
+                );
+              }
 
-            // client-side paging (infinite scroll)
-            const int pageSize = 12;
-            final int page = (productController.handpickedPage.value <= 0)
-                ? 1
-                : productController.handpickedPage.value;
+              // client-side paging (infinite scroll)
+              const int pageSize = 12;
+              final int page = (productController.handpickedPage.value <= 0)
+                  ? 1
+                  : productController.handpickedPage.value;
 
-            final int maxToShow = page * pageSize;
-            final int visibleCount =
-                maxToShow < allProducts.length ? maxToShow : allProducts.length;
-            final List<Map<String, dynamic>> items =
-                allProducts.take(visibleCount).toList();
+              final int maxToShow = page * pageSize;
+              final int visibleCount =
+                  maxToShow < items.length ? maxToShow : items.length;
+              final List<Map<String, dynamic>> displayItems =
+                  items.take(visibleCount).toList();
 
-            return Expanded(
-              child: NotificationListener<ScrollNotification>(
+              return NotificationListener<ScrollNotification>(
                 onNotification: (n) {
                   if (n.metrics.pixels >= n.metrics.maxScrollExtent - 160) {
                     final bool canLoadMore =
-                        items.length < allProducts.length &&
+                        displayItems.length < items.length &&
                             !productController.handpickedLoadMore.value;
                     if (canLoadMore) {
                       productController.handpickedLoadMore.value = true;
@@ -283,7 +458,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                       sliver: SliverGrid(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
-                            final item = items[index];
+                            final item = displayItems[index];
 
                             final imageUrl = _firstImageUrl(item);
                             final brand = _brandOf(item);
@@ -323,7 +498,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(6.sp),
                                     child: AspectRatio(
-                                      aspectRatio: 0.75, // 3:4
+                                      aspectRatio: 0.75,
                                       child: CachedNetworkImage(
                                         imageUrl: imageUrl,
                                         fit: BoxFit.cover,
@@ -420,7 +595,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                               ),
                             );
                           },
-                          childCount: items.length,
+                          childCount: displayItems.length,
                         ),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
@@ -437,220 +612,582 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                     ),
                   ],
                 ),
-              ),
-            );
-          }),
+              );
+            }),
+          ),
 
           // ===== bottom sort / category / filters row =====
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+          Container(
+            color: statusBarColor,
+            child: Column(
               children: [
-                // Sort by
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      constraints: BoxConstraints(
-                          maxWidth: double.infinity, maxHeight: 340.sp),
-                      builder: (ctx) => BottomSortBy(
-                        onPressedButton: (p0) {
-                          productController.productSortBy.value = p0;
-                        },
-                      ),
-                    );
-                  },
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(sortBySvgImage,
-                            height: 19.sp, width: 15.sp),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                          child: Text(
-                            "SORT BY",
-                            style: TextStyle(
-                              color: const Color(0xFF374151),
-                              fontSize: 13.sp,
-                              fontFamily: "Franklin Gothic",
-                              fontWeight: FontWeight.w500,
-                              decoration: TextDecoration.none,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(width: 1.sp, color: borderColor, height: 40.sp),
-
-                // Category (Men/Women/Accessories) → sets superCatId
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      constraints: BoxConstraints(
-                          maxWidth: double.infinity, maxHeight: 270.sp),
-                      builder: (ctx) => BottomCategory(
-                        gender: productController.selectedCategoryGender.value,
-                        onPressedButton: (p0) {
-                          // Mapping: Men=1, Women=2, Accessories=3
-                          if (p0 == "Women") {
-                            productController.categoryFilter.value = 2;
-                          } else if (p0 == "Men") {
-                            productController.categoryFilter.value = 1;
-                          } else {
-                            productController.categoryFilter.value = 3;
-                          }
-
-                          productController.selectedCategoryGender.value = p0;
-                        },
-                        onPressedFilter: () {
-                          Get.back();
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            constraints: BoxConstraints(
-                                maxWidth: double.infinity, maxHeight: 500.sp),
-                            builder: (ctx) => BottomFilters(
-                              btnclearAll: () async {
-                                productController.brand_ids.clear();
-                                productController.color_ids.clear();
-                                productController.size_ids.clear();
-                                productController.productSortBy.value = "";
-                                productController.filterProductEnable.value =
-                                    false;
-                                final prefs =
-                                    await SharedPreferences.getInstance();
-                                prefs.remove("brandList");
-                                prefs.remove("colorList");
-                                prefs.remove("sizeList");
-                                prefs.remove("upper");
-                                prefs.remove("lower");
-                                prefs.remove("sortby");
-                                prefs.remove("category");
-                              },
-                              onClick: (p0, p1) {
-                                productController.filterProductEnable.value =
-                                    true;
-                                productController.lowPrice.value = p0;
-                                productController.highPrice.value = p1;
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                          child: Text(
-                            "CATEGORY",
-                            style: TextStyle(
-                              color: const Color(0xFF374151),
-                              fontSize: 13.sp,
-                              fontFamily: "Franklin Gothic",
-                              fontWeight: FontWeight.w500,
-                              decoration: TextDecoration.none,
-                            ),
-                          ),
-                        ),
-                        Obx(
-                          () => Visibility(
-                            visible: productController
-                                .selectedCategoryGender.value.isNotEmpty,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  left: 5.sp, right: 5.sp, top: 1.sp),
-                              child: Text(
-                                productController.selectedCategoryGender.value
-                                    .toUpperCase(),
-                                style: TextStyle(
-                                  decoration: TextDecoration.underline,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                  color: appBarColor,
-                                  fontSize: 10.sp,
+                Container(height: 1.sp, color: dividerColor),
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      // Sort by
+                      GestureDetector(
+                        onTap: () => _showSortBottomSheet(context),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10.sp, horizontal: 5.sp),
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(sortBySvgImage,
+                                  height: 19.sp, width: 15.sp),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                                child: Text(
+                                  "SORT BY",
+                                  style: TextStyle(
+                                    color: const Color(0xFF374151),
+                                    fontSize: 13.sp,
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                    decoration: TextDecoration.none,
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(width: 1.sp, color: borderColor, height: 40.sp),
-
-                // Filters
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      constraints: BoxConstraints(
-                          maxWidth: double.infinity, maxHeight: 500.sp),
-                      builder: (ctx) => BottomFilters(
-                        btnclearAll: () async {
-                          productController.brand_ids.clear();
-                          productController.color_ids.clear();
-                          productController.size_ids.clear();
-                          productController.productSortBy.value = "";
-                          productController.filterProductEnable.value = false;
-                          final prefs = await SharedPreferences.getInstance();
-                          prefs.remove("brandList");
-                          prefs.remove("colorList");
-                          prefs.remove("sizeList");
-                          prefs.remove("upper");
-                          prefs.remove("lower");
-                          prefs.remove("sortby");
-                          prefs.remove("category");
-                        },
-                        onClick: (p0, p1) {
-                          productController.filterProductEnable.value = true;
-                          productController.lowPrice.value = p0;
-                          productController.highPrice.value = p1;
-                        },
                       ),
-                    );
-                  },
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 10.sp, horizontal: 5.sp),
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(filterSvgImage,
-                            height: 11.sp, width: 17.sp),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                          child: Text(
-                            "FILTERS",
-                            style: TextStyle(
-                              color: const Color(0xFF374151),
-                              fontSize: 13.sp,
-                              fontFamily: "Franklin Gothic",
-                              fontWeight: FontWeight.w500,
-                              decoration: TextDecoration.none,
-                            ),
+                      Container(width: 1.sp, color: borderColor, height: 40.sp),
+
+                      // Category
+                      GestureDetector(
+                        onTap: () {},
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10.sp, horizontal: 5.sp),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                                child: Text(
+                                  "CATEGORY",
+                                  style: TextStyle(
+                                    color: const Color(0xFF374151),
+                                    fontSize: 13.sp,
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                    decoration: TextDecoration.none,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: 5.sp, right: 5.sp, top: 1.sp),
+                                child: Text(
+                                  widget.genderName.toUpperCase(),
+                                  style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    fontFamily: "Franklin Gothic Regular",
+                                    fontWeight: FontWeight.w400,
+                                    color: appBarColor,
+                                    fontSize: 10.sp,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+
+                      Container(width: 1.sp, color: borderColor, height: 40.sp),
+
+                      // Filters
+                      GestureDetector(
+                        onTap: () => _showFilterBottomSheet(context),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10.sp, horizontal: 5.sp),
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(filterSvgImage,
+                                  height: 11.sp, width: 17.sp),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                                child: Text(
+                                  "FILTERS",
+                                  style: TextStyle(
+                                    color: const Color(0xFF374151),
+                                    fontSize: 13.sp,
+                                    fontFamily: "Franklin Gothic",
+                                    fontWeight: FontWeight.w500,
+                                    decoration: TextDecoration.none,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           )
+        ],
+      ),
+    );
+  }
+
+  /// ✅ Skeleton Grid
+  Widget _buildSkeletonGrid() {
+    return GridView.builder(
+      padding: EdgeInsets.symmetric(horizontal: 16.sp),
+      itemCount: 6,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 8.sp,
+        crossAxisSpacing: 5.sp,
+        childAspectRatio: 0.56,
+      ),
+      itemBuilder: (context, index) => _SkeletonProductTile(),
+    );
+  }
+
+  /// ✅ Filter Bottom Sheet
+  Future<void> _showFilterBottomSheet(BuildContext context) async {
+    String selectedFilter = "Brand";
+
+    List<String> selectedBrands = [];
+    RangeValues priceRange = RangeValues(
+      double.parse(_appliedMinPrice),
+      double.parse(_appliedMaxPrice),
+    );
+
+    final List<String> filterCategories = ["Brand", "Price Range"];
+
+    // ✅ Ensure brands are loaded
+    await _loadBrandsIfNeeded();
+
+    if (brandController.isBrand.value) {
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+
+    final allBrands = brandController.brandList
+        .where((item) => item['alphabet'] == null)
+        .map((item) => (item['name'] ?? '').toString().trim())
+        .where((name) => name.isNotEmpty)
+        .toList();
+
+    if (allBrands.isEmpty) {
+      getSnackBar("No brands available for filtering");
+      return;
+    }
+
+    // ✅ Restore previously applied brands
+    for (final id in _appliedBrandIds) {
+      final brandData = brandController.brandList.firstWhereOrNull((item) =>
+          item['alphabet'] == null &&
+          int.tryParse(item['id']?.toString() ?? '') == id);
+      if (brandData != null) {
+        final name = brandData['name']?.toString().trim();
+        if (name != null && name.isNotEmpty) {
+          selectedBrands.add(name);
+        }
+      }
+    }
+
+    final brands = ["Select All", ...allBrands];
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: whiteColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return SafeArea(
+              child: SizedBox(
+                height: Get.height * 0.8,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 20.sp, vertical: 16.sp),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text("FILTERS",
+                              style: TextStyle(
+                                  fontFamily: "Franklin Gothic",
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 18,
+                                  color: blackColor)),
+                          TextButton(
+                            onPressed: () {
+                              setModalState(() {
+                                selectedBrands.clear();
+                                priceRange = const RangeValues(100, 50000);
+                              });
+                            },
+                            child: const Text("CLEAR ALL",
+                                style: TextStyle(
+                                    color: appBarColor,
+                                    fontSize: 13,
+                                    fontFamily: "Franklin Gothic",
+                                    decoration: TextDecoration.underline)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(thickness: 1, color: dividerColor),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 130,
+                            child: ListView.builder(
+                              itemCount: filterCategories.length,
+                              itemBuilder: (context, index) {
+                                final name = filterCategories[index];
+                                final selected = selectedFilter == name;
+                                return GestureDetector(
+                                  onTap: () => setModalState(() {
+                                    selectedFilter = name;
+                                  }),
+                                  child: Container(
+                                    color: selected
+                                        ? whiteColor
+                                        : const Color(0xFFF5F5F5),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12.sp, vertical: 14.sp),
+                                    child: Text(name,
+                                        style: TextStyle(
+                                            color: selected
+                                                ? blackColor
+                                                : const Color(0xFF6B7280),
+                                            fontFamily: selected
+                                                ? "Franklin Gothic"
+                                                : "Franklin Gothic Regular",
+                                            fontWeight: selected
+                                                ? FontWeight.w700
+                                                : FontWeight.w400)),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16.sp, vertical: 10.sp),
+                              child: selectedFilter == "Brand"
+                                  ? ListView.builder(
+                                      itemCount: brands.length,
+                                      itemBuilder: (context, i) {
+                                        final b = brands[i];
+                                        final isSelectAll = b == "Select All";
+                                        final allSelected =
+                                            selectedBrands.length ==
+                                                brands.length - 1;
+                                        final checked = isSelectAll
+                                            ? allSelected
+                                            : selectedBrands.contains(b);
+
+                                        return CheckboxListTile(
+                                          dense: true,
+                                          activeColor: appBarColor,
+                                          value: checked,
+                                          title: Text(b,
+                                              style: const TextStyle(
+                                                  fontFamily:
+                                                      "Franklin Gothic Regular",
+                                                  color: blackColor)),
+                                          onChanged: (val) {
+                                            setModalState(() {
+                                              if (isSelectAll) {
+                                                if (val == true) {
+                                                  selectedBrands = brands
+                                                      .where((x) =>
+                                                          x != "Select All")
+                                                      .toList();
+                                                } else {
+                                                  selectedBrands.clear();
+                                                }
+                                              } else {
+                                                if (val == true) {
+                                                  selectedBrands.add(b);
+                                                } else {
+                                                  selectedBrands.remove(b);
+                                                }
+                                              }
+                                            });
+                                          },
+                                        );
+                                      },
+                                    )
+                                  : Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text("Select price range",
+                                            style: TextStyle(
+                                                fontFamily: "Franklin Gothic",
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 15)),
+                                        const SizedBox(height: 8),
+                                        RangeSlider(
+                                          values: priceRange,
+                                          min: 100,
+                                          max: 50000,
+                                          divisions: 100,
+                                          activeColor: appBarColor,
+                                          onChanged: (v) => setModalState(() {
+                                            priceRange = v;
+                                          }),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text("₹${priceRange.start.toInt()}",
+                                                style: const TextStyle(
+                                                    color: Colors.grey)),
+                                            Text("₹${priceRange.end.toInt()}",
+                                                style: const TextStyle(
+                                                    color: Colors.grey)),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 20.sp, vertical: 12.sp),
+                      child: Row(
+                        children: [
+                          Expanded(
+                              child: OutlinedButton(
+                            onPressed: () => Get.back(),
+                            style: OutlinedButton.styleFrom(
+                                side: const BorderSide(
+                                    color: dividerColor, width: 1.2),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8))),
+                            child: const Text("CLOSE",
+                                style: TextStyle(
+                                    fontFamily: "Franklin Gothic",
+                                    color: blackColor)),
+                          )),
+                          const SizedBox(width: 12),
+                          Expanded(
+                              child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: blackColor,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8))),
+                            onPressed: () {
+                              Get.back();
+
+                              final selectedBrandIds = <int>[];
+                              for (final brandName in selectedBrands) {
+                                final brandData = brandController.brandList
+                                    .firstWhereOrNull((item) =>
+                                        item['alphabet'] == null &&
+                                        item['name']?.toString().trim() ==
+                                            brandName);
+                                if (brandData != null) {
+                                  final id = int.tryParse(
+                                      brandData['id']?.toString() ?? '');
+                                  if (id != null) selectedBrandIds.add(id);
+                                }
+                              }
+
+                              setState(() {
+                                _appliedBrandIds = selectedBrandIds;
+                                _appliedMinPrice =
+                                    priceRange.start.toInt().toString();
+                                _appliedMaxPrice =
+                                    priceRange.end.toInt().toString();
+                                _hasActiveFilters =
+                                    selectedBrandIds.isNotEmpty ||
+                                        priceRange.start > 100 ||
+                                        priceRange.end < 50000;
+
+                                // Reset pagination
+                                productController.handpickedPage.value = 1;
+                              });
+
+                              _updateDisplayedProductsDebounced();
+
+                              if (_hasActiveFilters) {
+                                getSnackBar(
+                                    "Filtered by ${selectedBrands.length} brand(s), ₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
+                              } else {
+                                getSnackBar("Filters cleared");
+                              }
+                            },
+                            child: const Text("APPLY",
+                                style: TextStyle(
+                                    fontFamily: "Franklin Gothic",
+                                    color: whiteColor)),
+                          )),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// ✅ Sort Bottom Sheet
+  Future<void> _showSortBottomSheet(BuildContext context) async {
+    final RxString selectedOption = _appliedSortOption.obs;
+
+    final Map<String, String> sortOptions = {
+      "recommended": "Recommended",
+      "price_asc": "Price - low to high",
+      "price_desc": "Price - high to low",
+      "whats_new": "What's new",
+      "rating": "Customer rating",
+      "discount": "Discount",
+    };
+
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: whiteColor,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 20.sp),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                const Text("SORT BY",
+                    style: TextStyle(
+                        fontFamily: "Franklin Gothic",
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                        color: blackColor)),
+                IconButton(
+                    icon: const Icon(Icons.close), onPressed: () => Get.back())
+              ]),
+              const SizedBox(height: 8),
+              Obx(() => Column(
+                    children: sortOptions.entries.map((e) {
+                      return RadioListTile<String>(
+                        value: e.key,
+                        groupValue: selectedOption.value,
+                        activeColor: appBarColor,
+                        title: Text(e.value,
+                            style: const TextStyle(
+                                fontFamily: "Franklin Gothic Regular",
+                                color: blackColor)),
+                        onChanged: (v) =>
+                            selectedOption.value = v ?? "recommended",
+                      );
+                    }).toList(),
+                  )),
+              const SizedBox(height: 8),
+              Row(children: [
+                Expanded(
+                    child: OutlinedButton(
+                        onPressed: () => Get.back(),
+                        style: OutlinedButton.styleFrom(
+                            side: const BorderSide(
+                                color: dividerColor, width: 1.2),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8))),
+                        child: const Text("CLOSE",
+                            style: TextStyle(
+                                fontFamily: "Franklin Gothic",
+                                color: blackColor)))),
+                const SizedBox(width: 12),
+                Expanded(
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: blackColor,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8))),
+                        onPressed: () {
+                          final selected = selectedOption.value;
+                          Get.back();
+
+                          setState(() {
+                            _appliedSortOption = selected;
+                            // Reset pagination
+                            productController.handpickedPage.value = 1;
+                          });
+
+                          _updateDisplayedProductsDebounced();
+
+                          getSnackBar(
+                              "Sorted by ${sortOptions[selected] ?? 'Recommended'}");
+                        },
+                        child: const Text("APPLY",
+                            style: TextStyle(
+                                fontFamily: "Franklin Gothic",
+                                color: whiteColor))))
+              ]),
+              SizedBox(height: 10.sp)
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// ✅ Skeleton Product Tile
+class _SkeletonProductTile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AspectRatio(
+            aspectRatio: 0.75,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+          ),
+          SizedBox(height: 5.sp),
+          Container(
+            width: double.infinity,
+            height: 14.sp,
+            color: Colors.white,
+          ),
+          SizedBox(height: 4.sp),
+          Container(
+            width: double.infinity * 0.7,
+            height: 12.sp,
+            color: Colors.white,
+          ),
+          SizedBox(height: 6.sp),
+          Container(
+            width: 60.sp,
+            height: 14.sp,
+            color: Colors.white,
+          ),
         ],
       ),
     );

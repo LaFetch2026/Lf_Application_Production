@@ -18,6 +18,7 @@ import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../common/widget/appbar/productlist_appbar.dart';
 import '../../common/widget/lists/dummy_grid_list.dart';
@@ -469,20 +470,14 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           ),
           SizedBox(height: 8.sp),
 
-          /// ✅ Product Grid with initial loading state
+          /// ✅ Product Grid with skeleton loading
           Expanded(
             child: _isInitialLoading
-                ? const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: DummyGridList(size: 2),
-                  )
+                ? _buildSkeletonGrid()
                 : Obx(() {
                     if (catalogController.isCategory.value ||
                         catalogController.isSorting.value) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: DummyGridList(size: 2),
-                      );
+                      return _buildSkeletonGrid();
                     }
 
                     final items = catalogController.categoryProductList;
@@ -600,6 +595,23 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  /// ✅ Skeleton Grid with shimmer effect
+  Widget _buildSkeletonGrid() {
+    return GridView.builder(
+      padding: EdgeInsets.symmetric(horizontal: 10.sp),
+      itemCount: 6, // Show 6 skeleton items
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 10.sp,
+        crossAxisSpacing: 10.sp,
+        childAspectRatio: 0.62,
+      ),
+      itemBuilder: (context, index) {
+        return _SkeletonProductTile();
+      },
     );
   }
 
@@ -1121,7 +1133,91 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               ])));
 }
 
-/// ✅ Product Tile
+/// ✅ Skeleton Product Tile with Shimmer Effect
+class _SkeletonProductTile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image skeleton
+          AspectRatio(
+            aspectRatio: 0.88,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 8.sp),
+
+          // Brand name skeleton
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 6.sp),
+            child: Container(
+              width: double.infinity,
+              height: 16.sp,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 6.sp),
+
+          // Description skeleton
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 6.sp),
+            child: Container(
+              width: double.infinity * 0.8,
+              height: 14.sp,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 6.sp),
+
+          // Price skeleton
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 6.sp),
+            child: Row(
+              children: [
+                Container(
+                  width: 60.sp,
+                  height: 14.sp,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                SizedBox(width: 8.sp),
+                Container(
+                  width: 50.sp,
+                  height: 16.sp,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// ✅ Product Tile with Skeleton Placeholder
 class _ProductTileNoOverflow extends StatelessWidget {
   final String? imageUrl;
   final String brand;
@@ -1147,18 +1243,16 @@ class _ProductTileNoOverflow extends StatelessWidget {
         AspectRatio(
           aspectRatio: 0.88,
           child: ClipRRect(
+            borderRadius: BorderRadius.circular(4),
             child: imageUrl != null
                 ? CachedNetworkImage(
                     imageUrl: imageUrl!,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
-                      color: Colors.grey[200],
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(appBarColor),
-                        ),
+                    placeholder: (context, url) => Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        color: Colors.white,
                       ),
                     ),
                     errorWidget: (context, url, error) => Image.asset(
