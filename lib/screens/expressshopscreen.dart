@@ -271,7 +271,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                 ); */
               },
               onPressedCart: () async {
-                Get.to(const CartScreen());
+                Get.to(CartScreen());
                 await analytics.logEvent(
                   name: 'cart_page',
                   parameters: <String, Object>{

@@ -13,6 +13,7 @@ import '../screens/bottomnavscreen.dart';
 import '../screens/loginscreen.dart';
 import 'auth_api_client.dart';
 import 'base_controller.dart';
+import 'cart_controller.dart';
 
 class ProfileController extends BaseController {
   RxBool showList = false.obs;
@@ -373,7 +374,9 @@ class ProfileController extends BaseController {
 
         await getProfileData();
 
+        // 🛒 SYNC GUEST CART after signup completion
         if (isInitialSetup) {
+          await _syncGuestCartAfterSignup();
           Get.offAll(() => const BottomNavScreen());
         } else {
           Get.back(result: "profile_updated");
@@ -721,6 +724,27 @@ class ProfileController extends BaseController {
       getSnackBar(responseData['message']);
     } else {
       getSnackBar("An error occurred during profile update.");
+    }
+  }
+
+  /// Sync guest cart to server after signup completion
+  /// This is called automatically after user completes signup with profile details
+  Future<void> _syncGuestCartAfterSignup() async {
+    try {
+      // Check if CartController is registered
+      if (Get.isRegistered<CartController>()) {
+        final cartController = Get.find<CartController>();
+        print("🔄 Attempting to sync guest cart after signup...");
+        await cartController.syncGuestCartToServer();
+      } else {
+        // Register CartController if not already registered
+        final cartController = Get.put(CartController());
+        print("🔄 Attempting to sync guest cart after signup...");
+        await cartController.syncGuestCartToServer();
+      }
+    } catch (e) {
+      print("⚠️ Error syncing guest cart after signup: $e");
+      // Don't block the signup flow if cart sync fails
     }
   }
 }

@@ -197,7 +197,7 @@ Widget showSingleBtnNonCancelableDailog({
                       fontSize: 14,
                     ))),
                 onPressed: () {
-                  click1!.call();
+                  click1?.call();
                 },
                 child: Text(
                   btn1Text,
@@ -290,7 +290,7 @@ Widget showDoubleBtnDailog(
                                   fontSize: 14.sp,
                                 ))),
                             onPressed: () async {
-                              click1!.call();
+                              click1?.call();
                             },
                             child: Text(
                               btn1Text,
@@ -324,7 +324,7 @@ Widget showDoubleBtnDailog(
                                   fontSize: 14.sp,
                                 ))),
                             onPressed: () {
-                              click2!.call();
+                              click2?.call();
                             },
                             child: Text(
                               btn2Text,

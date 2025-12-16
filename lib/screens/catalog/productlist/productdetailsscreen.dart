@@ -1723,15 +1723,15 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         onPressedFirst: () async {
                           if (widget.type == "add") {
                             if (productController.checkDetailsValidation()) {
-                              await cartController.callAddtoCart(
-                                1,
-                                "addproduct",
-                                productController.sizeInventoryId.value,
-                                widget.productId,
-                                (widget.expressValue ?? 0),
-                                1,
-                                widget.backgroundcolor,
-                                productController.sizeInventoryId.value,
+                              await cartController.addToCartUniversal(
+                                quantity: 1,
+                                page: "addproduct",
+                                variantId: productController.sizeInventoryId.value,
+                                productId: widget.productId,
+                                expressValue: (widget.expressValue ?? 0),
+                                type: 1,
+                                backColor: widget.backgroundcolor,
+                                oldInventoryId: productController.sizeInventoryId.value,
                               );
                               productController.addToCart.value = true;
                             }

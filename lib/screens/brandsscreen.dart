@@ -191,7 +191,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                     );
                   },
                   onPressedCart: () async {
-                    Get.to(const CartScreen())?.then(
+                    Get.to(CartScreen())?.then(
                       (value) {
                         SystemChrome.setSystemUIOverlayStyle(
                             const SystemUiOverlayStyle(

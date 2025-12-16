@@ -62,7 +62,7 @@ class CatalogScreenState extends State<CatalogScreen> {
                   });
                 },
                 onPressedCart: () async {
-                  Get.to(const CartScreen());
+                  Get.to(CartScreen());
                   analytics
                       .logEvent(name: "cart_page", parameters: <String, Object>{
                     "page_name": "cart_page",
@@ -95,7 +95,7 @@ class CatalogScreenState extends State<CatalogScreen> {
                   );
                 },
                 onPressedCart: () async {
-                  Get.to(const CartScreen());
+                  Get.to(CartScreen());
                   await analytics.logEvent(
                     name: 'cart_page',
                     parameters: <String, Object>{

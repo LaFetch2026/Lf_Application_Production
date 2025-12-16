@@ -14,6 +14,7 @@ import '../screens/bottomnavscreen.dart';
 import '../screens/otpverficationscreen.dart';
 import '../screens/userdetails.dart';
 import 'base_controller.dart';
+import 'cart_controller.dart';
 
 class GuestResult {
   final bool ok;
@@ -256,6 +257,9 @@ class LoginController extends BaseController {
           await prefs.remove('skip');
           isGuest.value = false;
 
+          // 🛒 SYNC GUEST CART after successful login
+          await _syncGuestCartAfterAuth();
+
           Get.offAll(() => const BottomNavScreen());
         } else {
           await prefs.setString('phonenumber', phone);
@@ -342,6 +346,27 @@ class LoginController extends BaseController {
       return GuestResult.failure(e.toString());
     } finally {
       _busyGuestEnter.value = false;
+    }
+  }
+
+  /// Sync guest cart to server after authentication
+  /// This is called automatically after login/signup completes
+  Future<void> _syncGuestCartAfterAuth() async {
+    try {
+      // Check if CartController is registered
+      if (Get.isRegistered<CartController>()) {
+        final cartController = Get.find<CartController>();
+        print("🔄 Attempting to sync guest cart...");
+        await cartController.syncGuestCartToServer();
+      } else {
+        // Register CartController if not already registered
+        final cartController = Get.put(CartController());
+        print("🔄 Attempting to sync guest cart...");
+        await cartController.syncGuestCartToServer();
+      }
+    } catch (e) {
+      print("⚠️ Error syncing guest cart after auth: $e");
+      // Don't block the login flow if cart sync fails
     }
   }
 }

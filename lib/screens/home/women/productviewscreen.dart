@@ -380,7 +380,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                   parameters: {"page_name": "wishlist_page"});
             },
             onPressedCart: () async {
-              Get.to(const CartScreen())?.then((_) => setState(() {
+              Get.to(CartScreen())?.then((_) => setState(() {
                     controller.getCartData();
                   }));
               analytics.logEvent(

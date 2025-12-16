@@ -95,7 +95,7 @@ class ProductListScreenState extends State<ProductListScreen> {
                 Get.to(const SearchScreen());
               },
               onPressedCart: () {
-                Get.to(const CartScreen());
+                Get.to(CartScreen());
               },
             ), */
             ProductAppbar(onPressedSearch: () async {
@@ -115,7 +115,7 @@ class ProductListScreenState extends State<ProductListScreen> {
                 "page_name": "wishlist_page",
               });
             }, onPressedCart: () async {
-              Get.to(const CartScreen())?.then((value) => setState(
+              Get.to(CartScreen())?.then((value) => setState(
                     () {
                       cartController.getCartData();
                     },

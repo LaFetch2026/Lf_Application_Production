@@ -381,7 +381,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                   parameters: <String, Object>{'page_name': 'wishlist_page'});
             },
             onPressedCart: () async {
-              Get.to(const CartScreen())?.then((_) {
+              Get.to(CartScreen())?.then((_) {
                 SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
                   statusBarColor: homeAppBarColor,
                   statusBarIconBrightness: Brightness.light,

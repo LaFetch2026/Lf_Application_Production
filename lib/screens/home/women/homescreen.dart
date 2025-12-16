@@ -503,7 +503,7 @@ class HomeScreenState extends State<HomeScreen> {
                 return;
               }
 
-              Get.to(const CartScreen())
+              Get.to(CartScreen())
                   ?.then((_) => cartController.getCartData());
               await analytics.logEvent(
                 name: "cart_page",

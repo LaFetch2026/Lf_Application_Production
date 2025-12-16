@@ -93,7 +93,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
               });
             },
             onPressedCart: () async {
-              Get.to(() => const CartScreen())?.then((_) {
+              Get.to(() => CartScreen())?.then((_) {
                 SystemChrome.setSystemUIOverlayStyle(
                   const SystemUiOverlayStyle(
                     statusBarColor: whiteColor,

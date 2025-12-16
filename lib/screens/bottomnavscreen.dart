@@ -155,7 +155,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     return Scaffold(
       backgroundColor: whiteColor,
       body: _currentIndex == 5
-          ? const CartScreen(backgroundcolor: homeAppBarColor)
+          ? CartScreen(key: UniqueKey(), backgroundcolor: homeAppBarColor)
           : _screens[_currentIndex],
       bottomNavigationBar: BottomAppBar(
         padding: EdgeInsets.zero,

@@ -459,7 +459,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                 return;
               }
 
-              Get.to(const CartScreen())?.then((_) async {
+              Get.to(CartScreen())?.then((_) async {
                 await _loadCartIfNeeded(forceRefresh: true);
               });
               await analytics.logEvent(
