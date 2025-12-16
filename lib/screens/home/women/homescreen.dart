@@ -681,34 +681,31 @@ class HomeScreenState extends State<HomeScreen> {
                                   ],
                                 )
                               : const SizedBox(height: 0)),
-                      Padding(
-                        padding: EdgeInsets.only(top: 16.sp),
-                        child: Container(
-                          height: 30.sp,
-                          color: const Color(0xff7A6ECC),
-                          width: MediaQuery.of(context).size.width,
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              top: Platform.isIOS ? 7.sp : 6.sp,
-                              bottom: Platform.isIOS ? 5.sp : 6.sp,
-                            ),
-                            child: Center(
-                              child: Marquee(
-                                text:
-                                    '✦  More than 50+ Homegrown Brands  ✦  Fast and Reliable  ✦  Fashion for all occassions',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12.sp,
-                                  fontFamily: "Franklin Gothic Regular",
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                scrollAxis: Axis.horizontal,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                velocity: 100.0,
-                                pauseAfterRound: Duration.zero,
-                                accelerationCurve: Curves.linear,
-                                decelerationCurve: Curves.easeOut,
+                      Container(
+                        height: 30.sp,
+                        color: const Color(0xff2D2D2E),
+                        width: MediaQuery.of(context).size.width,
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            top: Platform.isIOS ? 7.sp : 6.sp,
+                            bottom: Platform.isIOS ? 5.sp : 6.sp,
+                          ),
+                          child: Center(
+                            child: Marquee(
+                              text:
+                                  '|  More than 50+ Homegrown Brands   |  Fast and Reliable   |  Fashion for all occassions  |  Easy Returns & Exchanges   |  Secure Payments   |  ',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12.sp,
+                                fontFamily: "Franklin Gothic Regular",
+                                fontWeight: FontWeight.w400,
                               ),
+                              scrollAxis: Axis.horizontal,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              velocity: 100.0,
+                              pauseAfterRound: Duration.zero,
+                              accelerationCurve: Curves.linear,
+                              decelerationCurve: Curves.easeOut,
                             ),
                           ),
                         ),
@@ -811,7 +808,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   Center(
                                     child: Padding(
                                       padding: EdgeInsets.only(
-                                        top: 18.sp,
+                                        top: 1.sp,
                                         left: 16.sp,
                                         right: 16.sp,
                                         bottom: 10.sp,

@@ -1235,77 +1235,100 @@ class _ProductTileNoOverflow extends StatelessWidget {
     required this.fmt,
   });
 
+  int _discountPercent(num? mrp, num? price) {
+    if (mrp == null || price == null || mrp <= 0 || price >= mrp) return 0;
+    return (((mrp - price) / mrp) * 100).round();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final discount = _discountPercent(mrp, price);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        /// IMAGE (takes fixed portion)
         AspectRatio(
-          aspectRatio: 0.88,
+          aspectRatio: 0.80,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: imageUrl != null
                 ? CachedNetworkImage(
                     imageUrl: imageUrl!,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => Shimmer.fromColors(
-                      baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.grey[100]!,
-                      child: Container(
-                        color: Colors.white,
-                      ),
-                    ),
-                    errorWidget: (context, url, error) => Image.asset(
-                      dummyWishlistImage,
-                      fit: BoxFit.cover,
-                    ),
                   )
-                : Image.asset(
-                    dummyWishlistImage,
-                    fit: BoxFit.cover,
-                  ),
+                : Image.asset(dummyWishlistImage, fit: BoxFit.cover),
           ),
         ),
+
+        const SizedBox(height: 6),
+
+        /// BRAND
         Padding(
-          padding: EdgeInsets.fromLTRB(6.sp, 8.sp, 6.sp, 0),
-          child: Text(brand.toUpperCase(),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                  color: blackColor,
-                  fontSize: 15,
-                  fontFamily: "Franklin Gothic",
-                  fontWeight: FontWeight.w700)),
+          padding: EdgeInsets.symmetric(horizontal: 6.sp),
+          child: Text(
+            brand.toUpperCase(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ),
+
+        /// DESCRIPTION
         Padding(
-          padding: EdgeInsets.fromLTRB(6.sp, 4.sp, 6.sp, 0),
-          child: Text(description,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                  color: Color(0xFF6B7280),
-                  fontSize: 13,
-                  fontFamily: "Franklin Gothic Regular")),
+          padding: EdgeInsets.symmetric(horizontal: 6.sp, vertical: 2.sp),
+          child: Text(
+            description,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 13),
+          ),
         ),
+
+        /// PRICE ROW
         Padding(
-          padding: EdgeInsets.fromLTRB(6.sp, 6.sp, 6.sp, 0),
-          child: Row(children: [
-            if (mrp != null && mrp! > 0)
-              Padding(
-                  padding: EdgeInsets.only(right: 6.sp),
-                  child: Text(fmt(mrp, cents: true),
-                      style: const TextStyle(
-                          color: Color(0xFF9CA3AF),
-                          fontSize: 13,
-                          fontFamily: "Franklin Gothic Regular",
-                          decoration: TextDecoration.lineThrough))),
-            Text((price == null || price == 0) ? "" : fmt(price, cents: true),
-                style: const TextStyle(
-                    color: blackColor,
-                    fontSize: 15,
-                    fontFamily: "Franklin Gothic",
-                    fontWeight: FontWeight.w700))
-          ]),
+          padding: EdgeInsets.symmetric(horizontal: 6.sp),
+          child: Row(
+            children: [
+              if (price != null)
+                Text(
+                  fmt(price, cents: true),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              if (mrp != null && price != null && mrp! > price!)
+                Padding(
+                  padding: EdgeInsets.only(left: 6.sp),
+                  child: Text(
+                    fmt(mrp, cents: true),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      decoration: TextDecoration.lineThrough,
+                      color: Color(0xFF9CA3AF),
+                    ),
+                  ),
+                ),
+
+              // /// DISCOUNT (small height)
+              // if (discount > 0)
+              //   Padding(
+              //     padding: EdgeInsets.fromLTRB(6.sp, 2.sp, 6.sp, 4.sp),
+              //     child: Text(
+              //       "$discount% OFF",
+              //       style: const TextStyle(
+              //         fontSize: 10,
+              //         color: Colors.green,
+              //         fontWeight: FontWeight.w600,
+              //       ),
+              //     ),
+              //   ),
+            ],
+          ),
         ),
       ],
     );
