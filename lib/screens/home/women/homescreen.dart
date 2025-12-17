@@ -72,6 +72,7 @@ class HomeScreenState extends State<HomeScreen> {
   static const Duration _cacheValidDuration =
       Duration(minutes: 5); // Adjust as needed
   static int? _lastGenderValue;
+  static bool? _lastAuthState; // Track authentication state
 
   @override
   void initState() {
@@ -146,9 +147,10 @@ class HomeScreenState extends State<HomeScreen> {
 
         initPlatformState(); // OneSignal push notifications
 
-        // ✅ Update cache timestamp
+        // ✅ Update cache timestamp and auth state
         _lastDataFetch = DateTime.now();
         _lastGenderValue = currentGender;
+        _lastAuthState = isGuest;
       } else {
         print(
             "✅ Using cached data (fetched ${DateTime.now().difference(_lastDataFetch!).inMinutes} minutes ago)");
@@ -180,6 +182,12 @@ class HomeScreenState extends State<HomeScreen> {
       return true;
     }
 
+    // Authentication state changed (guest -> authenticated or vice versa)
+    if (_lastAuthState != null && _lastAuthState != isGuest) {
+      print("🔐 Authentication state changed (wasGuest: $_lastAuthState, isGuest: $isGuest) - forcing data refresh");
+      return true;
+    }
+
     // Cache expired
     final timeSinceLastFetch = DateTime.now().difference(_lastDataFetch!);
     if (timeSinceLastFetch > _cacheValidDuration) {
@@ -207,6 +215,7 @@ class HomeScreenState extends State<HomeScreen> {
 
     _lastDataFetch = DateTime.now();
     _lastGenderValue = currentGender;
+    _lastAuthState = isGuest;
   }
 
   @override
