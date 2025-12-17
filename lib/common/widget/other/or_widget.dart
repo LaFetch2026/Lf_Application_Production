@@ -4,8 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 
-
-
 class ORWidget extends StatelessWidget {
   const ORWidget({
     Key? key,
@@ -29,7 +27,7 @@ class ORWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 10.sp),
             child: AppText(
               text: "OR",
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w400,
               color: lightText,
               fontSize: 11,

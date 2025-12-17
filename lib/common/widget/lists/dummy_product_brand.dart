@@ -21,7 +21,7 @@ class DummyProductBrand extends StatelessWidget {
           padding: const EdgeInsets.only(top: 10, left: 16),
           child: AppText(
             text: text,
-            fontFamily: "Franklin Gothic",
+            fontFamily: "Clash Display",
             color: textColor,
             fontSize: 16.sp,
           ),

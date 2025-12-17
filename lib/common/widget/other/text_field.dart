@@ -48,12 +48,12 @@ class TextFieldWidget extends StatelessWidget {
   TextStyle _textStyleSmall() => TextStyle(
         color: textColor,
         fontSize: 14.sp,
-        fontFamily: "Franklin Gothic Regular",
+        fontFamily: "Clash Display Regular",
       );
 
   TextStyle _textStyleLarge() => TextStyle(
         color: textColor,
-        fontFamily: "Franklin Gothic Regular",
+        fontFamily: "Clash Display Regular",
       );
 
   @override

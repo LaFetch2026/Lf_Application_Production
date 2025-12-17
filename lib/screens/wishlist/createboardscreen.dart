@@ -226,7 +226,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                         text:
                             "Tap '${widget.btnText}' to add this item to the board.",
                         color: appBarColor,
-                        fontFamily: "Franklin Gothic Regular",
+                        fontFamily: "Clash Display Regular",
                         fontWeight: FontWeight.w400,
                         fontSize: 14,
                         textAlign: TextAlign.center,
@@ -263,7 +263,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
             style: TextStyle(
               fontSize: 14.sp,
               color: Colors.black,
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
             ),
           ),
         ),
@@ -284,7 +284,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                   : "$_selectedCount items selected",
               color: textHintColor,
               fontSize: 12,
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w400,
             ),
           ),
@@ -455,7 +455,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                       color: nameText,
                                       maxLines: 1,
                                       fontSize: 12,
-                                      fontFamily: "Franklin Gothic",
+                                      fontFamily: "Clash Display",
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -469,7 +469,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                       color: nameText,
                                       maxLines: 1,
                                       fontSize: 11,
-                                      fontFamily: "Franklin Gothic Regular",
+                                      fontFamily: "Clash Display Regular",
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
@@ -485,7 +485,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                           color: deepGreytextColor,
                                           maxLines: 2,
                                           fontSize: 11,
-                                          fontFamily: "Franklin Gothic",
+                                          fontFamily: "Clash Display",
                                           fontWeight: FontWeight.w400,
                                         ),
                                         if (mrp.isNotEmpty)
@@ -500,7 +500,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                 decoration:
                                                     TextDecoration.lineThrough,
                                                 fontFamily:
-                                                    "Franklin Gothic Regular",
+                                                    "Clash Display Regular",
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),

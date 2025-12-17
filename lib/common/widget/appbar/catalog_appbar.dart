@@ -5,8 +5,6 @@ import 'package:get/get.dart';
 import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 
-
-
 class CatalogAppbar extends StatelessWidget {
   final Function? onPressedSearch;
   final Function? onPressedCart;
@@ -40,7 +38,7 @@ class CatalogAppbar extends StatelessWidget {
                   color: whiteColor,
                   child: Padding(
                     padding:
-                    EdgeInsets.symmetric(horizontal: 10.sp, vertical: 2.sp),
+                        EdgeInsets.symmetric(horizontal: 10.sp, vertical: 2.sp),
                     child: Image.asset(backArrowImage,
                         height: 16.sp, width: 10.sp, fit: BoxFit.cover),
                   ),
@@ -48,7 +46,7 @@ class CatalogAppbar extends StatelessWidget {
               ),
               AppText(
                 text: text,
-                fontFamily: "Franklin Gothic Regular",
+                fontFamily: "Clash Display Regular",
                 fontWeight: FontWeight.w400,
                 color: appbarText,
                 fontSize: 22,

@@ -232,7 +232,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                       textCapitalization: TextCapitalization.words,
                       style: TextStyle(
                           color: titleColor,
-                          fontFamily: "Franklin Gothic Regular",
+                          fontFamily: "Clash Display Regular",
                           fontSize: 14.sp),
                       controller: brandController.searchController,
                       onChanged: onSearchChanged,
@@ -263,7 +263,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                         hintStyle: TextStyle(
                             fontSize: 14.sp,
                             color: searchTextColor,
-                            fontFamily: "Franklin Gothic Regular"),
+                            fontFamily: "Clash Display Regular"),
                       ),
                     ),
                   ),
@@ -356,7 +356,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                       color: subtitleColor,
                                                       fontSize: 14,
                                                       fontFamily:
-                                                          "Franklin Gothic Regular",
+                                                          "Clash Display Regular",
                                                       fontWeight:
                                                           FontWeight.w400,
                                                     ),
@@ -519,7 +519,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                         fontSize:
                                                                             16,
                                                                         fontFamily:
-                                                                            "Franklin Gothic Regular",
+                                                                            "Clash Display Regular",
                                                                         fontWeight:
                                                                             FontWeight.w400,
                                                                       ),
@@ -685,7 +685,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                 child: Center(
                                                                                   child: AppText(
                                                                                     text: "EXPLORE BRAND",
-                                                                                    fontFamily: "Franklin Gothic",
+                                                                                    fontFamily: "Clash Display",
                                                                                     fontWeight: FontWeight.w400,
                                                                                     color: whiteColor,
                                                                                     fontSize: 12,
@@ -707,7 +707,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                             fontSize:
                                                                                 14.sp,
                                                                             fontFamily:
-                                                                                "Franklin Gothic Regular",
+                                                                                "Clash Display Regular",
                                                                           ),
                                                                         ),
                                                                       ))
@@ -754,7 +754,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                         fontSize: 12,
                                                         color: homeAppBarColor,
                                                         fontFamily:
-                                                            "Franklin Gothic"))
+                                                            "Clash Display"))
                                                 : Text(
                                                     "Coming Soon to Your Area",
                                                     textAlign: TextAlign.center,
@@ -762,7 +762,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                         fontSize: 12,
                                                         color: homeAppBarColor,
                                                         fontFamily:
-                                                            "Franklin Gothic"))),
+                                                            "Clash Display"))),
                                       ],
                                     ),
                           brandController.loadMore.value

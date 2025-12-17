@@ -5,7 +5,6 @@ import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 import 'dummy_container.dart';
 
-
 class DummyEstimateDelivery extends StatelessWidget {
   const DummyEstimateDelivery({
     Key? key,
@@ -20,7 +19,7 @@ class DummyEstimateDelivery extends StatelessWidget {
           padding: EdgeInsets.only(left: 16.sp, top: 20.sp),
           child: AppText(
             text: "Delivery Estimates",
-            fontFamily: "Franklin Gothic Regular",
+            fontFamily: "Clash Display Regular",
             fontWeight: FontWeight.w400,
             color: blackColor,
             fontSize: 16,
@@ -40,7 +39,7 @@ class DummyEstimateDelivery extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 5.sp),
                   child: Padding(
                     padding:
-                    EdgeInsets.only(top: 8.sp, left: 16.sp, right: 16.sp),
+                        EdgeInsets.only(top: 8.sp, left: 16.sp, right: 16.sp),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.start,

@@ -65,7 +65,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                           top: 70.sp, left: 16.sp, right: 16.sp),
                       child: AppText(
                         text: "Let’s get to know you\na bit more",
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         maxLines: 2,
                         fontWeight: FontWeight.w500,
                         color: blackColor,
@@ -77,7 +77,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                     ),
                     const LoginWidget(
                         text1: "ONE LAST STEP!",
-                        fontfamily: "Franklin Gothic",
+                        fontfamily: "Clash Display",
                         text2: "Let’s get to know you a bit more"),
                     Padding(
                       padding: EdgeInsets.only(top: 40.sp),
@@ -98,7 +98,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                             ),
                             child: AppText(
                               text: userController.nameError.value,
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
                               color: redColor,
                               fontSize: 12,
@@ -124,7 +124,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                             ),
                             child: AppText(
                               text: userController.emailError.value,
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
                               color: redColor,
                               fontSize: 12,
@@ -149,7 +149,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                           style: TextStyle(
                             color: textColor,
                             fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                           ),
                           controller: userController.gerderController,
                           keyboardType: TextInputType.text,
@@ -204,7 +204,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                             ),
                             child: AppText(
                               text: userController.genderError.value,
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
                               color: redColor,
                               fontSize: 12,
@@ -233,22 +233,35 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                                                 CrossAxisAlignment.center,
                                             children: [
                                               GestureDetector(
-                                              onTap: () {
-                                    userController.gerderController.text = userController.genderList[index];
+                                                onTap: () {
+                                                  userController
+                                                          .gerderController
+                                                          .text =
+                                                      userController
+                                                          .genderList[index];
 
-                                    final selectedGender = userController.gerderController.text.toLowerCase();
+                                                  final selectedGender =
+                                                      userController
+                                                          .gerderController.text
+                                                          .toLowerCase();
 
-                                    if (selectedGender == "male") {
-                                    userController.genderId.value = 1;
-                                    } else if (selectedGender == "female") {
-                                    userController.genderId.value = 2;
-                                    } else if (selectedGender == "non-binary") {
-                                    userController.genderId.value = 3;
-                                    }
+                                                  if (selectedGender ==
+                                                      "male") {
+                                                    userController
+                                                        .genderId.value = 1;
+                                                  } else if (selectedGender ==
+                                                      "female") {
+                                                    userController
+                                                        .genderId.value = 2;
+                                                  } else if (selectedGender ==
+                                                      "non-binary") {
+                                                    userController
+                                                        .genderId.value = 3;
+                                                  }
 
-                                    userController.showList.value = false;
-                                    },
-
+                                                  userController
+                                                      .showList.value = false;
+                                                },
                                                 child: Container(
                                                   width: double.infinity,
                                                   color: whiteTextColor,
@@ -264,7 +277,7 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                                                         fontSize: 14.sp,
                                                         color: nameText,
                                                         fontFamily:
-                                                            "Franklin Gothic Regular",
+                                                            "Clash Display Regular",
                                                       ),
                                                     ),
                                                   ),
@@ -302,30 +315,30 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
               ),
             ),
             Obx(() => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: getSingleButton(
-                label: "Continue".toUpperCase(),
-                textColor: greyTextColor,
-                controller: userController,
-                backgroundColor: colorSecondary,
-                onPressed: () async {
-                  // Step 1: Validate name, email, gender
-                  if (userController.validateBasicProfileFields()) {
-                    // Step 2: Submit profile update
-                    await userController.updateBasicProfile(isInitialSetup: true);
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: getSingleButton(
+                    label: "Continue".toUpperCase(),
+                    textColor: greyTextColor,
+                    controller: userController,
+                    backgroundColor: colorSecondary,
+                    onPressed: () async {
+                      // Step 1: Validate name, email, gender
+                      if (userController.validateBasicProfileFields()) {
+                        // Step 2: Submit profile update
+                        await userController.updateBasicProfile(
+                            isInitialSetup: true);
 
-                    // Step 3: Log analytics
-                    await analytics.logEvent(
-                      name: 'user_detail_btnContinue',
-                      parameters: {'page_name': 'user_detail_btnContinue'},
-                    );
-                  }
-                  // Errors (if any) show automatically via Obx watching nameError/emailError/genderError
-                },
-                borderColor: colorSecondary,
-              ),
-            ))
-
+                        // Step 3: Log analytics
+                        await analytics.logEvent(
+                          name: 'user_detail_btnContinue',
+                          parameters: {'page_name': 'user_detail_btnContinue'},
+                        );
+                      }
+                      // Errors (if any) show automatically via Obx watching nameError/emailError/genderError
+                    },
+                    borderColor: colorSecondary,
+                  ),
+                ))
           ],
         ),
       ),

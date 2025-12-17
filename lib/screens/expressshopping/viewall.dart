@@ -531,7 +531,7 @@
 //                                                                     colorPrimary,
 //                                                                 fontSize: 12,
 //                                                                 fontFamily:
-//                                                                     "Franklin Gothic Regular",
+//                                                                     "Clash Display Regular",
 //                                                                 fontWeight:
 //                                                                     FontWeight
 //                                                                         .w400,
@@ -559,7 +559,7 @@
 //                                                                     colorPrimary,
 //                                                                 fontSize: 12,
 //                                                                 fontFamily:
-//                                                                     "Franklin Gothic Regular",
+//                                                                     "Clash Display Regular",
 //                                                                 fontWeight:
 //                                                                     FontWeight
 //                                                                         .w400,
@@ -585,7 +585,7 @@
 //                                                       maxLines: 1,
 //                                                       fontSize: 12,
 //                                                       fontFamily:
-//                                                           "Franklin Gothic",
+//                                                           "Clash Display",
 //                                                       fontWeight:
 //                                                           FontWeight.w400,
 //                                                     ),
@@ -602,7 +602,7 @@
 //                                                       maxLines: 2,
 //                                                       fontSize: 11,
 //                                                       fontFamily:
-//                                                           "Franklin Gothic Regular",
+//                                                           "Clash Display Regular",
 //                                                       fontWeight:
 //                                                           FontWeight.w400,
 //                                                     ),
@@ -622,7 +622,7 @@
 //                                                           maxLines: 2,
 //                                                           fontSize: 11,
 //                                                           fontFamily:
-//                                                               "Franklin Gothic",
+//                                                               "Clash Display",
 //                                                           fontWeight:
 //                                                               FontWeight.w400,
 //                                                         ),
@@ -648,7 +648,7 @@
 //                                                                     TextDecoration
 //                                                                         .lineThrough,
 //                                                                 fontFamily:
-//                                                                     "Franklin Gothic Regular",
+//                                                                     "Clash Display Regular",
 //                                                                 fontWeight:
 //                                                                     FontWeight
 //                                                                         .w400,
@@ -690,7 +690,7 @@
 //                                                           //         maxLines: 2,
 //                                                           //         fontSize: 11,
 //                                                           //         fontFamily:
-//                                                           //             "Franklin Gothic Regular",
+//                                                           //             "Clash Display Regular",
 //                                                           //         fontWeight:
 //                                                           //             FontWeight
 //                                                           //                 .w400,
@@ -727,7 +727,7 @@
 //                                   style: TextStyle(
 //                                       fontSize: 14,
 //                                       color: Colors.black,
-//                                       fontFamily: "Franklin Gothic Regular")),
+//                                       fontFamily: "Clash Display Regular")),
 //                             ),
 //                           ),
 //                   ),

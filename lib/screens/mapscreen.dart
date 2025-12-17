@@ -176,7 +176,7 @@ class MapScreenState extends State<MapScreen> {
                                   maxLines: 1,
                                   style: const TextStyle(
                                     color: titleColor,
-                                    fontFamily: "Franklin Gothic Regular",
+                                    fontFamily: "Clash Display Regular",
                                   ),
                                   onChanged: onSearchChanged,
                                   keyboardType: TextInputType.text,
@@ -218,7 +218,7 @@ class MapScreenState extends State<MapScreen> {
                                     hintStyle: TextStyle(
                                       fontSize: 14.sp,
                                       color: searchTextColor,
-                                      fontFamily: "Franklin Gothic Regular",
+                                      fontFamily: "Clash Display Regular",
                                     ),
                                   ),
                                 ),
@@ -343,7 +343,7 @@ class MapScreenState extends State<MapScreen> {
                                                               fontSize: 14.sp,
                                                               color: nameText,
                                                               fontFamily:
-                                                                  "Franklin Gothic Regular",
+                                                                  "Clash Display Regular",
                                                             ),
                                                           ),
                                                         ),
@@ -413,7 +413,7 @@ class MapScreenState extends State<MapScreen> {
                                             text: "Use my current location",
                                             color: homeAppBarColor,
                                             fontSize: 16,
-                                            fontFamily: "Franklin Gothic",
+                                            fontFamily: "Clash Display",
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -483,7 +483,7 @@ class MapScreenState extends State<MapScreen> {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 16.sp,
-                        fontFamily: 'Franklin Gothic',
+                        fontFamily: 'Clash Display',
                         fontWeight: FontWeight.w500,
                         color: homeAppBarColor,
                       ),
@@ -523,7 +523,7 @@ class MapScreenState extends State<MapScreen> {
                     "Change".toUpperCase(),
                     style: TextStyle(
                       decoration: TextDecoration.underline,
-                      fontFamily: "Franklin Gothic Regular",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: appBarColor,
                       fontSize: 10.sp,
@@ -557,7 +557,7 @@ class MapScreenState extends State<MapScreen> {
                                 style: TextStyle(
                                   height: 1.5.sp,
                                   color: subtitleColor,
-                                  fontFamily: 'Franklin Gothic Regular',
+                                  fontFamily: 'Clash Display Regular',
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -638,7 +638,7 @@ class MapScreenState extends State<MapScreen> {
               style: TextStyle(
                 fontSize: 13.sp,
                 color: Colors.white,
-                fontFamily: 'Franklin Gothic',
+                fontFamily: 'Clash Display',
               ),
             ),
           ),
@@ -718,7 +718,7 @@ class MapScreenState extends State<MapScreen> {
                   children: const [
                     AppText(
                       text: "Order will be delivered here",
-                      fontFamily: "Franklin Gothic",
+                      fontFamily: "Clash Display",
                       fontWeight: FontWeight.w500,
                       color: whiteColor,
                       fontSize: 16,
@@ -726,7 +726,7 @@ class MapScreenState extends State<MapScreen> {
                     SizedBox(height: 4),
                     AppText(
                       text: "Move the pin to  change location",
-                      fontFamily: "Franklin Gothic Regular",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w500,
                       color: whiteColor,
                       fontSize: 12,

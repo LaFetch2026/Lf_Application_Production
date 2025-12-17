@@ -3,8 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constant/constants.dart';
 
-
-
 class MultipleTextWidget extends StatelessWidget {
   final String text1;
   final String text2;
@@ -36,7 +34,7 @@ class MultipleTextWidget extends StatelessWidget {
             text1,
             style: TextStyle(
               fontSize: fontSize,
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w400,
               color: subtitleColor,
             ),
@@ -49,7 +47,7 @@ class MultipleTextWidget extends StatelessWidget {
               text2,
               style: TextStyle(
                 decoration: TextDecoration.underline,
-                fontFamily: "Franklin Gothic Semibold",
+                fontFamily: "Clash Display Semibold",
                 fontWeight: FontWeight.w400,
                 color: subtitleColor,
                 fontSize: fontSize,
@@ -60,7 +58,7 @@ class MultipleTextWidget extends StatelessWidget {
             text3,
             style: TextStyle(
               fontSize: fontSize,
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w400,
               color: subtitleColor,
             ),
@@ -77,7 +75,7 @@ class MultipleTextWidget extends StatelessWidget {
                 fontSize: fontSize,
                 decoration: TextDecoration.underline,
                 overflow: TextOverflow.ellipsis,
-                fontFamily: "Franklin Gothic Semibold",
+                fontFamily: "Clash Display Semibold",
                 fontWeight: FontWeight.w500,
                 color: subtitleColor,
               ),

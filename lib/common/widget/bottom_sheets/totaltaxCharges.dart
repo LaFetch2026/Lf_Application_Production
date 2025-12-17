@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 
-
 class TotalTaxcharges extends StatefulWidget {
   final String title;
   final String tax;
@@ -60,7 +59,7 @@ class TotalTaxchargesState extends State<TotalTaxcharges> {
                         style: TextStyle(
                           color: loginText,
                           fontSize: 16.sp,
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Clash Display",
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -103,7 +102,7 @@ class TotalTaxchargesState extends State<TotalTaxcharges> {
                     padding: EdgeInsets.only(right: 4.sp),
                     child: AppText(
                       text: "Total Price",
-                      fontFamily: "Franklin Gothic Regular",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: textColor,
                       fontSize: 12,
@@ -116,7 +115,7 @@ class TotalTaxchargesState extends State<TotalTaxcharges> {
                   ),
                   AppText(
                     text: widget.price,
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                     color: homeAppBarColor,
                     fontSize: 12,
@@ -134,7 +133,7 @@ class TotalTaxchargesState extends State<TotalTaxcharges> {
                     padding: EdgeInsets.only(right: 4.sp),
                     child: AppText(
                       text: "Tax & Charges",
-                      fontFamily: "Franklin Gothic Regular",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: textColor,
                       fontSize: 12,
@@ -147,7 +146,7 @@ class TotalTaxchargesState extends State<TotalTaxcharges> {
                   ),
                   AppText(
                     text: widget.tax,
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                     color: homeAppBarColor,
                     fontSize: 12,
@@ -168,7 +167,7 @@ class TotalTaxchargesState extends State<TotalTaxcharges> {
                     padding: EdgeInsets.only(right: 4.sp),
                     child: AppText(
                       text: "BILL TOTAL",
-                      fontFamily: "Franklin Gothic Bold",
+                      fontFamily: "Clash Display Bold",
                       fontWeight: FontWeight.w400,
                       color: textColor,
                       fontSize: 14,
@@ -181,7 +180,7 @@ class TotalTaxchargesState extends State<TotalTaxcharges> {
                   ),
                   AppText(
                     text: widget.total,
-                    fontFamily: "Franklin Gothic Bold",
+                    fontFamily: "Clash Display Bold",
                     fontWeight: FontWeight.w400,
                     color: homeAppBarColor,
                     fontSize: 14,

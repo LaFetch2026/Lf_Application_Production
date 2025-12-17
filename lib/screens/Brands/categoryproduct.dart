@@ -652,7 +652,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               style: TextStyle(
                 color: colorPrimary,
                 fontSize: 14,
-                fontFamily: "Franklin Gothic Regular",
+                fontFamily: "Clash Display Regular",
               ),
             ),
             Padding(
@@ -698,7 +698,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                   style: const TextStyle(
                     color: Color(0xFF374151),
                     fontSize: 13,
-                    fontFamily: "Franklin Gothic",
+                    fontFamily: "Clash Display",
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -775,8 +775,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                         children: [
                           const Text("FILTERS",
                               style: TextStyle(
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w700,
+                                  fontFamily: "Clash Display Semibold",
+                                  fontWeight: FontWeight.w600,
                                   fontSize: 18,
                                   color: blackColor)),
                           TextButton(
@@ -790,7 +790,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                 style: TextStyle(
                                     color: appBarColor,
                                     fontSize: 13,
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
+                                    fontWeight: FontWeight.w500,
                                     decoration: TextDecoration.underline)),
                           ),
                         ],
@@ -823,10 +824,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                 ? blackColor
                                                 : const Color(0xFF6B7280),
                                             fontFamily: selected
-                                                ? "Franklin Gothic"
-                                                : "Franklin Gothic Regular",
+                                                ? "Clash Display Semibold"
+                                                : "Clash Display Regular",
                                             fontWeight: selected
-                                                ? FontWeight.w700
+                                                ? FontWeight.w600
                                                 : FontWeight.w400)),
                                   ),
                                 );
@@ -857,7 +858,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                           title: Text(b,
                                               style: const TextStyle(
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
+                                                  fontWeight: FontWeight.w400,
                                                   color: blackColor)),
                                           onChanged: (val) {
                                             setModalState(() {
@@ -888,8 +890,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                       children: [
                                         const Text("Select price range",
                                             style: TextStyle(
-                                                fontFamily: "Franklin Gothic",
-                                                fontWeight: FontWeight.w700,
+                                                fontFamily:
+                                                    "Clash Display Semibold",
+                                                fontWeight: FontWeight.w600,
                                                 fontSize: 15)),
                                         const SizedBox(height: 8),
                                         RangeSlider(
@@ -908,9 +911,13 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                           children: [
                                             Text("₹${priceRange.start.toInt()}",
                                                 style: const TextStyle(
+                                                    fontFamily:
+                                                        "Clash Display Regular",
                                                     color: Colors.grey)),
                                             Text("₹${priceRange.end.toInt()}",
                                                 style: const TextStyle(
+                                                    fontFamily:
+                                                        "Clash Display Regular",
                                                     color: Colors.grey)),
                                           ],
                                         ),
@@ -936,7 +943,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                     borderRadius: BorderRadius.circular(8))),
                             child: const Text("CLOSE",
                                 style: TextStyle(
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
+                                    fontWeight: FontWeight.w500,
                                     color: blackColor)),
                           )),
                           const SizedBox(width: 12),
@@ -992,7 +1000,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                             },
                             child: const Text("APPLY",
                                 style: TextStyle(
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
+                                    fontWeight: FontWeight.w500,
                                     color: whiteColor)),
                           )),
                         ],
@@ -1036,8 +1045,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 const Text("SORT BY",
                     style: TextStyle(
-                        fontFamily: "Franklin Gothic",
-                        fontWeight: FontWeight.w700,
+                        fontFamily: "Clash Display Semibold",
+                        fontWeight: FontWeight.w600,
                         fontSize: 18,
                         color: blackColor)),
                 IconButton(
@@ -1052,7 +1061,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                         activeColor: appBarColor,
                         title: Text(e.value,
                             style: const TextStyle(
-                                fontFamily: "Franklin Gothic Regular",
+                                fontFamily: "Clash Display Regular",
+                                fontWeight: FontWeight.w400,
                                 color: blackColor)),
                         onChanged: (v) =>
                             selectedOption.value = v ?? "recommended",
@@ -1071,7 +1081,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                 borderRadius: BorderRadius.circular(8))),
                         child: const Text("CLOSE",
                             style: TextStyle(
-                                fontFamily: "Franklin Gothic",
+                                fontFamily: "Clash Display",
+                                fontWeight: FontWeight.w500,
                                 color: blackColor)))),
                 const SizedBox(width: 12),
                 Expanded(
@@ -1097,7 +1108,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                         },
                         child: const Text("APPLY",
                             style: TextStyle(
-                                fontFamily: "Franklin Gothic",
+                                fontFamily: "Clash Display",
+                                fontWeight: FontWeight.w500,
                                 color: whiteColor))))
               ]),
               SizedBox(height: 10.sp)
@@ -1119,7 +1131,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                     style: const TextStyle(
                         color: Color(0xFF374151),
                         fontSize: 13,
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w500)),
                 if ((subtitle ?? '').isNotEmpty)
                   Padding(
@@ -1127,7 +1139,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                       child: Text(subtitle!,
                           style: const TextStyle(
                               decoration: TextDecoration.underline,
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
+                              fontWeight: FontWeight.w400,
                               fontSize: 10,
                               color: appBarColor)))
               ])));
@@ -1217,7 +1230,7 @@ class _SkeletonProductTile extends StatelessWidget {
   }
 }
 
-/// ✅ Product Tile with Skeleton Placeholder
+/// ✅ Product Tile with Clash Display Font
 class _ProductTileNoOverflow extends StatelessWidget {
   final String? imageUrl;
   final String brand;
@@ -1273,6 +1286,7 @@ class _ProductTileNoOverflow extends StatelessWidget {
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
+              fontFamily: "Clash Display Semibold",
             ),
           ),
         ),
@@ -1284,7 +1298,11 @@ class _ProductTileNoOverflow extends StatelessWidget {
             description,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 13),
+            style: const TextStyle(
+              fontSize: 13,
+              fontFamily: "Clash Display Regular",
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ),
 
@@ -1299,6 +1317,7 @@ class _ProductTileNoOverflow extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
+                    fontFamily: "Clash Display Semibold",
                   ),
                 ),
               if (mrp != null && price != null && mrp! > price!)
@@ -1310,23 +1329,11 @@ class _ProductTileNoOverflow extends StatelessWidget {
                       fontSize: 12,
                       decoration: TextDecoration.lineThrough,
                       color: Color(0xFF9CA3AF),
+                      fontFamily: "Clash Display Regular",
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ),
-
-              // /// DISCOUNT (small height)
-              // if (discount > 0)
-              //   Padding(
-              //     padding: EdgeInsets.fromLTRB(6.sp, 2.sp, 6.sp, 4.sp),
-              //     child: Text(
-              //       "$discount% OFF",
-              //       style: const TextStyle(
-              //         fontSize: 10,
-              //         color: Colors.green,
-              //         fontWeight: FontWeight.w600,
-              //       ),
-              //     ),
-              //   ),
             ],
           ),
         ),

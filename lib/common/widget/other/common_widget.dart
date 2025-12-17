@@ -7,7 +7,6 @@ import '../../../core/constant/constants.dart';
 
 import 'package:get/get.dart';
 
-
 getSnackBar(message, {SnackPosition? snackPosition}) {
   return Get.snackbar(
     '',
@@ -26,19 +25,19 @@ isImage(String path) {
 
 Widget getSingleButton(
     {label,
-      double fontSize = 14,
-      fontFamily = "Franklin Gothic",
-      roundness = 1,
-      fontWeight = FontWeight.bold,
-      width = double.infinity,
-      textColor,
-      borderColor,
-      double right = 16,
-      double left = 16,
-      backgroundColor,
-      controller,
-      Widget? trailingWidget,
-      Function? onPressed}) {
+    double fontSize = 14,
+    fontFamily = "Clash Display",
+    roundness = 1,
+    fontWeight = FontWeight.bold,
+    width = double.infinity,
+    textColor,
+    borderColor,
+    double right = 16,
+    double left = 16,
+    backgroundColor,
+    controller,
+    Widget? trailingWidget,
+    Function? onPressed}) {
   return Padding(
     padding: EdgeInsets.only(left: left.sp, right: right.sp),
     child: Container(
@@ -47,88 +46,88 @@ Widget getSingleButton(
         color: backgroundColor,
         child: (controller != null && controller.pageState == PageState.LOADING)
             ? Center(
-          child: Transform.scale(
-            scale: 0.5.sp,
-            child: const CircularProgressIndicator(
-              color: Colors.white,
-            ),
-          ),
-        )
-            : ElevatedButton(
-            style: ButtonStyle(
-                shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(1.sp))),
-                side: MaterialStateProperty.all(
-                  BorderSide(width: 1.sp, color: borderColor),
+                child: Transform.scale(
+                  scale: 0.5.sp,
+                  child: const CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
                 ),
-                elevation: MaterialStateProperty.all(0.0),
-                backgroundColor: MaterialStateProperty.all(backgroundColor),
-                textStyle: MaterialStateProperty.all(TextStyle(
-                  color: textColor,
-                  fontSize: fontSize.sp,
+              )
+            : ElevatedButton(
+                style: ButtonStyle(
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(1.sp))),
+                    side: MaterialStateProperty.all(
+                      BorderSide(width: 1.sp, color: borderColor),
+                    ),
+                    elevation: MaterialStateProperty.all(0.0),
+                    backgroundColor: MaterialStateProperty.all(backgroundColor),
+                    textStyle: MaterialStateProperty.all(TextStyle(
+                      color: textColor,
+                      fontSize: fontSize.sp,
+                    ))),
+                onPressed: () {
+                  onPressed?.call();
+                },
+                child: Text(
+                  label,
+                  style: TextStyle(
+                      color: textColor,
+                      fontFamily: fontFamily,
+                      fontSize: fontSize.sp),
                 ))),
-            onPressed: () {
-              onPressed?.call();
-            },
-            child: Text(
-              label,
-              style: TextStyle(
-                  color: textColor,
-                  fontFamily: fontFamily,
-                  fontSize: fontSize.sp),
-            ))),
   );
 }
 
 Widget getSmallButton(
     {String label = "",
-      double fontSize = 14,
-      fontFamily = "Franklin Gothic",
-      roundness = 1,
-      fontWeight = FontWeight.bold,
-      double width = double.infinity,
-      textColor,
-      borderColor,
-      backgroundColor,
-      controller,
-      Widget? trailingWidget,
-      Function? onPressed}) {
+    double fontSize = 14,
+    fontFamily = "Clash Display",
+    roundness = 1,
+    fontWeight = FontWeight.bold,
+    double width = double.infinity,
+    textColor,
+    borderColor,
+    backgroundColor,
+    controller,
+    Widget? trailingWidget,
+    Function? onPressed}) {
   return Container(
       width: width,
       height: 44.sp,
       color: backgroundColor,
       child: (controller != null && controller.pageState == PageState.LOADING)
           ? Center(
-        child: Transform.scale(
-          scale: 0.5,
-          child: const CircularProgressIndicator(
-            color: Colors.grey,
-          ),
-        ),
-      )
-          : ElevatedButton(
-          style: ButtonStyle(
-              shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(1.sp))),
-              side: MaterialStateProperty.all(
-                BorderSide(width: 1.sp, color: borderColor),
+              child: Transform.scale(
+                scale: 0.5,
+                child: const CircularProgressIndicator(
+                  color: Colors.grey,
+                ),
               ),
-              elevation: MaterialStateProperty.all(0.0),
-              backgroundColor: MaterialStateProperty.all(backgroundColor),
-              textStyle: MaterialStateProperty.all(TextStyle(
-                color: textColor,
-                fontSize: fontSize.sp,
-              ))),
-          onPressed: () {
-            onPressed?.call();
-          },
-          child: Text(
-            label,
-            style: TextStyle(
-                color: textColor,
-                fontFamily: fontFamily,
-                fontSize: fontSize.sp),
-          )));
+            )
+          : ElevatedButton(
+              style: ButtonStyle(
+                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(1.sp))),
+                  side: MaterialStateProperty.all(
+                    BorderSide(width: 1.sp, color: borderColor),
+                  ),
+                  elevation: MaterialStateProperty.all(0.0),
+                  backgroundColor: MaterialStateProperty.all(backgroundColor),
+                  textStyle: MaterialStateProperty.all(TextStyle(
+                    color: textColor,
+                    fontSize: fontSize.sp,
+                  ))),
+              onPressed: () {
+                onPressed?.call();
+              },
+              child: Text(
+                label,
+                style: TextStyle(
+                    color: textColor,
+                    fontFamily: fontFamily,
+                    fontSize: fontSize.sp),
+              )));
 }
 
 Route scaleIn(Widget page) {
@@ -175,7 +174,7 @@ Widget showSingleBtnNonCancelableDailog({
             style: const TextStyle(
               fontSize: 14.0,
               color: colorPrimary,
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -215,11 +214,11 @@ Widget showSingleBtnNonCancelableDailog({
 
 Widget showDoubleBtnDailog(
     {Color btncolor = colorPrimary,
-      text,
-      btn1Text,
-      btn2Text,
-      Function? click1,
-      Function? click2}) {
+    text,
+    btn1Text,
+    btn2Text,
+    Function? click1,
+    Function? click2}) {
   return Dialog(
     elevation: 0,
     backgroundColor: colorSecondary,
@@ -255,7 +254,7 @@ Widget showDoubleBtnDailog(
             style: TextStyle(
               fontSize: 14.0.sp,
               color: colorPrimary,
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -279,12 +278,12 @@ Widget showDoubleBtnDailog(
                                 shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(
                                         borderRadius:
-                                        BorderRadius.circular(100.sp))),
+                                            BorderRadius.circular(100.sp))),
                                 side: MaterialStateProperty.all(
                                   BorderSide(width: 1.sp, color: btncolor),
                                 ),
                                 backgroundColor:
-                                MaterialStateProperty.all(btncolor),
+                                    MaterialStateProperty.all(btncolor),
                                 textStyle: MaterialStateProperty.all(TextStyle(
                                   color: Colors.white,
                                   fontSize: 14.sp,
@@ -313,12 +312,12 @@ Widget showDoubleBtnDailog(
                                 shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(
                                         borderRadius:
-                                        BorderRadius.circular(100.sp))),
+                                            BorderRadius.circular(100.sp))),
                                 side: MaterialStateProperty.all(
                                   BorderSide(width: 1.sp, color: btncolor),
                                 ),
                                 backgroundColor:
-                                MaterialStateProperty.all(btncolor),
+                                    MaterialStateProperty.all(btncolor),
                                 textStyle: MaterialStateProperty.all(TextStyle(
                                   color: Colors.white,
                                   fontSize: 14.sp,

@@ -8,7 +8,6 @@ import '../../../core/constant/constants.dart';
 import '../lists/dummy_container.dart';
 import '../text/app_text.dart';
 
-
 class CartAppbar extends StatefulWidget {
   final String text;
   final Function? onPressedWishlist;
@@ -58,26 +57,26 @@ class _CartAppbarState extends State<CartAppbar> {
                   padding: EdgeInsets.only(top: 40.sp),
                   child: AppText(
                     text: widget.text.toUpperCase(),
-                    fontFamily: "Franklin Gothic Semibold",
+                    fontFamily: "Clash Display Semibold",
                     fontWeight: FontWeight.w600,
                     color: appBarColor,
                     fontSize: 16,
                   ),
                 ),
                 Obx(() => Padding(
-                  padding: EdgeInsets.only(top: 1.sp),
-                  child: controller.isOrder.value
-                      ? DummyContainer(height: 8, width: 50)
-                      : AppText(
-                    text: controller.orderList.length == 1
-                        ? "${controller.orderList.length} Product"
-                        : "${controller.orderList.length} Products",
-                    fontFamily: "Franklin Gothic Regular",
-                    fontWeight: FontWeight.w600,
-                    color: subtitleColor,
-                    fontSize: 10,
-                  ),
-                )),
+                      padding: EdgeInsets.only(top: 1.sp),
+                      child: controller.isOrder.value
+                          ? DummyContainer(height: 8, width: 50)
+                          : AppText(
+                              text: controller.orderList.length == 1
+                                  ? "${controller.orderList.length} Product"
+                                  : "${controller.orderList.length} Products",
+                              fontFamily: "Clash Display Regular",
+                              fontWeight: FontWeight.w600,
+                              color: subtitleColor,
+                              fontSize: 10,
+                            ),
+                    )),
               ],
             ),
             const Expanded(

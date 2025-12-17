@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 
-
 class EditBoardAppbar extends StatelessWidget {
   final String text;
 
@@ -45,7 +44,7 @@ class EditBoardAppbar extends StatelessWidget {
               ),
               AppText(
                 text: text,
-                fontFamily: "Franklin Gothic Regular",
+                fontFamily: "Clash Display Regular",
                 fontWeight: FontWeight.w400,
                 color: appbarText,
                 fontSize: 22,

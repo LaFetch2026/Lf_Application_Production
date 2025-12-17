@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 
-
 class Cartbottom extends StatelessWidget {
   final Function? onPressedQuality;
   final Function? onPressedLocationBase;
@@ -36,7 +35,7 @@ class Cartbottom extends StatelessWidget {
                     padding: EdgeInsets.only(top: 4.sp, right: 4.sp),
                     child: AppText(
                       text: "100% Quality assured",
-                      fontFamily: "Franklin Gothic Regular",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: backgroundColor == whiteColor
                           ? subtitleColor
@@ -56,7 +55,7 @@ class Cartbottom extends StatelessWidget {
                     padding: EdgeInsets.only(top: 4.sp, right: 4.sp),
                     child: AppText(
                       text: "Priority Deliveries",
-                      fontFamily: "Franklin Gothic Regular",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: backgroundColor == whiteColor
                           ? subtitleColor
@@ -76,7 +75,7 @@ class Cartbottom extends StatelessWidget {
                     padding: EdgeInsets.only(top: 4.sp),
                     child: AppText(
                       text: "exchange available",
-                      fontFamily: "Franklin Gothic Regular",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: backgroundColor == whiteColor
                           ? subtitleColor

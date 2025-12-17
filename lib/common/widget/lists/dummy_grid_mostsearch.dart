@@ -5,7 +5,6 @@ import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 import 'dummy_container.dart';
 
-
 class DummyGridMostSearch extends StatelessWidget {
   final String text;
   const DummyGridMostSearch({
@@ -22,7 +21,7 @@ class DummyGridMostSearch extends StatelessWidget {
           padding: EdgeInsets.only(top: 20.sp, left: 16.sp),
           child: AppText(
             text: text.toUpperCase(),
-            fontFamily: "Franklin Gothic Semibold",
+            fontFamily: "Clash Display Semibold",
             fontWeight: FontWeight.w400,
             color: blackColor,
             fontSize: 16,
@@ -42,7 +41,7 @@ class DummyGridMostSearch extends StatelessWidget {
             mainAxisSpacing: 0.sp,
             children: List.generate(
               8,
-                  (index) {
+              (index) {
                 return Column(
                   children: [
                     Column(

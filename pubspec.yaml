@@ -83,7 +83,7 @@ dev_dependencies:
 
 flutter_launcher_icons:
   ios: true
-  android: true # Also generate Android icons
+  android: true
   image_path: "assets/icon/IMG_1367.PNG"
   remove_alpha_ios: true
 
@@ -95,32 +95,6 @@ flutter:
     - assets/images/
 
   fonts:
-    - family: Franklin Gothic Bold
-      fonts:
-        - asset: fonts/LibreFranklin-Bold.otf
-          weight: 700
-    - family: Franklin Gothic Semibold
-      fonts:
-        - asset: fonts/LibreFranklin-SemiBold.otf
-          weight: 600
-    - family: Franklin Gothic Light
-      fonts:
-        - asset: fonts/LibreFranklin-Light.otf
-          weight: 300
-    - family: Franklin Gothic
-      fonts:
-        - asset: fonts/LibreFranklin-Medium.otf
-          weight: 500
-    - family: Franklin Gothic Regular
-      fonts:
-        - asset: fonts/LibreFranklin-Regular.otf
-          weight: 400
-    - family: Playfair Display Medium
-      fonts:
-        - asset: fonts/PlayfairDisplay-MediumItalic.ttf
-          weight: 400
-
-  
     - family: Clash Display Bold
       fonts:
         - asset: fonts/ClashDisplay-Bold.otf
@@ -144,4 +118,4 @@ flutter:
     - family: Clash Display Medium
       fonts:
         - asset: fonts/ClashDisplay-Extralight.otf
-          weight: 400        
+          weight: 400

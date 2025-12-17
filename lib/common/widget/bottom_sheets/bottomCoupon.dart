@@ -43,7 +43,7 @@ class _BottomCouponState extends State<BottomCoupon> {
         centerTitle: true,
         title: const AppText(
           text: "APPLY COUPON",
-          fontFamily: "Franklin Gothic Semibold",
+          fontFamily: "Clash Display Semibold",
           color: Colors.black87,
           fontWeight: FontWeight.w600,
           fontSize: 16,
@@ -87,7 +87,7 @@ class _BottomCouponState extends State<BottomCoupon> {
                               border: InputBorder.none,
                               hintStyle: TextStyle(
                                 color: Colors.grey.shade600,
-                                fontFamily: "Franklin Gothic Regular",
+                                fontFamily: "Clash Display Regular",
                                 fontSize: 14.sp,
                               ),
                             ),
@@ -115,7 +115,7 @@ class _BottomCouponState extends State<BottomCoupon> {
                     child: const Text(
                       "APPLY",
                       style: TextStyle(
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w600,
                         fontSize: 13,
                         color: whiteColor,
@@ -134,7 +134,7 @@ class _BottomCouponState extends State<BottomCoupon> {
               children: [
                 const AppText(
                   text: "Available coupons",
-                  fontFamily: "Franklin Gothic Semibold",
+                  fontFamily: "Clash Display Semibold",
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                   fontSize: 15,
@@ -143,7 +143,7 @@ class _BottomCouponState extends State<BottomCoupon> {
                 AppText(
                   text:
                       "${widget.list.length} ${widget.list.length == 1 ? "coupon" : "coupons"}",
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                   color: Colors.grey.shade600,
                   fontSize: 12,
@@ -199,7 +199,7 @@ class _BottomCouponState extends State<BottomCoupon> {
                                   text: (coupon["code"] ?? "COUPON")
                                       .toString()
                                       .toUpperCase(),
-                                  fontFamily: "Franklin Gothic",
+                                  fontFamily: "Clash Display",
                                   fontWeight: FontWeight.w600,
                                   color: Colors.black,
                                   fontSize: 14,
@@ -220,7 +220,7 @@ class _BottomCouponState extends State<BottomCoupon> {
                               children: [
                                 AppText(
                                   text: "Save ",
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   color: Colors.grey.shade700,
                                   fontSize: 12,
                                 ),
@@ -229,7 +229,7 @@ class _BottomCouponState extends State<BottomCoupon> {
                                       "₹${coupon["maxDiscountCap"] ?? coupon["discountAmount"] ?? "0"}",
                                   color: const Color(0xff059669),
                                   fontSize: 12,
-                                  fontFamily: "Franklin Gothic Semibold",
+                                  fontFamily: "Clash Display Semibold",
                                 ),
                               ],
                             ),
@@ -239,7 +239,7 @@ class _BottomCouponState extends State<BottomCoupon> {
                                   "Discount available on this order",
                               color: Colors.grey.shade800,
                               fontSize: 12,
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                             ),
                             SizedBox(height: 4.sp),
                             AppText(
@@ -247,7 +247,7 @@ class _BottomCouponState extends State<BottomCoupon> {
                                   "Valid until: ${coupon["endDate"]?.toString().split('T').first ?? "-"}",
                               color: Colors.grey.shade600,
                               fontSize: 12,
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                             ),
                             SizedBox(height: 10.sp),
                             Container(
@@ -260,7 +260,7 @@ class _BottomCouponState extends State<BottomCoupon> {
                                   "Add items worth ₹${coupon["minCartValue"] ?? "0"} for discount",
                               color: Colors.grey.shade800,
                               fontSize: 12,
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                             ),
                             GestureDetector(
                               onTap: () {},
@@ -274,7 +274,7 @@ class _BottomCouponState extends State<BottomCoupon> {
                                         decoration: TextDecoration.underline,
                                         color: Colors.black,
                                         fontSize: 12.sp,
-                                        fontFamily: "Franklin Gothic Regular",
+                                        fontFamily: "Clash Display Regular",
                                       ),
                                     ),
                                     SizedBox(width: 5.sp),
@@ -309,14 +309,14 @@ class _BottomCouponState extends State<BottomCoupon> {
                           text: "Maximum savings:",
                           color: Colors.grey.shade800,
                           fontSize: 13,
-                          fontFamily: "Franklin Gothic Regular",
+                          fontFamily: "Clash Display Regular",
                         ),
                         AppText(
                           text:
                               "₹${widget.list[selectedIndex!]["maxDiscountCap"] ?? "0"}",
                           color: Colors.black,
                           fontSize: 18,
-                          fontFamily: "Franklin Gothic Semibold",
+                          fontFamily: "Clash Display Semibold",
                         ),
                       ],
                     ),
@@ -337,7 +337,7 @@ class _BottomCouponState extends State<BottomCoupon> {
                       child: const Text(
                         "APPLY",
                         style: TextStyle(
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Clash Display",
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                           color: whiteColor,

@@ -68,7 +68,7 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
                         text:
                             //  "Your account is scheduled to be deleted at ${widget.date}. If you don't want this to be deleted, please reach out to support@la-fetch.com",
                             "Your account is scheduled to be deleted within 7 days. If you don't want this to be deleted, please reach out to support@la-fetch.com",
-                        fontFamily: "Franklin Gothic Regular",
+                        fontFamily: "Clash Display Regular",
                         fontWeight: FontWeight.w400,
                         color: redColor,
                         maxLines: 4,
@@ -87,7 +87,7 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 16.sp),
                       child: AppText(
                         text: "Are you sure you want to delete your account?",
-                        fontFamily: "Franklin Gothic Semibold",
+                        fontFamily: "Clash Display Semibold",
                         fontWeight: FontWeight.w400,
                         color: appbarText,
                         fontSize: 14,
@@ -101,7 +101,7 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
                       child: AppText(
                         text:
                             "LaFetch securely maintains the user-collected data integral to user onboarding processes. Information pertaining to user services will be upheld as long as necessary for organisational puposes, while individual user data will be expunged to ensure privacy.",
-                        fontFamily: "Franklin Gothic Regular",
+                        fontFamily: "Clash Display Regular",
                         fontWeight: FontWeight.w400,
                         color: appbarText,
                         maxLines: 8,

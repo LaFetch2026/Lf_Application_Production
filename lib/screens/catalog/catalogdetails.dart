@@ -334,7 +334,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                                     color: blackColor,
                                                     fontSize: 20,
                                                     fontFamily:
-                                                        "Franklin Gothic Semibold",
+                                                        "Clash Display Semibold",
                                                     fontWeight: FontWeight.w400,
                                                   ),
                                                 ),

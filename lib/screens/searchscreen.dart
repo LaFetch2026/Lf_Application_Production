@@ -205,7 +205,7 @@ class SearchScreenState extends State<SearchScreen> {
                                 maxLines: 1,
                                 style: TextStyle(
                                   color: homeAppBarColor,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontSize: 14.sp,
                                 ),
                                 onChanged: _onChanged,
@@ -250,7 +250,7 @@ class SearchScreenState extends State<SearchScreen> {
                                   hintStyle: const TextStyle(
                                     color: subtitleColor,
                                     fontSize: 14,
-                                    fontFamily: "Franklin Gothic Regular",
+                                    fontFamily: "Clash Display Regular",
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
@@ -338,7 +338,7 @@ class SearchScreenState extends State<SearchScreen> {
                         child: AppText(
                           text: "Search for '$term'",
                           maxLines: 1,
-                          fontFamily: "Franklin Gothic Regular",
+                          fontFamily: "Clash Display Regular",
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
                           color: homeAppBarColor,
@@ -402,7 +402,7 @@ class SearchScreenState extends State<SearchScreen> {
             children: [
               const AppText(
                 text: "Recent Searches",
-                fontFamily: "Franklin Gothic Semibold",
+                fontFamily: "Clash Display Semibold",
                 fontWeight: FontWeight.w400,
                 color: blackColor,
                 fontSize: 16,
@@ -419,7 +419,7 @@ class SearchScreenState extends State<SearchScreen> {
                   ),
                   child: const AppText(
                     text: "Clear all",
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                     color: subtitleColor,
                     fontSize: 12,
@@ -455,7 +455,7 @@ class SearchScreenState extends State<SearchScreen> {
                                   maxLines: 1,
                                   color: appBarColor,
                                   fontSize: 14.sp,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),

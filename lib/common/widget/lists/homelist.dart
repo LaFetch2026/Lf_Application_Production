@@ -5,7 +5,6 @@ import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 import 'home_product_list.dart';
 
-
 class HomeList extends StatelessWidget {
   final List list;
   final Function(int)? onPressed;
@@ -38,17 +37,17 @@ class HomeList extends StatelessWidget {
                           top: 24.sp, left: 16.sp, right: 16.sp),
                       child: AppText(
                         text: list[index]["title"].toUpperCase() ?? "",
-                        fontFamily: "Franklin Gothic Semibold",
+                        fontFamily: "Clash Display Semibold",
                         color: index % 2 == 0 ? whiteColor : blackColor,
                         fontSize: 20,
                       ),
                     ),
                     Padding(
                       padding:
-                      EdgeInsets.only(top: 4.sp, left: 16.sp, right: 16.sp),
+                          EdgeInsets.only(top: 4.sp, left: 16.sp, right: 16.sp),
                       child: AppText(
                         text: list[index]["sub_title"] ?? "",
-                        fontFamily: "Franklin Gothic Regular",
+                        fontFamily: "Clash Display Regular",
                         color: index % 2 == 0
                             ? productSubtitleColor
                             : subtitleColor,
@@ -64,7 +63,8 @@ class HomeList extends StatelessWidget {
                         onPressedExplore?.call(list[index]["tag_id"],
                             list[index]["title"].toUpperCase());
                       },
-                      parentIndex: index, parentInde: index,
+                      parentIndex: index,
+                      parentInde: index,
                     ),
                   ],
                 ),

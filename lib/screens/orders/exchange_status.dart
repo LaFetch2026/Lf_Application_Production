@@ -60,7 +60,7 @@ class ExchangeStatusScreen extends StatelessWidget {
         ),
         title: const AppText(
           text: "EXCHANGE STATUS",
-          fontFamily: "Franklin Gothic",
+          fontFamily: "Clash Display",
           fontWeight: FontWeight.w700,
           color: blackColor,
           fontSize: 16,
@@ -73,7 +73,7 @@ class ExchangeStatusScreen extends StatelessWidget {
           children: [
             const AppText(
               text: "TRACK EXCHANGE STATUS",
-              fontFamily: "Franklin Gothic",
+              fontFamily: "Clash Display",
               fontWeight: FontWeight.w700,
               color: blackColor,
               fontSize: 15,
@@ -113,7 +113,7 @@ class ExchangeStatusScreen extends StatelessWidget {
                       children: [
                         AppText(
                           text: productName,
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Clash Display",
                           fontWeight: FontWeight.w700,
                           color: blackColor,
                           fontSize: 13,
@@ -121,7 +121,7 @@ class ExchangeStatusScreen extends StatelessWidget {
                         SizedBox(height: 2.sp),
                         AppText(
                           text: description,
-                          fontFamily: "Franklin Gothic Regular",
+                          fontFamily: "Clash Display Regular",
                           fontWeight: FontWeight.w400,
                           color: subtitleColor,
                           fontSize: 11,
@@ -130,7 +130,7 @@ class ExchangeStatusScreen extends StatelessWidget {
                         SizedBox(height: 6.sp),
                         AppText(
                           text: "Size: $size   Qty: $quantity",
-                          fontFamily: "Franklin Gothic Regular",
+                          fontFamily: "Clash Display Regular",
                           fontWeight: FontWeight.w400,
                           color: subtitleColor,
                           fontSize: 11,
@@ -146,7 +146,7 @@ class ExchangeStatusScreen extends StatelessWidget {
 
             const AppText(
               text: "EXCHANGE TIMELINE",
-              fontFamily: "Franklin Gothic",
+              fontFamily: "Clash Display",
               fontWeight: FontWeight.w700,
               color: blackColor,
               fontSize: 14,
@@ -196,7 +196,7 @@ class ExchangeStatusScreen extends StatelessWidget {
                       children: [
                         AppText(
                           text: step["title"] ?? '',
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Clash Display",
                           fontWeight: FontWeight.w700,
                           color: isCompleted
                               ? const Color(0xFF10B981)
@@ -206,7 +206,7 @@ class ExchangeStatusScreen extends StatelessWidget {
                         SizedBox(height: 2.sp),
                         AppText(
                           text: step["date"] ?? '',
-                          fontFamily: "Franklin Gothic Regular",
+                          fontFamily: "Clash Display Regular",
                           fontWeight: FontWeight.w400,
                           color: subtitleColor,
                           fontSize: 11,
@@ -234,7 +234,7 @@ class ExchangeStatusScreen extends StatelessWidget {
                 child: const Center(
                   child: AppText(
                     text: "BACK TO ORDERS",
-                    fontFamily: "Franklin Gothic",
+                    fontFamily: "Clash Display",
                     fontWeight: FontWeight.w700,
                     color: whiteColor,
                     fontSize: 13,

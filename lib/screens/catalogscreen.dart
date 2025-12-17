@@ -139,7 +139,7 @@ class CatalogScreenState extends State<CatalogScreen> {
                           "Men".toUpperCase(),
                           style: TextStyle(
                               fontSize: 12.sp,
-                              fontFamily: "Franklin Gothic",
+                              fontFamily: "Clash Display",
                               fontWeight: FontWeight.w400),
                         )),
                         Tab(
@@ -147,7 +147,7 @@ class CatalogScreenState extends State<CatalogScreen> {
                           "Women".toUpperCase(),
                           style: TextStyle(
                               fontSize: 12.sp,
-                              fontFamily: "Franklin Gothic",
+                              fontFamily: "Clash Display",
                               fontWeight: FontWeight.w400),
                         )),
                         Tab(
@@ -155,7 +155,7 @@ class CatalogScreenState extends State<CatalogScreen> {
                           "Accessories".toUpperCase(),
                           style: TextStyle(
                               fontSize: 12.sp,
-                              fontFamily: "Franklin Gothic",
+                              fontFamily: "Clash Display",
                               fontWeight: FontWeight.w400),
                         ))
                       ]),

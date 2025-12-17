@@ -52,7 +52,7 @@ class ConfirmDeleteScreenState extends State<ConfirmDeleteScreen> {
                 child: AppText(
                   text:
                       "Your account deletion has been received and the account deletion will commence in 7 days.",
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                   color: appbarText,
                   maxLines: 3,

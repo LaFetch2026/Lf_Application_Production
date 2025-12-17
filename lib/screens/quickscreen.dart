@@ -270,14 +270,14 @@ class QuickScreenState extends State<QuickScreen> {
                                             "${homeController.expressHour.value}",
                                         color: whiteColor,
                                         fontSize: 18,
-                                        fontFamily: "Franklin Gothic Semibold",
+                                        fontFamily: "Clash Display Semibold",
                                         fontWeight: FontWeight.w500,
                                       )),
                                   AppText(
                                     text: "HRS",
                                     color: whiteColor,
                                     fontSize: 14,
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                   )
                                 ],
                               ),
@@ -359,7 +359,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                   color: whiteColor,
                                                   fontSize: 12,
                                                   fontFamily:
-                                                      "Franklin Gothic Semibold",
+                                                      "Clash Display Semibold",
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                                 Padding(
@@ -389,7 +389,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                   fontSize: 12,
                                                   maxLines: 1,
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                 ),
                                               ),
                                             )
@@ -408,7 +408,7 @@ class QuickScreenState extends State<QuickScreen> {
                                           color: whiteColor,
                                           fontSize: 12,
                                           maxLines: 3,
-                                          fontFamily: "Franklin Gothic Regular",
+                                          fontFamily: "Clash Display Regular",
                                         ),
                                       ),
                                     ))
@@ -469,7 +469,7 @@ class QuickScreenState extends State<QuickScreen> {
                                   textCapitalization: TextCapitalization.words,
                                   style: TextStyle(
                                       color: colorSecondary,
-                                      fontFamily: "Franklin Gothic Regular",
+                                      fontFamily: "Clash Display Regular",
                                       fontSize: 14.sp),
                                   controller: productController.brandController,
                                   onChanged: onSearchChanged,
@@ -529,7 +529,7 @@ class QuickScreenState extends State<QuickScreen> {
                                 children: [
                                   AppText(
                                     text: "Please Turn on your device location",
-                                    fontFamily: "Franklin Gothic Regular",
+                                    fontFamily: "Clash Display Regular",
                                     color: redColor,
                                     fontSize: 12,
                                   ),
@@ -558,7 +558,7 @@ class QuickScreenState extends State<QuickScreen> {
                                         child: AppText(
                                           text:
                                               "Location Permission isn't given",
-                                          fontFamily: "Franklin Gothic Regular",
+                                          fontFamily: "Clash Display Regular",
                                           color: whiteColor,
                                           fontSize: 12,
                                         ),
@@ -583,8 +583,7 @@ class QuickScreenState extends State<QuickScreen> {
                                             padding: const EdgeInsets.all(4.0),
                                             child: AppText(
                                               text: "Give Permission",
-                                              fontFamily:
-                                                  "Franklin Gothic Bold",
+                                              fontFamily: "Clash Display Bold",
                                               color: whiteColor,
                                               fontSize: 12,
                                             ),
@@ -815,7 +814,7 @@ class QuickScreenState extends State<QuickScreen> {
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12.sp,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w400,
                                 ),
                                 scrollAxis: Axis.horizontal,
@@ -916,7 +915,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                 child: AppText(
                                                   text: "Featured brands"
                                                       .toUpperCase(),
-                                                  fontFamily: "Franklin Gothic",
+                                                  fontFamily: "Clash Display",
                                                   color:
                                                       expressDeliveryFeaturedBrandsColor,
                                                   fontSize: 16,
@@ -1487,7 +1486,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                                       whiteColor,
                                                                   fontSize: 16,
                                                                   fontFamily:
-                                                                      "Franklin Gothic Semibold",
+                                                                      "Clash Display Semibold",
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w600,
@@ -1579,7 +1578,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                                   text: "VIEW ALL"
                                                                       .toUpperCase(),
                                                                   fontFamily:
-                                                                      "Franklin Gothic",
+                                                                      "Clash Display",
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
@@ -1761,7 +1760,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                                       .underline,
                                                               color: whiteColor,
                                                               fontFamily:
-                                                                  "Franklin Gothic")),
+                                                                  "Clash Display")),
                                                     ),
                                                   ),
                                                   Text(" or ",
@@ -1769,7 +1768,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                           fontSize: 14,
                                                           color: whiteColor,
                                                           fontFamily:
-                                                              "Franklin Gothic")),
+                                                              "Clash Display")),
                                                   GestureDetector(
                                                     onTap: () {
                                                       showModalBottomSheet(
@@ -1800,7 +1799,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                                     .underline,
                                                             color: whiteColor,
                                                             fontFamily:
-                                                                "Franklin Gothic")),
+                                                                "Clash Display")),
                                                   ),
                                                   GestureDetector(
                                                     onTap: () {
@@ -1832,7 +1831,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                         style: TextStyle(
                                                           fontSize: 13,
                                                           fontFamily:
-                                                              "Franklin Gothic",
+                                                              "Clash Display",
                                                           fontWeight:
                                                               FontWeight.w500,
                                                           color: whiteColor,
@@ -1863,7 +1862,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                     fontSize: 12,
                                                     color: whiteColor,
                                                     fontFamily:
-                                                        "Franklin Gothic")),
+                                                        "Clash Display")),
                                       )),
                                 ],
                               )),

@@ -100,7 +100,7 @@ class ReviewProductScreenState extends State<ReviewProductScreen> {
                                     child: AppText(
                                       text: widget.productName,
                                       maxLines: 2,
-                                      fontFamily: "Franklin Gothic Regular",
+                                      fontFamily: "Clash Display Regular",
                                       fontWeight: FontWeight.w400,
                                       fontSize: 14,
                                       color: nameText,
@@ -119,7 +119,7 @@ class ReviewProductScreenState extends State<ReviewProductScreen> {
                         child: AppText(
                           text: "Write a Review",
                           maxLines: 2,
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Clash Display",
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
                           color: loginText,
@@ -133,7 +133,7 @@ class ReviewProductScreenState extends State<ReviewProductScreen> {
                           style: TextStyle(
                             color: textColor,
                             fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                           ),
                           maxLines: 5,
                           keyboardType: TextInputType.multiline,

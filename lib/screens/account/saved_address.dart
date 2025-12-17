@@ -138,7 +138,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                         textCapitalization: TextCapitalization.words,
                         style: TextStyle(
                             color: titleColor,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontSize: 14.sp),
                         controller: shipController.searchAddressController,
                         onChanged: onSearchChanged,
@@ -171,7 +171,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                           hintStyle: TextStyle(
                               fontSize: 14.sp,
                               color: searchTextColor,
-                              fontFamily: "Franklin Gothic Regular"),
+                              fontFamily: "Clash Display Regular"),
                         ),
                       ),
                     ),
@@ -227,7 +227,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                     text: "Use my current location",
                                     color: homeAppBarColor,
                                     fontSize: 16,
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -284,7 +284,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                     color: homeAppBarColor,
                                     textAlign: TextAlign.center,
                                     fontSize: 16,
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -307,7 +307,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                       text: "Saved Address".toUpperCase(),
                       color: homeAppBarColor,
                       fontSize: 14,
-                      fontFamily: "Franklin Gothic",
+                      fontFamily: "Clash Display",
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -511,7 +511,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                                         fontSize:
                                                                             16,
                                                                         fontFamily:
-                                                                            "Franklin Gothic Semibold",
+                                                                            "Clash Display Semibold",
                                                                         fontWeight:
                                                                             FontWeight.w500,
                                                                       ),
@@ -611,7 +611,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                                         fontSize:
                                                                             16,
                                                                         fontFamily:
-                                                                            "Franklin Gothic Semibold",
+                                                                            "Clash Display Semibold",
                                                                         fontWeight:
                                                                             FontWeight.w500,
                                                                       ),
@@ -644,7 +644,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                       color: titleColor,
                                                       fontSize: 14,
                                                       fontFamily:
-                                                          "Franklin Gothic Semibold",
+                                                          "Clash Display Semibold",
                                                       fontWeight:
                                                           FontWeight.w600,
                                                     ),
@@ -685,7 +685,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                                       whiteColor,
                                                                   fontSize: 10,
                                                                   fontFamily:
-                                                                      "Franklin Gothic",
+                                                                      "Clash Display",
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -769,7 +769,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                     color: subtitleColor,
                                                     fontSize: 12,
                                                     fontFamily:
-                                                        "Franklin Gothic Regular",
+                                                        "Clash Display Regular",
                                                     fontWeight: FontWeight.w400,
                                                   ),
                                                 ),
@@ -791,7 +791,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                     color: subtitleColor,
                                                     fontSize: 12,
                                                     fontFamily:
-                                                        "Franklin Gothic Regular",
+                                                        "Clash Display Regular",
                                                     fontWeight: FontWeight.w400,
                                                   ),
                                                 ),
@@ -807,7 +807,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                                   color: subtitleColor,
                                                   fontSize: 12,
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               ),
@@ -888,7 +888,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                     style: TextStyle(
                                       fontSize: 14.sp,
                                       color: Colors.black,
-                                      fontFamily: "Franklin Gothic Regular",
+                                      fontFamily: "Clash Display Regular",
                                     ),
                                   ),
                                 ),

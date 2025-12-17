@@ -527,7 +527,7 @@ class CartScreenState extends State<CartScreen> {
                                             child: const AppText(
                                               text: "BAG",
                                               fontFamily:
-                                                  "Franklin Gothic Semibold",
+                                                  "Clash Display Semibold",
                                               fontWeight: FontWeight.w600,
                                               color: whiteColor,
                                               fontSize: 16,
@@ -547,7 +547,7 @@ class CartScreenState extends State<CartScreen> {
                                                           ? "${controller.orderList.length} Product"
                                                           : "${controller.orderList.length} Products",
                                                       fontFamily:
-                                                          "Franklin Gothic Regular",
+                                                          "Clash Display Regular",
                                                       fontWeight:
                                                           FontWeight.w600,
                                                       color:
@@ -645,7 +645,7 @@ class CartScreenState extends State<CartScreen> {
                           color: redColor,
                           fontSize: 10,
                           maxLines: 1,
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Clash Display",
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -727,7 +727,7 @@ class CartScreenState extends State<CartScreen> {
               child: AppText(
                 text: (product["brand_name"] ?? "").toString().toUpperCase(),
                 maxLines: 1,
-                fontFamily: "Franklin Gothic",
+                fontFamily: "Clash Display",
                 fontWeight: FontWeight.w500,
                 fontSize: 16,
                 color: widget.backgroundcolor == whiteColor
@@ -753,7 +753,7 @@ class CartScreenState extends State<CartScreen> {
                       : productSubtitleColor,
                   maxLines: 1,
                   fontSize: 14,
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -811,7 +811,7 @@ class CartScreenState extends State<CartScreen> {
                                 text: "Size : $sizeName",
                                 color: titleColor,
                                 fontSize: 10,
-                                fontFamily: "Franklin Gothic Regular",
+                                fontFamily: "Clash Display Regular",
                               ),
                             ),
                         ],
@@ -857,7 +857,7 @@ class CartScreenState extends State<CartScreen> {
                   //               text: "Color : $colorName",
                   //               color: titleColor,
                   //               fontSize: 10,
-                  //               fontFamily: "Franklin Gothic Regular",
+                  //               fontFamily: "Clash Display Regular",
                   //             ),
                   //           ),
                   //       ],
@@ -889,7 +889,7 @@ class CartScreenState extends State<CartScreen> {
                           text: "Qty : ${item["quantity"] ?? "0"}",
                           color: titleColor,
                           fontSize: 10,
-                          fontFamily: "Franklin Gothic Regular",
+                          fontFamily: "Clash Display Regular",
                         ),
                         SizedBox(width: 6.sp),
                       ],
@@ -912,7 +912,7 @@ class CartScreenState extends State<CartScreen> {
                         color: deepRed,
                         fontSize: 12,
                         maxLines: 3,
-                        fontFamily: "Franklin Gothic Regular",
+                        fontFamily: "Clash Display Regular",
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -942,7 +942,7 @@ class CartScreenState extends State<CartScreen> {
                               : searchTextColor,
                           fontSize: 12.sp,
                           decoration: TextDecoration.lineThrough,
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Clash Display",
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -958,7 +958,7 @@ class CartScreenState extends State<CartScreen> {
                             ? nameText
                             : whiteColor,
                         fontSize: 12.sp,
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -978,7 +978,7 @@ class CartScreenState extends State<CartScreen> {
                           style: const TextStyle(
                             color: homeAppBarColor,
                             fontSize: 12,
-                            fontFamily: "Franklin Gothic",
+                            fontFamily: "Clash Display",
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -1068,7 +1068,7 @@ class CartScreenState extends State<CartScreen> {
               padding: EdgeInsets.only(top: 24.sp),
               child: AppText(
                 text: "ORDER DETAILS",
-                fontFamily: "Franklin Gothic",
+                fontFamily: "Clash Display",
                 fontWeight: FontWeight.w500,
                 color: widget.backgroundcolor == whiteColor
                     ? homeAppBarColor
@@ -1118,7 +1118,7 @@ class CartScreenState extends State<CartScreen> {
                 children: [
                   AppText(
                     text: "Subtotal",
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                     color: widget.backgroundcolor == whiteColor
                         ? subtitleColor
@@ -1128,7 +1128,7 @@ class CartScreenState extends State<CartScreen> {
                   const Spacer(),
                   AppText(
                     text: "₹${sellingTotal.toStringAsFixed(0)}",
-                    fontFamily: "Franklin Gothic",
+                    fontFamily: "Clash Display",
                     fontWeight: FontWeight.w500,
                     color: widget.backgroundcolor == whiteColor
                         ? homeAppBarColor
@@ -1146,7 +1146,7 @@ class CartScreenState extends State<CartScreen> {
                 children: [
                   AppText(
                     text: "GST (18%)",
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                     color: widget.backgroundcolor == whiteColor
                         ? subtitleColor
@@ -1156,7 +1156,7 @@ class CartScreenState extends State<CartScreen> {
                   const Spacer(),
                   AppText(
                     text: "₹${gstAmount.toStringAsFixed(2)}",
-                    fontFamily: "Franklin Gothic",
+                    fontFamily: "Clash Display",
                     fontWeight: FontWeight.w500,
                     color: widget.backgroundcolor == whiteColor
                         ? homeAppBarColor
@@ -1175,7 +1175,7 @@ class CartScreenState extends State<CartScreen> {
                   children: [
                     AppText(
                       text: "Coupon Discount",
-                      fontFamily: "Franklin Gothic Regular",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: widget.backgroundcolor == whiteColor
                           ? subtitleColor
@@ -1185,7 +1185,7 @@ class CartScreenState extends State<CartScreen> {
                     const Spacer(),
                     AppText(
                       text: "- ₹${couponDiscount.toStringAsFixed(0)}",
-                      fontFamily: "Franklin Gothic Regular",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: const Color(0xff059669),
                       fontSize: 12,
@@ -1201,7 +1201,7 @@ class CartScreenState extends State<CartScreen> {
                 children: [
                   AppText(
                     text: "Delivery Charges",
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                     color: widget.backgroundcolor == whiteColor
                         ? subtitleColor
@@ -1213,7 +1213,7 @@ class CartScreenState extends State<CartScreen> {
                     text: deliveryCharges == 0
                         ? "Free"
                         : "+ ₹${deliveryCharges.toStringAsFixed(0)}",
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                     color: deliveryCharges == 0
                         ? const Color(0xff059669)
@@ -1240,7 +1240,7 @@ class CartScreenState extends State<CartScreen> {
               children: [
                 AppText(
                   text: "TOTAL AMOUNT (Incl. 18% GST)",
-                  fontFamily: "Franklin Gothic",
+                  fontFamily: "Clash Display",
                   fontWeight: FontWeight.w500,
                   color: widget.backgroundcolor == whiteColor
                       ? colorPrimary
@@ -1250,7 +1250,7 @@ class CartScreenState extends State<CartScreen> {
                 const Spacer(),
                 AppText(
                   text: "₹${finalTotal.toStringAsFixed(2)}",
-                  fontFamily: "Franklin Gothic",
+                  fontFamily: "Clash Display",
                   fontWeight: FontWeight.w500,
                   color: widget.backgroundcolor == whiteColor
                       ? colorPrimary
@@ -1299,7 +1299,7 @@ class CartScreenState extends State<CartScreen> {
                 child: Text(
                   couponText,
                   style: TextStyle(
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w500,
                     color: widget.backgroundcolor == whiteColor
                         ? titleColor
@@ -1378,7 +1378,7 @@ class CartScreenState extends State<CartScreen> {
                     style: TextStyle(
                       color: hasDiscount ? redColor : whiteColor,
                       fontSize: 12.sp,
-                      fontFamily: "Franklin Gothic",
+                      fontFamily: "Clash Display",
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -1492,7 +1492,7 @@ class CartScreenState extends State<CartScreen> {
                 Flexible(
                   child: AppText(
                     text: label,
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                     color: widget.backgroundcolor == whiteColor
                         ? subtitleColor
@@ -1521,7 +1521,7 @@ class CartScreenState extends State<CartScreen> {
           SizedBox(width: 8.sp),
           AppText(
             text: value,
-            fontFamily: "Franklin Gothic Regular",
+            fontFamily: "Clash Display Regular",
             fontWeight: FontWeight.w400,
             color: valueColor,
             fontSize: 12,
@@ -1582,7 +1582,7 @@ class CartScreenState extends State<CartScreen> {
               text: "Size : ${size ?? ""}",
               color: titleColor,
               fontSize: 10,
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w400,
             ),
           ),
@@ -1611,7 +1611,7 @@ class CartScreenState extends State<CartScreen> {
                       EdgeInsets.only(left: 20.sp, right: 20.sp, top: 10.sp),
                   child: AppText(
                     text: controller.addressError.value,
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                     color: redColor,
                     fontSize: 12,
@@ -1641,7 +1641,7 @@ class CartScreenState extends State<CartScreen> {
                     return Text(
                       hasAnyAddress ? "DELIVERING IN " : "",
                       style: TextStyle(
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w500,
                         color: searchTextColor,
                         fontSize: 14.sp,
@@ -1668,7 +1668,7 @@ class CartScreenState extends State<CartScreen> {
                     return Text(
                       label,
                       style: TextStyle(
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w500,
                         color: widget.backgroundcolor == whiteColor
                             ? titleColor
@@ -1737,7 +1737,7 @@ class CartScreenState extends State<CartScreen> {
                             style: TextStyle(
                               fontSize: 13.sp,
                               color: Colors.white,
-                              fontFamily: 'Franklin Gothic',
+                              fontFamily: 'Clash Display',
                             ),
                           ),
               ),
@@ -1756,7 +1756,7 @@ class CartScreenState extends State<CartScreen> {
         style: TextStyle(
           fontSize: 13.sp,
           color: redColor,
-          fontFamily: 'Franklin Gothic',
+          fontFamily: 'Clash Display',
         ),
       ),
     );

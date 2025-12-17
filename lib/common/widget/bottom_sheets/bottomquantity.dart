@@ -75,7 +75,7 @@ class BottomQuantityState extends State<BottomQuantity> {
                       style: TextStyle(
                         color: loginText,
                         fontSize: 14.sp,
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -143,7 +143,7 @@ class BottomQuantityState extends State<BottomQuantity> {
                                         ? whiteColor
                                         : btnTextColor,
                                     fontSize: 12,
-                                    fontFamily: "Franklin Gothic Regular",
+                                    fontFamily: "Clash Display Regular",
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
@@ -156,7 +156,7 @@ class BottomQuantityState extends State<BottomQuantity> {
               ),
             ),
             Obx(
-                  () => Padding(
+              () => Padding(
                 padding: EdgeInsets.symmetric(vertical: 10.sp),
                 child: getSingleButton(
                     label: "Done",

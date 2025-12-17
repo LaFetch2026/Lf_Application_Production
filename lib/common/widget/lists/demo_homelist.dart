@@ -29,21 +29,21 @@ class DemoProductList extends StatelessWidget {
 
   const DemoProductList(
       {Key? key,
-        required this.text,
-        this.text1 = "",
-        required this.height,
-        required this.list,
-        this.visibleViewAll = false,
-        this.visibleSubtitle = false,
-        this.textColor = blackColor,
-        this.leftPadding = 16,
-        this.visibleheart = false,
-        this.fontFamily = "Franklin Gothic",
-        required this.controller,
-        this.onPressed,
-        this.onPressedViewAll,
-        this.onPressedHeart,
-        this.onPressedExpress})
+      required this.text,
+      this.text1 = "",
+      required this.height,
+      required this.list,
+      this.visibleViewAll = false,
+      this.visibleSubtitle = false,
+      this.textColor = blackColor,
+      this.leftPadding = 16,
+      this.visibleheart = false,
+      this.fontFamily = "Clash Display",
+      required this.controller,
+      this.onPressed,
+      this.onPressedViewAll,
+      this.onPressedHeart,
+      this.onPressedExpress})
       : super(key: key);
 
   @override
@@ -57,7 +57,7 @@ class DemoProductList extends StatelessWidget {
               padding: EdgeInsets.only(top: 10.sp, left: leftPadding.sp),
               child: AppText(
                 text: text,
-                fontFamily: "Franklin Gothic Semibold",
+                fontFamily: "Clash Display Semibold",
                 color: blackColor,
                 fontSize: 18,
               ),
@@ -69,45 +69,45 @@ class DemoProductList extends StatelessWidget {
             ),
             visibleViewAll
                 ? GestureDetector(
-              onTap: () {
-                onPressedViewAll?.call();
-              },
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      top: 12.sp,
-                      right: 12.sp,
-                      left: 16.sp,
-                      bottom: 2.sp),
-                  child: Image.asset(
-                    rightBlackArrow,
-                    height: 30.sp,
-                    width: 30.sp,
-                  ),
-                ),
-              ),
-            )
+                    onTap: () {
+                      onPressedViewAll?.call();
+                    },
+                    child: Container(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            top: 12.sp,
+                            right: 12.sp,
+                            left: 16.sp,
+                            bottom: 2.sp),
+                        child: Image.asset(
+                          rightBlackArrow,
+                          height: 30.sp,
+                          width: 30.sp,
+                        ),
+                      ),
+                    ),
+                  )
                 : SizedBox(
-              height: 0,
-            ),
+                    height: 0,
+                  ),
           ],
         ),
         visibleSubtitle
             ? Padding(
-          padding: EdgeInsets.only(left: leftPadding.sp),
-          child: AppText(
-            text: text1,
-            fontFamily: "Franklin Gothic Regular",
-            color: Color(0xFF6B7280),
-            fontSize: 12,
-          ),
-        )
+                padding: EdgeInsets.only(left: leftPadding.sp),
+                child: AppText(
+                  text: text1,
+                  fontFamily: "Clash Display Regular",
+                  color: Color(0xFF6B7280),
+                  fontSize: 12,
+                ),
+              )
             : SizedBox(
-          height: 0,
-        ),
+                height: 0,
+              ),
         Padding(
           padding:
-          EdgeInsets.only(left: leftPadding.sp, top: 16.sp, bottom: 16.sp),
+              EdgeInsets.only(left: leftPadding.sp, top: 16.sp, bottom: 16.sp),
           child: SizedBox(
             width: double.infinity,
             height: height,
@@ -122,8 +122,8 @@ class DemoProductList extends StatelessWidget {
                       physics: const BouncingScrollPhysics(),
                       itemCount: visibleViewAll
                           ? list.length > 5
-                          ? 5
-                          : list.length
+                              ? 5
+                              : list.length
                           : list.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (ctx, index) {
@@ -143,42 +143,42 @@ class DemoProductList extends StatelessWidget {
                                   children: [
                                     Stack(children: [
                                       list[index]["images"].isNotEmpty &&
-                                          list[index]["images"] != null
+                                              list[index]["images"] != null
                                           ? SizedBox(
-                                        height: 150.sp,
-                                        width: 122.sp,
-                                        child: CachedNetworkImage(
-                                          cacheManager: CacheManager(
-                                              Config("customCacheKey",
-                                                  stalePeriod:
-                                                  const Duration(
-                                                      days: 15),
-                                                  maxNrOfCacheObjects:
-                                                  100)),
-                                          fit: BoxFit.cover,
-                                          fadeOutCurve: Curves.ease,
-                                          fadeOutDuration:
-                                          Duration(milliseconds: 100),
-                                          imageUrl: isImage(list[index]
-                                          ["images"][0]["name"])
-                                              ? list[index]["images"][0]
-                                          ["name"]
-                                              : list[index]["images"][1]
-                                          ["name"],
-                                          errorWidget:
-                                              (context, url, error) =>
-                                              Image.asset(
-                                                downloadImage,
+                                              height: 150.sp,
+                                              width: 122.sp,
+                                              child: CachedNetworkImage(
+                                                cacheManager: CacheManager(
+                                                    Config("customCacheKey",
+                                                        stalePeriod:
+                                                            const Duration(
+                                                                days: 15),
+                                                        maxNrOfCacheObjects:
+                                                            100)),
                                                 fit: BoxFit.cover,
-                                                height: 150.sp,
-                                                width: 122.sp,
+                                                fadeOutCurve: Curves.ease,
+                                                fadeOutDuration:
+                                                    Duration(milliseconds: 100),
+                                                imageUrl: isImage(list[index]
+                                                        ["images"][0]["name"])
+                                                    ? list[index]["images"][0]
+                                                        ["name"]
+                                                    : list[index]["images"][1]
+                                                        ["name"],
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Image.asset(
+                                                  downloadImage,
+                                                  fit: BoxFit.cover,
+                                                  height: 150.sp,
+                                                  width: 122.sp,
+                                                ),
                                               ),
-                                        ),
-                                      )
+                                            )
                                           : Image.asset(dummyWishlistImage,
-                                          height: 150.sp,
-                                          width: 122.sp,
-                                          fit: BoxFit.cover),
+                                              height: 150.sp,
+                                              width: 122.sp,
+                                              fit: BoxFit.cover),
                                       GestureDetector(
                                         onTap: () {
                                           onPressedHeart?.call(
@@ -197,21 +197,21 @@ class DemoProductList extends StatelessWidget {
                                                   height: 24.sp,
                                                   width: 24.sp,
                                                   child: CircleAvatar(
-                                                    // radius: 12.0.sp,
+                                                      // radius: 12.0.sp,
                                                       backgroundColor:
-                                                      whiteColor,
+                                                          whiteColor,
                                                       child: list[index]
-                                                      ["wishlisted"]
+                                                              ["wishlisted"]
                                                           ? Image.asset(
-                                                        wishlistSelectImage,
-                                                        height: 18.sp,
-                                                        width: 18.sp,
-                                                      )
+                                                              wishlistSelectImage,
+                                                              height: 18.sp,
+                                                              width: 18.sp,
+                                                            )
                                                           : Image.asset(
-                                                        heartImage,
-                                                        height: 18.sp,
-                                                        width: 18.sp,
-                                                      )),
+                                                              heartImage,
+                                                              height: 18.sp,
+                                                              width: 18.sp,
+                                                            )),
                                                 ),
                                               ),
                                             ),
@@ -228,7 +228,7 @@ class DemoProductList extends StatelessWidget {
                                         color: nameText,
                                         maxLines: 1,
                                         fontSize: 13,
-                                        fontFamily: "Franklin Gothic",
+                                        fontFamily: "Clash Display",
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -240,7 +240,7 @@ class DemoProductList extends StatelessWidget {
                                         color: Color(0xFF6B7280),
                                         maxLines: 1,
                                         fontSize: 11,
-                                        fontFamily: "Franklin Gothic Regular",
+                                        fontFamily: "Clash Display Regular",
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
@@ -255,7 +255,7 @@ class DemoProductList extends StatelessWidget {
                                                 : false,
                                             child: Padding(
                                               padding:
-                                              EdgeInsets.only(right: 5.sp),
+                                                  EdgeInsets.only(right: 5.sp),
                                               child: Text(
                                                 "\u{20B9} ${list[index]["mrp"] ?? ""}",
                                                 style: TextStyle(
@@ -264,7 +264,7 @@ class DemoProductList extends StatelessWidget {
                                                   decoration: TextDecoration
                                                       .lineThrough,
                                                   fontFamily:
-                                                  "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               ),
@@ -272,11 +272,11 @@ class DemoProductList extends StatelessWidget {
                                           ),
                                           AppText(
                                             text:
-                                            "\u{20B9} ${list[index]["price"] ?? ""}",
+                                                "\u{20B9} ${list[index]["price"] ?? ""}",
                                             color: deepGreytextColor,
                                             maxLines: 2,
                                             fontSize: 11,
-                                            fontFamily: "Franklin Gothic",
+                                            fontFamily: "Clash Display",
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ],

@@ -20,26 +20,26 @@ class DoubleButton extends StatelessWidget {
 
   const DoubleButton(
       {Key? key,
-        required this.firstText,
-        required this.secondText,
-        required this.firstTextColor,
-        required this.secondTextColor,
-        required this.firstBackgroundColor,
-        required this.secondBackgroundColor,
-        required this.firstBorderColor,
-        required this.secondBorderColor,
-        this.firstFontSize = 12,
-        this.secondFontSize = 12,
-        this.fontFamily = "Franklin Gothic",
-        this.onPressedFirst,
-        this.onPressedSecond})
+      required this.firstText,
+      required this.secondText,
+      required this.firstTextColor,
+      required this.secondTextColor,
+      required this.firstBackgroundColor,
+      required this.secondBackgroundColor,
+      required this.firstBorderColor,
+      required this.secondBorderColor,
+      this.firstFontSize = 12,
+      this.secondFontSize = 12,
+      this.fontFamily = "Clash Display",
+      this.onPressedFirst,
+      this.onPressedSecond})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding:
-      EdgeInsets.only(left: 16.sp, right: 16.sp, top: 10.sp, bottom: 10.sp),
+          EdgeInsets.only(left: 16.sp, right: 16.sp, top: 10.sp, bottom: 10.sp),
       child: Row(
         children: [
           Expanded(
@@ -59,7 +59,7 @@ class DoubleButton extends StatelessWidget {
                             ),
                             elevation: MaterialStateProperty.all(0.0),
                             backgroundColor:
-                            MaterialStateProperty.all(firstBackgroundColor),
+                                MaterialStateProperty.all(firstBackgroundColor),
                             textStyle: MaterialStateProperty.all(TextStyle(
                               color: firstTextColor,
                               fontSize: firstFontSize.sp,

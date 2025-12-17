@@ -133,25 +133,23 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   void initState() {
     super.initState();
 
-    // Map genderName → superCatId
     final g = widget.genderName.trim().toLowerCase();
     if (g == 'men') {
       productController.categoryFilter.value = 1;
     } else if (g == 'women') {
       productController.categoryFilter.value = 2;
     } else {
-      productController.categoryFilter.value = 3; // accessories
+      productController.categoryFilter.value = 3;
     }
     productController.selectedCategoryGender.value = widget.genderName;
 
-    // keep your initialization flow
     productController.handPickedProductList.clear();
     productController.handpickedHasnextpage.value = true;
     productController.handpickedLoadMore.value = false;
     productController.isHandPicked.value = false;
     productController.handpickedPage.value = 1;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       wishlistController.getWishlistData();
 
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -165,10 +163,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         productController.update();
       });
 
-      // ✅ Load brands for filters
-      _loadBrandsIfNeeded();
+      // ✅ Use the SAME method with withLimit: false
+      final currentGender = productController.categoryFilter.value;
+      await productController.getHomeProduct(currentGender, withLimit: false);
 
-      // ✅ Initialize displayed products
+      await _loadBrandsIfNeeded();
       _updateDisplayedProducts();
     });
 
@@ -525,7 +524,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                     color: blackColor,
                                     maxLines: 1,
                                     fontSize: 13,
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     fontWeight: FontWeight.w500,
                                   ),
                                   AppText(
@@ -533,7 +532,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                     color: const Color(0xFF6B7280),
                                     maxLines: 1,
                                     fontSize: 11,
-                                    fontFamily: "Franklin Gothic Regular",
+                                    fontFamily: "Clash Display Regular",
                                     fontWeight: FontWeight.w400,
                                   ),
                                   Padding(
@@ -549,7 +548,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                           color: homeAppBarColor,
                                           maxLines: 1,
                                           fontSize: 11,
-                                          fontFamily: "Franklin Gothic",
+                                          fontFamily: "Clash Display",
                                           fontWeight: FontWeight.w400,
                                         );
                                       }
@@ -571,7 +570,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                   decoration: TextDecoration
                                                       .lineThrough,
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               ),
@@ -581,7 +580,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                               color: homeAppBarColor,
                                               maxLines: 1,
                                               fontSize: 11,
-                                              fontFamily: "Franklin Gothic",
+                                              fontFamily: "Clash Display",
                                               fontWeight: FontWeight.w400,
                                             ),
                                           ],
@@ -595,7 +594,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                           color: homeAppBarColor,
                                           maxLines: 1,
                                           fontSize: 11,
-                                          fontFamily: "Franklin Gothic",
+                                          fontFamily: "Clash Display",
                                           fontWeight: FontWeight.w400,
                                         );
                                       }
@@ -617,8 +616,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                             color: expressText,
                                             maxLines: 2,
                                             fontSize: 11,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
+                                            fontFamily: "Clash Display Regular",
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ],
@@ -678,7 +676,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                   style: TextStyle(
                                     color: const Color(0xFF374151),
                                     fontSize: 13.sp,
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     fontWeight: FontWeight.w500,
                                     decoration: TextDecoration.none,
                                   ),
@@ -705,7 +703,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                   style: TextStyle(
                                     color: const Color(0xFF374151),
                                     fontSize: 13.sp,
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     fontWeight: FontWeight.w500,
                                     decoration: TextDecoration.none,
                                   ),
@@ -718,7 +716,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                   widget.genderName.toUpperCase(),
                                   style: TextStyle(
                                     decoration: TextDecoration.underline,
-                                    fontFamily: "Franklin Gothic Regular",
+                                    fontFamily: "Clash Display Regular",
                                     fontWeight: FontWeight.w400,
                                     color: appBarColor,
                                     fontSize: 10.sp,
@@ -749,7 +747,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                   style: TextStyle(
                                     color: const Color(0xFF374151),
                                     fontSize: 13.sp,
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     fontWeight: FontWeight.w500,
                                     decoration: TextDecoration.none,
                                   ),
@@ -853,7 +851,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                         children: [
                           const Text("FILTERS",
                               style: TextStyle(
-                                  fontFamily: "Franklin Gothic",
+                                  fontFamily: "Clash Display",
                                   fontWeight: FontWeight.w700,
                                   fontSize: 18,
                                   color: blackColor)),
@@ -868,7 +866,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                 style: TextStyle(
                                     color: appBarColor,
                                     fontSize: 13,
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     decoration: TextDecoration.underline)),
                           ),
                         ],
@@ -901,8 +899,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                 ? blackColor
                                                 : const Color(0xFF6B7280),
                                             fontFamily: selected
-                                                ? "Franklin Gothic"
-                                                : "Franklin Gothic Regular",
+                                                ? "Clash Display"
+                                                : "Clash Display Regular",
                                             fontWeight: selected
                                                 ? FontWeight.w700
                                                 : FontWeight.w400)),
@@ -935,7 +933,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                           title: Text(b,
                                               style: const TextStyle(
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   color: blackColor)),
                                           onChanged: (val) {
                                             setModalState(() {
@@ -966,7 +964,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                       children: [
                                         const Text("Select price range",
                                             style: TextStyle(
-                                                fontFamily: "Franklin Gothic",
+                                                fontFamily: "Clash Display",
                                                 fontWeight: FontWeight.w700,
                                                 fontSize: 15)),
                                         const SizedBox(height: 8),
@@ -1014,7 +1012,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                     borderRadius: BorderRadius.circular(8))),
                             child: const Text("CLOSE",
                                 style: TextStyle(
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     color: blackColor)),
                           )),
                           const SizedBox(width: 12),
@@ -1067,7 +1065,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                             },
                             child: const Text("APPLY",
                                 style: TextStyle(
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     color: whiteColor)),
                           )),
                         ],
@@ -1111,7 +1109,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 const Text("SORT BY",
                     style: TextStyle(
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w700,
                         fontSize: 18,
                         color: blackColor)),
@@ -1127,7 +1125,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                         activeColor: appBarColor,
                         title: Text(e.value,
                             style: const TextStyle(
-                                fontFamily: "Franklin Gothic Regular",
+                                fontFamily: "Clash Display Regular",
                                 color: blackColor)),
                         onChanged: (v) =>
                             selectedOption.value = v ?? "recommended",
@@ -1146,7 +1144,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                 borderRadius: BorderRadius.circular(8))),
                         child: const Text("CLOSE",
                             style: TextStyle(
-                                fontFamily: "Franklin Gothic",
+                                fontFamily: "Clash Display",
                                 color: blackColor)))),
                 const SizedBox(width: 12),
                 Expanded(
@@ -1172,7 +1170,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                         },
                         child: const Text("APPLY",
                             style: TextStyle(
-                                fontFamily: "Franklin Gothic",
+                                fontFamily: "Clash Display",
                                 color: whiteColor))))
               ]),
               SizedBox(height: 10.sp)

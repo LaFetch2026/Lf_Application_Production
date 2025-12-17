@@ -110,7 +110,7 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
         ),
         title: const AppText(
           text: "ORDER DETAILS",
-          fontFamily: "Franklin Gothic",
+          fontFamily: "Clash Display",
           fontWeight: FontWeight.w700,
           color: blackColor,
           fontSize: 16,
@@ -143,7 +143,7 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
             // ✅ Product Info
             AppText(
               text: productName,
-              fontFamily: "Franklin Gothic",
+              fontFamily: "Clash Display",
               fontWeight: FontWeight.w700,
               color: nameText,
               fontSize: 16,
@@ -151,7 +151,7 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
             SizedBox(height: 6.sp),
             AppText(
               text: "Size: $size   Qty: $quantity",
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w400,
               color: subtitleColor,
               fontSize: 12,
@@ -163,14 +163,14 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
               children: [
                 const AppText(
                   text: "Status: ",
-                  fontFamily: "Franklin Gothic",
+                  fontFamily: "Clash Display",
                   fontWeight: FontWeight.w600,
                   color: blackColor,
                   fontSize: 13,
                 ),
                 AppText(
                   text: status.capitalizeFirst ?? status,
-                  fontFamily: "Franklin Gothic",
+                  fontFamily: "Clash Display",
                   fontWeight: FontWeight.w700,
                   color: statusColor,
                   fontSize: 13,
@@ -197,7 +197,7 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
                       SizedBox(width: 6.sp),
                       const AppText(
                         text: "CANCEL ITEM",
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w600,
                         color: blackColor,
                         fontSize: 13,
@@ -212,7 +212,7 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
             // ✅ Order Summary
             const AppText(
               text: "ORDER SUMMARY",
-              fontFamily: "Franklin Gothic",
+              fontFamily: "Clash Display",
               fontWeight: FontWeight.w700,
               color: blackColor,
               fontSize: 14,
@@ -236,14 +236,14 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
               children: [
                 const AppText(
                   text: "BILL TOTAL",
-                  fontFamily: "Franklin Gothic",
+                  fontFamily: "Clash Display",
                   fontWeight: FontWeight.w700,
                   color: blackColor,
                   fontSize: 14,
                 ),
                 AppText(
                   text: "₹${total.toStringAsFixed(2)}",
-                  fontFamily: "Franklin Gothic",
+                  fontFamily: "Clash Display",
                   fontWeight: FontWeight.w700,
                   color: blackColor,
                   fontSize: 14,
@@ -266,14 +266,14 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
         children: [
           AppText(
             text: label,
-            fontFamily: "Franklin Gothic Regular",
+            fontFamily: "Clash Display Regular",
             fontWeight: FontWeight.w400,
             color: subtitleColor,
             fontSize: 12,
           ),
           AppText(
             text: value,
-            fontFamily: "Franklin Gothic",
+            fontFamily: "Clash Display",
             fontWeight: FontWeight.w600,
             color: color,
             fontSize: 12,

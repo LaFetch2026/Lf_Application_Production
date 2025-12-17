@@ -126,7 +126,7 @@ class FAQScreenState extends State<FAQScreen> {
                                                                       fontSize:
                                                                           14,
                                                                       fontFamily:
-                                                                          "Franklin Gothic Regular",
+                                                                          "Clash Display Regular",
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .w400,
@@ -171,7 +171,7 @@ class FAQScreenState extends State<FAQScreen> {
                                                                         [
                                                                         "answer"],
                                                                     fontFamily:
-                                                                        "Franklin Gothic Regular",
+                                                                        "Clash Display Regular",
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w400,
@@ -205,7 +205,7 @@ class FAQScreenState extends State<FAQScreen> {
                                                 fontSize: 14.sp,
                                                 color: Colors.black,
                                                 fontFamily:
-                                                    "Franklin Gothic Regular")),
+                                                    "Clash Display Regular")),
                                       ),
                                     )
                             ],

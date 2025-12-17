@@ -253,7 +253,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           fontSize: 16.sp,
-                                          fontFamily: 'Franklin Gothic',
+                                          fontFamily: 'Clash Display',
                                           fontWeight: FontWeight.w500,
                                           color: homeAppBarColor,
                                         ),
@@ -276,7 +276,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     color: subtitleColor,
-                                    fontFamily: 'Franklin Gothic Regular',
+                                    fontFamily: 'Clash Display Regular',
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -292,7 +292,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                 style: TextStyle(
                                   color: blackColor,
                                   fontSize: 12.sp,
-                                  fontFamily: "Franklin Gothic Semibold",
+                                  fontFamily: "Clash Display Semibold",
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -310,7 +310,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                     left: 20.sp, right: 20.sp, top: 2.sp),
                                 child: AppText(
                                   text: shipController.nameError.value,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w400,
                                   color: redColor,
                                   fontSize: 12,
@@ -332,7 +332,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                     left: 20.sp, right: 20.sp, top: 2.sp),
                                 child: AppText(
                                   text: shipController.phoneError.value,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w400,
                                   color: redColor,
                                   fontSize: 12,
@@ -344,7 +344,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               padding: EdgeInsets.only(left: 16.sp, top: 30.sp),
                               child: AppText(
                                 text: "POSTAL DETAILS",
-                                fontFamily: "Franklin Gothic Semibold",
+                                fontFamily: "Clash Display Semibold",
                                 fontWeight: FontWeight.w600,
                                 color: blackColor,
                                 fontSize: 12,
@@ -370,7 +370,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                     left: 20.sp, right: 20.sp, top: 2.sp),
                                 child: AppText(
                                   text: _geoError!,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w400,
                                   color: redColor,
                                   fontSize: 12,
@@ -416,7 +416,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                     left: 20.sp, right: 20.sp, top: 2.sp),
                                 child: AppText(
                                   text: shipController.addressError.value,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w400,
                                   color: redColor,
                                   fontSize: 12,
@@ -435,7 +435,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                     left: 20.sp, right: 20.sp, top: 2.sp),
                                 child: AppText(
                                   text: shipController.localityError.value,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w400,
                                   color: redColor,
                                   fontSize: 12,
@@ -447,7 +447,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                               padding: EdgeInsets.only(left: 16.sp, top: 30.sp),
                               child: AppText(
                                 text: "Save As".toUpperCase(),
-                                fontFamily: "Franklin Gothic Semibold",
+                                fontFamily: "Clash Display Semibold",
                                 fontWeight: FontWeight.w600,
                                 color: blackColor,
                                 fontSize: 12,
@@ -468,7 +468,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                     left: 20.sp, right: 20.sp, top: 2.sp),
                                 child: AppText(
                                   text: shipController.addressTypeError.value,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w400,
                                   color: redColor,
                                   fontSize: 12,
@@ -543,7 +543,7 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                         },
                                         child: const AppText(
                                           text: "Make this my default address",
-                                          fontFamily: "Franklin Gothic Regular",
+                                          fontFamily: "Clash Display Regular",
                                           fontWeight: FontWeight.w400,
                                           color: loginText,
                                           fontSize: 14,

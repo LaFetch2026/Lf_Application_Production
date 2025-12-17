@@ -87,7 +87,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                 ),
                 AppText(
                   text: "Notifications & Settings",
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                   textAlign: TextAlign.center,
                   color: appbarText,
@@ -119,7 +119,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                             },
                             child: AppText(
                               text: "Order notification ",
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
                               color: loginText,
                               fontSize: 16,
@@ -192,7 +192,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                             },
                             child: AppText(
                               text: "Offers notification ",
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
                               color: loginText,
                               fontSize: 14,
@@ -265,7 +265,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                             },
                             child: AppText(
                               text: "Promotional notification ",
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
                               color: loginText,
                               fontSize: 14,

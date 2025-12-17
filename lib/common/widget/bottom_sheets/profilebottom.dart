@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 
-
 class ProfileBottom extends StatelessWidget {
   final Function? onPressedDelivery;
   final Function? onPressedQuality;
@@ -39,7 +38,7 @@ class ProfileBottom extends StatelessWidget {
           child: Center(
             child: AppText(
               text: "App version $version",
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w400,
               color: textHintColor,
               fontSize: 11,
@@ -60,7 +59,7 @@ class ProfileBottom extends StatelessWidget {
                     padding: EdgeInsets.only(top: 4.sp),
                     child: AppText(
                       text: "Delivered in\n6 hours",
-                      fontFamily: "Franklin Gothic Regular",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: greyTextColor,
                       maxLines: 2,
@@ -78,7 +77,7 @@ class ProfileBottom extends StatelessWidget {
                     padding: EdgeInsets.only(top: 4.sp),
                     child: AppText(
                       text: "100% Quality\nassured",
-                      fontFamily: "Franklin Gothic Regular",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: greyTextColor,
                       maxLines: 2,
@@ -96,7 +95,7 @@ class ProfileBottom extends StatelessWidget {
                     padding: EdgeInsets.only(top: 4.sp),
                     child: AppText(
                       text: "Location based\nDeliveries",
-                      fontFamily: "Franklin Gothic Regular",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: greyTextColor,
                       maxLines: 2,
@@ -114,7 +113,7 @@ class ProfileBottom extends StatelessWidget {
                     padding: EdgeInsets.only(top: 4.sp),
                     child: AppText(
                       text: "exchange\navailable",
-                      fontFamily: "Franklin Gothic Regular",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: greyTextColor,
                       maxLines: 2,

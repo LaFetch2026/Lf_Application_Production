@@ -5,7 +5,6 @@ import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 import 'common_widget.dart';
 
-
 class PaymentFailWidget extends StatelessWidget {
   final String text1;
   final String text2;
@@ -48,7 +47,7 @@ class PaymentFailWidget extends StatelessWidget {
           child: Center(
             child: AppText(
               text: text1.toUpperCase(),
-              fontFamily: "Franklin Gothic Semibold",
+              fontFamily: "Clash Display Semibold",
               fontWeight: FontWeight.w600,
               color: homeAppBarColor,
               fontSize: 16,
@@ -61,7 +60,7 @@ class PaymentFailWidget extends StatelessWidget {
             padding: EdgeInsets.only(bottom: 8.sp, left: 16.sp, right: 16.sp),
             child: AppText(
               text: text2,
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w400,
               color: subtitleColor,
               fontSize: 12,

@@ -127,7 +127,7 @@ class AccountScreenState extends State<AccountScreen> {
                           SizedBox(height: 20.sp),
                           AppText(
                             text: "You're exploring as a guest!",
-                            fontFamily: "Franklin Gothic",
+                            fontFamily: "Clash Display",
                             fontWeight: FontWeight.w500,
                             color: blackColor,
                             fontSize: 16,
@@ -137,7 +137,7 @@ class AccountScreenState extends State<AccountScreen> {
                           AppText(
                             text:
                                 "Sign in or create an account to access your orders, addresses, and more.",
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontWeight: FontWeight.w400,
                             color: greyTextColor,
                             fontSize: 13,
@@ -196,7 +196,7 @@ class AccountScreenState extends State<AccountScreen> {
                                                       profileData["fullName"] ??
                                                           "",
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: blackColor,
                                                   fontSize: 28,
@@ -221,7 +221,7 @@ class AccountScreenState extends State<AccountScreen> {
                                                                   "phone"] ??
                                                               "",
                                                           fontFamily:
-                                                              "Franklin Gothic Regular",
+                                                              "Clash Display Regular",
                                                           fontWeight:
                                                               FontWeight.w400,
                                                           color: greyTextColor,
@@ -241,7 +241,7 @@ class AccountScreenState extends State<AccountScreen> {
                                                     bottom: 16.sp),
                                                 child: AppText(
                                                   text: "Edit",
-                                                  fontFamily: "Franklin Gothic",
+                                                  fontFamily: "Clash Display",
                                                   fontWeight: FontWeight.w500,
                                                   color: colorPrimary,
                                                   fontSize: 12,
@@ -259,7 +259,7 @@ class AccountScreenState extends State<AccountScreen> {
                                       top: 10.sp, left: 16.sp, right: 16.sp),
                                   child: AppText(
                                     text: "My Account",
-                                    fontFamily: "Franklin Gothic Bold",
+                                    fontFamily: "Clash Display Bold",
                                     fontWeight: FontWeight.w700,
                                     color: nameText,
                                     fontSize: 18,
@@ -274,7 +274,7 @@ class AccountScreenState extends State<AccountScreen> {
                                         top: 20.sp, left: 16.sp, right: 16.sp),
                                     child: AppText(
                                       text: "My Orders",
-                                      fontFamily: "Franklin Gothic Regular",
+                                      fontFamily: "Clash Display Regular",
                                       fontWeight: FontWeight.w400,
                                       color: nameText,
                                       fontSize: 14,
@@ -301,7 +301,7 @@ class AccountScreenState extends State<AccountScreen> {
                                             right: 16.sp),
                                         child: AppText(
                                           text: "Customer Care",
-                                          fontFamily: "Franklin Gothic Regular",
+                                          fontFamily: "Clash Display Regular",
                                           fontWeight: FontWeight.w400,
                                           color: nameText,
                                           fontSize: 14,
@@ -335,7 +335,7 @@ class AccountScreenState extends State<AccountScreen> {
                                             right: 16.sp),
                                         child: AppText(
                                           text: "Saved Addresses",
-                                          fontFamily: "Franklin Gothic Regular",
+                                          fontFamily: "Clash Display Regular",
                                           fontWeight: FontWeight.w400,
                                           color: nameText,
                                           fontSize: 14,

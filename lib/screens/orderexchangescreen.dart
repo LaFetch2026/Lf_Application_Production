@@ -139,7 +139,7 @@
 //                                           text: "Search",
 //                                           color: textHintColor,
 //                                           fontSize: 14.sp,
-//                                           fontFamily: "Franklin Gothic Regular",
+//                                           fontFamily: "Clash Display Regular",
 //                                           fontWeight: FontWeight.w400,
 //                                         ),
 //                                       ),
@@ -173,7 +173,7 @@
 //                                                   color: textColor,
 //                                                   fontSize: 15.sp,
 //                                                   fontFamily:
-//                                                       "Franklin Gothic Regular",
+//                                                       "Clash Display Regular",
 //                                                 ),
 //                                                 onChanged: onSearchChanged,
 //                                                 controller: orderController
@@ -243,7 +243,7 @@
 //                                                   color: textColor,
 //                                                   fontSize: 15.sp,
 //                                                   fontFamily:
-//                                                       "Franklin Gothic Regular",
+//                                                       "Clash Display Regular",
 //                                                 ),
 //                                                 onChanged: onSearchChanged,
 //                                                 controller: orderController
@@ -310,7 +310,7 @@
 //                                       hintStyle: TextStyle(
 //                                           fontSize: 12.sp,
 //                                           fontFamily:
-//                                               "Franklin Gothic Regular"),
+//                                               "Clash Display Regular"),
 //                                       border: OutlineInputBorder(
 //                                         borderRadius: BorderRadius.circular(1),
 //                                       ),
@@ -325,7 +325,7 @@
 //                                                   fontSize: 12.sp,
 //                                                   color: textColor,
 //                                                   fontFamily:
-//                                                       "Franklin Gothic Regular",
+//                                                       "Clash Display Regular",
 //                                                 ),
 //                                               ),
 //                                             ))
@@ -491,7 +491,7 @@
 //                                                                                 child: AppText(
 //                                                                                   text: value.orderList[index]["order_lines"][0]["product"] != null ? value.orderList[index]["order_lines"][0]["product"]["name"] : "",
 //                                                                                   maxLines: 1,
-//                                                                                   fontFamily: "Franklin Gothic Regular",
+//                                                                                   fontFamily: "Clash Display Regular",
 //                                                                                   fontWeight: FontWeight.w400,
 //                                                                                   fontSize: 14,
 //                                                                                   color: nameText,
@@ -504,7 +504,7 @@
 //                                                                                   color: greyTextColor,
 //                                                                                   maxLines: 2,
 //                                                                                   fontSize: 12,
-//                                                                                   fontFamily: "Franklin Gothic Regular",
+//                                                                                   fontFamily: "Clash Display Regular",
 //                                                                                   fontWeight: FontWeight.w400,
 //                                                                                 ),
 //                                                                               ),
@@ -520,7 +520,7 @@
 //                                                                                             color: greyTextColor,
 //                                                                                             maxLines: 2,
 //                                                                                             fontSize: 12,
-//                                                                                             fontFamily: "Franklin Gothic Regular",
+//                                                                                             fontFamily: "Clash Display Regular",
 //                                                                                             fontWeight: FontWeight.w400,
 //                                                                                           ),
 //                                                                                         )
@@ -536,7 +536,7 @@
 //                                                                                         color: greyTextColor,
 //                                                                                         maxLines: 2,
 //                                                                                         fontSize: 12,
-//                                                                                         fontFamily: "Franklin Gothic Regular",
+//                                                                                         fontFamily: "Clash Display Regular",
 //                                                                                         fontWeight: FontWeight.w400,
 //                                                                                       ),
 //                                                                                     ),
@@ -548,7 +548,7 @@
 //                                                                                         color: greyTextColor,
 //                                                                                         maxLines: 2,
 //                                                                                         fontSize: 12,
-//                                                                                         fontFamily: "Franklin Gothic Regular",
+//                                                                                         fontFamily: "Clash Display Regular",
 //                                                                                         fontWeight: FontWeight.w400,
 //                                                                                       ),
 //                                                                                     ),
@@ -563,7 +563,7 @@
 //                                                                                       color: greyTextColor,
 //                                                                                       fontSize: 12,
 //                                                                                       textAlign: TextAlign.right,
-//                                                                                       fontFamily: "Franklin Gothic Regular",
+//                                                                                       fontFamily: "Clash Display Regular",
 //                                                                                       fontWeight: FontWeight.w400,
 //                                                                                     ),
 //                                                                                   ],
@@ -623,7 +623,7 @@
 //                                                                                   //Delivered
 //                                                                                   color: deepGreen,
 //                                                                                   fontSize: 12,
-//                                                                                   fontFamily: "Franklin Gothic",
+//                                                                                   fontFamily: "Clash Display",
 //                                                                                   fontWeight: FontWeight.w500,
 //                                                                                 ),
 //                                                                               ),
@@ -669,7 +669,7 @@
 //                                                                                   //Shipped
 //                                                                                   color: deeptYellow,
 //                                                                                   fontSize: 12,
-//                                                                                   fontFamily: "Franklin Gothic",
+//                                                                                   fontFamily: "Clash Display",
 //                                                                                   fontWeight: FontWeight.w500,
 //                                                                                 ),
 //                                                                               ),
@@ -707,7 +707,7 @@
 //                                                                                   //Cart
 //                                                                                   color: deeptYellow,
 //                                                                                   fontSize: 12,
-//                                                                                   fontFamily: "Franklin Gothic",
+//                                                                                   fontFamily: "Clash Display",
 //                                                                                   fontWeight: FontWeight.w500,
 //                                                                                 ),
 //                                                                               ),
@@ -754,7 +754,7 @@
 //                                                                                   //Order Confirmed
 //                                                                                   color: deepPurple,
 //                                                                                   fontSize: 12,
-//                                                                                   fontFamily: "Franklin Gothic",
+//                                                                                   fontFamily: "Clash Display",
 //                                                                                   fontWeight: FontWeight.w500,
 //                                                                                 ),
 //                                                                               ),
@@ -800,7 +800,7 @@
 //                                                                                   //Pending
 //                                                                                   color: deepPurple,
 //                                                                                   fontSize: 12,
-//                                                                                   fontFamily: "Franklin Gothic",
+//                                                                                   fontFamily: "Clash Display",
 //                                                                                   fontWeight: FontWeight.w500,
 //                                                                                 ),
 //                                                                               ),
@@ -847,7 +847,7 @@
 //                                                                                   //Processing
 //                                                                                   color: deepPurple,
 //                                                                                   fontSize: 12,
-//                                                                                   fontFamily: "Franklin Gothic",
+//                                                                                   fontFamily: "Clash Display",
 //                                                                                   fontWeight: FontWeight.w500,
 //                                                                                 ),
 //                                                                               ),
@@ -893,7 +893,7 @@
 //                                                                                   //Cancelled
 //                                                                                   color: deepRed,
 //                                                                                   fontSize: 12,
-//                                                                                   fontFamily: "Franklin Gothic",
+//                                                                                   fontFamily: "Clash Display",
 //                                                                                   fontWeight: FontWeight.w500,
 //                                                                                 ),
 //                                                                               ),
@@ -942,7 +942,7 @@
 //                                                                                   //Completed
 //                                                                                   color: deepPurple,
 //                                                                                   fontSize: 12,
-//                                                                                   fontFamily: "Franklin Gothic",
+//                                                                                   fontFamily: "Clash Display",
 //                                                                                   fontWeight: FontWeight.w500,
 //                                                                                 ),
 //                                                                               ),
@@ -990,7 +990,7 @@
 //                                                                                   //Exchange
 //                                                                                   color: deepPurple,
 //                                                                                   fontSize: 12,
-//                                                                                   fontFamily: "Franklin Gothic",
+//                                                                                   fontFamily: "Clash Display",
 //                                                                                   fontWeight: FontWeight.w500,
 //                                                                                 ),
 //                                                                               ),
@@ -1038,7 +1038,7 @@
 //                                                                                   //Rejected
 //                                                                                   color: deepRed,
 //                                                                                   fontSize: 12,
-//                                                                                   fontFamily: "Franklin Gothic",
+//                                                                                   fontFamily: "Clash Display",
 //                                                                                   fontWeight: FontWeight.w500,
 //                                                                                 ),
 //                                                                               ),
@@ -1086,7 +1086,7 @@
 //                                                                                   //Approved
 //                                                                                   color: deepGreen,
 //                                                                                   fontSize: 12,
-//                                                                                   fontFamily: "Franklin Gothic",
+//                                                                                   fontFamily: "Clash Display",
 //                                                                                   fontWeight: FontWeight.w500,
 //                                                                                 ),
 //                                                                               ),
@@ -1130,7 +1130,7 @@
 //                                                                                 text: "Delivered on",
 //                                                                                 color: greyTextColor,
 //                                                                                 fontSize: 11,
-//                                                                                 fontFamily: "Franklin Gothic Regular",
+//                                                                                 fontFamily: "Clash Display Regular",
 //                                                                                 fontWeight: FontWeight.w400,
 //                                                                               ),
 //                                                                             ),
@@ -1142,7 +1142,7 @@
 //                                                                                 text: "Estimated Delivery",
 //                                                                                 color: greyTextColor,
 //                                                                                 fontSize: 11,
-//                                                                                 fontFamily: "Franklin Gothic Regular",
+//                                                                                 fontFamily: "Clash Display Regular",
 //                                                                                 fontWeight: FontWeight.w400,
 //                                                                               ),
 //                                                                             ),
@@ -1154,7 +1154,7 @@
 //                                                                                 text: "Cancelled on",
 //                                                                                 color: greyTextColor,
 //                                                                                 fontSize: 11,
-//                                                                                 fontFamily: "Franklin Gothic Regular",
+//                                                                                 fontFamily: "Clash Display Regular",
 //                                                                                 fontWeight: FontWeight.w400,
 //                                                                               ),
 //                                                                             ),
@@ -1168,7 +1168,7 @@
 //                                                                                 // text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["delivered_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["delivered_at"]).day}, at ${DateFormat('hh:mm a').format(DateTime.parse(value.orderList[index]["delivered_at"]))}",
 //                                                                                 color: greyTextColor,
 //                                                                                 fontSize: 11,
-//                                                                                 fontFamily: "Franklin Gothic Regular",
+//                                                                                 fontFamily: "Clash Display Regular",
 //                                                                                 fontWeight: FontWeight.w400,
 //                                                                               ),
 //                                                                             )
@@ -1181,7 +1181,7 @@
 //                                                                                 // text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["estimated_delivery_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["estimated_delivery_at"]).day}, ${DateTime.parse(value.orderList[index]["estimated_delivery_at"]).year}",
 //                                                                                 color: greyTextColor,
 //                                                                                 fontSize: 11,
-//                                                                                 fontFamily: "Franklin Gothic Regular",
+//                                                                                 fontFamily: "Clash Display Regular",
 //                                                                                 fontWeight: FontWeight.w400,
 //                                                                               ),
 //                                                                             )
@@ -1194,7 +1194,7 @@
 //                                                                                 //  text: "${DateFormat.MMMM().format(DateTime.parse(value.orderList[index]["cancelled_at"])).substring(0, 3)} ${DateTime.parse(value.orderList[index]["cancelled_at"]).day}, ${DateTime.parse(value.orderList[index]["cancelled_at"]).year}",
 //                                                                                 color: greyTextColor,
 //                                                                                 fontSize: 11,
-//                                                                                 fontFamily: "Franklin Gothic Regular",
+//                                                                                 fontFamily: "Clash Display Regular",
 //                                                                                 fontWeight: FontWeight.w400,
 //                                                                               ),
 //                                                                             )
@@ -1271,7 +1271,7 @@
 //                                                   text: "load more",
 //                                                   textAlign: TextAlign.center,
 //                                                   fontFamily:
-//                                                       "Franklin Gothic Regular",
+//                                                       "Clash Display Regular",
 //                                                   color: blue,
 //                                                   fontSize: 14,
 //                                                 ),
@@ -1298,7 +1298,7 @@
 //                                             fontSize: 14.sp,
 //                                             color: Colors.black,
 //                                             fontFamily:
-//                                                 "Franklin Gothic Regular")),
+//                                                 "Clash Display Regular")),
 //                                   ),
 //                                 )),
 //                     ],

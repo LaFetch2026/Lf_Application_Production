@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-
 import '../../../controllers/base_controller.dart';
 import '../../../core/constant/constants.dart';
 
@@ -19,13 +18,13 @@ class DoubleButtonNew extends StatelessWidget {
 
   const DoubleButtonNew(
       {Key? key,
-        required this.firstText,
-        this.lineColor = dividerColor,
-        required this.secondText,
-        required this.controller,
-        this.fontFamily = "Franklin Gothic",
-        this.onPressedFirst,
-        this.onPressedSecond})
+      required this.firstText,
+      this.lineColor = dividerColor,
+      required this.secondText,
+      required this.controller,
+      this.fontFamily = "Clash Display",
+      this.onPressedFirst,
+      this.onPressedSecond})
       : super(key: key);
 
   @override
@@ -82,54 +81,54 @@ class DoubleButtonNew extends StatelessWidget {
                 ),
               ),
               Obx(() => Expanded(
-                child: Center(
-                  child: Container(
-                      width: (MediaQuery.of(context).size.width / 2),
-                      height: 50.sp,
-                      color: lineColor == dividerColor
-                          ? homeAppBarColor
-                          : lightPurpleColor,
-                      child: (controller.pageState == PageState.LOADING)
-                          ? Center(
-                        child: Transform.scale(
-                          scale: 0.5.sp,
-                          child: const CircularProgressIndicator(
-                            color: whiteColor,
-                          ),
-                        ),
-                      )
-                          : ElevatedButton(
-                          style: ButtonStyle(
-                              shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(0))),
-                              side: MaterialStateProperty.all(BorderSide(
-                                  color: lineColor == dividerColor
-                                      ? homeAppBarColor
-                                      : lightPurpleColor,
-                                  width: 1.0,
-                                  style: BorderStyle.solid)),
-                              elevation: MaterialStateProperty.all(0.0),
-                              backgroundColor: MaterialStateProperty.all(
-                                  lineColor == dividerColor
-                                      ? homeAppBarColor
-                                      : lightPurpleColor),
-                              textStyle: MaterialStateProperty.all(TextStyle(
-                                  color: whiteColor,
-                                  fontSize: 13.sp,
-                                  fontFamily: fontFamily))),
-                          onPressed: () {
-                            onPressedSecond?.call();
-                          },
-                          child: Text(
-                            secondText,
-                            style: TextStyle(
-                                fontFamily: fontFamily,
-                                color: whiteColor,
-                                fontSize: 13.sp),
-                          ))),
-                ),
-              )),
+                    child: Center(
+                      child: Container(
+                          width: (MediaQuery.of(context).size.width / 2),
+                          height: 50.sp,
+                          color: lineColor == dividerColor
+                              ? homeAppBarColor
+                              : lightPurpleColor,
+                          child: (controller.pageState == PageState.LOADING)
+                              ? Center(
+                                  child: Transform.scale(
+                                    scale: 0.5.sp,
+                                    child: const CircularProgressIndicator(
+                                      color: whiteColor,
+                                    ),
+                                  ),
+                                )
+                              : ElevatedButton(
+                                  style: ButtonStyle(
+                                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(0))),
+                                      side: MaterialStateProperty.all(BorderSide(
+                                          color: lineColor == dividerColor
+                                              ? homeAppBarColor
+                                              : lightPurpleColor,
+                                          width: 1.0,
+                                          style: BorderStyle.solid)),
+                                      elevation: MaterialStateProperty.all(0.0),
+                                      backgroundColor: MaterialStateProperty.all(
+                                          lineColor == dividerColor
+                                              ? homeAppBarColor
+                                              : lightPurpleColor),
+                                      textStyle: MaterialStateProperty.all(TextStyle(
+                                          color: whiteColor,
+                                          fontSize: 13.sp,
+                                          fontFamily: fontFamily))),
+                                  onPressed: () {
+                                    onPressedSecond?.call();
+                                  },
+                                  child: Text(
+                                    secondText,
+                                    style: TextStyle(
+                                        fontFamily: fontFamily,
+                                        color: whiteColor,
+                                        fontSize: 13.sp),
+                                  ))),
+                    ),
+                  )),
             ],
           ),
         ],

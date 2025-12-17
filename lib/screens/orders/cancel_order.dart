@@ -64,7 +64,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
         ),
         title: const AppText(
           text: "CANCELLATION",
-          fontFamily: "Franklin Gothic",
+          fontFamily: "Clash Display",
           fontWeight: FontWeight.w700,
           color: Color(0xFF3B3B3B),
           fontSize: 16,
@@ -90,7 +90,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                     children: [
                       AppText(
                         text: productName,
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w700,
                         color: blackColor,
                         fontSize: 14,
@@ -101,7 +101,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                         text: productDescription.isNotEmpty
                             ? productDescription
                             : "Product details unavailable",
-                        fontFamily: "Franklin Gothic Regular",
+                        fontFamily: "Clash Display Regular",
                         fontWeight: FontWeight.w400,
                         color: subtitleColor,
                         fontSize: 12,
@@ -111,7 +111,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                       SizedBox(height: 6.sp),
                       AppText(
                         text: "Size: $size   Qty: $quantity",
-                        fontFamily: "Franklin Gothic Regular",
+                        fontFamily: "Clash Display Regular",
                         fontWeight: FontWeight.w400,
                         color: subtitleColor,
                         fontSize: 12,
@@ -119,7 +119,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                       SizedBox(height: 6.sp),
                       AppText(
                         text: "₹${price.toStringAsFixed(2)}",
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w700,
                         color: blackColor,
                         fontSize: 14,
@@ -136,7 +136,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
 
             const AppText(
               text: "WHY DO YOU WISH TO CANCEL THIS ORDER?",
-              fontFamily: "Franklin Gothic",
+              fontFamily: "Clash Display",
               fontWeight: FontWeight.w700,
               color: blackColor,
               fontSize: 13,
@@ -163,7 +163,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                           Expanded(
                             child: AppText(
                               text: reasons[index],
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
                               color: const Color(0xFF374151),
                               fontSize: 13,
@@ -209,7 +209,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                 child: TextField(
                   controller: otherReason,
                   style: const TextStyle(
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontSize: 13,
                     color: blackColor,
                   ),
@@ -246,7 +246,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                       child: const Center(
                         child: AppText(
                           text: "BACK",
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Clash Display",
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF6B7280),
                           fontSize: 13,
@@ -284,7 +284,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                       child: const Center(
                         child: AppText(
                           text: "CANCEL ITEM",
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Clash Display",
                           fontWeight: FontWeight.w700,
                           color: whiteColor,
                           fontSize: 13,

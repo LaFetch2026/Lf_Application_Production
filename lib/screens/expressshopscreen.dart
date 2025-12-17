@@ -89,7 +89,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
     }
     productController.isBrandProduct.value = true;
     setState(() {});
-  
+
     WidgetsBinding.instance
         .addPostFrameCallback((_) => brandController.getBrandData("express"));
   }
@@ -298,7 +298,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                     color: expressText,
                     maxLines: 2,
                     fontSize: 12.sp,
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                   ),
                 ],
@@ -310,7 +310,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                     top: 20.sp, left: 16.sp, right: 16.sp, bottom: 5.sp),
                 child: AppText(
                   text: "XPRESS DELIVERY",
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                   color: blackColor,
                   fontSize: 22,
@@ -338,7 +338,6 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                       )))
                               .then((value) => setState(
                                     () {
-                                     
                                       productController.addressList.clear();
                                     },
                                   ));
@@ -353,7 +352,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                             children: [
                               AppText(
                                 text: "",
-                                fontFamily: "Franklin Gothic Regular",
+                                fontFamily: "Clash Display Regular",
                                 fontWeight: FontWeight.w400,
                                 color: textHintColor,
                                 fontSize: 12,
@@ -374,7 +373,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                   text: "Add Address",
                                   color: blackColor,
                                   fontSize: 12,
-                                  fontFamily: "Franklin Gothic Bold",
+                                  fontFamily: "Clash Display Bold",
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
@@ -406,7 +405,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                 child: AppText(
                                   text:
                                       "${productController.addressTypeValue.value} -",
-                                  fontFamily: "Franklin Gothic",
+                                  fontFamily: "Clash Display",
                                   maxLines: 1,
                                   fontWeight: FontWeight.w500,
                                   color: blackColor,
@@ -418,7 +417,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                   padding: EdgeInsets.only(left: 2.sp),
                                   child: AppText(
                                     text: productController.addressText.value,
-                                    fontFamily: "Franklin Gothic Regular",
+                                    fontFamily: "Clash Display Regular",
                                     maxLines: 1,
                                     fontWeight: FontWeight.w500,
                                     color: blackColor,
@@ -590,7 +589,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                                                 : textHintColor,
                                                             fontSize: 12,
                                                             fontFamily:
-                                                                "Franklin Gothic",
+                                                                "Clash Display",
                                                             fontWeight:
                                                                 FontWeight.w500,
                                                           ),
@@ -712,7 +711,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                                           fontSize: 12.sp,
                                                           color: nameText,
                                                           fontFamily:
-                                                              "Franklin Gothic",
+                                                              "Clash Display",
                                                         ),
                                                       ),
                                                       Padding(
@@ -730,7 +729,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                                             fontSize: 12.sp,
                                                             color: nameText,
                                                             fontFamily:
-                                                                "Franklin Gothic Regular",
+                                                                "Clash Display Regular",
                                                           ),
                                                         ),
                                                       ),
@@ -750,7 +749,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                                                 fontSize: 12.sp,
                                                                 color: nameText,
                                                                 fontFamily:
-                                                                    "Franklin Gothic Regular",
+                                                                    "Clash Display Regular",
                                                               ),
                                                             ),
                                                             Text(
@@ -766,7 +765,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                                                 fontSize: 12.sp,
                                                                 color: nameText,
                                                                 fontFamily:
-                                                                    "Franklin Gothic Regular",
+                                                                    "Clash Display Regular",
                                                               ),
                                                             ),
                                                           ],
@@ -787,7 +786,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                                             fontSize: 12.sp,
                                                             color: nameText,
                                                             fontFamily:
-                                                                "Franklin Gothic Regular",
+                                                                "Clash Display Regular",
                                                           ),
                                                         ),
                                                       ),
@@ -859,7 +858,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
                                 style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.black,
-                                    fontFamily: "Franklin Gothic Regular")),
+                                    fontFamily: "Clash Display Regular")),
                           ),
                         ),
                         /* Padding(

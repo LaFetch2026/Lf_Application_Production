@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 
-
 class QuestionCardWidget extends StatelessWidget {
   final String text1;
   final String text2;
@@ -56,7 +55,7 @@ class QuestionCardWidget extends StatelessWidget {
                         text: text1,
                         color: colorPrimary,
                         fontSize: 14,
-                        fontFamily: "Franklin Gothic Regular",
+                        fontFamily: "Clash Display Regular",
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -66,7 +65,7 @@ class QuestionCardWidget extends StatelessWidget {
                         text: text2,
                         color: nameText,
                         fontSize: 11,
-                        fontFamily: "Franklin Gothic Regular",
+                        fontFamily: "Clash Display Regular",
                         fontWeight: FontWeight.w400,
                       ),
                     )

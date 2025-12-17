@@ -253,7 +253,7 @@ class BoardScreenState extends State<BoardScreen> {
                         text: widget.boardName,
                         color: blackColor,
                         fontSize: 25,
-                        fontFamily: "Franklin Gothic Regular",
+                        fontFamily: "Clash Display Regular",
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -275,7 +275,7 @@ class BoardScreenState extends State<BoardScreen> {
                                       : "${wishlistController.wishListProduct.length} items",
                               color: textHintColor,
                               fontSize: 12,
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -522,7 +522,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                         maxLines: 1,
                                                         fontSize: 12,
                                                         fontFamily:
-                                                            "Franklin Gothic",
+                                                            "Clash Display",
                                                         fontWeight:
                                                             FontWeight.w500,
                                                       ),
@@ -541,7 +541,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                           maxLines: 1,
                                                           fontSize: 11,
                                                           fontFamily:
-                                                              "Franklin Gothic Regular",
+                                                              "Clash Display Regular",
                                                           fontWeight:
                                                               FontWeight.w400,
                                                         ),
@@ -564,7 +564,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                               maxLines: 2,
                                                               fontSize: 11,
                                                               fontFamily:
-                                                                  "Franklin Gothic",
+                                                                  "Clash Display",
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w400,
@@ -587,7 +587,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                                       TextDecoration
                                                                           .lineThrough,
                                                                   fontFamily:
-                                                                      "Franklin Gothic Regular",
+                                                                      "Clash Display Regular",
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
@@ -617,7 +617,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                                   fontSize:
                                                                       11.sp,
                                                                   fontFamily:
-                                                                      "Franklin Gothic Regular",
+                                                                      "Clash Display Regular",
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w400,
@@ -693,8 +693,7 @@ class BoardScreenState extends State<BoardScreen> {
                                           style: TextStyle(
                                             fontSize: 14.sp,
                                             color: Colors.black,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
+                                            fontFamily: "Clash Display Regular",
                                           ),
                                         ),
                                       ),

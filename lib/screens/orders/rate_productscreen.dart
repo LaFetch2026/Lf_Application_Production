@@ -40,7 +40,7 @@ class _RateProductScreenState extends State<RateProductScreen> {
         ),
         title: const AppText(
           text: "RATE & REVIEW PRODUCT",
-          fontFamily: "Franklin Gothic",
+          fontFamily: "Clash Display",
           fontWeight: FontWeight.w700,
           color: blackColor,
           fontSize: 16,
@@ -66,7 +66,7 @@ class _RateProductScreenState extends State<RateProductScreen> {
                     children: [
                       AppText(
                         text: product['productName'] ?? 'Product Name',
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w700,
                         color: nameText,
                         fontSize: 14,
@@ -75,7 +75,7 @@ class _RateProductScreenState extends State<RateProductScreen> {
                       AppText(
                         text: product['productDescription'] ??
                             'Product description',
-                        fontFamily: "Franklin Gothic Regular",
+                        fontFamily: "Clash Display Regular",
                         fontWeight: FontWeight.w400,
                         color: subtitleColor,
                         fontSize: 12,
@@ -85,7 +85,7 @@ class _RateProductScreenState extends State<RateProductScreen> {
                       AppText(
                         text:
                             "Size: ${product['size'] ?? 'M'}   Qty: ${product['quantity'] ?? '1'}",
-                        fontFamily: "Franklin Gothic Regular",
+                        fontFamily: "Clash Display Regular",
                         fontWeight: FontWeight.w400,
                         color: subtitleColor,
                         fontSize: 12,
@@ -93,7 +93,7 @@ class _RateProductScreenState extends State<RateProductScreen> {
                       SizedBox(height: 8.sp),
                       AppText(
                         text: "₹${(product['price'] ?? 0).toStringAsFixed(2)}",
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w700,
                         color: nameText,
                         fontSize: 16,
@@ -111,7 +111,7 @@ class _RateProductScreenState extends State<RateProductScreen> {
             SizedBox(height: 16.sp),
             const AppText(
               text: "RATING",
-              fontFamily: "Franklin Gothic",
+              fontFamily: "Clash Display",
               fontWeight: FontWeight.w700,
               color: blackColor,
               fontSize: 14,
@@ -138,7 +138,7 @@ class _RateProductScreenState extends State<RateProductScreen> {
             // ✅ Review Section
             const AppText(
               text: "SHARE YOUR EXPERIENCE",
-              fontFamily: "Franklin Gothic",
+              fontFamily: "Clash Display",
               fontWeight: FontWeight.w700,
               color: blackColor,
               fontSize: 14,
@@ -148,7 +148,7 @@ class _RateProductScreenState extends State<RateProductScreen> {
               controller: _reviewController,
               maxLines: 5,
               style: const TextStyle(
-                fontFamily: "Franklin Gothic Regular",
+                fontFamily: "Clash Display Regular",
                 fontSize: 13,
                 color: blackColor,
               ),
@@ -187,7 +187,7 @@ class _RateProductScreenState extends State<RateProductScreen> {
                       child: const Center(
                         child: AppText(
                           text: "CANCEL",
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Clash Display",
                           fontWeight: FontWeight.w700,
                           color: subtitleColor,
                           fontSize: 13,
@@ -213,7 +213,7 @@ class _RateProductScreenState extends State<RateProductScreen> {
                             ? const CircularProgressIndicator(color: whiteColor)
                             : const AppText(
                                 text: "SUBMIT",
-                                fontFamily: "Franklin Gothic",
+                                fontFamily: "Clash Display",
                                 fontWeight: FontWeight.w700,
                                 color: whiteColor,
                                 fontSize: 13,

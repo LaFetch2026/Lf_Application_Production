@@ -65,7 +65,7 @@
 //                                         children: [
 //                                           AppText(
 //                                             text: "Status:",
-//                                             fontFamily: "Franklin Gothic",
+//                                             fontFamily: "Clash Display",
 //                                             fontWeight: FontWeight.w500,
 //                                             color: loginText,
 //                                             fontSize: 14,
@@ -77,7 +77,7 @@
 //                                               text:
 //                                                   "Order ${orderController.shipmentDetails["tracking_data"]["shipment_track"][0]["current_status"]}",
 //                                               fontFamily:
-//                                                   "Franklin Gothic Regular",
+//                                                   "Clash Display Regular",
 //                                               fontWeight: FontWeight.w500,
 //                                               color: greyTextColor,
 //                                               fontSize: 14,
@@ -98,7 +98,7 @@
 //                                         children: [
 //                                           AppText(
 //                                             text: "Estimate Delivery Date:",
-//                                             fontFamily: "Franklin Gothic",
+//                                             fontFamily: "Clash Display",
 //                                             fontWeight: FontWeight.w500,
 //                                             color: loginText,
 //                                             fontSize: 14,
@@ -110,7 +110,7 @@
 //                                               text:
 //                                                   "${orderController.shipmentDetails["tracking_data"]["shipment_track"][0]["edd"] ?? ""}",
 //                                               fontFamily:
-//                                                   "Franklin Gothic Regular",
+//                                                   "Clash Display Regular",
 //                                               fontWeight: FontWeight.w500,
 //                                               color: greyTextColor,
 //                                               fontSize: 14,
@@ -213,7 +213,7 @@
 //                                                                       [
 //                                                                       "activity"],
 //                                                                   fontFamily:
-//                                                                       "Franklin Gothic",
+//                                                                       "Clash Display",
 //                                                                   fontWeight:
 //                                                                       FontWeight
 //                                                                           .w500,
@@ -234,7 +234,7 @@
 //                                                                         [
 //                                                                         "location"],
 //                                                                     fontFamily:
-//                                                                         "Franklin Gothic Regular",
+//                                                                         "Clash Display Regular",
 //                                                                     fontWeight:
 //                                                                         FontWeight
 //                                                                             .w400,
@@ -272,7 +272,7 @@
 //                                                 fontSize: 14.sp,
 //                                                 color: Colors.red,
 //                                                 fontFamily:
-//                                                     "Franklin Gothic Regular")),
+//                                                     "Clash Display Regular")),
 //                                       ),
 //                                     )
 //                                   : SizedBox(

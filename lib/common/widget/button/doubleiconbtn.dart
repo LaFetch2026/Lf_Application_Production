@@ -6,7 +6,6 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../../core/constant/constants.dart';
 
-
 class DoubleIconButton extends StatelessWidget {
   final String firstText;
   final String secondText;
@@ -26,21 +25,21 @@ class DoubleIconButton extends StatelessWidget {
 
   const DoubleIconButton(
       {Key? key,
-        required this.firstText,
-        required this.secondText,
-        required this.firstTextColor,
-        required this.secondTextColor,
-        required this.firstBackgroundColor,
-        required this.secondBackgroundColor,
-        required this.firstBorderColor,
-        required this.secondBorderColor,
-        required this.firstIcon,
-        required this.secondIcon,
-        this.firstFontSize = 13,
-        this.secondFontSize = 13,
-        this.fontFamily = "Franklin Gothic",
-        this.onPressedFirst,
-        this.onPressedSecond})
+      required this.firstText,
+      required this.secondText,
+      required this.firstTextColor,
+      required this.secondTextColor,
+      required this.firstBackgroundColor,
+      required this.secondBackgroundColor,
+      required this.firstBorderColor,
+      required this.secondBorderColor,
+      required this.firstIcon,
+      required this.secondIcon,
+      this.firstFontSize = 13,
+      this.secondFontSize = 13,
+      this.fontFamily = "Clash Display",
+      this.onPressedFirst,
+      this.onPressedSecond})
       : super(key: key);
 
   @override
@@ -72,7 +71,7 @@ class DoubleIconButton extends StatelessWidget {
                           ),
                           elevation: MaterialStateProperty.all(0.0),
                           backgroundColor:
-                          MaterialStateProperty.all(firstBackgroundColor),
+                              MaterialStateProperty.all(firstBackgroundColor),
                           textStyle: MaterialStateProperty.all(TextStyle(
                             color: firstTextColor,
                             fontSize: firstFontSize,
@@ -120,7 +119,7 @@ class DoubleIconButton extends StatelessWidget {
                               width: 1.0.sp,
                               style: BorderStyle.solid)),
                           backgroundColor:
-                          MaterialStateProperty.all(secondBackgroundColor),
+                              MaterialStateProperty.all(secondBackgroundColor),
                           elevation: MaterialStateProperty.all(0.0),
                           textStyle: MaterialStateProperty.all(TextStyle(
                             color: secondTextColor,

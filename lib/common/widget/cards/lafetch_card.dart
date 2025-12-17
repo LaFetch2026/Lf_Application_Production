@@ -5,7 +5,6 @@ import '../../../core/constant/constants.dart';
 import '../button/smallbtn.dart';
 import '../text/app_text.dart';
 
-
 class LafetchCardWidget extends StatelessWidget {
   const LafetchCardWidget({super.key});
 
@@ -40,7 +39,7 @@ class LafetchCardWidget extends StatelessWidget {
               padding: const EdgeInsets.only(top: 8),
               child: AppText(
                 text: "Insider Access",
-                fontFamily: "Franklin Gothic",
+                fontFamily: "Clash Display",
                 fontWeight: FontWeight.w500,
                 color: whiteBorderColor,
                 fontSize: 28.sp,
@@ -51,7 +50,7 @@ class LafetchCardWidget extends StatelessWidget {
               child: Center(
                 child: AppText(
                   text: "Be the first to access exclusive discounts!",
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w500,
                   color: whiteBorderColor,
                   maxLines: 2,
