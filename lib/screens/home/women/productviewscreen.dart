@@ -22,6 +22,7 @@ import '../../../controllers/cart_controller.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
 import '../../../controllers/brand_controller.dart';
+import '../../../controllers/catalog_controller.dart';
 import '../../../core/constant/constants.dart';
 import 'dart:async';
 
@@ -44,6 +45,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   final wishlistController = Get.put(WishlistController());
   final controller = Get.put(CartController());
   final brandController = Get.put(BrandController());
+  final catalogController = Get.put(CatalogController(), permanent: false);
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
@@ -54,12 +56,18 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   String _appliedSortOption = "recommended";
   bool _hasActiveFilters = false;
   bool _isBrandsLoaded = false;
+  bool _isProductsLoaded = false;
+
+  // ✅ Hash tracking for change detection
+  String? _lastProductListHash;
+  String? _lastFilterHash;
+  String? _lastSortHash;
+
+  // ✅ Store original home product IDs for client-side filtering
+  Set<int> _originalHomeProductIds = {};
 
   // ✅ Debounce timer
   Timer? _debounceTimer;
-
-  // ✅ Filtered and sorted products
-  List<Map<String, dynamic>> _displayedProducts = [];
 
   // ---- helpers ----
   String _firstImageUrl(Map<String, dynamic> item) {
@@ -79,11 +87,12 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   }
 
   num? _priceOf(Map<String, dynamic> item) {
-    return item['price'] ??
+    // Return the selling price (NOT mrp)
+    return item['displayPrice'] ??
+        item['basePrice'] ??
+        item['price'] ??
         item['msp'] ??
-        item['lfMsp'] ??
-        item['mrp'] ??
-        item['basePrice'];
+        item['lfMsp'];
   }
 
   String _brandOf(Map<String, dynamic> item) {
@@ -98,34 +107,20 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     return (item['title'] ?? item['name'] ?? '').toString();
   }
 
-  num? _parseNum(dynamic v) {
-    if (v is num) return v;
-    if (v is String) return num.tryParse(v);
-    return null;
+  // ✅ Generate hash for product list to detect changes
+  String _generateProductHash(List<dynamic> products) {
+    if (products.isEmpty) return 'empty';
+    return products.map((p) => p['id'].toString()).join('|');
   }
 
-  String? _imageFrom(Map<String, dynamic> m) {
-    final urlList = (m['imageUrls'] as List?)
-            ?.whereType<String>()
-            .where((s) => s.trim().isNotEmpty)
-            .toList() ??
-        [];
-    if (urlList.isNotEmpty) return urlList.first;
+  // ✅ Generate hash for current filter state
+  String _generateFilterHash() {
+    return '${_appliedBrandIds.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_$_hasActiveFilters';
+  }
 
-    for (final key in const [
-      'image',
-      'thumbnail',
-      'thumb',
-      'cover',
-      'defaultImage',
-      'primaryImage',
-      'img',
-      'photo'
-    ]) {
-      final v = m[key];
-      if (v is String && v.trim().isNotEmpty) return v;
-    }
-    return null;
+  // ✅ Generate hash for current sort state
+  String _generateSortHash() {
+    return _appliedSortOption;
   }
   // ---- end helpers ----
 
@@ -168,8 +163,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
       // ✅ Load brands for filters
       _loadBrandsIfNeeded();
 
-      // ✅ Initialize displayed products
-      _updateDisplayedProducts();
+      // ✅ Load and track home products
+      _loadHomeProductsIfNeeded();
     });
 
     _clearPreferenceValue();
@@ -196,6 +191,30 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     await brandController.getBrandData("all");
     _isBrandsLoaded = true;
     print("✅ Brands loaded successfully");
+  }
+
+  // ✅ Load initial home products
+  Future<void> _loadHomeProductsIfNeeded() async {
+    if (_isProductsLoaded) {
+      print("✅ Home products already loaded - skipping");
+      return;
+    }
+
+    // Home products should already be loaded from home screen
+    // Just store the original product IDs for filtering
+    final allProducts = _getAllProducts();
+    _originalHomeProductIds = allProducts
+        .map((p) => int.tryParse(p['id']?.toString() ?? ''))
+        .whereType<int>()
+        .toSet();
+
+    // Generate initial hashes
+    _lastProductListHash = _generateProductHash(allProducts);
+    _lastFilterHash = _generateFilterHash();
+    _lastSortHash = _generateSortHash();
+
+    _isProductsLoaded = true;
+    print("✅ Home products tracked (${_originalHomeProductIds.length} items)");
   }
 
   // ✅ Get all products from collections
@@ -230,120 +249,161 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     return allProducts;
   }
 
-  // ✅ Apply filters to products
-  List<Map<String, dynamic>> _applyFilters(
-      List<Map<String, dynamic>> products) {
-    if (!_hasActiveFilters) return products;
+  // ✅ Apply filters and sort using API (like categoryproduct.dart)
+  Future<void> _applyFiltersAndSort() async {
+    try {
+      // Check if filter/sort state has actually changed
+      final currentFilterHash = _generateFilterHash();
+      final currentSortHash = _generateSortHash();
 
-    return products.where((product) {
-      // Brand filter
-      if (_appliedBrandIds.isNotEmpty) {
-        final brandId = product['brandId'];
-        final productBrandId = brandId is int
-            ? brandId
-            : int.tryParse(brandId?.toString() ?? '') ?? 0;
+      final filterChanged = currentFilterHash != _lastFilterHash;
+      final sortChanged = currentSortHash != _lastSortHash;
 
-        if (!_appliedBrandIds.contains(productBrandId)) {
-          return false;
-        }
+      if (!filterChanged && !sortChanged) {
+        print("⚠️ No filter/sort changes detected - skipping API call");
+        return;
       }
 
-      // Price filter
-      final price = _priceOf(product);
-      if (price != null) {
-        final minPrice = double.parse(_appliedMinPrice);
-        final maxPrice = double.parse(_appliedMaxPrice);
+      print("🔄 Applying changes - Filter: $filterChanged, Sort: $sortChanged");
 
-        if (price < minPrice || price > maxPrice) {
-          return false;
+      // ✅ Determine the action based on filters and sort state
+      // Case 1: Has filters → Call API (with or without sort)
+      // Case 2: Only sort (no filters) → Client-side sort
+      // Case 3: Neither filters nor sort → Show original
+      
+      if (_hasActiveFilters && filterChanged) {
+        // 📞 Case 1: Filters changed → Call /filter-products API
+        print("🔹 Case 1: Filter changed (has active filters)");
+        print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
+        print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
+        print("   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
+
+        await catalogController.getFilterAndSortProducts(
+          brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
+          minPrice: _appliedMinPrice,
+          maxPrice: _appliedMaxPrice,
+          sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
+        );
+
+        // ✅ Client-side filter: Only keep products from this gender/collection
+        final apiResults = List<dynamic>.from(catalogController.categoryProductList);
+        final filteredResults = apiResults.where((product) {
+          final productId = int.tryParse(product['id']?.toString() ?? '');
+          return productId != null && _originalHomeProductIds.contains(productId);
+        }).toList();
+
+        print("🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} from this view");
+
+        catalogController.categoryProductList.assignAll(filteredResults);
+        
+        _lastFilterHash = currentFilterHash;
+        if (sortChanged) _lastSortHash = currentSortHash;
+
+        print("✅ Filter applied - ${catalogController.categoryProductList.length} products");
+        
+      } else if (!_hasActiveFilters && _appliedSortOption != "recommended" && sortChanged) {
+        // 🔧 Case 2: ONLY sort changed (no filters) → Client-side sort
+        print("🔧 Client-side sorting: $_appliedSortOption (no filters, so not calling API)");
+        
+        // Get original products
+        final productsToSort = List<dynamic>.from(_getAllProducts());
+        
+        productsToSort.sort((a, b) {
+          final priceA = (a['price'] ?? a['basePrice'] ?? a['displayPrice'] ?? 0) as num;
+          final priceB = (b['price'] ?? b['basePrice'] ?? b['displayPrice'] ?? 0) as num;
+          
+          if (_appliedSortOption == 'price_asc') {
+            return priceA.compareTo(priceB);
+          } else if (_appliedSortOption == 'price_desc') {
+            return priceB.compareTo(priceA);
+          } else if (_appliedSortOption == 'whats_new') {
+            final idA = int.tryParse(a['id']?.toString() ?? '0') ?? 0;
+            final idB = int.tryParse(b['id']?.toString() ?? '0') ?? 0;
+            return idB.compareTo(idA);
+          }
+          return 0;
+        });
+        
+        // Store sorted results in catalogController
+        catalogController.categoryProductList.assignAll(productsToSort);
+        _lastSortHash = currentSortHash;
+        
+        print("✅ Client-side sort complete - ${catalogController.categoryProductList.length} products");
+        
+      } else if (_hasActiveFilters && sortChanged) {
+        // 🔧 Case 3: Filters already applied, but sort changed → Re-apply filters with new sort
+        print("🔹 Case 3: Sort changed (filters already applied)");
+        print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
+        print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
+        print("   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
+        
+        await catalogController.getFilterAndSortProducts(
+          brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
+          minPrice: _appliedMinPrice,
+          maxPrice: _appliedMaxPrice,
+          sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
+        );
+
+        final apiResults = List<dynamic>.from(catalogController.categoryProductList);
+        final filteredResults = apiResults.where((product) {
+          final productId = int.tryParse(product['id']?.toString() ?? '');
+          return productId != null && _originalHomeProductIds.contains(productId);
+        }).toList();
+
+        catalogController.categoryProductList.assignAll(filteredResults);
+        _lastSortHash = currentSortHash;
+        
+        print("✅ Filters re-applied with new sort - ${catalogController.categoryProductList.length} products");
+        
+      } else if (!_hasActiveFilters && filterChanged) {
+        // Filters cleared - clear filtered results
+        catalogController.categoryProductList.clear();
+        _lastFilterHash = currentFilterHash;
+        print("✅ Filters cleared - showing original products");
+      } else if (_appliedSortOption == "recommended" && sortChanged) {
+        // Sort reset to recommended - clear sorted results if no filters
+        if (!_hasActiveFilters) {
+          catalogController.categoryProductList.clear();
         }
+        _lastSortHash = currentSortHash;
+        print("✅ Sort reset to recommended");
       }
 
-      return true;
-    }).toList();
-  }
+      setState(() {
+        // Reset pagination when filters change
+        productController.handpickedPage.value = 1;
+      });
 
-  // ✅ Apply sorting to products
-  List<Map<String, dynamic>> _applySort(List<Map<String, dynamic>> products) {
-    final sorted = List<Map<String, dynamic>>.from(products);
-
-    switch (_appliedSortOption) {
-      case "price_asc":
-        sorted.sort((a, b) {
-          final priceA = _priceOf(a) ?? 0;
-          final priceB = _priceOf(b) ?? 0;
-          return priceA.compareTo(priceB);
-        });
-        break;
-
-      case "price_desc":
-        sorted.sort((a, b) {
-          final priceA = _priceOf(a) ?? 0;
-          final priceB = _priceOf(b) ?? 0;
-          return priceB.compareTo(priceA);
-        });
-        break;
-
-      case "whats_new":
-        sorted.sort((a, b) {
-          final dateA = a['createdAt']?.toString() ?? '';
-          final dateB = b['createdAt']?.toString() ?? '';
-          return dateB.compareTo(dateA);
-        });
-        break;
-
-      case "discount":
-        sorted.sort((a, b) {
-          final mrpA = _parseNum(a['mrp']) ?? 0;
-          final priceA = _priceOf(a) ?? mrpA;
-          final discountA = mrpA > 0 ? ((mrpA - priceA) / mrpA * 100) : 0;
-
-          final mrpB = _parseNum(b['mrp']) ?? 0;
-          final priceB = _priceOf(b) ?? mrpB;
-          final discountB = mrpB > 0 ? ((mrpB - priceB) / mrpB * 100) : 0;
-
-          return discountB.compareTo(discountA);
-        });
-        break;
-
-      case "rating":
-        sorted.sort((a, b) {
-          final ratingA = _parseNum(a['rating']) ?? 0;
-          final ratingB = _parseNum(b['rating']) ?? 0;
-          return ratingB.compareTo(ratingA);
-        });
-        break;
-
-      case "recommended":
-      default:
-        // Keep original order
-        break;
+      // Update final hash
+      final List<dynamic> productsForHash = catalogController.categoryProductList.isNotEmpty
+          ? List<dynamic>.from(catalogController.categoryProductList)
+          : _getAllProducts();
+      _lastProductListHash = _generateProductHash(productsForHash);
+    } catch (e) {
+      print("❌ Error applying filters/sort: $e");
+      getSnackBar("Something went wrong, please try again");
     }
-
-    return sorted;
   }
 
-// ✅ Update displayed products - NO setState here
-  List<Map<String, dynamic>> _getDisplayedProducts() {
-    var products = _getAllProducts();
-    products = _applyFilters(products);
-    products = _applySort(products);
-    return products;
-  }
-
-// ✅ Update with setState (for use outside build)
-  void _updateDisplayedProducts() {
-    setState(() {
-      _displayedProducts = _getDisplayedProducts();
-    });
-  }
-
-  // ✅ Debounced update - uses setState version
-  void _updateDisplayedProductsDebounced() {
+  // ✅ Debounced update
+  void _applyFiltersAndSortDebounced() {
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-      _updateDisplayedProducts(); // This one uses setState
+      _applyFiltersAndSort();
     });
+  }
+
+  // ✅ Get displayed products - either filtered or original
+  List<Map<String, dynamic>> _getDisplayedProducts() {
+    // If we have filtered results from API, use those
+    if (catalogController.categoryProductList.isNotEmpty) {
+      return catalogController.categoryProductList
+          .whereType<Map<String, dynamic>>()
+          .toList();
+    }
+
+    // Otherwise, use original products from home
+    return _getAllProducts();
   }
 
   @override
@@ -464,7 +524,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                             final brand = _brandOf(item);
                             final title = _titleOf(item);
                             final price = _priceOf(item);
-                            final mrp = item['mrp'];
+                            final mrp = item['displayMrp'] ?? item['mrp'];
                             final express = item['express_delivery'] == true;
 
                             return GestureDetector(
@@ -1041,6 +1101,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                 }
                               }
 
+                              print("✅ Filters configured:");
+                              print("  Brands: ${selectedBrands.join(', ')}");
+                              print("  Brand IDs: $selectedBrandIds");
+                              print("  Price: ₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()}");
+
                               setState(() {
                                 _appliedBrandIds = selectedBrandIds;
                                 _appliedMinPrice =
@@ -1056,7 +1121,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                 productController.handpickedPage.value = 1;
                               });
 
-                              _updateDisplayedProductsDebounced();
+                              _applyFiltersAndSortDebounced();
 
                               if (_hasActiveFilters) {
                                 getSnackBar(
@@ -1159,13 +1224,15 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                           final selected = selectedOption.value;
                           Get.back();
 
+                          print("✅ Sort option selected: $selected");
+
                           setState(() {
                             _appliedSortOption = selected;
                             // Reset pagination
                             productController.handpickedPage.value = 1;
                           });
 
-                          _updateDisplayedProductsDebounced();
+                          _applyFiltersAndSortDebounced();
 
                           getSnackBar(
                               "Sorted by ${sortOptions[selected] ?? 'Recommended'}");
