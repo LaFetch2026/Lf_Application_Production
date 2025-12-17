@@ -119,3 +119,29 @@ flutter:
       fonts:
         - asset: fonts/PlayfairDisplay-MediumItalic.ttf
           weight: 400
+
+  
+    - family: Clash Display Bold
+      fonts:
+        - asset: fonts/ClashDisplay-Bold.otf
+          weight: 700
+    - family: Clash Display Semibold
+      fonts:
+        - asset: fonts/ClashDisplay-Semibold.otf
+          weight: 600
+    - family: Clash Display Light
+      fonts:
+        - asset: fonts/ClashDisplay-Light.otf
+          weight: 300
+    - family: Clash Display
+      fonts:
+        - asset: fonts/ClashDisplay-Medium.otf
+          weight: 500
+    - family: Clash Display Regular
+      fonts:
+        - asset: fonts/ClashDisplay-Regular.otf
+          weight: 400
+    - family: Clash Display Medium
+      fonts:
+        - asset: fonts/ClashDisplay-Extralight.otf
+          weight: 400        
