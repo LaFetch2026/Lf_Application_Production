@@ -47,8 +47,10 @@ class BrandController extends BaseController {
   /// ================================================================
   /// ✅ Fetch Brands (Featured or All)
   /// ================================================================
-  Future<void> getBrandData(String type) async {
-    isBrand.value = true;
+  Future<void> getBrandData(String type, {bool showLoader = true}) async {
+    if (showLoader) {
+      isBrand.value = true;
+    }
     final prefs = await SharedPreferences.getInstance();
 
     try {
@@ -158,7 +160,9 @@ class BrandController extends BaseController {
       print("❌ Error fetching brand data: $e");
       getSnackBar("Something went wrong while fetching brands.");
     } finally {
-      isBrand.value = false;
+      if (showLoader) {
+        isBrand.value = false;
+      }
     }
   }
 
