@@ -393,7 +393,9 @@ class CatalogController extends BaseController {
     String? minPrice,
     String? maxPrice,
     String? sortOption,
+    int? superCatId,
     int? catId,
+    int? subCatId,
     int? brandId,
     int? collectionId,
   }) async {
@@ -422,8 +424,14 @@ class CatalogController extends BaseController {
       }
 
       // Add additional filters (skip if 0 or negative)
+      if (superCatId != null && superCatId > 0) {
+        queryParams['superCatId'] = superCatId.toString();
+      }
       if (catId != null && catId > 0) {
         queryParams['catId'] = catId.toString();
+      }
+      if (subCatId != null && subCatId > 0) {
+        queryParams['subCatId'] = subCatId.toString();
       }
       if (brandId != null && brandId > 0) {
         queryParams['brandId'] = brandId.toString();
@@ -442,7 +450,9 @@ class CatalogController extends BaseController {
       print("      minPrice     → $minPrice");
       print("      maxPrice     → $maxPrice");
       print("      sortOption   → $sortOption");
+      print("      superCatId   → $superCatId");
       print("      catId        → $catId");
+      print("      subCatId     → $subCatId");
       print("      brandId      → $brandId");
       print("      collectionId → $collectionId");
       print("   🌐 Final URL    → $uri");

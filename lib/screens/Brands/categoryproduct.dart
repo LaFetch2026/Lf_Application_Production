@@ -87,10 +87,16 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
   // ✅ Current filter/sort state
   List<int> _appliedBrandIds = [];
-  String _appliedMinPrice = "100";
-  String _appliedMaxPrice = "50000";
+  String _appliedMinPrice = "300";
+  String _appliedMaxPrice = "100000";
   String _appliedSortOption = "recommended";
+  int? _appliedSuperCatId;
+  int? _appliedCatId;
+  int? _appliedSubCatId;
+  int? _appliedCollectionId;
   bool _hasActiveFilters = false;
+  bool _isCategoriesLoaded = false;
+  List<Map<String, dynamic>> _collections = [];
 
   // ✅ Store original category product IDs for client-side filtering
   Set<int> _originalCategoryProductIds = {};
@@ -154,7 +160,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
   // ✅ Generate hash for current filter state
   String _generateFilterHash() {
-    return '${_appliedBrandIds.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_$_hasActiveFilters';
+    return '${_appliedBrandIds.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_${_appliedSuperCatId}_${_appliedCatId}_${_appliedSubCatId}_${_appliedCollectionId}_$_hasActiveFilters';
   }
 
   // ✅ Generate hash for current sort state
@@ -163,23 +169,30 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   }
 
   // ✅ Check if products list has actually changed
-  bool _hasProductsChanged(List<dynamic> previousProducts, List<dynamic> newProducts) {
+  bool _hasProductsChanged(
+      List<dynamic> previousProducts, List<dynamic> newProducts) {
     final previousHash = _generateProductHash(previousProducts);
     final newHash = _generateProductHash(newProducts);
 
     // 🔍 Debug: Show detailed comparison
     print("🔍 Hash Comparison:");
-    final prevHashPreview = previousHash.length > 50 ? previousHash.substring(0, 50) + "..." : previousHash;
-    final newHashPreview = newHash.length > 50 ? newHash.substring(0, 50) + "..." : newHash;
-    print("   Previous: ${previousProducts.length} products, hash: $prevHashPreview");
+    final prevHashPreview = previousHash.length > 50
+        ? previousHash.substring(0, 50) + "..."
+        : previousHash;
+    final newHashPreview =
+        newHash.length > 50 ? newHash.substring(0, 50) + "..." : newHash;
+    print(
+        "   Previous: ${previousProducts.length} products, hash: $prevHashPreview");
     print("   New: ${newProducts.length} products, hash: $newHashPreview");
 
     // Show first product from each list for comparison
     if (previousProducts.isNotEmpty && newProducts.isNotEmpty) {
       final prevFirst = previousProducts.first;
       final newFirst = newProducts.first;
-      print("   Previous first: ID=${prevFirst['id']}, Price=${prevFirst['basePrice'] ?? prevFirst['displayPrice']}");
-      print("   New first: ID=${newFirst['id']}, Price=${newFirst['basePrice'] ?? newFirst['displayPrice']}");
+      print(
+          "   Previous first: ID=${prevFirst['id']}, Price=${prevFirst['basePrice'] ?? prevFirst['displayPrice']}");
+      print(
+          "   New first: ID=${newFirst['id']}, Price=${newFirst['basePrice'] ?? newFirst['displayPrice']}");
     }
 
     if (previousHash != newHash) {
@@ -187,7 +200,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       return true;
     }
 
-    print("⚠️ Products UNCHANGED - hash match (this might indicate backend not sorting/filtering)");
+    print(
+        "⚠️ Products UNCHANGED - hash match (this might indicate backend not sorting/filtering)");
     return false;
   }
 
@@ -241,6 +255,39 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     print("✅ Brands loaded successfully");
   }
 
+  // ✅ Smart collections loader - only loads once
+  Future<void> _loadCollectionsIfNeeded() async {
+    if (_isCategoriesLoaded) {
+      print("✅ Collections already loaded - skipping");
+      return;
+    }
+
+    // Extract collections from home product list
+    // Use collectionID from products if available, otherwise use collection id
+    _collections = productController.homeProductList
+        .whereType<Map<String, dynamic>>()
+        .map((c) {
+      // Check if collection has products with collectionID
+      final products = c['products'] as List?;
+      final firstProduct =
+          products?.isNotEmpty == true ? products!.first : null;
+      final collectionId = firstProduct != null && firstProduct is Map
+          ? (firstProduct['collectionID'] ?? c['id'])
+          : c['id'];
+
+      return {
+        'id': collectionId,
+        'name': c['name'] ?? 'Unknown',
+      };
+    }).toList();
+
+    _isCategoriesLoaded = true;
+    print("✅ Collections loaded: ${_collections.length}");
+    for (final col in _collections) {
+      print("   - ID: ${col['id']}, Name: ${col['name']}");
+    }
+  }
+
   // ✅ Smart category products loader - only loads once initially
   Future<void> _loadCategoryProductsIfNeeded() async {
     if (_isCategoryProductsLoaded) {
@@ -269,7 +316,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     _isCategoryProductsLoaded = true;
     print(
         "✅ Category products loaded successfully (${catalogController.categoryProductList.length} items)");
-    print("✅ Stored ${_originalCategoryProductIds.length} product IDs for filtering");
+    print(
+        "✅ Stored ${_originalCategoryProductIds.length} product IDs for filtering");
   }
 
   // ✅ Initial load - happens before screen is visible
@@ -285,6 +333,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         _loadBrandsIfNeeded(),
         _loadCategoryProductsIfNeeded(),
       ]);
+
+      // Load collections after initial load (requires homeProductList)
+      await _loadCollectionsIfNeeded();
 
       print("✅ Initial load complete");
     } catch (e) {
@@ -326,44 +377,73 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       // Case 1: Has filters → Call API (with or without sort)
       // Case 2: Only sort (no filters) → Client-side sort
       // Case 3: Neither filters nor sort → Show original
-      
+
       if (_hasActiveFilters && filterChanged) {
         // 📞 Case 1: Filters changed → Call /filter-products API
         print("🔹 Case 1: Filter changed (has active filters)");
         print("   • Current _appliedSortOption → $_appliedSortOption");
-        print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
+        print(
+            "   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
+        print("   • superCatId   → $_appliedSuperCatId");
+        print("   • catId        → $_appliedCatId");
+        print("   • subCatId     → $_appliedSubCatId");
+        print("   • collectionId → $_appliedCollectionId");
         print("   • sortChanged  → $sortChanged");
-        print("   • Passing sortOption → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
+        print(
+            "   • Passing sortOption → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
         await catalogController.getFilterAndSortProducts(
           // Only pass actual filter values (not defaults)
           brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
           minPrice: _appliedMinPrice,
           maxPrice: _appliedMaxPrice,
-          sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
+          superCatId: _appliedSuperCatId,
+          catId: _appliedCatId,
+          subCatId: _appliedSubCatId,
+          collectionId: _appliedCollectionId,
+          sortOption:
+              _appliedSortOption != "recommended" ? _appliedSortOption : null,
         );
 
         // ✅ Client-side filter: Only keep products from this category
-        final apiResults = List<dynamic>.from(catalogController.categoryProductList);
+        var apiResults =
+            List<dynamic>.from(catalogController.categoryProductList);
+
+        // Filter by collectionId if specified (backend may ignore this)
+        if (_appliedCollectionId != null) {
+          apiResults = apiResults.where((product) {
+            final productCollectionId =
+                int.tryParse(product['collectionID']?.toString() ?? '');
+            return productCollectionId == _appliedCollectionId;
+          }).toList();
+          print(
+              "🔍 Filtered ${catalogController.categoryProductList.length} products to ${apiResults.length} with collectionID=$_appliedCollectionId");
+        }
+
         final filteredResults = apiResults.where((product) {
           final productId = int.tryParse(product['id']?.toString() ?? '');
-          return productId != null && _originalCategoryProductIds.contains(productId);
+          return productId != null &&
+              _originalCategoryProductIds.contains(productId);
         }).toList();
 
-        print("🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} from this category");
+        print(
+            "🔍 API returned ${catalogController.categoryProductList.length} products, filtered to ${filteredResults.length} from this category");
 
         catalogController.categoryProductList.assignAll(filteredResults);
-        
+
         _lastFilterHash = currentFilterHash;
         if (sortChanged) _lastSortHash = currentSortHash;
 
-        print("✅ Filter applied - ${catalogController.categoryProductList.length} products");
-        
-      } else if (!_hasActiveFilters && _appliedSortOption != "recommended" && sortChanged) {
+        print(
+            "✅ Filter applied - ${catalogController.categoryProductList.length} products");
+      } else if (!_hasActiveFilters &&
+          _appliedSortOption != "recommended" &&
+          sortChanged) {
         // 🔧 Case 2: ONLY sort changed (no filters) → Client-side sort
-        print("🔧 Client-side sorting: $_appliedSortOption (no filters, so not calling API)");
-        
+        print(
+            "🔧 Client-side sorting: $_appliedSortOption (no filters, so not calling API)");
+
         // Load original products if needed
         if (!_isCategoryProductsLoaded) {
           await catalogController.getCategoryProductData(
@@ -372,14 +452,15 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           );
           _isCategoryProductsLoaded = true;
         }
-        
+
         // Sort the current products client-side
-        final productsToSort = List<dynamic>.from(catalogController.categoryProductList);
-        
+        final productsToSort =
+            List<dynamic>.from(catalogController.categoryProductList);
+
         productsToSort.sort((a, b) {
           final priceA = (a['basePrice'] ?? a['displayPrice'] ?? 0) as num;
           final priceB = (b['basePrice'] ?? b['displayPrice'] ?? 0) as num;
-          
+
           if (_appliedSortOption == 'price_asc') {
             return priceA.compareTo(priceB);
           } else if (_appliedSortOption == 'price_desc') {
@@ -391,39 +472,63 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           }
           return 0;
         });
-        
+
         catalogController.categoryProductList.assignAll(productsToSort);
         _lastSortHash = currentSortHash;
-        
-        print("✅ Client-side sort complete - ${catalogController.categoryProductList.length} products");
-        print("   First 3: ${productsToSort.take(3).map((p) => 'ID:${p['id']} Price:₹${p['basePrice'] ?? p['displayPrice']}').join(', ')}");
-        
+
+        print(
+            "✅ Client-side sort complete - ${catalogController.categoryProductList.length} products");
+        print(
+            "   First 3: ${productsToSort.take(3).map((p) => 'ID:${p['id']} Price:₹${p['basePrice'] ?? p['displayPrice']}').join(', ')}");
       } else if (_hasActiveFilters && sortChanged) {
         // 🔧 Case 3: Filters already applied, but sort changed → Re-apply filters with new sort
         print("🔹 Case 3: Sort changed (filters already applied)");
         print("   • New _appliedSortOption → $_appliedSortOption");
-        print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
+        print(
+            "   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • Passing sortOption → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
-        
+        print("   • superCatId   → $_appliedSuperCatId");
+        print("   • catId        → $_appliedCatId");
+        print("   • subCatId     → $_appliedSubCatId");
+        print("   • collectionId → $_appliedCollectionId");
+        print(
+            "   • Passing sortOption → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
+
         await catalogController.getFilterAndSortProducts(
           brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
           minPrice: _appliedMinPrice,
           maxPrice: _appliedMaxPrice,
-          sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
+          superCatId: _appliedSuperCatId,
+          catId: _appliedCatId,
+          subCatId: _appliedSubCatId,
+          collectionId: _appliedCollectionId,
+          sortOption:
+              _appliedSortOption != "recommended" ? _appliedSortOption : null,
         );
 
-        final apiResults = List<dynamic>.from(catalogController.categoryProductList);
+        var apiResults =
+            List<dynamic>.from(catalogController.categoryProductList);
+
+        // Filter by collectionId if specified (backend may ignore this)
+        if (_appliedCollectionId != null) {
+          apiResults = apiResults.where((product) {
+            final productCollectionId =
+                int.tryParse(product['collectionID']?.toString() ?? '');
+            return productCollectionId == _appliedCollectionId;
+          }).toList();
+        }
+
         final filteredResults = apiResults.where((product) {
           final productId = int.tryParse(product['id']?.toString() ?? '');
-          return productId != null && _originalCategoryProductIds.contains(productId);
+          return productId != null &&
+              _originalCategoryProductIds.contains(productId);
         }).toList();
 
         catalogController.categoryProductList.assignAll(filteredResults);
         _lastSortHash = currentSortHash;
-        
-        print("✅ Filters re-applied with new sort - ${catalogController.categoryProductList.length} products");
-        
+
+        print(
+            "✅ Filters re-applied with new sort - ${catalogController.categoryProductList.length} products");
       } else if (!_hasActiveFilters && filterChanged) {
         // Filters cleared - reload original products
         if (!_isCategoryProductsLoaded) {
@@ -754,6 +859,58 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   Widget _divider() =>
       Container(width: 1.sp, color: dividerColor, height: 46.sp);
 
+  /// ✅ Helper: Build Category Dropdown
+  Widget _buildCategoryDropdown(
+    String title,
+    int? selectedValue,
+    List<Map<String, dynamic>> options,
+    Function(int?) onChanged,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Select $title",
+          style: const TextStyle(
+            fontFamily: "Franklin Gothic",
+            fontWeight: FontWeight.w700,
+            fontSize: 15,
+          ),
+        ),
+        const SizedBox(height: 16),
+        ...options.map((option) {
+          final id = option['id'] as int;
+          final name = option['name'] as String;
+          return RadioListTile<int>(
+            value: id,
+            groupValue: selectedValue,
+            activeColor: appBarColor,
+            title: Text(
+              name,
+              style: const TextStyle(
+                fontFamily: "Franklin Gothic Regular",
+                color: blackColor,
+              ),
+            ),
+            onChanged: onChanged,
+          );
+        }),
+        if (selectedValue != null)
+          TextButton(
+            onPressed: () => onChanged(null),
+            child: const Text(
+              "Clear Selection",
+              style: TextStyle(
+                color: appBarColor,
+                fontFamily: "Franklin Gothic",
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
   Widget _activeBottomButton({
     required String icon,
     required String label,
@@ -797,7 +954,20 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       double.parse(_appliedMaxPrice),
     );
 
-    final List<String> filterCategories = ["Brand", "Price Range"];
+    // Category filter selections
+    int? selectedSuperCatId = _appliedSuperCatId;
+    int? selectedCatId = _appliedCatId;
+    int? selectedSubCatId = _appliedSubCatId;
+    int? selectedCollectionId = _appliedCollectionId;
+
+    final List<String> filterCategories = [
+      "Brand",
+      "Price Range",
+      "Super Category",
+      "Category",
+      "Sub Category",
+      "Collection"
+    ];
 
     // ✅ Ensure brands are loaded
     await _loadBrandsIfNeeded();
@@ -863,7 +1033,11 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                             onPressed: () {
                               setModalState(() {
                                 selectedBrands.clear();
-                                priceRange = const RangeValues(100, 50000);
+                                priceRange = const RangeValues(300, 100000);
+                                selectedSuperCatId = null;
+                                selectedCatId = null;
+                                selectedSubCatId = null;
+                                selectedCollectionId = null;
                               });
                             },
                             child: const Text("CLEAR ALL",
@@ -962,40 +1136,161 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                         );
                                       },
                                     )
-                                  : Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text("Select price range",
-                                            style: TextStyle(
-                                                fontFamily: "Franklin Gothic",
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 15)),
-                                        const SizedBox(height: 8),
-                                        RangeSlider(
-                                          values: priceRange,
-                                          min: 100,
-                                          max: 50000,
-                                          divisions: 100,
-                                          activeColor: appBarColor,
-                                          onChanged: (v) => setModalState(() {
-                                            priceRange = v;
-                                          }),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                  : selectedFilter == "Price Range"
+                                      ? Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text("₹${priceRange.start.toInt()}",
-                                                style: const TextStyle(
-                                                    color: Colors.grey)),
-                                            Text("₹${priceRange.end.toInt()}",
-                                                style: const TextStyle(
-                                                    color: Colors.grey)),
+                                            const Text("Select price range",
+                                                style: TextStyle(
+                                                    fontFamily:
+                                                        "Franklin Gothic",
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 15)),
+                                            const SizedBox(height: 8),
+                                            RangeSlider(
+                                              values: priceRange,
+                                              min: 300,
+                                              max: 100000,
+                                              divisions: 100,
+                                              activeColor: appBarColor,
+                                              onChanged: (v) =>
+                                                  setModalState(() {
+                                                priceRange = v;
+                                              }),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                    "₹${priceRange.start.toInt()}",
+                                                    style: const TextStyle(
+                                                        color: Colors.grey)),
+                                                Text(
+                                                    "₹${priceRange.end.toInt()}",
+                                                    style: const TextStyle(
+                                                        color: Colors.grey)),
+                                              ],
+                                            ),
                                           ],
-                                        ),
-                                      ],
-                                    ),
+                                        )
+                                      : selectedFilter == "Super Category"
+                                          ? _buildCategoryDropdown(
+                                              "Super Category",
+                                              selectedSuperCatId,
+                                              [
+                                                {'id': 1, 'name': 'Men'},
+                                                {'id': 2, 'name': 'Women'},
+                                                {
+                                                  'id': 3,
+                                                  'name': 'Accessories'
+                                                },
+                                              ],
+                                              (val) => setModalState(() {
+                                                selectedSuperCatId = val;
+                                              }),
+                                            )
+                                          : selectedFilter == "Category"
+                                              ? _buildCategoryDropdown(
+                                                  "Category",
+                                                  selectedCatId,
+                                                  [
+                                                    {
+                                                      'id': 1,
+                                                      'name': 'Topwear'
+                                                    },
+                                                    {
+                                                      'id': 2,
+                                                      'name': 'Bottomwear'
+                                                    },
+                                                    {
+                                                      'id': 3,
+                                                      'name': 'Footwear'
+                                                    },
+                                                    {'id': 4, 'name': 'Bags'},
+                                                    {
+                                                      'id': 5,
+                                                      'name': 'Accessories'
+                                                    },
+                                                    {
+                                                      'id': 6,
+                                                      'name': 'Innerwear'
+                                                    },
+                                                  ],
+                                                  (val) => setModalState(() {
+                                                    selectedCatId = val;
+                                                  }),
+                                                )
+                                              : selectedFilter == "Sub Category"
+                                                  ? _buildCategoryDropdown(
+                                                      "Sub Category",
+                                                      selectedSubCatId,
+                                                      [
+                                                        {
+                                                          'id': 1,
+                                                          'name': 'T-Shirts'
+                                                        },
+                                                        {
+                                                          'id': 2,
+                                                          'name': 'Shirts'
+                                                        },
+                                                        {
+                                                          'id': 3,
+                                                          'name': 'Jeans'
+                                                        },
+                                                        {
+                                                          'id': 4,
+                                                          'name': 'Trousers'
+                                                        },
+                                                        {
+                                                          'id': 5,
+                                                          'name': 'Casual Shoes'
+                                                        },
+                                                        {
+                                                          'id': 6,
+                                                          'name': 'Formal Shoes'
+                                                        },
+                                                      ],
+                                                      (val) =>
+                                                          setModalState(() {
+                                                        selectedSubCatId = val;
+                                                      }),
+                                                    )
+                                                  : selectedFilter ==
+                                                          "Collection"
+                                                      ? _collections.isEmpty
+                                                          ? const Center(
+                                                              child: Padding(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .all(
+                                                                            20.0),
+                                                                child: Text(
+                                                                  "No collections available",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontFamily:
+                                                                        "Franklin Gothic Regular",
+                                                                    color: Colors
+                                                                        .grey,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            )
+                                                          : _buildCategoryDropdown(
+                                                              "Collection",
+                                                              selectedCollectionId,
+                                                              _collections,
+                                                              (val) =>
+                                                                  setModalState(
+                                                                      () {
+                                                                selectedCollectionId =
+                                                                    val;
+                                                              }),
+                                                            )
+                                                      : const SizedBox(),
                             ),
                           ),
                         ],
@@ -1049,10 +1344,18 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                     priceRange.start.toInt().toString();
                                 _appliedMaxPrice =
                                     priceRange.end.toInt().toString();
+                                _appliedSuperCatId = selectedSuperCatId;
+                                _appliedCatId = selectedCatId;
+                                _appliedSubCatId = selectedSubCatId;
+                                _appliedCollectionId = selectedCollectionId;
                                 _hasActiveFilters =
                                     selectedBrandIds.isNotEmpty ||
-                                        priceRange.start > 100 ||
-                                        priceRange.end < 50000;
+                                        priceRange.start > 300 ||
+                                        priceRange.end < 100000 ||
+                                        _appliedSuperCatId != null ||
+                                        _appliedCatId != null ||
+                                        _appliedSubCatId != null ||
+                                        _appliedCollectionId != null;
                               });
 
                               print("✅ Filters configured:");
@@ -1064,8 +1367,30 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                               await _applyFiltersAndSortDebounced();
 
                               if (_hasActiveFilters) {
+                                final filterParts = <String>[];
+                                if (selectedBrandIds.isNotEmpty) {
+                                  filterParts
+                                      .add("${selectedBrands.length} brand(s)");
+                                }
+                                if (priceRange.start > 300 ||
+                                    priceRange.end < 100000) {
+                                  filterParts.add(
+                                      "₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
+                                }
+                                if (selectedSuperCatId != null) {
+                                  filterParts.add("Super Category");
+                                }
+                                if (selectedCatId != null) {
+                                  filterParts.add("Category");
+                                }
+                                if (selectedSubCatId != null) {
+                                  filterParts.add("Sub Category");
+                                }
+                                if (selectedCollectionId != null) {
+                                  filterParts.add("Collection");
+                                }
                                 getSnackBar(
-                                    "Filtered by ${selectedBrands.length} brand(s), ₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
+                                    "Filtered by ${filterParts.join(', ')}");
                               } else {
                                 getSnackBar("Filters cleared");
                               }
