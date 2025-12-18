@@ -55,15 +55,20 @@ class BrandController extends BaseController {
       final base = ApiConstants.baseUrl;
       final baseUri = Uri.parse(base);
 
-      // Optional param: isFeatured=true
-      final queryParams = <String, String>{};
-      if (type == "featured") queryParams["isFeatured"] = "true";
+      // ✅ UPDATED: Always include status=true, and optionally isFeatured=true
+      final queryParams = <String, String>{
+        'status': 'true', // ✅ Always fetch only active brands
+      };
+
+      if (type == "featured") {
+        queryParams["isFeatured"] = "true";
+      }
 
       final uri = baseUri.replace(
         path: baseUri.path.endsWith('/')
             ? '${baseUri.path}brands'
             : '${baseUri.path}/brands',
-        queryParameters: queryParams.isEmpty ? null : queryParams,
+        queryParameters: queryParams,
       );
 
       final headers = {
@@ -129,7 +134,7 @@ class BrandController extends BaseController {
         return aName.compareTo(bName);
       });
 
-      // ✅ Update reactive list directly (no reassigning)
+      // ✅ CRITICAL: Clear old data first, then add new data
       brandList.clear();
       brandList.addAll(
         filtered
@@ -142,8 +147,9 @@ class BrandController extends BaseController {
       selected.clear();
       selected = List<bool>.generate(brandList.length, (_) => false);
 
-      print("✅ Brands loaded: ${brandList.length}");
-      print("🪪 Names: ${brandList.map((b) => b['name']).toList()}");
+      print("✅ Brands loaded: ${brandList.length} (type: $type)");
+      print(
+          "🪪 Brand names: ${brandList.map((b) => b['name']).take(5).toList()}${brandList.length > 5 ? '...' : ''}");
     } on TimeoutException {
       getSnackBar("Brands request timed out. Please try again.");
     } on SocketException {

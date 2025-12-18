@@ -188,15 +188,15 @@ class HomeScreenState extends State<HomeScreen> {
     return false;
   }
 
-  // ✅ OPTIMIZED: Centralized data fetching method
+// ✅ OPTIMIZED: Centralized data fetching method
   Future<void> _fetchAllData(int gender) async {
     // ALWAYS hit these APIs (no JWT required)
     await Future.wait([
       homeController.getBannerData(gender),
-      catalogController.getCatagoryData(gender),
+      catalogController
+          .getCatalogData(gender), // ✅ This now uses the updated endpoint
       homeController.getBrandData("featured", gender),
       productController.getHomeProduct(gender),
-      catalogController.getCatalogData(gender),
     ]);
 
     // One-time setup calls
@@ -613,7 +613,11 @@ class HomeScreenState extends State<HomeScreen> {
 
                       catalogController.selectCategoryGender.value = 1;
                       catalogController.categoryName.value = "Men";
-                      catalogController.getCatagoryData(1);
+
+                      // ✅ FORCE FRESH DATA: Clear cache and reload
+                      catalogController.catalogList.clear();
+                      await catalogController.getCatalogData(1);
+
                       await analytics.logEvent(
                         name: 'home_page_menClick',
                         parameters: {'page_name': 'home_page_menClick'},
@@ -622,6 +626,8 @@ class HomeScreenState extends State<HomeScreen> {
                     _genderTab("WOMEN", 2, onTap: () async {
                       homeController.genderText.value = "Women";
                       homeController.homeGenderValue.value = 2;
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setInt('selectedGender', 2);
                       _resetForTab();
 
                       // ✅ OPTIMIZED: Smart fetching only when needed
@@ -631,7 +637,11 @@ class HomeScreenState extends State<HomeScreen> {
 
                       catalogController.selectCategoryGender.value = 2;
                       catalogController.categoryName.value = "Women";
-                      catalogController.getCatagoryData(2);
+
+                      // ✅ FORCE FRESH DATA: Clear cache and reload
+                      catalogController.catalogList.clear();
+                      await catalogController.getCatalogData(2);
+
                       await analytics.logEvent(
                         name: 'home_page_womenClick',
                         parameters: {'page_name': 'home_page_womenClick'},
@@ -640,6 +650,8 @@ class HomeScreenState extends State<HomeScreen> {
                     _genderTab("ACCESSORIES", 3, onTap: () async {
                       homeController.genderText.value = "Accessories";
                       homeController.homeGenderValue.value = 3;
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setInt('selectedGender', 3);
                       _resetForTab();
 
                       // ✅ OPTIMIZED: Smart fetching only when needed
@@ -649,7 +661,11 @@ class HomeScreenState extends State<HomeScreen> {
 
                       catalogController.selectCategoryGender.value = 3;
                       catalogController.categoryName.value = "Accessories";
-                      catalogController.getCatagoryData(3);
+
+                      // ✅ FORCE FRESH DATA: Clear cache and reload
+                      catalogController.catalogList.clear();
+                      await catalogController.getCatalogData(3);
+
                       await analytics.logEvent(
                         name: 'home_page_accessoriesClick',
                         parameters: {'page_name': 'home_page_accessoriesClick'},
@@ -1757,6 +1773,7 @@ class _ShopByCategorySection extends StatelessWidget {
               catalogController.selectCategoryGender.value = g;
               catalogController.categoryName.value = gName;
 
+              // ✅ UPDATED: Using the new API endpoint
               await catalogController.getCatagoryData(g);
 
               final prefs = await SharedPreferences.getInstance();
