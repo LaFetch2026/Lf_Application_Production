@@ -336,13 +336,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   // Razorpay callbacks
-  void _onPaymentSuccess(PaymentSuccessResponse r) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Payment successful')),
-    );
-    // TODO: verify with backend if you're using Orders API (recommended)
-    // Get.off(() => OrderSuccessScreen(...));
-  }
 
   Future<String> generateProductShareLink() async {
     final productId =
@@ -363,18 +356,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
 
     return link.toString();
-  }
-
-  void _onPaymentError(PaymentFailureResponse r) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Payment failed: ${r.message ?? r.code}')),
-    );
-  }
-
-  void _onExternalWallet(ExternalWalletResponse r) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('External wallet: ${r.walletName}')),
-    );
   }
 
   // ===================== /RAZORPAY FLOW =====================
@@ -1062,46 +1043,28 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Visibility(
-                                visible: _titleText().isNotEmpty,
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 12.sp, vertical: 8.sp),
-                                  child: AppSpacingText(
-                                    text: _titleText(),
-                                    fontFamily: "Clash Display Regular",
-                                    fontWeight: FontWeight.w600,
-                                    color: widget.backgroundcolor == whiteColor
-                                        ? blackColor
-                                        : productSubtitleColor,
-                                    maxLines: 2,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-
                               Padding(
-                                padding:
-                                    EdgeInsets.only(left: 12.sp, right: 12.sp),
+                                padding: EdgeInsets.only(right: 12.sp),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
-                                  mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Expanded(
-                                      child: AppSpacingText(
-                                        text: _brandText().isNotEmpty
-                                            ? "${_brandText()}\n".toUpperCase()
-                                            : "",
-                                        fontFamily: "Clash Display",
-                                        fontWeight: FontWeight.w400,
-                                        color:
-                                            widget.backgroundcolor == whiteColor
-                                                ? subtitleColor
-                                                : whiteColor,
-                                        maxLines: 1,
-                                        fontSize: 14,
+                                    Visibility(
+                                      visible: _titleText().isNotEmpty,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 12.sp, vertical: 8.sp),
+                                        child: AppSpacingText(
+                                          text: _titleText(),
+                                          fontFamily: "Clash Display Regular",
+                                          fontWeight: FontWeight.w600,
+                                          color: widget.backgroundcolor ==
+                                                  whiteColor
+                                              ? blackColor
+                                              : productSubtitleColor,
+                                          maxLines: 2,
+                                          fontSize: 14,
+                                        ),
                                       ),
                                     ),
                                     (productController.brandDetails != null &&
@@ -1167,6 +1130,34 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 ),
                               ),
 
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(left: 12.sp, right: 12.sp),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: AppSpacingText(
+                                        text: _brandText().isNotEmpty
+                                            ? "${_brandText()}\n".toUpperCase()
+                                            : "",
+                                        fontFamily: "Clash Display",
+                                        fontWeight: FontWeight.w400,
+                                        color:
+                                            widget.backgroundcolor == whiteColor
+                                                ? subtitleColor
+                                                : whiteColor,
+                                        maxLines: 1,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
                               // Price Display Section
                               Obx(() {
                                 final price =
@@ -1179,6 +1170,21 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       top: 8.sp, left: 12.sp, right: 12.sp),
                                   child: Row(
                                     children: [
+                                      // Selling Price
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 10.sp),
+                                        child: AppSpacingText(
+                                          text: "₹${price.toStringAsFixed(0)}",
+                                          color: widget.backgroundcolor ==
+                                                  whiteColor
+                                              ? nameText
+                                              : whiteColor,
+                                          fontSize: 16,
+                                          fontFamily: "Clash Display",
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+
                                       // MRP (strikethrough)
                                       if (hasDiscount)
                                         Padding(
@@ -1198,21 +1204,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             ),
                                           ),
                                         ),
-
-                                      // Selling Price
-                                      Padding(
-                                        padding: EdgeInsets.only(right: 10.sp),
-                                        child: AppSpacingText(
-                                          text: "₹${price.toStringAsFixed(0)}",
-                                          color: widget.backgroundcolor ==
-                                                  whiteColor
-                                              ? nameText
-                                              : whiteColor,
-                                          fontSize: 16,
-                                          fontFamily: "Clash Display",
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
 
                                       // Discount Badge
                                       if (hasDiscount)

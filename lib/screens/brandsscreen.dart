@@ -105,7 +105,7 @@ class BrandsScreenState extends State<BrandsScreen> {
     });
 
     // ✅ Pass showLoader: false to prevent skeleton loader during pull-to-refresh
-    await brandController.getBrandData("brand", showLoader: false);
+    await brandController.getBrandData("brand");
 
     _lastDataFetch = DateTime.now();
     _lastSearchQuery = brandController.queryText.value;

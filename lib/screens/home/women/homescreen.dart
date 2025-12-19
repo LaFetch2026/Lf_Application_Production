@@ -687,7 +687,7 @@ class HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Banner Section
+                        // Banner Section - ✅ REDUCED SPACING
                         Obx(() => homeController.isBanner1.value
                             ? Padding(
                                 padding:
@@ -734,7 +734,8 @@ class HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(height: 12.sp),
+                                      SizedBox(
+                                          height: 8.sp), // ✅ REDUCED from 12.sp
                                       _currentBannerList().length == 1
                                           ? const SizedBox.shrink()
                                           : Center(
@@ -755,7 +756,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   )
                                 : const SizedBox.shrink()),
 
-                        SizedBox(height: 16.sp),
+                        SizedBox(height: 10.sp), // ✅ REDUCED from 16.sp
 
                         // Marquee Banner
                         Container(
@@ -788,7 +789,7 @@ class HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
 
-                        SizedBox(height: 24.sp),
+                        SizedBox(height: 16.sp), // ✅ REDUCED from 24.sp
 
                         // Shop by Category Section
                         Obx(
@@ -847,7 +848,8 @@ class HomeScreenState extends State<HomeScreen> {
                                   .toList();
 
                           if (collections.isEmpty) {
-                            return SizedBox(height: 20.sp);
+                            return SizedBox(
+                                height: 12.sp); // ✅ REDUCED from 20.sp
                           }
 
                           final int selectedSuperCat =
@@ -858,7 +860,7 @@ class HomeScreenState extends State<HomeScreen> {
                             shrinkWrap: true,
                             itemCount: collections.length,
                             separatorBuilder: (_, __) =>
-                                SizedBox(height: 24.sp),
+                                SizedBox(height: 16.sp), // ✅ REDUCED from 24.sp
                             itemBuilder: (context, index) {
                               final c = collections[index];
                               final int collectionId = c['id'] is int
@@ -894,7 +896,8 @@ class HomeScreenState extends State<HomeScreen> {
                                     Center(
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(
-                                            vertical: 16.sp),
+                                            vertical:
+                                                12.sp), // ✅ REDUCED from 16.sp
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
@@ -917,8 +920,9 @@ class HomeScreenState extends State<HomeScreen> {
                                             ),
                                             if (subtitle.isNotEmpty)
                                               Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 6.sp),
+                                                padding: EdgeInsets.only(
+                                                    top: 4
+                                                        .sp), // ✅ REDUCED from 6.sp
                                                 child: Text(
                                                   subtitle,
                                                   textAlign: TextAlign.center,
@@ -941,7 +945,8 @@ class HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 8.sp),
+                                    SizedBox(
+                                        height: 6.sp), // ✅ REDUCED from 8.sp
                                     if (filteredProducts.isNotEmpty)
                                       _SectionStrip(
                                         products: filteredProducts,
@@ -1026,7 +1031,9 @@ class HomeScreenState extends State<HomeScreen> {
                                     else
                                       Padding(
                                         padding: EdgeInsets.symmetric(
-                                            horizontal: 16.sp, vertical: 12.sp),
+                                            horizontal: 16.sp,
+                                            vertical:
+                                                10.sp), // ✅ REDUCED from 12.sp
                                         child: Text(
                                           "No products yet",
                                           style: TextStyle(
@@ -1037,7 +1044,8 @@ class HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
                                       ),
-                                    SizedBox(height: 16.sp),
+                                    SizedBox(
+                                        height: 12.sp), // ✅ REDUCED from 16.sp
                                   ],
                                 ),
                               );
@@ -1045,7 +1053,7 @@ class HomeScreenState extends State<HomeScreen> {
                           );
                         }),
 
-                        SizedBox(height: 24.sp),
+                        SizedBox(height: 16.sp), // ✅ REDUCED from 24.sp
                       ],
                     ),
                   ),
@@ -1204,7 +1212,8 @@ class _SectionStrip extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: 16.sp),
         itemCount: itemCount,
-        separatorBuilder: (_, __) => SizedBox(width: 16.sp),
+        separatorBuilder: (_, __) =>
+            SizedBox(width: 12.sp), // ✅ REDUCED from 16.sp
         itemBuilder: (context, index) {
           if (index == pick.length) {
             return _ExploreTile(
@@ -1250,7 +1259,7 @@ class _SectionStrip extends StatelessWidget {
                             color: Colors.black.withOpacity(0.06),
                           ),
                   ),
-                  SizedBox(height: 8.sp),
+                  SizedBox(height: 6.sp), // ✅ REDUCED from 8.sp
                   Text(
                     title,
                     maxLines: 1,
@@ -1437,8 +1446,8 @@ class BannerProductsScreen extends StatelessWidget {
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 0.56,
-                crossAxisSpacing: 16.sp,
-                mainAxisSpacing: 18.sp,
+                crossAxisSpacing: 12.sp, // ✅ REDUCED from 16.sp
+                mainAxisSpacing: 14.sp, // ✅ REDUCED from 18.sp
               ),
               itemBuilder: (context, index) {
                 final m = products[index];
@@ -1555,7 +1564,8 @@ class _BannerProductTile extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(6.sp, 8.sp, 6.sp, 0),
+          padding: EdgeInsets.fromLTRB(
+              6.sp, 6.sp, 6.sp, 0), // ✅ REDUCED top from 8.sp
           child: Text(
             brand.toUpperCase(),
             maxLines: 1,
@@ -1569,7 +1579,8 @@ class _BannerProductTile extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(6.sp, 4.sp, 6.sp, 0),
+          padding: EdgeInsets.fromLTRB(
+              6.sp, 3.sp, 6.sp, 0), // ✅ REDUCED top from 4.sp
           child: Text(
             description,
             maxLines: 1,
@@ -1583,7 +1594,8 @@ class _BannerProductTile extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(6.sp, 6.sp, 6.sp, 0),
+          padding: EdgeInsets.fromLTRB(
+              6.sp, 4.sp, 6.sp, 0), // ✅ REDUCED top from 6.sp
           child: Row(
             children: [
               if (mrp != null && mrp! > 0)
@@ -1644,7 +1656,8 @@ class _ShopByCategorySection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.only(top: 0.sp, bottom: 16.sp),
+            padding: EdgeInsets.only(
+                top: 0.sp, bottom: 12.sp), // ✅ REDUCED from 16.sp
             child: Center(
               child: AppText(
                 text: "SHOP BY CATEGORY",
@@ -1665,7 +1678,7 @@ class _ShopByCategorySection extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 childAspectRatio: 0.55,
                 physics: const NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 12.sp,
+                crossAxisSpacing: 10.sp, // ✅ REDUCED from 12.sp
                 mainAxisSpacing: 0.sp,
                 children: List.generate(
                   min(6, catalogController.catalogList.length),
@@ -1740,7 +1753,8 @@ class _ShopByCategorySection extends StatelessWidget {
                                   fit: BoxFit.cover,
                                 ),
                           Padding(
-                            padding: EdgeInsets.symmetric(vertical: 6.sp),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 4.sp), // ✅ REDUCED from 6.sp
                             child: AppText(
                               text: (catalog["name"] ?? "")
                                   .toString()
@@ -1786,7 +1800,8 @@ class _ShopByCategorySection extends StatelessWidget {
               );
             },
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.sp, horizontal: 16.sp),
+              padding: EdgeInsets.symmetric(
+                  vertical: 12.sp, horizontal: 16.sp), // ✅ REDUCED from 16.sp
               child: Container(
                 height: 42.sp,
                 color: homeAppBarColor,
@@ -1872,7 +1887,7 @@ class _FeaturedBrandsRow extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 16.sp),
+        SizedBox(height: 12.sp), // ✅ REDUCED from 16.sp
         SizedBox(
           height: 100.sp,
           child: Obx(() {
@@ -1967,7 +1982,7 @@ class _FeaturedBrandsRow extends StatelessWidget {
                                   ),
                           ),
                         ),
-                        SizedBox(height: 8.sp),
+                        SizedBox(height: 6.sp), // ✅ REDUCED from 8.sp
                         SizedBox(
                           width: 64.sp,
                           child: Text(

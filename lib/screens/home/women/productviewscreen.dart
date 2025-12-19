@@ -28,11 +28,15 @@ import 'dart:async';
 class ProductViewScreen extends StatefulWidget {
   final String title;
   final String genderName;
+  final List<Map<String, dynamic>>? searchResults;
+  final String? searchQuery;
 
   const ProductViewScreen({
     super.key,
     required this.title,
     required this.genderName,
+    this.searchResults,
+    this.searchQuery,
   });
 
   @override
@@ -163,9 +167,12 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         productController.update();
       });
 
-      // ✅ Use the SAME method with withLimit: false
-      final currentGender = productController.categoryFilter.value;
-      await productController.getHomeProduct(currentGender, withLimit: false);
+      // ✅ Only load products if NOT in search mode
+      if (widget.searchResults == null) {
+        // ✅ Use the SAME method with withLimit: false
+        final currentGender = productController.categoryFilter.value;
+        await productController.getHomeProduct(currentGender, withLimit: false);
+      }
 
       await _loadBrandsIfNeeded();
       _updateDisplayedProducts();
@@ -197,8 +204,13 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     print("✅ Brands loaded successfully");
   }
 
-  // ✅ Get all products from collections
+  // ✅ Get all products from collections or search results
   List<Map<String, dynamic>> _getAllProducts() {
+    // If search results are provided, return them directly
+    if (widget.searchResults != null && widget.searchResults!.isNotEmpty) {
+      return widget.searchResults!;
+    }
+
     final int selectedCollectionId = productController.tagId.value;
     final int superCatId = productController.categoryFilter.value;
 
@@ -391,8 +403,10 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           // ===== GRID =====
           Expanded(
             child: Obx(() {
-              final loading = productController.isHomeProduct.value ||
-                  productController.isHandPicked.value;
+              // ✅ Skip loading animation if search results are provided
+              final loading = widget.searchResults == null &&
+                  (productController.isHomeProduct.value ||
+                      productController.isHandPicked.value);
 
               if (loading) {
                 return _buildSkeletonGrid();
@@ -686,49 +700,53 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                           ),
                         ),
                       ),
+
                       Container(width: 1.sp, color: borderColor, height: 40.sp),
 
-                      // Category
-                      GestureDetector(
-                        onTap: () {},
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10.sp, horizontal: 5.sp),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                                child: Text(
-                                  "CATEGORY",
-                                  style: TextStyle(
-                                    color: const Color(0xFF374151),
-                                    fontSize: 13.sp,
-                                    fontFamily: "Clash Display",
-                                    fontWeight: FontWeight.w500,
-                                    decoration: TextDecoration.none,
+                      // Only show category if NOT in search mode
+                      if (widget.searchResults == null) ...[
+                        // Category
+                        GestureDetector(
+                          onTap: () {},
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10.sp, horizontal: 5.sp),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                                  child: Text(
+                                    "CATEGORY",
+                                    style: TextStyle(
+                                      color: const Color(0xFF374151),
+                                      fontSize: 13.sp,
+                                      fontFamily: "Clash Display",
+                                      fontWeight: FontWeight.w500,
+                                      decoration: TextDecoration.none,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: 5.sp, right: 5.sp, top: 1.sp),
-                                child: Text(
-                                  widget.genderName.toUpperCase(),
-                                  style: TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    fontFamily: "Clash Display Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: appBarColor,
-                                    fontSize: 10.sp,
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 5.sp, right: 5.sp, top: 1.sp),
+                                  child: Text(
+                                    widget.genderName.toUpperCase(),
+                                    style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      fontFamily: "Clash Display Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: appBarColor,
+                                      fontSize: 10.sp,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
 
-                      Container(width: 1.sp, color: borderColor, height: 40.sp),
+                        Container(width: 1.sp, color: borderColor, height: 40.sp),
+                      ],
 
                       // Filters
                       GestureDetector(

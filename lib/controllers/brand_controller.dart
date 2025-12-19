@@ -47,7 +47,8 @@ class BrandController extends BaseController {
   /// ================================================================
   /// ✅ Fetch Brands (Featured or All)
   /// ================================================================
-  Future<void> getBrandData(String type, {bool showLoader = true}) async {
+  Future<void> getBrandData(String type,
+      [int? gender, bool showLoader = true]) async {
     if (showLoader) {
       isBrand.value = true;
     }
@@ -57,13 +58,18 @@ class BrandController extends BaseController {
       final base = ApiConstants.baseUrl;
       final baseUri = Uri.parse(base);
 
-      // ✅ UPDATED: Always include status=true, and optionally isFeatured=true
+      // ✅ UPDATED: Always include status=true, and optionally isFeatured=true and gender
       final queryParams = <String, String>{
         'status': 'true', // ✅ Always fetch only active brands
       };
 
       if (type == "featured") {
         queryParams["isFeatured"] = "true";
+      }
+
+      // ✅ Add gender parameter if provided
+      if (gender != null) {
+        queryParams["gender"] = gender.toString();
       }
 
       final uri = baseUri.replace(
@@ -149,7 +155,8 @@ class BrandController extends BaseController {
       selected.clear();
       selected = List<bool>.generate(brandList.length, (_) => false);
 
-      print("✅ Brands loaded: ${brandList.length} (type: $type)");
+      print(
+          "✅ Brands loaded: ${brandList.length} (type: $type${gender != null ? ', gender: $gender' : ''})");
       print(
           "🪪 Brand names: ${brandList.map((b) => b['name']).take(5).toList()}${brandList.length > 5 ? '...' : ''}");
     } on TimeoutException {

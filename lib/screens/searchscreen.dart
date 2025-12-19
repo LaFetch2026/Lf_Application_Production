@@ -13,7 +13,7 @@ import '../common/widget/lists/dummy_container.dart';
 import '../common/widget/text/app_text.dart';
 import '../controllers/search_controller.dart';
 import '../core/constant/constants.dart';
-import '../screens/catalog/productlist/productdetailsscreen.dart';
+import '../screens/home/women/productviewscreen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -121,19 +121,12 @@ class SearchScreenState extends State<SearchScreen> {
       return;
     }
 
-    final first = items.first;
-    final int? productId = first['id'] is int
-        ? first['id'] as int
-        : int.tryParse('${first['id']}');
-
-    if (productId == null) {
-      getSnackBar("Product id missing");
-      return;
-    }
-
-    Get.to(() => ProductDetailsScreen(
-          productId: productId,
-          type: 'add',
+    // Navigate to ProductViewScreen with search results
+    Get.to(() => ProductViewScreen(
+          title: 'Search Results for "$q"',
+          genderName: 'search',
+          searchResults: items,
+          searchQuery: q,
         ));
   }
 
