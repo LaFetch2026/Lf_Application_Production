@@ -460,4 +460,647 @@ class CartController extends BaseController {
       getSnackBar("Failed to delete cart item.");
     }
   }
+
+  // ==================== GUEST CART FUNCTIONS ====================
+  // These functions handle cart operations for users who are not logged in.
+  // Cart items are stored locally in SharedPreferences and synced after login.
+
+  /// Check if user is in guest mode
+  Future<bool> isGuestUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('userId');
+    final token = prefs.getString('token');
+    final skip = prefs.getBool('skip') ?? false;
+
+    // Guest user if no userId/token OR skip flag is true
+    return (userId == null || token == null || token.isEmpty) || skip;
+  }
+
+  /// Add item to guest cart (local storage) with complete product details
+  Future<void> addToGuestCart({
+    required int productId,
+    required int variantId,
+    required int quantity,
+    Map<String, dynamic>? productDetails,
+    Map<String, dynamic>? variantDetails,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      // Get existing guest cart
+      final cartJson = prefs.getString('guest_cart') ?? '[]';
+      List<dynamic> guestCart = json.decode(cartJson);
+
+      // Check if product+variant already exists
+      final existingIndex = guestCart.indexWhere((item) =>
+          item['productId'] == productId && item['variantId'] == variantId);
+
+      if (existingIndex != -1) {
+        // Update quantity and details
+        guestCart[existingIndex]['quantity'] = quantity;
+        if (productDetails != null) {
+          guestCart[existingIndex]['product'] = productDetails;
+        }
+        if (variantDetails != null) {
+          guestCart[existingIndex]['variant'] = variantDetails;
+        }
+        print("🛒 Guest Cart: Updated quantity for product $productId");
+      } else {
+        // Add new item with complete details
+        guestCart.add({
+          'productId': productId,
+          'variantId': variantId,
+          'quantity': quantity,
+          'product': productDetails,
+          'variant': variantDetails,
+        });
+        print("🛒 Guest Cart: Added product $productId to guest cart");
+      }
+
+      // Save back to SharedPreferences
+      await prefs.setString('guest_cart', json.encode(guestCart));
+
+      // Update cart count
+      cartTotalValue.value = guestCart.length;
+
+      getSnackBar("Added to cart");
+      print("✅ Guest cart saved: ${guestCart.length} items");
+    } catch (e) {
+      print("❌ Error adding to guest cart: $e");
+      getSnackBar("Failed to add item to cart");
+    }
+  }
+
+  /// Get guest cart items from local storage
+  Future<List<Map<String, dynamic>>> getGuestCartItems() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cartJson = prefs.getString('guest_cart') ?? '[]';
+      List<dynamic> guestCart = json.decode(cartJson);
+
+      return guestCart.map((item) => Map<String, dynamic>.from(item)).toList();
+    } catch (e) {
+      print("❌ Error getting guest cart: $e");
+      return [];
+    }
+  }
+
+  /// Remove item from guest cart
+  Future<void> removeFromGuestCart(int productId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cartJson = prefs.getString('guest_cart') ?? '[]';
+      List<dynamic> guestCart = json.decode(cartJson);
+
+      // Remove item
+      guestCart.removeWhere((item) => item['productId'] == productId);
+
+      // Save back
+      await prefs.setString('guest_cart', json.encode(guestCart));
+
+      // Update cart count
+      cartTotalValue.value = guestCart.length;
+
+      print("🗑️ Guest Cart: Removed product $productId from local storage");
+      print("📦 Guest Cart: ${guestCart.length} items remaining");
+      getSnackBar("Item removed from cart");
+    } catch (e) {
+      print("❌ Error removing from guest cart: $e");
+      getSnackBar("Failed to remove item");
+    }
+  }
+
+  /// Get guest cart count
+  Future<int> getGuestCartCount() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cartJson = prefs.getString('guest_cart') ?? '[]';
+      List<dynamic> guestCart = json.decode(cartJson);
+      return guestCart.length;
+    } catch (e) {
+      print("❌ Error getting guest cart count: $e");
+      return 0;
+    }
+  }
+
+  /// Clear guest cart (used after sync)
+  Future<void> clearGuestCart() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('guest_cart');
+      cartTotalValue.value = 0;
+      print("🧹 Guest cart cleared");
+    } catch (e) {
+      print("❌ Error clearing guest cart: $e");
+    }
+  }
+
+  /// Sync guest cart to server after login/signup
+  /// This function is called automatically after successful authentication
+  Future<bool> syncGuestCartToServer() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('userId');
+
+      if (userId == null) {
+        print("⚠️ Cannot sync: userId not found");
+        return false;
+      }
+
+      // Get guest cart items
+      final guestCartItems = await getGuestCartItems();
+
+      if (guestCartItems.isEmpty) {
+        print("ℹ️ No guest cart items to sync");
+        return true;
+      }
+
+      print(
+          "🔄 Syncing ${guestCartItems.length} guest cart items to server...");
+
+      // Prepare payload for sync API
+      final payload = {
+        "userId": userId,
+        "items": guestCartItems
+            .map((item) => {
+                  "productId": item['productId'],
+                  "variantId": item['variantId'],
+                  "quantity": item['quantity'] ?? 1,
+                })
+            .toList(),
+      };
+
+      final client = _ensureClient();
+      final url = Uri.parse("${ApiConstants.baseUrl}/cart/sync");
+
+      print("🛰️ POST $url");
+      print("➡️ Payload: ${json.encode(payload)}");
+
+      final response = await client.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(payload),
+      );
+
+      print("🛰️ Sync response status: ${response.statusCode}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print("✅ Guest cart synced successfully!");
+
+        // Clear guest cart after successful sync
+        await clearGuestCart();
+
+        // Fetch the updated cart from server
+        await getCartData();
+
+        getSnackBar("Cart items synced successfully");
+        return true;
+      } else {
+        print("❌ Cart sync failed: ${response.statusCode}");
+        print("Response: ${response.body}");
+
+        // Don't clear guest cart if sync failed
+        getSnackBar("Failed to sync cart items");
+        return false;
+      }
+    } catch (e, st) {
+      print("❌ Exception in syncGuestCartToServer: $e\n$st");
+      getSnackBar("Error syncing cart items");
+      return false;
+    }
+  }
+
+  /// Wrapper for add to cart that handles both guest and logged-in users
+  Future<void> addToCartUniversal({
+    required int quantity,
+    required String page,
+    required int variantId,
+    required int productId,
+    required int expressValue,
+    required int type,
+    required Color backColor,
+    required int oldInventoryId,
+  }) async {
+    // Check if user is guest
+    final isGuest = await isGuestUser();
+
+    if (isGuest) {
+      // Add to guest cart (local storage)
+      print("🎭 User is guest, adding to local cart");
+
+      if (page == "quantity" || page == "size") showLoading();
+
+      try {
+        // Validate variant - use a local variable
+        int finalVariantId = variantId;
+
+        if (finalVariantId == 0) {
+          final productController = Get.isRegistered<ProductController>()
+              ? Get.find<ProductController>()
+              : Get.put(ProductController());
+
+          final selectedVariant = productController.getSelectedVariant();
+          if (selectedVariant != null) {
+            finalVariantId = selectedVariant["id"];
+          } else {
+            getSnackBar("Please select size or color first.");
+            return;
+          }
+        }
+
+        // Get product details from ProductController to store in guest cart
+        final productController = Get.isRegistered<ProductController>()
+            ? Get.find<ProductController>()
+            : null;
+
+        Map<String, dynamic>? productDetails;
+        Map<String, dynamic>? variantDetails;
+
+        if (productController != null &&
+            productController.productDetails.isNotEmpty) {
+          try {
+            // Get current product data - convert through JSON to ensure mutable map
+            final currentProduct = Map<String, dynamic>.from(
+                json.decode(json.encode(productController.productDetails)));
+
+            // Extract essential product info
+            productDetails = {
+              'id': currentProduct['id'],
+              'title': currentProduct['title'] ?? '',
+              'imageUrls': currentProduct['imageUrls'] ?? [],
+              'brandId': currentProduct['brandId'],
+              'brand': currentProduct['brand'],
+            };
+
+            // Find and extract variant info
+            final variants = currentProduct['variants'] as List? ?? [];
+            final variant = variants.firstWhere(
+              (v) => v['id'] == finalVariantId,
+              orElse: () => null,
+            );
+
+            if (variant != null) {
+              // Store variant with price fallbacks from product level
+              // This ensures prices are available even when variant doesn't have them
+              variantDetails = {
+                'id': variant['id'],
+                'size': variant['size'],
+                'color': variant['color'],
+                // Price fields: try variant first, fallback to product level
+                'lfMsp': variant['lfMsp'] ?? currentProduct['lfMsp'],
+                'price': variant['price'] ?? currentProduct['lfMsp'],
+                'mrp': variant['mrp'] ?? currentProduct['mrp'],
+                'compareAtPrice':
+                    variant['compareAtPrice'] ?? currentProduct['mrp'],
+                'inventory': variant['inventory'],
+              };
+              
+              print(
+                  "💾 Storing variant for guest cart: id=${variant['id']}, lfMsp=${variantDetails!['lfMsp']}, price=${variantDetails['price']}, mrp=${variantDetails['mrp']}");
+            }
+          } catch (e) {
+            print('⚠️ Error extracting product details: $e');
+          }
+        }
+
+        await addToGuestCart(
+          productId: productId,
+          variantId: finalVariantId,
+          quantity: quantity,
+          productDetails: productDetails,
+          variantDetails: variantDetails,
+        );
+      } finally {
+        if (page == "quantity" || page == "size") hideLoading();
+      }
+    } else {
+      // User is logged in, use existing function
+      print("👤 User is logged in, adding to server cart");
+      await callAddtoCart(
+        quantity,
+        page,
+        variantId,
+        productId,
+        expressValue,
+        type,
+        backColor,
+        oldInventoryId,
+      );
+    }
+  }
+
+  /// Wrapper for delete cart that handles both guest and logged-in users
+  Future<void> deleteFromCartUniversal(
+      Color backgroundColor, int productId) async {
+    final isGuest = await isGuestUser();
+
+    if (isGuest) {
+      print("🎭 User is guest, removing from local cart");
+      await removeFromGuestCart(productId);
+
+      // Reload guest cart UI if on cart screen
+      if (backgroundColor == whiteColor) {
+        await loadGuestCartForDisplay();
+      }
+    } else {
+      print("👤 User is logged in, removing from server cart");
+      await callDeleteCart(backgroundColor, productId);
+    }
+  }
+
+  /// Load guest cart for display in cart screen (fetch fresh data from API for real-time stock)
+  Future<void> loadGuestCartForDisplay() async {
+    isOrder.value = true;
+    try {
+      final guestCartItems = await getGuestCartItems();
+
+      if (guestCartItems.isEmpty) {
+        print("📦 Guest cart is empty");
+        _clearCartUi();
+        return;
+      }
+
+      print("📦 Loading ${guestCartItems.length} guest cart items for display");
+
+      final client = _ensureClient();
+
+      // Transform guest cart items to match orderList format
+      List<Map<String, dynamic>> cartProducts = [];
+
+      for (var item in guestCartItems) {
+        try {
+          final productId = item['productId'];
+          final variantId = item['variantId'];
+          final quantity = item['quantity'] ?? 1;
+
+          if (productId == null || variantId == null) {
+            print("⚠️ Skipping item without productId or variantId");
+            continue;
+          }
+
+          // Fetch fresh product data from API for real-time stock information
+          final url = Uri.parse("${ApiConstants.baseUrl}/products/$productId");
+          print("🌐 Fetching product data for guest cart: $url");
+
+          Map<String, dynamic>? product;
+          Map<String, dynamic>? variant;
+
+          try {
+            final response = await client.get(url);
+
+            if (response.statusCode == 200) {
+              final productData = json.decode(response.body);
+              product = productData is Map && productData['data'] != null
+                  ? (productData['data'] as Map<String, dynamic>)
+                  : (productData as Map<String, dynamic>?);
+
+              if (product != null) {
+                // Find the specific variant
+                final variants = product['variants'] as List? ?? [];
+                variant = variants.firstWhere(
+                  (v) => v['id'] == variantId,
+                  orElse: () => null,
+                ) as Map<String, dynamic>?;
+              }
+            }
+          } catch (e) {
+            print("⚠️ API error fetching product $productId: $e");
+          }
+
+          // Fallback to stored data if API fails or returns no data
+          if (product == null || variant == null) {
+            print("📦 Using stored data as fallback for product $productId");
+            final storedProduct = item['product'] as Map<String, dynamic>?;
+            final storedVariant = item['variant'] as Map<String, dynamic>?;
+
+            if (storedProduct != null && storedVariant != null) {
+              product = storedProduct;
+              variant = storedVariant;
+            } else {
+              print(
+                  "⚠️ No stored data available for product $productId, skipping");
+              continue;
+            }
+          }
+
+          if (product == null || variant == null) {
+            print("⚠️ Could not load product $productId");
+            continue;
+          }
+
+          // Parse price values safely
+          num parsePrice(dynamic value) {
+            if (value == null) return 0;
+            if (value is num) return value;
+            if (value is String) return num.tryParse(value) ?? 0;
+            return 0;
+          }
+
+          // Image wrapper function (same as logged-in cart)
+          List<Map<String, dynamic>> wrapImages(dynamic imgs) {
+            final out = <Map<String, dynamic>>[];
+            if (imgs == null) return out;
+            if (imgs is String && imgs.trim().isNotEmpty)
+              return [
+                {"name": imgs.trim()}
+              ];
+
+            if (imgs is List) {
+              for (final it in imgs) {
+                if (it == null) continue;
+                if (it is String && it.trim().isNotEmpty) {
+                  out.add({"name": it.trim()});
+                } else if (it is Map) {
+                  final mm = Map<String, dynamic>.from(it);
+                  final val = (mm["name"] ??
+                          mm["url"] ??
+                          mm["image"] ??
+                          mm["src"] ??
+                          "")
+                      .toString();
+                  if (val.isNotEmpty) out.add({"name": val});
+                }
+              }
+            }
+            return out;
+          }
+
+          // Extract brand name - handle both string and object formats
+          String getBrandName(dynamic brand) {
+            if (brand == null) return '';
+            if (brand is String) return brand;
+            if (brand is Map) {
+              return (brand['name'] ?? brand['title'] ?? '').toString();
+            }
+            return brand.toString();
+          }
+
+          // Get price from variant - try multiple sources
+          // Priority: 
+          // 1. Stored variant fields (lfMsp, price)
+          // 2. API variant fields (price, lfMsp)  
+          // 3. API product-level fields (lfMsp, msp)
+          final variantPrice = parsePrice(variant['lfMsp'] ??
+              variant['price'] ??
+              product['lfMsp'] ??
+              product['msp'] ??
+              variant['sellingPrice'] ??
+              0);
+
+          // Get MRP from variant or product level
+          final variantMrp = parsePrice(variant['mrp'] ??
+              variant['compareAtPrice'] ??
+              product['mrp'] ??
+              variant['originalPrice'] ??
+              variantPrice);
+
+          // Debug: Log what fields are available in variant
+          print(
+              "🔍 Variant $variantId fields: lfMsp=${variant['lfMsp']}, price=${variant['price']}, mrp=${variant['mrp']}");
+          print(
+              "🔍 Product-level: lfMsp=${product['lfMsp']}, msp=${product['msp']}, mrp=${product['mrp']}");
+          print("💵 Computed prices: selling=$variantPrice, mrp=$variantMrp");
+
+          // Transform to match the format expected by cartscreen (EXACTLY like logged-in cart)
+          final transformedProduct = {
+            'id': product['id'] ?? productId,
+            'name': (product['title'] ?? product['name'] ?? '').toString(),
+            'brand_name': '', // Empty to match logged-in cart UI (only shows product name)
+            'price': variantPrice,
+            'mrp': variantMrp,
+            'images': wrapImages(product['imageUrls'] ?? product['images']),
+            'express_delivery': product['express_delivery'] == true,
+            'wishlisted': product['wishlisted'] == true,
+          };
+
+          // Get REAL stock from backend (fresh data!)
+          // Try multiple possible field names for inventory (prioritize inventoryQuantity to match logged-in flow)
+          dynamic invValue = variant['inventoryQuantity'] ??
+              variant['inventory'] ??
+              variant['stock'] ??
+              variant['stocks'];
+
+          int stock = 0;
+          if (invValue != null) {
+            // If inventory is an object (like from stored data), extract the stock value
+            if (invValue is Map) {
+              invValue = invValue['availableStock'] ??
+                  invValue['stock'] ??
+                  invValue['stocks'] ??
+                  invValue['inventoryQuantity'];
+            }
+
+            if (invValue is int) {
+              stock = invValue;
+            } else if (invValue is num) {
+              stock = invValue.toInt();
+            } else if (invValue is String) {
+              stock = int.tryParse(invValue) ?? 0;
+            } else {
+              // Sometimes stock might be negative, treat as 0
+              stock = 0;
+            }
+          }
+
+          // Ensure stock is at least 1 if variant exists (prevent false "out of stock")
+          if (stock == 0) {
+            print(
+                "⚠️ Stock is 0 for variant $variantId, checking if this is an error...");
+            // If the variant exists in the API response, assume at least 1 in stock
+            // This prevents false "OUT OF STOCK" errors when API doesn't return inventory data
+            stock = 1;
+          }
+
+          print(
+              "📊 Product: ${product['title']}, Variant: $variantId, Stock: $stock (raw: $invValue)");
+          print(
+              "💰 Price: ${transformedProduct['price']}, MRP: ${transformedProduct['mrp']}");
+          print(
+              "🏷️ Name: ${transformedProduct['name']}, Brand: ${transformedProduct['brand_name']}");
+          print("🖼️ Images: ${transformedProduct['images']}");
+
+          final transformedInventory = {
+            'id': variant['id'] ?? variantId,
+            'stocks': stock, // Use real stock from backend
+            'product_matrix_name_size': variant['size']?.toString() ?? '',
+          };
+
+          final transformedVariant = {
+            'id': variant['id'] ?? variantId,
+            'price': variantPrice, // Use the already computed price
+            'title': '${product['title'] ?? ''} - ${variant['size'] ?? ''}',
+            'imageSrc': '',
+            'selectedOptions': [
+              if (variant['size'] != null &&
+                  variant['size'].toString().isNotEmpty)
+                {'name': 'size', 'value': variant['size'].toString()},
+              if (variant['color'] != null &&
+                  variant['color'].toString().isNotEmpty)
+                {'name': 'color', 'value': variant['color'].toString()},
+            ],
+          };
+
+          cartProducts.add({
+            'id': 0, // Guest cart items don't have cart item IDs
+            'quantity': quantity,
+            'product': transformedProduct,
+            'inventory': transformedInventory,
+            'product_variant': transformedVariant,
+            'status': 'active',
+          });
+          print(
+              "✅ Loaded product: ${transformedProduct['name']} (Stock: $stock)");
+        } catch (e) {
+          print("⚠️ Error loading cart item: $e");
+          continue;
+        }
+      }
+
+      print("📊 Total products loaded: ${cartProducts.length}");
+
+      if (cartProducts.isNotEmpty) {
+        // Populate orderList with guest cart products
+        orderList.value = cartProducts;
+        cartTotalValue.value = cartProducts.length;
+
+        // Calculate totals
+        num totalPrice = 0;
+        num totalMrp = 0;
+        for (var item in cartProducts) {
+          final quantity = item['quantity'] ?? 1;
+          final price = item['product']['price'] ?? 0;
+          final mrp = item['product']['mrp'] ?? 0;
+          totalPrice += price * quantity;
+          totalMrp += (mrp > 0 ? mrp : price) * quantity;
+        }
+
+        // Update cart details
+        cartDetails.value = {
+          'id': 0,
+          'total': totalPrice.toStringAsFixed(2),
+          'total_mrp': totalMrp.toStringAsFixed(2),
+          'total_tax': '0',
+          'shipping_cost': '0',
+          'express_delivery_charges': '0',
+          'convenience_fee': '0',
+          'coupon_discount': '0.00',
+          'discount': null,
+          'address': null,
+        };
+
+        print(
+            "✅ Guest cart loaded: ${cartProducts.length} products, total: ₹$totalPrice");
+        print("📦 OrderList updated with ${orderList.length} items");
+      } else {
+        print("⚠️ No valid products found in guest cart");
+        _clearCartUi();
+      }
+    } catch (e, st) {
+      print("❌ Exception in loadGuestCartForDisplay: $e\n$st");
+      _clearCartUi();
+    } finally {
+      isOrder.value = false;
+      update();
+    }
+  }
 }

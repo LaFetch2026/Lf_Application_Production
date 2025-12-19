@@ -80,7 +80,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
               Get.to(const SearchScreen());
             },
             onPressedCart: () {
-              Get.to(const CartScreen());
+              Get.to(CartScreen());
             },
           ), */
           ProductAppbar(
@@ -109,7 +109,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                     });
               },
               onPressedCart: () async {
-                Get.to(const CartScreen())?.then((value) => setState(
+                Get.to(CartScreen())?.then((value) => setState(
                       () {
                         cartController.getCartData();
                       },

@@ -356,7 +356,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                     ),
                     InkWell(
                       onTap: () async {
-                        Navigator.push(context, scaleIn(const CartScreen()))
+                        Navigator.push(context, scaleIn(CartScreen()))
                             .then((_) {
                           SystemChrome.setSystemUIOverlayStyle(
                             SystemUiOverlayStyle(

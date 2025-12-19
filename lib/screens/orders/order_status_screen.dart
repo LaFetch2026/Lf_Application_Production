@@ -116,7 +116,7 @@ class OrderStatusScreen extends StatelessWidget {
           "title": "UH-OH SOMETHING WENT WRONG!",
           "subtitle": null,
           "buttonText": "GO TO BAG",
-          "onTap": () => Get.offAll(() => const CartScreen()),
+          "onTap": () => Get.offAll(() => CartScreen()),
         };
     }
   }

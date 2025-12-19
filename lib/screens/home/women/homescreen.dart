@@ -170,14 +170,16 @@ class HomeScreenState extends State<HomeScreen> {
       return true;
     }
 
-    // Check if cache expired
-    if (_lastDataFetch != null) {
-      final timeSinceLastFetch = DateTime.now().difference(_lastDataFetch!);
-      if (timeSinceLastFetch > _cacheValidDuration) {
-        print(
-            "⏰ Cache expired (${timeSinceLastFetch.inMinutes} minutes old) - fetching fresh data");
-        return true;
-      }
+    // Authentication state changed (guest -> authenticated or vice versa)
+    if (_lastAuthState != null && _lastAuthState != isGuest) {
+      print("🔐 Authentication state changed (wasGuest: $_lastAuthState, isGuest: $isGuest) - forcing data refresh");
+      return true;
+    }
+
+    // Cache expired
+    final timeSinceLastFetch = DateTime.now().difference(_lastDataFetch!);
+    if (timeSinceLastFetch > _cacheValidDuration) {
+      return true;
     }
 
     // ✅ NEW: Check if backend data has changed using lightweight API call
@@ -278,9 +280,9 @@ class HomeScreenState extends State<HomeScreen> {
     final currentGender = homeController.homeGenderValue.value;
     await _fetchAllData(currentGender);
 
-    if (mounted) {
-      setState(() {}); // Trigger UI rebuild
-    }
+    _lastDataFetch = DateTime.now();
+    _lastGenderValue = currentGender;
+    _lastAuthState = isGuest;
   }
 
   @override
@@ -578,19 +580,19 @@ class HomeScreenState extends State<HomeScreen> {
                   return;
                 }
 
-                Get.to(const CartScreen())
-                    ?.then((_) => cartController.getCartData());
-                await analytics.logEvent(
-                  name: "cart_page",
-                  parameters: {"page_name": "cart_page"},
-                );
-              },
-              onPressedDropDown: () {
-                homeController.showGenderList.value =
-                    !homeController.showGenderList.value;
-                setState(() {});
-              },
-            ),
+              Get.to(CartScreen())
+                  ?.then((_) => cartController.getCartData());
+              await analytics.logEvent(
+                name: "cart_page",
+                parameters: {"page_name": "cart_page"},
+              );
+            },
+            onPressedDropDown: () {
+              homeController.showGenderList.value =
+                  !homeController.showGenderList.value;
+              setState(() {});
+            },
+          ),
 
             // Gender tabs...
             Obx(

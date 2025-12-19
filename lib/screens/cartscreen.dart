@@ -212,8 +212,8 @@ class CartScreenState extends State<CartScreen> {
       // ✅ Step 4: Build payload for initiate-payment
       final List<Map<String, dynamic>> items = [];
       for (final item in controller.orderList) {
-        final product = (item["product"] ?? {}) as Map<String, dynamic>;
-        final inventory = (item["inventory"] ?? {}) as Map<String, dynamic>;
+        final product = Map<String, dynamic>.from(item["product"] ?? {});
+        final inventory = Map<String, dynamic>.from(item["inventory"] ?? {});
 
         items.add({
           "productName": product["name"] ?? "",
@@ -333,6 +333,7 @@ class CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     super.initState();
+    debugPrint("🔍🔍🔍 CartScreen initState() called");
 
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onPaymentSuccess);
@@ -369,17 +370,20 @@ class CartScreenState extends State<CartScreen> {
   }
 
   Future<void> getPreferenceValue() async {
+    debugPrint("🔍 getPreferenceValue() called");
     final prefs = await SharedPreferences.getInstance();
     final phone = prefs.getString("phonenumber");
-
-    final skip = prefs.getBool("skip") == true;
 
     // ✅ Restore saved coupon
     final savedCouponCode = prefs.getString('applied_coupon_code');
     final savedCouponDiscount = prefs.getInt('applied_coupon_discount');
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      debugPrint("🔍 PostFrameCallback executing");
+      if (!mounted) {
+        debugPrint("⚠️ Widget not mounted, returning");
+        return;
+      }
 
       if (phone != null) {
         controller.userNumber.value = phone;
@@ -395,15 +399,23 @@ class CartScreenState extends State<CartScreen> {
         controller.couponText.value = "Apply Coupon";
       }
 
-      if (skip) {
-        Get.to(() => const LoginScreen(initialTab: 0, hideBack: true));
-        return;
-      }
+      // 🛒 Check if user is guest or logged in
+      debugPrint("🔍 Checking if user is guest...");
+      final isGuest = await controller.isGuestUser();
+      debugPrint("🔍 isGuest = $isGuest");
 
-      if (widget.backgroundcolor == whiteColor) {
-        controller.getCartData();
+      if (isGuest) {
+        // Guest user - load guest cart from local storage
+        debugPrint("🎭 Guest user detected, loading guest cart");
+        await controller.loadGuestCartForDisplay();
       } else {
-        // controller.getExpressCartData();
+        // Logged in user - load cart from server
+        debugPrint("👤 Logged in user, loading server cart");
+        if (widget.backgroundcolor == whiteColor) {
+          controller.getCartData();
+        } else {
+          // controller.getExpressCartData();
+        }
       }
     });
   }
@@ -610,9 +622,9 @@ class CartScreenState extends State<CartScreen> {
           itemBuilder: (ctx, index) {
             final item = items[index];
             final product =
-                (item["product"] ?? const {}) as Map<String, dynamic>;
+                Map<String, dynamic>.from(item["product"] ?? const {});
             final inventory =
-                (item["inventory"] ?? const {}) as Map<String, dynamic>;
+                Map<String, dynamic>.from(item["inventory"] ?? const {});
             final imgUrl = _firstImageUrl(product);
             final outOfStock = _asNum(inventory["stocks"]).toInt() == 0;
 
@@ -1013,7 +1025,7 @@ class CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildOutOfStockActions(Map item, int index) {
-    final product = (item["product"] ?? {}) as Map<String, dynamic>;
+    final product = Map<String, dynamic>.from(item["product"] ?? {});
     final isWishlisted = product["wishlisted"] == true;
 
     return Padding(
@@ -1742,10 +1754,33 @@ class CartScreenState extends State<CartScreen> {
                           ),
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
+  }
+
+  // Handle guest user trying to checkout - redirect to signup
+  Future<void> _handleGuestSignUp() async {
+    final guestCartCount = await controller.getGuestCartCount();
+
+    if (guestCartCount == 0) {
+      getSnackBar("Your cart is empty");
+      return;
+    }
+
+    // Show a message explaining cart will be saved
+    getSnackBar("Sign up to save your cart and checkout");
+
+    // Navigate to login/signup screen
+    await analytics.logEvent(
+      name: 'guest_cart_signup_clicked',
+      parameters: <String, Object>{
+        'guest_cart_items': guestCartCount,
+      },
+    );
+
+    Get.to(() => const LoginScreen(initialTab: 0));
   }
 
   Widget _buildStockError() {
@@ -1809,7 +1844,7 @@ class CartScreenState extends State<CartScreen> {
           click1: () => Get.back(),
           click2: () async {
             Get.back();
-            await controller.callDeleteCart(widget.backgroundcolor, productId);
+            await controller.deleteFromCartUniversal(widget.backgroundcolor, productId);
           },
           btncolor: colorPrimary,
           text: "Are you sure you want to remove this item?",
@@ -1826,7 +1861,7 @@ class CartScreenState extends State<CartScreen> {
   }
 
   void _handleWishlistAction(Map item, bool isWishlisted) async {
-    final product = (item["product"] ?? {}) as Map<String, dynamic>;
+    final product = Map<String, dynamic>.from(item["product"] ?? {});
     final productId = (product["id"] is num)
         ? (product["id"] as num).toInt()
         : int.tryParse("${product["id"]}") ?? 0;
@@ -1864,7 +1899,7 @@ class CartScreenState extends State<CartScreen> {
           productImage: preview,
           onPressed: (boardId) async {
             wishlistController.addProductToBoard(boardId, productId);
-            await controller.callDeleteCart(widget.backgroundcolor, productId);
+            await controller.deleteFromCartUniversal(widget.backgroundcolor, productId);
           },
           wishlistList: wishlistController.wishlistList,
         ),

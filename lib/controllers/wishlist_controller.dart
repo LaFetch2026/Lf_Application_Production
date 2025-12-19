@@ -233,7 +233,9 @@ class WishlistController extends BaseController {
     final auth = await _auth();
     if (auth == null) return;
 
-    final userId = auth['userId'] as int;
+    final userId = auth['userId'];
+    if (userId == null) return; // Guest users don't have boards
+
     final token = auth['token'] as String;
 
     isLoading.value = true;
@@ -292,7 +294,9 @@ class WishlistController extends BaseController {
     final auth = await _auth();
     if (auth == null) return;
 
-    final userId = auth['userId'] as int;
+    final userId = auth['userId'];
+    if (userId == null) return; // Guest users can't create boards
+
     final token = auth['token'] as String;
 
     showLoading();
@@ -476,7 +480,9 @@ class WishlistController extends BaseController {
     final auth = await _auth();
     if (auth == null) return;
 
-    final userId = auth['userId'] as int;
+    final userId = auth['userId'];
+    if (userId == null) return; // Guest users can't add to boards
+
     final token = auth['token'] as String;
 
     showLoading();
@@ -515,7 +521,9 @@ class WishlistController extends BaseController {
     final auth = await _auth();
     if (auth == null) return;
 
-    final userId = auth['userId'] as int;
+    final userId = auth['userId'];
+    if (userId == null) return; // Guest users can't remove from boards
+
     final token = auth['token'] as String;
 
     showLoading();

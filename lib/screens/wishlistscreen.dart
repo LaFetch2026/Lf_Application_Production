@@ -89,7 +89,7 @@ class WishlistScreenState extends State<WishlistScreen> {
             isWishlist: false,
             isCart: false,
             onPressedSearch: () => Get.to(() => const SearchScreen()),
-            onPressedCart: () => Get.to(() => const CartScreen()),
+            onPressedCart: () => Get.to(() => CartScreen()),
           ),
           Expanded(
             child: SingleChildScrollView(

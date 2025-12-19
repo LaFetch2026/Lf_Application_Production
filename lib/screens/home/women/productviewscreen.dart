@@ -22,6 +22,7 @@ import '../../../controllers/cart_controller.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
 import '../../../controllers/brand_controller.dart';
+import '../../../controllers/catalog_controller.dart';
 import '../../../core/constant/constants.dart';
 import 'dart:async';
 
@@ -48,22 +49,35 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   final wishlistController = Get.put(WishlistController());
   final controller = Get.put(CartController());
   final brandController = Get.put(BrandController());
+  final catalogController = Get.put(CatalogController(), permanent: false);
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   // ✅ Filter and Sort State
   List<int> _appliedBrandIds = [];
-  String _appliedMinPrice = "100";
-  String _appliedMaxPrice = "50000";
+  String _appliedMinPrice = "300";
+  String _appliedMaxPrice = "100000";
   String _appliedSortOption = "recommended";
+  int? _appliedSuperCatId;
+  int? _appliedCatId;
+  int? _appliedSubCatId;
+  int? _appliedCollectionId;
   bool _hasActiveFilters = false;
   bool _isBrandsLoaded = false;
+  bool _isProductsLoaded = false;
+  bool _isCategoriesLoaded = false;
+  List<Map<String, dynamic>> _collections = [];
+
+  // ✅ Hash tracking for change detection
+  String? _lastProductListHash;
+  String? _lastFilterHash;
+  String? _lastSortHash;
+
+  // ✅ Store original home product IDs for client-side filtering
+  Set<int> _originalHomeProductIds = {};
 
   // ✅ Debounce timer
   Timer? _debounceTimer;
-
-  // ✅ Filtered and sorted products
-  List<Map<String, dynamic>> _displayedProducts = [];
 
   // ---- helpers ----
   String _firstImageUrl(Map<String, dynamic> item) {
@@ -83,11 +97,12 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   }
 
   num? _priceOf(Map<String, dynamic> item) {
-    return item['price'] ??
+    // Return the selling price (NOT mrp)
+    return item['displayPrice'] ??
+        item['basePrice'] ??
+        item['price'] ??
         item['msp'] ??
-        item['lfMsp'] ??
-        item['mrp'] ??
-        item['basePrice'];
+        item['lfMsp'];
   }
 
   String _brandOf(Map<String, dynamic> item) {
@@ -102,34 +117,20 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     return (item['title'] ?? item['name'] ?? '').toString();
   }
 
-  num? _parseNum(dynamic v) {
-    if (v is num) return v;
-    if (v is String) return num.tryParse(v);
-    return null;
+  // ✅ Generate hash for product list to detect changes
+  String _generateProductHash(List<dynamic> products) {
+    if (products.isEmpty) return 'empty';
+    return products.map((p) => p['id'].toString()).join('|');
   }
 
-  String? _imageFrom(Map<String, dynamic> m) {
-    final urlList = (m['imageUrls'] as List?)
-            ?.whereType<String>()
-            .where((s) => s.trim().isNotEmpty)
-            .toList() ??
-        [];
-    if (urlList.isNotEmpty) return urlList.first;
+  // ✅ Generate hash for current filter state
+  String _generateFilterHash() {
+    return '${_appliedBrandIds.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_${_appliedSuperCatId}_${_appliedCatId}_${_appliedSubCatId}_${_appliedCollectionId}_$_hasActiveFilters';
+  }
 
-    for (final key in const [
-      'image',
-      'thumbnail',
-      'thumb',
-      'cover',
-      'defaultImage',
-      'primaryImage',
-      'img',
-      'photo'
-    ]) {
-      final v = m[key];
-      if (v is String && v.trim().isNotEmpty) return v;
-    }
-    return null;
+  // ✅ Generate hash for current sort state
+  String _generateSortHash() {
+    return _appliedSortOption;
   }
   // ---- end helpers ----
 
@@ -174,8 +175,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         await productController.getHomeProduct(currentGender, withLimit: false);
       }
 
-      await _loadBrandsIfNeeded();
-      _updateDisplayedProducts();
+      // ✅ Load and track home products
+      _loadHomeProductsIfNeeded();
     });
 
     _clearPreferenceValue();
@@ -204,7 +205,54 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     print("✅ Brands loaded successfully");
   }
 
-  // ✅ Get all products from collections or search results
+  // ✅ Load initial home products
+  Future<void> _loadHomeProductsIfNeeded() async {
+    if (_isProductsLoaded) {
+      print("✅ Home products already loaded - skipping");
+      return;
+    }
+
+    // Home products should already be loaded from home screen
+    // Just store the original product IDs for filtering
+    final allProducts = _getAllProducts();
+    _originalHomeProductIds = allProducts
+        .map((p) => int.tryParse(p['id']?.toString() ?? ''))
+        .whereType<int>()
+        .toSet();
+
+    // Extract collections from home product list
+    // Use collectionID from products if available, otherwise use collection id
+    _collections = productController.homeProductList
+        .whereType<Map<String, dynamic>>()
+        .map((c) {
+          // Check if collection has products with collectionID
+          final products = c['products'] as List?;
+          final firstProduct = products?.isNotEmpty == true ? products!.first : null;
+          final collectionId = firstProduct != null && firstProduct is Map
+              ? (firstProduct['collectionID'] ?? c['id'])
+              : c['id'];
+
+          return {
+            'id': collectionId,
+            'name': c['name'] ?? 'Unknown',
+          };
+        })
+        .toList();
+
+    // Generate initial hashes
+    _lastProductListHash = _generateProductHash(allProducts);
+    _lastFilterHash = _generateFilterHash();
+    _lastSortHash = _generateSortHash();
+
+    _isProductsLoaded = true;
+    print("✅ Home products tracked (${_originalHomeProductIds.length} items)");
+    print("✅ Collections loaded: ${_collections.length}");
+    for (final col in _collections) {
+      print("   - ID: ${col['id']}, Name: ${col['name']}");
+    }
+  }
+
+  // ✅ Get all products from collections
   List<Map<String, dynamic>> _getAllProducts() {
     // If search results are provided, return them directly
     if (widget.searchResults != null && widget.searchResults!.isNotEmpty) {
@@ -241,120 +289,213 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     return allProducts;
   }
 
-  // ✅ Apply filters to products
-  List<Map<String, dynamic>> _applyFilters(
-      List<Map<String, dynamic>> products) {
-    if (!_hasActiveFilters) return products;
+  // ✅ Apply filters and sort using API (like categoryproduct.dart)
+  Future<void> _applyFiltersAndSort() async {
+    try {
+      // Check if filter/sort state has actually changed
+      final currentFilterHash = _generateFilterHash();
+      final currentSortHash = _generateSortHash();
 
-    return products.where((product) {
-      // Brand filter
-      if (_appliedBrandIds.isNotEmpty) {
-        final brandId = product['brandId'];
-        final productBrandId = brandId is int
-            ? brandId
-            : int.tryParse(brandId?.toString() ?? '') ?? 0;
+      final filterChanged = currentFilterHash != _lastFilterHash;
+      final sortChanged = currentSortHash != _lastSortHash;
 
-        if (!_appliedBrandIds.contains(productBrandId)) {
-          return false;
-        }
+      if (!filterChanged && !sortChanged) {
+        print("⚠️ No filter/sort changes detected - skipping API call");
+        return;
       }
 
-      // Price filter
-      final price = _priceOf(product);
-      if (price != null) {
-        final minPrice = double.parse(_appliedMinPrice);
-        final maxPrice = double.parse(_appliedMaxPrice);
+      print("🔄 Applying changes - Filter: $filterChanged, Sort: $sortChanged");
 
-        if (price < minPrice || price > maxPrice) {
-          return false;
+      // ✅ Determine the action based on filters and sort state
+      // Case 1: Has filters → Call API (with or without sort)
+      // Case 2: Only sort (no filters) → Client-side sort
+      // Case 3: Neither filters nor sort → Show original
+      
+      if (_hasActiveFilters && filterChanged) {
+        // 📞 Case 1: Filters changed → Call /filter-products API
+        print("🔹 Case 1: Filter changed (has active filters)");
+        print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
+        print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
+        print("   • superCatId   → $_appliedSuperCatId");
+        print("   • catId        → $_appliedCatId");
+        print("   • subCatId     → $_appliedSubCatId");
+        print("   • collectionId → $_appliedCollectionId");
+        print("   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
+
+        await catalogController.getFilterAndSortProducts(
+          brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
+          minPrice: _appliedMinPrice,
+          maxPrice: _appliedMaxPrice,
+          superCatId: _appliedSuperCatId,
+          catId: _appliedCatId,
+          subCatId: _appliedSubCatId,
+          collectionId: _appliedCollectionId,
+          sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
+        );
+
+        // ✅ Client-side filter: Only filter by home products if NO category filters are applied
+        // When user explicitly filters by super category, category, or sub-category, trust the API results
+        final apiResults = List<dynamic>.from(catalogController.categoryProductList);
+
+        if (_appliedSuperCatId == null && _appliedCatId == null && _appliedSubCatId == null && _appliedCollectionId == null) {
+          // No category/collection filters - restrict to home products
+          final filteredResults = apiResults.where((product) {
+            final productId = int.tryParse(product['id']?.toString() ?? '');
+            return productId != null && _originalHomeProductIds.contains(productId);
+          }).toList();
+
+          print("🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} from this view (no category/collection filters)");
+          catalogController.categoryProductList.assignAll(filteredResults);
+        } else {
+          // Category/collection filters applied - but backend may ignore filters, so filter client-side
+          var filteredResults = apiResults;
+
+          // ✅ Client-side filter by collectionId (backend ignores this parameter)
+          if (_appliedCollectionId != null) {
+            filteredResults = filteredResults.where((product) {
+              final productCollectionId = int.tryParse(product['collectionID']?.toString() ?? '');
+              return productCollectionId == _appliedCollectionId;
+            }).toList();
+            print("🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} with collectionID=$_appliedCollectionId");
+          } else {
+            print("🔍 API returned ${apiResults.length} products, using all (category filters applied)");
+          }
+
+          catalogController.categoryProductList.assignAll(filteredResults);
         }
+        
+        _lastFilterHash = currentFilterHash;
+        if (sortChanged) _lastSortHash = currentSortHash;
+
+        print("✅ Filter applied - ${catalogController.categoryProductList.length} products");
+        
+      } else if (!_hasActiveFilters && _appliedSortOption != "recommended" && sortChanged) {
+        // 🔧 Case 2: ONLY sort changed (no filters) → Client-side sort
+        print("🔧 Client-side sorting: $_appliedSortOption (no filters, so not calling API)");
+        
+        // Get original products
+        final productsToSort = List<dynamic>.from(_getAllProducts());
+        
+        productsToSort.sort((a, b) {
+          final priceA = (a['price'] ?? a['basePrice'] ?? a['displayPrice'] ?? 0) as num;
+          final priceB = (b['price'] ?? b['basePrice'] ?? b['displayPrice'] ?? 0) as num;
+          
+          if (_appliedSortOption == 'price_asc') {
+            return priceA.compareTo(priceB);
+          } else if (_appliedSortOption == 'price_desc') {
+            return priceB.compareTo(priceA);
+          } else if (_appliedSortOption == 'whats_new') {
+            final idA = int.tryParse(a['id']?.toString() ?? '0') ?? 0;
+            final idB = int.tryParse(b['id']?.toString() ?? '0') ?? 0;
+            return idB.compareTo(idA);
+          }
+          return 0;
+        });
+        
+        // Store sorted results in catalogController
+        catalogController.categoryProductList.assignAll(productsToSort);
+        _lastSortHash = currentSortHash;
+        
+        print("✅ Client-side sort complete - ${catalogController.categoryProductList.length} products");
+        
+      } else if (_hasActiveFilters && sortChanged) {
+        // 🔧 Case 3: Filters already applied, but sort changed → Re-apply filters with new sort
+        print("🔹 Case 3: Sort changed (filters already applied)");
+        print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
+        print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
+        print("   • superCatId   → $_appliedSuperCatId");
+        print("   • catId        → $_appliedCatId");
+        print("   • subCatId     → $_appliedSubCatId");
+        print("   • collectionId → $_appliedCollectionId");
+        print("   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
+
+        await catalogController.getFilterAndSortProducts(
+          brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
+          minPrice: _appliedMinPrice,
+          maxPrice: _appliedMaxPrice,
+          superCatId: _appliedSuperCatId,
+          catId: _appliedCatId,
+          subCatId: _appliedSubCatId,
+          collectionId: _appliedCollectionId,
+          sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
+        );
+
+        final apiResults = List<dynamic>.from(catalogController.categoryProductList);
+
+        if (_appliedSuperCatId == null && _appliedCatId == null && _appliedSubCatId == null && _appliedCollectionId == null) {
+          // No category/collection filters - restrict to home products
+          final filteredResults = apiResults.where((product) {
+            final productId = int.tryParse(product['id']?.toString() ?? '');
+            return productId != null && _originalHomeProductIds.contains(productId);
+          }).toList();
+          catalogController.categoryProductList.assignAll(filteredResults);
+        } else {
+          // Category/collection filters applied - filter client-side by collectionId
+          var filteredResults = apiResults;
+
+          if (_appliedCollectionId != null) {
+            filteredResults = filteredResults.where((product) {
+              final productCollectionId = int.tryParse(product['collectionID']?.toString() ?? '');
+              return productCollectionId == _appliedCollectionId;
+            }).toList();
+          }
+
+          catalogController.categoryProductList.assignAll(filteredResults);
+        }
+
+        _lastSortHash = currentSortHash;
+
+        print("✅ Filters re-applied with new sort - ${catalogController.categoryProductList.length} products");
+        
+      } else if (!_hasActiveFilters && filterChanged) {
+        // Filters cleared - clear filtered results
+        catalogController.categoryProductList.clear();
+        _lastFilterHash = currentFilterHash;
+        print("✅ Filters cleared - showing original products");
+      } else if (_appliedSortOption == "recommended" && sortChanged) {
+        // Sort reset to recommended - clear sorted results if no filters
+        if (!_hasActiveFilters) {
+          catalogController.categoryProductList.clear();
+        }
+        _lastSortHash = currentSortHash;
+        print("✅ Sort reset to recommended");
       }
 
-      return true;
-    }).toList();
-  }
+      setState(() {
+        // Reset pagination when filters change
+        productController.handpickedPage.value = 1;
+      });
 
-  // ✅ Apply sorting to products
-  List<Map<String, dynamic>> _applySort(List<Map<String, dynamic>> products) {
-    final sorted = List<Map<String, dynamic>>.from(products);
-
-    switch (_appliedSortOption) {
-      case "price_asc":
-        sorted.sort((a, b) {
-          final priceA = _priceOf(a) ?? 0;
-          final priceB = _priceOf(b) ?? 0;
-          return priceA.compareTo(priceB);
-        });
-        break;
-
-      case "price_desc":
-        sorted.sort((a, b) {
-          final priceA = _priceOf(a) ?? 0;
-          final priceB = _priceOf(b) ?? 0;
-          return priceB.compareTo(priceA);
-        });
-        break;
-
-      case "whats_new":
-        sorted.sort((a, b) {
-          final dateA = a['createdAt']?.toString() ?? '';
-          final dateB = b['createdAt']?.toString() ?? '';
-          return dateB.compareTo(dateA);
-        });
-        break;
-
-      case "discount":
-        sorted.sort((a, b) {
-          final mrpA = _parseNum(a['mrp']) ?? 0;
-          final priceA = _priceOf(a) ?? mrpA;
-          final discountA = mrpA > 0 ? ((mrpA - priceA) / mrpA * 100) : 0;
-
-          final mrpB = _parseNum(b['mrp']) ?? 0;
-          final priceB = _priceOf(b) ?? mrpB;
-          final discountB = mrpB > 0 ? ((mrpB - priceB) / mrpB * 100) : 0;
-
-          return discountB.compareTo(discountA);
-        });
-        break;
-
-      case "rating":
-        sorted.sort((a, b) {
-          final ratingA = _parseNum(a['rating']) ?? 0;
-          final ratingB = _parseNum(b['rating']) ?? 0;
-          return ratingB.compareTo(ratingA);
-        });
-        break;
-
-      case "recommended":
-      default:
-        // Keep original order
-        break;
+      // Update final hash
+      final List<dynamic> productsForHash = catalogController.categoryProductList.isNotEmpty
+          ? List<dynamic>.from(catalogController.categoryProductList)
+          : _getAllProducts();
+      _lastProductListHash = _generateProductHash(productsForHash);
+    } catch (e) {
+      print("❌ Error applying filters/sort: $e");
+      getSnackBar("Something went wrong, please try again");
     }
-
-    return sorted;
   }
 
-// ✅ Update displayed products - NO setState here
-  List<Map<String, dynamic>> _getDisplayedProducts() {
-    var products = _getAllProducts();
-    products = _applyFilters(products);
-    products = _applySort(products);
-    return products;
-  }
-
-// ✅ Update with setState (for use outside build)
-  void _updateDisplayedProducts() {
-    setState(() {
-      _displayedProducts = _getDisplayedProducts();
-    });
-  }
-
-  // ✅ Debounced update - uses setState version
-  void _updateDisplayedProductsDebounced() {
+  // ✅ Debounced update
+  void _applyFiltersAndSortDebounced() {
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-      _updateDisplayedProducts(); // This one uses setState
+      _applyFiltersAndSort();
     });
+  }
+
+  // ✅ Get displayed products - either filtered or original
+  List<Map<String, dynamic>> _getDisplayedProducts() {
+    // If we have filtered results from API, use those
+    if (catalogController.categoryProductList.isNotEmpty) {
+      return catalogController.categoryProductList
+          .whereType<Map<String, dynamic>>()
+          .toList();
+    }
+
+    // Otherwise, use original products from home
+    return _getAllProducts();
   }
 
   @override
@@ -391,7 +532,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                   parameters: {"page_name": "wishlist_page"});
             },
             onPressedCart: () async {
-              Get.to(const CartScreen())?.then((_) => setState(() {
+              Get.to(CartScreen())?.then((_) => setState(() {
                     controller.getCartData();
                   }));
               analytics.logEvent(
@@ -477,7 +618,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                             final brand = _brandOf(item);
                             final title = _titleOf(item);
                             final price = _priceOf(item);
-                            final mrp = item['mrp'];
+                            final mrp = item['displayMrp'] ?? item['mrp'];
                             final express = item['express_delivery'] == true;
 
                             return GestureDetector(
@@ -801,6 +942,66 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     );
   }
 
+  /// ✅ Helper: Build Category Dropdown
+  Widget _buildCategoryDropdown(
+    String title,
+    int? selectedValue,
+    List<Map<String, dynamic>> options,
+    Function(int?) onChanged,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Select $title",
+          style: const TextStyle(
+            fontFamily: "Franklin Gothic",
+            fontWeight: FontWeight.w700,
+            fontSize: 15,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                ...options.map((option) {
+                  final id = option['id'] as int;
+                  final name = option['name'] as String;
+                  return RadioListTile<int>(
+                    value: id,
+                    groupValue: selectedValue,
+                    activeColor: appBarColor,
+                    title: Text(
+                      name,
+                      style: const TextStyle(
+                        fontFamily: "Franklin Gothic Regular",
+                        color: blackColor,
+                      ),
+                    ),
+                    onChanged: onChanged,
+                  );
+                }),
+                if (selectedValue != null)
+                  TextButton(
+                    onPressed: () => onChanged(null),
+                    child: const Text(
+                      "Clear Selection",
+                      style: TextStyle(
+                        color: appBarColor,
+                        fontFamily: "Franklin Gothic",
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   /// ✅ Filter Bottom Sheet
   Future<void> _showFilterBottomSheet(BuildContext context) async {
     String selectedFilter = "Brand";
@@ -811,7 +1012,20 @@ class ProductViewScreenState extends State<ProductViewScreen> {
       double.parse(_appliedMaxPrice),
     );
 
-    final List<String> filterCategories = ["Brand", "Price Range"];
+    // Category filter selections
+    int? selectedSuperCatId = _appliedSuperCatId;
+    int? selectedCatId = _appliedCatId;
+    int? selectedSubCatId = _appliedSubCatId;
+    int? selectedCollectionId = _appliedCollectionId;
+
+    final List<String> filterCategories = [
+      "Brand",
+      "Price Range",
+      "Super Category",
+      "Category",
+      "Sub Category",
+      "Collection"
+    ];
 
     // ✅ Ensure brands are loaded
     await _loadBrandsIfNeeded();
@@ -877,7 +1091,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                             onPressed: () {
                               setModalState(() {
                                 selectedBrands.clear();
-                                priceRange = const RangeValues(100, 50000);
+                                priceRange = const RangeValues(300, 100000);
+                                selectedSuperCatId = null;
+                                selectedCatId = null;
+                                selectedSubCatId = null;
+                                selectedCollectionId = null;
                               });
                             },
                             child: const Text("CLEAR ALL",
@@ -976,40 +1194,115 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                         );
                                       },
                                     )
-                                  : Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text("Select price range",
-                                            style: TextStyle(
-                                                fontFamily: "Clash Display",
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 15)),
-                                        const SizedBox(height: 8),
-                                        RangeSlider(
-                                          values: priceRange,
-                                          min: 100,
-                                          max: 50000,
-                                          divisions: 100,
-                                          activeColor: appBarColor,
-                                          onChanged: (v) => setModalState(() {
-                                            priceRange = v;
-                                          }),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                  : selectedFilter == "Price Range"
+                                      ? Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text("₹${priceRange.start.toInt()}",
-                                                style: const TextStyle(
-                                                    color: Colors.grey)),
-                                            Text("₹${priceRange.end.toInt()}",
-                                                style: const TextStyle(
-                                                    color: Colors.grey)),
+                                            const Text("Select price range",
+                                                style: TextStyle(
+                                                    fontFamily: "Franklin Gothic",
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 15)),
+                                            const SizedBox(height: 8),
+                                            RangeSlider(
+                                              values: priceRange,
+                                              min: 300,
+                                              max: 100000,
+                                              divisions: 100,
+                                              activeColor: appBarColor,
+                                              onChanged: (v) => setModalState(() {
+                                                priceRange = v;
+                                              }),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text("₹${priceRange.start.toInt()}",
+                                                    style: const TextStyle(
+                                                        color: Colors.grey)),
+                                                Text("₹${priceRange.end.toInt()}",
+                                                    style: const TextStyle(
+                                                        color: Colors.grey)),
+                                              ],
+                                            ),
                                           ],
-                                        ),
-                                      ],
-                                    ),
+                                        )
+                                      : selectedFilter == "Super Category"
+                                          ? _buildCategoryDropdown(
+                                              "Super Category",
+                                              selectedSuperCatId,
+                                              [
+                                                {"id": 1, "name": "Men"},
+                                                {"id": 2, "name": "Women"},
+                                                {"id": 3, "name": "Accessories"},
+                                              ],
+                                              (val) => setModalState(() {
+                                                selectedSuperCatId = val;
+                                              }),
+                                            )
+                                          : selectedFilter == "Category"
+                                              ? _buildCategoryDropdown(
+                                                  "Category",
+                                                  selectedCatId,
+                                                  [
+                                                    {"id": 1, "name": "Topwear"},
+                                                    {"id": 2, "name": "Bottomwear"},
+                                                    {"id": 3, "name": "Footwear"},
+                                                    {"id": 4, "name": "Ethnic Wear"},
+                                                    {"id": 5, "name": "Western Wear"},
+                                                  ],
+                                                  (val) => setModalState(() {
+                                                    selectedCatId = val;
+                                                  }),
+                                                )
+                                              : selectedFilter == "Sub Category"
+                                                  ? _buildCategoryDropdown(
+                                                      "Sub Category",
+                                                      selectedSubCatId,
+                                                      [
+                                                        {"id": 1, "name": "T-Shirts"},
+                                                        {"id": 2, "name": "Shirts"},
+                                                        {"id": 3, "name": "Jeans"},
+                                                        {"id": 4, "name": "Trousers"},
+                                                        {"id": 5, "name": "Shoes"},
+                                                        {"id": 6, "name": "Sneakers"},
+                                                      ],
+                                                      (val) => setModalState(() {
+                                                        selectedSubCatId = val;
+                                                      }),
+                                                    )
+                                                  : _collections.isEmpty
+                                                      ? const Center(
+                                                          child: Padding(
+                                                            padding: EdgeInsets.all(20.0),
+                                                            child: Text(
+                                                              "No collections available",
+                                                              style: TextStyle(
+                                                                fontFamily: "Franklin Gothic Regular",
+                                                                color: Colors.grey,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : _buildCategoryDropdown(
+                                                          "Collection",
+                                                          selectedCollectionId,
+                                                          _collections,
+                                                          (val) {
+                                                            setModalState(() {
+                                                              selectedCollectionId = val;
+                                                              if (val != null) {
+                                                                final collectionName = _collections
+                                                                    .firstWhere((c) => c['id'] == val, orElse: () => {'name': 'Unknown'})['name'];
+                                                                print("🎯 Collection selected in dropdown: ID=$val, Name=$collectionName");
+                                                              } else {
+                                                                print("🎯 Collection cleared in dropdown");
+                                                              }
+                                                            });
+                                                          },
+                                                        ),
                             ),
                           ),
                         ],
@@ -1057,26 +1350,61 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                 }
                               }
 
+                              print("✅ Filters configured:");
+                              print("  Brands: ${selectedBrands.join(', ')}");
+                              print("  Brand IDs: $selectedBrandIds");
+                              print("  Price: ₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()}");
+                              print("  Super Category ID: $selectedSuperCatId");
+                              print("  Category ID: $selectedCatId");
+                              print("  Sub Category ID: $selectedSubCatId");
+                              print("  Collection ID: $selectedCollectionId");
+
                               setState(() {
                                 _appliedBrandIds = selectedBrandIds;
                                 _appliedMinPrice =
                                     priceRange.start.toInt().toString();
                                 _appliedMaxPrice =
                                     priceRange.end.toInt().toString();
+                                _appliedSuperCatId = selectedSuperCatId;
+                                _appliedCatId = selectedCatId;
+                                _appliedSubCatId = selectedSubCatId;
+                                _appliedCollectionId = selectedCollectionId;
                                 _hasActiveFilters =
                                     selectedBrandIds.isNotEmpty ||
-                                        priceRange.start > 100 ||
-                                        priceRange.end < 50000;
+                                        priceRange.start > 300 ||
+                                        priceRange.end < 100000 ||
+                                        _appliedSuperCatId != null ||
+                                        _appliedCatId != null ||
+                                        _appliedSubCatId != null ||
+                                        _appliedCollectionId != null;
 
                                 // Reset pagination
                                 productController.handpickedPage.value = 1;
                               });
 
-                              _updateDisplayedProductsDebounced();
+                              _applyFiltersAndSortDebounced();
 
                               if (_hasActiveFilters) {
-                                getSnackBar(
-                                    "Filtered by ${selectedBrands.length} brand(s), ₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
+                                final filterParts = <String>[];
+                                if (selectedBrands.isNotEmpty) {
+                                  filterParts.add("${selectedBrands.length} brand(s)");
+                                }
+                                if (priceRange.start > 300 || priceRange.end < 100000) {
+                                  filterParts.add("₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
+                                }
+                                if (selectedSuperCatId != null) {
+                                  filterParts.add("Super Cat");
+                                }
+                                if (selectedCatId != null) {
+                                  filterParts.add("Cat");
+                                }
+                                if (selectedSubCatId != null) {
+                                  filterParts.add("Sub Cat");
+                                }
+                                if (selectedCollectionId != null) {
+                                  filterParts.add("Collection");
+                                }
+                                getSnackBar("Filtered by ${filterParts.join(', ')}");
                               } else {
                                 getSnackBar("Filters cleared");
                               }
@@ -1175,13 +1503,15 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                           final selected = selectedOption.value;
                           Get.back();
 
+                          print("✅ Sort option selected: $selected");
+
                           setState(() {
                             _appliedSortOption = selected;
                             // Reset pagination
                             productController.handpickedPage.value = 1;
                           });
 
-                          _updateDisplayedProductsDebounced();
+                          _applyFiltersAndSortDebounced();
 
                           getSnackBar(
                               "Sorted by ${sortOptions[selected] ?? 'Recommended'}");
