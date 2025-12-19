@@ -108,10 +108,12 @@ class CatalogController extends BaseController {
         },
       );
 
-      print("📥 Catalogs Response [${response.statusCode}]: ${response.body.substring(0, response.body.length > 200 ? 200 : response.body.length)}");
-      
+      print(
+          "📥 Catalogs Response [${response.statusCode}]: ${response.body.substring(0, response.body.length > 200 ? 200 : response.body.length)}");
+
       // Check if response is HTML instead of JSON
-      if (response.body.trim().startsWith('<!DOCTYPE') || response.body.trim().startsWith('<html')) {
+      if (response.body.trim().startsWith('<!DOCTYPE') ||
+          response.body.trim().startsWith('<html')) {
         print("❌ Catalogs API returned HTML instead of JSON");
         getSnackBar("Server returned invalid response");
         return;
@@ -405,6 +407,7 @@ class CatalogController extends BaseController {
     int? subCatId,
     int? brandId,
     int? collectionId,
+    String? key,
   }) async {
     isSorting.value = true;
     isCategory.value = true;
@@ -424,9 +427,14 @@ class CatalogController extends BaseController {
       if (maxPrice != null && maxPrice.isNotEmpty) {
         queryParams['maxPrice'] = maxPrice;
       }
+      if (key != null && key.isNotEmpty) {
+        queryParams['key'] = key;
+      }
 
       // Add sort parameter (skip if "recommended")
-      if (sortOption != null && sortOption.isNotEmpty && sortOption != 'recommended') {
+      if (sortOption != null &&
+          sortOption.isNotEmpty &&
+          sortOption != 'recommended') {
         queryParams['sort'] = sortOption;
       }
 
@@ -447,8 +455,8 @@ class CatalogController extends BaseController {
         queryParams['collectionId'] = collectionId.toString();
       }
 
-      final uri = Uri.parse("${ApiConstants.baseUrl}/filter-products")
-          .replace(queryParameters: queryParams.isNotEmpty ? queryParams : null);
+      final uri = Uri.parse("${ApiConstants.baseUrl}/filter-products").replace(
+          queryParameters: queryParams.isNotEmpty ? queryParams : null);
 
       // ✅ Debug prints
       print("🔹 Filter & Sort API Request (POST with query params):");
@@ -456,6 +464,7 @@ class CatalogController extends BaseController {
       print("      brandIds     → $brandIds");
       print("      minPrice     → $minPrice");
       print("      maxPrice     → $maxPrice");
+      print("      key          → $key");
       print("      sortOption   → $sortOption");
       print("      superCatId   → $superCatId");
       print("      catId        → $catId");
@@ -478,9 +487,11 @@ class CatalogController extends BaseController {
       );
 
       // Check if response is HTML instead of JSON
-      print("📥 Filter API Response [${response.statusCode}]: ${response.body.substring(0, response.body.length > 300 ? 300 : response.body.length)}");
-      
-      if (response.body.trim().startsWith('<!DOCTYPE') || response.body.trim().startsWith('<html')) {
+      print(
+          "📥 Filter API Response [${response.statusCode}]: ${response.body.substring(0, response.body.length > 300 ? 300 : response.body.length)}");
+
+      if (response.body.trim().startsWith('<!DOCTYPE') ||
+          response.body.trim().startsWith('<html')) {
         print("❌ Filter API returned HTML instead of JSON");
         getSnackBar("Server error: Invalid response format");
         return;
@@ -491,67 +502,85 @@ class CatalogController extends BaseController {
       if (response.statusCode == 200 && decoded["data"] != null) {
         List<dynamic> products = List<dynamic>.from(decoded["data"]);
         final originalCount = products.length;
-        
+
         // 📊 Analyze price distribution BEFORE filtering
         if (products.isNotEmpty && (minPrice != null || maxPrice != null)) {
-          final prices = products.map((p) => (p['basePrice'] ?? p['displayPrice'] ?? 0) as num).toList();
+          final prices = products
+              .map((p) => (p['basePrice'] ?? p['displayPrice'] ?? 0) as num)
+              .toList();
           prices.sort();
-          print("   📊 API returned products - Price range: ₹${prices.first} to ₹${prices.last}");
-          print("   📊 Requested filter: ₹${minPrice ?? '0'} to ₹${maxPrice ?? '∞'}");
+          print(
+              "   📊 API returned products - Price range: ₹${prices.first} to ₹${prices.last}");
+          print(
+              "   📊 Requested filter: ₹${minPrice ?? '0'} to ₹${maxPrice ?? '∞'}");
         }
-        
+
         // ✅ Client-side filtering as safety net (in case backend filtering is incomplete)
         // Filter by price range
         if (minPrice != null || maxPrice != null) {
           final minPriceNum = double.tryParse(minPrice ?? '0') ?? 0;
           final maxPriceNum = double.tryParse(maxPrice ?? '999999') ?? 999999;
-          
+
           int excludedCount = 0;
           products = products.where((product) {
-            final price = (product['basePrice'] ?? product['displayPrice'] ?? 0) as num;
+            final price =
+                (product['basePrice'] ?? product['displayPrice'] ?? 0) as num;
             final isInRange = price >= minPriceNum && price <= maxPriceNum;
             if (!isInRange) {
               excludedCount++;
-              if (excludedCount <= 5) { // Show first 5 excluded products
-                print("   ❌ EXCLUDED: ID:${product['id']} Price:₹$price (outside ₹$minPrice-₹$maxPrice)");
+              if (excludedCount <= 5) {
+                // Show first 5 excluded products
+                print(
+                    "   ❌ EXCLUDED: ID:${product['id']} Price:₹$price (outside ₹$minPrice-₹$maxPrice)");
               }
             }
             return isInRange;
           }).toList();
-          
+
           if (excludedCount > 0) {
-            print("   🔧 Client-side price filter: REMOVED $excludedCount products outside range");
-            print("   📉 Reduced from $originalCount to ${products.length} products");
+            print(
+                "   🔧 Client-side price filter: REMOVED $excludedCount products outside range");
+            print(
+                "   📉 Reduced from $originalCount to ${products.length} products");
           } else {
-            print("   ✅ All ${products.length} products are within price range ₹$minPrice-₹$maxPrice");
+            print(
+                "   ✅ All ${products.length} products are within price range ₹$minPrice-₹$maxPrice");
           }
-          
+
           // Show price range of filtered products
           if (products.isNotEmpty) {
-            final filteredPrices = products.map((p) => (p['basePrice'] ?? p['displayPrice'] ?? 0) as num).toList();
+            final filteredPrices = products
+                .map((p) => (p['basePrice'] ?? p['displayPrice'] ?? 0) as num)
+                .toList();
             filteredPrices.sort();
-            print("   📊 After filter - Price range: ₹${filteredPrices.first} to ₹${filteredPrices.last}");
+            print(
+                "   📊 After filter - Price range: ₹${filteredPrices.first} to ₹${filteredPrices.last}");
           }
         }
-        
+
         // Filter by brand IDs
         if (brandIds != null && brandIds.isNotEmpty) {
           final beforeBrandFilter = products.length;
           products = products.where((product) {
-            final productBrandId = int.tryParse(product['brandId']?.toString() ?? '0') ?? 0;
+            final productBrandId =
+                int.tryParse(product['brandId']?.toString() ?? '0') ?? 0;
             final isMatch = brandIds.contains(productBrandId);
-            if (!isMatch && beforeBrandFilter <= 10) { // Only log first few for debugging
-              print("   ⚠️ Excluding product ID:${product['id']} Brand:$productBrandId (not in ${brandIds.take(5).join(',')})");
+            if (!isMatch && beforeBrandFilter <= 10) {
+              // Only log first few for debugging
+              print(
+                  "   ⚠️ Excluding product ID:${product['id']} Brand:$productBrandId (not in ${brandIds.take(5).join(',')})");
             }
             return isMatch;
           }).toList();
-          
+
           if (products.length != beforeBrandFilter) {
-            print("   🔧 Client-side brand filter applied: ${brandIds.length} brand(s)");
-            print("   📉 Reduced from $beforeBrandFilter to ${products.length} products");
+            print(
+                "   🔧 Client-side brand filter applied: ${brandIds.length} brand(s)");
+            print(
+                "   📉 Reduced from $beforeBrandFilter to ${products.length} products");
           }
         }
-        
+
         // ✅ Transform products to add displayPrice and displayMrp
         final transformed = products.map<Map<String, dynamic>>((p) {
           final base = p["basePrice"] ?? 0;
@@ -565,11 +594,12 @@ class CatalogController extends BaseController {
             "displayMrp": hideMrp ? null : mrp,
           };
         }).toList();
-        
+
         // ✅ Update both lists to maintain backward compatibility
         categoryProductList.assignAll(transformed);
         sortedProductList.assignAll(transformed);
-        print("✅ Filtered/Sorted products fetched: ${categoryProductList.length}");
+        print(
+            "✅ Filtered/Sorted products fetched: ${categoryProductList.length}");
 
         // 🔍 Debug: Show first 5 products to verify sorting/filtering
         if (categoryProductList.isNotEmpty) {

@@ -950,8 +950,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
     List<String> selectedBrands = [];
     RangeValues priceRange = RangeValues(
-      double.parse(_appliedMinPrice),
-      double.parse(_appliedMaxPrice),
+      double.parse(_appliedMinPrice).clamp(100.0, 50000.0),
+      double.parse(_appliedMaxPrice).clamp(100.0, 50000.0),
     );
 
     // Category filter selections
@@ -1138,41 +1138,44 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                         );
                                       },
                                     )
-                                  : Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text("Select price range",
-                                            style: TextStyle(
-                                                fontFamily:
-                                                    "Clash Display Semibold",
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 15)),
-                                        const SizedBox(height: 8),
-                                        RangeSlider(
-                                          values: priceRange,
-                                          min: 100,
-                                          max: 50000,
-                                          divisions: 100,
-                                          activeColor: appBarColor,
-                                          onChanged: (v) => setModalState(() {
-                                            priceRange = v;
-                                          }),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                  : selectedFilter == "Price Range"
+                                      ? Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text("₹${priceRange.start.toInt()}",
-                                                style: const TextStyle(
+                                            const Text("Select price range",
+                                                style: TextStyle(
                                                     fontFamily:
-                                                        "Clash Display Regular",
-                                                    color: Colors.grey)),
-                                            Text("₹${priceRange.end.toInt()}",
-                                                style: const TextStyle(
-                                                    fontFamily:
-                                                        "Clash Display Regular",
-                                                    color: Colors.grey)),
+                                                        "Clash Display Semibold",
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 15)),
+                                            const SizedBox(height: 8),
+                                            RangeSlider(
+                                              values: priceRange,
+                                              min: 100,
+                                              max: 50000,
+                                              divisions: 100,
+                                              activeColor: appBarColor,
+                                              onChanged: (v) => setModalState(() {
+                                                priceRange = v;
+                                              }),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text("₹${priceRange.start.toInt()}",
+                                                    style: const TextStyle(
+                                                        fontFamily:
+                                                            "Clash Display Regular",
+                                                        color: Colors.grey)),
+                                                Text("₹${priceRange.end.toInt()}",
+                                                    style: const TextStyle(
+                                                        fontFamily:
+                                                            "Clash Display Regular",
+                                                        color: Colors.grey)),
+                                              ],
+                                            ),
                                           ],
                                         )
                                       : selectedFilter == "Super Category"
@@ -1292,7 +1295,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                       : const SizedBox(),
                             ),
                           ),
-                        ],
+                        ]
                       ),
                     ),
                     Padding(

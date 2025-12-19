@@ -1049,21 +1049,23 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Visibility(
-                                      visible: _titleText().isNotEmpty,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12.sp, vertical: 8.sp),
-                                        child: AppSpacingText(
-                                          text: _titleText(),
-                                          fontFamily: "Clash Display Regular",
-                                          fontWeight: FontWeight.w600,
-                                          color: widget.backgroundcolor ==
-                                                  whiteColor
-                                              ? blackColor
-                                              : productSubtitleColor,
-                                          maxLines: 2,
-                                          fontSize: 14,
+                                    Expanded(
+                                      child: Visibility(
+                                        visible: _titleText().isNotEmpty,
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 12.sp, vertical: 8.sp),
+                                          child: AppSpacingText(
+                                            text: _titleText(),
+                                            fontFamily: "Clash Display Regular",
+                                            fontWeight: FontWeight.w600,
+                                            color: widget.backgroundcolor ==
+                                                    whiteColor
+                                                ? blackColor
+                                                : productSubtitleColor,
+                                            maxLines: 2,
+                                            fontSize: 14,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -1171,60 +1173,66 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   child: Row(
                                     children: [
                                       // Selling Price
-                                      Padding(
-                                        padding: EdgeInsets.only(right: 10.sp),
-                                        child: AppSpacingText(
-                                          text: "₹${price.toStringAsFixed(0)}",
-                                          color: widget.backgroundcolor ==
-                                                  whiteColor
-                                              ? nameText
-                                              : whiteColor,
-                                          fontSize: 16,
-                                          fontFamily: "Clash Display",
-                                          fontWeight: FontWeight.w500,
+                                      Flexible(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(right: 10.sp),
+                                          child: AppSpacingText(
+                                            text: "₹${price.toStringAsFixed(0)}",
+                                            color: widget.backgroundcolor ==
+                                                    whiteColor
+                                                ? nameText
+                                                : whiteColor,
+                                            fontSize: 16,
+                                            fontFamily: "Clash Display",
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       ),
 
                                       // MRP (strikethrough)
                                       if (hasDiscount)
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.only(right: 10.sp),
-                                          child: Text(
-                                            "₹${mrp.toStringAsFixed(0)}",
-                                            style: TextStyle(
-                                              color: searchTextColor,
-                                              letterSpacing: 0.65,
-                                              fontSize: 16.sp,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
-                                              fontFamily:
-                                                  "Clash Display Regular",
-                                              fontWeight: FontWeight.w400,
+                                        Flexible(
+                                          child: Padding(
+                                            padding:
+                                                EdgeInsets.only(right: 10.sp),
+                                            child: Text(
+                                              "₹${mrp.toStringAsFixed(0)}",
+                                              style: TextStyle(
+                                                color: searchTextColor,
+                                                letterSpacing: 0.65,
+                                                fontSize: 16.sp,
+                                                decoration:
+                                                    TextDecoration.lineThrough,
+                                                fontFamily:
+                                                    "Clash Display Regular",
+                                                fontWeight: FontWeight.w400,
+                                              ),
                                             ),
                                           ),
                                         ),
 
                                       // Discount Badge
                                       if (hasDiscount)
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xffA7F3D0),
-                                            borderRadius:
-                                                BorderRadius.circular(18),
-                                          ),
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 8.sp, vertical: 2.sp),
-                                          child: AppSpacingText(
-                                            text:
-                                                "${((mrp - price) / mrp * 100).toStringAsFixed(0)}% OFF",
-                                            color: widget.backgroundcolor ==
-                                                    whiteColor
-                                                ? expressText
-                                                : homeAppBarColor,
-                                            fontSize: 12,
-                                            fontFamily: "Clash Display",
-                                            fontWeight: FontWeight.w500,
+                                        Flexible(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xffA7F3D0),
+                                              borderRadius:
+                                                  BorderRadius.circular(18),
+                                            ),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 8.sp, vertical: 2.sp),
+                                            child: AppSpacingText(
+                                              text:
+                                                  "${((mrp - price) / mrp * 100).toStringAsFixed(0)}% OFF",
+                                              color: widget.backgroundcolor ==
+                                                      whiteColor
+                                                  ? expressText
+                                                  : homeAppBarColor,
+                                              fontSize: 12,
+                                              fontFamily: "Clash Display",
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
                                         ),
                                     ],
@@ -1267,15 +1275,17 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          AppSpacingText(
-                                            text: 'SELECT SIZE',
-                                            fontFamily: "Clash Display",
-                                            fontWeight: FontWeight.w500,
-                                            color: widget.backgroundcolor ==
-                                                    whiteColor
-                                                ? blackColor
-                                                : productSubtitleColor,
-                                            fontSize: 16,
+                                          Expanded(
+                                            child: AppSpacingText(
+                                              text: 'SELECT SIZE',
+                                              fontFamily: "Clash Display",
+                                              fontWeight: FontWeight.w500,
+                                              color: widget.backgroundcolor ==
+                                                      whiteColor
+                                                  ? blackColor
+                                                  : productSubtitleColor,
+                                              fontSize: 16,
+                                            ),
                                           ),
                                           GestureDetector(
                                             onTap: _openSizeChartDialog,
@@ -2127,6 +2137,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     borderRadius: BorderRadius.circular(4.sp),
                   ),
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.star, color: whiteColor, size: 14.sp),
                       SizedBox(width: 4.sp),
@@ -2143,15 +2154,19 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   ),
                 ),
                 SizedBox(width: 8.sp),
-                Text(
-                  '$totalReviews ${totalReviews == 1 ? "Review" : "Reviews"}',
-                  style: TextStyle(
-                    fontFamily: "Clash Display Regular",
-                    fontWeight: FontWeight.w400,
-                    color: widget.backgroundcolor == whiteColor
-                        ? subtitleColor
-                        : searchTextColor,
-                    fontSize: 13.sp,
+                Expanded(
+                  child: Text(
+                    '$totalReviews ${totalReviews == 1 ? "Review" : "Reviews"}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: "Clash Display Regular",
+                      fontWeight: FontWeight.w400,
+                      color: widget.backgroundcolor == whiteColor
+                          ? subtitleColor
+                          : searchTextColor,
+                      fontSize: 13.sp,
+                    ),
                   ),
                 ),
               ],
@@ -2280,15 +2295,20 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                name,
-                style: TextStyle(
-                  fontFamily: "Clash Display",
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13.sp,
-                  color: nameText,
+              Expanded(
+                child: Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: "Clash Display",
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13.sp,
+                    color: nameText,
+                  ),
                 ),
               ),
+              SizedBox(width: 8.sp),
               Text(
                 date,
                 style: TextStyle(

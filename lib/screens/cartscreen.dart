@@ -1717,42 +1717,52 @@ class CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildCheckoutButton() {
-    return GestureDetector(
-      onTap: _handleCheckout,
-      child: Container(
-        width: double.infinity,
-        height: widget.backgroundcolor == whiteColor ? 70.sp : 50.sp,
-        color: widget.backgroundcolor == whiteColor
-            ? homeAppBarColor
-            : lightPurpleColor,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 16.sp),
-              child: Obx(
-                () => controller.isOrder.value
-                    ? const SizedBox.shrink()
-                    : (controller.pageState == PageState.LOADING)
-                        ? Center(
-                            child: Transform.scale(
-                              scale: 0.5.sp,
-                              child: const CircularProgressIndicator(
-                                  color: whiteColor),
-                            ),
-                          )
-                        : Text(
-                            controller.cartDetails["address"] == null &&
-                                    _pendingSelectedAddress == null
-                                ? "PROCEED TO CHECKOUT"
-                                : "PROCEED TO PAY",
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              color: Colors.white,
-                              fontFamily: 'Clash Display',
-                            ),
-                          ),
-              ),
+    return FutureBuilder<bool>(
+      future: controller.isGuestUser(),
+      builder: (context, snapshot) {
+        final isGuest = snapshot.data ?? false;
+
+        return GestureDetector(
+          onTap: isGuest ? _handleGuestSignUp : _handleCheckout,
+          child: Container(
+            width: double.infinity,
+            height: widget.backgroundcolor == whiteColor ? 70.sp : 50.sp,
+            color: widget.backgroundcolor == whiteColor
+                ? homeAppBarColor
+                : lightPurpleColor,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 16.sp),
+                  child: Obx(
+                    () => controller.isOrder.value
+                        ? const SizedBox.shrink()
+                        : (controller.pageState == PageState.LOADING)
+                            ? Center(
+                                child: Transform.scale(
+                                  scale: 0.5.sp,
+                                  child: const CircularProgressIndicator(
+                                      color: whiteColor),
+                                ),
+                              )
+                            : Text(
+                                isGuest
+                                    ? "SIGN UP TO PROCEED"
+                                    : (controller.cartDetails["address"] ==
+                                                null &&
+                                            _pendingSelectedAddress == null
+                                        ? "PROCEED TO CHECKOUT"
+                                        : "PROCEED TO PAY"),
+                                style: TextStyle(
+                                  fontSize: 13.sp,
+                                  color: Colors.white,
+                                  fontFamily: 'Clash Display',
+                                ),
+                              ),
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -1844,7 +1854,8 @@ class CartScreenState extends State<CartScreen> {
           click1: () => Get.back(),
           click2: () async {
             Get.back();
-            await controller.deleteFromCartUniversal(widget.backgroundcolor, productId);
+            await controller.deleteFromCartUniversal(
+                widget.backgroundcolor, productId);
           },
           btncolor: colorPrimary,
           text: "Are you sure you want to remove this item?",
@@ -1899,7 +1910,8 @@ class CartScreenState extends State<CartScreen> {
           productImage: preview,
           onPressed: (boardId) async {
             wishlistController.addProductToBoard(boardId, productId);
-            await controller.deleteFromCartUniversal(widget.backgroundcolor, productId);
+            await controller.deleteFromCartUniversal(
+                widget.backgroundcolor, productId);
           },
           wishlistList: wishlistController.wishlistList,
         ),

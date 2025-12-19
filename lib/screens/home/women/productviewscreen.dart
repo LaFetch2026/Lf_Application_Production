@@ -98,6 +98,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
   num? _priceOf(Map<String, dynamic> item) {
     // Return the selling price (NOT mrp)
+    // API now provides displayPrice (= basePrice) for filtered products
     return item['displayPrice'] ??
         item['basePrice'] ??
         item['price'] ??
@@ -313,6 +314,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
       
       if (_hasActiveFilters && filterChanged) {
         // 📞 Case 1: Filters changed → Call /filter-products API
+        // Note: API does backend filtering + client-side price/brand safety net
         print("🔹 Case 1: Filter changed (has active filters)");
         print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
@@ -333,32 +335,32 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
         );
 
-        // ✅ Client-side filter: Only filter by home products if NO category filters are applied
-        // When user explicitly filters by super category, category, or sub-category, trust the API results
+        // ✅ Additional client-side filtering for view-specific constraints
+        // API already filtered by price & brand; we filter by home products & collection
         final apiResults = List<dynamic>.from(catalogController.categoryProductList);
 
         if (_appliedSuperCatId == null && _appliedCatId == null && _appliedSubCatId == null && _appliedCollectionId == null) {
-          // No category/collection filters - restrict to home products
+          // No category/collection filters - restrict to home products only
           final filteredResults = apiResults.where((product) {
             final productId = int.tryParse(product['id']?.toString() ?? '');
             return productId != null && _originalHomeProductIds.contains(productId);
           }).toList();
 
-          print("🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} from this view (no category/collection filters)");
+          print("🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} from home collections");
           catalogController.categoryProductList.assignAll(filteredResults);
         } else {
-          // Category/collection filters applied - but backend may ignore filters, so filter client-side
+          // Category/collection filters applied
           var filteredResults = apiResults;
 
-          // ✅ Client-side filter by collectionId (backend ignores this parameter)
+          // ✅ Client-side filter by collectionId (backend currently ignores this parameter)
           if (_appliedCollectionId != null) {
             filteredResults = filteredResults.where((product) {
               final productCollectionId = int.tryParse(product['collectionID']?.toString() ?? '');
               return productCollectionId == _appliedCollectionId;
             }).toList();
-            print("🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} with collectionID=$_appliedCollectionId");
+            print("🔍 Filtered ${apiResults.length} → ${filteredResults.length} products with collectionID=$_appliedCollectionId");
           } else {
-            print("🔍 API returned ${apiResults.length} products, using all (category filters applied)");
+            print("🔍 Using all ${apiResults.length} API products (category filters applied)");
           }
 
           catalogController.categoryProductList.assignAll(filteredResults);
@@ -400,6 +402,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         
       } else if (_hasActiveFilters && sortChanged) {
         // 🔧 Case 3: Filters already applied, but sort changed → Re-apply filters with new sort
+        // Note: API does backend filtering + client-side price/brand safety net
         print("🔹 Case 3: Sort changed (filters already applied)");
         print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
@@ -420,19 +423,22 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
         );
 
+        // ✅ Additional client-side filtering for view-specific constraints
+        // API already filtered by price & brand; we filter by home products & collection
         final apiResults = List<dynamic>.from(catalogController.categoryProductList);
 
         if (_appliedSuperCatId == null && _appliedCatId == null && _appliedSubCatId == null && _appliedCollectionId == null) {
-          // No category/collection filters - restrict to home products
+          // No category/collection filters - restrict to home products only
           final filteredResults = apiResults.where((product) {
             final productId = int.tryParse(product['id']?.toString() ?? '');
             return productId != null && _originalHomeProductIds.contains(productId);
           }).toList();
           catalogController.categoryProductList.assignAll(filteredResults);
         } else {
-          // Category/collection filters applied - filter client-side by collectionId
+          // Category/collection filters applied
           var filteredResults = apiResults;
 
+          // ✅ Client-side filter by collectionId (backend currently ignores this parameter)
           if (_appliedCollectionId != null) {
             filteredResults = filteredResults.where((product) {
               final productCollectionId = int.tryParse(product['collectionID']?.toString() ?? '');
@@ -618,6 +624,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                             final brand = _brandOf(item);
                             final title = _titleOf(item);
                             final price = _priceOf(item);
+                            // API provides displayMrp (null if mrp = basePrice, otherwise mrp value)
                             final mrp = item['displayMrp'] ?? item['mrp'];
                             final express = item['express_delivery'] == true;
 

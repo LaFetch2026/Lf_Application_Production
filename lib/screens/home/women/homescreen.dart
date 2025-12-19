@@ -74,6 +74,7 @@ class HomeScreenState extends State<HomeScreen> {
   static const Duration _cacheValidDuration =
       Duration(minutes: 30); // Longer cache for performance
   static int? _lastGenderValue;
+  static bool? _lastAuthState; // Track last auth state (guest/authenticated)
   static Map<int, String> _dataHashByGender =
       {}; // Track data fingerprint for each gender
   static bool _isInitialLoad = true;
@@ -172,7 +173,8 @@ class HomeScreenState extends State<HomeScreen> {
 
     // Authentication state changed (guest -> authenticated or vice versa)
     if (_lastAuthState != null && _lastAuthState != isGuest) {
-      print("🔐 Authentication state changed (wasGuest: $_lastAuthState, isGuest: $isGuest) - forcing data refresh");
+      print(
+          "🔐 Authentication state changed (wasGuest: $_lastAuthState, isGuest: $isGuest) - forcing data refresh");
       return true;
     }
 
@@ -580,19 +582,18 @@ class HomeScreenState extends State<HomeScreen> {
                   return;
                 }
 
-              Get.to(CartScreen())
-                  ?.then((_) => cartController.getCartData());
-              await analytics.logEvent(
-                name: "cart_page",
-                parameters: {"page_name": "cart_page"},
-              );
-            },
-            onPressedDropDown: () {
-              homeController.showGenderList.value =
-                  !homeController.showGenderList.value;
-              setState(() {});
-            },
-          ),
+                Get.to(CartScreen())?.then((_) => cartController.getCartData());
+                await analytics.logEvent(
+                  name: "cart_page",
+                  parameters: {"page_name": "cart_page"},
+                );
+              },
+              onPressedDropDown: () {
+                homeController.showGenderList.value =
+                    !homeController.showGenderList.value;
+                setState(() {});
+              },
+            ),
 
             // Gender tabs...
             Obx(
