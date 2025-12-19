@@ -10,6 +10,7 @@ import 'package:lafetch/screens/account/deleteaccount.dart';
 import 'package:lafetch/screens/account/notification_setting.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/cartscreen.dart';
+import 'package:lafetch/screens/editprofilescreen.dart';
 import 'package:lafetch/screens/orders/my_order.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -235,7 +236,31 @@ class AccountScreenState extends State<AccountScreen> {
                                             ),
                                             const Expanded(child: SizedBox()),
                                             GestureDetector(
-                                              onTap: () async {},
+                                              onTap: () async {
+                                                final profileData =
+                                                    controller.profileDetails.value ?? {};
+
+                                                Get.to(EditProfileScreen(
+                                                  name: profileData['fullName'] ?? '',
+                                                  email: profileData['email'] ?? '',
+                                                  number: profileData['phone'] ?? '',
+                                                  genderId: controller.genderId.value,
+                                                ))?.then((value) {
+                                                  SystemChrome
+                                                      .setSystemUIOverlayStyle(
+                                                    const SystemUiOverlayStyle(
+                                                        statusBarColor:
+                                                            whiteColor),
+                                                  );
+                                                  controller.getProfileData();
+                                                });
+                                                await analytics.logEvent(
+                                                  name: 'edit_profile',
+                                                  parameters: {
+                                                    'page_name': 'edit_profile'
+                                                  },
+                                                );
+                                              },
                                               child: Padding(
                                                 padding: EdgeInsets.only(
                                                     bottom: 16.sp),

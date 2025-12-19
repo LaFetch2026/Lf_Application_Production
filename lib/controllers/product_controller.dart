@@ -221,6 +221,12 @@ class ProductController extends BaseController {
 // Add this observable for tracking current display images
   RxList<String> currentDisplayImages = <String>[].obs;
 
+  //collections
+
+  RxBool isProductCollectionsLoading = false.obs;
+  RxList<Map<String, dynamic>> productCollections =
+      <Map<String, dynamic>>[].obs;
+
 // Method to update images based on selected color
   void updateImagesForSelectedColor() {
     final pd = productDetails;
@@ -1504,5 +1510,53 @@ class ProductController extends BaseController {
     }
 
     return null;
+  }
+
+  Future<void> getProductCollections() async {
+    isProductCollectionsLoading.value = true;
+    productCollections.clear();
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+
+    final uri = Uri.parse("${ApiConstants.baseUrl}/product-collections");
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 20));
+
+      print("📦 Product Collections → ${response.statusCode}");
+      print("📦 Response Body → ${response.body}");
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body);
+
+        if (decoded is Map && decoded['data'] is List) {
+          productCollections.assignAll(
+            List<Map<String, dynamic>>.from(decoded['data']),
+          );
+          print("✅ Collections loaded: ${productCollections.length}");
+        } else {
+          print("⚠ Unexpected response structure");
+        }
+      } else if (response.statusCode == 401) {
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("Failed to load product collections");
+      }
+    } on TimeoutException {
+      getSnackBar("Request timed out");
+    } catch (e, s) {
+      print("❌ getProductCollections error: $e\n$s");
+      getSnackBar("Something went wrong");
+    } finally {
+      isProductCollectionsLoading.value = false;
+    }
   }
 }

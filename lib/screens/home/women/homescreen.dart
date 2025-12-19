@@ -1032,18 +1032,37 @@ class HomeScreenState extends State<HomeScreen> {
                                             collectionId,
                                       )
                                     else
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 16.sp,
-                                            vertical:
-                                                10.sp), // ✅ REDUCED from 12.sp
-                                        child: Text(
-                                          "No products yet",
-                                          style: TextStyle(
-                                            color: dark
-                                                ? Colors.white.withOpacity(0.85)
-                                                : Colors.black
-                                                    .withOpacity(0.75),
+                                      Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 16.sp,
+                                              vertical: 10.sp),
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                "Coming Soon",
+                                                style: TextStyle(
+                                                  fontFamily:
+                                                      "Clash Display Semibold",
+                                                  fontSize: 14.sp,
+                                                  color: dark
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                ),
+                                              ),
+                                              SizedBox(height: 4.sp),
+                                              Text(
+                                                "Products will be added soon",
+                                                style: TextStyle(
+                                                  fontSize: 12.sp,
+                                                  color: dark
+                                                      ? Colors.white
+                                                          .withOpacity(0.7)
+                                                      : Colors.black
+                                                          .withOpacity(0.6),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),

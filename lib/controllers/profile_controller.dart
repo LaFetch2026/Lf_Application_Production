@@ -378,9 +378,8 @@ class ProfileController extends BaseController {
         if (isInitialSetup) {
           await _syncGuestCartAfterSignup();
           Get.offAll(() => const BottomNavScreen());
-        } else {
-          Get.back(result: "profile_updated");
         }
+        // Don't navigate back here - let the calling screen handle navigation
       } else if (response.statusCode == 400) {
         _handleProfileUpdateErrors(data);
       } else {
@@ -423,8 +422,8 @@ class ProfileController extends BaseController {
         final prefs = await SharedPreferences.getInstance();
         prefs.setString('phonenumber', responseData['data']['phone'] ?? phone);
         isPhoneNumber.value = false; // Assuming this hides OTP input in UI
-        getProfileData(); // Refresh profile data
-        Get.back(); // Close current screen (e.g., OTP input dialog)
+        await getProfileData(); // Refresh profile data
+        // Don't navigate back here - let the calling screen handle navigation
       } else if (response.statusCode == 400) {
         _handleProfileUpdateErrors(responseData);
       } else {
