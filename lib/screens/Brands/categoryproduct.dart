@@ -837,7 +837,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               style: TextStyle(
                 color: colorPrimary,
                 fontSize: 14,
-                fontFamily: "Franklin Gothic Regular",
+                fontFamily: "Clash Display Regular",
               ),
             ),
             Padding(
@@ -935,7 +935,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                   style: const TextStyle(
                     color: Color(0xFF374151),
                     fontSize: 13,
-                    fontFamily: "Franklin Gothic",
+                    fontFamily: "Clash Display",
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -1025,8 +1025,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                         children: [
                           const Text("FILTERS",
                               style: TextStyle(
-                                  fontFamily: "Franklin Gothic",
-                                  fontWeight: FontWeight.w700,
+                                  fontFamily: "Clash Display Semibold",
+                                  fontWeight: FontWeight.w600,
                                   fontSize: 18,
                                   color: blackColor)),
                           TextButton(
@@ -1044,7 +1044,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                 style: TextStyle(
                                     color: appBarColor,
                                     fontSize: 13,
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
+                                    fontWeight: FontWeight.w500,
                                     decoration: TextDecoration.underline)),
                           ),
                         ],
@@ -1077,10 +1078,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                 ? blackColor
                                                 : const Color(0xFF6B7280),
                                             fontFamily: selected
-                                                ? "Franklin Gothic"
-                                                : "Franklin Gothic Regular",
+                                                ? "Clash Display Semibold"
+                                                : "Clash Display Regular",
                                             fontWeight: selected
-                                                ? FontWeight.w700
+                                                ? FontWeight.w600
                                                 : FontWeight.w400)),
                                   ),
                                 );
@@ -1111,7 +1112,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                           title: Text(b,
                                               style: const TextStyle(
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
+                                                  fontWeight: FontWeight.w400,
                                                   color: blackColor)),
                                           onChanged: (val) {
                                             setModalState(() {
@@ -1136,44 +1138,41 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                         );
                                       },
                                     )
-                                  : selectedFilter == "Price Range"
-                                      ? Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                  : Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text("Select price range",
+                                            style: TextStyle(
+                                                fontFamily:
+                                                    "Clash Display Semibold",
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 15)),
+                                        const SizedBox(height: 8),
+                                        RangeSlider(
+                                          values: priceRange,
+                                          min: 100,
+                                          max: 50000,
+                                          divisions: 100,
+                                          activeColor: appBarColor,
+                                          onChanged: (v) => setModalState(() {
+                                            priceRange = v;
+                                          }),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            const Text("Select price range",
-                                                style: TextStyle(
+                                            Text("₹${priceRange.start.toInt()}",
+                                                style: const TextStyle(
                                                     fontFamily:
-                                                        "Franklin Gothic",
-                                                    fontWeight: FontWeight.w700,
-                                                    fontSize: 15)),
-                                            const SizedBox(height: 8),
-                                            RangeSlider(
-                                              values: priceRange,
-                                              min: 300,
-                                              max: 100000,
-                                              divisions: 100,
-                                              activeColor: appBarColor,
-                                              onChanged: (v) =>
-                                                  setModalState(() {
-                                                priceRange = v;
-                                              }),
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                    "₹${priceRange.start.toInt()}",
-                                                    style: const TextStyle(
-                                                        color: Colors.grey)),
-                                                Text(
-                                                    "₹${priceRange.end.toInt()}",
-                                                    style: const TextStyle(
-                                                        color: Colors.grey)),
-                                              ],
-                                            ),
+                                                        "Clash Display Regular",
+                                                    color: Colors.grey)),
+                                            Text("₹${priceRange.end.toInt()}",
+                                                style: const TextStyle(
+                                                    fontFamily:
+                                                        "Clash Display Regular",
+                                                    color: Colors.grey)),
                                           ],
                                         )
                                       : selectedFilter == "Super Category"
@@ -1311,7 +1310,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                     borderRadius: BorderRadius.circular(8))),
                             child: const Text("CLOSE",
                                 style: TextStyle(
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
+                                    fontWeight: FontWeight.w500,
                                     color: blackColor)),
                           )),
                           const SizedBox(width: 12),
@@ -1397,7 +1397,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                             },
                             child: const Text("APPLY",
                                 style: TextStyle(
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
+                                    fontWeight: FontWeight.w500,
                                     color: whiteColor)),
                           )),
                         ],
@@ -1441,8 +1442,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 const Text("SORT BY",
                     style: TextStyle(
-                        fontFamily: "Franklin Gothic",
-                        fontWeight: FontWeight.w700,
+                        fontFamily: "Clash Display Semibold",
+                        fontWeight: FontWeight.w600,
                         fontSize: 18,
                         color: blackColor)),
                 IconButton(
@@ -1457,7 +1458,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                         activeColor: appBarColor,
                         title: Text(e.value,
                             style: const TextStyle(
-                                fontFamily: "Franklin Gothic Regular",
+                                fontFamily: "Clash Display Regular",
+                                fontWeight: FontWeight.w400,
                                 color: blackColor)),
                         onChanged: (v) =>
                             selectedOption.value = v ?? "recommended",
@@ -1476,7 +1478,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                 borderRadius: BorderRadius.circular(8))),
                         child: const Text("CLOSE",
                             style: TextStyle(
-                                fontFamily: "Franklin Gothic",
+                                fontFamily: "Clash Display",
+                                fontWeight: FontWeight.w500,
                                 color: blackColor)))),
                 const SizedBox(width: 12),
                 Expanded(
@@ -1502,7 +1505,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                         },
                         child: const Text("APPLY",
                             style: TextStyle(
-                                fontFamily: "Franklin Gothic",
+                                fontFamily: "Clash Display",
+                                fontWeight: FontWeight.w500,
                                 color: whiteColor))))
               ]),
               SizedBox(height: 10.sp)
@@ -1524,7 +1528,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                     style: const TextStyle(
                         color: Color(0xFF374151),
                         fontSize: 13,
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w500)),
                 if ((subtitle ?? '').isNotEmpty)
                   Padding(
@@ -1532,7 +1536,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                       child: Text(subtitle!,
                           style: const TextStyle(
                               decoration: TextDecoration.underline,
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
+                              fontWeight: FontWeight.w400,
                               fontSize: 10,
                               color: appBarColor)))
               ])));
@@ -1622,7 +1627,7 @@ class _SkeletonProductTile extends StatelessWidget {
   }
 }
 
-/// ✅ Product Tile with Skeleton Placeholder
+/// ✅ Product Tile with Clash Display Font
 class _ProductTileNoOverflow extends StatelessWidget {
   final String? imageUrl;
   final String brand;
@@ -1640,77 +1645,94 @@ class _ProductTileNoOverflow extends StatelessWidget {
     required this.fmt,
   });
 
+  int _discountPercent(num? mrp, num? price) {
+    if (mrp == null || price == null || mrp <= 0 || price >= mrp) return 0;
+    return (((mrp - price) / mrp) * 100).round();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final discount = _discountPercent(mrp, price);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        /// IMAGE (takes fixed portion)
         AspectRatio(
-          aspectRatio: 0.88,
+          aspectRatio: 0.80,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: imageUrl != null
                 ? CachedNetworkImage(
                     imageUrl: imageUrl!,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => Shimmer.fromColors(
-                      baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.grey[100]!,
-                      child: Container(
-                        color: Colors.white,
-                      ),
-                    ),
-                    errorWidget: (context, url, error) => Image.asset(
-                      dummyWishlistImage,
-                      fit: BoxFit.cover,
-                    ),
                   )
-                : Image.asset(
-                    dummyWishlistImage,
-                    fit: BoxFit.cover,
-                  ),
+                : Image.asset(dummyWishlistImage, fit: BoxFit.cover),
           ),
         ),
+
+        const SizedBox(height: 6),
+
+        /// BRAND
         Padding(
-          padding: EdgeInsets.fromLTRB(6.sp, 8.sp, 6.sp, 0),
-          child: Text(brand.toUpperCase(),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                  color: blackColor,
-                  fontSize: 15,
-                  fontFamily: "Franklin Gothic",
-                  fontWeight: FontWeight.w700)),
+          padding: EdgeInsets.symmetric(horizontal: 6.sp),
+          child: Text(
+            brand.toUpperCase(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              fontFamily: "Clash Display Semibold",
+            ),
+          ),
         ),
+
+        /// DESCRIPTION
         Padding(
-          padding: EdgeInsets.fromLTRB(6.sp, 4.sp, 6.sp, 0),
-          child: Text(description,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                  color: Color(0xFF6B7280),
-                  fontSize: 13,
-                  fontFamily: "Franklin Gothic Regular")),
+          padding: EdgeInsets.symmetric(horizontal: 6.sp, vertical: 2.sp),
+          child: Text(
+            description,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 13,
+              fontFamily: "Clash Display Regular",
+              fontWeight: FontWeight.w400,
+            ),
+          ),
         ),
+
+        /// PRICE ROW
         Padding(
-          padding: EdgeInsets.fromLTRB(6.sp, 6.sp, 6.sp, 0),
-          child: Row(children: [
-            if (mrp != null && mrp! > 0)
-              Padding(
-                  padding: EdgeInsets.only(right: 6.sp),
-                  child: Text(fmt(mrp, cents: true),
-                      style: const TextStyle(
-                          color: Color(0xFF9CA3AF),
-                          fontSize: 13,
-                          fontFamily: "Franklin Gothic Regular",
-                          decoration: TextDecoration.lineThrough))),
-            Text((price == null || price == 0) ? "" : fmt(price, cents: true),
-                style: const TextStyle(
-                    color: blackColor,
-                    fontSize: 15,
-                    fontFamily: "Franklin Gothic",
-                    fontWeight: FontWeight.w700))
-          ]),
+          padding: EdgeInsets.symmetric(horizontal: 6.sp),
+          child: Row(
+            children: [
+              if (price != null)
+                Text(
+                  fmt(price, cents: true),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: "Clash Display Semibold",
+                  ),
+                ),
+              if (mrp != null && price != null && mrp! > price!)
+                Padding(
+                  padding: EdgeInsets.only(left: 6.sp),
+                  child: Text(
+                    fmt(mrp, cents: true),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      decoration: TextDecoration.lineThrough,
+                      color: Color(0xFF9CA3AF),
+                      fontFamily: "Clash Display Regular",
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ],
     );

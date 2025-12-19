@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../core/constant/constants.dart';
 
-
 class BottomSizeChart extends StatefulWidget {
   final String productName;
   final String productSizeChart;
@@ -55,7 +54,7 @@ class BottomSizeChartState extends State<BottomSizeChart> {
                 ),
                 Padding(
                   padding:
-                  EdgeInsets.only(left: 16.sp, right: 16.sp, top: 10.sp),
+                      EdgeInsets.only(left: 16.sp, right: 16.sp, top: 10.sp),
                   child: Row(
                     children: [
                       Expanded(
@@ -68,7 +67,7 @@ class BottomSizeChartState extends State<BottomSizeChart> {
                             color: blackColor,
                             fontSize: 14.sp,
                             decoration: TextDecoration.none,
-                            fontFamily: "Franklin Gothic",
+                            fontFamily: "Clash Display",
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -78,7 +77,7 @@ class BottomSizeChartState extends State<BottomSizeChart> {
                 ),
                 Padding(
                   padding:
-                  EdgeInsets.only(left: 10.sp, right: 10.sp, bottom: 10.sp),
+                      EdgeInsets.only(left: 10.sp, right: 10.sp, bottom: 10.sp),
                   child: SizedBox(
                     height: 400.sp,
                     width: MediaQuery.sizeOf(context).width,

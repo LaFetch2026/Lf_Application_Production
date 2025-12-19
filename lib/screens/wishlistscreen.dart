@@ -102,7 +102,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                         EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
                     child: AppText(
                       text: "Wishlist",
-                      fontFamily: "Franklin Gothic Regular",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: blackColor,
                       fontSize: 25,
@@ -141,7 +141,7 @@ class WishlistScreenState extends State<WishlistScreen> {
           padding: EdgeInsets.only(top: 40.sp, left: 16.sp, right: 16.sp),
           child: AppText(
             text: "Your Wishlist is empty",
-            fontFamily: "Franklin Gothic",
+            fontFamily: "Clash Display",
             fontWeight: FontWeight.w500,
             color: colorPrimary,
             fontSize: 22,
@@ -153,7 +153,7 @@ class WishlistScreenState extends State<WishlistScreen> {
           child: AppText(
             text:
                 "Add products to your wishlist, review them anytime and easily move to cart",
-            fontFamily: "Franklin Gothic Regular",
+            fontFamily: "Clash Display Regular",
             fontWeight: FontWeight.w400,
             maxLines: 2,
             textAlign: TextAlign.center,
@@ -362,7 +362,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                             text: boardName,
                             color: blackColor,
                             fontSize: 16,
-                            fontFamily: "Franklin Gothic",
+                            fontFamily: "Clash Display",
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -373,7 +373,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                             text: "$count ${count == 1 ? 'item' : 'items'}",
                             color: textHintColor,
                             fontSize: 12,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -521,7 +521,7 @@ class WishlistScreenState extends State<WishlistScreen> {
             text: wishlistController.totalBoard.value == 1
                 ? "${wishlistController.totalBoard.value} board"
                 : "${wishlistController.totalBoard.value} boards",
-            fontFamily: "Franklin Gothic Regular",
+            fontFamily: "Clash Display Regular",
             fontWeight: FontWeight.w400,
             color: textHintColor,
             fontSize: 12,
@@ -534,7 +534,7 @@ class WishlistScreenState extends State<WishlistScreen> {
               text: "New Board",
               color: blackColor,
               fontSize: 12,
-              fontFamily: "Franklin Gothic Bold",
+              fontFamily: "Clash Display Bold",
               fontWeight: FontWeight.w400,
             ),
           ),

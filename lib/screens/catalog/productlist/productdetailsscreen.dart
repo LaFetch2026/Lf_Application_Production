@@ -336,13 +336,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   // Razorpay callbacks
-  void _onPaymentSuccess(PaymentSuccessResponse r) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Payment successful')),
-    );
-    // TODO: verify with backend if you're using Orders API (recommended)
-    // Get.off(() => OrderSuccessScreen(...));
-  }
 
   Future<String> generateProductShareLink() async {
     final productId =
@@ -363,18 +356,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
 
     return link.toString();
-  }
-
-  void _onPaymentError(PaymentFailureResponse r) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Payment failed: ${r.message ?? r.code}')),
-    );
-  }
-
-  void _onExternalWallet(ExternalWalletResponse r) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('External wallet: ${r.walletName}')),
-    );
   }
 
   // ===================== /RAZORPAY FLOW =====================
@@ -500,7 +481,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             child: Center(
                               child: AppSpacingText(
                                 text: size.toUpperCase(),
-                                fontFamily: "Franklin Gothic Regular",
+                                fontFamily: "Clash Display Regular",
                                 fontWeight: FontWeight.w400,
                                 color: isSelected
                                     ? whiteColor
@@ -518,7 +499,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           padding: EdgeInsets.only(top: 4.sp),
                           child: AppSpacingText(
                             text: 'Only $sizeStock left',
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontWeight: FontWeight.w400,
                             color: redColor,
                             fontSize: 10,
@@ -608,7 +589,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 color.toUpperCase(),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontFamily: "Franklin Gothic",
+                                  fontFamily: "Clash Display",
                                   fontWeight: FontWeight.w600,
                                   fontSize: 9.sp,
                                   color: widget.backgroundcolor == whiteColor
@@ -625,7 +606,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               style: TextStyle(
                                 fontSize: 9.sp,
                                 color: redColor,
-                                fontFamily: "Franklin Gothic",
+                                fontFamily: "Clash Display",
                               ),
                             ),
                         ],
@@ -728,7 +709,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   Text(
                     chart["title"]?.toString() ?? "Size Chart",
                     style: TextStyle(
-                      fontFamily: "Franklin Gothic",
+                      fontFamily: "Clash Display",
                       fontWeight: FontWeight.w700,
                       fontSize: 18.sp,
                     ),
@@ -768,7 +749,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         "Close",
                         style: TextStyle(
                           color: Colors.white,
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Clash Display",
                           fontWeight: FontWeight.w600,
                           fontSize: 14.sp,
                         ),
@@ -923,7 +904,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     color: whiteColor,
                                     fontSize: 16,
                                     maxLines: 1,
-                                    fontFamily: "Franklin Gothic Semibold",
+                                    fontFamily: "Clash Display Semibold",
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -1006,7 +987,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                         .toStringAsFixed(1),
                                                     style: TextStyle(
                                                       fontFamily:
-                                                          "Franklin Gothic",
+                                                          "Clash Display",
                                                       fontWeight:
                                                           FontWeight.w700,
                                                       color: blackColor,
@@ -1062,46 +1043,28 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Visibility(
-                                visible: _titleText().isNotEmpty,
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 12.sp, vertical: 8.sp),
-                                  child: AppSpacingText(
-                                    text: _titleText(),
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w600,
-                                    color: widget.backgroundcolor == whiteColor
-                                        ? blackColor
-                                        : productSubtitleColor,
-                                    maxLines: 2,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-
                               Padding(
-                                padding:
-                                    EdgeInsets.only(left: 12.sp, right: 12.sp),
+                                padding: EdgeInsets.only(right: 12.sp),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
-                                  mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Expanded(
-                                      child: AppSpacingText(
-                                        text: _brandText().isNotEmpty
-                                            ? "${_brandText()}\n".toUpperCase()
-                                            : "",
-                                        fontFamily: "Franklin Gothic",
-                                        fontWeight: FontWeight.w400,
-                                        color:
-                                            widget.backgroundcolor == whiteColor
-                                                ? subtitleColor
-                                                : whiteColor,
-                                        maxLines: 1,
-                                        fontSize: 14,
+                                    Visibility(
+                                      visible: _titleText().isNotEmpty,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 12.sp, vertical: 8.sp),
+                                        child: AppSpacingText(
+                                          text: _titleText(),
+                                          fontFamily: "Clash Display Regular",
+                                          fontWeight: FontWeight.w600,
+                                          color: widget.backgroundcolor ==
+                                                  whiteColor
+                                              ? blackColor
+                                              : productSubtitleColor,
+                                          maxLines: 2,
+                                          fontSize: 14,
+                                        ),
                                       ),
                                     ),
                                     (productController.brandDetails != null &&
@@ -1141,7 +1104,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                       text: 'View Brand \n'
                                                           .toUpperCase(),
                                                       fontFamily:
-                                                          "Franklin Gothic",
+                                                          "Clash Display",
                                                       fontWeight:
                                                           FontWeight.w500,
                                                       color: homeAppBarColor,
@@ -1167,6 +1130,34 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 ),
                               ),
 
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(left: 12.sp, right: 12.sp),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: AppSpacingText(
+                                        text: _brandText().isNotEmpty
+                                            ? "${_brandText()}\n".toUpperCase()
+                                            : "",
+                                        fontFamily: "Clash Display",
+                                        fontWeight: FontWeight.w400,
+                                        color:
+                                            widget.backgroundcolor == whiteColor
+                                                ? subtitleColor
+                                                : whiteColor,
+                                        maxLines: 1,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
                               // Price Display Section
                               Obx(() {
                                 final price =
@@ -1179,6 +1170,21 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       top: 8.sp, left: 12.sp, right: 12.sp),
                                   child: Row(
                                     children: [
+                                      // Selling Price
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 10.sp),
+                                        child: AppSpacingText(
+                                          text: "₹${price.toStringAsFixed(0)}",
+                                          color: widget.backgroundcolor ==
+                                                  whiteColor
+                                              ? nameText
+                                              : whiteColor,
+                                          fontSize: 16,
+                                          fontFamily: "Clash Display",
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+
                                       // MRP (strikethrough)
                                       if (hasDiscount)
                                         Padding(
@@ -1193,26 +1199,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               decoration:
                                                   TextDecoration.lineThrough,
                                               fontFamily:
-                                                  "Franklin Gothic Regular",
+                                                  "Clash Display Regular",
                                               fontWeight: FontWeight.w400,
                                             ),
                                           ),
                                         ),
-
-                                      // Selling Price
-                                      Padding(
-                                        padding: EdgeInsets.only(right: 10.sp),
-                                        child: AppSpacingText(
-                                          text: "₹${price.toStringAsFixed(0)}",
-                                          color: widget.backgroundcolor ==
-                                                  whiteColor
-                                              ? nameText
-                                              : whiteColor,
-                                          fontSize: 16,
-                                          fontFamily: "Franklin Gothic",
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
 
                                       // Discount Badge
                                       if (hasDiscount)
@@ -1232,7 +1223,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 ? expressText
                                                 : homeAppBarColor,
                                             fontSize: 12,
-                                            fontFamily: "Franklin Gothic",
+                                            fontFamily: "Clash Display",
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -1249,7 +1240,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       ? subtitleColor
                                       : searchTextColor,
                                   fontSize: 12,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
@@ -1278,7 +1269,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         children: [
                                           AppSpacingText(
                                             text: 'SELECT SIZE',
-                                            fontFamily: "Franklin Gothic",
+                                            fontFamily: "Clash Display",
                                             fontWeight: FontWeight.w500,
                                             color: widget.backgroundcolor ==
                                                     whiteColor
@@ -1291,7 +1282,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             child: Text(
                                               "View Size Chart",
                                               style: TextStyle(
-                                                fontFamily: "Franklin Gothic",
+                                                fontFamily: "Clash Display",
                                                 fontWeight: FontWeight.w600,
                                                 color: colorPrimary,
                                                 fontSize: 13.sp,
@@ -1311,7 +1302,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         child: AppSpacingText(
                                           text: productController
                                               .errorSizeMsg.value,
-                                          fontFamily: "Franklin Gothic Regular",
+                                          fontFamily: "Clash Display Regular",
                                           fontWeight: FontWeight.w400,
                                           color: redColor,
                                           fontSize: 14,
@@ -1363,7 +1354,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           left: 12.sp, right: 12.sp),
                                       child: AppSpacingText(
                                         text: 'SELECT COLOR',
-                                        fontFamily: "Franklin Gothic",
+                                        fontFamily: "Clash Display",
                                         fontWeight: FontWeight.w500,
                                         color:
                                             widget.backgroundcolor == whiteColor
@@ -1380,7 +1371,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         child: AppSpacingText(
                                           text: productController
                                               .errorColorMsg.value,
-                                          fontFamily: "Franklin Gothic Regular",
+                                          fontFamily: "Clash Display Regular",
                                           fontWeight: FontWeight.w400,
                                           color: redColor,
                                           fontSize: 14,
@@ -1406,7 +1397,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     EdgeInsets.only(left: 12.sp, top: 16.sp),
                                 child: AppSpacingText(
                                   text: 'Delivery Options'.toUpperCase(),
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w600,
                                   color: appBarColor,
                                   fontSize: 12,
@@ -1434,7 +1425,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       hintStyle: TextStyle(
                                         fontSize: 14.sp,
                                         color: textHintColor,
-                                        fontFamily: "Franklin Gothic",
+                                        fontFamily: "Clash Display",
                                       ),
                                       enabledBorder: OutlineInputBorder(
                                         borderSide: const BorderSide(
@@ -1550,8 +1541,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   child: const AppSpacingText(
                                                     text: "CHECK",
                                                     textAlign: TextAlign.center,
-                                                    fontFamily:
-                                                        "Franklin Gothic",
+                                                    fontFamily: "Clash Display",
                                                     fontWeight: FontWeight.w600,
                                                     color: whiteColor,
                                                     fontSize: 13,
@@ -1563,7 +1553,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     style: TextStyle(
                                       color: blackColor,
                                       fontSize: 16.sp,
-                                      fontFamily: "Franklin Gothic",
+                                      fontFamily: "Clash Display",
                                     ),
                                   ),
                                 ),
@@ -1593,7 +1583,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       Expanded(
                                         child: AppSpacingText(
                                           text: msg,
-                                          fontFamily: "Franklin Gothic Regular",
+                                          fontFamily: "Clash Display Regular",
                                           fontWeight: FontWeight.w500,
                                           color: isOk
                                               ? Colors.green.shade700
@@ -1640,7 +1630,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       bottom: 16.sp),
                                   child: AppSpacingText(
                                     text: productController.errorMsg.value,
-                                    fontFamily: "Franklin Gothic Regular",
+                                    fontFamily: "Clash Display Regular",
                                     fontWeight: FontWeight.w400,
                                     color: deepRed,
                                     maxLines: 5,
@@ -1864,7 +1854,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   : whiteColor,
               title: AppSpacingText(
                 text: title,
-                fontFamily: "Franklin Gothic Regular",
+                fontFamily: "Clash Display Regular",
                 fontWeight: FontWeight.w500,
                 color: widget.backgroundcolor == whiteColor
                     ? colorPrimary
@@ -1878,7 +1868,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   alignment: Alignment.topLeft,
                   child: AppSpacingText(
                     text: content,
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     maxLines: 20,
                     fontWeight: FontWeight.w500,
                     color: widget.backgroundcolor == whiteColor
@@ -1978,7 +1968,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
           iconColor: appBarColor,
           title: AppSpacingText(
             text: title,
-            fontFamily: "Franklin Gothic Regular",
+            fontFamily: "Clash Display Regular",
             fontWeight: FontWeight.w500,
             color: colorPrimary,
             fontSize: 16,
@@ -2061,7 +2051,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontFamily: "Franklin Gothic",
+          fontFamily: "Clash Display",
           fontWeight: FontWeight.w600,
           fontSize: 12.sp,
         ),
@@ -2076,7 +2066,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontFamily: "Franklin Gothic Regular",
+          fontFamily: "Clash Display Regular",
           fontSize: 12.sp,
         ),
       ),
@@ -2115,7 +2105,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
             padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 16.sp),
             child: AppSpacingText(
               text: 'RATINGS & REVIEWS',
-              fontFamily: "Franklin Gothic",
+              fontFamily: "Clash Display",
               fontWeight: FontWeight.w600,
               color: widget.backgroundcolor == whiteColor
                   ? blackColor
@@ -2143,7 +2133,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       Text(
                         avgRating.toStringAsFixed(1),
                         style: TextStyle(
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Clash Display",
                           fontWeight: FontWeight.w700,
                           color: whiteColor,
                           fontSize: 13.sp,
@@ -2156,7 +2146,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 Text(
                   '$totalReviews ${totalReviews == 1 ? "Review" : "Reviews"}',
                   style: TextStyle(
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                     color: widget.backgroundcolor == whiteColor
                         ? subtitleColor
@@ -2222,7 +2212,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
               child: Center(
                 child: AppSpacingText(
                   text: 'No reviews yet. Be the first to review!',
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                   color: widget.backgroundcolor == whiteColor
                       ? subtitleColor
@@ -2256,7 +2246,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     child: Text(
                       'SEE ALL REVIEWS ($totalReviews)',
                       style: TextStyle(
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w500,
                         color: widget.backgroundcolor == whiteColor
                             ? blackColor
@@ -2293,7 +2283,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
               Text(
                 name,
                 style: TextStyle(
-                  fontFamily: "Franklin Gothic",
+                  fontFamily: "Clash Display",
                   fontWeight: FontWeight.w600,
                   fontSize: 13.sp,
                   color: nameText,
@@ -2302,7 +2292,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
               Text(
                 date,
                 style: TextStyle(
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                   fontSize: 11.sp,
                   color: subtitleColor,
@@ -2332,7 +2322,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
             Text(
               variant,
               style: TextStyle(
-                fontFamily: "Franklin Gothic Regular",
+                fontFamily: "Clash Display Regular",
                 fontWeight: FontWeight.w400,
                 fontSize: 12.sp,
                 color: subtitleColor,
@@ -2345,7 +2335,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
           Text(
             review,
             style: TextStyle(
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w400,
               fontSize: 12.sp,
               color: nameText,

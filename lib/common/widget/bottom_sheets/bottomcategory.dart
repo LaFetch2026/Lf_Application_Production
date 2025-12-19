@@ -11,7 +11,6 @@ import '../../../controllers/cart_controller.dart';
 import '../../../core/constant/constants.dart';
 import '../button/doublebutton_new.dart';
 
-
 class BottomCategory extends StatefulWidget {
   final String gender;
   final Function(String) onPressedButton;
@@ -95,7 +94,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                                     ? blackColor
                                     : whiteColor,
                                 fontSize: 16.sp,
-                                fontFamily: "Franklin Gothic Semibold",
+                                fontFamily: "Clash Display Semibold",
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -113,7 +112,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                                 "View All Filters".toUpperCase(),
                                 style: TextStyle(
                                   decoration: TextDecoration.underline,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w400,
                                   color: widget.backgroundColor == whiteColor
                                       ? subtitleColor
@@ -136,7 +135,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                               : dividerColor,
                           groupValue: text1,
                           fillColor: MaterialStateProperty.resolveWith(
-                                (states) {
+                            (states) {
                               if (states.contains(MaterialState.selected)) {
                                 return widget.backgroundColor == whiteColor
                                     ? homeAppBarColor
@@ -165,7 +164,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                                 ? subtitleColor
                                 : dividerColor,
                             fontSize: 16,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -181,7 +180,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                               : dividerColor,
                           groupValue: text1,
                           fillColor: MaterialStateProperty.resolveWith(
-                                (states) {
+                            (states) {
                               if (states.contains(MaterialState.selected)) {
                                 return widget.backgroundColor == whiteColor
                                     ? homeAppBarColor
@@ -211,7 +210,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                                 ? subtitleColor
                                 : dividerColor,
                             fontSize: 16,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -226,7 +225,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                               ? homeAppBarColor
                               : dividerColor,
                           fillColor: MaterialStateProperty.resolveWith(
-                                (states) {
+                            (states) {
                               if (states.contains(MaterialState.selected)) {
                                 return widget.backgroundColor == whiteColor
                                     ? homeAppBarColor
@@ -256,7 +255,7 @@ class _BottomCategoryState extends State<BottomCategory> {
                                 ? subtitleColor
                                 : dividerColor,
                             fontSize: 16,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontWeight: FontWeight.w400,
                           ),
                         ),

@@ -24,7 +24,7 @@ class SettingWidgets extends StatelessWidget {
           padding: EdgeInsets.only(top: 40.sp, left: 16.sp, right: 16.sp),
           child: AppText(
             text: "Settings",
-            fontFamily: "Franklin Gothic Bold",
+            fontFamily: "Clash Display Bold",
             fontWeight: FontWeight.w700,
             color: nameText,
             fontSize: 18,
@@ -38,7 +38,7 @@ class SettingWidgets extends StatelessWidget {
             padding: EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
             child: AppText(
               text: "Notifications & Settings",
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w400,
               color: nameText,
               fontSize: 14,
@@ -53,7 +53,7 @@ class SettingWidgets extends StatelessWidget {
             padding: EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
             child: AppText(
               text: "Delete Account",
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w400,
               color: nameText,
               fontSize: 14,

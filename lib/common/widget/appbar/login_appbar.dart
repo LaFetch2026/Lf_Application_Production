@@ -92,7 +92,7 @@ class LoginAppbarState extends State<LoginAppbar> {
               //       child: AppText(
               //         text: "Skip".toUpperCase(),
               //         textAlign: TextAlign.right,
-              //         fontFamily: "Franklin Gothic Semibold",
+              //         fontFamily: "Clash Display Semibold",
               //         fontWeight: FontWeight.w600,
               //         color: searchTextColor,
               //         fontSize: 12,

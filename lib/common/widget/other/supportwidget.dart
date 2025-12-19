@@ -43,7 +43,7 @@ class SupportWidgets extends StatelessWidget {
           padding: EdgeInsets.only(top: 40.sp, left: 16.sp, right: 16.sp),
           child: AppText(
             text: "Support",
-            fontFamily: "Franklin Gothic Bold",
+            fontFamily: "Clash Display Bold",
             fontWeight: FontWeight.w700,
             color: nameText,
             fontSize: 18,
@@ -59,7 +59,7 @@ class SupportWidgets extends StatelessWidget {
               children: [
                 AppText(
                   text: "About Us",
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                   color: nameText,
                   fontSize: 14,
@@ -85,7 +85,7 @@ class SupportWidgets extends StatelessWidget {
               children: [
                 AppText(
                   text: "Terms & Conditions",
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                   color: nameText,
                   fontSize: 14,
@@ -111,7 +111,7 @@ class SupportWidgets extends StatelessWidget {
               children: [
                 AppText(
                   text: "Privacy Policy",
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                   color: nameText,
                   fontSize: 14,
@@ -137,7 +137,7 @@ class SupportWidgets extends StatelessWidget {
               children: [
                 AppText(
                   text: "Cancellation Policy",
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                   color: nameText,
                   fontSize: 14,
@@ -163,7 +163,7 @@ class SupportWidgets extends StatelessWidget {
               children: [
                 AppText(
                   text: "Shipping Policy",
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                   color: nameText,
                   fontSize: 14,

@@ -7,7 +7,6 @@ import '../../../core/constant/constants.dart';
 import '../other/common_widget.dart';
 import '../text/app_text.dart';
 
-
 class HorizontalCategoryList extends StatelessWidget {
   final Function(int, String)? onPressed;
   final List list;
@@ -55,42 +54,42 @@ class HorizontalCategoryList extends StatelessWidget {
                               Stack(
                                 children: [
                                   list[index]["images"].isNotEmpty &&
-                                      list[index]["images"] != null
+                                          list[index]["images"] != null
                                       ? SizedBox(
-                                    width: 136.sp,
-                                    height: 170.sp,
-                                    child: CachedNetworkImage(
-                                      cacheManager: CacheManager(Config(
-                                          "customCacheKey",
-                                          stalePeriod:
-                                          const Duration(days: 15),
-                                          maxNrOfCacheObjects: 100)),
-                                      fit: BoxFit.cover,
-                                      imageUrl: isImage(list[index]
-                                      ["images"][0]["name"])
-                                          ? list[index]["images"][0]
-                                      ["name"]
-                                          : list[index]["images"][1]
-                                      ["name"],
-                                      errorWidget:
-                                          (context, url, error) =>
-                                          Image.asset(
-                                            downloadImage,
+                                          width: 136.sp,
+                                          height: 170.sp,
+                                          child: CachedNetworkImage(
+                                            cacheManager: CacheManager(Config(
+                                                "customCacheKey",
+                                                stalePeriod:
+                                                    const Duration(days: 15),
+                                                maxNrOfCacheObjects: 100)),
                                             fit: BoxFit.cover,
-                                            width: 136.sp,
-                                            height: 170.sp,
+                                            imageUrl: isImage(list[index]
+                                                    ["images"][0]["name"])
+                                                ? list[index]["images"][0]
+                                                    ["name"]
+                                                : list[index]["images"][1]
+                                                    ["name"],
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Image.asset(
+                                              downloadImage,
+                                              fit: BoxFit.cover,
+                                              width: 136.sp,
+                                              height: 170.sp,
+                                            ),
                                           ),
-                                    ),
-                                  )
+                                        )
                                       : Image.asset(dummyWishlistImage,
-                                      width: 136.sp,
-                                      height: 170.sp,
-                                      fit: BoxFit.cover),
+                                          width: 136.sp,
+                                          height: 170.sp,
+                                          fit: BoxFit.cover),
                                   Visibility(
                                     visible:
-                                    list[index]["aggregated_rating"] != 0
-                                        ? true
-                                        : false,
+                                        list[index]["aggregated_rating"] != 0
+                                            ? true
+                                            : false,
                                     child: Positioned(
                                         bottom: 10.sp,
                                         right: 8.sp,
@@ -106,9 +105,9 @@ class HorizontalCategoryList extends StatelessWidget {
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                                MainAxisAlignment.start,
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                                CrossAxisAlignment.center,
                                             children: [
                                               Padding(
                                                 padding: EdgeInsets.symmetric(
@@ -124,9 +123,9 @@ class HorizontalCategoryList extends StatelessWidget {
                                                     top: 1.sp, left: 2.sp),
                                                 child: AppText(
                                                   text: list[index]
-                                                  ["aggregated_rating"]
+                                                          ["aggregated_rating"]
                                                       .toString(),
-                                                  fontFamily: "Franklin Gothic",
+                                                  fontFamily: "Clash Display",
                                                   fontWeight: FontWeight.w500,
                                                   color: homeAppBarColor,
                                                   fontSize: 10,
@@ -153,7 +152,7 @@ class HorizontalCategoryList extends StatelessWidget {
                                         maxLines: 1,
                                         textAlign: TextAlign.center,
                                         fontSize: 13,
-                                        fontFamily: "Franklin Gothic",
+                                        fontFamily: "Clash Display",
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
@@ -190,7 +189,7 @@ class HorizontalCategoryList extends StatelessWidget {
                                     color: appBarColor,
                                     maxLines: 1,
                                     fontSize: 11,
-                                    fontFamily: "Franklin Gothic Regular",
+                                    fontFamily: "Clash Display Regular",
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
@@ -213,9 +212,8 @@ class HorizontalCategoryList extends StatelessWidget {
                                             color: subtitleColor,
                                             fontSize: 11.sp,
                                             decoration:
-                                            TextDecoration.lineThrough,
-                                            fontFamily:
-                                            "Franklin Gothic Regular",
+                                                TextDecoration.lineThrough,
+                                            fontFamily: "Clash Display Regular",
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -223,11 +221,11 @@ class HorizontalCategoryList extends StatelessWidget {
                                     ),
                                     AppText(
                                       text:
-                                      "\u{20B9} ${list[index]["price"] ?? ""}",
+                                          "\u{20B9} ${list[index]["price"] ?? ""}",
                                       color: homeAppBarColor,
                                       maxLines: 2,
                                       fontSize: 11,
-                                      fontFamily: "Franklin Gothic",
+                                      fontFamily: "Clash Display",
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ],

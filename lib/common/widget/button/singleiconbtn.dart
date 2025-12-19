@@ -26,7 +26,7 @@ class SingleIconButton extends StatelessWidget {
     this.fontSize = 14,
     this.roundness = 1,
     this.fontWeight = FontWeight.bold,
-    this.fontFamily = "Franklin Gothic",
+    this.fontFamily = "Clash Display",
     this.trailingWidget,
     this.onPressed,
   }) : super(key: key);

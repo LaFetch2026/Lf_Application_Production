@@ -11,7 +11,6 @@ import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 import 'common_widget.dart';
 
-
 class NotificationSettingScreen extends StatefulWidget {
   const NotificationSettingScreen({
     super.key,
@@ -88,7 +87,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                 ),
                 AppText(
                   text: "Notifications & Settings",
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                   textAlign: TextAlign.center,
                   color: appbarText,
@@ -98,78 +97,78 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                   height: 20.sp,
                 ),
                 Obx(() => Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 16.sp, vertical: 10.sp),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () async {
-                          if (controller.isOrder.value) {
-                            controller.isOrder.value = false;
-                            controller.orderValue.value = 0;
-                          } else {
-                            controller.isOrder.value = true;
-                            controller.orderValue.value = 1;
-                          }
-                          /* await analytics.logEvent(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.sp, vertical: 10.sp),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              if (controller.isOrder.value) {
+                                controller.isOrder.value = false;
+                                controller.orderValue.value = 0;
+                              } else {
+                                controller.isOrder.value = true;
+                                controller.orderValue.value = 1;
+                              }
+                              /* await analytics.logEvent(
                                 name: 'default_addressClick',
                                 parameters: <String, Object>{
                                   'page_name': 'default_addressClick',
                                 },
                               ); */
-                        },
-                        child: AppText(
-                          text: "Order notification ",
-                          fontFamily: "Franklin Gothic Regular",
-                          fontWeight: FontWeight.w400,
-                          color: loginText,
-                          fontSize: 16,
-                        ),
-                      ),
-                      /*  Expanded(
+                            },
+                            child: AppText(
+                              text: "Order notification ",
+                              fontFamily: "Clash Display Regular",
+                              fontWeight: FontWeight.w400,
+                              color: loginText,
+                              fontSize: 16,
+                            ),
+                          ),
+                          /*  Expanded(
                             child: const SizedBox(
                               width: 0,
                             ),
                           ), */
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.sp),
-                        child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(3.sp),
-                              border: Border(
-                                top: BorderSide(
-                                    width: 2.0.sp, color: greyBorder),
-                                left: BorderSide(
-                                    width: 2.0.sp, color: greyBorder),
-                                right: BorderSide(
-                                    width: 2.0.sp, color: greyBorder),
-                                bottom: BorderSide(
-                                    width: 2.0.sp, color: greyBorder),
-                              ),
-                            ),
-                            width: 20,
-                            height: 20,
-                            child: Checkbox(
-                              value: controller.isOrder.value,
-                              checkColor: btnTextColor,
-                              activeColor: whiteBorderColor,
-                              side: const BorderSide(
-                                  color: btnTextColor, width: 0),
-                              onChanged: (value) {
-                                setState(() {
-                                  controller.isOrder.value = value!;
-                                  if (controller.isOrder.value) {
-                                    controller.orderValue.value = 1;
-                                  } else {
-                                    controller.orderValue.value = 0;
-                                  }
-                                });
-                              },
-                            )),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(3.sp),
+                                  border: Border(
+                                    top: BorderSide(
+                                        width: 2.0.sp, color: greyBorder),
+                                    left: BorderSide(
+                                        width: 2.0.sp, color: greyBorder),
+                                    right: BorderSide(
+                                        width: 2.0.sp, color: greyBorder),
+                                    bottom: BorderSide(
+                                        width: 2.0.sp, color: greyBorder),
+                                  ),
+                                ),
+                                width: 20,
+                                height: 20,
+                                child: Checkbox(
+                                  value: controller.isOrder.value,
+                                  checkColor: btnTextColor,
+                                  activeColor: whiteBorderColor,
+                                  side: const BorderSide(
+                                      color: btnTextColor, width: 0),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      controller.isOrder.value = value!;
+                                      if (controller.isOrder.value) {
+                                        controller.orderValue.value = 1;
+                                      } else {
+                                        controller.orderValue.value = 0;
+                                      }
+                                    });
+                                  },
+                                )),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                )),
+                    )),
                 /*      Obx(() => Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: 16.sp, vertical: 10.sp),
@@ -193,7 +192,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                             },
                             child: AppText(
                               text: "Offers notification ",
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
                               color: loginText,
                               fontSize: 14,
@@ -266,7 +265,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                             },
                             child: AppText(
                               text: "Promotional notification ",
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
                               color: loginText,
                               fontSize: 14,
@@ -321,17 +320,17 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
             ),
           ),
           Obx(() => Padding(
-            padding: EdgeInsets.symmetric(vertical: 20.sp),
-            child: getSingleButton(
-                label: "Submit",
-                textColor: whiteBorderColor,
-                backgroundColor: btnTextColor,
-                controller: controller,
-                onPressed: () {
-                  controller.callNotificationSetting();
-                },
-                borderColor: btnTextColor),
-          )),
+                padding: EdgeInsets.symmetric(vertical: 20.sp),
+                child: getSingleButton(
+                    label: "Submit",
+                    textColor: whiteBorderColor,
+                    backgroundColor: btnTextColor,
+                    controller: controller,
+                    onPressed: () {
+                      controller.callNotificationSetting();
+                    },
+                    borderColor: btnTextColor),
+              )),
         ],
       ),
     );

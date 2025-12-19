@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 
-
 class BottomCharges extends StatefulWidget {
   final String title;
   final String text;
@@ -56,7 +55,7 @@ class BottomChargesState extends State<BottomCharges> {
                         style: TextStyle(
                           color: loginText,
                           fontSize: 16.sp,
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Clash Display",
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -93,7 +92,7 @@ class BottomChargesState extends State<BottomCharges> {
               padding: EdgeInsets.symmetric(horizontal: 16.sp),
               child: AppText(
                 text: widget.text,
-                fontFamily: "Franklin Gothic Regular",
+                fontFamily: "Clash Display Regular",
                 fontWeight: FontWeight.w400,
                 color: textColor,
                 maxLines: 9,

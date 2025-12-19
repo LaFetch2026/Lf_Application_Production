@@ -112,7 +112,7 @@ class BrandProductList extends StatelessWidget {
                                   color: productSubtitleColor,
                                   maxLines: 1,
                                   fontSize: 11,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -141,8 +141,7 @@ class BrandProductList extends StatelessWidget {
                                             fontSize: 11.sp,
                                             decoration:
                                                 TextDecoration.lineThrough,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
+                                            fontFamily: "Clash Display Regular",
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -154,7 +153,7 @@ class BrandProductList extends StatelessWidget {
                                       style: TextStyle(
                                         color: whiteColor,
                                         fontSize: 11.sp,
-                                        fontFamily: "Franklin Gothic",
+                                        fontFamily: "Clash Display",
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),

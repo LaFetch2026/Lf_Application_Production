@@ -559,19 +559,19 @@ class ProductController extends BaseController {
     }
   }
 
-  Future<void> getHomeProduct(int gender) async {
+  Future<void> getHomeProduct(int gender, {bool withLimit = true}) async {
     isHomeProduct.value = true;
     homeProductList.clear();
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
 
-    // Use laFetch base for this API
-    final base = ApiConstants.baseUrl; // << make sure this exists
+    final base = ApiConstants.baseUrl;
     final uri = Uri.parse("$base/collection-with-products").replace(
-      // Keep this only if backend supports gender filtering here.
-      // Remove the queryParameters line if it doesn't.
-      queryParameters: {'status': '$gender'},
+      queryParameters: {
+        'status': '$gender',
+        if (withLimit) 'limit': 'true', // ✅ Only add if withLimit is true
+      },
     );
 
     try {
@@ -586,41 +586,36 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         final body = json.decode(response.body);
 
-        // Expect: { status, message, data: [ { id, name, desc?, products: [] }, ... ] }
         final List<Map<String, dynamic>> data =
             (body is Map && body['data'] is List)
                 ? List<Map<String, dynamic>>.from(
                     (body['data'] as List).whereType<Map>())
                 : <Map<String, dynamic>>[];
 
-        // Ensure products is always a List for the UI
         for (final c in data) {
           if (c['products'] is! List) c['products'] = <dynamic>[];
         }
 
-        // Update reactive list
         homeProductList.assignAll(data);
 
-        // Optional tagname for your loading stub
         tagname.value =
             data.isNotEmpty ? (data.first['name']?.toString() ?? '') : '';
 
-        // Stable shuffle seed for session (declare: int? productsShuffleSeed; in controller)
         productsShuffleSeed ??= DateTime.now().millisecondsSinceEpoch;
 
-        print("Ã¢Å“â€¦ collections loaded: ${homeProductList.length}");
+        print(
+            "✅ collections loaded: ${homeProductList.length} ${withLimit ? '(limited)' : '(all)'}");
       } else {
         homeProductList.clear();
         print(
-            "Ã¢ÂÅ’ collections load failed: ${response.statusCode} ${response.reasonPhrase}");
-        // print(response.body); // uncomment to debug server message
+            "❌ collections load failed: ${response.statusCode} ${response.reasonPhrase}");
       }
     } on TimeoutException {
       homeProductList.clear();
-      print("Ã¢ÂÅ’ Request timed out for $uri");
+      print("⏱️ Request timed out for $uri");
     } catch (e) {
       homeProductList.clear();
-      print("Ã¢ÂÅ’ Error fetching collections: $e");
+      print("❌ Error fetching collections: $e");
     } finally {
       isHomeProduct.value = false;
     }

@@ -16,7 +16,7 @@ class AppSpacingText extends StatelessWidget {
     this.maxLines = 1,
     this.fontSize = 18,
     this.fontWeight = FontWeight.normal,
-    this.fontFamily = "Franklin Gothic",
+    this.fontFamily = "Clash Display",
     this.color = Colors.black,
     this.textAlign,
   }) : super(key: key);

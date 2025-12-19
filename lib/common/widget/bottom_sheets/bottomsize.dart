@@ -74,7 +74,7 @@ class BottomSizeState extends State<BottomSize> {
                       style: TextStyle(
                         color: loginText,
                         fontSize: 14.sp,
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -106,89 +106,88 @@ class BottomSizeState extends State<BottomSize> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
               child: widget.sizeList
-                  .where((element) =>
-              int.parse(element['stocks'].toString()) > 0)
-                  .toList()
-                  .isNotEmpty
+                      .where((element) =>
+                          int.parse(element['stocks'].toString()) > 0)
+                      .toList()
+                      .isNotEmpty
                   ? Wrap(
-                  direction: Axis.horizontal,
-                  spacing: 12.0.sp,
-                  runSpacing: 8.0.sp,
-                  runAlignment: WrapAlignment.spaceEvenly,
-                  children: [
-                    for (var i in widget.sizeList.where((element) =>
-                    int.parse(element['stocks'].toString()) > 0))
-                      Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              selectedProductSize = i;
-                              inventoryId = selectedProductSize["id"];
-                              print(inventoryId);
-                              setState(() {});
-                            },
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: btnTextColor, width: 1),
-                                    color: selectedProductSize
-                                        .isNotEmpty &&
-                                        selectedProductSize['id'] ==
-                                            i['id']
-                                        ? colorPrimary
-                                        : whiteColor),
-                                child: SizedBox(
-                                  width: i['product_matrix_size_name']
-                                      .toString() ==
-                                      "Free Size"
-                                      ? 80.sp
-                                      : 40.sp,
-                                  height: 40.sp,
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: AppText(
-                                      text: i['product_matrix_size_name']
-                                          .toString(),
-                                      fontFamily:
-                                      "Franklin Gothic Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: selectedProductSize
-                                          .isNotEmpty &&
-                                          selectedProductSize['id'] ==
-                                              i['id']
-                                          ? whiteColor
-                                          : btnTextColor,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                )),
-                          ),
-                          int.parse(i['stocks'].toString()) > 1
-                              ? const SizedBox()
-                              : Padding(
-                            padding: EdgeInsets.only(top: 8.0.sp),
-                            child: AppText(
-                              text:
-                              '${i['stocks'].toString()} left',
-                              fontFamily: "Franklin Gothic Regular",
-                              fontWeight: FontWeight.w400,
-                              color: redColor,
-                              fontSize: 11,
+                      direction: Axis.horizontal,
+                      spacing: 12.0.sp,
+                      runSpacing: 8.0.sp,
+                      runAlignment: WrapAlignment.spaceEvenly,
+                      children: [
+                          for (var i in widget.sizeList.where((element) =>
+                              int.parse(element['stocks'].toString()) > 0))
+                            Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    selectedProductSize = i;
+                                    inventoryId = selectedProductSize["id"];
+                                    print(inventoryId);
+                                    setState(() {});
+                                  },
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: btnTextColor, width: 1),
+                                          color: selectedProductSize
+                                                      .isNotEmpty &&
+                                                  selectedProductSize['id'] ==
+                                                      i['id']
+                                              ? colorPrimary
+                                              : whiteColor),
+                                      child: SizedBox(
+                                        width: i['product_matrix_size_name']
+                                                    .toString() ==
+                                                "Free Size"
+                                            ? 80.sp
+                                            : 40.sp,
+                                        height: 40.sp,
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: AppText(
+                                            text: i['product_matrix_size_name']
+                                                .toString(),
+                                            fontFamily: "Clash Display Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: selectedProductSize
+                                                        .isNotEmpty &&
+                                                    selectedProductSize['id'] ==
+                                                        i['id']
+                                                ? whiteColor
+                                                : btnTextColor,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      )),
+                                ),
+                                int.parse(i['stocks'].toString()) > 1
+                                    ? const SizedBox()
+                                    : Padding(
+                                        padding: EdgeInsets.only(top: 8.0.sp),
+                                        child: AppText(
+                                          text:
+                                              '${i['stocks'].toString()} left',
+                                          fontFamily: "Clash Display Regular",
+                                          fontWeight: FontWeight.w400,
+                                          color: redColor,
+                                          fontSize: 11,
+                                        ),
+                                      )
+                              ],
                             ),
-                          )
-                        ],
-                      ),
-                  ])
+                        ])
                   : AppText(
-                text: 'N/A',
-                fontFamily: "Franklin Gothic Regular",
-                fontWeight: FontWeight.w400,
-                color: redColor,
-                fontSize: 11,
-              ),
+                      text: 'N/A',
+                      fontFamily: "Clash Display Regular",
+                      fontWeight: FontWeight.w400,
+                      color: redColor,
+                      fontSize: 11,
+                    ),
             ),
             Obx(
-                  () => Padding(
+              () => Padding(
                 padding: EdgeInsets.symmetric(vertical: 10.sp),
                 child: getSingleButton(
                     label: "Done",

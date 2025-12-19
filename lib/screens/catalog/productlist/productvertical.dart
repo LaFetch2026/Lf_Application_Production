@@ -496,7 +496,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                     colorPrimary,
                                                                 fontSize: 12,
                                                                 fontFamily:
-                                                                    "Franklin Gothic Regular",
+                                                                    "Clash Display Regular",
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w400,
@@ -524,7 +524,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                     colorPrimary,
                                                                 fontSize: 12,
                                                                 fontFamily:
-                                                                    "Franklin Gothic Regular",
+                                                                    "Clash Display Regular",
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w400,
@@ -636,7 +636,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                       maxLines: 2,
                                                       fontSize: 14,
                                                       fontFamily:
-                                                          "Franklin Gothic",
+                                                          "Clash Display",
                                                       fontWeight:
                                                           FontWeight.w500,
                                                     ),
@@ -655,7 +655,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                       maxLines: 2,
                                                       fontSize: 12,
                                                       fontFamily:
-                                                          "Franklin Gothic Regular",
+                                                          "Clash Display Regular",
                                                       fontWeight:
                                                           FontWeight.w400,
                                                     ),
@@ -675,7 +675,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                           maxLines: 2,
                                                           fontSize: 14,
                                                           fontFamily:
-                                                              "Franklin Gothic",
+                                                              "Clash Display",
                                                           fontWeight:
                                                               FontWeight.w400,
                                                         ),
@@ -701,7 +701,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                     TextDecoration
                                                                         .lineThrough,
                                                                 fontFamily:
-                                                                    "Franklin Gothic Regular",
+                                                                    "Clash Display Regular",
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w400,
@@ -745,7 +745,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                           //         maxLines: 2,
                                                           //         fontSize: 11,
                                                           //         fontFamily:
-                                                          //             "Franklin Gothic Regular",
+                                                          //             "Clash Display Regular",
                                                           //         fontWeight:
                                                           //             FontWeight
                                                           //                 .w400,
@@ -781,8 +781,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                       style: TextStyle(
                                           fontSize: 14.sp,
                                           color: Colors.black,
-                                          fontFamily:
-                                              "Franklin Gothic Regular")),
+                                          fontFamily: "Clash Display Regular")),
                                 ),
                               ),
                       ),

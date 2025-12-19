@@ -17,18 +17,18 @@ class SingleButton extends StatelessWidget {
 
   const SingleButton(
       {Key? key,
-        required this.label,
-        required this.textColor,
-        required this.backgroundColor,
-        required this.borderColor,
-        this.height = 50,
-        this.fontSize = 14,
-        this.roundness = 1,
-        this.fontWeight = FontWeight.bold,
-        this.fontFamily = "Franklin Gothic",
-        this.trailingWidget,
-        this.onPressed,
-        this.horizontal = 16})
+      required this.label,
+      required this.textColor,
+      required this.backgroundColor,
+      required this.borderColor,
+      this.height = 50,
+      this.fontSize = 14,
+      this.roundness = 1,
+      this.fontWeight = FontWeight.bold,
+      this.fontFamily = "Clash Display",
+      this.trailingWidget,
+      this.onPressed,
+      this.horizontal = 16})
       : super(key: key);
 
   @override

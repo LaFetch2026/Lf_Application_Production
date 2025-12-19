@@ -35,14 +35,8 @@ class CatalogController extends BaseController {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
 
-      // if (token == null || token.isEmpty) {
-      //   Get.offAll(() => const LoginScreen(initialTab: 0));
-      //   getSnackBar("Please login to continue");
-      //   return;
-      // }
-
       final url = Uri.parse(
-        "${ApiConstants.baseUrl}/categories?gender=$gender&type=category",
+        "${ApiConstants.baseUrl}/categories?type=category&status=true&gender=$gender",
       );
 
       final response = await http.get(
@@ -62,13 +56,21 @@ class CatalogController extends BaseController {
 
       if (response.statusCode == 200) {
         if (responseData["data"] != null && responseData["data"] is List) {
+          // ✅ CRITICAL: Clear old data first, then assign new data
+          catalogList.clear();
           catalogList.assignAll(responseData["data"]);
+
+          // ✅ Force UI update
+          update();
+
+          print(
+              "✅ Shop by Category loaded: ${catalogList.length} items for gender: $gender");
         } else {
           catalogList.clear();
           getSnackBar("No categories available");
         }
       } else if (response.statusCode == 401) {
-        await prefs.remove('token'); // Clear invalid token
+        await prefs.remove('token');
         Get.offAll(() => const LoginScreen(initialTab: 0));
         getSnackBar("Session expired, please login again");
       } else if (response.statusCode == 500) {
@@ -96,10 +98,8 @@ class CatalogController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
 
     try {
-      final uri =
-          Uri.parse("${ApiConstants.baseUrl}/catalogs?gender_type=$type");
-      print("📤 Catalogs API: $uri");
-      
+      final uri = Uri.parse(
+          "${ApiConstants.baseUrl}/categories?type=category&status=true&gender=$type");
       final response = await http.get(
         uri,
         headers: {
@@ -120,7 +120,14 @@ class CatalogController extends BaseController {
       final responseData = json.decode(response.body);
 
       if (response.statusCode == 200 && responseData["data"] != null) {
+        // ✅ CRITICAL FIX: Clear old data first, then assign new data
+        catagoryList.clear();
         catagoryList.assignAll(responseData["data"]);
+
+        // ✅ Force UI update
+        update();
+
+        print("✅ Categories loaded: ${catagoryList.length} items");
       } else if (response.statusCode == 401) {
         Get.offAll(() => const LoginScreen(initialTab: 0));
         getSnackBar("Authentication failed");

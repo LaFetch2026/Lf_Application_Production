@@ -5,7 +5,6 @@ import '../../../core/constant/constants.dart';
 import '../button/singlebtn.dart';
 import '../text/app_text.dart';
 
-
 class CartWidget extends StatelessWidget {
   final String text1;
   final String text2;
@@ -43,7 +42,7 @@ class CartWidget extends StatelessWidget {
           child: Center(
             child: AppText(
               text: text1,
-              fontFamily: "Franklin Gothic Bold",
+              fontFamily: "Clash Display Bold",
               fontWeight: FontWeight.w700,
               color: backColor == whiteColor ? blackColor : whiteColor,
               fontSize: 18,
@@ -55,7 +54,7 @@ class CartWidget extends StatelessWidget {
           child: AppText(
             text: text2,
             textAlign: TextAlign.center,
-            fontFamily: "Franklin Gothic Regular",
+            fontFamily: "Clash Display Regular",
             fontWeight: FontWeight.w400,
             maxLines: 2,
             color: backColor == whiteColor ? blackColor : whiteColor,
@@ -67,9 +66,9 @@ class CartWidget extends StatelessWidget {
           child: SingleButton(
               label: btntext,
               textColor:
-              backColor == whiteColor ? whiteBorderColor : homeAppBarColor,
+                  backColor == whiteColor ? whiteBorderColor : homeAppBarColor,
               backgroundColor:
-              backColor == whiteColor ? colorPrimary : whiteColor,
+                  backColor == whiteColor ? colorPrimary : whiteColor,
               onPressed: () {
                 onPressed?.call();
               },

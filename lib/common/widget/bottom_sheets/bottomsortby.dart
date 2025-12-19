@@ -83,7 +83,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                                   ? blackColor
                                   : whiteColor,
                               fontSize: 16.sp,
-                              fontFamily: "Franklin Gothic Semibold",
+                              fontFamily: "Clash Display Semibold",
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -118,7 +118,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                               ? appBarColor
                               : dividerColor,
                           fillColor: MaterialStateProperty.resolveWith(
-                                (states) {
+                            (states) {
                               if (states.contains(MaterialState.selected)) {
                                 return widget.backgroundColor == whiteColor
                                     ? homeAppBarColor
@@ -149,7 +149,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                                 ? appBarColor
                                 : dividerColor,
                             fontSize: 16,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -164,7 +164,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                               ? appBarColor
                               : dividerColor,
                           fillColor: MaterialStateProperty.resolveWith(
-                                (states) {
+                            (states) {
                               if (states.contains(MaterialState.selected)) {
                                 return widget.backgroundColor == whiteColor
                                     ? homeAppBarColor
@@ -194,7 +194,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                                 ? appBarColor
                                 : dividerColor,
                             fontSize: 16,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -209,7 +209,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                               ? appBarColor
                               : dividerColor,
                           fillColor: MaterialStateProperty.resolveWith(
-                                (states) {
+                            (states) {
                               if (states.contains(MaterialState.selected)) {
                                 return widget.backgroundColor == whiteColor
                                     ? homeAppBarColor
@@ -239,7 +239,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                                 ? appBarColor
                                 : dividerColor,
                             fontSize: 16,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -254,7 +254,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                               ? appBarColor
                               : dividerColor,
                           fillColor: MaterialStateProperty.resolveWith(
-                                (states) {
+                            (states) {
                               if (states.contains(MaterialState.selected)) {
                                 return widget.backgroundColor == whiteColor
                                     ? homeAppBarColor
@@ -284,7 +284,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                                 ? appBarColor
                                 : dividerColor,
                             fontSize: 16,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -329,7 +329,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                                 ? appBarColor
                                 : dividerColor,
                             fontSize: 16,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontWeight: FontWeight.w400,
                           ),
                         ),

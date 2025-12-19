@@ -188,7 +188,7 @@ class LoginScreenState extends State<LoginScreen> {
                             "Sign In".toUpperCase(),
                             style: TextStyle(
                               fontSize: 13.sp,
-                              fontFamily: "Franklin Gothic Semibold",
+                              fontFamily: "Clash Display Semibold",
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -198,7 +198,7 @@ class LoginScreenState extends State<LoginScreen> {
                             "I’m new here".toUpperCase(),
                             style: TextStyle(
                               fontSize: 13.sp,
-                              fontFamily: "Franklin Gothic Semibold",
+                              fontFamily: "Clash Display Semibold",
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -231,7 +231,7 @@ class LoginScreenState extends State<LoginScreen> {
           SizedBox(height: 16.sp),
           const LoginWidget(
             text1: "Welcome Back!",
-            fontfamily: "Franklin Gothic",
+            fontfamily: "Clash Display",
             text2:
                 "Great to see you again - let's dive back into your Shoping journey!",
           ),
@@ -263,7 +263,7 @@ class LoginScreenState extends State<LoginScreen> {
               padding: EdgeInsets.only(left: 16.sp, right: 5.sp, bottom: 10.sp),
               child: AppText(
                 text: loginController.loginError.value,
-                fontFamily: "Franklin Gothic Regular",
+                fontFamily: "Clash Display Regular",
                 fontWeight: FontWeight.w400,
                 color: redColor,
                 fontSize: 12,
@@ -315,7 +315,7 @@ class LoginScreenState extends State<LoginScreen> {
         children: [
           SizedBox(height: 16.sp),
           const LoginWidget(
-            fontfamily: "Franklin Gothic Regular",
+            fontfamily: "Clash Display Regular",
             text1: "Hey there,",
             text2:
                 "Lets set you up around, for a tailored shopping experience!",
@@ -348,7 +348,7 @@ class LoginScreenState extends State<LoginScreen> {
               padding: EdgeInsets.only(left: 16.sp, right: 5.sp),
               child: AppText(
                 text: loginController.registerError.value,
-                fontFamily: "Franklin Gothic Regular",
+                fontFamily: "Clash Display Regular",
                 fontWeight: FontWeight.w400,
                 color: redColor,
                 fontSize: 12,

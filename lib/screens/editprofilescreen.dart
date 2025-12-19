@@ -142,7 +142,7 @@ class EditProfileScreenState extends State<EditProfileScreen>
                                 horizontal: 20.sp, vertical: 2.sp),
                             child: AppText(
                               text: profileController.nameError.value,
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
                               color: redColor,
                               fontSize: 12,
@@ -166,7 +166,7 @@ class EditProfileScreenState extends State<EditProfileScreen>
                                 horizontal: 20.sp, vertical: 2.sp),
                             child: AppText(
                               text: profileController.phoneError.value,
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
                               color: redColor,
                               fontSize: 12,
@@ -193,7 +193,7 @@ class EditProfileScreenState extends State<EditProfileScreen>
                                       horizontal: 16.sp, vertical: 5.sp),
                                   child: AppText(
                                     text: "Change number",
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     fontSize: 14,
                                     color: colorPrimary,
                                   ),
@@ -211,7 +211,7 @@ class EditProfileScreenState extends State<EditProfileScreen>
                                     horizontal: 16.sp, vertical: 10.sp),
                                 child: AppText(
                                   text: "Enter OTP",
-                                  fontFamily: "Franklin Gothic",
+                                  fontFamily: "Clash Display",
                                   fontSize: 14,
                                   color: colorPrimary,
                                 ),
@@ -276,7 +276,7 @@ class EditProfileScreenState extends State<EditProfileScreen>
                                 horizontal: 20.sp, vertical: 2.sp),
                             child: AppText(
                               text: profileController.emailError.value,
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
                               color: redColor,
                               fontSize: 12,
@@ -296,7 +296,7 @@ class EditProfileScreenState extends State<EditProfileScreen>
                           },
                           style: const TextStyle(
                             color: textColor,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                           ),
                           controller: profileController.gerderController,
                           decoration: InputDecoration(
@@ -333,7 +333,7 @@ class EditProfileScreenState extends State<EditProfileScreen>
                                 horizontal: 20.sp, vertical: 2.sp),
                             child: AppText(
                               text: profileController.genderError.value,
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
                               color: redColor,
                               fontSize: 12,
@@ -370,7 +370,7 @@ class EditProfileScreenState extends State<EditProfileScreen>
                                         EdgeInsets.symmetric(vertical: 10.sp),
                                     child: AppText(
                                       text: profileController.genderList[index],
-                                      fontFamily: "Franklin Gothic Regular",
+                                      fontFamily: "Clash Display Regular",
                                       fontSize: 14.sp,
                                       color: nameText,
                                     ),

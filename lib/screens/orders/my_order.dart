@@ -85,8 +85,8 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
         centerTitle: true,
         title: const AppText(
           text: "MY ORDERS",
-          fontFamily: "Franklin Gothic",
-          fontWeight: FontWeight.w700,
+          fontFamily: "Clash Display Semibold",
+          fontWeight: FontWeight.w600,
           color: blackColor,
           fontSize: 16,
         ),
@@ -134,6 +134,8 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
                   child: AppText(
                     text: "No orders found",
                     fontSize: 14,
+                    fontFamily: "Clash Display Regular",
+                    fontWeight: FontWeight.w400,
                     color: subtitleColor,
                   ),
                 ),
@@ -227,19 +229,23 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
                       text: productName,
                       fontSize: 14,
                       maxLines: 2,
+                      fontFamily: "Clash Display Semibold",
                       fontWeight: FontWeight.w600,
                     ),
                     SizedBox(height: 4.sp),
                     AppText(
                       text: "Qty: $quantity",
                       fontSize: 12,
+                      fontFamily: "Clash Display Regular",
+                      fontWeight: FontWeight.w400,
                       color: subtitleColor,
                     ),
                     SizedBox(height: 8.sp),
                     AppText(
                       text: "₹${price.toStringAsFixed(2)}",
                       fontSize: 16,
-                      fontWeight: FontWeight.w700,
+                      fontFamily: "Clash Display Semibold",
+                      fontWeight: FontWeight.w600,
                     ),
                   ],
                 ),
@@ -319,8 +325,8 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
       iconData = Icons.refresh_rounded;
       iconColor = const Color(0xFF3B82F6);
     } else if (lower.contains("exchange")) {
-      iconData = Icons.swap_horiz_rounded; // 🔥 EXCHANGED
-      iconColor = const Color(0xFF6366F1); // Indigo
+      iconData = Icons.swap_horiz_rounded;
+      iconColor = const Color(0xFF6366F1);
     } else if (lower.contains("delivered") || lower.contains("confirmed")) {
       iconData = Icons.check_circle_rounded;
       iconColor = const Color(0xFF10B981);
@@ -340,6 +346,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
             SizedBox(width: 8.sp),
             AppText(
               text: status.capitalizeFirst ?? status,
+              fontFamily: "Clash Display Semibold",
               fontWeight: FontWeight.w600,
               color: iconColor,
               fontSize: 13,
@@ -368,14 +375,18 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
 
                   Get.to(() => RateProductScreen(product: productData));
                 },
-                child: AppText(
+                child: const AppText(
                   text: "Rate & Review Product",
-                  color: const Color(0xFF8B5CF6),
+                  fontFamily: "Clash Display",
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF8B5CF6),
                   fontSize: 12,
                 ),
               )
             : AppText(
                 text: "ID #$orderItemId",
+                fontFamily: "Clash Display Regular",
+                fontWeight: FontWeight.w400,
                 color: subtitleColor,
                 fontSize: 12,
               ),
@@ -402,12 +413,21 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
           return Padding(
             padding: EdgeInsets.only(right: 10.sp),
             child: ChoiceChip(
-              label: Text(filter),
+              label: Text(
+                filter,
+                style: TextStyle(
+                  fontFamily:
+                      isSelected ? "Clash Display Semibold" : "Clash Display",
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                ),
+              ),
               selected: isSelected,
               selectedColor: homeAppBarColor,
               labelStyle: TextStyle(
                 color: isSelected ? Colors.white : Colors.black,
-                fontWeight: FontWeight.w600,
+                fontFamily:
+                    isSelected ? "Clash Display Semibold" : "Clash Display",
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
               onSelected: (_) {
                 setState(() => selectedFilter = filter);
@@ -445,6 +465,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
           child: Center(
             child: AppText(
               text: text,
+              fontFamily: "Clash Display Semibold",
               fontWeight: FontWeight.w600,
               color: textColor,
               fontSize: 12,

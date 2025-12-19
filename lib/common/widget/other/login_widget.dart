@@ -4,8 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 
-
-
 class LoginWidget extends StatelessWidget {
   final String text1;
   final String text2;
@@ -28,7 +26,7 @@ class LoginWidget extends StatelessWidget {
           padding: EdgeInsets.only(top: 20.sp, left: 16.sp),
           child: AppText(
             text: text1.toUpperCase(),
-            fontFamily: "Franklin Gothic Semibold",
+            fontFamily: "Clash Display Semibold",
             fontWeight: FontWeight.w500,
             color: appBarColor,
             fontSize: 16,
@@ -39,7 +37,7 @@ class LoginWidget extends StatelessWidget {
           child: AppText(
             text: text2,
             maxLines: 2,
-            fontFamily: "Franklin Gothic Regular",
+            fontFamily: "Clash Display Regular",
             fontWeight: FontWeight.w400,
             color: searchTextColor,
             fontSize: 14,

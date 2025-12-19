@@ -15,12 +15,16 @@ import '../text/app_text.dart';
 class BottomWishlist extends StatefulWidget {
   /// Called with the selected boardId when user taps SAVE
   final Function(int)? onPressed;
+
   /// “New Board” action
   final Function? onPressedBoard;
+
   /// Controller only for button loading state
   final GetxController controller;
+
   /// Boards from new API: [{id, name, productCount}]
   final List wishlistList;
+
   /// Optional PDP image preview
   final String productImage;
 
@@ -85,7 +89,8 @@ class _BottomWishlistState extends State<BottomWishlist> {
       if (item['images'] is List) {
         for (final it in (item['images'] as List)) {
           if (it is String && it.trim().isNotEmpty) candidates.add(it);
-          if (it is Map && it['name'] != null) candidates.add(it['name']?.toString());
+          if (it is Map && it['name'] != null)
+            candidates.add(it['name']?.toString());
         }
       }
 
@@ -187,7 +192,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                           style: TextStyle(
                             fontSize: 16.sp,
                             color: blackColor,
-                            fontFamily: "Franklin Gothic Semibold",
+                            fontFamily: "Clash Display Semibold",
                           ),
                         ),
                       ),
@@ -198,7 +203,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                           style: TextStyle(
                             fontSize: 10.sp,
                             color: subtitleColor,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                           ),
                         ),
                       ),
@@ -228,7 +233,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                     style: TextStyle(
                       color: blackColor,
                       fontSize: 12.sp,
-                      fontFamily: "Franklin Gothic Semibold",
+                      fontFamily: "Clash Display Semibold",
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -251,7 +256,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                               text: "NEW BOARD",
                               color: homeAppBarColor,
                               fontSize: 10,
-                              fontFamily: "Franklin Gothic",
+                              fontFamily: "Clash Display",
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -329,15 +334,14 @@ class _BottomWishlistState extends State<BottomWishlist> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Padding(
-                                          padding:
-                                              EdgeInsets.only(top: 15.sp),
+                                          padding: EdgeInsets.only(top: 15.sp),
                                           child: Text(
                                             boardName.toUpperCase(),
                                             style: TextStyle(
                                               fontSize: 16.sp,
                                               color: blackColor,
                                               fontFamily:
-                                                  "Franklin Gothic Semibold",
+                                                  "Clash Display Semibold",
                                             ),
                                           ),
                                         ),
@@ -350,7 +354,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                                               fontSize: 10.sp,
                                               color: subtitleColor,
                                               fontFamily:
-                                                  "Franklin Gothic Regular",
+                                                  "Clash Display Regular",
                                             ),
                                           ),
                                         ),
@@ -450,7 +454,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
               padding: EdgeInsets.only(left: 20.sp, right: 20.sp, top: 2.sp),
               child: AppText(
                 text: error,
-                fontFamily: "Franklin Gothic Regular",
+                fontFamily: "Clash Display Regular",
                 fontWeight: FontWeight.w400,
                 color: redColor,
                 fontSize: 12,

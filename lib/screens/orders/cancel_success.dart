@@ -56,7 +56,7 @@ class CancelSuccessScreen extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: AppText(
                 text: "Refund Details",
-                fontFamily: "Franklin Gothic",
+                fontFamily: "Clash Display",
                 fontWeight: FontWeight.w700,
                 color: blackColor,
                 fontSize: 14,
@@ -67,7 +67,7 @@ class CancelSuccessScreen extends StatelessWidget {
             const AppText(
               text:
                   "Refund will be processed to your original payment method within 24 hours.",
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w400,
               color: subtitleColor,
               fontSize: 12,
@@ -81,7 +81,7 @@ class CancelSuccessScreen extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: AppText(
                 text: "Item Cancelled",
-                fontFamily: "Franklin Gothic",
+                fontFamily: "Clash Display",
                 fontWeight: FontWeight.w700,
                 color: blackColor,
                 fontSize: 14,
@@ -124,7 +124,7 @@ class CancelSuccessScreen extends StatelessWidget {
                         children: [
                           AppText(
                             text: productName,
-                            fontFamily: "Franklin Gothic",
+                            fontFamily: "Clash Display",
                             fontWeight: FontWeight.w700,
                             color: blackColor,
                             fontSize: 13,
@@ -132,7 +132,7 @@ class CancelSuccessScreen extends StatelessWidget {
                           SizedBox(height: 2.sp),
                           AppText(
                             text: description,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontWeight: FontWeight.w400,
                             color: subtitleColor,
                             fontSize: 11,
@@ -141,7 +141,7 @@ class CancelSuccessScreen extends StatelessWidget {
                           SizedBox(height: 6.sp),
                           AppText(
                             text: "Size: $size   Qty: $quantity",
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontWeight: FontWeight.w400,
                             color: subtitleColor,
                             fontSize: 11,
@@ -170,7 +170,7 @@ class CancelSuccessScreen extends StatelessWidget {
                 child: const Center(
                   child: AppText(
                     text: "BACK TO ORDERS",
-                    fontFamily: "Franklin Gothic",
+                    fontFamily: "Clash Display",
                     fontWeight: FontWeight.w700,
                     color: blackColor,
                     fontSize: 13,

@@ -175,7 +175,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                         color: loginText,
                                                         fontSize: 16,
                                                         fontFamily:
-                                                            "Franklin Gothic Regular",
+                                                            "Clash Display Regular",
                                                         fontWeight:
                                                             FontWeight.w400,
                                                       ),
@@ -241,7 +241,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                                   btnTextColor,
                                                               fontSize: 12,
                                                               fontFamily:
-                                                                  "Franklin Gothic",
+                                                                  "Clash Display",
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w500,
@@ -265,7 +265,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                   color: greyTextColor,
                                                   fontSize: 12,
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               ),
@@ -279,7 +279,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                   color: greyTextColor,
                                                   fontSize: 12,
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               ),
@@ -295,7 +295,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                   color: loginText,
                                                   fontSize: 12,
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               ),
@@ -310,7 +310,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                   color: loginText,
                                                   fontSize: 12,
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               ),
@@ -353,7 +353,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                             text:
                                                                 "Shipping Address",
                                                             fontFamily:
-                                                                "Franklin Gothic",
+                                                                "Clash Display",
                                                             fontWeight:
                                                                 FontWeight.w500,
                                                             color: loginText,
@@ -369,7 +369,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                             text:
                                                                 "Add a shipping address",
                                                             fontFamily:
-                                                                "Franklin Gothic Regular",
+                                                                "Clash Display Regular",
                                                             fontWeight:
                                                                 FontWeight.w400,
                                                             color:
@@ -424,7 +424,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                       horizontal: 16),
                                   child: AppText(
                                     text: "Payment",
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     fontWeight: FontWeight.w500,
                                     color: loginText,
                                     fontSize: 16.sp,
@@ -435,7 +435,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                       const EdgeInsets.only(left: 16, top: 2),
                                   child: AppText(
                                     text: "Select payment method",
-                                    fontFamily: "Franklin Gothic Regular",
+                                    fontFamily: "Clash Display Regular",
                                     fontWeight: FontWeight.w400,
                                     color: greyTextColor,
                                     fontSize: 14.sp,
@@ -479,7 +479,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                             child: AppText(
                                               text: "Delivery Estimates",
                                               fontFamily:
-                                                  "Franklin Gothic Regular",
+                                                  "Clash Display Regular",
                                               fontWeight: FontWeight.w400,
                                               color: blackColor,
                                               fontSize: 16,
@@ -580,7 +580,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                               text:
                                                                   " Estimated delivery :",
                                                               fontFamily:
-                                                                  "Franklin Gothic Regular",
+                                                                  "Clash Display Regular",
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w400,
@@ -594,7 +594,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                                     index][
                                                                 "estimated_delivery"],
                                                             fontFamily:
-                                                                "Franklin Gothic Bold",
+                                                                "Clash Display Bold",
                                                             fontWeight:
                                                                 FontWeight.w700,
                                                             color: blackColor,
@@ -636,7 +636,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                       onTap: () {},
                                       child: AppText(
                                         text: "Have a gift card?",
-                                        fontFamily: "Franklin Gothic",
+                                        fontFamily: "Clash Display",
                                         fontWeight: FontWeight.w500,
                                         color: textColor,
                                         fontSize: 14.sp,
@@ -659,7 +659,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                       },
                                       child: AppText(
                                         text: "Apply",
-                                        fontFamily: "Franklin Gothic",
+                                        fontFamily: "Clash Display",
                                         fontWeight: FontWeight.w500,
                                         color: textColor,
                                         fontSize: 12.sp,
@@ -675,7 +675,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                       padding: EdgeInsets.only(top: 10.sp),
                                       child: AppText(
                                         text: "Price Details",
-                                        fontFamily: "Franklin Gothic Regular",
+                                        fontFamily: "Clash Display Regular",
                                         fontWeight: FontWeight.w400,
                                         color: colorPrimary,
                                         fontSize: 12,
@@ -703,7 +703,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                             child: AppText(
                                               text: "Total MRP",
                                               fontFamily:
-                                                  "Franklin Gothic Regular",
+                                                  "Clash Display Regular",
                                               fontWeight: FontWeight.w400,
                                               color: textColor,
                                               fontSize: 12,
@@ -716,8 +716,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                           ),
                                           AppText(
                                             text: "\u{20B9} ${widget.mrp}",
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
+                                            fontFamily: "Clash Display Regular",
                                             fontWeight: FontWeight.w400,
                                             color: textColor,
                                             fontSize: 12,
@@ -741,7 +740,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                     text:
                                                         "Express Delivery Charges",
                                                     fontFamily:
-                                                        "Franklin Gothic Regular",
+                                                        "Clash Display Regular",
                                                     fontWeight: FontWeight.w400,
                                                     color: textColor,
                                                     fontSize: 12,
@@ -756,7 +755,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                   text:
                                                       "\u{20B9} ${widget.expressDelivery}",
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: textColor,
                                                   fontSize: 12,
@@ -780,7 +779,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                             child: AppText(
                                               text: "Discount on MRP",
                                               fontFamily:
-                                                  "Franklin Gothic Regular",
+                                                  "Clash Display Regular",
                                               fontWeight: FontWeight.w400,
                                               color: textColor,
                                               fontSize: 12,
@@ -793,8 +792,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                           ),
                                           AppText(
                                             text: "\u{20B9} ${widget.discount}",
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
+                                            fontFamily: "Clash Display Regular",
                                             fontWeight: FontWeight.w400,
                                             color: greenText,
                                             fontSize: 12,
@@ -817,7 +815,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                   child: AppText(
                                                     text: "Coupon Discount",
                                                     fontFamily:
-                                                        "Franklin Gothic Regular",
+                                                        "Clash Display Regular",
                                                     fontWeight: FontWeight.w400,
                                                     color: textColor,
                                                     fontSize: 12,
@@ -832,7 +830,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                   text:
                                                       "\u{20B9} ${widget.coupanDiscount}",
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: greenText,
                                                   fontSize: 12,
@@ -858,7 +856,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                   child: AppText(
                                                     text: "Shipping Cost",
                                                     fontFamily:
-                                                        "Franklin Gothic Regular",
+                                                        "Clash Display Regular",
                                                     fontWeight: FontWeight.w400,
                                                     color: textColor,
                                                     fontSize: 12,
@@ -873,7 +871,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                   text:
                                                       "\u{20B9} ${widget.ShipCost}",
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: greenText,
                                                   fontSize: 12,
@@ -897,7 +895,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                             child: AppText(
                                               text: "Service tax",
                                               fontFamily:
-                                                  "Franklin Gothic Regular",
+                                                  "Clash Display Regular",
                                               fontWeight: FontWeight.w400,
                                               color: textColor,
                                               fontSize: 12,
@@ -911,8 +909,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                           AppText(
                                             text:
                                                 "\u{20B9} ${widget.lafetchtax.toString()}",
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
+                                            fontFamily: "Clash Display Regular",
                                             fontWeight: FontWeight.w400,
                                             color: greenText,
                                             fontSize: 12,
@@ -935,7 +932,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                 child: AppText(
                                                   text: "Convenience Fee",
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: textColor,
                                                   fontSize: 12,
@@ -955,8 +952,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                           AppText(
                                             text:
                                                 "\u{20B9} ${widget.convenienceFee}",
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
+                                            fontFamily: "Clash Display Regular",
                                             fontWeight: FontWeight.w400,
                                             color: greenText,
                                             fontSize: 12,
@@ -979,7 +975,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                 child: AppText(
                                                   text: "Tax & Charges",
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                   color: textColor,
                                                   fontSize: 12,
@@ -998,8 +994,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                           ),
                                           AppText(
                                             text: "\u{20B9} ${widget.tax}",
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
+                                            fontFamily: "Clash Display Regular",
                                             fontWeight: FontWeight.w400,
                                             color: textColor,
                                             fontSize: 12,
@@ -1028,7 +1023,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                 EdgeInsets.only(right: 4.sp),
                                             child: AppText(
                                               text: "Bill total",
-                                              fontFamily: "Franklin Gothic",
+                                              fontFamily: "Clash Display",
                                               fontWeight: FontWeight.w500,
                                               color: colorPrimary,
                                               fontSize: 16,
@@ -1041,7 +1036,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                           ),
                                           AppText(
                                             text: "\u{20B9} ${widget.total}",
-                                            fontFamily: "Franklin Gothic Bold",
+                                            fontFamily: "Clash Display Bold",
                                             fontWeight: FontWeight.w700,
                                             color: colorPrimary,
                                             fontSize: 18,
@@ -1066,7 +1061,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                         child: AppText(
                           text:
                               "You will earn 100 LaFetch coins on this purchase",
-                          fontFamily: "Franklin Gothic Regular",
+                          fontFamily: "Clash Display Regular",
                           fontWeight: FontWeight.w400,
                           color: deepPurple,
                           fontSize: 12.sp,
@@ -1095,7 +1090,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                 AppText(
                                   text: "INR ${widget.amount}",
                                   textAlign: TextAlign.center,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w400,
                                   color: blackColor,
                                   fontSize: 16,
@@ -1106,7 +1101,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       AppText(
                         text: "View details",
                         textAlign: TextAlign.center,
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w500,
                         color: textColor,
                         fontSize: 12.sp,

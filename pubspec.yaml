@@ -83,7 +83,7 @@ dev_dependencies:
 
 flutter_launcher_icons:
   ios: true
-  android: true # Also generate Android icons
+  android: true
   image_path: "assets/icon/IMG_1367.PNG"
   remove_alpha_ios: true
 
@@ -95,27 +95,27 @@ flutter:
     - assets/images/
 
   fonts:
-    - family: Franklin Gothic Bold
+    - family: Clash Display Bold
       fonts:
-        - asset: fonts/LibreFranklin-Bold.otf
+        - asset: fonts/ClashDisplay-Bold.otf
           weight: 700
-    - family: Franklin Gothic Semibold
+    - family: Clash Display Semibold
       fonts:
-        - asset: fonts/LibreFranklin-SemiBold.otf
+        - asset: fonts/ClashDisplay-Semibold.otf
           weight: 600
-    - family: Franklin Gothic Light
+    - family: Clash Display Light
       fonts:
-        - asset: fonts/LibreFranklin-Light.otf
+        - asset: fonts/ClashDisplay-Light.otf
           weight: 300
-    - family: Franklin Gothic
+    - family: Clash Display
       fonts:
-        - asset: fonts/LibreFranklin-Medium.otf
+        - asset: fonts/ClashDisplay-Medium.otf
           weight: 500
-    - family: Franklin Gothic Regular
+    - family: Clash Display Regular
       fonts:
-        - asset: fonts/LibreFranklin-Regular.otf
+        - asset: fonts/ClashDisplay-Regular.otf
           weight: 400
-    - family: Playfair Display Medium
+    - family: Clash Display Medium
       fonts:
-        - asset: fonts/PlayfairDisplay-MediumItalic.ttf
+        - asset: fonts/ClashDisplay-Extralight.otf
           weight: 400

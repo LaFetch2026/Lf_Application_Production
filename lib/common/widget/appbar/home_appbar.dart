@@ -98,7 +98,7 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                   color: homeAppBarColor,
                   fontSize: 16,
                   textAlign: TextAlign.end,
-                  fontFamily: "Franklin Gothic Semibold",
+                  fontFamily: "Clash Display Semibold",
                   fontWeight: FontWeight.w500,
                 ),
               )
@@ -202,7 +202,7 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                                   style: TextStyle(
                                     fontSize: 8.sp,
                                     color: whiteColor,
-                                    fontFamily: "Franklin Gothic Regular",
+                                    fontFamily: "Clash Display Regular",
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),

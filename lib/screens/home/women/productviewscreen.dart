@@ -29,11 +29,15 @@ import 'dart:async';
 class ProductViewScreen extends StatefulWidget {
   final String title;
   final String genderName;
+  final List<Map<String, dynamic>>? searchResults;
+  final String? searchQuery;
 
   const ProductViewScreen({
     super.key,
     required this.title,
     required this.genderName,
+    this.searchResults,
+    this.searchQuery,
   });
 
   @override
@@ -134,25 +138,23 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   void initState() {
     super.initState();
 
-    // Map genderName → superCatId
     final g = widget.genderName.trim().toLowerCase();
     if (g == 'men') {
       productController.categoryFilter.value = 1;
     } else if (g == 'women') {
       productController.categoryFilter.value = 2;
     } else {
-      productController.categoryFilter.value = 3; // accessories
+      productController.categoryFilter.value = 3;
     }
     productController.selectedCategoryGender.value = widget.genderName;
 
-    // keep your initialization flow
     productController.handPickedProductList.clear();
     productController.handpickedHasnextpage.value = true;
     productController.handpickedLoadMore.value = false;
     productController.isHandPicked.value = false;
     productController.handpickedPage.value = 1;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       wishlistController.getWishlistData();
 
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -166,8 +168,12 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         productController.update();
       });
 
-      // ✅ Load brands for filters
-      _loadBrandsIfNeeded();
+      // ✅ Only load products if NOT in search mode
+      if (widget.searchResults == null) {
+        // ✅ Use the SAME method with withLimit: false
+        final currentGender = productController.categoryFilter.value;
+        await productController.getHomeProduct(currentGender, withLimit: false);
+      }
 
       // ✅ Load and track home products
       _loadHomeProductsIfNeeded();
@@ -248,6 +254,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
   // ✅ Get all products from collections
   List<Map<String, dynamic>> _getAllProducts() {
+    // If search results are provided, return them directly
+    if (widget.searchResults != null && widget.searchResults!.isNotEmpty) {
+      return widget.searchResults!;
+    }
+
     final int selectedCollectionId = productController.tagId.value;
     final int superCatId = productController.categoryFilter.value;
 
@@ -533,8 +544,10 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           // ===== GRID =====
           Expanded(
             child: Obx(() {
-              final loading = productController.isHomeProduct.value ||
-                  productController.isHandPicked.value;
+              // ✅ Skip loading animation if search results are provided
+              final loading = widget.searchResults == null &&
+                  (productController.isHomeProduct.value ||
+                      productController.isHandPicked.value);
 
               if (loading) {
                 return _buildSkeletonGrid();
@@ -666,7 +679,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                     color: blackColor,
                                     maxLines: 1,
                                     fontSize: 13,
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     fontWeight: FontWeight.w500,
                                   ),
                                   AppText(
@@ -674,7 +687,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                     color: const Color(0xFF6B7280),
                                     maxLines: 1,
                                     fontSize: 11,
-                                    fontFamily: "Franklin Gothic Regular",
+                                    fontFamily: "Clash Display Regular",
                                     fontWeight: FontWeight.w400,
                                   ),
                                   Padding(
@@ -690,7 +703,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                           color: homeAppBarColor,
                                           maxLines: 1,
                                           fontSize: 11,
-                                          fontFamily: "Franklin Gothic",
+                                          fontFamily: "Clash Display",
                                           fontWeight: FontWeight.w400,
                                         );
                                       }
@@ -712,7 +725,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                   decoration: TextDecoration
                                                       .lineThrough,
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               ),
@@ -722,7 +735,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                               color: homeAppBarColor,
                                               maxLines: 1,
                                               fontSize: 11,
-                                              fontFamily: "Franklin Gothic",
+                                              fontFamily: "Clash Display",
                                               fontWeight: FontWeight.w400,
                                             ),
                                           ],
@@ -736,7 +749,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                           color: homeAppBarColor,
                                           maxLines: 1,
                                           fontSize: 11,
-                                          fontFamily: "Franklin Gothic",
+                                          fontFamily: "Clash Display",
                                           fontWeight: FontWeight.w400,
                                         );
                                       }
@@ -758,8 +771,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                             color: expressText,
                                             maxLines: 2,
                                             fontSize: 11,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
+                                            fontFamily: "Clash Display Regular",
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ],
@@ -819,7 +831,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                   style: TextStyle(
                                     color: const Color(0xFF374151),
                                     fontSize: 13.sp,
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     fontWeight: FontWeight.w500,
                                     decoration: TextDecoration.none,
                                   ),
@@ -829,49 +841,53 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                           ),
                         ),
                       ),
+
                       Container(width: 1.sp, color: borderColor, height: 40.sp),
 
-                      // Category
-                      GestureDetector(
-                        onTap: () {},
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10.sp, horizontal: 5.sp),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                                child: Text(
-                                  "CATEGORY",
-                                  style: TextStyle(
-                                    color: const Color(0xFF374151),
-                                    fontSize: 13.sp,
-                                    fontFamily: "Franklin Gothic",
-                                    fontWeight: FontWeight.w500,
-                                    decoration: TextDecoration.none,
+                      // Only show category if NOT in search mode
+                      if (widget.searchResults == null) ...[
+                        // Category
+                        GestureDetector(
+                          onTap: () {},
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10.sp, horizontal: 5.sp),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                                  child: Text(
+                                    "CATEGORY",
+                                    style: TextStyle(
+                                      color: const Color(0xFF374151),
+                                      fontSize: 13.sp,
+                                      fontFamily: "Clash Display",
+                                      fontWeight: FontWeight.w500,
+                                      decoration: TextDecoration.none,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: 5.sp, right: 5.sp, top: 1.sp),
-                                child: Text(
-                                  widget.genderName.toUpperCase(),
-                                  style: TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    fontFamily: "Franklin Gothic Regular",
-                                    fontWeight: FontWeight.w400,
-                                    color: appBarColor,
-                                    fontSize: 10.sp,
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 5.sp, right: 5.sp, top: 1.sp),
+                                  child: Text(
+                                    widget.genderName.toUpperCase(),
+                                    style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      fontFamily: "Clash Display Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: appBarColor,
+                                      fontSize: 10.sp,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
 
-                      Container(width: 1.sp, color: borderColor, height: 40.sp),
+                        Container(width: 1.sp, color: borderColor, height: 40.sp),
+                      ],
 
                       // Filters
                       GestureDetector(
@@ -890,7 +906,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                   style: TextStyle(
                                     color: const Color(0xFF374151),
                                     fontSize: 13.sp,
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     fontWeight: FontWeight.w500,
                                     decoration: TextDecoration.none,
                                   ),
@@ -1067,7 +1083,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                         children: [
                           const Text("FILTERS",
                               style: TextStyle(
-                                  fontFamily: "Franklin Gothic",
+                                  fontFamily: "Clash Display",
                                   fontWeight: FontWeight.w700,
                                   fontSize: 18,
                                   color: blackColor)),
@@ -1086,7 +1102,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                 style: TextStyle(
                                     color: appBarColor,
                                     fontSize: 13,
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     decoration: TextDecoration.underline)),
                           ),
                         ],
@@ -1119,8 +1135,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                 ? blackColor
                                                 : const Color(0xFF6B7280),
                                             fontFamily: selected
-                                                ? "Franklin Gothic"
-                                                : "Franklin Gothic Regular",
+                                                ? "Clash Display"
+                                                : "Clash Display Regular",
                                             fontWeight: selected
                                                 ? FontWeight.w700
                                                 : FontWeight.w400)),
@@ -1153,7 +1169,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                           title: Text(b,
                                               style: const TextStyle(
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   color: blackColor)),
                                           onChanged: (val) {
                                             setModalState(() {
@@ -1307,7 +1323,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                     borderRadius: BorderRadius.circular(8))),
                             child: const Text("CLOSE",
                                 style: TextStyle(
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     color: blackColor)),
                           )),
                           const SizedBox(width: 12),
@@ -1395,7 +1411,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                             },
                             child: const Text("APPLY",
                                 style: TextStyle(
-                                    fontFamily: "Franklin Gothic",
+                                    fontFamily: "Clash Display",
                                     color: whiteColor)),
                           )),
                         ],
@@ -1439,7 +1455,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 const Text("SORT BY",
                     style: TextStyle(
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w700,
                         fontSize: 18,
                         color: blackColor)),
@@ -1455,7 +1471,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                         activeColor: appBarColor,
                         title: Text(e.value,
                             style: const TextStyle(
-                                fontFamily: "Franklin Gothic Regular",
+                                fontFamily: "Clash Display Regular",
                                 color: blackColor)),
                         onChanged: (v) =>
                             selectedOption.value = v ?? "recommended",
@@ -1474,7 +1490,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                 borderRadius: BorderRadius.circular(8))),
                         child: const Text("CLOSE",
                             style: TextStyle(
-                                fontFamily: "Franklin Gothic",
+                                fontFamily: "Clash Display",
                                 color: blackColor)))),
                 const SizedBox(width: 12),
                 Expanded(
@@ -1502,7 +1518,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                         },
                         child: const Text("APPLY",
                             style: TextStyle(
-                                fontFamily: "Franklin Gothic",
+                                fontFamily: "Clash Display",
                                 color: whiteColor))))
               ]),
               SizedBox(height: 10.sp)

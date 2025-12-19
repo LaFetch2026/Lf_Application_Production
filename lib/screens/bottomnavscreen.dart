@@ -285,7 +285,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
-                    fontFamily: "Franklin Gothic",
+                    fontFamily: "Clash Display",
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.2,
                   ),
@@ -298,7 +298,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.85),
                     fontSize: 14,
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                   ),
                   textAlign: TextAlign.center,
@@ -322,7 +322,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Clash Display",
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.5,
                         ),
@@ -365,7 +365,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                 style: TextStyle(
                   color: color,
                   fontSize: 10.sp,
-                  fontFamily: "Franklin Gothic",
+                  fontFamily: "Clash Display",
                 ),
               ),
             ],

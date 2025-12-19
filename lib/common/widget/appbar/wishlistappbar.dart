@@ -94,7 +94,7 @@ class _WishlistAppbarState extends State<WishlistAppbar> {
                   text: widget.text,
                   color: homeAppBarColor,
                   fontSize: 16,
-                  fontFamily: "Franklin Gothic Semibold",
+                  fontFamily: "Clash Display Semibold",
                   textAlign: TextAlign.center,
                   fontWeight: FontWeight.w500,
                 ),

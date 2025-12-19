@@ -168,7 +168,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
                   padding: EdgeInsets.only(left: 16.sp),
                   child: AppText(
                     text: "Welcome to Lafetch!".toUpperCase(),
-                    fontFamily: "Franklin Gothic",
+                    fontFamily: "Clash Display",
                     fontWeight: FontWeight.w500,
                     color: whiteBack,
                     fontSize: 22,
@@ -182,7 +182,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
                   child: AppText(
                     text:
                         "Shape your closet with india's best curation of homegrown brands, designs and boutiques",
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     maxLines: 3,
                     fontWeight: FontWeight.w400,
                     color: whiteTextColor,
@@ -255,7 +255,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
                               child: AppText(
                                 text: "SKIP",
                                 textAlign: TextAlign.center,
-                                fontFamily: "Franklin Gothic Semibold",
+                                fontFamily: "Clash Display Semibold",
                                 fontWeight: FontWeight.w600,
                                 color: searchTextColor,
                                 fontSize: 12,

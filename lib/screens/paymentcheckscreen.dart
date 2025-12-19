@@ -125,7 +125,7 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
               padding: EdgeInsets.only(top: 0.sp, left: 16.sp, right: 16.sp),
               child: AppText(
                 text: "We are currently verifying your payment.",
-                fontFamily: "Franklin Gothic Semibold",
+                fontFamily: "Clash Display Semibold",
                 fontWeight: FontWeight.w500,
                 color: homeAppBarColor,
                 maxLines: 2,
@@ -137,7 +137,7 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
               child: AppText(
                 text:
                     "This may take upto 5 minutes to update! You can check your order status in the ${'"'}${"My Orders"}${'"'} section.\nFor any concerns, you can contact support for any assistance.",
-                fontFamily: "Franklin Gothic Regular",
+                fontFamily: "Clash Display Regular",
                 fontWeight: FontWeight.w400,
                 color: titleColor,
                 maxLines: 15,

@@ -6,8 +6,6 @@ import 'package:get/get.dart';
 import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 
-
-
 class SaveAddressAppbar extends StatelessWidget {
   final String text;
   final Function? onPressedWishlist;
@@ -15,9 +13,9 @@ class SaveAddressAppbar extends StatelessWidget {
 
   const SaveAddressAppbar(
       {Key? key,
-        required this.text,
-        this.onPressedWishlist,
-        this.showWishlist = true})
+      required this.text,
+      this.onPressedWishlist,
+      this.showWishlist = true})
       : super(key: key);
 
   @override
@@ -54,7 +52,7 @@ class SaveAddressAppbar extends StatelessWidget {
               padding: EdgeInsets.only(top: 45.sp),
               child: AppText(
                 text: text.toUpperCase(),
-                fontFamily: "Franklin Gothic Semibold",
+                fontFamily: "Clash Display Semibold",
                 fontWeight: FontWeight.w600,
                 color: appBarColor,
                 fontSize: 16,
@@ -67,24 +65,24 @@ class SaveAddressAppbar extends StatelessWidget {
             ),
             showWishlist
                 ? GestureDetector(
-              onTap: () {
-                onPressedWishlist?.call();
-              },
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      top: 45.sp,
-                      left: 16.sp,
-                      right: 16.sp,
-                      bottom: 5.sp),
-                  child: SvgPicture.asset(heartSvgImage,
-                      height: 18.sp, width: 18.sp, fit: BoxFit.cover),
-                ),
-              ),
-            )
+                    onTap: () {
+                      onPressedWishlist?.call();
+                    },
+                    child: Container(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            top: 45.sp,
+                            left: 16.sp,
+                            right: 16.sp,
+                            bottom: 5.sp),
+                        child: SvgPicture.asset(heartSvgImage,
+                            height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                      ),
+                    ),
+                  )
                 : SizedBox(
-              width: 20.sp,
-            ),
+                    width: 20.sp,
+                  ),
           ],
         ),
       ]),

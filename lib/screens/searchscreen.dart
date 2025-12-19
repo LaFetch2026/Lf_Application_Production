@@ -13,7 +13,7 @@ import '../common/widget/lists/dummy_container.dart';
 import '../common/widget/text/app_text.dart';
 import '../controllers/search_controller.dart';
 import '../core/constant/constants.dart';
-import '../screens/catalog/productlist/productdetailsscreen.dart';
+import '../screens/home/women/productviewscreen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -121,19 +121,12 @@ class SearchScreenState extends State<SearchScreen> {
       return;
     }
 
-    final first = items.first;
-    final int? productId = first['id'] is int
-        ? first['id'] as int
-        : int.tryParse('${first['id']}');
-
-    if (productId == null) {
-      getSnackBar("Product id missing");
-      return;
-    }
-
-    Get.to(() => ProductDetailsScreen(
-          productId: productId,
-          type: 'add',
+    // Navigate to ProductViewScreen with search results
+    Get.to(() => ProductViewScreen(
+          title: 'Search Results for "$q"',
+          genderName: 'search',
+          searchResults: items,
+          searchQuery: q,
         ));
   }
 
@@ -205,7 +198,7 @@ class SearchScreenState extends State<SearchScreen> {
                                 maxLines: 1,
                                 style: TextStyle(
                                   color: homeAppBarColor,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontSize: 14.sp,
                                 ),
                                 onChanged: _onChanged,
@@ -250,7 +243,7 @@ class SearchScreenState extends State<SearchScreen> {
                                   hintStyle: const TextStyle(
                                     color: subtitleColor,
                                     fontSize: 14,
-                                    fontFamily: "Franklin Gothic Regular",
+                                    fontFamily: "Clash Display Regular",
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
@@ -338,7 +331,7 @@ class SearchScreenState extends State<SearchScreen> {
                         child: AppText(
                           text: "Search for '$term'",
                           maxLines: 1,
-                          fontFamily: "Franklin Gothic Regular",
+                          fontFamily: "Clash Display Regular",
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
                           color: homeAppBarColor,
@@ -402,7 +395,7 @@ class SearchScreenState extends State<SearchScreen> {
             children: [
               const AppText(
                 text: "Recent Searches",
-                fontFamily: "Franklin Gothic Semibold",
+                fontFamily: "Clash Display Semibold",
                 fontWeight: FontWeight.w400,
                 color: blackColor,
                 fontSize: 16,
@@ -419,7 +412,7 @@ class SearchScreenState extends State<SearchScreen> {
                   ),
                   child: const AppText(
                     text: "Clear all",
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                     color: subtitleColor,
                     fontSize: 12,
@@ -455,7 +448,7 @@ class SearchScreenState extends State<SearchScreen> {
                                   maxLines: 1,
                                   color: appBarColor,
                                   fontSize: 14.sp,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),

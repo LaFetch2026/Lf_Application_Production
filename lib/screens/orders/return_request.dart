@@ -79,7 +79,7 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
         ),
         title: const AppText(
           text: "RETURN REQUEST",
-          fontFamily: "Franklin Gothic",
+          fontFamily: "Clash Display",
           fontWeight: FontWeight.w700,
           color: blackColor,
           fontSize: 16,

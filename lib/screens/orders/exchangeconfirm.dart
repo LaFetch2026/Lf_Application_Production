@@ -104,7 +104,7 @@
 //                                       child: AppText(
 //                                         text: widget.productName,
 //                                         maxLines: 2,
-//                                         fontFamily: "Franklin Gothic Regular",
+//                                         fontFamily: "Clash Display Regular",
 //                                         fontWeight: FontWeight.w400,
 //                                         fontSize: 14,
 //                                         color: nameText,
@@ -117,7 +117,7 @@
 //                                         text: Bidi.stripHtmlIfNeeded(
 //                                             widget.productDescription),
 //                                         maxLines: 2,
-//                                         fontFamily: "Franklin Gothic Regular",
+//                                         fontFamily: "Clash Display Regular",
 //                                         fontWeight: FontWeight.w400,
 //                                         fontSize: 12,
 //                                         color: nameText,
@@ -135,7 +135,7 @@
 //                           child: AppText(
 //                             text: "Why you exchanging this?",
 //                             maxLines: 2,
-//                             fontFamily: "Franklin Gothic",
+//                             fontFamily: "Clash Display",
 //                             fontWeight: FontWeight.w500,
 //                             fontSize: 14,
 //                             color: loginText,
@@ -149,7 +149,7 @@
 //                             style: TextStyle(
 //                               color: textColor,
 //                               fontSize: 14.sp,
-//                               fontFamily: "Franklin Gothic Regular",
+//                               fontFamily: "Clash Display Regular",
 //                             ),
 //                             controller: controller.exchangeComment,
 //                             maxLines: 5,

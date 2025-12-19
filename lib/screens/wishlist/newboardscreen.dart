@@ -153,7 +153,7 @@ class _NewBoardScreenState extends State<NewBoardScreen> {
                           EdgeInsets.only(left: 16.sp, right: 5.sp, top: 5.sp),
                       child: AppText(
                         text: wishlistController.boardError.value,
-                        fontFamily: "Franklin Gothic Regular",
+                        fontFamily: "Clash Display Regular",
                         fontWeight: FontWeight.w400,
                         color: redColor,
                         fontSize: 12,

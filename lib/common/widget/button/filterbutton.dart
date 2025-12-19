@@ -6,8 +6,6 @@ import 'package:get/get.dart';
 
 import '../../../core/constant/constants.dart';
 
-
-
 class FilterButton extends StatefulWidget {
   final Function onPresedApply;
   final Color lineColor;
@@ -62,7 +60,7 @@ class _FilterButtonState extends State<FilterButton> {
                                     ? titleColor
                                     : whiteColor,
                                 fontSize: 13.sp,
-                                fontFamily: "Franklin Gothic"))),
+                                fontFamily: "Clash Display"))),
                         onPressed: () {
                           Get.back();
                         },
@@ -72,7 +70,7 @@ class _FilterButtonState extends State<FilterButton> {
                               color: widget.lineColor == dividerColor
                                   ? titleColor
                                   : whiteColor,
-                              fontFamily: "Franklin Gothic",
+                              fontFamily: "Clash Display",
                               fontSize: 13.sp),
                         ))),
               ),
@@ -87,49 +85,49 @@ class _FilterButtonState extends State<FilterButton> {
                         : lightPurpleColor,
                     child: isFilter
                         ? Center(
-                      child: SizedBox(
-                        height: 14.sp,
-                        width: 14.sp,
-                        child: Center(
-                            child: CircularProgressIndicator(
-                              color: whiteColor,
-                            )),
-                      ),
-                    )
-                        : ElevatedButton(
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(0))),
-                            side: MaterialStateProperty.all(BorderSide(
-                                color: widget.lineColor == dividerColor
-                                    ? homeAppBarColor
-                                    : lightPurpleColor,
-                                width: 1.0,
-                                style: BorderStyle.solid)),
-                            elevation: MaterialStateProperty.all(0.0),
-                            backgroundColor: MaterialStateProperty.all(
-                                widget.lineColor == dividerColor
-                                    ? homeAppBarColor
-                                    : lightPurpleColor),
-                            textStyle: MaterialStateProperty.all(TextStyle(
+                            child: SizedBox(
+                              height: 14.sp,
+                              width: 14.sp,
+                              child: Center(
+                                  child: CircularProgressIndicator(
                                 color: whiteColor,
-                                fontSize: 13.sp,
-                                fontFamily: "Franklin Gothic"))),
-                        onPressed: () {
-                          setState(() {
-                            isFilter = true;
-                          });
-                          widget.onPresedApply.call();
-                        },
-                        child: Text(
-                          "APPLY",
-                          style: TextStyle(
-                              fontFamily: "Franklin Gothic",
-                              color: whiteColor,
-                              fontSize: 13.sp),
-                        ))),
+                              )),
+                            ),
+                          )
+                        : ElevatedButton(
+                            style: ButtonStyle(
+                                shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(0))),
+                                side: MaterialStateProperty.all(BorderSide(
+                                    color: widget.lineColor == dividerColor
+                                        ? homeAppBarColor
+                                        : lightPurpleColor,
+                                    width: 1.0,
+                                    style: BorderStyle.solid)),
+                                elevation: MaterialStateProperty.all(0.0),
+                                backgroundColor: MaterialStateProperty.all(
+                                    widget.lineColor == dividerColor
+                                        ? homeAppBarColor
+                                        : lightPurpleColor),
+                                textStyle: MaterialStateProperty.all(TextStyle(
+                                    color: whiteColor,
+                                    fontSize: 13.sp,
+                                    fontFamily: "Clash Display"))),
+                            onPressed: () {
+                              setState(() {
+                                isFilter = true;
+                              });
+                              widget.onPresedApply.call();
+                            },
+                            child: Text(
+                              "APPLY",
+                              style: TextStyle(
+                                  fontFamily: "Clash Display",
+                                  color: whiteColor,
+                                  fontSize: 13.sp),
+                            ))),
               ),
             ),
           ],
@@ -152,7 +150,7 @@ class _FilterButtonState extends State<FilterButton> {
                       color: btnTextColor,
                       decoration: TextDecoration.none,
                       fontSize: 14.sp,
-                      fontFamily: "Franklin Gothic Regular",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -190,7 +188,7 @@ class _FilterButtonState extends State<FilterButton> {
                             color: btnTextColor,
                             decoration: TextDecoration.none,
                             fontSize: 14.sp,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontWeight: FontWeight.w400,
                           ),
                         ),

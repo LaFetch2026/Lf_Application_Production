@@ -367,7 +367,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
               child: Text(
                 _couponCode,
                 style: TextStyle(
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w500,
                   color: titleColor,
                   fontSize: 14.sp,
@@ -435,7 +435,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                   style: TextStyle(
                     color: _hasDiscount ? redColor : whiteColor,
                     fontSize: 12.sp,
-                    fontFamily: "Franklin Gothic",
+                    fontFamily: "Clash Display",
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -538,7 +538,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
         centerTitle: true,
         title: const AppText(
           text: "REVIEW ORDER",
-          fontFamily: "Franklin Gothic",
+          fontFamily: "Clash Display",
           fontWeight: FontWeight.w700,
           color: blackColor,
           fontSize: 16,
@@ -592,7 +592,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                 AppText(
                   text: widget.title,
                   maxLines: 2,
-                  fontFamily: "Franklin Gothic",
+                  fontFamily: "Clash Display",
                   fontWeight: FontWeight.w600,
                   color: nameText,
                   fontSize: 16,
@@ -618,14 +618,14 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                             color: searchTextColor,
                             fontSize: 12.sp,
                             decoration: TextDecoration.lineThrough,
-                            fontFamily: "Franklin Gothic",
+                            fontFamily: "Clash Display",
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
                     AppText(
                       text: "₹${widget.price.toStringAsFixed(0)}",
-                      fontFamily: "Franklin Gothic",
+                      fontFamily: "Clash Display",
                       fontWeight: FontWeight.w700,
                       color: nameText,
                       fontSize: 16,
@@ -658,7 +658,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
         children: [
           const AppText(
             text: "ORDER DETAILS",
-            fontFamily: "Franklin Gothic",
+            fontFamily: "Clash Display",
             fontWeight: FontWeight.w500,
             color: homeAppBarColor,
             fontSize: 14,
@@ -690,7 +690,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
             children: [
               const AppText(
                 text: "Delivery Charges",
-                fontFamily: "Franklin Gothic Regular",
+                fontFamily: "Clash Display Regular",
                 fontWeight: FontWeight.w400,
                 color: subtitleColor,
                 fontSize: 12,
@@ -700,7 +700,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                 text: _delivery == 0
                     ? "Free"
                     : "₹${_delivery.toStringAsFixed(2)}",
-                fontFamily: "Franklin Gothic Regular",
+                fontFamily: "Clash Display Regular",
                 fontWeight: FontWeight.w600,
                 color:
                     _delivery == 0 ? const Color(0xff059669) : homeAppBarColor,
@@ -717,7 +717,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
             children: [
               const AppText(
                 text: "TOTAL AMOUNT (Incl. 18% GST)",
-                fontFamily: "Franklin Gothic",
+                fontFamily: "Clash Display",
                 fontWeight: FontWeight.w700,
                 color: blackColor,
                 fontSize: 13,
@@ -725,7 +725,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
               const Spacer(),
               AppText(
                 text: "₹${payable.toStringAsFixed(2)}",
-                fontFamily: "Franklin Gothic",
+                fontFamily: "Clash Display",
                 fontWeight: FontWeight.w700,
                 color: blackColor,
                 fontSize: 13,
@@ -752,7 +752,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                 text: _address == null
                     ? "Select Shipping Address"
                     : "DELIVERING IN ${(_address?['pincode'] ?? _address?['zip'] ?? '').toString().toUpperCase()}",
-                fontFamily: "Franklin Gothic",
+                fontFamily: "Clash Display",
                 fontWeight: FontWeight.w500,
                 color: titleColor,
                 fontSize: 14,
@@ -785,7 +785,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
         alignment: Alignment.center,
         child: const AppText(
           text: "CONFIRM AND PAY",
-          fontFamily: "Franklin Gothic",
+          fontFamily: "Clash Display",
           fontWeight: FontWeight.w500,
           color: whiteColor,
           fontSize: 13,
@@ -801,7 +801,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
         children: [
           const AppText(
             text: "",
-            fontFamily: "Franklin Gothic Regular",
+            fontFamily: "Clash Display Regular",
             fontWeight: FontWeight.w400,
             color: subtitleColor,
             fontSize: 12,
@@ -810,7 +810,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
           Expanded(
             child: AppText(
               text: k,
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w400,
               color: subtitleColor,
               fontSize: 12,
@@ -818,7 +818,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
           ),
           AppText(
             text: v,
-            fontFamily: "Franklin Gothic Regular",
+            fontFamily: "Clash Display Regular",
             fontWeight: FontWeight.w400,
             color: homeAppBarColor,
             fontSize: 12,
@@ -836,7 +836,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
           Expanded(
             child: AppText(
               text: k,
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w400,
               color: subtitleColor,
               fontSize: 12,
@@ -847,7 +847,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
             style: TextStyle(
               color: const Color(0xff059669),
               fontSize: 12.sp,
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -866,7 +866,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
       ),
       child: AppText(
         text: text,
-        fontFamily: "Franklin Gothic Regular",
+        fontFamily: "Clash Display Regular",
         fontWeight: FontWeight.w400,
         color: titleColor,
         fontSize: 10,

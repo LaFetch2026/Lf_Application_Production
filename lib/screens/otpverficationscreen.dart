@@ -97,7 +97,7 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen>
                       padding: EdgeInsets.only(top: 40.sp, left: 16.sp),
                       child: AppText(
                         text: "Enter your Verification Code".toUpperCase(),
-                        fontFamily: "Franklin Gothic Semibold",
+                        fontFamily: "Clash Display Semibold",
                         maxLines: 2,
                         fontWeight: FontWeight.w500,
                         color: subtitleColor,
@@ -111,7 +111,7 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen>
                         children: [
                           AppText(
                             text: "We've sent a code to ",
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontSize: 14,
                             color: subtitleColor,
                           ),
@@ -120,7 +120,7 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen>
                                 ? widget.phoneMunber
                                 : "+91${widget.phoneMunber}",
                             style: TextStyle(
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                               fontSize: 14.sp,
                               color: subtitleColor,
                             ),
@@ -156,7 +156,7 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen>
                             style: TextStyle(
                               color: blackColor,
                               fontSize: 20.sp,
-                              fontFamily: "Franklin Gothic Regular",
+                              fontFamily: "Clash Display Regular",
                             ),
                             contentPadding:
                                 EdgeInsets.symmetric(vertical: 20.sp),
@@ -182,7 +182,7 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen>
                                     left: 20.sp, right: 20.sp, top: 24.sp),
                                 child: AppText(
                                   text: otpController.otpError.value,
-                                  fontFamily: "Franklin Gothic",
+                                  fontFamily: "Clash Display",
                                   fontWeight: FontWeight.w400,
                                   color: redColor,
                                   fontSize: 14,
@@ -247,7 +247,7 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen>
                           padding: EdgeInsets.only(bottom: 10.sp),
                           child: AppText(
                             text: "Resend Code ".toUpperCase(),
-                            fontFamily: "Franklin Gothic",
+                            fontFamily: "Clash Display",
                             fontSize: 14,
                             color: titleColor,
                           ),
@@ -263,7 +263,7 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen>
                                   otpController.maxResendAttempts
                               ? 'Maximum resend attempts reached'
                               : '00 : ${otpController.secondsRemaining.value.toString().padLeft(2, '0')}',
-                          fontFamily: "Franklin Gothic",
+                          fontFamily: "Clash Display",
                           fontSize: 14,
                           color: otpController.resendAttempts.value >=
                                   otpController.maxResendAttempts

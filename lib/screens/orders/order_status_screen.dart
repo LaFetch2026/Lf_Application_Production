@@ -37,7 +37,7 @@ class OrderStatusScreen extends StatelessWidget {
               SizedBox(height: 30.sp),
               AppText(
                 text: content["title"],
-                fontFamily: "Franklin Gothic",
+                fontFamily: "Clash Display",
                 fontWeight: FontWeight.w700,
                 color: blackColor,
                 fontSize: 16,
@@ -47,7 +47,7 @@ class OrderStatusScreen extends StatelessWidget {
                 SizedBox(height: 8.sp),
                 AppText(
                   text: content["subtitle"],
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                   color: subtitleColor,
                   fontSize: 13,
@@ -69,7 +69,7 @@ class OrderStatusScreen extends StatelessWidget {
                   ),
                   child: AppText(
                     text: content["buttonText"],
-                    fontFamily: "Franklin Gothic",
+                    fontFamily: "Clash Display",
                     fontWeight: FontWeight.w600,
                     color: whiteColor,
                     fontSize: 13,

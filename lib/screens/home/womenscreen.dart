@@ -156,7 +156,7 @@ class _WomenScreenState extends State<WomenScreen>
                                                       ? whiteColor
                                                       : textHintColor,
                                                   fontSize: 12,
-                                                  fontFamily: "Franklin Gothic",
+                                                  fontFamily: "Clash Display",
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                               ),
@@ -242,7 +242,7 @@ class _WomenScreenState extends State<WomenScreen>
                                                     ? whiteColor
                                                     : textHintColor,
                                                 fontSize: 12,
-                                                fontFamily: "Franklin Gothic",
+                                                fontFamily: "Clash Display",
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),

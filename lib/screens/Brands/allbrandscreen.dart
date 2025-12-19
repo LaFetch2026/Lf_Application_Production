@@ -528,7 +528,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       text: brandName.toUpperCase(),
                                       color: whiteColor,
                                       fontSize: 16,
-                                      fontFamily: "Franklin Gothic",
+                                      fontFamily: "Clash Display",
                                       fontWeight: FontWeight.w400,
                                     ),
                             ),
@@ -570,7 +570,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         fontSize: 15.sp,
                                         height: 1.45,
                                         letterSpacing: 0.2,
-                                        fontFamily: "Franklin Gothic Regular",
+                                        fontFamily: "Clash Display Regular",
                                         fontWeight: FontWeight.w400,
                                       ),
                                       maxLines: showDescription ? null : 2,
@@ -595,7 +595,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                                 color: Colors.white
                                                     .withOpacity(0.75),
                                                 fontSize: 12.sp,
-                                                fontFamily: "Franklin Gothic",
+                                                fontFamily: "Clash Display",
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -788,7 +788,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                         child: Center(
                           child: AppText(
                             text: "EXPLORE ALL",
-                            fontFamily: "Franklin Gothic",
+                            fontFamily: "Clash Display",
                             fontWeight: FontWeight.w400,
                             color: colorPrimary,
                             fontSize: 12,

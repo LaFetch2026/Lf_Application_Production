@@ -297,7 +297,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                       text: widget.title.toUpperCase(),
                       color: whiteColor,
                       fontSize: 16,
-                      fontFamily: "Franklin Gothic Semibold",
+                      fontFamily: "Clash Display Semibold",
                       fontWeight: FontWeight.w500,
                     ),
                     const Spacer(),
@@ -432,7 +432,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                 textCapitalization: TextCapitalization.words,
                 style: TextStyle(
                     color: colorSecondary,
-                    fontFamily: "Franklin Gothic Regular",
+                    fontFamily: "Clash Display Regular",
                     fontSize: 14.sp),
                 decoration: InputDecoration(
                   filled: true,
@@ -640,7 +640,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                   color: productSubtitleColor,
                                   maxLines: 1,
                                   fontSize: 11,
-                                  fontFamily: "Franklin Gothic Regular",
+                                  fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -660,8 +660,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                             fontSize: 11.sp,
                                             decoration:
                                                 TextDecoration.lineThrough,
-                                            fontFamily:
-                                                "Franklin Gothic Regular",
+                                            fontFamily: "Clash Display Regular",
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -672,7 +671,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                       color: whiteColor,
                                       maxLines: 2,
                                       fontSize: 11,
-                                      fontFamily: "Franklin Gothic",
+                                      fontFamily: "Clash Display",
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ],
@@ -743,7 +742,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
             //                   style: TextStyle(
             //                     color: whiteColor,
             //                     fontSize: 13.sp,
-            //                     fontFamily: "Franklin Gothic",
+            //                     fontFamily: "Clash Display",
             //                     fontWeight: FontWeight.w500,
             //                   ),
             //                 ),
@@ -831,7 +830,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
             //                 style: TextStyle(
             //                   color: whiteColor,
             //                   fontSize: 13.sp,
-            //                   fontFamily: "Franklin Gothic",
+            //                   fontFamily: "Clash Display",
             //                   fontWeight: FontWeight.w500,
             //                 ),
             //               ),
@@ -842,7 +841,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
             //                     (_categoryFilter == 1 ? "WOMEN" : "MEN"),
             //                     style: TextStyle(
             //                       decoration: TextDecoration.underline,
-            //                       fontFamily: "Franklin Gothic Regular",
+            //                       fontFamily: "Clash Display Regular",
             //                       fontWeight: FontWeight.w400,
             //                       color: lightgreyColor,
             //                       fontSize: 10.sp,
@@ -911,7 +910,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
             //                   style: TextStyle(
             //                     color: whiteColor,
             //                     fontSize: 13.sp,
-            //                     fontFamily: "Franklin Gothic",
+            //                     fontFamily: "Clash Display",
             //                     fontWeight: FontWeight.w500,
             //                   ),
             //                 ),

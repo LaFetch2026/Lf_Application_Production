@@ -4,8 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/constants.dart';
 import 'app_text.dart';
 
-
-
 class NumberWidget extends StatelessWidget {
   final TextEditingController controller;
   final bool readonly;
@@ -65,7 +63,7 @@ class NumberWidget extends StatelessWidget {
                   children: [
                     AppText(
                       text: "+91",
-                      fontFamily: "Franklin Gothic",
+                      fontFamily: "Clash Display",
                       fontWeight: FontWeight.w500,
                       color: subtitleColor,
                       fontSize: 14,
@@ -88,7 +86,7 @@ class NumberWidget extends StatelessWidget {
             hintStyle: TextStyle(
               fontSize: 14.sp,
               color: searchTextColor,
-              fontFamily: "Franklin Gothic Regular",
+              fontFamily: "Clash Display Regular",
             ),
           ),
         ),

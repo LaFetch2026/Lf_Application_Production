@@ -5,7 +5,6 @@ import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 import 'dummy_container.dart';
 
-
 class DummyProductList extends StatelessWidget {
   final String text;
   final bool visibleSubtitle;
@@ -25,22 +24,22 @@ class DummyProductList extends StatelessWidget {
           padding: EdgeInsets.only(top: 10.sp, left: 16.sp),
           child: AppText(
             text: text,
-            fontFamily: "Franklin Gothic",
+            fontFamily: "Clash Display",
             color: textColor,
             fontSize: 16,
           ),
         ),
         visibleSubtitle
             ? Padding(
-          padding: EdgeInsets.only(top: 2.sp, left: 16.sp, right: 40.sp),
-          child: DummyContainer(
-            height: 12,
-            width: double.infinity,
-          ),
-        )
+                padding: EdgeInsets.only(top: 2.sp, left: 16.sp, right: 40.sp),
+                child: DummyContainer(
+                  height: 12,
+                  width: double.infinity,
+                ),
+              )
             : SizedBox(
-          height: 0,
-        ),
+                height: 0,
+              ),
         Padding(
             padding: EdgeInsets.only(top: 10.sp, left: 16.sp),
             child: SizedBox(

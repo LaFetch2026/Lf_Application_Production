@@ -65,7 +65,7 @@ class ProductListScreenState extends State<ProductListScreen> {
         "View All",
         style: TextStyle(
             fontSize: 14.sp,
-            fontFamily: "Franklin Gothic",
+            fontFamily: "Clash Display",
             fontWeight: FontWeight.w400),
       ));
     } else {
@@ -74,7 +74,7 @@ class ProductListScreenState extends State<ProductListScreen> {
         widget.tabTextList[widgetNumber - 1],
         style: TextStyle(
             fontSize: 14.sp,
-            fontFamily: "Franklin Gothic",
+            fontFamily: "Clash Display",
             fontWeight: FontWeight.w400),
       ));
     }

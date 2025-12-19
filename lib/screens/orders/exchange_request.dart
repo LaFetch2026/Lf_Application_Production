@@ -199,7 +199,7 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
         ),
         title: const AppText(
           text: "EXCHANGE REQUEST",
-          fontFamily: "Franklin Gothic",
+          fontFamily: "Clash Display",
           fontWeight: FontWeight.w700,
           color: blackColor,
           fontSize: 16,

@@ -6,8 +6,6 @@ import 'package:get/get.dart';
 import '../../../core/constant/constants.dart';
 import '../text/app_text.dart';
 
-
-
 class BackButtonAppbar extends StatelessWidget {
   final String text;
   final bool threeDot;
@@ -17,11 +15,11 @@ class BackButtonAppbar extends StatelessWidget {
 
   const BackButtonAppbar(
       {Key? key,
-        required this.text,
-        required this.threeDot,
-        required this.icon,
-        this.backgroundColor = whiteTextColor,
-        this.onPressedThreeDot})
+      required this.text,
+      required this.threeDot,
+      required this.icon,
+      this.backgroundColor = whiteTextColor,
+      this.onPressedThreeDot})
       : super(key: key);
 
   @override
@@ -56,7 +54,7 @@ class BackButtonAppbar extends StatelessWidget {
                 padding: EdgeInsets.only(top: 40.sp),
                 child: AppText(
                   text: text,
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                   color: appbarText,
                   fontSize: 22,

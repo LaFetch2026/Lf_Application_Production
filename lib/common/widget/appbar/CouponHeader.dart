@@ -62,8 +62,8 @@ class CouponHeader extends StatelessWidget implements PreferredSizeWidget {
                         color: Colors.black87,
                         fontSize: 16.sp,
                         fontWeight:
-                            FontWeight.w600, // Franklin Gothic Semibold vibe
-                        fontFamily: "Franklin Gothic Semibold",
+                            FontWeight.w600, // Clash Display Semibold vibe
+                        fontFamily: "Clash Display Semibold",
                       ),
                     ),
                   ),

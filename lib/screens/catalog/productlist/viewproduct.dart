@@ -49,7 +49,7 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                 padding: EdgeInsets.only(top: 16.sp, left: 16.sp),
                 child: AppText(
                   text: widget.categoryName,
-                  fontFamily: "Franklin Gothic Regular",
+                  fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
                   color: blackColor,
                   fontSize: 22,
@@ -68,7 +68,7 @@ class ViewProductScreenState extends State<ViewProductScreen> {
                               : productController.total.value == 1
                                   ? "${productController.total.value} item"
                                   : "${productController.total.value} items",
-                          fontFamily: "Franklin Gothic Regular",
+                          fontFamily: "Clash Display Regular",
                           fontWeight: FontWeight.w400,
                           color: textHintColor,
                           fontSize: 12,

@@ -130,7 +130,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                 padding: EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
                 child: const AppText(
                   text: 'Explore our entire collection',
-                  fontFamily: 'Franklin Gothic Regular',
+                  fontFamily: 'Clash Display Regular',
                   fontWeight: FontWeight.w400,
                   color: appbarText,
                   fontSize: 22,
@@ -142,7 +142,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                   child: AppText(
                     text: 'For ${catalogController.categoryName.value}',
                     fontSize: 14,
-                    fontFamily: 'Franklin Gothic Regular',
+                    fontFamily: 'Clash Display Regular',
                     color: textHintColor,
                   ),
                 ),
@@ -163,7 +163,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: Colors.black,
-                            fontFamily: 'Franklin Gothic Regular',
+                            fontFamily: 'Clash Display Regular',
                           ),
                         ),
                       ),
@@ -245,7 +245,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
                                         color: Colors.black,
-                                        fontFamily: 'Franklin Gothic Demi',
+                                        fontFamily: 'Clash Display Demi',
                                       ),
                                     ),
                                   ),
@@ -309,8 +309,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
             text: label,
             fontSize: 13,
             fontWeight: FontWeight.w500,
-            fontFamily:
-                isSelected ? 'Franklin Gothic Semibold' : 'Franklin Gothic',
+            fontFamily: isSelected ? 'Clash Display Semibold' : 'Clash Display',
             color: isSelected ? homeAppBarColor : searchTextColor,
           ),
           Padding(

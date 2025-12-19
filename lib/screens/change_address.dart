@@ -102,7 +102,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                         style: TextStyle(
                           color: blackColor,
                           fontSize: 16.sp,
-                          fontFamily: "Franklin Gothic Semibold",
+                          fontFamily: "Clash Display Semibold",
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -153,7 +153,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                         textCapitalization: TextCapitalization.words,
                         style: TextStyle(
                             color: titleColor,
-                            fontFamily: "Franklin Gothic Regular",
+                            fontFamily: "Clash Display Regular",
                             fontSize: 14.sp),
                         controller: shipController.searchAddressController,
                         onChanged: onSearchChanged,
@@ -178,7 +178,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                           hintStyle: TextStyle(
                               fontSize: 14.sp,
                               color: searchTextColor,
-                              fontFamily: "Franklin Gothic Regular"),
+                              fontFamily: "Clash Display Regular"),
                         ),
                       ),
                     ),
@@ -218,7 +218,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                               text: "Use my current location",
                               color: homeAppBarColor,
                               fontSize: 16,
-                              fontFamily: "Franklin Gothic",
+                              fontFamily: "Clash Display",
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -275,7 +275,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                               text: "Add new address",
                               color: homeAppBarColor,
                               fontSize: 16,
-                              fontFamily: "Franklin Gothic",
+                              fontFamily: "Clash Display",
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -299,7 +299,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                         text: "Saved Address".toUpperCase(),
                         color: homeAppBarColor,
                         fontSize: 14,
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -398,7 +398,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                     color: titleColor,
                                                     fontSize: 14,
                                                     fontFamily:
-                                                        "Franklin Gothic Semibold",
+                                                        "Clash Display Semibold",
                                                     fontWeight: FontWeight.w600,
                                                   ),
                                                 ),
@@ -442,7 +442,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                                     whiteColor,
                                                                 fontSize: 10,
                                                                 fontFamily:
-                                                                    "Franklin Gothic",
+                                                                    "Clash Display",
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w500,
@@ -649,7 +649,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                                       btnTextColor,
                                                                   fontSize: 12,
                                                                   fontFamily:
-                                                                      "Franklin Gothic",
+                                                                      "Clash Display",
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -674,7 +674,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                 color: subtitleColor,
                                                 fontSize: 12,
                                                 fontFamily:
-                                                    "Franklin Gothic Regular",
+                                                    "Clash Display Regular",
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -695,7 +695,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                   color: subtitleColor,
                                                   fontSize: 12,
                                                   fontFamily:
-                                                      "Franklin Gothic Regular",
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               ),
@@ -712,7 +712,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                 color: subtitleColor,
                                                 fontSize: 12,
                                                 fontFamily:
-                                                    "Franklin Gothic Regular",
+                                                    "Clash Display Regular",
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -733,7 +733,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                       color: loginText,
                                                       fontSize: 16,
                                                       fontFamily:
-                                                          "Franklin Gothic Regular",
+                                                          "Clash Display Regular",
                                                       fontWeight:
                                                           FontWeight.w400,
                                                     ),
@@ -787,7 +787,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                                     btnTextColor,
                                                                 fontSize: 12,
                                                                 fontFamily:
-                                                                    "Franklin Gothic",
+                                                                    "Clash Display",
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w500,
@@ -813,7 +813,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                 color: greyTextColor,
                                                 fontSize: 12,
                                                 fontFamily:
-                                                    "Franklin Gothic Regular",
+                                                    "Clash Display Regular",
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -827,7 +827,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                 color: greyTextColor,
                                                 fontSize: 12,
                                                 fontFamily:
-                                                    "Franklin Gothic Regular",
+                                                    "Clash Display Regular",
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -843,7 +843,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                 color: loginText,
                                                 fontSize: 12,
                                                 fontFamily:
-                                                    "Franklin Gothic Regular",
+                                                    "Clash Display Regular",
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -858,7 +858,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                 color: loginText,
                                                 fontSize: 12,
                                                 fontFamily:
-                                                    "Franklin Gothic Regular",
+                                                    "Clash Display Regular",
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             ),
@@ -992,7 +992,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                     style: TextStyle(
                                         fontSize: 14.sp,
                                         color: Colors.black,
-                                        fontFamily: "Franklin Gothic Regular")),
+                                        fontFamily: "Clash Display Regular")),
                               ),
                             ))
                 ],
