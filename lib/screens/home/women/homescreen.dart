@@ -147,12 +147,8 @@ class HomeScreenState extends State<HomeScreen> {
         catalogController.update();
       }
 
-      // ✅ Only initialize profile if NOT a guest user (requires JWT)
-      if (!isGuest) {
-        profileController.safeInitProfile(redirectIfMissing: true);
-      } else {
-        print("👤 Guest user - skipping profile initialization");
-      }
+      // ✅ Profile is already initialized by BottomNavScreen, no need to call again
+      // This prevents "TextEditingController disposed" errors when controllers are recreated
     });
   }
 
@@ -212,6 +208,8 @@ class HomeScreenState extends State<HomeScreen> {
     // ✅ Update cache metadata
     _lastDataFetch = DateTime.now();
     _lastGenderValue = gender;
+    _lastAuthState = isGuest; // ✅ Track auth state for transition detection
+    print("📊 Cache updated: gender=$gender, isGuest=$isGuest, authState=$_lastAuthState");
 
     // ✅ Store data hash to detect backend changes
     _dataHashByGender[gender] = _generateDataHash(gender);
@@ -285,6 +283,17 @@ class HomeScreenState extends State<HomeScreen> {
     _lastDataFetch = DateTime.now();
     _lastGenderValue = currentGender;
     _lastAuthState = isGuest;
+  }
+
+  // ✅ Static method to clear all cached data (call on logout)
+  static void clearCache() {
+    print("🗑️ Clearing HomeScreen cache on logout");
+    _lastDataFetch = null;
+    _lastGenderValue = null;
+    _lastAuthState = null;
+    _dataHashByGender.clear();
+    _cachedData.clear();
+    _isInitialLoad = true;
   }
 
   @override

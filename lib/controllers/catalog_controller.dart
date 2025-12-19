@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
 import '../screens/loginscreen.dart';
+import '../screens/home/women/homescreen.dart';
 import 'base_controller.dart';
 
 class CatalogController extends BaseController {
@@ -71,6 +72,7 @@ class CatalogController extends BaseController {
         }
       } else if (response.statusCode == 401) {
         await prefs.remove('token');
+        HomeScreenState.clearCache(); // ✅ Clear cache on session expiration
         Get.offAll(() => const LoginScreen(initialTab: 0));
         getSnackBar("Session expired, please login again");
       } else if (response.statusCode == 500) {
