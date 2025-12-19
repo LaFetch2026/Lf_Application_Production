@@ -58,15 +58,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   String _appliedMinPrice = "300";
   String _appliedMaxPrice = "100000";
   String _appliedSortOption = "recommended";
-  int? _appliedSuperCatId;
   int? _appliedCatId;
   int? _appliedSubCatId;
-  int? _appliedCollectionId;
   bool _hasActiveFilters = false;
   bool _isBrandsLoaded = false;
   bool _isProductsLoaded = false;
-  bool _isCategoriesLoaded = false;
-  List<Map<String, dynamic>> _collections = [];
 
   // ✅ Hash tracking for change detection
   String? _lastProductListHash;
@@ -126,7 +122,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
   // ✅ Generate hash for current filter state
   String _generateFilterHash() {
-    return '${_appliedBrandIds.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_${_appliedSuperCatId}_${_appliedCatId}_${_appliedSubCatId}_${_appliedCollectionId}_$_hasActiveFilters';
+    return '${_appliedBrandIds.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_${_appliedCatId}_${_appliedSubCatId}_$_hasActiveFilters';
   }
 
   // ✅ Generate hash for current sort state
@@ -221,25 +217,6 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         .whereType<int>()
         .toSet();
 
-    // Extract collections from home product list
-    // Use collectionID from products if available, otherwise use collection id
-    _collections = productController.homeProductList
-        .whereType<Map<String, dynamic>>()
-        .map((c) {
-          // Check if collection has products with collectionID
-          final products = c['products'] as List?;
-          final firstProduct = products?.isNotEmpty == true ? products!.first : null;
-          final collectionId = firstProduct != null && firstProduct is Map
-              ? (firstProduct['collectionID'] ?? c['id'])
-              : c['id'];
-
-          return {
-            'id': collectionId,
-            'name': c['name'] ?? 'Unknown',
-          };
-        })
-        .toList();
-
     // Generate initial hashes
     _lastProductListHash = _generateProductHash(allProducts);
     _lastFilterHash = _generateFilterHash();
@@ -247,9 +224,110 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
     _isProductsLoaded = true;
     print("✅ Home products tracked (${_originalHomeProductIds.length} items)");
-    print("✅ Collections loaded: ${_collections.length}");
-    for (final col in _collections) {
-      print("   - ID: ${col['id']}, Name: ${col['name']}");
+  }
+
+  // ✅ Get categories based on super category (genderType from productController)
+  // Uses actual API-loaded categories from catalogController.catalogList
+  List<Map<String, dynamic>> _getCategoriesForGender() {
+    final genderType = productController.categoryFilter.value;
+
+    // ✅ Return API-loaded categories from catalogController
+    // The catalogList is already filtered by gender when loaded via getCatalogData(gender)
+    if (catalogController.catalogList.isNotEmpty) {
+      return catalogController.catalogList
+          .map((cat) => {
+                'id': cat['id'],
+                'name': cat['name'] ?? 'Unknown',
+              })
+          .toList();
+    }
+
+    // ⚠️ Fallback: Return empty list if categories aren't loaded yet
+    // This shouldn't happen in normal flow since categories are loaded on home screen
+    print("⚠️ Warning: catalogList is empty for gender $genderType");
+    return [];
+  }
+
+  // ✅ Get sub-categories based on super category (genderType from productController)
+  // TODO: Replace with API data when subcategories endpoint is available
+  // Currently using hardcoded values as subcategories are not available in the catalog API
+  List<Map<String, dynamic>> _getSubCategoriesForGender() {
+    final genderType = productController.categoryFilter.value;
+
+    // Check if catalogList has subcategories nested within
+    // Some APIs might return subcategories as nested arrays within categories
+    List<Map<String, dynamic>> subcategories = [];
+    if (catalogController.catalogList.isNotEmpty) {
+      for (var cat in catalogController.catalogList) {
+        if (cat['subcategories'] != null && cat['subcategories'] is List) {
+          for (var subCat in cat['subcategories']) {
+            subcategories.add({
+              'id': subCat['id'],
+              'name': subCat['name'] ?? 'Unknown',
+              'categoryId': cat['id'], // Keep track of parent category
+            });
+          }
+        }
+      }
+    }
+
+    // If API provides subcategories, use them
+    if (subcategories.isNotEmpty) {
+      print("✅ Using API subcategories: ${subcategories.length} items");
+      return subcategories;
+    }
+
+    // ⚠️ Fallback to hardcoded subcategories
+    // This is temporary until the API provides subcategory data
+    print("⚠️ Using hardcoded subcategories for gender $genderType");
+
+    if (genderType == 1) {
+      // Men's sub-categories
+      return [
+        {'id': 1, 'name': 'T-Shirts'},
+        {'id': 2, 'name': 'Shirts'},
+        {'id': 3, 'name': 'Jeans'},
+        {'id': 4, 'name': 'Trousers'},
+        {'id': 5, 'name': 'Jackets'},
+        {'id': 6, 'name': 'Shorts'},
+        {'id': 7, 'name': 'Sneakers'},
+        {'id': 8, 'name': 'Casual Shoes'},
+        {'id': 9, 'name': 'Formal Shoes'},
+        {'id': 10, 'name': 'Kurtas'},
+        {'id': 11, 'name': 'Sherwanis'},
+      ];
+    } else if (genderType == 2) {
+      // Women's sub-categories
+      return [
+        {'id': 1, 'name': 'Tops'},
+        {'id': 2, 'name': 'Dresses'},
+        {'id': 3, 'name': 'Jeans'},
+        {'id': 4, 'name': 'Trousers'},
+        {'id': 5, 'name': 'Skirts'},
+        {'id': 6, 'name': 'Leggings'},
+        {'id': 7, 'name': 'Kurtas'},
+        {'id': 8, 'name': 'Sarees'},
+        {'id': 9, 'name': 'Lehenga'},
+        {'id': 10, 'name': 'Heels'},
+        {'id': 11, 'name': 'Flats'},
+        {'id': 12, 'name': 'Sneakers'},
+      ];
+    } else {
+      // Accessories sub-categories
+      return [
+        {'id': 1, 'name': 'Handbags'},
+        {'id': 2, 'name': 'Shoulder Bags'},
+        {'id': 3, 'name': 'Tote Bags'},
+        {'id': 4, 'name': 'Clutches'},
+        {'id': 5, 'name': 'Necklaces'},
+        {'id': 6, 'name': 'Earrings'},
+        {'id': 7, 'name': 'Bracelets'},
+        {'id': 8, 'name': 'Rings'},
+        {'id': 9, 'name': 'Belts'},
+        {'id': 10, 'name': 'Sunglasses'},
+        {'id': 11, 'name': 'Watches'},
+        {'id': 12, 'name': 'Wallets'},
+      ];
     }
   }
 
@@ -318,29 +396,25 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         print("🔹 Case 1: Filter changed (has active filters)");
         print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • superCatId   → $_appliedSuperCatId");
         print("   • catId        → $_appliedCatId");
         print("   • subCatId     → $_appliedSubCatId");
-        print("   • collectionId → $_appliedCollectionId");
         print("   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
         await catalogController.getFilterAndSortProducts(
           brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
           minPrice: _appliedMinPrice,
           maxPrice: _appliedMaxPrice,
-          superCatId: _appliedSuperCatId,
           catId: _appliedCatId,
           subCatId: _appliedSubCatId,
-          collectionId: _appliedCollectionId,
           sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
         );
 
         // ✅ Additional client-side filtering for view-specific constraints
-        // API already filtered by price & brand; we filter by home products & collection
+        // API already filtered by price & brand; we filter by home products
         final apiResults = List<dynamic>.from(catalogController.categoryProductList);
 
-        if (_appliedSuperCatId == null && _appliedCatId == null && _appliedSubCatId == null && _appliedCollectionId == null) {
-          // No category/collection filters - restrict to home products only
+        if (_appliedCatId == null && _appliedSubCatId == null) {
+          // No category filters - restrict to home products only
           final filteredResults = apiResults.where((product) {
             final productId = int.tryParse(product['id']?.toString() ?? '');
             return productId != null && _originalHomeProductIds.contains(productId);
@@ -349,21 +423,9 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           print("🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} from home collections");
           catalogController.categoryProductList.assignAll(filteredResults);
         } else {
-          // Category/collection filters applied
-          var filteredResults = apiResults;
-
-          // ✅ Client-side filter by collectionId (backend currently ignores this parameter)
-          if (_appliedCollectionId != null) {
-            filteredResults = filteredResults.where((product) {
-              final productCollectionId = int.tryParse(product['collectionID']?.toString() ?? '');
-              return productCollectionId == _appliedCollectionId;
-            }).toList();
-            print("🔍 Filtered ${apiResults.length} → ${filteredResults.length} products with collectionID=$_appliedCollectionId");
-          } else {
-            print("🔍 Using all ${apiResults.length} API products (category filters applied)");
-          }
-
-          catalogController.categoryProductList.assignAll(filteredResults);
+          // Category filters applied
+          print("🔍 Using all ${apiResults.length} API products (category filters applied)");
+          catalogController.categoryProductList.assignAll(apiResults);
         }
         
         _lastFilterHash = currentFilterHash;
@@ -406,47 +468,33 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         print("🔹 Case 3: Sort changed (filters already applied)");
         print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • superCatId   → $_appliedSuperCatId");
         print("   • catId        → $_appliedCatId");
         print("   • subCatId     → $_appliedSubCatId");
-        print("   • collectionId → $_appliedCollectionId");
         print("   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
         await catalogController.getFilterAndSortProducts(
           brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
           minPrice: _appliedMinPrice,
           maxPrice: _appliedMaxPrice,
-          superCatId: _appliedSuperCatId,
           catId: _appliedCatId,
           subCatId: _appliedSubCatId,
-          collectionId: _appliedCollectionId,
           sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
         );
 
         // ✅ Additional client-side filtering for view-specific constraints
-        // API already filtered by price & brand; we filter by home products & collection
+        // API already filtered by price & brand; we filter by home products
         final apiResults = List<dynamic>.from(catalogController.categoryProductList);
 
-        if (_appliedSuperCatId == null && _appliedCatId == null && _appliedSubCatId == null && _appliedCollectionId == null) {
-          // No category/collection filters - restrict to home products only
+        if (_appliedCatId == null && _appliedSubCatId == null) {
+          // No category filters - restrict to home products only
           final filteredResults = apiResults.where((product) {
             final productId = int.tryParse(product['id']?.toString() ?? '');
             return productId != null && _originalHomeProductIds.contains(productId);
           }).toList();
           catalogController.categoryProductList.assignAll(filteredResults);
         } else {
-          // Category/collection filters applied
-          var filteredResults = apiResults;
-
-          // ✅ Client-side filter by collectionId (backend currently ignores this parameter)
-          if (_appliedCollectionId != null) {
-            filteredResults = filteredResults.where((product) {
-              final productCollectionId = int.tryParse(product['collectionID']?.toString() ?? '');
-              return productCollectionId == _appliedCollectionId;
-            }).toList();
-          }
-
-          catalogController.categoryProductList.assignAll(filteredResults);
+          // Category filters applied
+          catalogController.categoryProductList.assignAll(apiResults);
         }
 
         _lastSortHash = currentSortHash;
@@ -1020,18 +1068,14 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     );
 
     // Category filter selections
-    int? selectedSuperCatId = _appliedSuperCatId;
     int? selectedCatId = _appliedCatId;
     int? selectedSubCatId = _appliedSubCatId;
-    int? selectedCollectionId = _appliedCollectionId;
 
     final List<String> filterCategories = [
       "Brand",
       "Price Range",
-      "Super Category",
       "Category",
-      "Sub Category",
-      "Collection"
+      "Sub Category"
     ];
 
     // ✅ Ensure brands are loaded
@@ -1099,10 +1143,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                               setModalState(() {
                                 selectedBrands.clear();
                                 priceRange = const RangeValues(300, 100000);
-                                selectedSuperCatId = null;
                                 selectedCatId = null;
                                 selectedSubCatId = null;
-                                selectedCollectionId = null;
                               });
                             },
                             child: const Text("CLEAR ALL",
@@ -1236,80 +1278,25 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                             ),
                                           ],
                                         )
-                                      : selectedFilter == "Super Category"
+                                      : selectedFilter == "Category"
                                           ? _buildCategoryDropdown(
-                                              "Super Category",
-                                              selectedSuperCatId,
-                                              [
-                                                {"id": 1, "name": "Men"},
-                                                {"id": 2, "name": "Women"},
-                                                {"id": 3, "name": "Accessories"},
-                                              ],
+                                              "Category",
+                                              selectedCatId,
+                                              _getCategoriesForGender(),
                                               (val) => setModalState(() {
-                                                selectedSuperCatId = val;
+                                                selectedCatId = val;
                                               }),
                                             )
-                                          : selectedFilter == "Category"
+                                          : selectedFilter == "Sub Category"
                                               ? _buildCategoryDropdown(
-                                                  "Category",
-                                                  selectedCatId,
-                                                  [
-                                                    {"id": 1, "name": "Topwear"},
-                                                    {"id": 2, "name": "Bottomwear"},
-                                                    {"id": 3, "name": "Footwear"},
-                                                    {"id": 4, "name": "Ethnic Wear"},
-                                                    {"id": 5, "name": "Western Wear"},
-                                                  ],
+                                                  "Sub Category",
+                                                  selectedSubCatId,
+                                                  _getSubCategoriesForGender(),
                                                   (val) => setModalState(() {
-                                                    selectedCatId = val;
+                                                    selectedSubCatId = val;
                                                   }),
                                                 )
-                                              : selectedFilter == "Sub Category"
-                                                  ? _buildCategoryDropdown(
-                                                      "Sub Category",
-                                                      selectedSubCatId,
-                                                      [
-                                                        {"id": 1, "name": "T-Shirts"},
-                                                        {"id": 2, "name": "Shirts"},
-                                                        {"id": 3, "name": "Jeans"},
-                                                        {"id": 4, "name": "Trousers"},
-                                                        {"id": 5, "name": "Shoes"},
-                                                        {"id": 6, "name": "Sneakers"},
-                                                      ],
-                                                      (val) => setModalState(() {
-                                                        selectedSubCatId = val;
-                                                      }),
-                                                    )
-                                                  : _collections.isEmpty
-                                                      ? const Center(
-                                                          child: Padding(
-                                                            padding: EdgeInsets.all(20.0),
-                                                            child: Text(
-                                                              "No collections available",
-                                                              style: TextStyle(
-                                                                fontFamily: "Franklin Gothic Regular",
-                                                                color: Colors.grey,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        )
-                                                      : _buildCategoryDropdown(
-                                                          "Collection",
-                                                          selectedCollectionId,
-                                                          _collections,
-                                                          (val) {
-                                                            setModalState(() {
-                                                              selectedCollectionId = val;
-                                                              if (val != null) {
-                                                                final collectionName = _collections
-                                                                    .firstWhere((c) => c['id'] == val, orElse: () => {'name': 'Unknown'})['name'];
-                                                                print("🎯 Collection selected in dropdown: ID=$val, Name=$collectionName");
-                                                              } else {
-                                                                print("🎯 Collection cleared in dropdown");
-                                                              }
-                                                            });
-                                                          },
-                                                        ),
+                                              : const SizedBox(),
                             ),
                           ),
                         ],
@@ -1361,10 +1348,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                               print("  Brands: ${selectedBrands.join(', ')}");
                               print("  Brand IDs: $selectedBrandIds");
                               print("  Price: ₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()}");
-                              print("  Super Category ID: $selectedSuperCatId");
                               print("  Category ID: $selectedCatId");
                               print("  Sub Category ID: $selectedSubCatId");
-                              print("  Collection ID: $selectedCollectionId");
 
                               setState(() {
                                 _appliedBrandIds = selectedBrandIds;
@@ -1372,18 +1357,14 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                     priceRange.start.toInt().toString();
                                 _appliedMaxPrice =
                                     priceRange.end.toInt().toString();
-                                _appliedSuperCatId = selectedSuperCatId;
                                 _appliedCatId = selectedCatId;
                                 _appliedSubCatId = selectedSubCatId;
-                                _appliedCollectionId = selectedCollectionId;
                                 _hasActiveFilters =
                                     selectedBrandIds.isNotEmpty ||
                                         priceRange.start > 300 ||
                                         priceRange.end < 100000 ||
-                                        _appliedSuperCatId != null ||
                                         _appliedCatId != null ||
-                                        _appliedSubCatId != null ||
-                                        _appliedCollectionId != null;
+                                        _appliedSubCatId != null;
 
                                 // Reset pagination
                                 productController.handpickedPage.value = 1;
@@ -1399,17 +1380,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                 if (priceRange.start > 300 || priceRange.end < 100000) {
                                   filterParts.add("₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
                                 }
-                                if (selectedSuperCatId != null) {
-                                  filterParts.add("Super Cat");
-                                }
                                 if (selectedCatId != null) {
-                                  filterParts.add("Cat");
+                                  filterParts.add("Category");
                                 }
                                 if (selectedSubCatId != null) {
-                                  filterParts.add("Sub Cat");
-                                }
-                                if (selectedCollectionId != null) {
-                                  filterParts.add("Collection");
+                                  filterParts.add("Sub Category");
                                 }
                                 getSnackBar("Filtered by ${filterParts.join(', ')}");
                               } else {
