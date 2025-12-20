@@ -11,6 +11,7 @@ import '../common/widget/other/confirmdelete.dart';
 import '../core/constant/constants.dart';
 import '../screens/bottomnavscreen.dart';
 import '../screens/loginscreen.dart';
+import '../screens/home/women/homescreen.dart';
 import 'auth_api_client.dart';
 import 'base_controller.dart';
 import 'cart_controller.dart';
@@ -52,6 +53,7 @@ class ProfileController extends BaseController {
   ].obs;
 
   late final AuthApiClient _apiClient;
+  bool _isDisposed = false; // Track if controller is disposed
 
   @override
   void onInit() {
@@ -62,6 +64,7 @@ class ProfileController extends BaseController {
 
   @override
   void onClose() {
+    _isDisposed = true; // Mark as disposed before disposing controllers
     nameController.dispose();
     emailController.dispose();
     gerderController.dispose();
@@ -72,6 +75,10 @@ class ProfileController extends BaseController {
 
   Future<void> _loadProfileFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
+
+    // ✅ Safety check: Don't update controllers if already disposed
+    if (_isDisposed) return;
+
     nameController.text = prefs.getString('name') ?? '';
     emailController.text = prefs.getString('email') ?? '';
     phoneController.text =
@@ -175,11 +182,12 @@ class ProfileController extends BaseController {
     final userId = prefs.getInt('userId');
     final token = prefs.getString('token');
 
-    // If there’s no session, optionally redirect to Welcome/Login
+    // If there's no session, optionally redirect to Welcome/Login
     if (userId == null || token == null || token.isEmpty) {
       debugPrint("⚠️ safeInitProfile(): no valid session.");
       if (redirectIfMissing) {
         await prefs.clear();
+        HomeScreenState.clearCache(); // ✅ Clear cache on session invalidation
         Get.offAll(() => const LoginScreen(initialTab: 0));
       }
       return;
@@ -212,6 +220,7 @@ class ProfileController extends BaseController {
       if (resp.statusCode == 401) {
         getSnackBar("Session expired. Please login again.");
         await prefs.clear(); // ✅ make sure next launch sees no session
+        HomeScreenState.clearCache(); // ✅ Clear cache on session expiration
         Get.offAll(() => const LoginScreen(initialTab: 0));
         return;
       }
@@ -220,6 +229,7 @@ class ProfileController extends BaseController {
         debugPrint("❌ 404 - User not found.");
         getSnackBar("Your account no longer exists. Please log in.");
         await prefs.clear(); // ✅ clear stale session
+        HomeScreenState.clearCache(); // ✅ Clear cache on account deletion
         Get.offAll(() => const LoginScreen(initialTab: 0));
         return;
       }
@@ -255,6 +265,12 @@ class ProfileController extends BaseController {
 
       debugPrint("✅ Profile fetch success: $userData");
 
+      // ✅ Safety check: Don't update controllers if already disposed
+      if (_isDisposed) {
+        debugPrint("⚠️ Controller disposed, skipping profile update");
+        return;
+      }
+
       nameController.text = userData['fullName'] ?? '';
       emailController.text = userData['email'] ?? '';
       phoneController.text = (userData['phone'] ?? '').replaceAll("+91", "");
@@ -282,7 +298,10 @@ class ProfileController extends BaseController {
       profileDetails.value = userData;
     } catch (e, st) {
       debugPrint("❌ Fetch error: $e\n$st");
-      getSnackBar("Error fetching profile: ${e.toString()}");
+      // ✅ Only show error if not disposed (prevents errors after navigation)
+      if (!_isDisposed) {
+        getSnackBar("Error fetching profile: ${e.toString()}");
+      }
     } finally {
       isProfile.value = false;
     }
@@ -651,6 +670,9 @@ class ProfileController extends BaseController {
   Future<void> _localLogoutCleanup(SharedPreferences prefs) async {
     // Clear local session/preferences
     await prefs.clear();
+
+    // ✅ Clear HomeScreen static cache to force fresh data on next login
+    HomeScreenState.clearCache();
   }
 
   /// Initiates the account deletion process for the current user.
@@ -677,6 +699,7 @@ class ProfileController extends BaseController {
       if (response.statusCode == 200) {
         getSnackBar("Account deleted successfully!");
         await prefs.clear();
+        HomeScreenState.clearCache(); // ✅ Clear cache on account deletion
 
         Get.offAll(() => const ConfirmDeleteScreen());
       } else if (response.statusCode == 400) {
