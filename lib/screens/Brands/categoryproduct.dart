@@ -954,7 +954,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         Text(
           "Select $title",
           style: const TextStyle(
-            fontFamily: "Franklin Gothic",
+            fontFamily: "Clash Display",
             fontWeight: FontWeight.w700,
             fontSize: 15,
           ),
@@ -994,6 +994,33 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                     ),
                   ),
               ],
+        ...options.map((option) {
+          final id = option['id'] as int;
+          final name = option['name'] as String;
+          return RadioListTile<int>(
+            value: id,
+            groupValue: selectedValue,
+            activeColor: appBarColor,
+            title: Text(
+              name,
+              style: const TextStyle(
+                fontFamily: "Clash Display Regular",
+                color: blackColor,
+              ),
+            ),
+            onChanged: onChanged,
+          );
+        }),
+        if (selectedValue != null)
+          TextButton(
+            onPressed: () => onChanged(null),
+            child: const Text(
+              "Clear Selection",
+              style: TextStyle(
+                color: appBarColor,
+                fontFamily: "Clash Display",
+                decoration: TextDecoration.underline,
+              ),
             ),
           ),
         ),
@@ -1137,85 +1164,83 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                     ),
                     const Divider(thickness: 1, color: dividerColor),
                     Expanded(
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 130,
-                            child: ListView.builder(
-                              itemCount: filterCategories.length,
-                              itemBuilder: (context, index) {
-                                final name = filterCategories[index];
-                                final selected = selectedFilter == name;
-                                return GestureDetector(
-                                  onTap: () => setModalState(() {
-                                    selectedFilter = name;
-                                  }),
-                                  child: Container(
-                                    color: selected
-                                        ? whiteColor
-                                        : const Color(0xFFF5F5F5),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 12.sp, vertical: 14.sp),
-                                    child: Text(name,
-                                        style: TextStyle(
-                                            color: selected
-                                                ? blackColor
-                                                : const Color(0xFF6B7280),
-                                            fontFamily: selected
-                                                ? "Clash Display Semibold"
-                                                : "Clash Display Regular",
-                                            fontWeight: selected
-                                                ? FontWeight.w600
-                                                : FontWeight.w400)),
-                                  ),
-                                );
-                              },
-                            ),
+                      child: Row(children: [
+                        SizedBox(
+                          width: 130,
+                          child: ListView.builder(
+                            itemCount: filterCategories.length,
+                            itemBuilder: (context, index) {
+                              final name = filterCategories[index];
+                              final selected = selectedFilter == name;
+                              return GestureDetector(
+                                onTap: () => setModalState(() {
+                                  selectedFilter = name;
+                                }),
+                                child: Container(
+                                  color: selected
+                                      ? whiteColor
+                                      : const Color(0xFFF5F5F5),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 12.sp, vertical: 14.sp),
+                                  child: Text(name,
+                                      style: TextStyle(
+                                          color: selected
+                                              ? blackColor
+                                              : const Color(0xFF6B7280),
+                                          fontFamily: selected
+                                              ? "Clash Display Semibold"
+                                              : "Clash Display Regular",
+                                          fontWeight: selected
+                                              ? FontWeight.w600
+                                              : FontWeight.w400)),
+                                ),
+                              );
+                            },
                           ),
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16.sp, vertical: 10.sp),
-                              child: selectedFilter == "Brand"
-                                  ? ListView.builder(
-                                      itemCount: brands.length,
-                                      itemBuilder: (context, i) {
-                                        final b = brands[i];
-                                        final isSelectAll = b == "Select All";
-                                        final allSelected =
-                                            selectedBrands.length ==
-                                                brands.length - 1;
-                                        final checked = isSelectAll
-                                            ? allSelected
-                                            : selectedBrands.contains(b);
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16.sp, vertical: 10.sp),
+                            child: selectedFilter == "Brand"
+                                ? ListView.builder(
+                                    itemCount: brands.length,
+                                    itemBuilder: (context, i) {
+                                      final b = brands[i];
+                                      final isSelectAll = b == "Select All";
+                                      final allSelected =
+                                          selectedBrands.length ==
+                                              brands.length - 1;
+                                      final checked = isSelectAll
+                                          ? allSelected
+                                          : selectedBrands.contains(b);
 
-                                        return CheckboxListTile(
-                                          dense: true,
-                                          activeColor: appBarColor,
-                                          value: checked,
-                                          title: Text(b,
-                                              style: const TextStyle(
-                                                  fontFamily:
-                                                      "Clash Display Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: blackColor)),
-                                          onChanged: (val) {
-                                            setModalState(() {
-                                              if (isSelectAll) {
-                                                if (val == true) {
-                                                  selectedBrands = brands
-                                                      .where((x) =>
-                                                          x != "Select All")
-                                                      .toList();
-                                                } else {
-                                                  selectedBrands.clear();
-                                                }
+                                      return CheckboxListTile(
+                                        dense: true,
+                                        activeColor: appBarColor,
+                                        value: checked,
+                                        title: Text(b,
+                                            style: const TextStyle(
+                                                fontFamily:
+                                                    "Clash Display Regular",
+                                                fontWeight: FontWeight.w400,
+                                                color: blackColor)),
+                                        onChanged: (val) {
+                                          setModalState(() {
+                                            if (isSelectAll) {
+                                              if (val == true) {
+                                                selectedBrands = brands
+                                                    .where((x) =>
+                                                        x != "Select All")
+                                                    .toList();
                                               } else {
-                                                if (val == true) {
-                                                  selectedBrands.add(b);
-                                                } else {
-                                                  selectedBrands.remove(b);
-                                                }
+                                                selectedBrands.clear();
+                                              }
+                                            } else {
+                                              if (val == true) {
+                                                selectedBrands.add(b);
+                                              } else {
+                                                selectedBrands.remove(b);
                                               }
                                             });
                                           },
@@ -1290,25 +1315,160 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                     color: Colors
                                                                         .grey,
                                                                   ),
+                                            }
+                                          });
+                                        },
+                                      );
+                                    },
+                                  )
+                                : selectedFilter == "Price Range"
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text("Select price range",
+                                              style: TextStyle(
+                                                  fontFamily:
+                                                      "Clash Display Semibold",
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 15)),
+                                          const SizedBox(height: 8),
+                                          RangeSlider(
+                                            values: priceRange,
+                                            min: 100,
+                                            max: 50000,
+                                            divisions: 100,
+                                            activeColor: appBarColor,
+                                            onChanged: (v) => setModalState(() {
+                                              priceRange = v;
+                                            }),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                  "₹${priceRange.start.toInt()}",
+                                                  style: const TextStyle(
+                                                      fontFamily:
+                                                          "Clash Display Regular",
+                                                      color: Colors.grey)),
+                                              Text("₹${priceRange.end.toInt()}",
+                                                  style: const TextStyle(
+                                                      fontFamily:
+                                                          "Clash Display Regular",
+                                                      color: Colors.grey)),
+                                            ],
+                                          ),
+                                        ],
+                                      )
+                                    : selectedFilter == "Super Category"
+                                        ? _buildCategoryDropdown(
+                                            "Super Category",
+                                            selectedSuperCatId,
+                                            [
+                                              {'id': 1, 'name': 'Men'},
+                                              {'id': 2, 'name': 'Women'},
+                                              {'id': 3, 'name': 'Accessories'},
+                                            ],
+                                            (val) => setModalState(() {
+                                              selectedSuperCatId = val;
+                                            }),
+                                          )
+                                        : selectedFilter == "Category"
+                                            ? _buildCategoryDropdown(
+                                                "Category",
+                                                selectedCatId,
+                                                [
+                                                  {'id': 1, 'name': 'Topwear'},
+                                                  {
+                                                    'id': 2,
+                                                    'name': 'Bottomwear'
+                                                  },
+                                                  {'id': 3, 'name': 'Footwear'},
+                                                  {'id': 4, 'name': 'Bags'},
+                                                  {
+                                                    'id': 5,
+                                                    'name': 'Accessories'
+                                                  },
+                                                  {
+                                                    'id': 6,
+                                                    'name': 'Innerwear'
+                                                  },
+                                                ],
+                                                (val) => setModalState(() {
+                                                  selectedCatId = val;
+                                                }),
+                                              )
+                                            : selectedFilter == "Sub Category"
+                                                ? _buildCategoryDropdown(
+                                                    "Sub Category",
+                                                    selectedSubCatId,
+                                                    [
+                                                      {
+                                                        'id': 1,
+                                                        'name': 'T-Shirts'
+                                                      },
+                                                      {
+                                                        'id': 2,
+                                                        'name': 'Shirts'
+                                                      },
+                                                      {
+                                                        'id': 3,
+                                                        'name': 'Jeans'
+                                                      },
+                                                      {
+                                                        'id': 4,
+                                                        'name': 'Trousers'
+                                                      },
+                                                      {
+                                                        'id': 5,
+                                                        'name': 'Casual Shoes'
+                                                      },
+                                                      {
+                                                        'id': 6,
+                                                        'name': 'Formal Shoes'
+                                                      },
+                                                    ],
+                                                    (val) => setModalState(() {
+                                                      selectedSubCatId = val;
+                                                    }),
+                                                  )
+                                                : selectedFilter == "Collection"
+                                                    ? _collections.isEmpty
+                                                        ? const Center(
+                                                            child: Padding(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(
+                                                                          20.0),
+                                                              child: Text(
+                                                                "No collections available",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontFamily:
+                                                                      "Clash Display Regular",
+                                                                  color: Colors
+                                                                      .grey,
                                                                 ),
                                                               ),
-                                                            )
-                                                          : _buildCategoryDropdown(
-                                                              "Collection",
-                                                              selectedCollectionId,
-                                                              _collections,
-                                                              (val) =>
-                                                                  setModalState(
-                                                                      () {
-                                                                selectedCollectionId =
-                                                                    val;
-                                                              }),
-                                                            )
-                                                      : const SizedBox(),
-                            ),
+                                                            ),
+                                                          )
+                                                        : _buildCategoryDropdown(
+                                                            "Collection",
+                                                            selectedCollectionId,
+                                                            _collections,
+                                                            (val) =>
+                                                                setModalState(
+                                                                    () {
+                                                              selectedCollectionId =
+                                                                  val;
+                                                            }),
+                                                          )
+                                                    : const SizedBox(),
                           ),
-                        ]
-                      ),
+                        ),
+                      ]),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(

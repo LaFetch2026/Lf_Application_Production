@@ -245,7 +245,7 @@ class WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
                                         color: Colors.black,
-                                        fontFamily: 'Clash Display Demi',
+                                        fontFamily: 'Clash Display ',
                                       ),
                                     ),
                                   ),

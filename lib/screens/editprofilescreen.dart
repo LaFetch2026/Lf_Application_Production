@@ -65,9 +65,9 @@ class EditProfileScreenState extends State<EditProfileScreen>
 
     profileController.genderId.value = widget.genderId;
     if (widget.genderId == 1) {
-      profileController.gerderController.text = "Female";
-    } else if (widget.genderId == 2) {
       profileController.gerderController.text = "Male";
+    } else if (widget.genderId == 2) {
+      profileController.gerderController.text = "Female";
     } else if (widget.genderId == 3) {
       profileController.gerderController.text = "Non-Binary";
     }
@@ -354,11 +354,11 @@ class EditProfileScreenState extends State<EditProfileScreen>
                                         profileController.genderList[index];
                                     if (profileController
                                             .gerderController.text ==
-                                        "Female") {
+                                        "Male") {
                                       profileController.genderId.value = 1;
                                     } else if (profileController
                                             .gerderController.text ==
-                                        "Male") {
+                                        "Female") {
                                       profileController.genderId.value = 2;
                                     } else {
                                       profileController.genderId.value = 3;
