@@ -16,7 +16,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lafetch/common/widget/lists/dummy_product_list.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
-import 'package:lafetch/screens/Brands/categoryproduct.dart';
+import 'package:lafetch/screens/Brands/categoryproduct.dart' hide SizedBox, Center, Column, Padding;
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/home/women/productviewscreen.dart';
@@ -43,7 +43,6 @@ import '../../../controllers/profile_controller.dart';
 import '../../../controllers/search_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
-import '../../../core/utils/analytics_helper.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(int)? onPressed;
@@ -174,7 +173,10 @@ class HomeScreenState extends State<HomeScreen> {
       return true;
     }
 
-    // Cache expired
+    // Cache expired - check if _lastDataFetch exists
+    if (_lastDataFetch == null) {
+      return true;
+    }
     final timeSinceLastFetch = DateTime.now().difference(_lastDataFetch!);
     if (timeSinceLastFetch > _cacheValidDuration) {
       return true;
@@ -209,7 +211,8 @@ class HomeScreenState extends State<HomeScreen> {
     _lastDataFetch = DateTime.now();
     _lastGenderValue = gender;
     _lastAuthState = isGuest; // ✅ Track auth state for transition detection
-    print("📊 Cache updated: gender=$gender, isGuest=$isGuest, authState=$_lastAuthState");
+    print(
+        "📊 Cache updated: gender=$gender, isGuest=$isGuest, authState=$_lastAuthState");
 
     // ✅ Store data hash to detect backend changes
     _dataHashByGender[gender] = _generateDataHash(gender);
@@ -749,7 +752,7 @@ class HomeScreenState extends State<HomeScreen> {
                                       SizedBox(
                                           height: 8.sp), // ✅ REDUCED from 12.sp
                                       _currentBannerList().length == 1
-                                          ? const SizedBox.shrink()
+                                          ? SizedBox.shrink()
                                           : Center(
                                               child: PageIndicator(
                                                 controller: _pageController,
@@ -1928,7 +1931,6 @@ class _FeaturedBrandsRow extends StatelessWidget {
 
             final brands = brandController.brandList
                 .where((b) =>
-                    b is Map &&
                     b.containsKey("id") &&
                     (b["name"]?.toString().isNotEmpty ?? false))
                 .toList();

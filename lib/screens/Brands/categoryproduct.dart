@@ -5,11 +5,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
@@ -21,7 +19,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../common/widget/appbar/productlist_appbar.dart';
-import '../../common/widget/lists/dummy_grid_list.dart';
 import '../../common/widget/other/common_widget.dart';
 import '../../controllers/catalog_controller.dart';
 import '../../controllers/cart_controller.dart';
@@ -78,7 +75,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   bool _isInitialLoading = true;
 
   // ✅ Hash tracking for change detection
-  String? _lastProductListHash;
   String? _lastFilterHash;
   String? _lastSortHash;
 
@@ -148,14 +144,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     }
   }
 
-  // ✅ Generate hash for product list to detect changes
-  // This hash includes the ORDER of product IDs, so sorting will be detected
-  String _generateProductHash(List<dynamic> products) {
-    if (products.isEmpty) return 'empty';
-    // Include just IDs in order - this way sorting changes will be detected
-    return products.map((p) => p['id'].toString()).join('|');
-  }
-
   // ✅ Generate hash for current filter state
   String _generateFilterHash() {
     return '${_appliedBrandIds.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_${_appliedSubCatId}_${_appliedCollectionId}_$_hasActiveFilters';
@@ -164,43 +152,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   // ✅ Generate hash for current sort state
   String _generateSortHash() {
     return _appliedSortOption;
-  }
-
-  // ✅ Check if products list has actually changed
-  bool _hasProductsChanged(
-      List<dynamic> previousProducts, List<dynamic> newProducts) {
-    final previousHash = _generateProductHash(previousProducts);
-    final newHash = _generateProductHash(newProducts);
-
-    // 🔍 Debug: Show detailed comparison
-    print("🔍 Hash Comparison:");
-    final prevHashPreview = previousHash.length > 50
-        ? previousHash.substring(0, 50) + "..."
-        : previousHash;
-    final newHashPreview =
-        newHash.length > 50 ? newHash.substring(0, 50) + "..." : newHash;
-    print(
-        "   Previous: ${previousProducts.length} products, hash: $prevHashPreview");
-    print("   New: ${newProducts.length} products, hash: $newHashPreview");
-
-    // Show first product from each list for comparison
-    if (previousProducts.isNotEmpty && newProducts.isNotEmpty) {
-      final prevFirst = previousProducts.first;
-      final newFirst = newProducts.first;
-      print(
-          "   Previous first: ID=${prevFirst['id']}, Price=${prevFirst['basePrice'] ?? prevFirst['displayPrice']}");
-      print(
-          "   New first: ID=${newFirst['id']}, Price=${newFirst['basePrice'] ?? newFirst['displayPrice']}");
-    }
-
-    if (previousHash != newHash) {
-      print("🔄 Products CHANGED - applying update");
-      return true;
-    }
-
-    print(
-        "⚠️ Products UNCHANGED - hash match (this might indicate backend not sorting/filtering)");
-    return false;
   }
 
   // ✅ Smart wishlist loader - only loads once
@@ -397,9 +348,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         .toSet();
 
     // Generate initial hash
-    _lastProductListHash = _generateProductHash(
-      catalogController.categoryProductList,
-    );
     _lastFilterHash = _generateFilterHash();
     _lastSortHash = _generateSortHash();
 
@@ -457,11 +405,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       print("🔄 Applying changes - Filter: $filterChanged, Sort: $sortChanged");
 
       catalogController.isCategory.value = true;
-
-      // Store current products for comparison
-      final previousProducts = List<dynamic>.from(
-        catalogController.categoryProductList,
-      );
 
       // ✅ Determine the action based on filters and sort state
       // Case 1: Has filters → Call API (with or without sort)
@@ -634,11 +577,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         }
         _lastSortHash = currentSortHash;
       }
-
-      // Update final hash
-      _lastProductListHash = _generateProductHash(
-        catalogController.categoryProductList,
-      );
     } catch (e) {
       print("❌ Error applying filters/sort: $e");
       getSnackBar("Failed to apply filters");
@@ -974,7 +912,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                     title: Text(
                       name,
                       style: const TextStyle(
-                        fontFamily: "Franklin Gothic Regular",
+                        fontFamily: "Clash Display Regular",
                         color: blackColor,
                       ),
                     ),
@@ -988,39 +926,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                       "Clear Selection",
                       style: TextStyle(
                         color: appBarColor,
-                        fontFamily: "Franklin Gothic",
+                        fontFamily: "Clash Display",
                         decoration: TextDecoration.underline,
                       ),
                     ),
                   ),
               ],
-        ...options.map((option) {
-          final id = option['id'] as int;
-          final name = option['name'] as String;
-          return RadioListTile<int>(
-            value: id,
-            groupValue: selectedValue,
-            activeColor: appBarColor,
-            title: Text(
-              name,
-              style: const TextStyle(
-                fontFamily: "Clash Display Regular",
-                color: blackColor,
-              ),
-            ),
-            onChanged: onChanged,
-          );
-        }),
-        if (selectedValue != null)
-          TextButton(
-            onPressed: () => onChanged(null),
-            child: const Text(
-              "Clear Selection",
-              style: TextStyle(
-                color: appBarColor,
-                fontFamily: "Clash Display",
-                decoration: TextDecoration.underline,
-              ),
             ),
           ),
         ),
@@ -1242,9 +1153,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                               } else {
                                                 selectedBrands.remove(b);
                                               }
-                                            });
-                                          },
-                                        );
+                                            }
+                                          });
+                                        },
+                                      );
                                       },
                                     )
                                   : selectedFilter == "Price Range"
@@ -1311,161 +1223,25 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                                   style:
                                                                       TextStyle(
                                                                     fontFamily:
-                                                                        "Franklin Gothic Regular",
+                                                                        "Clash Display Regular",
                                                                     color: Colors
                                                                         .grey,
                                                                   ),
-                                            }
-                                          });
-                                        },
-                                      );
-                                    },
-                                  )
-                                : selectedFilter == "Price Range"
-                                    ? Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text("Select price range",
-                                              style: TextStyle(
-                                                  fontFamily:
-                                                      "Clash Display Semibold",
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 15)),
-                                          const SizedBox(height: 8),
-                                          RangeSlider(
-                                            values: priceRange,
-                                            min: 100,
-                                            max: 50000,
-                                            divisions: 100,
-                                            activeColor: appBarColor,
-                                            onChanged: (v) => setModalState(() {
-                                              priceRange = v;
-                                            }),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                  "₹${priceRange.start.toInt()}",
-                                                  style: const TextStyle(
-                                                      fontFamily:
-                                                          "Clash Display Regular",
-                                                      color: Colors.grey)),
-                                              Text("₹${priceRange.end.toInt()}",
-                                                  style: const TextStyle(
-                                                      fontFamily:
-                                                          "Clash Display Regular",
-                                                      color: Colors.grey)),
-                                            ],
-                                          ),
-                                        ],
-                                      )
-                                    : selectedFilter == "Super Category"
-                                        ? _buildCategoryDropdown(
-                                            "Super Category",
-                                            selectedSuperCatId,
-                                            [
-                                              {'id': 1, 'name': 'Men'},
-                                              {'id': 2, 'name': 'Women'},
-                                              {'id': 3, 'name': 'Accessories'},
-                                            ],
-                                            (val) => setModalState(() {
-                                              selectedSuperCatId = val;
-                                            }),
-                                          )
-                                        : selectedFilter == "Category"
-                                            ? _buildCategoryDropdown(
-                                                "Category",
-                                                selectedCatId,
-                                                [
-                                                  {'id': 1, 'name': 'Topwear'},
-                                                  {
-                                                    'id': 2,
-                                                    'name': 'Bottomwear'
-                                                  },
-                                                  {'id': 3, 'name': 'Footwear'},
-                                                  {'id': 4, 'name': 'Bags'},
-                                                  {
-                                                    'id': 5,
-                                                    'name': 'Accessories'
-                                                  },
-                                                  {
-                                                    'id': 6,
-                                                    'name': 'Innerwear'
-                                                  },
-                                                ],
-                                                (val) => setModalState(() {
-                                                  selectedCatId = val;
-                                                }),
-                                              )
-                                            : selectedFilter == "Sub Category"
-                                                ? _buildCategoryDropdown(
-                                                    "Sub Category",
-                                                    selectedSubCatId,
-                                                    [
-                                                      {
-                                                        'id': 1,
-                                                        'name': 'T-Shirts'
-                                                      },
-                                                      {
-                                                        'id': 2,
-                                                        'name': 'Shirts'
-                                                      },
-                                                      {
-                                                        'id': 3,
-                                                        'name': 'Jeans'
-                                                      },
-                                                      {
-                                                        'id': 4,
-                                                        'name': 'Trousers'
-                                                      },
-                                                      {
-                                                        'id': 5,
-                                                        'name': 'Casual Shoes'
-                                                      },
-                                                      {
-                                                        'id': 6,
-                                                        'name': 'Formal Shoes'
-                                                      },
-                                                    ],
-                                                    (val) => setModalState(() {
-                                                      selectedSubCatId = val;
-                                                    }),
-                                                  )
-                                                : selectedFilter == "Collection"
-                                                    ? _collections.isEmpty
-                                                        ? const Center(
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(
-                                                                          20.0),
-                                                              child: Text(
-                                                                "No collections available",
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontFamily:
-                                                                      "Clash Display Regular",
-                                                                  color: Colors
-                                                                      .grey,
                                                                 ),
                                                               ),
-                                                            ),
-                                                          )
-                                                        : _buildCategoryDropdown(
-                                                            "Collection",
-                                                            selectedCollectionId,
-                                                            _collections,
-                                                            (val) =>
-                                                                setModalState(
-                                                                    () {
-                                                              selectedCollectionId =
-                                                                  val;
-                                                            }),
-                                                          )
-                                                    : const SizedBox(),
+                                                            )
+                                                          : _buildCategoryDropdown(
+                                                              "Collection",
+                                                              selectedCollectionId,
+                                                              _collections,
+                                                              (val) =>
+                                                                  setModalState(
+                                                                      () {
+                                                                selectedCollectionId =
+                                                                    val;
+                                                              }),
+                                                            )
+                                                      : const SizedBox(),
                           ),
                         ),
                       ]),
@@ -1810,15 +1586,8 @@ class _ProductTileNoOverflow extends StatelessWidget {
     required this.fmt,
   });
 
-  int _discountPercent(num? mrp, num? price) {
-    if (mrp == null || price == null || mrp <= 0 || price >= mrp) return 0;
-    return (((mrp - price) / mrp) * 100).round();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final discount = _discountPercent(mrp, price);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
