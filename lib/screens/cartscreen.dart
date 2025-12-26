@@ -1059,12 +1059,9 @@ class CartScreenState extends State<CartScreen> {
     // Discount on MRP = MRP - selling price
     final discountOnMrp = totalMrp - sellingTotal;
 
-    // 🟡 GST = 18% on selling price (same as review order)
-    final gstAmount = sellingTotal * 0.18;
-
-    // Final Total = selling - coupon + delivery + GST
+    // Final Total = selling - coupon + delivery
     final finalTotal =
-        (sellingTotal - couponDiscount) + deliveryCharges + gstAmount;
+        (sellingTotal - couponDiscount) + deliveryCharges;
 
     return Container(
       color: widget.backgroundcolor,
@@ -1123,7 +1120,7 @@ class CartScreenState extends State<CartScreen> {
                 ),
               ),
 
-            // 🟦 Subtotal (Selling Price)
+            // Subtotal (Selling Price)
             Padding(
               padding: EdgeInsets.only(top: 12.sp),
               child: Row(
@@ -1140,34 +1137,6 @@ class CartScreenState extends State<CartScreen> {
                   const Spacer(),
                   AppText(
                     text: "₹${sellingTotal.toStringAsFixed(0)}",
-                    fontFamily: "Clash Display",
-                    fontWeight: FontWeight.w500,
-                    color: widget.backgroundcolor == whiteColor
-                        ? homeAppBarColor
-                        : whiteColor,
-                    fontSize: 12,
-                  ),
-                ],
-              ),
-            ),
-
-            // 🟧 GST 18%
-            Padding(
-              padding: EdgeInsets.only(top: 12.sp),
-              child: Row(
-                children: [
-                  AppText(
-                    text: "GST (18%)",
-                    fontFamily: "Clash Display Regular",
-                    fontWeight: FontWeight.w400,
-                    color: widget.backgroundcolor == whiteColor
-                        ? subtitleColor
-                        : productSubtitleColor,
-                    fontSize: 12,
-                  ),
-                  const Spacer(),
-                  AppText(
-                    text: "₹${gstAmount.toStringAsFixed(2)}",
                     fontFamily: "Clash Display",
                     fontWeight: FontWeight.w500,
                     color: widget.backgroundcolor == whiteColor
@@ -1247,11 +1216,11 @@ class CartScreenState extends State<CartScreen> {
               ),
             ),
 
-            // 🔥 FINAL TOTAL (including GST)
+            // FINAL TOTAL
             Row(
               children: [
                 AppText(
-                  text: "TOTAL AMOUNT (Incl. 18% GST)",
+                  text: "TOTAL AMOUNT",
                   fontFamily: "Clash Display",
                   fontWeight: FontWeight.w500,
                   color: widget.backgroundcolor == whiteColor

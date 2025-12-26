@@ -79,14 +79,11 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   num _computePayable() {
     final num sellingPrice = _totalPrice;
 
-    // GST on selling price: always 18%
-    final num gstAmount = sellingPrice * 0.18;
-
     // Apply coupon on selling
     final num discountedPrice = sellingPrice - _couponDiscount;
 
-    // Final total = discounted price + GST + delivery + convenience
-    final num total = discountedPrice + gstAmount + _delivery + _convenience;
+    // Final total = discounted price + delivery + convenience
+    final num total = discountedPrice + _delivery + _convenience;
 
     return total < 0 ? 0 : total;
   }
@@ -643,9 +640,6 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   Widget _buildOrderDetails() {
     final num subtotal = _totalPrice;
     final num payable = _computePayable();
-    final num sellingPrice = _totalPrice; // price * qty
-    final num gstAmount = sellingPrice * 0.18; // 18% GST
-    final num discountMrpSelling = widget.mrp - sellingPrice;
 
     // discount on MRP (like Bag screen shows sometimes)
     final num discountOnMrp = (widget.mrp - _totalPrice);
@@ -677,8 +671,6 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
 
           // Subtotal (selling)
           _kv("Subtotal", "₹${subtotal.toStringAsFixed(2)}"),
-// GST on selling price
-          _kv("GST (18%)", "₹${gstAmount.toStringAsFixed(2)}"),
 
           // Coupon discount (green)
           if (_couponDiscount > 0)
@@ -712,11 +704,10 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
           Divider(color: colorSecondary, height: 30.sp),
 
           // TOTAL AMOUNT
-          // TOTAL AMOUNT (including GST)
           Row(
             children: [
               const AppText(
-                text: "TOTAL AMOUNT (Incl. 18% GST)",
+                text: "TOTAL AMOUNT",
                 fontFamily: "Clash Display",
                 fontWeight: FontWeight.w700,
                 color: blackColor,

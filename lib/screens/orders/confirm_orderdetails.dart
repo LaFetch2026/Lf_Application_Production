@@ -83,7 +83,6 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
         double.tryParse(order['shippingCost']?.toString() ?? '0') ?? 0.0;
     final coupon =
         double.tryParse(order['couponDiscount']?.toString() ?? '0') ?? 0.0;
-    final tax = double.tryParse(order['tax']?.toString() ?? '0') ?? 0.0;
 
     // ✅ Dynamic status color mapping
     final statusColor = status == 'cancelled'
@@ -223,7 +222,6 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
 
             _priceRow("Total MRP", "₹${totalMRP.toStringAsFixed(2)}"),
             _priceRow("Shipping Cost", "₹${shipping.toStringAsFixed(2)}"),
-            _priceRow("Tax", "₹${tax.toStringAsFixed(2)}"),
             if (coupon > 0)
               _priceRow("Coupon Discount", "- ₹${coupon.toStringAsFixed(2)}",
                   color: Colors.green),
