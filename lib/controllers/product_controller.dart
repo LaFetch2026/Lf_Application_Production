@@ -227,6 +227,12 @@ class ProductController extends BaseController {
   RxList<Map<String, dynamic>> productCollections =
       <Map<String, dynamic>>[].obs;
 
+  // Filter metadata
+  RxBool isFilterMetadata = false.obs;
+  RxList<Map<String, dynamic>> filterBrands = <Map<String, dynamic>>[].obs;
+  RxList<String> filterColors = <String>[].obs;
+  RxList<String> filterSizes = <String>[].obs;
+
 // Method to update images based on selected color
   void updateImagesForSelectedColor() {
     final pd = productDetails;
@@ -1557,6 +1563,78 @@ class ProductController extends BaseController {
       getSnackBar("Something went wrong");
     } finally {
       isProductCollectionsLoading.value = false;
+    }
+  }
+
+  /// ✅ Fetch filter metadata (brands, colors, sizes) for a super category
+  Future<void> getFilterMetadata(int superCatId) async {
+    isFilterMetadata.value = true;
+    filterBrands.clear();
+    filterColors.clear();
+    filterSizes.clear();
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+
+    final uri = Uri.parse("${ApiConstants.baseUrl}/filter-metadata?superCatId=$superCatId");
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 20));
+
+      print("🔍 Filter Metadata → ${response.statusCode}");
+      print("🔍 Response Body → ${response.body}");
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body);
+
+        if (decoded is Map && decoded['data'] is Map) {
+          final data = decoded['data'];
+
+          // ✅ Parse brands
+          if (data['brands'] is List) {
+            filterBrands.assignAll(
+              List<Map<String, dynamic>>.from(data['brands']),
+            );
+            print("✅ Brands loaded: ${filterBrands.length}");
+          }
+
+          // ✅ Parse colors
+          if (data['colors'] is List) {
+            filterColors.assignAll(
+              List<String>.from(data['colors']),
+            );
+            print("✅ Colors loaded: ${filterColors.length}");
+          }
+
+          // ✅ Parse sizes
+          if (data['sizes'] is List) {
+            filterSizes.assignAll(
+              List<String>.from(data['sizes']),
+            );
+            print("✅ Sizes loaded: ${filterSizes.length}");
+          }
+        } else {
+          print("⚠ Unexpected response structure");
+        }
+      } else if (response.statusCode == 401) {
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+        getSnackBar("Authentication failed");
+      } else {
+        getSnackBar("Failed to load filter metadata");
+      }
+    } on TimeoutException {
+      getSnackBar("Request timed out");
+    } catch (e, s) {
+      print("❌ getFilterMetadata error: $e\n$s");
+      getSnackBar("Error loading filters");
+    } finally {
+      isFilterMetadata.value = false;
     }
   }
 }

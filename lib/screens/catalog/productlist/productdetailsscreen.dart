@@ -19,7 +19,6 @@ import 'package:share_plus/share_plus.dart';
 // ✅ Razorpay import
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../common/widget/appbar/productdetails_appbar.dart';
 import '../../../common/widget/bottom_sheets/bottomwishlist.dart';
 import '../../../common/widget/button/oublebutton_iconnew.dart';
@@ -95,7 +94,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   // ===================== BUY NOW + RAZORPAY STATE =====================
   // Your LIVE Razorpay key
-  static const String _razorpayKey = "rzp_live_rhkxLWkaUrRAHO";
 
   // Razorpay instance
   Razorpay? _razorpay;
@@ -1054,7 +1052,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         visible: _titleText().isNotEmpty,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
-                                              horizontal: 12.sp, vertical: 8.sp),
+                                              horizontal: 12.sp,
+                                              vertical: 8.sp),
                                           child: AppSpacingText(
                                             text: _titleText(),
                                             fontFamily: "Clash Display Regular",
@@ -1175,9 +1174,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       // Selling Price
                                       Flexible(
                                         child: Padding(
-                                          padding: EdgeInsets.only(right: 10.sp),
+                                          padding:
+                                              EdgeInsets.only(right: 10.sp),
                                           child: AppSpacingText(
-                                            text: "₹${price.toStringAsFixed(0)}",
+                                            text:
+                                                "₹${price.toStringAsFixed(0)}",
                                             color: widget.backgroundcolor ==
                                                     whiteColor
                                                 ? nameText
@@ -1221,7 +1222,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   BorderRadius.circular(18),
                                             ),
                                             padding: EdgeInsets.symmetric(
-                                                horizontal: 8.sp, vertical: 2.sp),
+                                                horizontal: 8.sp,
+                                                vertical: 2.sp),
                                             child: AppSpacingText(
                                               text:
                                                   "${((mrp - price) / mrp * 100).toStringAsFixed(0)}% OFF",
@@ -1726,12 +1728,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               await cartController.addToCartUniversal(
                                 quantity: 1,
                                 page: "addproduct",
-                                variantId: productController.sizeInventoryId.value,
+                                variantId:
+                                    productController.sizeInventoryId.value,
                                 productId: widget.productId,
                                 expressValue: (widget.expressValue ?? 0),
                                 type: 1,
                                 backColor: widget.backgroundcolor,
-                                oldInventoryId: productController.sizeInventoryId.value,
+                                oldInventoryId:
+                                    productController.sizeInventoryId.value,
                               );
                               productController.addToCart.value = true;
                             }
@@ -2102,10 +2106,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
         avgRating = sum / reviews.length;
       }
 
-      // ✅ Hide section if no reviews and not loading
-      if (!isLoading && reviews.isEmpty && totalReviews == 0) {
-        return const SizedBox.shrink();
-      }
+      // ✅ Always show section, even when empty
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2125,53 +2126,54 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ),
 
           // ---------- Average Rating + Count ----------
-          Padding(
-            padding: EdgeInsets.only(left: 12.sp, right: 12.sp, bottom: 12.sp),
-            child: Row(
-              children: [
-                Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 8.sp, vertical: 4.sp),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF00B67A),
-                    borderRadius: BorderRadius.circular(4.sp),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.star, color: whiteColor, size: 14.sp),
-                      SizedBox(width: 4.sp),
-                      Text(
-                        avgRating.toStringAsFixed(1),
-                        style: TextStyle(
-                          fontFamily: "Clash Display",
-                          fontWeight: FontWeight.w700,
-                          color: whiteColor,
-                          fontSize: 13.sp,
+          if (reviews.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.only(left: 12.sp, right: 12.sp, bottom: 12.sp),
+              child: Row(
+                children: [
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.sp, vertical: 4.sp),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF00B67A),
+                      borderRadius: BorderRadius.circular(4.sp),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.star, color: whiteColor, size: 14.sp),
+                        SizedBox(width: 4.sp),
+                        Text(
+                          avgRating.toStringAsFixed(1),
+                          style: TextStyle(
+                            fontFamily: "Clash Display",
+                            fontWeight: FontWeight.w700,
+                            color: whiteColor,
+                            fontSize: 13.sp,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 8.sp),
-                Expanded(
-                  child: Text(
-                    '$totalReviews ${totalReviews == 1 ? "Review" : "Reviews"}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: "Clash Display Regular",
-                      fontWeight: FontWeight.w400,
-                      color: widget.backgroundcolor == whiteColor
-                          ? subtitleColor
-                          : searchTextColor,
-                      fontSize: 13.sp,
+                      ],
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(width: 8.sp),
+                  Expanded(
+                    child: Text(
+                      '$totalReviews ${totalReviews == 1 ? "Review" : "Reviews"}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: "Clash Display Regular",
+                        fontWeight: FontWeight.w400,
+                        color: widget.backgroundcolor == whiteColor
+                            ? subtitleColor
+                            : searchTextColor,
+                        fontSize: 13.sp,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
 
           // ---------- Loader ----------
           if (isLoading)

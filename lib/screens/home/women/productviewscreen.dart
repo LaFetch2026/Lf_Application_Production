@@ -55,13 +55,13 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
   // ✅ Filter and Sort State
   List<int> _appliedBrandIds = [];
+  List<String> _appliedColors = [];
+  List<String> _appliedSizes = [];
   String _appliedMinPrice = "300";
   String _appliedMaxPrice = "100000";
   String _appliedSortOption = "recommended";
-  int? _appliedCatId;
-  int? _appliedSubCatId;
   bool _hasActiveFilters = false;
-  bool _isBrandsLoaded = false;
+  bool _isFilterMetadataLoaded = false;
   bool _isProductsLoaded = false;
 
   // ✅ Hash tracking for change detection
@@ -122,7 +122,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
   // ✅ Generate hash for current filter state
   String _generateFilterHash() {
-    return '${_appliedBrandIds.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_${_appliedCatId}_${_appliedSubCatId}_$_hasActiveFilters';
+    return '${_appliedBrandIds.join(',')}_${_appliedColors.join(',')}_${_appliedSizes.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_$_hasActiveFilters';
   }
 
   // ✅ Generate hash for current sort state
@@ -190,16 +190,17 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     prefs.remove("category");
   }
 
-  // ✅ Load brands for filter
-  Future<void> _loadBrandsIfNeeded() async {
-    if (_isBrandsLoaded) {
-      print("✅ Brands already loaded - skipping");
+  // ✅ Load filter metadata for filter
+  Future<void> _loadFilterMetadataIfNeeded() async {
+    if (_isFilterMetadataLoaded) {
+      print("✅ Filter metadata already loaded - skipping");
       return;
     }
 
-    await brandController.getBrandData("all");
-    _isBrandsLoaded = true;
-    print("✅ Brands loaded successfully");
+    final currentGender = productController.categoryFilter.value;
+    await productController.getFilterMetadata(currentGender);
+    _isFilterMetadataLoaded = true;
+    print("✅ Filter metadata loaded successfully");
   }
 
   // ✅ Load initial home products
@@ -228,109 +229,6 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
   // ✅ Get categories based on super category (genderType from productController)
   // Uses actual API-loaded categories from catalogController.catalogList
-  List<Map<String, dynamic>> _getCategoriesForGender() {
-    final genderType = productController.categoryFilter.value;
-
-    // ✅ Return API-loaded categories from catalogController
-    // The catalogList is already filtered by gender when loaded via getCatalogData(gender)
-    if (catalogController.catalogList.isNotEmpty) {
-      return catalogController.catalogList
-          .map((cat) => {
-                'id': cat['id'],
-                'name': cat['name'] ?? 'Unknown',
-              })
-          .toList();
-    }
-
-    // ⚠️ Fallback: Return empty list if categories aren't loaded yet
-    // This shouldn't happen in normal flow since categories are loaded on home screen
-    print("⚠️ Warning: catalogList is empty for gender $genderType");
-    return [];
-  }
-
-  // ✅ Get sub-categories based on super category (genderType from productController)
-  // TODO: Replace with API data when subcategories endpoint is available
-  // Currently using hardcoded values as subcategories are not available in the catalog API
-  List<Map<String, dynamic>> _getSubCategoriesForGender() {
-    final genderType = productController.categoryFilter.value;
-
-    // Check if catalogList has subcategories nested within
-    // Some APIs might return subcategories as nested arrays within categories
-    List<Map<String, dynamic>> subcategories = [];
-    if (catalogController.catalogList.isNotEmpty) {
-      for (var cat in catalogController.catalogList) {
-        if (cat['subcategories'] != null && cat['subcategories'] is List) {
-          for (var subCat in cat['subcategories']) {
-            subcategories.add({
-              'id': subCat['id'],
-              'name': subCat['name'] ?? 'Unknown',
-              'categoryId': cat['id'], // Keep track of parent category
-            });
-          }
-        }
-      }
-    }
-
-    // If API provides subcategories, use them
-    if (subcategories.isNotEmpty) {
-      print("✅ Using API subcategories: ${subcategories.length} items");
-      return subcategories;
-    }
-
-    // ⚠️ Fallback to hardcoded subcategories
-    // This is temporary until the API provides subcategory data
-    print("⚠️ Using hardcoded subcategories for gender $genderType");
-
-    if (genderType == 1) {
-      // Men's sub-categories
-      return [
-        {'id': 1, 'name': 'T-Shirts'},
-        {'id': 2, 'name': 'Shirts'},
-        {'id': 3, 'name': 'Jeans'},
-        {'id': 4, 'name': 'Trousers'},
-        {'id': 5, 'name': 'Jackets'},
-        {'id': 6, 'name': 'Shorts'},
-        {'id': 7, 'name': 'Sneakers'},
-        {'id': 8, 'name': 'Casual Shoes'},
-        {'id': 9, 'name': 'Formal Shoes'},
-        {'id': 10, 'name': 'Kurtas'},
-        {'id': 11, 'name': 'Sherwanis'},
-      ];
-    } else if (genderType == 2) {
-      // Women's sub-categories
-      return [
-        {'id': 1, 'name': 'Tops'},
-        {'id': 2, 'name': 'Dresses'},
-        {'id': 3, 'name': 'Jeans'},
-        {'id': 4, 'name': 'Trousers'},
-        {'id': 5, 'name': 'Skirts'},
-        {'id': 6, 'name': 'Leggings'},
-        {'id': 7, 'name': 'Kurtas'},
-        {'id': 8, 'name': 'Sarees'},
-        {'id': 9, 'name': 'Lehenga'},
-        {'id': 10, 'name': 'Heels'},
-        {'id': 11, 'name': 'Flats'},
-        {'id': 12, 'name': 'Sneakers'},
-      ];
-    } else {
-      // Accessories sub-categories
-      return [
-        {'id': 1, 'name': 'Handbags'},
-        {'id': 2, 'name': 'Shoulder Bags'},
-        {'id': 3, 'name': 'Tote Bags'},
-        {'id': 4, 'name': 'Clutches'},
-        {'id': 5, 'name': 'Necklaces'},
-        {'id': 6, 'name': 'Earrings'},
-        {'id': 7, 'name': 'Bracelets'},
-        {'id': 8, 'name': 'Rings'},
-        {'id': 9, 'name': 'Belts'},
-        {'id': 10, 'name': 'Sunglasses'},
-        {'id': 11, 'name': 'Watches'},
-        {'id': 12, 'name': 'Wallets'},
-      ];
-    }
-  }
-
   // ✅ Get all products from collections
   List<Map<String, dynamic>> _getAllProducts() {
     // If search results are provided, return them directly
@@ -395,17 +293,17 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         // Note: API does backend filtering + client-side price/brand safety net
         print("🔹 Case 1: Filter changed (has active filters)");
         print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
+        print("   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
+        print("   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • catId        → $_appliedCatId");
-        print("   • subCatId     → $_appliedSubCatId");
         print("   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
         await catalogController.getFilterAndSortProducts(
           brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
+          colors: _appliedColors.isNotEmpty ? _appliedColors : null,
+          sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
           minPrice: _appliedMinPrice,
           maxPrice: _appliedMaxPrice,
-          catId: _appliedCatId,
-          subCatId: _appliedSubCatId,
           sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
         );
 
@@ -413,20 +311,14 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         // API already filtered by price & brand; we filter by home products
         final apiResults = List<dynamic>.from(catalogController.categoryProductList);
 
-        if (_appliedCatId == null && _appliedSubCatId == null) {
-          // No category filters - restrict to home products only
-          final filteredResults = apiResults.where((product) {
-            final productId = int.tryParse(product['id']?.toString() ?? '');
-            return productId != null && _originalHomeProductIds.contains(productId);
-          }).toList();
+        // Restrict to home products only
+        final filteredResults = apiResults.where((product) {
+          final productId = int.tryParse(product['id']?.toString() ?? '');
+          return productId != null && _originalHomeProductIds.contains(productId);
+        }).toList();
 
-          print("🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} from home collections");
-          catalogController.categoryProductList.assignAll(filteredResults);
-        } else {
-          // Category filters applied
-          print("🔍 Using all ${apiResults.length} API products (category filters applied)");
-          catalogController.categoryProductList.assignAll(apiResults);
-        }
+        print("🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} from home collections");
+        catalogController.categoryProductList.assignAll(filteredResults);
         
         _lastFilterHash = currentFilterHash;
         if (sortChanged) _lastSortHash = currentSortHash;
@@ -467,17 +359,17 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         // Note: API does backend filtering + client-side price/brand safety net
         print("🔹 Case 3: Sort changed (filters already applied)");
         print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
+        print("   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
+        print("   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • catId        → $_appliedCatId");
-        print("   • subCatId     → $_appliedSubCatId");
         print("   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
         await catalogController.getFilterAndSortProducts(
           brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
+          colors: _appliedColors.isNotEmpty ? _appliedColors : null,
+          sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
           minPrice: _appliedMinPrice,
           maxPrice: _appliedMaxPrice,
-          catId: _appliedCatId,
-          subCatId: _appliedSubCatId,
           sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
         );
 
@@ -485,17 +377,12 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         // API already filtered by price & brand; we filter by home products
         final apiResults = List<dynamic>.from(catalogController.categoryProductList);
 
-        if (_appliedCatId == null && _appliedSubCatId == null) {
-          // No category filters - restrict to home products only
-          final filteredResults = apiResults.where((product) {
-            final productId = int.tryParse(product['id']?.toString() ?? '');
-            return productId != null && _originalHomeProductIds.contains(productId);
-          }).toList();
-          catalogController.categoryProductList.assignAll(filteredResults);
-        } else {
-          // Category filters applied
-          catalogController.categoryProductList.assignAll(apiResults);
-        }
+        // Restrict to home products only
+        final filteredResults = apiResults.where((product) {
+          final productId = int.tryParse(product['id']?.toString() ?? '');
+          return productId != null && _originalHomeProductIds.contains(productId);
+        }).toList();
+        catalogController.categoryProductList.assignAll(filteredResults);
 
         _lastSortHash = currentSortHash;
 
@@ -997,96 +884,33 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     );
   }
 
-  /// ✅ Helper: Build Category Dropdown
-  Widget _buildCategoryDropdown(
-    String title,
-    int? selectedValue,
-    List<Map<String, dynamic>> options,
-    Function(int?) onChanged,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Select $title",
-          style: const TextStyle(
-            fontFamily: "Franklin Gothic",
-            fontWeight: FontWeight.w700,
-            fontSize: 15,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                ...options.map((option) {
-                  final id = option['id'] as int;
-                  final name = option['name'] as String;
-                  return RadioListTile<int>(
-                    value: id,
-                    groupValue: selectedValue,
-                    activeColor: appBarColor,
-                    title: Text(
-                      name,
-                      style: const TextStyle(
-                        fontFamily: "Franklin Gothic Regular",
-                        color: blackColor,
-                      ),
-                    ),
-                    onChanged: onChanged,
-                  );
-                }),
-                if (selectedValue != null)
-                  TextButton(
-                    onPressed: () => onChanged(null),
-                    child: const Text(
-                      "Clear Selection",
-                      style: TextStyle(
-                        color: appBarColor,
-                        fontFamily: "Franklin Gothic",
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   /// ✅ Filter Bottom Sheet
   Future<void> _showFilterBottomSheet(BuildContext context) async {
     String selectedFilter = "Brand";
 
     List<String> selectedBrands = [];
+    List<String> selectedColors = List.from(_appliedColors);
+    List<String> selectedSizes = List.from(_appliedSizes);
     RangeValues priceRange = RangeValues(
       double.parse(_appliedMinPrice),
       double.parse(_appliedMaxPrice),
     );
 
-    // Category filter selections
-    int? selectedCatId = _appliedCatId;
-    int? selectedSubCatId = _appliedSubCatId;
-
     final List<String> filterCategories = [
       "Brand",
       "Price Range",
-      "Category",
-      "Sub Category"
+      "Color",
+      "Size"
     ];
 
-    // ✅ Ensure brands are loaded
-    await _loadBrandsIfNeeded();
+    // ✅ Ensure filter metadata is loaded
+    await _loadFilterMetadataIfNeeded();
 
-    if (brandController.isBrand.value) {
+    if (productController.isFilterMetadata.value) {
       await Future.delayed(const Duration(milliseconds: 500));
     }
 
-    final allBrands = brandController.brandList
-        .where((item) => item['alphabet'] == null)
+    final allBrands = productController.filterBrands
         .map((item) => (item['name'] ?? '').toString().trim())
         .where((name) => name.isNotEmpty)
         .toList();
@@ -1098,8 +922,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
     // ✅ Restore previously applied brands
     for (final id in _appliedBrandIds) {
-      final brandData = brandController.brandList.firstWhereOrNull((item) =>
-          item['alphabet'] == null &&
+      final brandData = productController.filterBrands.firstWhereOrNull((item) =>
           int.tryParse(item['id']?.toString() ?? '') == id);
       if (brandData != null) {
         final name = brandData['name']?.toString().trim();
@@ -1110,6 +933,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     }
 
     final brands = ["Select All", ...allBrands];
+    final colors = productController.filterColors.toList();
+    final sizes = productController.filterSizes.toList();
 
     await showModalBottomSheet(
       context: context,
@@ -1142,9 +967,9 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                             onPressed: () {
                               setModalState(() {
                                 selectedBrands.clear();
+                                selectedColors.clear();
+                                selectedSizes.clear();
                                 priceRange = const RangeValues(300, 100000);
-                                selectedCatId = null;
-                                selectedSubCatId = null;
                               });
                             },
                             child: const Text("CLEAR ALL",
@@ -1278,24 +1103,72 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                             ),
                                           ],
                                         )
-                                      : selectedFilter == "Category"
-                                          ? _buildCategoryDropdown(
-                                              "Category",
-                                              selectedCatId,
-                                              _getCategoriesForGender(),
-                                              (val) => setModalState(() {
-                                                selectedCatId = val;
-                                              }),
-                                            )
-                                          : selectedFilter == "Sub Category"
-                                              ? _buildCategoryDropdown(
-                                                  "Sub Category",
-                                                  selectedSubCatId,
-                                                  _getSubCategoriesForGender(),
-                                                  (val) => setModalState(() {
-                                                    selectedSubCatId = val;
-                                                  }),
+                                      : selectedFilter == "Color"
+                                          ? colors.isEmpty
+                                              ? const Center(
+                                                  child: Text("No colors available"))
+                                              : ListView.builder(
+                                                  itemCount: colors.length,
+                                                  itemBuilder: (context, i) {
+                                                    final color = colors[i];
+                                                    final checked =
+                                                        selectedColors.contains(color);
+                                                    return CheckboxListTile(
+                                                      value: checked,
+                                                      onChanged: (val) {
+                                                        setModalState(() {
+                                                          if (val == true) {
+                                                            selectedColors.add(color);
+                                                          } else {
+                                                            selectedColors.remove(color);
+                                                          }
+                                                        });
+                                                      },
+                                                      controlAffinity:
+                                                          ListTileControlAffinity.leading,
+                                                      title: Text(
+                                                        color.toUpperCase(),
+                                                        style: TextStyle(
+                                                          fontSize: 14.sp,
+                                                          fontWeight: FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
                                                 )
+                                          : selectedFilter == "Size"
+                                              ? sizes.isEmpty
+                                                  ? const Center(
+                                                      child: Text("No sizes available"))
+                                                  : ListView.builder(
+                                                      itemCount: sizes.length,
+                                                      itemBuilder: (context, i) {
+                                                        final size = sizes[i];
+                                                        final checked =
+                                                            selectedSizes.contains(size);
+                                                        return CheckboxListTile(
+                                                          value: checked,
+                                                          onChanged: (val) {
+                                                            setModalState(() {
+                                                              if (val == true) {
+                                                                selectedSizes.add(size);
+                                                              } else {
+                                                                selectedSizes.remove(size);
+                                                              }
+                                                            });
+                                                          },
+                                                          controlAffinity:
+                                                              ListTileControlAffinity.leading,
+                                                          title: Text(
+                                                            size.toUpperCase(),
+                                                            style: TextStyle(
+                                                              fontSize: 14.sp,
+                                                              fontWeight: FontWeight.w400,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    )
                                               : const SizedBox(),
                             ),
                           ),
@@ -1348,8 +1221,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                               print("  Brands: ${selectedBrands.join(', ')}");
                               print("  Brand IDs: $selectedBrandIds");
                               print("  Price: ₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()}");
-                              print("  Category ID: $selectedCatId");
-                              print("  Sub Category ID: $selectedSubCatId");
+                              print("  Colors: ${selectedColors.join(', ')}");
+                              print("  Sizes: ${selectedSizes.join(', ')}");
 
                               setState(() {
                                 _appliedBrandIds = selectedBrandIds;
@@ -1357,14 +1230,14 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                     priceRange.start.toInt().toString();
                                 _appliedMaxPrice =
                                     priceRange.end.toInt().toString();
-                                _appliedCatId = selectedCatId;
-                                _appliedSubCatId = selectedSubCatId;
+                                _appliedColors = List.from(selectedColors);
+                                _appliedSizes = List.from(selectedSizes);
                                 _hasActiveFilters =
                                     selectedBrandIds.isNotEmpty ||
                                         priceRange.start > 300 ||
                                         priceRange.end < 100000 ||
-                                        _appliedCatId != null ||
-                                        _appliedSubCatId != null;
+                                        selectedColors.isNotEmpty ||
+                                        selectedSizes.isNotEmpty;
 
                                 // Reset pagination
                                 productController.handpickedPage.value = 1;
@@ -1380,11 +1253,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                 if (priceRange.start > 300 || priceRange.end < 100000) {
                                   filterParts.add("₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
                                 }
-                                if (selectedCatId != null) {
-                                  filterParts.add("Category");
+                                if (selectedColors.isNotEmpty) {
+                                  filterParts.add("${selectedColors.length} color(s)");
                                 }
-                                if (selectedSubCatId != null) {
-                                  filterParts.add("Sub Category");
+                                if (selectedSizes.isNotEmpty) {
+                                  filterParts.add("${selectedSizes.length} size(s)");
                                 }
                                 getSnackBar("Filtered by ${filterParts.join(', ')}");
                               } else {

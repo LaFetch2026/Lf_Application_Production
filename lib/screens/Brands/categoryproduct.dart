@@ -68,7 +68,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   // ✅ Cache flags to prevent redundant API calls
   bool _isWishlistLoaded = false;
   bool _isCartLoaded = false;
-  bool _isBrandsLoaded = false;
+  bool _isFilterMetadataLoaded = false;
   bool _isCategoryProductsLoaded = false;
 
   // ✅ Initial loading state
@@ -83,14 +83,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
   // ✅ Current filter/sort state
   List<int> _appliedBrandIds = [];
+  List<String> _appliedColors = [];
+  List<String> _appliedSizes = [];
   String _appliedMinPrice = "300";
   String _appliedMaxPrice = "100000";
   String _appliedSortOption = "recommended";
-  int? _appliedSubCatId;
-  int? _appliedCollectionId;
   bool _hasActiveFilters = false;
-  bool _isCategoriesLoaded = false;
-  List<Map<String, dynamic>> _collections = [];
 
   // ✅ Store original category product IDs for client-side filtering
   Set<int> _originalCategoryProductIds = {};
@@ -146,7 +144,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
   // ✅ Generate hash for current filter state
   String _generateFilterHash() {
-    return '${_appliedBrandIds.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_${_appliedSubCatId}_${_appliedCollectionId}_$_hasActiveFilters';
+    return '${_appliedBrandIds.join(',')}_${_appliedColors.join(',')}_${_appliedSizes.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_$_hasActiveFilters';
   }
 
   // ✅ Generate hash for current sort state
@@ -192,141 +190,16 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     }
   }
 
-  // ✅ Smart brand loader - only loads once
-  Future<void> _loadBrandsIfNeeded() async {
-    if (_isBrandsLoaded) {
-      print("✅ Brands already loaded - skipping");
+  // ✅ Smart filter metadata loader - only loads once
+  Future<void> _loadFilterMetadataIfNeeded() async {
+    if (_isFilterMetadataLoaded) {
+      print("✅ Filter metadata already loaded - skipping");
       return;
     }
 
-    await brandController.getBrandData("all");
-    _isBrandsLoaded = true;
-    print("✅ Brands loaded successfully");
-  }
-
-  // ✅ Smart collections loader - only loads once
-  Future<void> _loadCollectionsIfNeeded() async {
-    if (_isCategoriesLoaded) {
-      print("✅ Collections already loaded - skipping");
-      return;
-    }
-
-    // Extract collections from home product list, filtered by super category
-    // Use collectionID from products if available, otherwise use collection id
-    _collections = productController.homeProductList
-        .whereType<Map<String, dynamic>>()
-        .where((c) {
-          // Filter collections by super category (genderType)
-          final products = c['products'] as List?;
-          if (products == null || products.isEmpty) return false;
-
-          final firstProduct = products.first;
-          if (firstProduct is! Map) return false;
-
-          final superCatId = firstProduct['superCatId'];
-          return superCatId == widget.genderType;
-        })
-        .map((c) {
-      // Check if collection has products with collectionID
-      final products = c['products'] as List?;
-      final firstProduct =
-          products?.isNotEmpty == true ? products!.first : null;
-      final collectionId = firstProduct != null && firstProduct is Map
-          ? (firstProduct['collectionID'] ?? c['id'])
-          : c['id'];
-
-      return {
-        'id': collectionId,
-        'name': c['name'] ?? 'Unknown',
-      };
-    }).toList();
-
-    _isCategoriesLoaded = true;
-    print("✅ Collections loaded for genderType ${widget.genderType}: ${_collections.length}");
-    for (final col in _collections) {
-      print("   - ID: ${col['id']}, Name: ${col['name']}");
-    }
-  }
-
-  // ✅ Get sub-categories based on super category (genderType)
-  // TODO: Replace with API data when subcategories endpoint is available
-  // Currently using hardcoded values as subcategories are not available in the catalog API
-  List<Map<String, dynamic>> _getSubCategoriesForGender() {
-    // Check if catalogList has subcategories nested within
-    // Some APIs might return subcategories as nested arrays within categories
-    List<Map<String, dynamic>> subcategories = [];
-    if (catalogController.catalogList.isNotEmpty) {
-      for (var cat in catalogController.catalogList) {
-        if (cat['subcategories'] != null && cat['subcategories'] is List) {
-          for (var subCat in cat['subcategories']) {
-            subcategories.add({
-              'id': subCat['id'],
-              'name': subCat['name'] ?? 'Unknown',
-              'categoryId': cat['id'], // Keep track of parent category
-            });
-          }
-        }
-      }
-    }
-
-    // If API provides subcategories, use them
-    if (subcategories.isNotEmpty) {
-      print("✅ Using API subcategories: ${subcategories.length} items");
-      return subcategories;
-    }
-
-    // ⚠️ Fallback to hardcoded subcategories
-    // This is temporary until the API provides subcategory data
-    print("⚠️ Using hardcoded subcategories for gender ${widget.genderType}");
-
-    if (widget.genderType == 1) {
-      // Men's sub-categories
-      return [
-        {'id': 1, 'name': 'T-Shirts'},
-        {'id': 2, 'name': 'Shirts'},
-        {'id': 3, 'name': 'Jeans'},
-        {'id': 4, 'name': 'Trousers'},
-        {'id': 5, 'name': 'Jackets'},
-        {'id': 6, 'name': 'Shorts'},
-        {'id': 7, 'name': 'Sneakers'},
-        {'id': 8, 'name': 'Casual Shoes'},
-        {'id': 9, 'name': 'Formal Shoes'},
-        {'id': 10, 'name': 'Kurtas'},
-        {'id': 11, 'name': 'Sherwanis'},
-      ];
-    } else if (widget.genderType == 2) {
-      // Women's sub-categories
-      return [
-        {'id': 1, 'name': 'Tops'},
-        {'id': 2, 'name': 'Dresses'},
-        {'id': 3, 'name': 'Jeans'},
-        {'id': 4, 'name': 'Trousers'},
-        {'id': 5, 'name': 'Skirts'},
-        {'id': 6, 'name': 'Leggings'},
-        {'id': 7, 'name': 'Kurtas'},
-        {'id': 8, 'name': 'Sarees'},
-        {'id': 9, 'name': 'Lehenga'},
-        {'id': 10, 'name': 'Heels'},
-        {'id': 11, 'name': 'Flats'},
-        {'id': 12, 'name': 'Sneakers'},
-      ];
-    } else {
-      // Accessories sub-categories
-      return [
-        {'id': 1, 'name': 'Handbags'},
-        {'id': 2, 'name': 'Shoulder Bags'},
-        {'id': 3, 'name': 'Tote Bags'},
-        {'id': 4, 'name': 'Clutches'},
-        {'id': 5, 'name': 'Necklaces'},
-        {'id': 6, 'name': 'Earrings'},
-        {'id': 7, 'name': 'Bracelets'},
-        {'id': 8, 'name': 'Rings'},
-        {'id': 9, 'name': 'Belts'},
-        {'id': 10, 'name': 'Sunglasses'},
-        {'id': 11, 'name': 'Watches'},
-        {'id': 12, 'name': 'Wallets'},
-      ];
-    }
+    await productController.getFilterMetadata(widget.genderType);
+    _isFilterMetadataLoaded = true;
+    print("✅ Filter metadata loaded successfully");
   }
 
   // ✅ Smart category products loader - only loads once initially
@@ -368,12 +241,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         _loadWishlistIfNeeded(),
         _loadCartIfNeeded(),
         _clearPref(),
-        _loadBrandsIfNeeded(),
+        _loadFilterMetadataIfNeeded(),
         _loadCategoryProductsIfNeeded(),
       ]);
-
-      // Load collections after initial load (requires homeProductList)
-      await _loadCollectionsIfNeeded();
 
       print("✅ Initial load complete");
     } catch (e) {
@@ -417,9 +287,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         print("   • Current _appliedSortOption → $_appliedSortOption");
         print(
             "   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
+        print("   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
+        print("   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • subCatId     → $_appliedSubCatId");
-        print("   • collectionId → $_appliedCollectionId");
         print("   • sortChanged  → $sortChanged");
         print(
             "   • Passing sortOption → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
@@ -427,10 +297,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         await catalogController.getFilterAndSortProducts(
           // Only pass actual filter values (not defaults)
           brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
+          colors: _appliedColors.isNotEmpty ? _appliedColors : null,
+          sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
           minPrice: _appliedMinPrice,
           maxPrice: _appliedMaxPrice,
-          subCatId: _appliedSubCatId,
-          collectionId: _appliedCollectionId,
           sortOption:
               _appliedSortOption != "recommended" ? _appliedSortOption : null,
         );
@@ -438,17 +308,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         // ✅ Client-side filter: Only keep products from this category
         var apiResults =
             List<dynamic>.from(catalogController.categoryProductList);
-
-        // Filter by collectionId if specified (backend may ignore this)
-        if (_appliedCollectionId != null) {
-          apiResults = apiResults.where((product) {
-            final productCollectionId =
-                int.tryParse(product['collectionID']?.toString() ?? '');
-            return productCollectionId == _appliedCollectionId;
-          }).toList();
-          print(
-              "🔍 Filtered ${catalogController.categoryProductList.length} products to ${apiResults.length} with collectionID=$_appliedCollectionId");
-        }
 
         final filteredResults = apiResults.where((product) {
           final productId = int.tryParse(product['id']?.toString() ?? '');
@@ -515,33 +374,24 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         print("   • New _appliedSortOption → $_appliedSortOption");
         print(
             "   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
+        print("   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
+        print("   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • subCatId     → $_appliedSubCatId");
-        print("   • collectionId → $_appliedCollectionId");
         print(
             "   • Passing sortOption → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
         await catalogController.getFilterAndSortProducts(
           brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
+          colors: _appliedColors.isNotEmpty ? _appliedColors : null,
+          sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
           minPrice: _appliedMinPrice,
           maxPrice: _appliedMaxPrice,
-          subCatId: _appliedSubCatId,
-          collectionId: _appliedCollectionId,
           sortOption:
               _appliedSortOption != "recommended" ? _appliedSortOption : null,
         );
 
         var apiResults =
             List<dynamic>.from(catalogController.categoryProductList);
-
-        // Filter by collectionId if specified (backend may ignore this)
-        if (_appliedCollectionId != null) {
-          apiResults = apiResults.where((product) {
-            final productCollectionId =
-                int.tryParse(product['collectionID']?.toString() ?? '');
-            return productCollectionId == _appliedCollectionId;
-          }).toList();
-        }
 
         final filteredResults = apiResults.where((product) {
           final productId = int.tryParse(product['id']?.toString() ?? '');
@@ -673,6 +523,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               );
             },
           ),
+
           SizedBox(height: 8.sp),
 
           /// ✅ Product Grid with skeleton loading
@@ -879,66 +730,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   Widget _divider() =>
       Container(width: 1.sp, color: dividerColor, height: 46.sp);
 
-  /// ✅ Helper: Build Category Dropdown
-  Widget _buildCategoryDropdown(
-    String title,
-    int? selectedValue,
-    List<Map<String, dynamic>> options,
-    Function(int?) onChanged,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Select $title",
-          style: const TextStyle(
-            fontFamily: "Clash Display",
-            fontWeight: FontWeight.w700,
-            fontSize: 15,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                ...options.map((option) {
-                  final id = option['id'] as int;
-                  final name = option['name'] as String;
-                  return RadioListTile<int>(
-                    value: id,
-                    groupValue: selectedValue,
-                    activeColor: appBarColor,
-                    title: Text(
-                      name,
-                      style: const TextStyle(
-                        fontFamily: "Clash Display Regular",
-                        color: blackColor,
-                      ),
-                    ),
-                    onChanged: onChanged,
-                  );
-                }),
-                if (selectedValue != null)
-                  TextButton(
-                    onPressed: () => onChanged(null),
-                    child: const Text(
-                      "Clear Selection",
-                      style: TextStyle(
-                        color: appBarColor,
-                        fontFamily: "Clash Display",
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _activeBottomButton({
     required String icon,
     required String label,
@@ -977,31 +768,22 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     String selectedFilter = "Brand";
 
     List<String> selectedBrands = [];
+    List<String> selectedColors = List.from(_appliedColors);
+    List<String> selectedSizes = List.from(_appliedSizes);
     RangeValues priceRange = RangeValues(
       double.parse(_appliedMinPrice).clamp(100.0, 50000.0),
       double.parse(_appliedMaxPrice).clamp(100.0, 50000.0),
     );
 
-    // Category filter selections
-    int? selectedSubCatId = _appliedSubCatId;
-    int? selectedCollectionId = _appliedCollectionId;
-
     final List<String> filterCategories = [
       "Brand",
       "Price Range",
-      "Sub Category",
-      "Collection"
+      "Color",
+      "Size"
     ];
 
-    // ✅ Ensure brands are loaded
-    await _loadBrandsIfNeeded();
-
-    if (brandController.isBrand.value) {
-      await Future.delayed(const Duration(milliseconds: 500));
-    }
-
-    final allBrands = brandController.brandList
-        .where((item) => item['alphabet'] == null)
+    // ✅ Get brands from filter metadata
+    final allBrands = productController.filterBrands
         .map((item) => (item['name'] ?? '').toString().trim())
         .where((name) => name.isNotEmpty)
         .toList();
@@ -1013,8 +795,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
     // ✅ Restore previously applied brands
     for (final id in _appliedBrandIds) {
-      final brandData = brandController.brandList.firstWhereOrNull((item) =>
-          item['alphabet'] == null &&
+      final brandData = productController.filterBrands.firstWhereOrNull((item) =>
           int.tryParse(item['id']?.toString() ?? '') == id);
       if (brandData != null) {
         final name = brandData['name']?.toString().trim();
@@ -1025,6 +806,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     }
 
     final brands = ["Select All", ...allBrands];
+    final colors = productController.filterColors.toList();
+    final sizes = productController.filterSizes.toList();
 
     await showModalBottomSheet(
       context: context,
@@ -1057,9 +840,9 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                             onPressed: () {
                               setModalState(() {
                                 selectedBrands.clear();
+                                selectedColors.clear();
+                                selectedSizes.clear();
                                 priceRange = const RangeValues(300, 100000);
-                                selectedSubCatId = null;
-                                selectedCollectionId = null;
                               });
                             },
                             child: const Text("CLEAR ALL",
@@ -1157,91 +940,140 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                           });
                                         },
                                       );
-                                      },
-                                    )
-                                  : selectedFilter == "Price Range"
-                                      ? Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const Text("Select price range",
-                                                style: TextStyle(
+                                    },
+                                  )
+                                : selectedFilter == "Price Range"
+                                    ? Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text("Select price range",
+                                              style: TextStyle(
+                                                  fontFamily:
+                                                      "Clash Display Semibold",
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 15)),
+                                          const SizedBox(height: 8),
+                                          RangeSlider(
+                                            values: priceRange,
+                                            min: 100,
+                                            max: 50000,
+                                            divisions: 100,
+                                            activeColor: appBarColor,
+                                            onChanged: (v) => setModalState(() {
+                                              priceRange = v;
+                                            }),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                  "₹${priceRange.start.toInt()}",
+                                                  style: const TextStyle(
+                                                      fontFamily:
+                                                          "Clash Display Regular",
+                                                      color: Colors.grey)),
+                                              Text("₹${priceRange.end.toInt()}",
+                                                  style: const TextStyle(
+                                                      fontFamily:
+                                                          "Clash Display Regular",
+                                                      color: Colors.grey)),
+                                            ],
+                                          ),
+                                        ],
+                                      )
+                                    : selectedFilter == "Color"
+                                        ? colors.isEmpty
+                                            ? const Center(
+                                                child: Text(
+                                                  "No colors available",
+                                                  style: TextStyle(
                                                     fontFamily:
-                                                        "Clash Display Semibold",
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 15)),
-                                            const SizedBox(height: 8),
-                                            RangeSlider(
-                                              values: priceRange,
-                                              min: 100,
-                                              max: 50000,
-                                              divisions: 100,
-                                              activeColor: appBarColor,
-                                              onChanged: (v) => setModalState(() {
-                                                priceRange = v;
-                                              }),
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text("₹${priceRange.start.toInt()}",
-                                                    style: const TextStyle(
+                                                        "Clash Display Regular",
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                              )
+                                            : ListView.builder(
+                                                itemCount: colors.length,
+                                                itemBuilder: (context, i) {
+                                                  final color = colors[i];
+                                                  final checked =
+                                                      selectedColors.contains(color);
+
+                                                  return CheckboxListTile(
+                                                    dense: true,
+                                                    activeColor: appBarColor,
+                                                    value: checked,
+                                                    title: Text(
+                                                      color.toUpperCase(),
+                                                      style: const TextStyle(
                                                         fontFamily:
                                                             "Clash Display Regular",
-                                                        color: Colors.grey)),
-                                                Text("₹${priceRange.end.toInt()}",
-                                                    style: const TextStyle(
+                                                        fontWeight: FontWeight.w400,
+                                                        color: blackColor,
+                                                      ),
+                                                    ),
+                                                    onChanged: (val) {
+                                                      setModalState(() {
+                                                        if (val == true) {
+                                                          selectedColors.add(color);
+                                                        } else {
+                                                          selectedColors.remove(color);
+                                                        }
+                                                      });
+                                                    },
+                                                  );
+                                                },
+                                              )
+                                        : selectedFilter == "Size"
+                                            ? sizes.isEmpty
+                                                ? const Center(
+                                                    child: Text(
+                                                      "No sizes available",
+                                                      style: TextStyle(
                                                         fontFamily:
                                                             "Clash Display Regular",
-                                                        color: Colors.grey)),
-                                              ],
-                                            ),
-                                          ],
-                                        )
-                                      : selectedFilter == "Sub Category"
-                                                  ? _buildCategoryDropdown(
-                                                      "Sub Category",
-                                                      selectedSubCatId,
-                                                      _getSubCategoriesForGender(),
-                                                      (val) =>
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : ListView.builder(
+                                                    itemCount: sizes.length,
+                                                    itemBuilder: (context, i) {
+                                                      final size = sizes[i];
+                                                      final checked =
+                                                          selectedSizes.contains(size);
+
+                                                      return CheckboxListTile(
+                                                        dense: true,
+                                                        activeColor: appBarColor,
+                                                        value: checked,
+                                                        title: Text(
+                                                          size.toUpperCase(),
+                                                          style: const TextStyle(
+                                                            fontFamily:
+                                                                "Clash Display Regular",
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color: blackColor,
+                                                          ),
+                                                        ),
+                                                        onChanged: (val) {
                                                           setModalState(() {
-                                                        selectedSubCatId = val;
-                                                      }),
-                                                    )
-                                                  : selectedFilter ==
-                                                          "Collection"
-                                                      ? _collections.isEmpty
-                                                          ? const Center(
-                                                              child: Padding(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .all(
-                                                                            20.0),
-                                                                child: Text(
-                                                                  "No collections available",
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontFamily:
-                                                                        "Clash Display Regular",
-                                                                    color: Colors
-                                                                        .grey,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            )
-                                                          : _buildCategoryDropdown(
-                                                              "Collection",
-                                                              selectedCollectionId,
-                                                              _collections,
-                                                              (val) =>
-                                                                  setModalState(
-                                                                      () {
-                                                                selectedCollectionId =
-                                                                    val;
-                                                              }),
-                                                            )
-                                                      : const SizedBox(),
+                                                            if (val == true) {
+                                                              selectedSizes.add(size);
+                                                            } else {
+                                                              selectedSizes
+                                                                  .remove(size);
+                                                            }
+                                                          });
+                                                        },
+                                                      );
+                                                    },
+                                                  )
+                                            : const SizedBox(),
                           ),
                         ),
                       ]),
@@ -1277,9 +1109,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
                               final selectedBrandIds = <int>[];
                               for (final brandName in selectedBrands) {
-                                final brandData = brandController.brandList
+                                final brandData = productController.filterBrands
                                     .firstWhereOrNull((item) =>
-                                        item['alphabet'] == null &&
                                         item['name']?.toString().trim() ==
                                             brandName);
                                 if (brandData != null) {
@@ -1291,23 +1122,25 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
                               setState(() {
                                 _appliedBrandIds = selectedBrandIds;
+                                _appliedColors = selectedColors;
+                                _appliedSizes = selectedSizes;
                                 _appliedMinPrice =
                                     priceRange.start.toInt().toString();
                                 _appliedMaxPrice =
                                     priceRange.end.toInt().toString();
-                                _appliedSubCatId = selectedSubCatId;
-                                _appliedCollectionId = selectedCollectionId;
                                 _hasActiveFilters =
                                     selectedBrandIds.isNotEmpty ||
+                                        selectedColors.isNotEmpty ||
+                                        selectedSizes.isNotEmpty ||
                                         priceRange.start > 300 ||
-                                        priceRange.end < 100000 ||
-                                        _appliedSubCatId != null ||
-                                        _appliedCollectionId != null;
+                                        priceRange.end < 100000;
                               });
 
                               print("✅ Filters configured:");
                               print("  Brands: ${selectedBrands.join(', ')}");
                               print("  Brand IDs: $selectedBrandIds");
+                              print("  Colors: ${selectedColors.join(', ')}");
+                              print("  Sizes: ${selectedSizes.join(', ')}");
                               print(
                                   "  Price: ₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()}");
 
@@ -1319,16 +1152,16 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                   filterParts
                                       .add("${selectedBrands.length} brand(s)");
                                 }
+                                if (selectedColors.isNotEmpty) {
+                                  filterParts.add("${selectedColors.length} color(s)");
+                                }
+                                if (selectedSizes.isNotEmpty) {
+                                  filterParts.add("${selectedSizes.length} size(s)");
+                                }
                                 if (priceRange.start > 300 ||
                                     priceRange.end < 100000) {
                                   filterParts.add(
                                       "₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
-                                }
-                                if (selectedSubCatId != null) {
-                                  filterParts.add("Sub Category");
-                                }
-                                if (selectedCollectionId != null) {
-                                  filterParts.add("Collection");
                                 }
                                 getSnackBar(
                                     "Filtered by ${filterParts.join(', ')}");

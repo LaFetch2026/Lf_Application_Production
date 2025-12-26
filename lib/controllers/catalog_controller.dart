@@ -401,6 +401,8 @@ class CatalogController extends BaseController {
   /// - Both: Pass all parameters
   Future<void> getFilterAndSortProducts({
     List<int>? brandIds,
+    List<String>? colors,
+    List<String>? sizes,
     String? minPrice,
     String? maxPrice,
     String? sortOption,
@@ -422,6 +424,12 @@ class CatalogController extends BaseController {
       // Add filter parameters
       if (brandIds != null && brandIds.isNotEmpty) {
         queryParams['brandIds'] = brandIds.join(','); // Comma-separated string
+      }
+      if (colors != null && colors.isNotEmpty) {
+        queryParams['colors'] = colors.join(','); // Comma-separated string
+      }
+      if (sizes != null && sizes.isNotEmpty) {
+        queryParams['sizes'] = sizes.join(','); // Comma-separated string
       }
       if (minPrice != null && minPrice.isNotEmpty) {
         queryParams['minPrice'] = minPrice;
