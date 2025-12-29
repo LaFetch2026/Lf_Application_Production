@@ -546,7 +546,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                         crossAxisCount: 2,
                         mainAxisSpacing: 10.sp,
                         crossAxisSpacing: 10.sp,
-                        childAspectRatio: 0.62,
+                        childAspectRatio: 0.58,
                       ),
                       itemBuilder: (context, index) {
                         final m = normalizeProduct(items[index]);
@@ -663,7 +663,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         crossAxisCount: 2,
         mainAxisSpacing: 10.sp,
         crossAxisSpacing: 10.sp,
-        childAspectRatio: 0.62,
+        childAspectRatio: 0.58,
       ),
       itemBuilder: (context, index) {
         return _SkeletonProductTile();
@@ -678,10 +678,20 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   }
 
   Map<String, dynamic> normalizeProduct(Map<String, dynamic> m) {
+    // Extract brand name from multiple possible sources
+    String brandName = "";
+    if (m["brand_name"] != null) {
+      brandName = m["brand_name"].toString();
+    } else if (m["brandName"] != null) {
+      brandName = m["brandName"].toString();
+    } else if (m["brand"] is Map) {
+      brandName = (m["brand"]["name"] ?? "").toString();
+    }
+
     return {
       "id": m["id"],
       "title": m["title"] ?? m["name"] ?? "",
-      "brandName": m["brand_name"] ?? m["brandName"] ?? "",
+      "brandName": brandName,
       "shortDescription": m["shortDescription"] ??
           m["description"] ??
           m["short_description"] ??
@@ -1421,6 +1431,12 @@ class _ProductTileNoOverflow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate discount percentage
+    int? discountPercent;
+    if (price != null && mrp != null && mrp! > price! && price! > 0) {
+      discountPercent = (((mrp! - price!) / mrp!) * 100).round();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1438,34 +1454,36 @@ class _ProductTileNoOverflow extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 6),
+        SizedBox(height: 4.sp),
 
-        /// BRAND
+        /// PRODUCT NAME
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 6.sp),
           child: Text(
-            brand.toUpperCase(),
+            description.toUpperCase(),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
               fontFamily: "Clash Display Semibold",
+              color: blackColor,
             ),
           ),
         ),
 
-        /// DESCRIPTION
+        /// BRAND NAME
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 6.sp, vertical: 2.sp),
+          padding: EdgeInsets.only(left: 6.sp, right: 6.sp, top: 2.sp),
           child: Text(
-            description,
+            brand.toUpperCase(),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontSize: 13,
+              fontSize: 11,
               fontFamily: "Clash Display Regular",
               fontWeight: FontWeight.w400,
+              color: Color(0xFF6B7280),
             ),
           ),
         ),
@@ -1473,29 +1491,42 @@ class _ProductTileNoOverflow extends StatelessWidget {
         /// PRICE ROW
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 6.sp),
-          child: Row(
+          child: Wrap(
+            spacing: 6.sp,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              if (price != null)
+              // Base Price
+              if (price != null && price! > 0)
                 Text(
                   fmt(price, cents: true),
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     fontFamily: "Clash Display Semibold",
+                    color: blackColor,
                   ),
                 ),
+              // MRP (crossed out)
               if (mrp != null && price != null && mrp! > price!)
-                Padding(
-                  padding: EdgeInsets.only(left: 6.sp),
-                  child: Text(
-                    fmt(mrp, cents: true),
-                    style: const TextStyle(
-                      fontSize: 12,
-                      decoration: TextDecoration.lineThrough,
-                      color: Color(0xFF9CA3AF),
-                      fontFamily: "Clash Display Regular",
-                      fontWeight: FontWeight.w400,
-                    ),
+                Text(
+                  fmt(mrp, cents: true),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    decoration: TextDecoration.lineThrough,
+                    color: Color(0xFF9CA3AF),
+                    fontFamily: "Clash Display Regular",
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              // Discount %
+              if (discountPercent != null)
+                Text(
+                  "($discountPercent% OFF)",
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontFamily: "Clash Display",
+                    fontWeight: FontWeight.w500,
+                    color: Colors.green[700],
                   ),
                 ),
             ],

@@ -848,6 +848,20 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     parameters: <String, Object>{'page_name': 'share_product'},
                   );
                 },
+                onPressedCart: () async {
+                  // ✅ Check if user is guest
+                  final prefs = await SharedPreferences.getInstance();
+                  final isGuest = prefs.getBool('skip') ?? false;
+
+                  if (isGuest) {
+                    getSnackBar("Please login to view cart");
+                    Get.toNamed('/login');
+                    return;
+                  }
+
+                  // Navigate to cart screen
+                  Get.to(const CartScreen());
+                },
               ),
             ),
 
@@ -1725,45 +1739,83 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         onPressedFirst: () async {
                           if (widget.type == "add") {
                             if (productController.checkDetailsValidation()) {
+                              // ✅ Get selected variant ID properly
+                              final variant =
+                                  productController.getSelectedVariant();
+                              if (variant == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Please select size and color')),
+                                );
+                                return;
+                              }
+
+                              final variantId = variant['id'] as int;
+
                               await cartController.addToCartUniversal(
                                 quantity: 1,
                                 page: "addproduct",
-                                variantId:
-                                    productController.sizeInventoryId.value,
+                                variantId: variantId,
                                 productId: widget.productId,
                                 expressValue: (widget.expressValue ?? 0),
                                 type: 1,
                                 backColor: widget.backgroundcolor,
-                                oldInventoryId:
-                                    productController.sizeInventoryId.value,
+                                oldInventoryId: variantId,
                               );
-                              productController.addToCart.value = true;
+
+                              await analytics.logEvent(
+                                name: 'productDetails_btnaddtocart',
+                                parameters: {
+                                  'page_name': 'productDetails_btnaddtocart'
+                                },
+                              );
+
+                              // ✅ Navigate to cart screen immediately after adding
+                              Get.to(CartScreen(
+                                      backgroundcolor: widget.backgroundcolor))
+                                  ?.then((_) {
+                                productController.getProductById(widget.productId);
+                              });
                             }
                           } else {
                             if (productController.checkDetailsValidation()) {
+                              // ✅ Get selected variant ID for wishlist move
+                              final variant =
+                                  productController.getSelectedVariant();
+                              if (variant == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Please select size and color')),
+                                );
+                                return;
+                              }
+
+                              final variantId = variant['id'] as int;
+
                               wishlistController.callMovetoCart(
                                 widget.boardId.toString(),
                                 widget.wishlistProductId.toString(),
-                                productController.sizeInventoryId.value
-                                    .toString(),
+                                variantId.toString(),
                                 1,
                               );
-                              productController.addToCart.value = true;
+
+                              await analytics.logEvent(
+                                name: 'productDetails_btnaddtocart',
+                                parameters: {
+                                  'page_name': 'productDetails_btnaddtocart'
+                                },
+                              );
+
+                              // ✅ Navigate to cart screen immediately after moving
+                              Get.to(CartScreen(
+                                      backgroundcolor: widget.backgroundcolor))
+                                  ?.then((_) {
+                                productController.getProductById(widget.productId);
+                              });
                             }
                           }
-
-                          _scrollController.animateTo(
-                            MediaQuery.of(context).size.height / 2.sp + 150.sp,
-                            duration: const Duration(seconds: 1),
-                            curve: Curves.easeInOut,
-                          );
-
-                          await analytics.logEvent(
-                            name: 'productDetails_btnaddtocart',
-                            parameters: {
-                              'page_name': 'productDetails_btnaddtocart'
-                            },
-                          );
                         },
                         onPressedSecond: () async {
                           await _onBuyNowPressed(isCartFlow: false);
@@ -2128,7 +2180,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
           // ---------- Average Rating + Count ----------
           if (reviews.isNotEmpty)
             Padding(
-              padding: EdgeInsets.only(left: 12.sp, right: 12.sp, bottom: 12.sp),
+              padding:
+                  EdgeInsets.only(left: 12.sp, right: 12.sp, bottom: 12.sp),
               child: Row(
                 children: [
                   Container(
@@ -2224,19 +2277,56 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
           // ---------- No Reviews Message ----------
           if (!isLoading && reviews.isEmpty)
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 20.sp, horizontal: 12.sp),
-              child: Center(
-                child: AppSpacingText(
-                  text: 'No reviews yet. Be the first to review!',
-                  fontFamily: "Clash Display Regular",
-                  fontWeight: FontWeight.w400,
-                  color: widget.backgroundcolor == whiteColor
-                      ? subtitleColor
-                      : searchTextColor,
-                  fontSize: 13,
+            Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20.sp, horizontal: 12.sp),
+                  child: Center(
+                    child: AppSpacingText(
+                      text: 'No reviews yet. Be the first to review!',
+                      fontFamily: "Clash Display Regular",
+                      fontWeight: FontWeight.w400,
+                      color: widget.backgroundcolor == whiteColor
+                          ? subtitleColor
+                          : searchTextColor,
+                      fontSize: 13,
+                    ),
+                  ),
                 ),
-              ),
+                // Add Review Button
+                Padding(
+                  padding: EdgeInsets.only(bottom: 16.sp, left: 12.sp, right: 12.sp),
+                  child: Center(
+                    child: InkWell(
+                      onTap: () {
+                        // TODO: Navigate to add review screen
+                        print('Add review for product: ${widget.productId}');
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 32.sp, vertical: 12.sp),
+                        decoration: BoxDecoration(
+                          color: widget.backgroundcolor == whiteColor
+                              ? blackColor
+                              : whiteColor,
+                        ),
+                        child: Text(
+                          'ADD REVIEW',
+                          style: TextStyle(
+                            fontFamily: "Clash Display",
+                            fontWeight: FontWeight.w600,
+                            color: widget.backgroundcolor == whiteColor
+                                ? whiteColor
+                                : blackColor,
+                            fontSize: 13.sp,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
 
           // ---------- See All ----------

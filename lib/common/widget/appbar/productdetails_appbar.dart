@@ -4,6 +4,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../controllers/cart_controller.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
@@ -17,6 +20,7 @@ class ProductdetailsAppbar extends StatefulWidget {
 
   final Function? onPressedShare;
   final Function? onPressedHeart;
+  final Function? onPressedCart;
   final bool dark;
 
   const ProductdetailsAppbar({
@@ -26,6 +30,7 @@ class ProductdetailsAppbar extends StatefulWidget {
     required this.slug,
     this.onPressedShare,
     this.onPressedHeart,
+    this.onPressedCart,
     this.dark = false,
     Key? key,
   }) : super(key: key);
@@ -37,6 +42,24 @@ class ProductdetailsAppbar extends StatefulWidget {
 class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
   final wishlistController = Get.put(WishlistController());
   final productController = Get.put(ProductController());
+  final cartController = Get.put(CartController());
+  bool isGuest = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Check guest status and fetch cart only for logged-in users
+    Future.delayed(Duration.zero, () async {
+      final prefs = await SharedPreferences.getInstance();
+      isGuest = prefs.getBool('skip') ?? false;
+
+      if (!isGuest) {
+        await cartController.getCartData();
+      }
+
+      if (mounted) setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,6 +129,64 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
                               colorFilter:
                                   ColorFilter.mode(iconColor, BlendMode.srcIn),
                             ),
+                    ),
+                  ),
+                ),
+
+                // CART ICON
+                InkWell(
+                  onTap: () async {
+                    await widget.onPressedCart?.call();
+                    if (!isGuest) {
+                      await cartController.getCartData();
+                    }
+                  },
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        SvgPicture.asset(
+                          cartSvgImage,
+                          height: 18.sp,
+                          width: 18.sp,
+                          colorFilter:
+                              ColorFilter.mode(iconColor, BlendMode.srcIn),
+                        ),
+
+                        // Only show badge for logged-in users
+                        if (!isGuest)
+                          Positioned(
+                            right: -5.sp,
+                            top: 6.sp,
+                            child: Obx(() {
+                              final count = cartController.cartTotalValue.value;
+                              if (count == 0) return const SizedBox.shrink();
+                              return Container(
+                                padding: EdgeInsets.all(2.sp),
+                                constraints: BoxConstraints(
+                                  minWidth: 14.sp,
+                                  minHeight: 14.sp,
+                                ),
+                                decoration: const BoxDecoration(
+                                  color: homeAppBarColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  count.toString(),
+                                  style: TextStyle(
+                                    fontSize: 8.sp,
+                                    color: whiteColor,
+                                    fontFamily: "Clash Display Regular",
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              );
+                            }),
+                          ),
+                      ],
                     ),
                   ),
                 ),

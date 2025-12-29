@@ -65,50 +65,36 @@ class ReviewProductScreenState extends State<ReviewProductScreen> {
                             horizontal: 16.sp, vertical: 20.sp),
                         child: Row(
                           children: [
-                            Expanded(
-                              flex: 1,
-                              child: SizedBox(
-                                height: 85.sp,
-                                width: 70.sp,
-                                child: CachedNetworkImage(
-                                  cacheManager: CacheManager(Config(
-                                      "customCacheKey",
-                                      stalePeriod: const Duration(days: 15),
-                                      maxNrOfCacheObjects: 100)),
+                            SizedBox(
+                              height: 85.sp,
+                              width: 70.sp,
+                              child: CachedNetworkImage(
+                                cacheManager: CacheManager(Config(
+                                    "customCacheKey",
+                                    stalePeriod: const Duration(days: 15),
+                                    maxNrOfCacheObjects: 100)),
+                                fit: BoxFit.cover,
+                                imageUrl: widget.productimage,
+                                errorWidget: (context, url, error) =>
+                                    Image.asset(
+                                  downloadImage,
                                   fit: BoxFit.cover,
-                                  imageUrl: widget.productimage,
-                                  errorWidget: (context, url, error) =>
-                                      Image.asset(
-                                    downloadImage,
-                                    fit: BoxFit.cover,
-                                    height: 85.sp,
-                                    width: 70.sp,
-                                  ),
+                                  height: 85.sp,
+                                  width: 70.sp,
                                 ),
                               ),
                             ),
+                            SizedBox(width: 10.sp),
                             Expanded(
-                              flex: 3,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 10.sp,
-                                    ),
-                                    child: AppText(
-                                      text: widget.productName,
-                                      maxLines: 2,
-                                      fontFamily: "Clash Display Regular",
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 14,
-                                      color: nameText,
-                                    ),
-                                  ),
-                                ],
+                              child: AppText(
+                                text: widget.productName,
+                                maxLines: 2,
+                                fontFamily: "Clash Display Regular",
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: nameText,
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),

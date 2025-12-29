@@ -407,15 +407,14 @@ class ProductController extends BaseController {
 
     colorInventoryList.assignAll(colors);
 
-    // Auto-select first color if available
-    if (colors.isNotEmpty) {
-      selectedColor.value = colors.first;
-      print("✅ Auto-selected color: ${colors.first}");
+    // ❌ DO NOT auto-select - user must select color
+    // Reset selected color when size changes
+    selectedColor.value = '';
 
-      // ✅ Update images for selected color
-      updateImagesForSelectedColor();
+    if (colors.isNotEmpty) {
+      print("✅ Colors available: $colors");
+      print("⚠️ No auto-selection - user must choose color");
     } else {
-      selectedColor.value = '';
       print("⚠️ No colors available for size $size");
     }
 
@@ -742,14 +741,9 @@ class ProductController extends BaseController {
 
         colorInventoryList.assignAll(uniqueColors);
 
-        // Auto-select first color
-        if (uniqueColors.isNotEmpty) {
-          selectedColor.value = uniqueColors.first;
-          updateImagesForSelectedColor();
-
-          print("✅ Colors available: $uniqueColors");
-          print("✅ Auto-selected color: ${uniqueColors.first}");
-        }
+        // ❌ DO NOT auto-select - user must select
+        print("✅ Colors available: $uniqueColors");
+        print("⚠️ No auto-selection - user must choose color");
       }
       // ✅ Handle products with SIZE + COLOR (clothing)
       else if (hasSize) {
@@ -773,16 +767,9 @@ class ProductController extends BaseController {
 
         sizeInventoryList.assignAll(uniqueSizes);
 
-        if (uniqueSizes.isNotEmpty) {
-          final firstSize = uniqueSizes.first;
-          selectedSize.value = firstSize;
-
-          loadColorsForSize(firstSize);
-          updateImagesForSelectedColor();
-
-          print("✅ Sizes available: $uniqueSizes");
-          print("✅ Colors for $firstSize: ${colorInventoryList.toList()}");
-        }
+        // ❌ DO NOT auto-select - user must select
+        print("✅ Sizes available: $uniqueSizes");
+        print("⚠️ No auto-selection - user must choose size first");
       }
       // ✅ Handle products with ONLY SIZE (no color)
       else if (hasSize && !hasColor) {
@@ -796,10 +783,9 @@ class ProductController extends BaseController {
 
         sizeInventoryList.assignAll(uniqueSizes);
 
-        if (uniqueSizes.isNotEmpty) {
-          selectedSize.value = uniqueSizes.first;
-          print("✅ Auto-selected size: ${uniqueSizes.first}");
-        }
+        // ❌ DO NOT auto-select - user must select
+        print("✅ Sizes available: $uniqueSizes");
+        print("⚠️ No auto-selection - user must choose size");
       }
 
       print("🖼️ Display images count: ${currentDisplayImages.length}");

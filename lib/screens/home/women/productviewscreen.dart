@@ -616,70 +616,90 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                     ),
                                   ),
                                   SizedBox(height: 5.sp),
+                                  // Product Name
                                   AppText(
-                                    text: brand.toUpperCase(),
+                                    text: title.toUpperCase(),
                                     color: blackColor,
                                     maxLines: 1,
-                                    fontSize: 13,
-                                    fontFamily: "Clash Display",
-                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12,
+                                    fontFamily: "Clash Display Semibold",
+                                    fontWeight: FontWeight.w700,
                                   ),
+                                  // Brand Name
                                   AppText(
-                                    text: title,
+                                    text: brand.toUpperCase(),
                                     color: const Color(0xFF6B7280),
                                     maxLines: 1,
                                     fontSize: 11,
                                     fontFamily: "Clash Display Regular",
                                     fontWeight: FontWeight.w400,
                                   ),
+                                  // Price Row
                                   Padding(
-                                    padding: EdgeInsets.only(top: 6.sp),
+                                    padding: EdgeInsets.only(top: 4.sp),
                                     child: () {
                                       final numPrice = price is num ? price : 0;
                                       final numMrp = mrp is num ? mrp : 0;
+
+                                      // Calculate discount percentage
+                                      int? discountPercent;
+                                      if (numPrice > 0 && numMrp > 0 && numMrp > numPrice) {
+                                        discountPercent = (((numMrp - numPrice) / numMrp) * 100).round();
+                                      }
 
                                       // ✅ Case 1: Price is 0 or null - show only MRP (not crossed)
                                       if (numPrice == 0 && numMrp > 0) {
                                         return AppText(
                                           text: "₹ ${numMrp.toString()}",
-                                          color: homeAppBarColor,
+                                          color: blackColor,
                                           maxLines: 1,
-                                          fontSize: 11,
-                                          fontFamily: "Clash Display",
-                                          fontWeight: FontWeight.w400,
+                                          fontSize: 12,
+                                          fontFamily: "Clash Display Semibold",
+                                          fontWeight: FontWeight.w700,
                                         );
                                       }
 
-                                      // ✅ Case 2: Both exist and price < mrp - show both
-                                      if (numPrice > 0 &&
-                                          numMrp > 0 &&
-                                          numPrice < numMrp) {
+                                      // ✅ Case 2: Both exist and price < mrp - show base price, crossed MRP, and discount %
+                                      if (numPrice > 0 && numMrp > 0 && numPrice < numMrp) {
                                         return Row(
                                           children: [
+                                            // Base Price
+                                            AppText(
+                                              text: "₹ ${numPrice.toString()}",
+                                              color: blackColor,
+                                              maxLines: 1,
+                                              fontSize: 12,
+                                              fontFamily: "Clash Display Semibold",
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                            // MRP (crossed out)
                                             Padding(
-                                              padding:
-                                                  EdgeInsets.only(right: 5.sp),
+                                              padding: EdgeInsets.only(left: 5.sp),
                                               child: Text(
                                                 "₹ $numMrp",
                                                 style: TextStyle(
-                                                  color: searchTextColor,
+                                                  color: const Color(0xFF9CA3AF),
                                                   fontSize: 11.sp,
-                                                  decoration: TextDecoration
-                                                      .lineThrough,
-                                                  fontFamily:
-                                                      "Clash Display Regular",
+                                                  decoration: TextDecoration.lineThrough,
+                                                  fontFamily: "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               ),
                                             ),
-                                            AppText(
-                                              text: "₹ ${numPrice.toString()}",
-                                              color: homeAppBarColor,
-                                              maxLines: 1,
-                                              fontSize: 11,
-                                              fontFamily: "Clash Display",
-                                              fontWeight: FontWeight.w400,
-                                            ),
+                                            // Discount %
+                                            if (discountPercent != null)
+                                              Padding(
+                                                padding: EdgeInsets.only(left: 5.sp),
+                                                child: Text(
+                                                  "($discountPercent% OFF)",
+                                                  style: TextStyle(
+                                                    fontSize: 10.sp,
+                                                    fontFamily: "Clash Display",
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.green[700],
+                                                  ),
+                                                ),
+                                              ),
                                           ],
                                         );
                                       }
@@ -688,11 +708,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                       if (numPrice > 0) {
                                         return AppText(
                                           text: "₹ ${numPrice.toString()}",
-                                          color: homeAppBarColor,
+                                          color: blackColor,
                                           maxLines: 1,
-                                          fontSize: 11,
-                                          fontFamily: "Clash Display",
-                                          fontWeight: FontWeight.w400,
+                                          fontSize: 12,
+                                          fontFamily: "Clash Display Semibold",
+                                          fontWeight: FontWeight.w700,
                                         );
                                       }
 

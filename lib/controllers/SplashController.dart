@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../screens/bottomnavscreen.dart';
-import '../screens/userdetails.dart';
 import '../screens/welcomescreen.dart';
 
 class SplashController extends GetxController {
@@ -27,19 +26,10 @@ class SplashController extends GetxController {
     // -------------------------
     // LOGGED-IN USER
     // -------------------------
+    // ✅ Trust the token and let BottomNavScreen handle profile verification
+    // BottomNavScreen's safeInitProfile() will fetch profile from server and handle errors
     if (isLoggedIn && token != null && token.isNotEmpty) {
-      final name = prefs.getString("name");
-      final phone = prefs.getString("phonenumber");
-
-      if (name != null && name.isNotEmpty) {
-        return _go(const BottomNavScreen());
-      }
-
-      if (phone != null && phone.isNotEmpty) {
-        return _go(const UserDetailsScreen());
-      }
-
-      return _go(const WelcomeScreen());
+      return _go(const BottomNavScreen());
     }
 
     // -------------------------
