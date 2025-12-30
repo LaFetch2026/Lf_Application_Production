@@ -18,6 +18,7 @@ import 'package:lafetch/controllers/product_controller.dart';
 import 'package:lafetch/screens/orders/order_status_screen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lafetch/common/widget/bottom_sheets/bottomquantity.dart';
 
 class ReviewOrderScreen extends StatefulWidget {
   final int productId;
@@ -31,6 +32,7 @@ class ReviewOrderScreen extends StatefulWidget {
   final double mrp;
   final Map<String, dynamic>? initialAddress;
   final String? razorpayOrderId;
+  final int maxStock;
 
   const ReviewOrderScreen({
     super.key,
@@ -45,6 +47,7 @@ class ReviewOrderScreen extends StatefulWidget {
     required this.mrp,
     this.initialAddress,
     this.razorpayOrderId,
+    this.maxStock = 10,
   });
 
   @override
@@ -65,9 +68,12 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   bool _hasDiscount = false;
   num _couponDiscount = 0;
 
+  // --- quantity state ---
+  late int _selectedQuantity;
+
   // --- totals ---
   double get _totalPrice =>
-      (widget.price * (widget.quantity <= 0 ? 1 : widget.quantity)).toDouble();
+      (widget.price * (_selectedQuantity <= 0 ? 1 : _selectedQuantity)).toDouble();
   final double _delivery = 0; // if you add charges later, UI adapts
   final double _convenience = 0;
 
@@ -92,6 +98,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   void initState() {
     super.initState();
     _address = widget.initialAddress;
+    _selectedQuantity = widget.quantity;
 
     _rzp = Razorpay();
     _rzp!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onPaymentSuccess);
@@ -160,7 +167,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     }
 
     // 3) product sanity
-    if (widget.productId <= 0 || widget.quantity <= 0 || widget.price <= 0) {
+    if (widget.productId <= 0 || _selectedQuantity <= 0 || widget.price <= 0) {
       _snack("Invalid product data. Please try again.");
       return;
     }
@@ -181,7 +188,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
           "productName": widget.title,
           "productId": widget.productId,
           "variantId": widget.variantId,
-          "quantity": widget.quantity,
+          "quantity": _selectedQuantity,
           "unitPrice": widget.price,
           "total": payable, // final payable for this line
           "sku": "",
@@ -261,7 +268,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
       'currency': 'INR',
       'order_id': orderId,
       'name': 'Lafetch',
-      'description': '${widget.title} • Qty ${widget.quantity}',
+      'description': '${widget.title} • Qty $_selectedQuantity',
       'prefill': {
         'name': userName.isEmpty ? 'Customer' : userName,
         'email': userEmail.isEmpty ? 'customer@example.com' : userEmail,
@@ -600,7 +607,10 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                     _pill(
                         'Size : ${widget.sizeLabel.isEmpty ? "-" : widget.sizeLabel}'),
                     SizedBox(width: 8.sp),
-                    _pill('Qty : ${widget.quantity}'),
+                    GestureDetector(
+                      onTap: _showQuantityModal,
+                      child: _pillWithIcon('Qty : $_selectedQuantity'),
+                    ),
                   ],
                 ),
                 SizedBox(height: 10.sp),
@@ -862,6 +872,148 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
         color: titleColor,
         fontSize: 10,
       ),
+    );
+  }
+
+  Widget _pillWithIcon(String text) {
+    return Container(
+      height: 30.sp,
+      padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 6.sp),
+      decoration: BoxDecoration(
+        color: const Color(0xffF3F4F6),
+        border: Border.all(width: 1, color: const Color(0xFFE5E7EB)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AppText(
+            text: text,
+            fontFamily: "Clash Display Regular",
+            fontWeight: FontWeight.w400,
+            color: titleColor,
+            fontSize: 10,
+          ),
+          SizedBox(width: 6.sp),
+          SvgPicture.asset(
+            dropdownSvgImage,
+            colorFilter: const ColorFilter.mode(titleColor, BlendMode.srcIn),
+            height: 5.sp,
+            width: 8.sp,
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showQuantityModal() async {
+    // ✅ Fetch fresh stock data from product API for accuracy
+    int availableStock = widget.maxStock; // Initial value
+
+    try {
+      debugPrint("🔍 Fetching fresh stock for product ${widget.productId}, variant ${widget.variantId}");
+      final productDetails = await productController.fetchProductDetails(widget.productId);
+
+      if (productDetails != null && productDetails["variants"] != null) {
+        final variants = List<Map<String, dynamic>>.from(
+          (productDetails["variants"] as List).whereType<Map>()
+        );
+
+        // Find matching variant
+        final matchingVariant = variants.firstWhere(
+          (v) => v["id"] == widget.variantId,
+          orElse: () => {},
+        );
+
+        if (matchingVariant.isNotEmpty) {
+          final inv = matchingVariant["inventory"];
+          final freshStock = inv != null
+            ? (inv["availableStock"] ?? 0)
+            : 0;
+
+          if (freshStock > 0) {
+            availableStock = freshStock;
+            debugPrint("✅ Fresh stock for variant ${widget.variantId}: $availableStock");
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("⚠️ Failed to fetch fresh stock, using initial value: $e");
+      // Continue with widget.maxStock
+    }
+
+    if (!mounted) return;
+
+    if (availableStock == 0) {
+      _snack("This item is out of stock");
+      return;
+    }
+
+    // ✅ Allow user to select up to available inventory (no artificial limit)
+    final int maxQty = availableStock;
+    final List<String> qtyList = List.generate(maxQty, (i) => "${i + 1}");
+
+    // Show stock info to user
+    final String stockMessage = availableStock <= 5
+        ? "Only $availableStock left in stock"
+        : "$availableStock available";
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Stock indicator
+            if (availableStock <= 10)
+              Container(
+                margin: EdgeInsets.only(bottom: 8.sp),
+                padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
+                decoration: BoxDecoration(
+                  color: availableStock <= 5 ? Colors.red.shade50 : Colors.orange.shade50,
+                  borderRadius: BorderRadius.circular(8.sp),
+                ),
+                child: Text(
+                  stockMessage,
+                  style: TextStyle(
+                    color: availableStock <= 5 ? Colors.red.shade800 : Colors.orange.shade800,
+                    fontSize: 12.sp,
+                    fontFamily: "Clash Display",
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            BottomQuantity(
+              qtyList: qtyList,
+              selectedQty: "$_selectedQuantity",
+              stock: maxQty,
+              controller: productController,
+              onPressed: (newQty) async {
+                Navigator.pop(ctx);
+                if (newQty != _selectedQuantity) {
+                  // ✅ Validate quantity before updating
+                  if (newQty > availableStock) {
+                    _snack("Only $availableStock units available in stock");
+                    return;
+                  }
+
+                  setState(() {
+                    _selectedQuantity = newQty;
+                  });
+
+                  // ✅ Only update local quantity - Buy Now is independent of cart
+                  // No need to sync with cart as this is a direct purchase flow
+                  _snack("Quantity updated to $newQty");
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

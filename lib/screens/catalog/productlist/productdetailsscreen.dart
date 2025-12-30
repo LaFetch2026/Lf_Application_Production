@@ -244,6 +244,308 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     return title.toString();
   }
 
+  // Add Review Modal State
+  int _selectedRating = 0;
+  final TextEditingController _reviewController = TextEditingController();
+
+  void _showAddReviewModal() {
+    // Reset state
+    _selectedRating = 0;
+    _reviewController.clear();
+
+    final firstImg = _imagesOnly().isNotEmpty ? _imagesOnly().first : '';
+    final brandName = _brandText();
+    final productTitle = _titleText();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.85,
+            decoration: BoxDecoration(
+              color: whiteColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.sp),
+                topRight: Radius.circular(20.sp),
+              ),
+            ),
+            child: Column(
+              children: [
+                // Handle Bar
+                Container(
+                  margin: EdgeInsets.only(top: 12.sp),
+                  width: 40.sp,
+                  height: 4.sp,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2.sp),
+                  ),
+                ),
+
+                // Header
+                Padding(
+                  padding: EdgeInsets.all(16.sp),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AppSpacingText(
+                        text: 'WRITE A REVIEW',
+                        fontFamily: "Clash Display",
+                        fontWeight: FontWeight.w600,
+                        color: blackColor,
+                        fontSize: 18,
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.close, size: 24.sp),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                ),
+
+                Divider(color: colorSecondary, height: 1),
+
+                // Scrollable Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(16.sp),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Product Info Card
+                        Container(
+                          padding: EdgeInsets.all(12.sp),
+                          decoration: BoxDecoration(
+                            color: colorSecondary,
+                            borderRadius: BorderRadius.circular(8.sp),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Product Image
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8.sp),
+                                child: firstImg.isNotEmpty
+                                    ? CachedNetworkImage(
+                                        imageUrl: firstImg,
+                                        width: 80.sp,
+                                        height: 80.sp,
+                                        fit: BoxFit.cover,
+                                        errorWidget: (context, url, error) =>
+                                            Image.asset(
+                                          dummyWishlistImage,
+                                          width: 80.sp,
+                                          height: 80.sp,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : Image.asset(
+                                        dummyWishlistImage,
+                                        width: 80.sp,
+                                        height: 80.sp,
+                                        fit: BoxFit.cover,
+                                      ),
+                              ),
+                              SizedBox(width: 12.sp),
+                              // Product Details
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (brandName.isNotEmpty)
+                                      AppSpacingText(
+                                        text: brandName.toUpperCase(),
+                                        fontFamily: "Clash Display",
+                                        fontWeight: FontWeight.w600,
+                                        color: blackColor,
+                                        fontSize: 12,
+                                        maxLines: 1,
+                                      ),
+                                    SizedBox(height: 4.sp),
+                                    AppSpacingText(
+                                      text: productTitle,
+                                      fontFamily: "Clash Display Regular",
+                                      fontWeight: FontWeight.w400,
+                                      color: subtitleColor,
+                                      fontSize: 12,
+                                      maxLines: 3,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: 24.sp),
+
+                        // Star Rating
+                        AppSpacingText(
+                          text: 'Rate this product',
+                          fontFamily: "Clash Display",
+                          fontWeight: FontWeight.w600,
+                          color: blackColor,
+                          fontSize: 14,
+                        ),
+                        SizedBox(height: 12.sp),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: List.generate(5, (index) {
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _selectedRating = index + 1;
+                                });
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.only(right: 8.sp),
+                                child: Icon(
+                                  index < _selectedRating
+                                      ? Icons.star
+                                      : Icons.star_border,
+                                  size: 36.sp,
+                                  color: const Color(0xFFFFB800),
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+
+                        SizedBox(height: 24.sp),
+
+                        // Review Text Field
+                        AppSpacingText(
+                          text: 'Write your review',
+                          fontFamily: "Clash Display",
+                          fontWeight: FontWeight.w600,
+                          color: blackColor,
+                          fontSize: 14,
+                        ),
+                        SizedBox(height: 12.sp),
+                        TextField(
+                          controller: _reviewController,
+                          maxLines: 6,
+                          maxLength: 500,
+                          decoration: InputDecoration(
+                            hintText:
+                                'Share your thoughts about this product...',
+                            hintStyle: TextStyle(
+                              fontFamily: "Clash Display Regular",
+                              fontSize: 13.sp,
+                              color: textHintColor,
+                            ),
+                            filled: true,
+                            fillColor: colorSecondary,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.sp),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.sp),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.sp),
+                              borderSide: BorderSide(
+                                color: colorPrimary,
+                                width: 1.sp,
+                              ),
+                            ),
+                            contentPadding: EdgeInsets.all(12.sp),
+                          ),
+                          style: TextStyle(
+                            fontFamily: "Clash Display Regular",
+                            fontSize: 13.sp,
+                            color: blackColor,
+                          ),
+                        ),
+
+                        SizedBox(height: 24.sp),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Submit Button
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(16.sp),
+                  decoration: BoxDecoration(
+                    color: whiteColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: Offset(0, -2),
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_selectedRating == 0) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please select a rating'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                        return;
+                      }
+
+                      if (_reviewController.text.trim().isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please write a review'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                        return;
+                      }
+
+                      // TODO: Submit review to API
+                      print('Rating: $_selectedRating');
+                      print('Review: ${_reviewController.text}');
+                      print('Product ID: ${widget.productId}');
+
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Review submitted successfully!'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: blackColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.sp),
+                      ),
+                      minimumSize: Size(double.infinity, 48.sp),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      'SUBMIT REVIEW',
+                      style: TextStyle(
+                        fontFamily: "Clash Display",
+                        fontWeight: FontWeight.w600,
+                        color: whiteColor,
+                        fontSize: 14.sp,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   // Product Logger Helper Method
   void _logBuyNowAction({
     String action = "BUY NOW",
@@ -318,6 +620,22 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ? " / ${productController.selectedColor.value}"
             : "");
 
+    // Check if this variant already exists in cart
+    int initialQuantity = 1;
+    try {
+      final cartController = Get.find<CartController>();
+      for (final item in cartController.orderList) {
+        final itemVariantId = item["inventory"]?["id"];
+        if (itemVariantId == variantId) {
+          initialQuantity = int.tryParse("${item["quantity"]}") ?? 1;
+          break;
+        }
+      }
+    } catch (e) {
+      // CartController not found or error - use default quantity 1
+      debugPrint("Could not check cart for existing quantity: $e");
+    }
+
     Get.to(() => ReviewOrderScreen(
           productId: widget.productId,
           variantId: variantId,
@@ -325,9 +643,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
           brandName: _brandText(),
           imageUrl: firstImg,
           sizeLabel: sizeLabel,
-          quantity: 1,
+          quantity: initialQuantity,
           price: productController.getDisplayPrice().toDouble(),
           mrp: productController.getDisplayMrp().toDouble(),
+          maxStock: stock,
           initialAddress:
               _addressSelected ? _addressResult as Map<String, dynamic>? : null,
         ));
@@ -768,6 +1087,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     try {
       _razorpay?.clear();
     } catch (_) {}
+    _reviewController.dispose();
     super.dispose();
   }
 
@@ -1745,8 +2065,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               if (variant == null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                      content: Text(
-                                          'Please select size and color')),
+                                      content:
+                                          Text('Please select size and color')),
                                 );
                                 return;
                               }
@@ -1775,7 +2095,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               Get.to(CartScreen(
                                       backgroundcolor: widget.backgroundcolor))
                                   ?.then((_) {
-                                productController.getProductById(widget.productId);
+                                productController
+                                    .getProductById(widget.productId);
                               });
                             }
                           } else {
@@ -1786,8 +2107,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               if (variant == null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                      content: Text(
-                                          'Please select size and color')),
+                                      content:
+                                          Text('Please select size and color')),
                                 );
                                 return;
                               }
@@ -1812,7 +2133,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               Get.to(CartScreen(
                                       backgroundcolor: widget.backgroundcolor))
                                   ?.then((_) {
-                                productController.getProductById(widget.productId);
+                                productController
+                                    .getProductById(widget.productId);
                               });
                             }
                           }
@@ -2158,8 +2480,49 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
         avgRating = sum / reviews.length;
       }
 
-      // ✅ Always show section, even when empty
+      // ✅ If no reviews and not loading, only show ADD REVIEW button
+      if (!isLoading && reviews.isEmpty) {
+        return Padding(
+          padding: EdgeInsets.only(
+              bottom: 16.sp, left: 12.sp, right: 12.sp, top: 16.sp),
+          child: Center(
+            child: InkWell(
+              onTap: _showAddReviewModal,
+              child: Container(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 32.sp, vertical: 12.sp),
+                decoration: BoxDecoration(
+                  color: widget.backgroundcolor == whiteColor
+                      ? blackColor
+                      : whiteColor,
+                ),
+                child: Text(
+                  'ADD REVIEW',
+                  style: TextStyle(
+                    fontFamily: "Clash Display",
+                    fontWeight: FontWeight.w600,
+                    color: widget.backgroundcolor == whiteColor
+                        ? whiteColor
+                        : blackColor,
+                    fontSize: 13.sp,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }
 
+      // ✅ If loading, show loader
+      if (isLoading) {
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 20.sp),
+          child: const Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      // ✅ If reviews exist, show full section
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2178,159 +2541,93 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ),
 
           // ---------- Average Rating + Count ----------
-          if (reviews.isNotEmpty)
-            Padding(
-              padding:
-                  EdgeInsets.only(left: 12.sp, right: 12.sp, bottom: 12.sp),
-              child: Row(
-                children: [
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 8.sp, vertical: 4.sp),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF00B67A),
-                      borderRadius: BorderRadius.circular(4.sp),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.star, color: whiteColor, size: 14.sp),
-                        SizedBox(width: 4.sp),
-                        Text(
-                          avgRating.toStringAsFixed(1),
-                          style: TextStyle(
-                            fontFamily: "Clash Display",
-                            fontWeight: FontWeight.w700,
-                            color: whiteColor,
-                            fontSize: 13.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 8.sp),
-                  Expanded(
-                    child: Text(
-                      '$totalReviews ${totalReviews == 1 ? "Review" : "Reviews"}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontFamily: "Clash Display Regular",
-                        fontWeight: FontWeight.w400,
-                        color: widget.backgroundcolor == whiteColor
-                            ? subtitleColor
-                            : searchTextColor,
-                        fontSize: 13.sp,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-          // ---------- Loader ----------
-          if (isLoading)
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 20.sp),
-              child: const Center(child: CircularProgressIndicator()),
-            ),
-
-          // ---------- Review List ----------
-          if (!isLoading && reviews.isNotEmpty)
-            ...reviews.take(3).map((review) {
-              final user = review['user'] ?? {};
-              final variant = review['product_variant'] ?? {};
-
-              final userName =
-                  (user['fullName'] ?? user['name'] ?? 'Anonymous').toString();
-              final comment = (review['comment'] ?? '').toString();
-              final rating = (review['rating'] as num?)?.toInt() ?? 0;
-              final createdAt = review['createdAt'] ?? '';
-              final variantTitle = variant['title']?.toString();
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildReviewItem(
-                    name: userName.toUpperCase(),
-                    date: _formatReviewDate(createdAt),
-                    rating: rating,
-                    review:
-                        comment.isNotEmpty ? comment : "No comment provided",
-                    variant:
-                        variantTitle != null ? "Size: $variantTitle" : null,
-                  ),
-                  if (review != reviews.take(3).last)
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 12.sp, vertical: 8.sp),
-                      child: Divider(
-                        color: widget.backgroundcolor == whiteColor
-                            ? colorSecondary
-                            : titleColor,
-                        height: 1,
-                      ),
-                    ),
-                ],
-              );
-            }).toList(),
-
-          // ---------- No Reviews Message ----------
-          if (!isLoading && reviews.isEmpty)
-            Column(
+          Padding(
+            padding: EdgeInsets.only(left: 12.sp, right: 12.sp, bottom: 12.sp),
+            child: Row(
               children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20.sp, horizontal: 12.sp),
-                  child: Center(
-                    child: AppSpacingText(
-                      text: 'No reviews yet. Be the first to review!',
+                Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 8.sp, vertical: 4.sp),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF00B67A),
+                    borderRadius: BorderRadius.circular(4.sp),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.star, color: whiteColor, size: 14.sp),
+                      SizedBox(width: 4.sp),
+                      Text(
+                        avgRating.toStringAsFixed(1),
+                        style: TextStyle(
+                          fontFamily: "Clash Display",
+                          fontWeight: FontWeight.w700,
+                          color: whiteColor,
+                          fontSize: 13.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 8.sp),
+                Expanded(
+                  child: Text(
+                    '$totalReviews ${totalReviews == 1 ? "Review" : "Reviews"}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
                       fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: widget.backgroundcolor == whiteColor
                           ? subtitleColor
                           : searchTextColor,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
-                // Add Review Button
-                Padding(
-                  padding: EdgeInsets.only(bottom: 16.sp, left: 12.sp, right: 12.sp),
-                  child: Center(
-                    child: InkWell(
-                      onTap: () {
-                        // TODO: Navigate to add review screen
-                        print('Add review for product: ${widget.productId}');
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 32.sp, vertical: 12.sp),
-                        decoration: BoxDecoration(
-                          color: widget.backgroundcolor == whiteColor
-                              ? blackColor
-                              : whiteColor,
-                        ),
-                        child: Text(
-                          'ADD REVIEW',
-                          style: TextStyle(
-                            fontFamily: "Clash Display",
-                            fontWeight: FontWeight.w600,
-                            color: widget.backgroundcolor == whiteColor
-                                ? whiteColor
-                                : blackColor,
-                            fontSize: 13.sp,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ),
+                      fontSize: 13.sp,
                     ),
                   ),
                 ),
               ],
             ),
+          ),
+
+          // ---------- Review List ----------
+          ...reviews.take(3).map((review) {
+            final user = review['user'] ?? {};
+            final variant = review['product_variant'] ?? {};
+
+            final userName =
+                (user['fullName'] ?? user['name'] ?? 'Anonymous').toString();
+            final comment = (review['comment'] ?? '').toString();
+            final rating = (review['rating'] as num?)?.toInt() ?? 0;
+            final createdAt = review['createdAt'] ?? '';
+            final variantTitle = variant['title']?.toString();
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildReviewItem(
+                  name: userName.toUpperCase(),
+                  date: _formatReviewDate(createdAt),
+                  rating: rating,
+                  review: comment.isNotEmpty ? comment : "No comment provided",
+                  variant: variantTitle != null ? "Size: $variantTitle" : null,
+                ),
+                if (review != reviews.take(3).last)
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 12.sp, vertical: 8.sp),
+                    child: Divider(
+                      color: widget.backgroundcolor == whiteColor
+                          ? colorSecondary
+                          : titleColor,
+                      height: 1,
+                    ),
+                  ),
+              ],
+            );
+          }).toList(),
 
           // ---------- See All ----------
-          if (!isLoading && reviews.length > 3)
+          if (reviews.length > 3)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 16.sp),
               child: Center(
