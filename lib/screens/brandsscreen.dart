@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 
 import 'dart:async';
+import 'dart:math' show Random;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -404,9 +405,13 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                   .selectIndex
                                                                   .value ==
                                                               brand["id"];
-                                                          final products = brand[
-                                                                  "products"] ??
-                                                              [];
+                                                          // TEMPORARY FIX: Get products from brandDetails (from /view-brand API)
+                                                          // Only show products if this brand is expanded (to avoid showing wrong products)
+                                                          final rawProducts = (isExpanded && val.selectIndex.value == brand["id"])
+                                                              ? (brandController.brandDetails["products"] as List? ?? [])
+                                                              : [];
+                                                          // Randomize and take 3 products
+                                                          final products = (List.from(rawProducts)..shuffle(Random())).take(3).toList();
 
                                                           return Column(
                                                             children: [
@@ -485,9 +490,12 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                   color:
                                                                       statusBarColor,
                                                                   padding:
-                                                                      EdgeInsets
-                                                                          .all(10
-                                                                              .sp),
+                                                                      EdgeInsets.only(
+                                                                        left: 10.sp,
+                                                                        right: 10.sp,
+                                                                        top: 10.sp,
+                                                                        bottom: isExpanded ? 6.sp : 10.sp,
+                                                                      ),
                                                                   child: Row(
                                                                     children: [
                                                                       brand["logo"] !=
@@ -539,10 +547,16 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                       ),
                                                                       InkWell(
                                                                         onTap:
-                                                                            () {
-                                                                          val.selectIndex.value = isExpanded
-                                                                              ? 0
-                                                                              : brand["id"];
+                                                                            () async {
+                                                                          // Toggle expansion
+                                                                          if (isExpanded) {
+                                                                            val.selectIndex.value = 0;
+                                                                          } else {
+                                                                            val.selectIndex.value = brand["id"];
+                                                                            // TEMPORARY FIX: Fetch complete product data from /view-brand API
+                                                                            // because /brand-products only returns id and title
+                                                                            await brandController.getBrandDetails(brand["id"], "");
+                                                                          }
                                                                           val.update();
                                                                         },
                                                                         child:
@@ -574,10 +588,11 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                           .isNotEmpty
                                                                       ? Column(
                                                                           children: [
-                                                                            SizedBox(height: 10.sp),
+                                                                            // SizedBox(height: 8.sp),
                                                                             Padding(
                                                                               padding: EdgeInsets.symmetric(horizontal: 16.sp),
                                                                               child: GridView.count(
+                                                                                padding: EdgeInsets.zero,
                                                                                 shrinkWrap: true,
                                                                                 crossAxisCount: 3,
                                                                                 childAspectRatio: 0.85,
@@ -586,7 +601,13 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                 mainAxisSpacing: 10.sp,
                                                                                 children: List.generate(products.length, (i) {
                                                                                   final product = products[i];
-                                                                                  final imageUrl = product["images"]?.isNotEmpty == true ? product["images"][0]["name"] : null;
+                                                                                  // Support both image formats: "images" array or "imageUrls" array
+                                                                                  String? imageUrl;
+                                                                                  if (product["images"] != null && product["images"].isNotEmpty) {
+                                                                                    imageUrl = product["images"][0]["name"];
+                                                                                  } else if (product["imageUrls"] != null && product["imageUrls"].isNotEmpty) {
+                                                                                    imageUrl = product["imageUrls"][0];
+                                                                                  }
 
                                                                                   return GestureDetector(
                                                                                     onTap: () async {
@@ -685,7 +706,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                 );
                                                                               },
                                                                               child: Padding(
-                                                                                padding: EdgeInsets.symmetric(vertical: 8.sp),
+                                                                                padding: EdgeInsets.only(top: 4.sp, bottom: 4.sp),
                                                                                 child: Container(
                                                                                   height: 42.sp,
                                                                                   color: homeAppBarColor,

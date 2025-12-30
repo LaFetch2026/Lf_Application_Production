@@ -44,6 +44,9 @@ class BrandController extends BaseController {
   RxInt selectIndex = 0.obs;
   List<bool> selected = List.generate(50, (i) => false).obs;
 
+  /// ✅ Map to store brand products by brandId for quick lookup
+  RxMap<int, List<dynamic>> brandProductsMap = <int, List<dynamic>>{}.obs;
+
   /// ================================================================
   /// ✅ Fetch Brands (Featured or All)
   /// ================================================================
@@ -238,6 +241,78 @@ class BrandController extends BaseController {
       getSnackBar("Something went wrong while fetching brand details.");
     } finally {
       isDetails.value = false;
+    }
+  }
+
+  /// ================================================================
+  /// ✅ Fetch Brand Products (random products for a brand)
+  /// ================================================================
+  Future<void> getBrandProducts(int brandId, {bool showLoader = true}) async {
+    if (showLoader) {
+      isProductBrand.value = true;
+    }
+    final prefs = await SharedPreferences.getInstance();
+
+    try {
+      final token = prefs.getString('token') ?? '';
+      final url = "${ApiConstants.baseUrl}/brand-products/$brandId";
+      print("➡️ Fetching brand products: $url");
+
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 20));
+
+      print("⬅️ Status Code: ${response.statusCode}");
+
+      if (response.statusCode == 401) {
+        getSnackBar("Session expired. Please log in again.");
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+        return;
+      }
+
+      if (response.statusCode != 200) {
+        String msg = "Failed to fetch brand products (${response.statusCode}).";
+        try {
+          final err = json.decode(response.body);
+          if (err is Map && err["message"] is String) {
+            msg = err["message"];
+          }
+        } catch (_) {}
+        print("⚠️ $msg");
+        // Don't show snackbar, just return empty list
+        brandProductsMap[brandId] = [];
+        return;
+      }
+
+      final decoded = json.decode(response.body);
+      final List<dynamic> productsRaw =
+          (decoded is Map && decoded['data'] is List)
+              ? decoded['data'] as List
+              : [];
+
+      // Store products in the map
+      brandProductsMap[brandId] = productsRaw.whereType<Map>().toList();
+
+      print(
+          "✅ Brand products loaded for brand $brandId: ${brandProductsMap[brandId]?.length ?? 0} products");
+    } on TimeoutException {
+      print("⚠️ Brand products request timed out.");
+      brandProductsMap[brandId] = [];
+    } on SocketException {
+      print("⚠️ No internet connection.");
+      brandProductsMap[brandId] = [];
+    } catch (e) {
+      print("❌ Exception in getBrandProducts: $e");
+      brandProductsMap[brandId] = [];
+    } finally {
+      if (showLoader) {
+        isProductBrand.value = false;
+      }
     }
   }
 }
