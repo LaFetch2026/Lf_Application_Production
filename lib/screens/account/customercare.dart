@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:flutter_tawk/flutter_tawk.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../core/constant/constants.dart';
 
@@ -15,6 +15,26 @@ class CustomerCareScreen extends StatefulWidget {
 }
 
 class CustomerCareScreenState extends State<CustomerCareScreen> {
+  late final WebViewController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (String url) {
+            print('Page started loading: $url');
+          },
+          onPageFinished: (String url) {
+            print('Page finished loading: $url');
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse('https://tawk.to/chat/66f8fcc1e5982d6c7bb6389e/1i8u9ml4f'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,29 +42,7 @@ class CustomerCareScreenState extends State<CustomerCareScreen> {
       body: Column(
         children: [
           Expanded(
-            child: Tawk(
-              directChatLink:
-                  'https://tawk.to/chat/66f8fcc1e5982d6c7bb6389e/1i8u9ml4f',
-              visitor: TawkVisitor(
-                name: 'Lafetch',
-                email: 'ashish@thecodework.com',
-              ),
-              onLoad: () {
-                print('Hello!');
-              },
-              onLinkTap: (String url) {
-                print(url);
-              },
-              placeholder: Container(
-                color: whiteColor,
-                child: Center(
-                  child: Text(
-                    'Loading...',
-                    style: TextStyle(color: colorPrimary),
-                  ),
-                ),
-              ),
-            ),
+            child: WebViewWidget(controller: controller),
           )
         ],
       ),

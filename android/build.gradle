@@ -1,14 +1,14 @@
 buildscript {
-    ext.kotlin_version = '1.9.22' // Updated for better compatibility
+    ext.kotlin_version = '2.1.0' // Updated for Flutter 3.40 compatibility
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.4' // Updated from 7.1.2
+        classpath 'com.android.tools.build:gradle:8.9.1' // Updated for androidx compatibility
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.4.0' // Updated from 4.3.10
+        classpath 'com.google.gms:google-services:4.4.0'
     }
 }
 
