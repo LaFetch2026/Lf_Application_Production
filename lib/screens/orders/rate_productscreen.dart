@@ -281,8 +281,15 @@ class _RateProductScreenState extends State<RateProductScreen> {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('user_id') ?? prefs.getInt('userId') ?? 0;
 
+    // Extract productId from the product data
+    final productId = widget.product["productId"] ??
+        widget.product["product_id"] ??
+        widget.product["product"]?["id"] ??
+        0;
+
     final success = await productController.submitProductReview(
       userId: userId,
+      productId: productId, // ✅ Added productId parameter
       orderItemId: widget.product["id"], // ✅ from order item
       variantId: widget.product["variantId"], // ✅ from API
       rating: _rating,

@@ -1156,6 +1156,7 @@ class ProductController extends BaseController {
 
   Future<bool> submitProductReview({
     required int userId,
+    required int productId,
     required int orderItemId,
     required int variantId,
     required int rating,
@@ -1175,6 +1176,7 @@ class ProductController extends BaseController {
     try {
       final Map<String, dynamic> sendData = {
         "userId": userId,
+        "productId": productId,
         "orderItemId": orderItemId,
         "variantId": variantId,
         "rating": rating,
@@ -1245,12 +1247,14 @@ class ProductController extends BaseController {
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
+    final userId = prefs.getInt('userId') ?? 0;
 
     try {
       final queryParams = {
         'productId': productId.toString(),
         'page': page.toString(),
         'limit': limit.toString(),
+        if (userId > 0) 'userId': userId.toString(),
       };
 
       final uri = Uri.parse("${ApiConstants.baseUrl}/reviews")
@@ -1562,7 +1566,8 @@ class ProductController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
 
-    final uri = Uri.parse("${ApiConstants.baseUrl}/filter-metadata?superCatId=$superCatId");
+    final uri = Uri.parse(
+        "${ApiConstants.baseUrl}/filter-metadata?superCatId=$superCatId");
 
     try {
       final response = await http.get(

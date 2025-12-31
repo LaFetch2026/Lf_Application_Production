@@ -279,11 +279,6 @@ class CartScreenState extends State<CartScreen> {
         : cleanDigits;
   }
 
-  bool _hasValidPhone(String? raw) {
-    final sanitized = _sanitizeIndianPhone(raw);
-    return sanitized.length == 10;
-  }
-
   Future<void> _openRazorpayCheckout({String? orderId}) async {
     if (orderId == null || orderId.isEmpty) {
       getSnackBar("Payment could not be started. Missing Razorpay Order ID.");
@@ -909,7 +904,8 @@ class CartScreenState extends State<CartScreen> {
                           SizedBox(width: 6.sp),
                           SvgPicture.asset(
                             dropdownSvgImage,
-                            colorFilter: const ColorFilter.mode(titleColor, BlendMode.srcIn),
+                            colorFilter: const ColorFilter.mode(
+                                titleColor, BlendMode.srcIn),
                             height: 5.sp,
                             width: 8.sp,
                           ),
@@ -1070,8 +1066,7 @@ class CartScreenState extends State<CartScreen> {
     final discountOnMrp = totalMrp - sellingTotal;
 
     // Final Total = selling - coupon + delivery
-    final finalTotal =
-        (sellingTotal - couponDiscount) + deliveryCharges;
+    final finalTotal = (sellingTotal - couponDiscount) + deliveryCharges;
 
     return Container(
       color: widget.backgroundcolor,
@@ -1791,13 +1786,14 @@ class CartScreenState extends State<CartScreen> {
 
     // Fetch fresh stock data from product API for accuracy
     try {
-      debugPrint("🔍 Fetching fresh stock for product $productId, variant $variantId");
-      final productDetails = await productController.fetchProductDetails(productId);
+      debugPrint(
+          "🔍 Fetching fresh stock for product $productId, variant $variantId");
+      final productDetails =
+          await productController.fetchProductDetails(productId);
 
       if (productDetails != null && productDetails["variants"] != null) {
         final variants = List<Map<String, dynamic>>.from(
-          (productDetails["variants"] as List).whereType<Map>()
-        );
+            (productDetails["variants"] as List).whereType<Map>());
 
         // Find matching variant
         final matchingVariant = variants.firstWhere(
@@ -1807,9 +1803,8 @@ class CartScreenState extends State<CartScreen> {
 
         if (matchingVariant.isNotEmpty) {
           final inv = matchingVariant["inventory"];
-          final freshStock = inv != null
-            ? (inv["availableStock"] ?? inv["stocks"] ?? 0)
-            : 0;
+          final freshStock =
+              inv != null ? (inv["availableStock"] ?? inv["stocks"] ?? 0) : 0;
 
           if (freshStock > 0) {
             availableStock = freshStock;
@@ -1853,15 +1848,20 @@ class CartScreenState extends State<CartScreen> {
             if (availableStock <= 10)
               Container(
                 margin: EdgeInsets.only(bottom: 8.sp),
-                padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
                 decoration: BoxDecoration(
-                  color: availableStock <= 5 ? Colors.red.shade50 : Colors.orange.shade50,
+                  color: availableStock <= 5
+                      ? Colors.red.shade50
+                      : Colors.orange.shade50,
                   borderRadius: BorderRadius.circular(8.sp),
                 ),
                 child: Text(
                   stockMessage,
                   style: TextStyle(
-                    color: availableStock <= 5 ? Colors.red.shade800 : Colors.orange.shade800,
+                    color: availableStock <= 5
+                        ? Colors.red.shade800
+                        : Colors.orange.shade800,
                     fontSize: 12.sp,
                     fontFamily: "Clash Display",
                     fontWeight: FontWeight.w600,
@@ -1878,7 +1878,8 @@ class CartScreenState extends State<CartScreen> {
                 if (newQty != currentQuantity) {
                   // Validate quantity before updating
                   if (newQty > availableStock) {
-                    getSnackBar("Only $availableStock units available in stock");
+                    getSnackBar(
+                        "Only $availableStock units available in stock");
                     return;
                   }
 
@@ -1956,7 +1957,8 @@ class CartScreenState extends State<CartScreen> {
             orElse: () => {},
           );
           if (updatedItem.isNotEmpty) {
-            debugPrint("🔍 After refresh - Quantity in cart: ${updatedItem['quantity']}");
+            debugPrint(
+                "🔍 After refresh - Quantity in cart: ${updatedItem['quantity']}");
           }
 
           controller.hideLoading();
@@ -2049,7 +2051,8 @@ class CartScreenState extends State<CartScreen> {
           click2: () async {
             Get.back();
             await controller.deleteFromCartUniversal(
-                widget.backgroundcolor, productId, variantId: variantId);
+                widget.backgroundcolor, productId,
+                variantId: variantId);
           },
           btncolor: colorPrimary,
           text: "Are you sure you want to remove this item?",
@@ -2111,7 +2114,8 @@ class CartScreenState extends State<CartScreen> {
           onPressed: (boardId) async {
             wishlistController.addProductToBoard(boardId, productId);
             await controller.deleteFromCartUniversal(
-                widget.backgroundcolor, productId, variantId: variantId);
+                widget.backgroundcolor, productId,
+                variantId: variantId);
           },
           wishlistList: wishlistController.wishlistList,
         ),

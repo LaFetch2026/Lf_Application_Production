@@ -260,7 +260,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color.fromARGB(0, 255, 137, 137),
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
           return Container(
@@ -483,60 +483,146 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                     ],
                   ),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_selectedRating == 0) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Please select a rating'),
-                            duration: Duration(seconds: 2),
-                          ),
+                  child: Obx(() {
+                    final isSubmitting = productController.isSubmittingReview.value;
+
+                    return ElevatedButton(
+                      onPressed: isSubmitting ? null : () async {
+                        // Capture context and navigator before async operations
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
+                        final navigator = Navigator.of(context);
+
+                        if (_selectedRating == 0) {
+                          scaffoldMessenger.showSnackBar(
+                            const SnackBar(
+                              content: Text('Please select a rating'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                          return;
+                        }
+
+                        if (_reviewController.text.trim().isEmpty) {
+                          scaffoldMessenger.showSnackBar(
+                            const SnackBar(
+                              content: Text('Please write a review'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                          return;
+                        }
+
+                        // Get userId from SharedPreferences
+                        final prefs = await SharedPreferences.getInstance();
+                        final userId = prefs.getInt('userId') ?? 0;
+
+                        if (userId == 0) {
+                          scaffoldMessenger.showSnackBar(
+                            const SnackBar(
+                              content: Text('Please login to submit a review'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                          return;
+                        }
+
+                        // Get selected variant - improved logic
+                        var variant = productController.getSelectedVariant();
+
+                        // If no variant selected but variants exist, try to get the first available one
+                        if (variant == null && productController.selectedVariants.isNotEmpty) {
+                          variant = productController.selectedVariants.first;
+                          print("⚠️ No variant selected, using first variant: ${variant['id']}");
+                        }
+
+                        final variantId = variant?['id'] ?? 0;
+
+                        if (variantId == 0) {
+                          // More helpful error message
+                          final hasSizes = productController.sizeInventoryList.isNotEmpty;
+                          final hasColors = productController.colorInventoryList.isNotEmpty;
+
+                          String errorMsg = 'Please select ';
+                          if (hasSizes && hasColors) {
+                            errorMsg += 'size and color first';
+                          } else if (hasSizes) {
+                            errorMsg += 'a size first';
+                          } else if (hasColors) {
+                            errorMsg += 'a color first';
+                          } else {
+                            errorMsg = 'Product variant not available';
+                          }
+
+                          scaffoldMessenger.showSnackBar(
+                            SnackBar(
+                              content: Text(errorMsg),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                          return;
+                        }
+
+                        // Submit review
+                        final success = await productController.submitProductReview(
+                          userId: userId,
+                          productId: widget.productId,
+                          orderItemId: 0, // 0 for reviews not from orders
+                          variantId: variantId,
+                          rating: _selectedRating,
+                          comment: _reviewController.text.trim(),
                         );
-                        return;
-                      }
 
-                      if (_reviewController.text.trim().isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Please write a review'),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
-                        return;
-                      }
-
-                      // TODO: Submit review to API
-                      print('Rating: $_selectedRating');
-                      print('Review: ${_reviewController.text}');
-                      print('Product ID: ${widget.productId}');
-
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Review submitted successfully!'),
-                          duration: Duration(seconds: 2),
+                        if (success) {
+                          navigator.pop();
+                          // Refresh reviews after successful submission
+                          await productController.getProductReviews(widget.productId);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isSubmitting ? Colors.grey : blackColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4.sp),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: blackColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4.sp),
+                        minimumSize: Size(double.infinity, 48.sp),
+                        elevation: 0,
                       ),
-                      minimumSize: Size(double.infinity, 48.sp),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      'SUBMIT REVIEW',
-                      style: TextStyle(
-                        fontFamily: "Clash Display",
-                        fontWeight: FontWeight.w600,
-                        color: whiteColor,
-                        fontSize: 14.sp,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
+                      child: isSubmitting
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 20.sp,
+                                height: 20.sp,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
+                                ),
+                              ),
+                              SizedBox(width: 12.sp),
+                              Text(
+                                'SUBMITTING...',
+                                style: TextStyle(
+                                  fontFamily: "Clash Display",
+                                  fontWeight: FontWeight.w600,
+                                  color: whiteColor,
+                                  fontSize: 14.sp,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Text(
+                            'SUBMIT REVIEW',
+                            style: TextStyle(
+                              fontFamily: "Clash Display",
+                              fontWeight: FontWeight.w600,
+                              color: whiteColor,
+                              fontSize: 14.sp,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                    );
+                  }),
                 ),
               ],
             ),

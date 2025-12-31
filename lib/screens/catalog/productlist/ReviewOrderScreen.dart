@@ -73,7 +73,8 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
 
   // --- totals ---
   double get _totalPrice =>
-      (widget.price * (_selectedQuantity <= 0 ? 1 : _selectedQuantity)).toDouble();
+      (widget.price * (_selectedQuantity <= 0 ? 1 : _selectedQuantity))
+          .toDouble();
   final double _delivery = 0; // if you add charges later, UI adapts
   final double _convenience = 0;
 
@@ -910,13 +911,14 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     int availableStock = widget.maxStock; // Initial value
 
     try {
-      debugPrint("🔍 Fetching fresh stock for product ${widget.productId}, variant ${widget.variantId}");
-      final productDetails = await productController.fetchProductDetails(widget.productId);
+      debugPrint(
+          "🔍 Fetching fresh stock for product ${widget.productId}, variant ${widget.variantId}");
+      final productDetails =
+          await productController.fetchProductDetails(widget.productId);
 
       if (productDetails != null && productDetails["variants"] != null) {
         final variants = List<Map<String, dynamic>>.from(
-          (productDetails["variants"] as List).whereType<Map>()
-        );
+            (productDetails["variants"] as List).whereType<Map>());
 
         // Find matching variant
         final matchingVariant = variants.firstWhere(
@@ -926,13 +928,12 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
 
         if (matchingVariant.isNotEmpty) {
           final inv = matchingVariant["inventory"];
-          final freshStock = inv != null
-            ? (inv["availableStock"] ?? 0)
-            : 0;
+          final freshStock = inv != null ? (inv["availableStock"] ?? 0) : 0;
 
           if (freshStock > 0) {
             availableStock = freshStock;
-            debugPrint("✅ Fresh stock for variant ${widget.variantId}: $availableStock");
+            debugPrint(
+                "✅ Fresh stock for variant ${widget.variantId}: $availableStock");
           }
         }
       }
@@ -972,15 +973,20 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
             if (availableStock <= 10)
               Container(
                 margin: EdgeInsets.only(bottom: 8.sp),
-                padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
                 decoration: BoxDecoration(
-                  color: availableStock <= 5 ? Colors.red.shade50 : Colors.orange.shade50,
+                  color: availableStock <= 5
+                      ? Colors.red.shade50
+                      : Colors.orange.shade50,
                   borderRadius: BorderRadius.circular(8.sp),
                 ),
                 child: Text(
                   stockMessage,
                   style: TextStyle(
-                    color: availableStock <= 5 ? Colors.red.shade800 : Colors.orange.shade800,
+                    color: availableStock <= 5
+                        ? Colors.red.shade800
+                        : Colors.orange.shade800,
                     fontSize: 12.sp,
                     fontFamily: "Clash Display",
                     fontWeight: FontWeight.w600,
