@@ -88,6 +88,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final double gM = 8.sp; // medium
   final double gL = 12.sp; // large
 
+  // ===================== QUANTITY STATE =====================
+  int _selectedQuantity = 1;
+
   // ---------- helpers ----------
   final cartController =
       Get.put(CartController()); // ensures controller is available
@@ -484,102 +487,118 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ],
                   ),
                   child: Obx(() {
-                    final isSubmitting = productController.isSubmittingReview.value;
+                    final isSubmitting =
+                        productController.isSubmittingReview.value;
 
                     return ElevatedButton(
-                      onPressed: isSubmitting ? null : () async {
-                        // Capture context and navigator before async operations
-                        final scaffoldMessenger = ScaffoldMessenger.of(context);
-                        final navigator = Navigator.of(context);
+                      onPressed: isSubmitting
+                          ? null
+                          : () async {
+                              // Capture context and navigator before async operations
+                              final scaffoldMessenger =
+                                  ScaffoldMessenger.of(context);
+                              final navigator = Navigator.of(context);
 
-                        if (_selectedRating == 0) {
-                          scaffoldMessenger.showSnackBar(
-                            const SnackBar(
-                              content: Text('Please select a rating'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                          return;
-                        }
+                              if (_selectedRating == 0) {
+                                scaffoldMessenger.showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Please select a rating'),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                                return;
+                              }
 
-                        if (_reviewController.text.trim().isEmpty) {
-                          scaffoldMessenger.showSnackBar(
-                            const SnackBar(
-                              content: Text('Please write a review'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                          return;
-                        }
+                              if (_reviewController.text.trim().isEmpty) {
+                                scaffoldMessenger.showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Please write a review'),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                                return;
+                              }
 
-                        // Get userId from SharedPreferences
-                        final prefs = await SharedPreferences.getInstance();
-                        final userId = prefs.getInt('userId') ?? 0;
+                              // Get userId from SharedPreferences
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              final userId = prefs.getInt('userId') ?? 0;
 
-                        if (userId == 0) {
-                          scaffoldMessenger.showSnackBar(
-                            const SnackBar(
-                              content: Text('Please login to submit a review'),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                          return;
-                        }
+                              if (userId == 0) {
+                                scaffoldMessenger.showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text('Please login to submit a review'),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                                return;
+                              }
 
-                        // Get selected variant - improved logic
-                        var variant = productController.getSelectedVariant();
+                              // Get selected variant - improved logic
+                              var variant =
+                                  productController.getSelectedVariant();
 
-                        // If no variant selected but variants exist, try to get the first available one
-                        if (variant == null && productController.selectedVariants.isNotEmpty) {
-                          variant = productController.selectedVariants.first;
-                          print("⚠️ No variant selected, using first variant: ${variant['id']}");
-                        }
+                              // If no variant selected but variants exist, try to get the first available one
+                              if (variant == null &&
+                                  productController
+                                      .selectedVariants.isNotEmpty) {
+                                variant =
+                                    productController.selectedVariants.first;
+                                print(
+                                    "⚠️ No variant selected, using first variant: ${variant['id']}");
+                              }
 
-                        final variantId = variant?['id'] ?? 0;
+                              final variantId = variant?['id'] ?? 0;
 
-                        if (variantId == 0) {
-                          // More helpful error message
-                          final hasSizes = productController.sizeInventoryList.isNotEmpty;
-                          final hasColors = productController.colorInventoryList.isNotEmpty;
+                              if (variantId == 0) {
+                                // More helpful error message
+                                final hasSizes = productController
+                                    .sizeInventoryList.isNotEmpty;
+                                final hasColors = productController
+                                    .colorInventoryList.isNotEmpty;
 
-                          String errorMsg = 'Please select ';
-                          if (hasSizes && hasColors) {
-                            errorMsg += 'size and color first';
-                          } else if (hasSizes) {
-                            errorMsg += 'a size first';
-                          } else if (hasColors) {
-                            errorMsg += 'a color first';
-                          } else {
-                            errorMsg = 'Product variant not available';
-                          }
+                                String errorMsg = 'Please select ';
+                                if (hasSizes && hasColors) {
+                                  errorMsg += 'size and color first';
+                                } else if (hasSizes) {
+                                  errorMsg += 'a size first';
+                                } else if (hasColors) {
+                                  errorMsg += 'a color first';
+                                } else {
+                                  errorMsg = 'Product variant not available';
+                                }
 
-                          scaffoldMessenger.showSnackBar(
-                            SnackBar(
-                              content: Text(errorMsg),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                          return;
-                        }
+                                scaffoldMessenger.showSnackBar(
+                                  SnackBar(
+                                    content: Text(errorMsg),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                                return;
+                              }
 
-                        // Submit review
-                        final success = await productController.submitProductReview(
-                          userId: userId,
-                          productId: widget.productId,
-                          orderItemId: 0, // 0 for reviews not from orders
-                          variantId: variantId,
-                          rating: _selectedRating,
-                          comment: _reviewController.text.trim(),
-                        );
+                              // Submit review
+                              final success =
+                                  await productController.submitProductReview(
+                                userId: userId,
+                                productId: widget.productId,
+                                orderItemId: 0, // 0 for reviews not from orders
+                                variantId: variantId,
+                                rating: _selectedRating,
+                                comment: _reviewController.text.trim(),
+                              );
 
-                        if (success) {
-                          navigator.pop();
-                          // Refresh reviews after successful submission
-                          await productController.getProductReviews(widget.productId);
-                        }
-                      },
+                              if (success) {
+                                navigator.pop();
+                                // Refresh reviews after successful submission
+                                await productController
+                                    .getProductReviews(widget.productId);
+                              }
+                            },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isSubmitting ? Colors.grey : blackColor,
+                        backgroundColor:
+                            isSubmitting ? Colors.grey : blackColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4.sp),
                         ),
@@ -587,40 +606,41 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         elevation: 0,
                       ),
                       child: isSubmitting
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 20.sp,
-                                height: 20.sp,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 20.sp,
+                                  height: 20.sp,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        whiteColor),
+                                  ),
                                 ),
-                              ),
-                              SizedBox(width: 12.sp),
-                              Text(
-                                'SUBMITTING...',
-                                style: TextStyle(
-                                  fontFamily: "Clash Display",
-                                  fontWeight: FontWeight.w600,
-                                  color: whiteColor,
-                                  fontSize: 14.sp,
-                                  letterSpacing: 0.5,
+                                SizedBox(width: 12.sp),
+                                Text(
+                                  'SUBMITTING...',
+                                  style: TextStyle(
+                                    fontFamily: "Clash Display",
+                                    fontWeight: FontWeight.w600,
+                                    color: whiteColor,
+                                    fontSize: 14.sp,
+                                    letterSpacing: 0.5,
+                                  ),
                                 ),
+                              ],
+                            )
+                          : Text(
+                              'SUBMIT REVIEW',
+                              style: TextStyle(
+                                fontFamily: "Clash Display",
+                                fontWeight: FontWeight.w600,
+                                color: whiteColor,
+                                fontSize: 14.sp,
+                                letterSpacing: 0.5,
                               ),
-                            ],
-                          )
-                        : Text(
-                            'SUBMIT REVIEW',
-                            style: TextStyle(
-                              fontFamily: "Clash Display",
-                              fontWeight: FontWeight.w600,
-                              color: whiteColor,
-                              fontSize: 14.sp,
-                              letterSpacing: 0.5,
                             ),
-                          ),
                     );
                   }),
                 ),
@@ -651,8 +671,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       print("Selected Size: null (No size selected)");
     }
     print("Selected Color: ${productController.selectedProductColor}");
+    print("Selected Quantity: $_selectedQuantity"); // ✅ Added quantity logging
     print("Price: ₹${_displayPrice().toStringAsFixed(0)}");
     print("MRP: ₹${_displayMrp().toStringAsFixed(0)}");
+    print(
+        "Total Price: ₹${(_displayPrice() * _selectedQuantity).toStringAsFixed(0)}"); // ✅ Added total price
     print("Discount: ${_discountPctStr()}");
     print("Size Inventory ID: ${productController.sizeInventoryId.value}");
     print("Color Inventory ID: ${productController.colorInventoryId.value}");
@@ -706,21 +729,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ? " / ${productController.selectedColor.value}"
             : "");
 
-    // Check if this variant already exists in cart
-    int initialQuantity = 1;
-    try {
-      final cartController = Get.find<CartController>();
-      for (final item in cartController.orderList) {
-        final itemVariantId = item["inventory"]?["id"];
-        if (itemVariantId == variantId) {
-          initialQuantity = int.tryParse("${item["quantity"]}") ?? 1;
-          break;
-        }
-      }
-    } catch (e) {
-      // CartController not found or error - use default quantity 1
-      debugPrint("Could not check cart for existing quantity: $e");
-    }
+    // ✅ Use the selected quantity from the quantity selector
+    final initialQuantity = _selectedQuantity;
 
     Get.to(() => ReviewOrderScreen(
           productId: widget.productId,
@@ -860,7 +870,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           if (_pageController.hasClients) {
                             _pageController.jumpToPage(0);
                           }
-                          setState(() {});
+                          setState(() {
+                            _selectedQuantity =
+                                1; // ✅ Reset quantity when size changes
+                          });
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -965,7 +978,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         _pageController.jumpToPage(0);
                       }
 
-                      setState(() {});
+                      setState(() {
+                        _selectedQuantity =
+                            1; // ✅ Reset quantity when color changes
+                      });
                     },
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
@@ -1057,6 +1073,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       productController.sizeInventoryList.clear();
       productController.colorInventoryList.clear();
       productController.selectedVariants.clear();
+
+      // ✅ Reset quantity when loading new product
+      setState(() {
+        _selectedQuantity = 1;
+      });
 
       print("🚀 Loading product ID: ${widget.productId}");
 
@@ -1813,6 +1834,248 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ],
                                 );
                               }),
+
+                              // ===================== QUANTITY SELECTOR =====================
+                              Obx(() {
+                                final hasSizes = productController
+                                    .sizeInventoryList.isNotEmpty;
+                                final hasColors = productController
+                                    .colorInventoryList.isNotEmpty;
+                                final sizeSelected = productController
+                                    .selectedSize.value.isNotEmpty;
+                                final colorSelected = productController
+                                    .selectedColor.value.isNotEmpty;
+
+                                // ✅ Show quantity selector only when user has made valid selections
+                                bool shouldShow = false;
+                                if (hasSizes && hasColors) {
+                                  // Both exist - need both selected
+                                  shouldShow = sizeSelected && colorSelected;
+                                } else if (hasSizes) {
+                                  // Only sizes - need size selected
+                                  shouldShow = sizeSelected;
+                                } else if (hasColors) {
+                                  // Only colors - need color selected
+                                  shouldShow = colorSelected;
+                                } else {
+                                  // No sizes or colors - always show if product loaded
+                                  shouldShow =
+                                      !productController.isDetails.value;
+                                }
+
+                                if (!shouldShow) return const SizedBox.shrink();
+
+                                // Get available stock for selected variant
+                                final variant =
+                                    productController.getSelectedVariant();
+                                final maxStock = int.tryParse(
+                                        variant?['stocks']?.toString() ??
+                                            '0') ??
+                                    0;
+
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Divider
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 14.sp, horizontal: 12.sp),
+                                      child: Divider(
+                                        color:
+                                            widget.backgroundcolor == whiteColor
+                                                ? colorSecondary
+                                                : titleColor,
+                                      ),
+                                    ),
+
+                                    // Quantity Label
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 12.sp, right: 12.sp),
+                                      child: AppSpacingText(
+                                        text: 'SELECT QUANTITY',
+                                        fontFamily: "Clash Display",
+                                        fontWeight: FontWeight.w500,
+                                        color:
+                                            widget.backgroundcolor == whiteColor
+                                                ? blackColor
+                                                : productSubtitleColor,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+
+                                    SizedBox(height: 12.sp),
+
+                                    // Quantity Selector
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 12.sp),
+                                      child: Row(
+                                        children: [
+                                          // Decrease Button
+                                          GestureDetector(
+                                            onTap: () {
+                                              if (_selectedQuantity > 1) {
+                                                setState(() {
+                                                  _selectedQuantity--;
+                                                });
+                                              }
+                                            },
+                                            child: Container(
+                                              width: 36.sp,
+                                              height: 36.sp,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color:
+                                                      widget.backgroundcolor ==
+                                                              whiteColor
+                                                          ? btnTextColor
+                                                          : searchTextColor,
+                                                  width: 1.sp,
+                                                ),
+                                                color: widget.backgroundcolor ==
+                                                        whiteColor
+                                                    ? whiteColor
+                                                    : homeAppBarColor,
+                                              ),
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons.remove,
+                                                  color: _selectedQuantity <= 1
+                                                      ? searchTextColor
+                                                      : (widget.backgroundcolor ==
+                                                              whiteColor
+                                                          ? btnTextColor
+                                                          : searchTextColor),
+                                                  size: 18.sp,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Quantity Display
+                                          Container(
+                                            width: 60.sp,
+                                            height: 36.sp,
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                top: BorderSide(
+                                                  color:
+                                                      widget.backgroundcolor ==
+                                                              whiteColor
+                                                          ? btnTextColor
+                                                          : searchTextColor,
+                                                  width: 1.sp,
+                                                ),
+                                                bottom: BorderSide(
+                                                  color:
+                                                      widget.backgroundcolor ==
+                                                              whiteColor
+                                                          ? btnTextColor
+                                                          : searchTextColor,
+                                                  width: 1.sp,
+                                                ),
+                                              ),
+                                              color: widget.backgroundcolor ==
+                                                      whiteColor
+                                                  ? whiteColor
+                                                  : homeAppBarColor,
+                                            ),
+                                            child: Center(
+                                              child: AppSpacingText(
+                                                text: _selectedQuantity
+                                                    .toString(),
+                                                fontFamily: "Clash Display",
+                                                fontWeight: FontWeight.w600,
+                                                color: widget.backgroundcolor ==
+                                                        whiteColor
+                                                    ? btnTextColor
+                                                    : searchTextColor,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Increase Button
+                                          GestureDetector(
+                                            onTap: () {
+                                              if (maxStock > 0 &&
+                                                  _selectedQuantity <
+                                                      maxStock) {
+                                                setState(() {
+                                                  _selectedQuantity++;
+                                                });
+                                              } else if (maxStock > 0) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'Maximum available quantity is $maxStock'),
+                                                    duration:
+                                                        Duration(seconds: 2),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            child: Container(
+                                              width: 36.sp,
+                                              height: 36.sp,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color:
+                                                      widget.backgroundcolor ==
+                                                              whiteColor
+                                                          ? btnTextColor
+                                                          : searchTextColor,
+                                                  width: 1.sp,
+                                                ),
+                                                color: widget.backgroundcolor ==
+                                                        whiteColor
+                                                    ? whiteColor
+                                                    : homeAppBarColor,
+                                              ),
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons.add,
+                                                  color: (maxStock > 0 &&
+                                                          _selectedQuantity >=
+                                                              maxStock)
+                                                      ? searchTextColor
+                                                      : (widget.backgroundcolor ==
+                                                              whiteColor
+                                                          ? btnTextColor
+                                                          : searchTextColor),
+                                                  size: 18.sp,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+                                          SizedBox(width: 12.sp),
+
+                                          // // Stock Info
+                                          // if (maxStock > 0)
+                                          //   Expanded(
+                                          //     child: AppSpacingText(
+                                          //       text: maxStock <= 10
+                                          //           ? 'Only $maxStock left in stock'
+                                          //           : '$maxStock available',
+                                          //       fontFamily: "Clash Display Regular",
+                                          //       fontWeight: FontWeight.w400,
+                                          //       color: maxStock <= 5 ? redColor : subtitleColor,
+                                          //       fontSize: 12,
+                                          //       maxLines: 1,
+                                          //     ),
+                                          //   ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    SizedBox(height: 8.sp),
+                                  ],
+                                );
+                              }),
+
                               SizedBox(height: 0),
                             ],
                           );

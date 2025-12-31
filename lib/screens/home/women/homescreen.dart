@@ -16,7 +16,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lafetch/common/widget/lists/dummy_product_list.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
-import 'package:lafetch/screens/Brands/categoryproduct.dart' hide SizedBox, Center, Column, Padding;
+import 'package:lafetch/screens/Brands/categoryproduct.dart'
+    hide SizedBox, Center, Column, Padding;
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/home/women/productviewscreen.dart';
@@ -1698,7 +1699,7 @@ class _ShopByCategorySection extends StatelessWidget {
                 fontFamily: "Clash Display Semibold",
                 fontWeight: FontWeight.w400,
                 color: blackColor,
-                fontSize: 20,
+                fontSize: 16,
               ),
             ),
           ),
