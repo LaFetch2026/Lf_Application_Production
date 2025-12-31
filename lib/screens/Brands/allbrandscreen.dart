@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 
+import 'dart:math' show Random;
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -83,8 +85,14 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       productController.filterProductEnable.value = false;
       productController.categoryFilter.value = 0;
 
-      // Fetch brand details first
+      // Fetch brand details and products
       await brandController.getBrandDetails(widget.id, widget.slug);
+      // TEMPORARY FIX: Commenting out getBrandProducts because it returns incomplete data
+      // TODO: Uncomment when backend fixes /brand-products API to return images and prices
+      // await brandController.getBrandProducts(widget.id, showLoader: true);
+
+      // Clear cached normalized products to force recalculation with new data
+      _cachedNormalizedProducts = null;
 
       // Cache values to avoid repeated map lookups
       _cachedBrandName =
@@ -275,23 +283,31 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       return _cachedNormalizedProducts!;
     }
 
+    // TEMPORARY FIX: Use brandDetails["products"] from /view-brand API instead of /brand-products
+    // because /brand-products only returns id and title (missing images and prices)
     final raw = (brandController.brandDetails["products"] as List?) ?? [];
     final brandName = _cachedBrandName ?? '';
 
-    _cachedNormalizedProducts = raw.map<Map<String, dynamic>>((e) {
+    // Randomize and limit to maximum 3 products
+    final shuffled = List.from(raw)..shuffle(Random());
+    final limitedRaw = shuffled.take(3).toList();
+
+    _cachedNormalizedProducts = limitedRaw.map<Map<String, dynamic>>((e) {
       final m = Map<String, dynamic>.from(e as Map);
 
       final id = m["id"];
       final title = (m["title"] ?? m["name"] ?? "").toString();
 
-      final num base = (m["basePrice"] ?? m["mrp"] ?? 0);
+      // Try multiple price fields from API response
+      final num base = (m["basePrice"] ?? m["msp"] ?? m["lfMsp"] ?? m["mrp"] ?? 0);
       final num mrpVal = (m["mrp"] ?? 0);
 
       bool hideMrp = (mrpVal == 0 || mrpVal == base);
       final num displayPrice = base;
       final num? displayMrp = hideMrp ? null : mrpVal;
 
-      final List<dynamic> imageUrls = m["imageUrls"] ?? [];
+      // Support multiple image field formats
+      final List<dynamic> imageUrls = m["imageUrls"] ?? m["images"] ?? [];
       final images = imageUrls
           .map((url) => {"name": url.toString()})
           .where((img) => img["name"]!.isNotEmpty)

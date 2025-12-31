@@ -6,6 +6,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:lafetch/common/widget/bottom_sheets/bottomCoupon.dart';
 import 'package:lafetch/controllers/order_controller.dart';
@@ -878,33 +879,42 @@ class CartScreenState extends State<CartScreen> {
                   // ),
 
                   // -----------------------------
-                  // QTY BOX
+                  // QTY BOX - NOW TAPPABLE
                   // -----------------------------
-                  Container(
-                    height: 30.sp,
-                    padding: EdgeInsets.symmetric(horizontal: 10.sp),
-                    decoration: BoxDecoration(
-                      color: widget.backgroundcolor == whiteColor
-                          ? const Color(0xffF3F4F6)
-                          : const Color(0xFFDFDBFF),
-                      border: Border.all(
-                        width: 1,
+                  GestureDetector(
+                    onTap: () => _showQuantityModal(item, index),
+                    child: Container(
+                      height: 30.sp,
+                      padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                      decoration: BoxDecoration(
                         color: widget.backgroundcolor == whiteColor
-                            ? const Color(0xFFE5E7EB)
-                            : titleColor,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AppText(
-                          text: "Qty : ${item["quantity"] ?? "0"}",
-                          color: titleColor,
-                          fontSize: 10,
-                          fontFamily: "Clash Display Regular",
+                            ? const Color(0xffF3F4F6)
+                            : const Color(0xFFDFDBFF),
+                        border: Border.all(
+                          width: 1,
+                          color: widget.backgroundcolor == whiteColor
+                              ? const Color(0xFFE5E7EB)
+                              : titleColor,
                         ),
-                        SizedBox(width: 6.sp),
-                      ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AppText(
+                            text: "Qty : ${item["quantity"] ?? "0"}",
+                            color: titleColor,
+                            fontSize: 10,
+                            fontFamily: "Clash Display Regular",
+                          ),
+                          SizedBox(width: 6.sp),
+                          SvgPicture.asset(
+                            dropdownSvgImage,
+                            colorFilter: const ColorFilter.mode(titleColor, BlendMode.srcIn),
+                            height: 5.sp,
+                            width: 8.sp,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -1762,6 +1772,215 @@ class CartScreenState extends State<CartScreen> {
     Get.to(() => const LoginScreen(initialTab: 0));
   }
 
+  // Show quantity selection modal for cart items
+  void _showQuantityModal(Map item, int index) async {
+    final product = Map<String, dynamic>.from(item["product"] ?? const {});
+    final inventory = Map<String, dynamic>.from(item["inventory"] ?? const {});
+    final currentQuantity = item["quantity"] ?? 1;
+    final productId = product["id"];
+    final variantId = inventory["id"];
+
+    // Get available stock from inventory
+    int availableStock = _asNum(inventory["stocks"]).toInt();
+
+    // Check if product is out of stock
+    if (availableStock == 0) {
+      getSnackBar("This item is out of stock");
+      return;
+    }
+
+    // Fetch fresh stock data from product API for accuracy
+    try {
+      debugPrint("🔍 Fetching fresh stock for product $productId, variant $variantId");
+      final productDetails = await productController.fetchProductDetails(productId);
+
+      if (productDetails != null && productDetails["variants"] != null) {
+        final variants = List<Map<String, dynamic>>.from(
+          (productDetails["variants"] as List).whereType<Map>()
+        );
+
+        // Find matching variant
+        final matchingVariant = variants.firstWhere(
+          (v) => v["id"] == variantId,
+          orElse: () => {},
+        );
+
+        if (matchingVariant.isNotEmpty) {
+          final inv = matchingVariant["inventory"];
+          final freshStock = inv != null
+            ? (inv["availableStock"] ?? inv["stocks"] ?? 0)
+            : 0;
+
+          if (freshStock > 0) {
+            availableStock = freshStock;
+            debugPrint("✅ Fresh stock for variant $variantId: $availableStock");
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("⚠️ Failed to fetch fresh stock, using cart value: $e");
+      // Continue with inventory["stocks"] value
+    }
+
+    if (!mounted) return;
+
+    if (availableStock == 0) {
+      getSnackBar("This item is out of stock");
+      return;
+    }
+
+    // Allow user to select up to available inventory
+    final int maxQty = availableStock;
+    final List<String> qtyList = List.generate(maxQty, (i) => "${i + 1}");
+
+    // Show stock info to user
+    final String stockMessage = availableStock <= 5
+        ? "Only $availableStock left in stock"
+        : "$availableStock available";
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Stock indicator
+            if (availableStock <= 10)
+              Container(
+                margin: EdgeInsets.only(bottom: 8.sp),
+                padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
+                decoration: BoxDecoration(
+                  color: availableStock <= 5 ? Colors.red.shade50 : Colors.orange.shade50,
+                  borderRadius: BorderRadius.circular(8.sp),
+                ),
+                child: Text(
+                  stockMessage,
+                  style: TextStyle(
+                    color: availableStock <= 5 ? Colors.red.shade800 : Colors.orange.shade800,
+                    fontSize: 12.sp,
+                    fontFamily: "Clash Display",
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            BottomQuantity(
+              qtyList: qtyList,
+              selectedQty: "$currentQuantity",
+              stock: maxQty,
+              controller: controller,
+              onPressed: (newQty) async {
+                Navigator.pop(ctx);
+                if (newQty != currentQuantity) {
+                  // Validate quantity before updating
+                  if (newQty > availableStock) {
+                    getSnackBar("Only $availableStock units available in stock");
+                    return;
+                  }
+
+                  // Update quantity by removing and re-adding with new quantity
+                  await _updateCartItemQuantity(
+                    productId: productId,
+                    variantId: variantId,
+                    newQuantity: newQty,
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    await analytics.logEvent(
+      name: 'cart_quantity_modal_opened',
+      parameters: <String, Object>{
+        'product_id': productId,
+        'current_quantity': currentQuantity,
+      },
+    );
+  }
+
+  // Update cart item quantity
+  Future<void> _updateCartItemQuantity({
+    required int productId,
+    required int variantId,
+    required int newQuantity,
+  }) async {
+    try {
+      controller.showLoading();
+
+      final isGuest = await controller.isGuestUser();
+
+      if (isGuest) {
+        // For guest users: directly update in local storage
+        debugPrint("🎭 Guest user: Updating quantity in local cart");
+        await controller.addToCartUniversal(
+          quantity: newQuantity,
+          page: "quantity",
+          variantId: variantId,
+          productId: productId,
+          expressValue: 0,
+          type: 1,
+          backColor: widget.backgroundcolor,
+          oldInventoryId: 0,
+        );
+
+        // Refresh guest cart display
+        await controller.loadGuestCartForDisplay();
+        controller.hideLoading();
+        getSnackBar("Quantity updated to $newQuantity");
+      } else {
+        // For logged-in users: use the new update-cart-quantity API
+        debugPrint("👤 Logged-in user: Updating quantity via API");
+
+        final success = await controller.updateCartQuantity(
+          productId: productId,
+          variantId: variantId,
+          quantity: newQuantity,
+        );
+
+        if (success) {
+          debugPrint("✅ Quantity updated successfully");
+
+          // Refresh cart data to show updated quantity
+          await controller.getCartData();
+
+          // Verify the quantity was actually updated
+          final updatedItem = controller.orderList.firstWhere(
+            (item) => item['product']['id'] == productId,
+            orElse: () => {},
+          );
+          if (updatedItem.isNotEmpty) {
+            debugPrint("🔍 After refresh - Quantity in cart: ${updatedItem['quantity']}");
+          }
+
+          controller.hideLoading();
+          getSnackBar("Quantity updated to $newQuantity");
+        } else {
+          controller.hideLoading();
+          getSnackBar("Failed to update quantity");
+        }
+      }
+
+      await analytics.logEvent(
+        name: 'cart_quantity_updated',
+        parameters: <String, Object>{
+          'product_id': productId,
+          'new_quantity': newQuantity,
+        },
+      );
+    } catch (e) {
+      controller.hideLoading();
+      debugPrint("❌ Error updating quantity: $e");
+      getSnackBar("Failed to update quantity. Please try again.");
+    }
+  }
+
   Widget _buildStockError() {
     return Padding(
       padding: EdgeInsets.only(top: 20.sp, bottom: 30.sp, left: 16.sp),
@@ -1815,6 +2034,12 @@ class CartScreenState extends State<CartScreen> {
         ? (item["product"]["id"] as num).toInt()
         : int.tryParse("${item["product"]["id"]}") ?? 0;
 
+    // Extract variantId from inventory or product_variant
+    final inventory = item["inventory"] ?? {};
+    final variantId = (inventory["id"] is num)
+        ? (inventory["id"] as num).toInt()
+        : int.tryParse("${inventory["id"]}") ?? 0;
+
     showDialog(
       barrierColor: Colors.black26,
       context: context,
@@ -1824,7 +2049,7 @@ class CartScreenState extends State<CartScreen> {
           click2: () async {
             Get.back();
             await controller.deleteFromCartUniversal(
-                widget.backgroundcolor, productId);
+                widget.backgroundcolor, productId, variantId: variantId);
           },
           btncolor: colorPrimary,
           text: "Are you sure you want to remove this item?",
@@ -1845,6 +2070,12 @@ class CartScreenState extends State<CartScreen> {
     final productId = (product["id"] is num)
         ? (product["id"] as num).toInt()
         : int.tryParse("${product["id"]}") ?? 0;
+
+    // Extract variantId from inventory
+    final inventory = item["inventory"] ?? {};
+    final variantId = (inventory["id"] is num)
+        ? (inventory["id"] as num).toInt()
+        : int.tryParse("${inventory["id"]}") ?? 0;
 
     if (isWishlisted) {
       final wishlistId = product["wishlist_id"];
@@ -1880,7 +2111,7 @@ class CartScreenState extends State<CartScreen> {
           onPressed: (boardId) async {
             wishlistController.addProductToBoard(boardId, productId);
             await controller.deleteFromCartUniversal(
-                widget.backgroundcolor, productId);
+                widget.backgroundcolor, productId, variantId: variantId);
           },
           wishlistList: wishlistController.wishlistList,
         ),

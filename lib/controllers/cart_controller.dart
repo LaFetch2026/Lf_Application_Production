@@ -425,8 +425,60 @@ class CartController extends BaseController {
     }
   }
 
+  // -------------------- UPDATE CART QUANTITY --------------------
+  Future<bool> updateCartQuantity({
+    required int productId,
+    required int variantId,
+    required int quantity,
+  }) async {
+    try {
+      final client = _ensureClient();
+      final prefs = await SharedPreferences.getInstance();
+      final userId = _getUserIdFromPrefs(prefs);
+
+      if (userId == null) {
+        getSnackBar("User not found. Please log in again.");
+        return false;
+      }
+
+      final payload = {
+        "userId": userId,
+        "productId": productId,
+        "variantId": variantId,
+        "quantity": quantity,
+      };
+
+      final url = Uri.parse("${ApiConstants.baseUrl}/cart/update-quantity");
+      print("🛰️ PUT $url");
+      print("➡️ Payload: $payload");
+
+      final resp = await client.put(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(payload),
+      );
+
+      print("🛰️ Response status: ${resp.statusCode}");
+
+      if (resp.statusCode == 200 || resp.statusCode == 201) {
+        print("✅ Cart quantity updated successfully");
+        return true;
+      } else if (resp.statusCode == 401) {
+        getSnackBar("Unauthorized. Please log in again.");
+        return false;
+      } else {
+        print("❌ Update quantity failed: ${resp.statusCode}");
+        print("Response: ${resp.body}");
+        return false;
+      }
+    } catch (e) {
+      print("❌ Exception in updateCartQuantity: $e");
+      return false;
+    }
+  }
+
   // -------------------- DELETE CART ITEM --------------------
-  Future<void> callDeleteCart(Color backgroundColor, int productId) async {
+  Future<void> callDeleteCart(Color backgroundColor, int productId, {int? variantId}) async {
     try {
       final client = _ensureClient();
       final prefs = await SharedPreferences.getInstance();
@@ -437,13 +489,22 @@ class CartController extends BaseController {
         return;
       }
 
+      final payload = {
+        "userId": userId,
+        "productId": productId,
+      };
+
+      // Add variantId if provided (required by new backend API)
+      if (variantId != null) {
+        payload["variantId"] = variantId;
+      }
+
+      print("🗑️ DELETE cart-item: $payload");
+
       final resp = await client.delete(
         Uri.parse("${ApiConstants.baseUrl}/cart-item"),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          "userId": userId,
-          "productId": productId,
-        }),
+        body: json.encode(payload),
       );
 
       if (resp.statusCode == 200) {
@@ -791,7 +852,7 @@ class CartController extends BaseController {
 
   /// Wrapper for delete cart that handles both guest and logged-in users
   Future<void> deleteFromCartUniversal(
-      Color backgroundColor, int productId) async {
+      Color backgroundColor, int productId, {int? variantId}) async {
     final isGuest = await isGuestUser();
 
     if (isGuest) {
@@ -804,7 +865,7 @@ class CartController extends BaseController {
       }
     } else {
       print("👤 User is logged in, removing from server cart");
-      await callDeleteCart(backgroundColor, productId);
+      await callDeleteCart(backgroundColor, productId, variantId: variantId);
     }
   }
 
