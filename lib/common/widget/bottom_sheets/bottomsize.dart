@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+
+import '../../../controllers/base_controller.dart';
 import '../../../core/constant/constants.dart';
 
 import '../other/common_widget.dart';
@@ -11,10 +13,10 @@ import '../text/app_text.dart';
 
 class BottomSize extends StatefulWidget {
   final Function(int)? onPressed;
-  final Function onPressedCross;
-  final List sizeList;
+  final VoidCallback onPressedCross;
+  final List<Map<String, dynamic>> sizeList;
   final int selectedSizeId;
-  final GetxController controller;
+  final BaseController controller;
 
   const BottomSize({
     Key? key,
@@ -44,7 +46,7 @@ class BottomSizeState extends State<BottomSize> {
     return Container(
         height: widget.sizeList.length > 6 ? 300.sp : 230.sp,
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: whiteTextColor,
           /*   borderRadius: BorderRadius.only(
               topLeft: Radius.circular(16.0.sp),
@@ -178,7 +180,7 @@ class BottomSizeState extends State<BottomSize> {
                               ],
                             ),
                         ])
-                  : AppText(
+                  : const AppText(
                       text: 'N/A',
                       fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,

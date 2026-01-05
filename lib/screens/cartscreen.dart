@@ -1913,13 +1913,13 @@ class CartScreenState extends State<CartScreen> {
     required int newQuantity,
   }) async {
     try {
-      controller.showLoading();
-
       final isGuest = await controller.isGuestUser();
 
       if (isGuest) {
         // For guest users: directly update in local storage
+        // Note: addToCartUniversal handles showLoading() internally for page="quantity"
         debugPrint("🎭 Guest user: Updating quantity in local cart");
+
         await controller.addToCartUniversal(
           quantity: newQuantity,
           page: "quantity",
@@ -1933,10 +1933,10 @@ class CartScreenState extends State<CartScreen> {
 
         // Refresh guest cart display
         await controller.loadGuestCartForDisplay();
-        controller.hideLoading();
         getSnackBar("Quantity updated to $newQuantity");
       } else {
         // For logged-in users: use the new update-cart-quantity API
+        controller.showLoading();
         debugPrint("👤 Logged-in user: Updating quantity via API");
 
         final success = await controller.updateCartQuantity(
@@ -1977,7 +1977,11 @@ class CartScreenState extends State<CartScreen> {
         },
       );
     } catch (e) {
-      controller.hideLoading();
+      // Only hide loading if we're in logged-in flow (guest flow doesn't call showLoading here)
+      final isGuest = await controller.isGuestUser();
+      if (!isGuest) {
+        controller.hideLoading();
+      }
       debugPrint("❌ Error updating quantity: $e");
       getSnackBar("Failed to update quantity. Please try again.");
     }

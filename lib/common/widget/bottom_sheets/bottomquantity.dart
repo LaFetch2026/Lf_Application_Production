@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
+import '../../../controllers/base_controller.dart';
 import '../../../core/constant/constants.dart';
 
 import '../other/common_widget.dart';
@@ -12,10 +13,10 @@ import '../text/app_text.dart';
 
 class BottomQuantity extends StatefulWidget {
   final Function(int)? onPressed;
-  final List qtyList;
+  final List<String> qtyList;
   final int stock;
   final String selectedQty;
-  final GetxController controller;
+  final BaseController controller;
 
   const BottomQuantity({
     Key? key,
@@ -43,7 +44,7 @@ class BottomQuantityState extends State<BottomQuantity> {
     return Container(
       height: 230.sp,
       width: double.infinity,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: whiteTextColor,
         /*   borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16.0.sp),

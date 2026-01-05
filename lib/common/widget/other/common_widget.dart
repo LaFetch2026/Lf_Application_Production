@@ -7,8 +7,8 @@ import '../../../core/constant/constants.dart';
 
 import 'package:get/get.dart';
 
-getSnackBar(message, {SnackPosition? snackPosition}) {
-  return Get.snackbar(
+void getSnackBar(String message, {SnackPosition? snackPosition}) {
+  Get.snackbar(
     '',
     message,
     titleText: Container(),
@@ -19,23 +19,23 @@ getSnackBar(message, {SnackPosition? snackPosition}) {
   );
 }
 
-isImage(String path) {
+bool isImage(String path) {
   return path.contains('product_photo');
 }
 
-Widget getSingleButton(
-    {label,
+Widget getSingleButton({
+    required String label,
     double fontSize = 14,
-    fontFamily = "Clash Display",
-    roundness = 1,
-    fontWeight = FontWeight.bold,
-    width = double.infinity,
-    textColor,
-    borderColor,
+    String fontFamily = "Clash Display",
+    double roundness = 1,
+    FontWeight fontWeight = FontWeight.bold,
+    double width = double.infinity,
+    required Color textColor,
+    required Color borderColor,
     double right = 16,
     double left = 16,
-    backgroundColor,
-    controller,
+    required Color backgroundColor,
+    BaseController? controller,
     Widget? trailingWidget,
     Function? onPressed}) {
   return Padding(
@@ -79,17 +79,17 @@ Widget getSingleButton(
   );
 }
 
-Widget getSmallButton(
-    {String label = "",
+Widget getSmallButton({
+    String label = "",
     double fontSize = 14,
-    fontFamily = "Clash Display",
-    roundness = 1,
-    fontWeight = FontWeight.bold,
+    String fontFamily = "Clash Display",
+    double roundness = 1,
+    FontWeight fontWeight = FontWeight.bold,
     double width = double.infinity,
-    textColor,
-    borderColor,
-    backgroundColor,
-    controller,
+    required Color textColor,
+    required Color borderColor,
+    required Color backgroundColor,
+    BaseController? controller,
     Widget? trailingWidget,
     Function? onPressed}) {
   return Container(
@@ -151,8 +151,8 @@ Route scaleIn(Widget page) {
 
 Widget showSingleBtnNonCancelableDailog({
   Color btncolor = colorPrimary,
-  text,
-  btn1Text,
+  required String text,
+  required String btn1Text,
   Function? click1,
 }) {
   return Dialog(
@@ -212,11 +212,11 @@ Widget showSingleBtnNonCancelableDailog({
   );
 }
 
-Widget showDoubleBtnDailog(
-    {Color btncolor = colorPrimary,
-    text,
-    btn1Text,
-    btn2Text,
+Widget showDoubleBtnDailog({
+    Color btncolor = colorPrimary,
+    required String text,
+    required String btn1Text,
+    required String btn2Text,
     Function? click1,
     Function? click2}) {
   return Dialog(
