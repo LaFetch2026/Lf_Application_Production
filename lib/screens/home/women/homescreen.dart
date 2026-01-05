@@ -29,6 +29,7 @@ import 'package:marquee/marquee.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../common/widget/appbar/home_appbar.dart';
 import '../../../common/widget/lists/dummy_grid_mostsearch.dart';
@@ -455,33 +456,39 @@ class HomeScreenState extends State<HomeScreen> {
               getSnackBar("Unable to open banner right now");
             }
           },
-          child: CachedNetworkImage(
-            cacheManager: CacheManager(
-              Config(
-                "customCacheKey",
-                stalePeriod: const Duration(days: 15),
-                maxNrOfCacheObjects: 100,
-              ),
-            ),
-            fit: BoxFit.fill,
-            imageUrl: imageUrl,
-            height: 229.sp,
-            width: MediaQuery.of(context).size.width,
-            progressIndicatorBuilder: (context, url, downloadProgress) =>
-                Center(
-              child: Container(
-                height: 229.sp,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.04),
+          child: imageUrl.isNotEmpty && isVideoUrl(imageUrl)
+              ? BannerVideoPlayer(
+                  videoUrl: imageUrl,
+                  height: 229.sp,
+                  width: MediaQuery.of(context).size.width,
+                )
+              : CachedNetworkImage(
+                  cacheManager: CacheManager(
+                    Config(
+                      "customCacheKey",
+                      stalePeriod: const Duration(days: 15),
+                      maxNrOfCacheObjects: 100,
+                    ),
+                  ),
+                  fit: BoxFit.fill,
+                  imageUrl: imageUrl,
+                  height: 229.sp,
+                  width: MediaQuery.of(context).size.width,
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      Center(
+                    child: Container(
+                      height: 229.sp,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.04),
+                      ),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Image.asset(
+                    downloadImage,
+                    height: 229.sp,
+                  ),
                 ),
-              ),
-            ),
-            errorWidget: (context, url, error) => Image.asset(
-              downloadImage,
-              height: 229.sp,
-            ),
-          ),
         ),
       );
     }
@@ -1146,6 +1153,16 @@ class HomeScreenState extends State<HomeScreen> {
 }
 
 // ---------- helper sections ----------
+
+// ✅ Helper to check if URL is a video
+bool isVideoUrl(String url) {
+  final videoExtensions = [
+    '.mp4', '.mov', '.avi', '.mkv', '.flv', '.wmv', '.webm', '.m4v', '.3gp'
+  ];
+  final lowerUrl = url.toLowerCase();
+  return videoExtensions.any((ext) => lowerUrl.contains(ext));
+}
+
 String? firstImageUrlFromProduct(Map<String, dynamic> m) {
   final imgs = m['imageUrls'];
   if (imgs is List) {
@@ -1333,6 +1350,117 @@ class _SectionStrip extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+// ✅ Video Player Widget for Banner Videos
+class BannerVideoPlayer extends StatefulWidget {
+  final String videoUrl;
+  final double height;
+  final double width;
+
+  const BannerVideoPlayer({
+    super.key,
+    required this.videoUrl,
+    required this.height,
+    required this.width,
+  });
+
+  @override
+  State<BannerVideoPlayer> createState() => _BannerVideoPlayerState();
+}
+
+class _BannerVideoPlayerState extends State<BannerVideoPlayer> {
+  late VideoPlayerController _controller;
+  bool _isInitialized = false;
+  bool _hasError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeVideo();
+  }
+
+  Future<void> _initializeVideo() async {
+    try {
+      _controller = VideoPlayerController.networkUrl(
+        Uri.parse(widget.videoUrl),
+      );
+
+      await _controller.initialize();
+
+      if (mounted) {
+        setState(() {
+          _isInitialized = true;
+        });
+
+        // Autoplay with sound and loop
+        _controller.setLooping(true);
+        _controller.setVolume(1.0); // Full volume
+        _controller.play();
+      }
+    } catch (e) {
+      print("Error initializing video: $e");
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_hasError) {
+      // Show placeholder if video fails to load
+      return Container(
+        height: widget.height,
+        width: widget.width,
+        color: Colors.black.withOpacity(0.04),
+        child: const Center(
+          child: Icon(
+            Icons.videocam_off,
+            size: 48,
+            color: Colors.grey,
+          ),
+        ),
+      );
+    }
+
+    if (!_isInitialized) {
+      // Show loading indicator while initializing
+      return Container(
+        height: widget.height,
+        width: widget.width,
+        color: Colors.black.withOpacity(0.04),
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: Colors.black,
+            strokeWidth: 2,
+          ),
+        ),
+      );
+    }
+
+    // Show video player
+    return SizedBox(
+      height: widget.height,
+      width: widget.width,
+      child: FittedBox(
+        fit: BoxFit.cover,
+        child: SizedBox(
+          width: _controller.value.size.width,
+          height: _controller.value.size.height,
+          child: VideoPlayer(_controller),
+        ),
       ),
     );
   }
