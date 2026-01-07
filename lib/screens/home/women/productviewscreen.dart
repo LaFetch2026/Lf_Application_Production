@@ -246,23 +246,50 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
     final List<Map<String, dynamic>> allProducts = <Map<String, dynamic>>[];
 
+    print("🔍 DEBUG: Getting products - selectedCollectionId: $selectedCollectionId, superCatId: $superCatId");
+    print("🔍 DEBUG: Total collections: ${collections.length}");
+
     for (final c in collections) {
+      // ✅ Get the collection ID from the collection object (not from products)
+      final collectionId = c['id'] is int
+          ? c['id']
+          : int.tryParse(c['id']?.toString() ?? '') ?? 0;
+
       final List<Map<String, dynamic>> prods =
           (c['products'] as List? ?? const [])
               .whereType<Map<String, dynamic>>()
               .toList();
 
-      for (final p in prods) {
-        if (selectedCollectionId != 0 &&
-            (p['collectionID'] != selectedCollectionId)) continue;
+      print("📦 Collection ID: $collectionId, Name: ${c['name']}, Products: ${prods.length}");
 
+      // ✅ If a specific collection is selected, skip other collections
+      if (selectedCollectionId != 0 && collectionId != selectedCollectionId) {
+        print("   ⏭️ Skipping collection $collectionId (looking for $selectedCollectionId)");
+        continue;
+      }
+
+      for (final p in prods) {
         final sc = p['superCatId'];
-        if (superCatId != 0 && sc is int && sc != superCatId) continue;
+        final scId = sc is int ? sc : int.tryParse(sc?.toString() ?? '') ?? 0;
+
+        // ✅ Apply same workaround as homescreen: if superCatId is 0 (missing), assume it matches
+        // because API already filters by gender parameter
+        if (scId == 0) {
+          allProducts.add(p);
+          continue;
+        }
+
+        // ✅ Filter by gender if superCatId is set
+        if (superCatId != 0 && scId != superCatId) {
+          print("   ⏭️ Product ${p['id']} skipped (superCatId: $scId, need: $superCatId)");
+          continue;
+        }
 
         allProducts.add(p);
       }
     }
 
+    print("✅ Total products returned: ${allProducts.length}");
     return allProducts;
   }
 

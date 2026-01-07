@@ -681,144 +681,108 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     if (!productController.checkDetailsValidation()) {
       return;
     }
-
     _logBuyNowAction(action: "BUY NOW", isCartFlow: isCartFlow);
-
     // Get selected variant
     final variant = productController.getSelectedVariant();
     if (variant == null) {
       showAppSnackBar('Please select size and color', type: SnackBarType.error);
       return;
     }
-
     final variantId = variant['id'] as int;
     final stock = int.tryParse(variant['stocks']?.toString() ?? '0') ?? 0;
-
     if (stock <= 0) {
       showAppSnackBar('Selected variant is out of stock',
           type: SnackBarType.error);
       return;
     }
-
     final firstImg = _imagesOnly().isNotEmpty ? _imagesOnly().first : '';
-
     final sizeLabel = "${productController.selectedSize.value}" +
         (productController.selectedColor.value.isNotEmpty
             ? " / ${productController.selectedColor.value}"
             : "");
-
-    // ✅ Use the selected quantity from the quantity selector
+    // :white_check_mark: Use the selected quantity from the quantity selector
     final initialQuantity = _selectedQuantity;
-
     // ========================================
-    // ✅ FETCH COMPLETE VARIANT DATA FROM API
+    // :white_check_mark: FETCH COMPLETE VARIANT DATA FROM API
     // ========================================
-
-    print("🔍 === Fetching Complete Variant Data ===");
+    print(":mag: === Fetching Complete Variant Data ===");
     print("Product ID: ${widget.productId}");
     print("Variant ID: $variantId");
-
     String? hsnCode;
     double? gstRate;
     double? statutoryGSTRate;
     String? gstRuleApplied;
-
-    try {
-      // Fetch fresh product details from API
-      showLoading(); // Show loading indicator
-
-      final productDetails =
-          await productController.fetchProductDetails(widget.productId);
-
-      if (productDetails != null && productDetails["variants"] != null) {
-        final variants = List<Map<String, dynamic>>.from(
-            (productDetails["variants"] as List).whereType<Map>());
-
-        print("📦 Found ${variants.length} variants in API response");
-
-        // Find the matching variant by ID
-        final matchingVariant = variants.firstWhere(
-          (v) => v["id"] == variantId,
-          orElse: () => {},
-        );
-
-        if (matchingVariant.isNotEmpty) {
-          print("✅ Found matching variant in API response");
-
-          // Extract GST data from variant
-          hsnCode = matchingVariant["hsn_code"]?.toString() ??
-              matchingVariant["hsnCode"]?.toString();
-
-          gstRate = _extractDouble(
-              matchingVariant["gst_rate"] ?? matchingVariant["gstRate"]);
-
-          statutoryGSTRate = _extractDouble(
-              matchingVariant["statutory_gst_rate"] ??
-                  matchingVariant["statutoryGSTRate"] ??
-                  matchingVariant["gst_rate"] ??
-                  matchingVariant["gstRate"]);
-
-          gstRuleApplied = matchingVariant["gst_rule"]?.toString() ??
-              matchingVariant["gstRule"]?.toString();
-
-          print("📋 Extracted from variant:");
-          print("   HSN Code: $hsnCode");
-          print("   GST Rate: $gstRate");
-          print("   Statutory GST Rate: $statutoryGSTRate");
-          print("   GST Rule Applied: $gstRuleApplied");
-        } else {
-          print("⚠️ Variant $variantId not found in API response");
-        }
-
-        // Fallback to product-level GST data if variant doesn't have it
-        if (hsnCode == null || hsnCode.isEmpty || gstRate == null) {
-          print("📦 Falling back to product-level GST data");
-
-          hsnCode = hsnCode ??
-              productDetails["hsn_code"]?.toString() ??
-              productDetails["hsnCode"]?.toString();
-
-          gstRate = gstRate ??
-              _extractDouble(
-                  productDetails["gst_rate"] ?? productDetails["gstRate"]);
-
-          statutoryGSTRate = statutoryGSTRate ??
-              _extractDouble(productDetails["statutory_gst_rate"] ??
-                  productDetails["statutoryGSTRate"]) ??
-              gstRate;
-
-          gstRuleApplied = gstRuleApplied ??
-              productDetails["gst_rule"]?.toString() ??
-              productDetails["gstRule"]?.toString();
-
-          print("📋 Extracted from product:");
-          print("   HSN Code: $hsnCode");
-          print("   GST Rate: $gstRate");
-          print("   Statutory GST Rate: $statutoryGSTRate");
-          print("   GST Rule Applied: $gstRuleApplied");
-        }
+    // Use existing product details from controller (already loaded)
+    showLoading(); // Show loading indicator
+    final productDetails = productController.productDetails;
+    if (productDetails.isNotEmpty && productDetails["variants"] != null) {
+      final variants = List<Map<String, dynamic>>.from(
+          (productDetails["variants"] as List).whereType<Map>());
+      print(
+          ":package: Found ${variants.length} variants in existing product data");
+      // Find the matching variant by ID
+      final matchingVariant = variants.firstWhere(
+        (v) => v["id"] == variantId,
+        orElse: () => {},
+      );
+      if (matchingVariant.isNotEmpty) {
+        print(":white_check_mark: Found matching variant in existing data");
+        // Extract GST data from variant
+        hsnCode = matchingVariant["hsn_code"]?.toString() ??
+            matchingVariant["hsnCode"]?.toString();
+        gstRate = _extractDouble(
+            matchingVariant["gst_rate"] ?? matchingVariant["gstRate"]);
+        statutoryGSTRate = _extractDouble(
+            matchingVariant["statutory_gst_rate"] ??
+                matchingVariant["statutoryGSTRate"] ??
+                matchingVariant["gst_rate"] ??
+                matchingVariant["gstRate"]);
+        gstRuleApplied = matchingVariant["gst_rule"]?.toString() ??
+            matchingVariant["gstRule"]?.toString();
+        print(":clipboard: Extracted from variant:");
+        print("   HSN Code: $hsnCode");
+        print("   GST Rate: $gstRate");
+        print("   Statutory GST Rate: $statutoryGSTRate");
+        print("   GST Rule Applied: $gstRuleApplied");
       } else {
-        print("❌ Failed to fetch product details from API");
+        print(":warning: Variant $variantId not found in existing data");
       }
-
-      hideLoading(); // Hide loading indicator
-    } catch (e) {
-      hideLoading();
-      print("❌ Error fetching variant data: $e");
+      // Fallback to product-level GST data if variant doesn't have it
+      if (hsnCode == null || hsnCode.isEmpty || gstRate == null) {
+        print(":package: Falling back to product-level GST data");
+        hsnCode = hsnCode ??
+            productDetails["hsn_code"]?.toString() ??
+            productDetails["hsnCode"]?.toString();
+        gstRate = gstRate ??
+            _extractDouble(
+                productDetails["gst_rate"] ?? productDetails["gstRate"]);
+        statutoryGSTRate = statutoryGSTRate ??
+            _extractDouble(productDetails["statutory_gst_rate"] ??
+                productDetails["statutoryGSTRate"]) ??
+            gstRate;
+        gstRuleApplied = gstRuleApplied ??
+            productDetails["gst_rule"]?.toString() ??
+            productDetails["gstRule"]?.toString();
+        print(":clipboard: Extracted from product:");
+        print("   HSN Code: $hsnCode");
+        print("   GST Rate: $gstRate");
+        print("   Statutory GST Rate: $statutoryGSTRate");
+        print("   GST Rule Applied: $gstRuleApplied");
+      }
+    } else {
+      print(":x: No product details available");
     }
-
+    hideLoading(); // Hide loading indicator
     // ========================================
-    // ✅ FINAL VALIDATION & DEFAULTS
+    // :white_check_mark: FINAL VALIDATION & DEFAULTS
     // ========================================
-
     // Set safe defaults if still missing
     hsnCode = hsnCode ?? "";
     gstRate = gstRate ?? 0.0;
     statutoryGSTRate = statutoryGSTRate ?? gstRate;
     gstRuleApplied = gstRuleApplied ?? "VALUE_BASED";
-
     print("==========================");
-    print("📦 Final Values:");
+    print(":package: Final Values:");
     print("   Product ID: ${widget.productId}");
     print("   Variant ID: $variantId");
     print("   Price: ${productController.getDisplayPrice()}");
@@ -828,17 +792,15 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     print("   Statutory GST Rate: $statutoryGSTRate");
     print("   GST Rule Applied: $gstRuleApplied");
     print("==========================");
-
     // Show warning if GST data is still missing
     if (hsnCode.isEmpty || gstRate == 0) {
-      print("⚠️ Warning: GST data is incomplete!");
+      print(":warning: Warning: GST data is incomplete!");
       showAppSnackBar(
           'Tax information incomplete. Proceeding with available data.',
           type: SnackBarType.warning);
     }
-
     // ========================================
-    // ✅ NAVIGATE TO REVIEW ORDER SCREEN
+    // :white_check_mark: NAVIGATE TO REVIEW ORDER SCREEN
     // ========================================
     Get.to(() => ReviewOrderScreen(
           productId: widget.productId,

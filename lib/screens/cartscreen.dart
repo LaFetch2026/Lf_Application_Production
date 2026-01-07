@@ -259,60 +259,216 @@ class CartScreenState extends State<CartScreen> {
         final product = Map<String, dynamic>.from(item["product"] ?? {});
         final inventory = Map<String, dynamic>.from(item["inventory"] ?? {});
 
-        final num unitPrice = _asNum(product["price"]);
+        final num unitPrice = _asNum(product["price"]); // Price WITH GST
         final int quantity = item["quantity"] ?? 1;
         const num discount = 0;
 
-        print("      Product ID: ${product["id"]}");
-        print("      Variant ID: ${inventory["id"]}");
-        print("      Unit Price: ₹$unitPrice");
+        final int productId = product["id"];
+        final int variantId = inventory["id"];
+
+        print("      Product ID: $productId");
+        print("      Variant ID: $variantId");
+        print("      Unit Price: ₹$unitPrice (includes GST)");
         print("      Quantity: $quantity");
 
-        // Extract GST data from product/inventory
-        final String hsnCode = product["hsn_code"]?.toString() ??
-            inventory["hsn_code"]?.toString() ??
-            "";
-        final num gstRate =
-            _asNum(product["gst_rate"] ?? inventory["gst_rate"]);
-        final num statutoryGSTRate = _asNum(product["statutory_gst_rate"] ??
-            inventory["statutory_gst_rate"] ??
-            gstRate);
-        final String gstRuleApplied = product["gst_rule"]?.toString() ??
-            inventory["gst_rule"]?.toString() ??
-            "";
+        // ========================================
+        // 🔍 EXTRACT GST DATA (with fallback to product API)
+        // ========================================
+        String hsnCode = "";
+        num gstRate = 0;
+        num statutoryGSTRate = 0;
+        String gstRuleApplied = "";
+        num basePrice = 0; // Price WITHOUT GST
+
+        // Try to get from cart data (check both formats)
+        hsnCode = (product["hsn_code"] ??
+                   product["hsnCode"] ??
+                   inventory["hsn_code"] ??
+                   inventory["hsnCode"] ??
+                   "").toString();
+
+        gstRate = _asNum(product["gst_rate"] ??
+                        product["gstRate"] ??
+                        inventory["gst_rate"] ??
+                        inventory["gstRate"]);
+
+        statutoryGSTRate = _asNum(product["statutory_gst_rate"] ??
+                                  product["statutoryGSTRate"] ??
+                                  inventory["statutory_gst_rate"] ??
+                                  inventory["statutoryGSTRate"] ??
+                                  gstRate);
+
+        gstRuleApplied = (product["gst_rule"] ??
+                          product["gstRule"] ??
+                          inventory["gst_rule"] ??
+                          inventory["gstRule"] ??
+                          "").toString();
+
+        basePrice = _asNum(product["base_price"] ??
+                          product["basePrice"] ??
+                          inventory["base_price"] ??
+                          inventory["basePrice"]);
+
+        // ⚠️ If critical GST data is missing, fetch from ProductController memory or API
+        if (hsnCode.isEmpty || gstRate == 0) {
+          print("      ⚠️ Missing GST data in cart, checking ProductController memory...");
+
+          // 🔥 MEMORY-FIRST APPROACH (like Buy Now)
+          // Check if product is already loaded in ProductController
+          if (productController.productDetails.isNotEmpty &&
+              productController.productDetails['id'] == productId) {
+            print("      ✅ Found product in memory, extracting GST data...");
+
+            final cachedProduct = productController.productDetails;
+            final variants = cachedProduct["variants"];
+
+            if (variants is List && variants.isNotEmpty) {
+              // Find matching variant by ID
+              final matchingVariant = variants.firstWhere(
+                (v) => v["id"] == variantId,
+                orElse: () => {},
+              );
+
+              if (matchingVariant.isNotEmpty) {
+                hsnCode = (matchingVariant["hsnCode"] ??
+                          matchingVariant["hsn_code"] ??
+                          "").toString();
+
+                gstRate = _asNum(matchingVariant["gstRate"] ??
+                                matchingVariant["gst_rate"]);
+
+                statutoryGSTRate = _asNum(matchingVariant["statutoryGSTRate"] ??
+                                        matchingVariant["statutory_gst_rate"] ??
+                                        gstRate);
+
+                gstRuleApplied = (matchingVariant["gstRule"] ??
+                                 matchingVariant["gst_rule"] ??
+                                 matchingVariant["gstRuleApplied"] ??
+                                 "").toString();
+
+                basePrice = _asNum(matchingVariant["basePrice"] ??
+                                  matchingVariant["base_price"]);
+
+                print("      ✅ Extracted GST from memory:");
+                print("         HSN: $hsnCode");
+                print("         GST Rate: $gstRate");
+                print("         Statutory Rate: $statutoryGSTRate");
+                print("         Base Price: $basePrice");
+              }
+            }
+          }
+
+          // 🔄 FALLBACK: If still missing, try fetching from API
+          if (hsnCode.isEmpty || gstRate == 0) {
+            print("      ⚠️ Not in memory, fetching from product API...");
+            try {
+              final productDetails = await productController.fetchProductDetails(productId);
+
+              if (productDetails != null) {
+                // Handle both direct response and wrapped response
+                final data = productDetails["data"] ?? productDetails;
+                final variants = data["variants"];
+
+                if (variants is List && variants.isNotEmpty) {
+                  final matchingVariant = variants.firstWhere(
+                    (v) => v["id"] == variantId,
+                    orElse: () => {},
+                  );
+
+                  if (matchingVariant.isNotEmpty) {
+                    hsnCode = (matchingVariant["hsnCode"] ??
+                              matchingVariant["hsn_code"] ??
+                              data["hsnCode"] ??
+                              data["hsn_code"] ??
+                              "").toString();
+
+                    gstRate = _asNum(matchingVariant["gstRate"] ??
+                                    matchingVariant["gst_rate"]);
+
+                    statutoryGSTRate = _asNum(matchingVariant["statutoryGSTRate"] ??
+                                            matchingVariant["statutory_gst_rate"] ??
+                                            gstRate);
+
+                    gstRuleApplied = (matchingVariant["gstRule"] ??
+                                     matchingVariant["gst_rule"] ??
+                                     matchingVariant["gstRuleApplied"] ??
+                                     "").toString();
+
+                    basePrice = _asNum(matchingVariant["basePrice"] ??
+                                      matchingVariant["base_price"]);
+
+                    print("      ✅ Fetched GST data from API");
+                  } else {
+                    print("      ⚠️ Variant $variantId not found in API response");
+                  }
+                } else {
+                  print("      ⚠️ No variants in API response");
+                }
+              }
+            } catch (e) {
+              print("      ❌ Failed to fetch GST data from API: $e");
+            }
+          }
+        }
 
         print("      HSN Code: $hsnCode");
         print("      GST Rate: $gstRate%");
+        print("      Base Price: ₹$basePrice");
+        print("      Statutory GST Rate: $statutoryGSTRate%");
+        print("      GST Rule: $gstRuleApplied");
 
-        // Calculate GST: (unitPrice * quantity * gstRate / 100)
-        final num gstAmount = ((unitPrice * quantity) * gstRate / 100);
+        // ========================================
+        // 🧮 CALCULATE GST AMOUNT
+        // ========================================
+        // Important: unitPrice INCLUDES GST, so we need to extract GST portion
+        num gstAmount = 0;
+
+        if (basePrice > 0) {
+          // If we have basePrice (without GST), calculate GST as difference
+          gstAmount = (unitPrice - basePrice) * quantity;
+          print("      GST Amount (from base price): ₹$gstAmount");
+        } else if (gstRate > 0) {
+          // Extract GST from price that includes GST
+          // Formula: gstAmount = price * (gstRate / (100 + gstRate))
+          gstAmount = (unitPrice * quantity) * (gstRate / (100 + gstRate));
+          print("      GST Amount (extracted): ₹$gstAmount");
+        } else {
+          print("      ⚠️ No GST rate available, setting GST to 0");
+        }
+
         totalGst += gstAmount;
 
-        // Item total = (unitPrice * quantity) + gstAmount - discount
-        final num itemTotal = (unitPrice * quantity) + gstAmount - discount;
+        // ========================================
+        // 🧮 ITEM TOTAL
+        // ========================================
+        // Item total = (unitPrice * quantity) - discount
+        // Note: GST is already included in unitPrice, so DON'T add it again
+        final num itemTotal = (unitPrice * quantity) - discount;
 
-        print("      GST Amount: ₹$gstAmount");
-        print("      Item Total: ₹$itemTotal");
+        print("      GST Amount: ₹${gstAmount.toStringAsFixed(2)}");
+        print("      Item Total: ₹${itemTotal.toStringAsFixed(2)}");
 
-        // ✅ Use helper method to build item
+        // ========================================
+        // ✅ BUILD ORDER ITEM
+        // ========================================
         items.add(orderController.buildOrderItem(
-          productId: product["id"],
-          variantId: inventory["id"],
+          productId: productId,
+          variantId: variantId,
           quantity: quantity,
-          unitPrice: unitPrice,
+          unitPrice: unitPrice, // Price WITH GST
           discount: discount,
-          total: itemTotal,
-          tax: 0, // Keep as 0 (GST is separate)
+          total: itemTotal, // unitPrice * quantity - discount
+          tax: 0, // Keep as 0 (GST is sent separately in gstAmount)
           gstAmount: gstAmount,
           hsnCode: hsnCode,
           gstRate: gstRate,
           statutoryGSTRate: statutoryGSTRate,
-          gstRuleApplied: gstRuleApplied,
+          gstRuleApplied: gstRuleApplied.isEmpty ? "VALUE_BASED" : gstRuleApplied,
         ));
       }
 
       print("\n   ✅ Built ${items.length} items for payment");
-      print("   Total GST: ₹$totalGst");
+      print("   Total GST: ₹${totalGst.toStringAsFixed(2)}");
 
       // ✅ Step 5: Call initiate-payment API with named parameters
       print("\n💳 STEP 5: Initiating Payment");

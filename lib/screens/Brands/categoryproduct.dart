@@ -214,10 +214,35 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       return;
     }
 
-    await catalogController.getCategoryProductData(
-      widget.categoryId,
-      widget.genderType,
-    );
+    // ✅ Check if we should load by collection/tag ID instead of category ID
+    final hasTagIds = widget.tagIds.isNotEmpty;
+    final hasCategoryId = widget.categoryId > 0;
+
+    if (hasTagIds) {
+      // Load products by collection/tag ID
+      print("🔹 Loading products by collection/tag ID: ${widget.tagIds}");
+      final collectionId = widget.tagIds.first is int
+          ? widget.tagIds.first
+          : int.tryParse(widget.tagIds.first?.toString() ?? '') ?? 0;
+
+      await catalogController.getFilterAndSortProducts(
+        collectionId: collectionId,
+        superCatId: widget.genderType,
+      );
+    } else if (hasCategoryId) {
+      // Load products by category ID (existing behavior)
+      print("🔹 Loading products by category ID: ${widget.categoryId}");
+      await catalogController.getCategoryProductData(
+        widget.categoryId,
+        widget.genderType,
+      );
+    } else {
+      // No valid ID provided
+      print("⚠️ No valid categoryId or tagIds provided");
+      catalogController.categoryProductList.clear();
+      _isCategoryProductsLoaded = true;
+      return;
+    }
 
     // ✅ Store original product IDs for client-side filtering
     _originalCategoryProductIds = catalogController.categoryProductList
@@ -231,7 +256,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
     _isCategoryProductsLoaded = true;
     print(
-        "✅ Category products loaded successfully (${catalogController.categoryProductList.length} items)");
+        "✅ Products loaded successfully (${catalogController.categoryProductList.length} items)");
     print(
         "✅ Stored ${_originalCategoryProductIds.length} product IDs for filtering");
   }
@@ -402,10 +427,24 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
         // Load original products if needed
         if (!_isCategoryProductsLoaded) {
-          await catalogController.getCategoryProductData(
-            widget.categoryId,
-            widget.genderType,
-          );
+          final hasTagIds = widget.tagIds.isNotEmpty;
+          final hasCategoryId = widget.categoryId > 0;
+
+          if (hasTagIds) {
+            final collectionId = widget.tagIds.first is int
+                ? widget.tagIds.first
+                : int.tryParse(widget.tagIds.first?.toString() ?? '') ?? 0;
+
+            await catalogController.getFilterAndSortProducts(
+              collectionId: collectionId,
+              superCatId: widget.genderType,
+            );
+          } else if (hasCategoryId) {
+            await catalogController.getCategoryProductData(
+              widget.categoryId,
+              widget.genderType,
+            );
+          }
           _isCategoryProductsLoaded = true;
         }
 
@@ -478,23 +517,49 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
             "✅ Filters re-applied with new sort - ${catalogController.categoryProductList.length} products");
       } else if (!_hasActiveFilters && filterChanged) {
         // Filters cleared - reload original products
-        if (!_isCategoryProductsLoaded) {
+        print("🔹 Filters cleared - reloading original products");
+
+        final hasTagIds = widget.tagIds.isNotEmpty;
+        final hasCategoryId = widget.categoryId > 0;
+
+        if (hasTagIds) {
+          final collectionId = widget.tagIds.first is int
+              ? widget.tagIds.first
+              : int.tryParse(widget.tagIds.first?.toString() ?? '') ?? 0;
+
+          await catalogController.getFilterAndSortProducts(
+            collectionId: collectionId,
+            superCatId: widget.genderType,
+          );
+        } else if (hasCategoryId) {
           await catalogController.getCategoryProductData(
             widget.categoryId,
             widget.genderType,
           );
-          _isCategoryProductsLoaded = true;
         }
         _lastFilterHash = currentFilterHash;
       } else if (_appliedSortOption == "recommended" && sortChanged) {
         // Sort reset to recommended - reload original products if no filters
         if (!_hasActiveFilters) {
-          if (!_isCategoryProductsLoaded) {
+          print("🔹 Sort reset to recommended - reloading original products");
+
+          final hasTagIds = widget.tagIds.isNotEmpty;
+          final hasCategoryId = widget.categoryId > 0;
+
+          if (hasTagIds) {
+            final collectionId = widget.tagIds.first is int
+                ? widget.tagIds.first
+                : int.tryParse(widget.tagIds.first?.toString() ?? '') ?? 0;
+
+            await catalogController.getFilterAndSortProducts(
+              collectionId: collectionId,
+              superCatId: widget.genderType,
+            );
+          } else if (hasCategoryId) {
             await catalogController.getCategoryProductData(
               widget.categoryId,
               widget.genderType,
             );
-            _isCategoryProductsLoaded = true;
           }
         }
         _lastSortHash = currentSortHash;

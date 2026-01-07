@@ -1046,7 +1046,7 @@ class ProductController extends BaseController {
 
   Future<Map<String, dynamic>?> fetchProductDetails(int productId) async {
     try {
-      final uri = Uri.parse("${ApiConstants.baseUrl}/products/$productId");
+      final uri = Uri.parse("${ApiConstants.baseUrl}/product/$productId");
 
       print("🌐 Fetching product details from: $uri");
 
