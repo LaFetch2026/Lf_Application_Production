@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../common/widget/other/common_widget.dart';
 import '../controllers/cart_controller.dart';
 import '../controllers/product_controller.dart';
 import '../controllers/profile_controller.dart';
@@ -95,13 +96,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   void _handleProtectedNavigation(VoidCallback onAllowed) {
     if (isGuest) {
       // ✅ Show snackbar
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Please sign in to access your profile"),
-          duration: Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showAppSnackBar("Please sign in to access your profile", type: SnackBarType.info);
 
       // ✅ Navigate to login after delay
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -130,18 +125,14 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     }
 
     if (permission == LocationPermission.denied) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Location permission denied")),
-      );
+      showAppSnackBar("Location permission denied", type: SnackBarType.error);
       return false;
     }
 
     if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              "Location permission permanently denied. Enable from settings."),
-        ),
+      showAppSnackBar(
+        "Location permission permanently denied. Enable from settings.",
+        type: SnackBarType.error,
       );
       await Geolocator.openAppSettings();
       return false;

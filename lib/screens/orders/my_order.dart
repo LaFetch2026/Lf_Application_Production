@@ -11,6 +11,7 @@ import 'package:lafetch/screens/orders/rate_productscreen.dart';
 import 'package:lafetch/screens/orders/return_request.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
+import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/core/constant/constants.dart';
 import 'package:lafetch/controllers/order_controller.dart';
 import 'package:lafetch/screens/orders/confirm_orderdetails.dart';
@@ -64,7 +65,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
     final int? userId = prefs.getInt('userId') ?? prefs.getInt('user_id');
 
     if (userId == null) {
-      Get.snackbar("Error", "Please login again");
+      showAppSnackBar("Please login again", type: SnackBarType.error);
       return;
     }
 

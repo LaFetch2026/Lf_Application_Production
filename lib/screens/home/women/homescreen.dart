@@ -112,9 +112,39 @@ class HomeScreenState extends State<HomeScreen> {
         systemNavigationBarIconBrightness: Brightness.dark,
       ));
 
+      // ✅ NEW: Fetch gender tabs FIRST
+      await homeController.getGenderTabs();
+
       // ✅ Check if user is guest
       final prefs = await SharedPreferences.getInstance();
       isGuest = prefs.getBool('skip') ?? false;
+
+      // ✅ NEW: Load saved gender preference or use first tab from API
+      final savedGender = prefs.getInt('selectedGender');
+      if (savedGender != null &&
+          homeController.genderTabs.any((tab) => tab['id'] == savedGender)) {
+        // Use saved gender if it exists in API response
+        homeController.homeGenderValue.value = savedGender;
+        final tab = homeController.genderTabs.firstWhere(
+          (tab) => tab['id'] == savedGender,
+          orElse: () => homeController.genderTabs.first,
+        );
+        homeController.genderText.value = tab['name']?.toString() ?? '';
+      } else if (homeController.genderTabs.isNotEmpty) {
+        // Use first tab from API as default
+        homeController.homeGenderValue.value =
+            homeController.genderTabs.first['id'] ?? 1;
+        homeController.genderText.value =
+            homeController.genderTabs.first['name']?.toString() ?? 'MEN';
+        // Save this as the default
+        await prefs.setInt(
+            'selectedGender', homeController.homeGenderValue.value);
+      } else {
+        // Fallback if API fails - use hardcoded default
+        homeController.homeGenderValue.value = 1;
+        homeController.genderText.value = 'Men';
+        print("⚠️ No gender tabs from API, using default");
+      }
 
       homeController.showGenderList.value = false;
       homeController.currentPage.value = 0;
@@ -194,11 +224,18 @@ class HomeScreenState extends State<HomeScreen> {
 
 // ✅ OPTIMIZED: Centralized data fetching method
   Future<void> _fetchAllData(int gender) async {
+    print("📡 Fetching data for gender: $gender");
+
+    // Ensure gender tabs are loaded
+    if (homeController.genderTabs.isEmpty) {
+      print("⚠️ Gender tabs not loaded, fetching now...");
+      await homeController.getGenderTabs();
+    }
+
     // ALWAYS hit these APIs (no JWT required)
     await Future.wait([
       homeController.getBannerData(gender),
-      catalogController
-          .getCatalogData(gender), // ✅ This now uses the updated endpoint
+      catalogController.getCatalogData(gender),
       homeController.getBrandData("featured", gender),
       productController.getHomeProduct(gender),
     ]);
@@ -212,7 +249,7 @@ class HomeScreenState extends State<HomeScreen> {
     // ✅ Update cache metadata
     _lastDataFetch = DateTime.now();
     _lastGenderValue = gender;
-    _lastAuthState = isGuest; // ✅ Track auth state for transition detection
+    _lastAuthState = isGuest;
     print(
         "📊 Cache updated: gender=$gender, isGuest=$isGuest, authState=$_lastAuthState");
 
@@ -312,7 +349,10 @@ class HomeScreenState extends State<HomeScreen> {
   // ---- helpers ----
 
   List<dynamic> _currentBannerList() {
-    switch (homeController.homeGenderValue.value) {
+    final currentGender = homeController.homeGenderValue.value;
+
+    // Map gender IDs to banner lists
+    switch (currentGender) {
       case 1:
         return homeController.banner1List;
       case 2:
@@ -320,7 +360,14 @@ class HomeScreenState extends State<HomeScreen> {
       case 3:
         return homeController.banner3List;
       default:
-        return homeController.banner1List;
+        // Return first available banner list
+        if (homeController.banner1List.isNotEmpty)
+          return homeController.banner1List;
+        if (homeController.banner2List.isNotEmpty)
+          return homeController.banner2List;
+        if (homeController.banner3List.isNotEmpty)
+          return homeController.banner3List;
+        return [];
     }
   }
 
@@ -615,90 +662,85 @@ class HomeScreenState extends State<HomeScreen> {
               },
             ),
 
-            // Gender tabs...
+// Gender tabs...
             Obx(
-              () => SizedBox(
-                height: 40.sp,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _genderTab("MEN", 1, onTap: () async {
-                      homeController.genderText.value = "Men";
-                      homeController.homeGenderValue.value = 1;
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setInt('selectedGender', 1);
-                      _resetForTab();
+              () => homeController.isLoadingTabs.value
+                  ? SizedBox(
+                      height: 40.sp,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.black,
+                        ),
+                      ),
+                    )
+                  : homeController.genderTabs.isEmpty
+                      ? const SizedBox.shrink()
+                      : SizedBox(
+                          height: 40.sp,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            shrinkWrap: true,
+                            physics: const ClampingScrollPhysics(),
+                            itemCount: homeController.genderTabs.length,
+                            itemBuilder: (context, index) {
+                              final tab = homeController.genderTabs[index];
+                              final int genderId = tab['id'] is int
+                                  ? tab['id'] as int
+                                  : int.tryParse(tab['id']?.toString() ?? '') ??
+                                      0;
+                              final String genderName =
+                                  tab['name']?.toString() ?? '';
 
-                      // ✅ OPTIMIZED: Smart fetching only when needed
-                      if (await _shouldFetchData(1)) {
-                        await _fetchAllData(1);
-                      }
+                              // ✅ WRAP EACH TAB IN Obx TO MAKE IT REACTIVE
+                              return Obx(
+                                () => _genderTab(
+                                  genderName.toUpperCase(),
+                                  genderId,
+                                  onTap: () async {
+                                    homeController.genderText.value =
+                                        genderName;
+                                    homeController.homeGenderValue.value =
+                                        genderId;
 
-                      catalogController.selectCategoryGender.value = 1;
-                      catalogController.categoryName.value = "Men";
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+                                    await prefs.setInt(
+                                        'selectedGender', genderId);
 
-                      // ✅ FORCE FRESH DATA: Clear cache and reload
-                      catalogController.catalogList.clear();
-                      await catalogController.getCatalogData(1);
+                                    _resetForTab();
 
-                      await analytics.logEvent(
-                        name: 'home_page_menClick',
-                        parameters: {'page_name': 'home_page_menClick'},
-                      );
-                    }),
-                    _genderTab("WOMEN", 2, onTap: () async {
-                      homeController.genderText.value = "Women";
-                      homeController.homeGenderValue.value = 2;
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setInt('selectedGender', 2);
-                      _resetForTab();
+                                    // ✅ Smart fetching only when needed
+                                    if (await _shouldFetchData(genderId)) {
+                                      await _fetchAllData(genderId);
+                                    }
 
-                      // ✅ OPTIMIZED: Smart fetching only when needed
-                      if (await _shouldFetchData(2)) {
-                        await _fetchAllData(2);
-                      }
+                                    catalogController
+                                        .selectCategoryGender.value = genderId;
+                                    catalogController.categoryName.value =
+                                        genderName;
 
-                      catalogController.selectCategoryGender.value = 2;
-                      catalogController.categoryName.value = "Women";
+                                    // ✅ Force fresh catalog data
+                                    catalogController.catalogList.clear();
+                                    await catalogController
+                                        .getCatalogData(genderId);
 
-                      // ✅ FORCE FRESH DATA: Clear cache and reload
-                      catalogController.catalogList.clear();
-                      await catalogController.getCatalogData(2);
-
-                      await analytics.logEvent(
-                        name: 'home_page_womenClick',
-                        parameters: {'page_name': 'home_page_womenClick'},
-                      );
-                    }),
-                    _genderTab("ACCESSORIES", 3, onTap: () async {
-                      homeController.genderText.value = "Accessories";
-                      homeController.homeGenderValue.value = 3;
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setInt('selectedGender', 3);
-                      _resetForTab();
-
-                      // ✅ OPTIMIZED: Smart fetching only when needed
-                      if (await _shouldFetchData(3)) {
-                        await _fetchAllData(3);
-                      }
-
-                      catalogController.selectCategoryGender.value = 3;
-                      catalogController.categoryName.value = "Accessories";
-
-                      // ✅ FORCE FRESH DATA: Clear cache and reload
-                      catalogController.catalogList.clear();
-                      await catalogController.getCatalogData(3);
-
-                      await analytics.logEvent(
-                        name: 'home_page_accessoriesClick',
-                        parameters: {'page_name': 'home_page_accessoriesClick'},
-                      );
-                    }),
-                  ],
-                ),
-              ),
+                                    await analytics.logEvent(
+                                      name:
+                                          'home_page_${genderName.toLowerCase()}Click',
+                                      parameters: {
+                                        'page_name':
+                                            'home_page_${genderName.toLowerCase()}Click',
+                                        'gender_id': genderId,
+                                      },
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                        ),
             ),
-
             Container(
                 width: double.infinity, color: lightgreyColor, height: 2.sp),
 
@@ -829,14 +871,13 @@ class HomeScreenState extends State<HomeScreen> {
                                   : const SizedBox.shrink(),
                         ),
 
-                        // Featured Brands Section
                         Obx(() {
                           if (homeController.isBrand.value) {
                             return const DummyHomeBrand();
                           }
                           if (homeController.brandList.isEmpty) {
                             return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 12),
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
                               child: Center(
                                 child: Text("No featured brands yet"),
                               ),
@@ -860,30 +901,99 @@ class HomeScreenState extends State<HomeScreen> {
                             );
                           }
 
+                          final int selectedSuperCat =
+                              homeController.homeGenderValue.value;
+
+                          // ✅ DEBUG: Log raw data
+                          print(
+                              "🔍 DEBUG: Filtering collections for gender $selectedSuperCat");
+                          print(
+                              "🔍 DEBUG: Total collections in homeProductList: ${productController.homeProductList.length}");
+
                           final List<Map<String, dynamic>> collections =
                               productController.homeProductList
                                   .whereType<Map<String, dynamic>>()
-                                  .where((c) => (c['name']
-                                          ?.toString()
-                                          .trim()
-                                          .isNotEmpty ??
-                                      false))
-                                  .toList();
+                                  .where((c) {
+                            // Check if collection has a name
+                            final collectionName =
+                                c['name']?.toString().trim() ?? '';
+                            if (collectionName.isEmpty) {
+                              print(
+                                  "⚠️ Skipping collection without name: ${c['id']}");
+                              return false;
+                            }
+
+                            // Check if collection has products for the selected gender
+                            final List rawProducts = (c['products'] is List)
+                                ? List.from(c['products'] as List)
+                                : const [];
+
+                            print(
+                                "📦 Collection '$collectionName' (ID: ${c['id']}) has ${rawProducts.length} total products");
+
+                            final List<Map<String, dynamic>> filteredProducts =
+                                rawProducts
+                                    .whereType<Map<String, dynamic>>()
+                                    .where((p) {
+                              final v = p['superCatId'];
+                              final scId = v is int
+                                  ? v
+                                  : int.tryParse(v?.toString() ?? '') ?? 0;
+
+                              // ✅ WORKAROUND: If superCatId is 0 (missing), assume product matches
+                              // because API already filters by gender parameter (gender=1/2/3)
+                              if (scId == 0) {
+                                print(
+                                    "   ✅ Product ${p['id']} (${p['title']}) - no superCatId, assuming matches gender $selectedSuperCat");
+                                return true;
+                              }
+
+                              // ✅ DEBUG: Log product filtering
+                              if (scId != selectedSuperCat) {
+                                print(
+                                    "   ⏭️ Product ${p['id']} skipped (superCatId: $scId, need: $selectedSuperCat)");
+                              }
+
+                              return scId == selectedSuperCat;
+                            }).toList();
+
+                            print(
+                                "   ✅ After filtering: ${filteredProducts.length} products for gender $selectedSuperCat");
+
+                            // Only include collections that have products
+                            return filteredProducts.isNotEmpty;
+                          }).toList();
+
+                          print(
+                              "📊 RESULT: ${collections.length} collections with products for gender $selectedSuperCat");
 
                           if (collections.isEmpty) {
-                            return SizedBox(
-                                height: 12.sp); // ✅ REDUCED from 20.sp
+                            print(
+                                "⚠️ No collections to display - showing empty space");
+                            return Column(
+                              children: [
+                                SizedBox(height: 20.sp),
+                                const Center(
+                                  child: Text(
+                                    "No products available for this category",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                      fontFamily: "Clash Display Regular",
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 20.sp),
+                              ],
+                            );
                           }
-
-                          final int selectedSuperCat =
-                              homeController.homeGenderValue.value;
 
                           return ListView.separated(
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             itemCount: collections.length,
                             separatorBuilder: (_, __) =>
-                                SizedBox(height: 16.sp), // ✅ REDUCED from 24.sp
+                                SizedBox(height: 16.sp),
                             itemBuilder: (context, index) {
                               final c = collections[index];
                               final int collectionId = c['id'] is int
@@ -898,6 +1008,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   ? List.from(c['products'] as List)
                                   : const [];
 
+                              // ✅ FIXED: Apply the same filtering logic with superCatId=0 workaround
                               final List<Map<String, dynamic>>
                                   filteredProducts = rawProducts
                                       .whereType<Map<String, dynamic>>()
@@ -906,6 +1017,12 @@ class HomeScreenState extends State<HomeScreen> {
                                 final scId = v is int
                                     ? v
                                     : int.tryParse(v?.toString() ?? '') ?? 0;
+
+                                // ✅ If superCatId is 0 (missing), assume product matches
+                                if (scId == 0) {
+                                  return true;
+                                }
+
                                 return scId == selectedSuperCat;
                               }).toList();
 
@@ -919,8 +1036,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     Center(
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(
-                                            vertical:
-                                                12.sp), // ✅ REDUCED from 16.sp
+                                            vertical: 12.sp),
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
@@ -943,9 +1059,8 @@ class HomeScreenState extends State<HomeScreen> {
                                             ),
                                             if (subtitle.isNotEmpty)
                                               Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 4
-                                                        .sp), // ✅ REDUCED from 6.sp
+                                                padding:
+                                                    EdgeInsets.only(top: 4.sp),
                                                 child: Text(
                                                   subtitle,
                                                   textAlign: TextAlign.center,
@@ -968,8 +1083,7 @@ class HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                        height: 6.sp), // ✅ REDUCED from 8.sp
+                                    SizedBox(height: 6.sp),
                                     if (filteredProducts.isNotEmpty)
                                       _SectionStrip(
                                         products: filteredProducts,
@@ -1086,16 +1200,13 @@ class HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
                                       ),
-                                    SizedBox(
-                                        height: 12.sp), // ✅ REDUCED from 16.sp
+                                    SizedBox(height: 12.sp),
                                   ],
                                 ),
                               );
                             },
                           );
                         }),
-
-                        SizedBox(height: 16.sp), // ✅ REDUCED from 24.sp
                       ],
                     ),
                   ),
@@ -1157,7 +1268,15 @@ class HomeScreenState extends State<HomeScreen> {
 // ✅ Helper to check if URL is a video
 bool isVideoUrl(String url) {
   final videoExtensions = [
-    '.mp4', '.mov', '.avi', '.mkv', '.flv', '.wmv', '.webm', '.m4v', '.3gp'
+    '.mp4',
+    '.mov',
+    '.avi',
+    '.mkv',
+    '.flv',
+    '.wmv',
+    '.webm',
+    '.m4v',
+    '.3gp'
   ];
   final lowerUrl = url.toLowerCase();
   return videoExtensions.any((ext) => lowerUrl.contains(ext));
@@ -1227,16 +1346,12 @@ class _SectionStrip extends StatelessWidget {
     return "";
   }
 
-  String resolvePrice(Map<String, dynamic> p) {
-    return (p['price'] ??
-            p['salePrice'] ??
-            p['sale_price'] ??
-            p['basePrice'] ??
-            p['base_price'] ??
-            p['netAmount'] ??
-            p['mrp'] ??
-            '')
-        .toString();
+  Map<String, dynamic> resolvePricing(Map<String, dynamic> p) {
+    return {
+      'price': p['displayPrice'] ?? p['price'] ?? p['basePrice'] ?? 0,
+      'mrp': p['displayMrp'],
+      'discountPercent': p['discountPercent'],
+    };
   }
 
   @override
@@ -1282,7 +1397,10 @@ class _SectionStrip extends StatelessWidget {
 
           final title = p['title']?.toString() ?? '';
           final brandName = resolveBrandName(p);
-          final price = resolvePrice(p);
+          final pricing = resolvePricing(p);
+          final numPrice = pricing['price'] as num;
+          final numMrp = pricing['mrp'] as num?;
+          final discount = pricing['discountPercent'] as int?;
 
           String imageUrl = "";
           if (p['imageUrls'] is List && (p['imageUrls'] as List).isNotEmpty) {
@@ -1335,15 +1453,43 @@ class _SectionStrip extends StatelessWidget {
                             : Colors.black.withOpacity(0.7),
                       ),
                     ),
-                  if (price.isNotEmpty)
-                    Text(
-                      "₹$price",
-                      style: TextStyle(
-                        fontFamily: "Clash Display Semibold",
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.bold,
-                        color: dark ? Colors.white : Colors.black,
-                      ),
+                  if (numPrice > 0)
+                    Row(
+                      children: [
+                        Text(
+                          "₹$numPrice",
+                          style: TextStyle(
+                            fontFamily: "Clash Display Semibold",
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.bold,
+                            color: dark ? Colors.white : Colors.black,
+                          ),
+                        ),
+                        if (numMrp != null && numMrp > numPrice) ...[
+                          SizedBox(width: 5.sp),
+                          Text(
+                            "₹$numMrp",
+                            style: TextStyle(
+                              color: const Color(0xFF9CA3AF),
+                              fontSize: 11.sp,
+                              decoration: TextDecoration.lineThrough,
+                              fontFamily: "Clash Display Regular",
+                            ),
+                          ),
+                        ],
+                        if (discount != null && discount > 0) ...[
+                          SizedBox(width: 5.sp),
+                          Text(
+                            "($discount% OFF)",
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              fontFamily: "Clash Display",
+                              fontWeight: FontWeight.w500,
+                              color: Colors.green[700],
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                 ],
               ),
@@ -1627,7 +1773,8 @@ class BannerProductsScreen extends StatelessWidget {
                     .trim();
 
                 num? price;
-                final rawPrice = m['basePrice'] ??
+                final rawPrice = m['displayPrice'] ??
+                    m['basePrice'] ??
                     m['base_price'] ??
                     m['baseprice'] ??
                     m['price'];
@@ -1638,7 +1785,7 @@ class BannerProductsScreen extends StatelessWidget {
                 }
 
                 num? mrp;
-                final rawMrp = m['mrp'];
+                final rawMrp = m['displayMrp'] ?? m['mrp'];
                 if (rawMrp is num) {
                   mrp = rawMrp;
                 } else if (rawMrp is String) {
@@ -2052,7 +2199,7 @@ class _FeaturedBrandsRow extends StatelessWidget {
         ),
         SizedBox(height: 12.sp), // ✅ REDUCED from 16.sp
         SizedBox(
-          height: 100.sp,
+          height: 90.sp,
           child: Obx(() {
             if (brandController.isBrand.value) {
               return const Center(child: CircularProgressIndicator());
@@ -2144,7 +2291,7 @@ class _FeaturedBrandsRow extends StatelessWidget {
                                   ),
                           ),
                         ),
-                        SizedBox(height: 6.sp), // ✅ REDUCED from 8.sp
+                        SizedBox(height: 4.sp), // ✅ REDUCED from 8.sp
                         SizedBox(
                           width: 64.sp,
                           child: Text(

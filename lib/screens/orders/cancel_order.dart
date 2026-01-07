@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
+import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/core/constant/constants.dart';
 import 'package:lafetch/controllers/order_controller.dart';
 import 'cancel_success.dart';
@@ -259,7 +260,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                   child: GestureDetector(
                     onTap: () async {
                       if (selectedReason == null) {
-                        Get.snackbar('Alert', 'Please select a reason.');
+                        showAppSnackBar('Please select a reason.', type: SnackBarType.error);
                         return;
                       }
 

@@ -59,9 +59,22 @@ class OrderController extends BaseController {
     return false;
   }
 
-// ---------- INITIATE PAYMENT ----------
-  Future<Map<String, dynamic>?> initiatePayment(
-      Map<String, dynamic> body) async {
+// Updated initiatePayment method with proper payload structure
+
+// ========================================
+// UPDATED initiatePayment Method
+// ========================================
+
+  Future<Map<String, dynamic>?> initiatePayment({
+    required int userId,
+    required int shippingAddressId,
+    required List<Map<String, dynamic>> items,
+    required num totalMRP,
+    required num couponDiscount,
+    required num tax,
+    required num total,
+    required String paymentMethod,
+  }) async {
     isPlacingOrder.value = true;
     apiError.value = "";
     showLoading();
@@ -70,6 +83,18 @@ class OrderController extends BaseController {
 
     try {
       final uri = Uri.parse("${ApiConstants.baseUrl}/initiate-payment");
+
+      // ✅ Build payload matching the API structure
+      final body = {
+        "userId": userId,
+        "shippingAddressId": shippingAddressId,
+        "items": items,
+        "totalMRP": totalMRP,
+        "couponDiscount": couponDiscount,
+        "tax": tax,
+        "total": total,
+        "paymentMethod": paymentMethod,
+      };
 
       print("📤 Initiating payment with body:");
       print(jsonEncode(body));
@@ -85,7 +110,6 @@ class OrderController extends BaseController {
 
       if (_handleAuthGuard(res.statusCode)) return null;
 
-      // ✅ Handle successful status codes (201 created or 200 ok)
       if (res.statusCode == 200 || res.statusCode == 201) {
         final decoded = jsonDecode(res.body);
 
@@ -103,7 +127,6 @@ class OrderController extends BaseController {
           return null;
         }
 
-        // ✅ Extract IDs safely
         final orderId = data["orderId"];
         final providerOrderId = data["providerOrderId"];
         final paymentId = data["paymentId"];
@@ -114,7 +137,6 @@ class OrderController extends BaseController {
           return null;
         }
 
-        // ✅ Save local orderId for later use in place-order
         await prefs.setInt("orderId", orderId);
         print("💾 Saved local orderId: $orderId");
 
@@ -129,7 +151,6 @@ class OrderController extends BaseController {
         };
       }
 
-      // ❌ Handle failure responses
       try {
         final error = jsonDecode(res.body);
         apiError.value = error["message"] ??
@@ -151,6 +172,40 @@ class OrderController extends BaseController {
       hideLoading();
       isPlacingOrder.value = false;
     }
+  }
+
+// ========================================
+// HELPER: Build Order Item
+// ========================================
+
+  Map<String, dynamic> buildOrderItem({
+    required int productId,
+    required int variantId,
+    required int quantity,
+    required num unitPrice,
+    required num discount,
+    required num total,
+    required num tax,
+    required num gstAmount,
+    required String hsnCode,
+    required num gstRate,
+    required num statutoryGSTRate,
+    required String gstRuleApplied,
+  }) {
+    return {
+      "productId": productId,
+      "variantId": variantId,
+      "quantity": quantity,
+      "unitPrice": unitPrice,
+      "discount": discount,
+      "total": total,
+      "tax": tax,
+      "gstAmount": gstAmount,
+      "hsnCode": hsnCode,
+      "gstRate": gstRate,
+      "statutoryGSTRate": statutoryGSTRate,
+      "gstRuleApplied": gstRuleApplied,
+    };
   }
 
   Future<bool> confirmPlaceOrder({

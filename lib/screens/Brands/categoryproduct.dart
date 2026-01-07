@@ -90,6 +90,11 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   String _appliedSortOption = "recommended";
   bool _hasActiveFilters = false;
 
+  // ✅ Pagination state
+  int _currentPage = 1;
+  bool _hasMoreData = true;
+  bool _isLoadingMore = false;
+
   // ✅ Store original category product IDs for client-side filtering
   Set<int> _originalCategoryProductIds = {};
 
@@ -257,6 +262,59 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     }
   }
 
+  // ✅ Load more products (pagination)
+  Future<void> _loadMoreProducts() async {
+    if (_isLoadingMore || !_hasMoreData || !_hasActiveFilters) return;
+
+    setState(() {
+      _isLoadingMore = true;
+      _currentPage++;
+    });
+
+    try {
+      await catalogController.getFilterAndSortProducts(
+        brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
+        colors: _appliedColors.isNotEmpty ? _appliedColors : null,
+        sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
+        minPrice: _appliedMinPrice,
+        maxPrice: _appliedMaxPrice,
+        sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
+        catId: widget.categoryId,
+        superCatId: widget.genderType,
+        page: _currentPage,
+        limit: 20,
+        appendResults: true, // ✅ Append instead of replace
+      );
+
+      // Client-side filter
+      var apiResults = List<dynamic>.from(catalogController.categoryProductList);
+      final filteredResults = apiResults.where((product) {
+        final productId = int.tryParse(product['id']?.toString() ?? '');
+        return productId != null && _originalCategoryProductIds.contains(productId);
+      }).toList();
+
+      catalogController.categoryProductList.assignAll(filteredResults);
+
+      // Check if we got less than 20 products (means no more data)
+      if (apiResults.length < 20) {
+        setState(() {
+          _hasMoreData = false;
+        });
+      }
+
+      print("✅ Loaded page $_currentPage (${filteredResults.length} products)");
+    } catch (e) {
+      print("❌ Error loading more products: $e");
+      setState(() {
+        _currentPage--; // Rollback page number on error
+      });
+    } finally {
+      setState(() {
+        _isLoadingMore = false;
+      });
+    }
+  }
+
   // ✅ Optimized filter and sort application
   Future<void> _applyFiltersAndSort() async {
     try {
@@ -273,6 +331,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       }
 
       print("🔄 Applying changes - Filter: $filterChanged, Sort: $sortChanged");
+
+      // ✅ Reset pagination when filters change
+      setState(() {
+        _currentPage = 1;
+        _hasMoreData = true;
+      });
 
       catalogController.isCategory.value = true;
 
@@ -303,6 +367,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           maxPrice: _appliedMaxPrice,
           sortOption:
               _appliedSortOption != "recommended" ? _appliedSortOption : null,
+          catId: widget.categoryId, // ✅ Pass category ID to filter by this category
+          superCatId: widget.genderType, // ✅ Pass gender type
+          page: 1, // ✅ Reset to page 1
+          limit: 20, // ✅ Load 20 items per page
         );
 
         // ✅ Client-side filter: Only keep products from this category
@@ -388,6 +456,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           maxPrice: _appliedMaxPrice,
           sortOption:
               _appliedSortOption != "recommended" ? _appliedSortOption : null,
+          catId: widget.categoryId, // ✅ Pass category ID to filter by this category
+          superCatId: widget.genderType, // ✅ Pass gender type
+          page: 1, // ✅ Reset to first page
+          limit: 20, // ✅ Fetch 20 items per page
         );
 
         var apiResults =
@@ -539,16 +611,39 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                     final items = catalogController.categoryProductList;
                     if (items.isEmpty) return _emptyView();
 
-                    return GridView.builder(
-                      padding: EdgeInsets.symmetric(horizontal: 10.sp),
-                      itemCount: items.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 10.sp,
-                        crossAxisSpacing: 10.sp,
-                        childAspectRatio: 0.58,
-                      ),
-                      itemBuilder: (context, index) {
+                    return NotificationListener<ScrollNotification>(
+                      onNotification: (ScrollNotification scrollInfo) {
+                        // ✅ Detect when user scrolls near bottom (160px before end)
+                        if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 160) {
+                          if (_hasActiveFilters && _hasMoreData && !_isLoadingMore) {
+                            _loadMoreProducts();
+                          }
+                        }
+                        return false;
+                      },
+                      child: GridView.builder(
+                        padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                        itemCount: items.length + (_isLoadingMore ? 2 : 0), // ✅ Add 2 for loading indicators
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 10.sp,
+                          crossAxisSpacing: 10.sp,
+                          childAspectRatio: 0.58,
+                        ),
+                        itemBuilder: (context, index) {
+                          // ✅ Show loading indicator at the end
+                          if (index >= items.length) {
+                            return Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ),
+                            );
+                          }
                         final m = normalizeProduct(items[index]);
 
                         final brand = (m['brandName'] ?? '').toString().trim();
@@ -601,7 +696,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           ),
                         );
                       },
-                    );
+                      ), // Close GridView.builder
+                    ); // Close NotificationListener
                   }),
           ),
 

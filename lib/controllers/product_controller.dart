@@ -351,13 +351,26 @@ class ProductController extends BaseController {
     return null;
   }
 
-// Get display price from selected variant or product details
+// Get display price from selected variant or minimum variant price
   num getDisplayPrice() {
     final variant = getSelectedVariant();
 
+    // If a variant is selected, use its price
     if (variant != null) {
       final price = variant['price'];
       if (price is num && price > 0) return price;
+    }
+
+    // If no variant selected but variants exist, use minimum variant price
+    if (selectedVariants.isNotEmpty) {
+      num minPrice = double.infinity;
+      for (final v in selectedVariants) {
+        final vPrice = v['price'] as num? ?? 0;
+        if (vPrice > 0 && vPrice < minPrice) {
+          minPrice = vPrice;
+        }
+      }
+      if (minPrice != double.infinity && minPrice > 0) return minPrice;
     }
 
     // Fallback to product details
@@ -369,13 +382,27 @@ class ProductController extends BaseController {
     return num.tryParse(price?.toString() ?? '0') ?? 0;
   }
 
-// Get MRP
+// Get MRP from selected variant or maximum variant MRP
   num getDisplayMrp() {
     final variant = getSelectedVariant();
 
-    // Try to get compareAtPrice from variant
-    final compareAt = variant?['compareAtPrice'];
-    if (compareAt is num && compareAt > 0) return compareAt;
+    // If a variant is selected, use its compareAtPrice
+    if (variant != null) {
+      final compareAt = variant['compareAtPrice'];
+      if (compareAt is num && compareAt > 0) return compareAt;
+    }
+
+    // If no variant selected but variants exist, use maximum compareAtPrice
+    if (selectedVariants.isNotEmpty) {
+      num maxMrp = 0;
+      for (final v in selectedVariants) {
+        final vMrp = v['compareAtPrice'] as num? ?? 0;
+        if (vMrp > maxMrp) {
+          maxMrp = vMrp;
+        }
+      }
+      if (maxMrp > 0) return maxMrp;
+    }
 
     // Fallback to product MRP
     final mrp = productDetails['mrp'] ?? productDetails['manufacturingAmount'];
@@ -580,8 +607,8 @@ class ProductController extends BaseController {
     final base = ApiConstants.baseUrl;
     final uri = Uri.parse("$base/collection-with-products").replace(
       queryParameters: {
-        'status': '$gender',
-        if (withLimit) 'limit': 'true', // ✅ Only add if withLimit is true
+        'gender': '$gender', // ✅ Changed from 'status' to 'gender'
+        if (withLimit) 'limit': 'true',
       },
     );
 
@@ -605,6 +632,14 @@ class ProductController extends BaseController {
 
         for (final c in data) {
           if (c['products'] is! List) c['products'] = <dynamic>[];
+
+          // Transform each product to add display prices
+          final transformedProducts = (c['products'] as List).map((p) {
+            if (p is! Map<String, dynamic>) return p;
+            return calculateDisplayPrices(p);
+          }).toList();
+
+          c['products'] = transformedProducts;
         }
 
         homeProductList.assignAll(data);
@@ -630,6 +665,60 @@ class ProductController extends BaseController {
     } finally {
       isHomeProduct.value = false;
     }
+  }
+
+  /// Calculate minimum variant price and MRP for display in product lists
+  static Map<String, dynamic> calculateDisplayPrices(
+      Map<String, dynamic> product) {
+    final variants = product['variants'] as List?;
+
+    num minPrice = double.infinity;
+    num maxCompareAtPrice = 0;
+
+    if (variants != null && variants.isNotEmpty) {
+      for (final v in variants) {
+        if (v is! Map) continue;
+
+        // Get variant price (selling price)
+        final vPrice = v['price'] as num? ?? 0;
+        if (vPrice > 0 && vPrice < minPrice) {
+          minPrice = vPrice;
+        }
+
+        // Get variant MRP (compare at price)
+        final vMrp = v['compareAtPrice'] as num? ?? 0;
+        if (vMrp > maxCompareAtPrice) {
+          maxCompareAtPrice = vMrp;
+        }
+      }
+    }
+
+    // Fallback to product-level prices
+    if (minPrice == double.infinity) {
+      minPrice = (product['basePrice'] ??
+          product['price'] ??
+          product['netAmount'] ??
+          0) as num;
+    }
+
+    if (maxCompareAtPrice == 0) {
+      maxCompareAtPrice =
+          (product['mrp'] ?? product['manufacturingAmount'] ?? 0) as num;
+    }
+
+    // Calculate discount percentage
+    int? discountPercent;
+    if (minPrice > 0 && maxCompareAtPrice > minPrice) {
+      discountPercent =
+          (((maxCompareAtPrice - minPrice) / maxCompareAtPrice) * 100).round();
+    }
+
+    return {
+      ...product,
+      'displayPrice': minPrice,
+      'displayMrp': maxCompareAtPrice > minPrice ? maxCompareAtPrice : null,
+      'discountPercent': discountPercent,
+    };
   }
 
   Future<void> getProductById(int id) async {
@@ -666,6 +755,27 @@ class ProductController extends BaseController {
       // ✅ Store complete product details
       productDetails = Map<String, dynamic>.from(data);
 
+      // ✅ Extract all product information
+      print("📦 Product ID: ${data['id']}");
+      print("📦 Product Title: ${data['title']}");
+      print("📦 Product Type: ${data['type']}");
+      print("📦 Short Description: ${data['shortDescription']}");
+      print("📦 Description: ${data['description']}");
+      print("📦 Base Price: ${data['basePrice']}");
+      print("📦 Net Amount: ${data['netAmount']}");
+      print("📦 MRP: ${data['mrp']}");
+      print("📦 Super Category ID: ${data['superCatId']}");
+      print("📦 Category ID: ${data['catId']}");
+      print("📦 Sub Category ID: ${data['subCatId']}");
+      print("📦 Brand ID: ${data['brandId']}");
+      print("📦 Tags: ${data['tags']}");
+      print("📦 Target Genders: ${data['targetGenders']}");
+      print("📦 Shopify Handle: ${data['shopifyHandle']}");
+      print("📦 Status: ${data['status']}");
+      print("📦 Is Featured: ${data['isFeatured']}");
+      print("📦 Rating: ${data['rating']}");
+      print("📦 Number of Reviews: ${data['numReviews']}");
+
       // ✅ Process imageUrls
       if (data["imageUrls"] is List) {
         imageList.assignAll((data["imageUrls"] as List)
@@ -679,9 +789,40 @@ class ProductController extends BaseController {
       // ✅ Store brand details
       if (data["brand"] != null) {
         brandDetails = data["brand"];
+        print("🏷️ Brand Name: ${data['brand']['name']}");
+        print("🏷️ Brand Description: ${data['brand']['description']}");
+        print("🏷️ Brand Logo: ${data['brand']['logo']}");
+        print("🏷️ Brand Video: ${data['brand']['video']}");
+        print("🏷️ Brand Website: ${data['brand']['websiteLink']}");
+        print("🏷️ Brand Commission: ${data['brand']['commission']}%");
+        print("🏷️ COD Available: ${data['brand']['codAvailable']}");
+        print("🏷️ Is Featured Brand: ${data['brand']['isFeatured']}");
       }
 
-      // ✅ Process variants
+      // ✅ Store category details
+      if (data["category"] != null) {
+        print("📂 Category Name: ${data['category']['name']}");
+        print("📂 Category Type: ${data['category']['type']}");
+      }
+
+      // ✅ Store HSN Code details
+      if (data["hsnCodeDetails"] != null) {
+        print("🔢 HSN Code: ${data['hsnCodeDetails']['hsnCode']}");
+        print(
+            "🔢 GST Rate Higher: ${data['hsnCodeDetails']['gstRateHigher']}%");
+        print("🔢 GST Rate Lower: ${data['hsnCodeDetails']['gstRateLower']}%");
+        print(
+            "🔢 Price Threshold: ₹${data['hsnCodeDetails']['priceThreshold']}");
+      }
+
+      // ✅ Store Return Policy
+      if (data["returnPolicy"] != null) {
+        print("↩️ Return Policy: ${data['returnPolicy']['name']}");
+        print(
+            "↩️ Return Policy Description: ${data['returnPolicy']['description']}");
+      }
+
+      // ✅ Process variants with complete details
       final variants =
           List<Map<String, dynamic>>.from(data["variants"].whereType<Map>());
 
@@ -695,13 +836,19 @@ class ProductController extends BaseController {
 
         if (v["selectedOptions"] is List) {
           for (final opt in v["selectedOptions"]) {
-            final optName = opt["name"].toString().toLowerCase();
+            if (opt == null || opt is! Map) continue;
+
+            final optName = opt["name"]?.toString().toLowerCase() ?? "";
+            final optValue = opt["value"]?.toString() ?? "";
+
+            if (optValue.isEmpty) continue;
+
             if (optName == "size") {
-              size = opt["value"].toString();
+              size = optValue;
               hasSize = true;
             }
             if (optName == "color" || optName == "colour") {
-              color = opt["value"].toString();
+              color = optValue;
               hasColor = true;
             }
           }
@@ -710,16 +857,41 @@ class ProductController extends BaseController {
         final inventory = v["inventory"];
         final stock =
             inventory != null ? (inventory["availableStock"] ?? 0) : 0;
+        final reservedStock =
+            inventory != null ? (inventory["reservedStock"] ?? 0) : 0;
+
+        // ✅ Extract variant price (use 'price' field which includes GST)
+        final variantPrice = v["price"];
+        final validPrice =
+            (variantPrice is num && variantPrice > 0) ? variantPrice : 0;
+
+        // ✅ Extract base price and GST details
+        final basePrice = v["basePrice"] ?? 0;
+        final gstRate = v["gstRate"] ?? 0;
+        final gstAmount = v["gstAmount"] ?? 0;
+        final hsnCode = v["hsnCode"] ?? "";
 
         parsedVariants.add({
           "id": v["id"],
           "size": size,
           "color": color,
-          "price": v["price"],
+          "price": validPrice, // Price including GST
+          "basePrice": basePrice, // Base price without GST
+          "gstRate": gstRate,
+          "gstAmount": gstAmount,
+          "hsnCode": hsnCode,
+          "compareAtPrice": v["compareAtPrice"] ?? 0,
           "stocks": stock,
+          "reservedStock": reservedStock,
           "variant": v,
           "imageSrc": v["imageSrc"],
+          "imageAlt": v["imageAlt"],
+          "title": v["title"],
+          "shopifyVariantId": v["shopifyVariantId"],
         });
+
+        print(
+            "📦 Variant ${v['id']}: Size=$size, Color=$color, Price=₹$validPrice, Base=₹$basePrice, GST=$gstRate%, Stock=$stock");
       }
 
       selectedVariants.assignAll(parsedVariants);
@@ -727,12 +899,12 @@ class ProductController extends BaseController {
       print("🔍 Product Type Detection:");
       print("   Has Size: $hasSize");
       print("   Has Color: $hasColor");
+      print("   Total Variants: ${parsedVariants.length}");
 
       // ✅ Handle products with ONLY COLOR (no size)
       if (!hasSize && hasColor) {
         print("📦 Product Type: COLOR ONLY (Accessory)");
 
-        // Get unique colors
         final List<String> uniqueColors = parsedVariants
             .map((e) => e["color"].toString())
             .where((c) => c.isNotEmpty)
@@ -740,13 +912,11 @@ class ProductController extends BaseController {
             .toList();
 
         colorInventoryList.assignAll(uniqueColors);
-
-        // ❌ DO NOT auto-select - user must select
         print("✅ Colors available: $uniqueColors");
         print("⚠️ No auto-selection - user must choose color");
       }
       // ✅ Handle products with SIZE + COLOR (clothing)
-      else if (hasSize) {
+      else if (hasSize && hasColor) {
         print("📦 Product Type: SIZE + COLOR (Clothing)");
 
         final List<String> uniqueSizes = parsedVariants
@@ -755,8 +925,32 @@ class ProductController extends BaseController {
             .toSet()
             .toList();
 
-        final sizeOrder = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+        final sizeOrder = [
+          'XXS',
+          'XS',
+          'S',
+          'M',
+          'L',
+          'XL',
+          'XXL',
+          '2XL',
+          '3XL',
+          'XXXL'
+        ];
         uniqueSizes.sort((a, b) {
+          // Try numeric comparison first (for jeans sizes like "28", "30", "32")
+          final aNum = int.tryParse(a);
+          final bNum = int.tryParse(b);
+
+          if (aNum != null && bNum != null) {
+            return aNum.compareTo(bNum);
+          }
+
+          // If one is numeric and the other isn't, numeric comes first
+          if (aNum != null) return -1;
+          if (bNum != null) return 1;
+
+          // Fall back to standard size order for letter sizes
           final aIndex = sizeOrder.indexOf(a.toUpperCase());
           final bIndex = sizeOrder.indexOf(b.toUpperCase());
           if (aIndex == -1 && bIndex == -1) return a.compareTo(b);
@@ -767,9 +961,17 @@ class ProductController extends BaseController {
 
         sizeInventoryList.assignAll(uniqueSizes);
 
-        // ❌ DO NOT auto-select - user must select
+        final List<String> uniqueColors = parsedVariants
+            .map((e) => e["color"].toString())
+            .where((c) => c.isNotEmpty)
+            .toSet()
+            .toList();
+
+        colorInventoryList.assignAll(uniqueColors);
+
         print("✅ Sizes available: $uniqueSizes");
-        print("⚠️ No auto-selection - user must choose size first");
+        print("✅ Colors available: $uniqueColors");
+        print("⚠️ No auto-selection - user must choose size and color");
       }
       // ✅ Handle products with ONLY SIZE (no color)
       else if (hasSize && !hasColor) {
@@ -781,11 +983,54 @@ class ProductController extends BaseController {
             .toSet()
             .toList();
 
-        sizeInventoryList.assignAll(uniqueSizes);
+        final sizeOrder = [
+          'XXS',
+          'XS',
+          'S',
+          'M',
+          'L',
+          'XL',
+          'XXL',
+          '2XL',
+          '3XL',
+          'XXXL'
+        ];
+        uniqueSizes.sort((a, b) {
+          // Try numeric comparison first (for jeans sizes like "28", "30", "32")
+          final aNum = int.tryParse(a);
+          final bNum = int.tryParse(b);
 
-        // ❌ DO NOT auto-select - user must select
+          if (aNum != null && bNum != null) {
+            return aNum.compareTo(bNum);
+          }
+
+          // If one is numeric and the other isn't, numeric comes first
+          if (aNum != null) return -1;
+          if (bNum != null) return 1;
+
+          // Fall back to standard size order for letter sizes
+          final aIndex = sizeOrder.indexOf(a.toUpperCase());
+          final bIndex = sizeOrder.indexOf(b.toUpperCase());
+          if (aIndex == -1 && bIndex == -1) return a.compareTo(b);
+          if (aIndex == -1) return 1;
+          if (bIndex == -1) return -1;
+          return aIndex.compareTo(bIndex);
+        });
+
+        sizeInventoryList.assignAll(uniqueSizes);
         print("✅ Sizes available: $uniqueSizes");
         print("⚠️ No auto-selection - user must choose size");
+      }
+      // ✅ Handle products with NO SIZE and NO COLOR (one-size-fits-all)
+      else {
+        print("📦 Product Type: ONE SIZE FITS ALL (No variants)");
+        if (parsedVariants.isNotEmpty) {
+          // Auto-select the only variant
+          final onlyVariant = parsedVariants.first;
+          selectedSize.value = onlyVariant["size"] ?? "";
+          selectedColor.value = onlyVariant["color"] ?? "";
+          print("✅ Auto-selected variant: ${onlyVariant['id']}");
+        }
       }
 
       print("🖼️ Display images count: ${currentDisplayImages.length}");
@@ -799,27 +1044,77 @@ class ProductController extends BaseController {
     }
   }
 
-  Future<Map<String, dynamic>?> fetchProductDetails(int id) async {
+  Future<Map<String, dynamic>?> fetchProductDetails(int productId) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token') ?? '';
+      final uri = Uri.parse("${ApiConstants.baseUrl}/products/$productId");
 
-      final uri = Uri.parse('${ApiConstants.baseUrl}/product/$id');
-      final resp = await http.get(uri, headers: {
-        'Accept': 'application/json',
-        if (token.isNotEmpty) 'Authorization': 'Bearer $token'
-      });
+      print("🌐 Fetching product details from: $uri");
 
-      if (resp.statusCode != 200) {
-        print("❌ Product fetch failed: ${resp.statusCode}");
+      final res = await http.get(
+        uri,
+        headers: {'Accept': 'application/json'},
+      );
+
+      print("📥 API Response Status: ${res.statusCode}");
+
+      if (res.statusCode == 200) {
+        final data = json.decode(res.body);
+
+        // ========================================
+        // 🔍 DEBUG: Print the entire response
+        // ========================================
+        print("📦 Full API Response:");
+        print(json.encode(data));
+
+        // ========================================
+        // 🔍 DEBUG: Check variants structure
+        // ========================================
+        if (data["variants"] != null) {
+          final variants = data["variants"];
+          print(
+              "📦 Variants found: ${variants is List ? variants.length : 'Not a list'}");
+
+          if (variants is List && variants.isNotEmpty) {
+            print("📦 First variant structure:");
+            print(json.encode(variants.first));
+
+            // Check if GST fields exist
+            final firstVariant = variants.first;
+            print("🔍 Checking GST fields in first variant:");
+            print("   hsn_code: ${firstVariant["hsn_code"]}");
+            print("   hsnCode: ${firstVariant["hsnCode"]}");
+            print("   gst_rate: ${firstVariant["gst_rate"]}");
+            print("   gstRate: ${firstVariant["gstRate"]}");
+            print(
+                "   statutory_gst_rate: ${firstVariant["statutory_gst_rate"]}");
+            print("   statutoryGSTRate: ${firstVariant["statutoryGSTRate"]}");
+            print("   gst_rule: ${firstVariant["gst_rule"]}");
+            print("   gstRule: ${firstVariant["gstRule"]}");
+          }
+        } else {
+          print("⚠️ No variants field in response");
+        }
+
+        // ========================================
+        // 🔍 DEBUG: Check product-level GST fields
+        // ========================================
+        print("🔍 Checking product-level GST fields:");
+        print("   hsn_code: ${data["hsn_code"]}");
+        print("   hsnCode: ${data["hsnCode"]}");
+        print("   gst_rate: ${data["gst_rate"]}");
+        print("   gstRate: ${data["gstRate"]}");
+        print("   statutory_gst_rate: ${data["statutory_gst_rate"]}");
+        print("   statutoryGSTRate: ${data["statutoryGSTRate"]}");
+        print("   gst_rule: ${data["gst_rule"]}");
+        print("   gstRule: ${data["gstRule"]}");
+
+        return data;
+      } else {
+        print("❌ API Error: ${res.statusCode} - ${res.body}");
         return null;
       }
-
-      final decoded = json.decode(resp.body);
-
-      return Map<String, dynamic>.from(decoded["data"]);
     } catch (e) {
-      print("❌ fetchProductDetails error: $e");
+      print("❌ Exception fetching product details: $e");
       return null;
     }
   }

@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
 import 'base_controller.dart';
+import 'product_controller.dart';
 
 class SearchScreenController extends BaseController {
   final TextEditingController searchController = TextEditingController();
@@ -108,7 +109,12 @@ class SearchScreenController extends BaseController {
                   .toList()
               : <Map<String, dynamic>>[];
 
-      searchList.assignAll(items);
+      // Transform products to add display prices
+      final transformed = items.map((p) {
+        return ProductController.calculateDisplayPrices(p);
+      }).toList();
+
+      searchList.assignAll(transformed);
       searchText.value =
           items.isEmpty ? "No product found" : "Search for products";
     } on TimeoutException {

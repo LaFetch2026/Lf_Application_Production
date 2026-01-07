@@ -494,30 +494,19 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       onPressed: isSubmitting
                           ? null
                           : () async {
-                              // Capture context and navigator before async operations
-                              final scaffoldMessenger =
-                                  ScaffoldMessenger.of(context);
-                              final navigator = Navigator.of(context);
-
                               if (_selectedRating == 0) {
-                                scaffoldMessenger.showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Please select a rating'),
-                                    duration: Duration(seconds: 2),
-                                  ),
-                                );
+                                showAppSnackBar('Please select a rating',
+                                    type: SnackBarType.error);
                                 return;
                               }
 
                               if (_reviewController.text.trim().isEmpty) {
-                                scaffoldMessenger.showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Please write a review'),
-                                    duration: Duration(seconds: 2),
-                                  ),
-                                );
+                                showAppSnackBar('Please write a review',
+                                    type: SnackBarType.error);
                                 return;
                               }
+
+                              final navigator = Navigator.of(context);
 
                               // Get userId from SharedPreferences
                               final prefs =
@@ -525,13 +514,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               final userId = prefs.getInt('userId') ?? 0;
 
                               if (userId == 0) {
-                                scaffoldMessenger.showSnackBar(
-                                  const SnackBar(
-                                    content:
-                                        Text('Please login to submit a review'),
-                                    duration: Duration(seconds: 2),
-                                  ),
-                                );
+                                showAppSnackBar(
+                                    'Please login to submit a review',
+                                    type: SnackBarType.error);
                                 return;
                               }
 
@@ -569,12 +554,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   errorMsg = 'Product variant not available';
                                 }
 
-                                scaffoldMessenger.showSnackBar(
-                                  SnackBar(
-                                    content: Text(errorMsg),
-                                    duration: Duration(seconds: 2),
-                                  ),
-                                );
+                                showAppSnackBar(errorMsg,
+                                    type: SnackBarType.error);
                                 return;
                               }
 
@@ -706,9 +687,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     // Get selected variant
     final variant = productController.getSelectedVariant();
     if (variant == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select size and color')),
-      );
+      showAppSnackBar('Please select size and color', type: SnackBarType.error);
       return;
     }
 
@@ -716,9 +695,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     final stock = int.tryParse(variant['stocks']?.toString() ?? '0') ?? 0;
 
     if (stock <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selected variant is out of stock')),
-      );
+      showAppSnackBar('Selected variant is out of stock',
+          type: SnackBarType.error);
       return;
     }
 
@@ -732,6 +710,136 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     // ✅ Use the selected quantity from the quantity selector
     final initialQuantity = _selectedQuantity;
 
+    // ========================================
+    // ✅ FETCH COMPLETE VARIANT DATA FROM API
+    // ========================================
+
+    print("🔍 === Fetching Complete Variant Data ===");
+    print("Product ID: ${widget.productId}");
+    print("Variant ID: $variantId");
+
+    String? hsnCode;
+    double? gstRate;
+    double? statutoryGSTRate;
+    String? gstRuleApplied;
+
+    try {
+      // Fetch fresh product details from API
+      showLoading(); // Show loading indicator
+
+      final productDetails =
+          await productController.fetchProductDetails(widget.productId);
+
+      if (productDetails != null && productDetails["variants"] != null) {
+        final variants = List<Map<String, dynamic>>.from(
+            (productDetails["variants"] as List).whereType<Map>());
+
+        print("📦 Found ${variants.length} variants in API response");
+
+        // Find the matching variant by ID
+        final matchingVariant = variants.firstWhere(
+          (v) => v["id"] == variantId,
+          orElse: () => {},
+        );
+
+        if (matchingVariant.isNotEmpty) {
+          print("✅ Found matching variant in API response");
+
+          // Extract GST data from variant
+          hsnCode = matchingVariant["hsn_code"]?.toString() ??
+              matchingVariant["hsnCode"]?.toString();
+
+          gstRate = _extractDouble(
+              matchingVariant["gst_rate"] ?? matchingVariant["gstRate"]);
+
+          statutoryGSTRate = _extractDouble(
+              matchingVariant["statutory_gst_rate"] ??
+                  matchingVariant["statutoryGSTRate"] ??
+                  matchingVariant["gst_rate"] ??
+                  matchingVariant["gstRate"]);
+
+          gstRuleApplied = matchingVariant["gst_rule"]?.toString() ??
+              matchingVariant["gstRule"]?.toString();
+
+          print("📋 Extracted from variant:");
+          print("   HSN Code: $hsnCode");
+          print("   GST Rate: $gstRate");
+          print("   Statutory GST Rate: $statutoryGSTRate");
+          print("   GST Rule Applied: $gstRuleApplied");
+        } else {
+          print("⚠️ Variant $variantId not found in API response");
+        }
+
+        // Fallback to product-level GST data if variant doesn't have it
+        if (hsnCode == null || hsnCode.isEmpty || gstRate == null) {
+          print("📦 Falling back to product-level GST data");
+
+          hsnCode = hsnCode ??
+              productDetails["hsn_code"]?.toString() ??
+              productDetails["hsnCode"]?.toString();
+
+          gstRate = gstRate ??
+              _extractDouble(
+                  productDetails["gst_rate"] ?? productDetails["gstRate"]);
+
+          statutoryGSTRate = statutoryGSTRate ??
+              _extractDouble(productDetails["statutory_gst_rate"] ??
+                  productDetails["statutoryGSTRate"]) ??
+              gstRate;
+
+          gstRuleApplied = gstRuleApplied ??
+              productDetails["gst_rule"]?.toString() ??
+              productDetails["gstRule"]?.toString();
+
+          print("📋 Extracted from product:");
+          print("   HSN Code: $hsnCode");
+          print("   GST Rate: $gstRate");
+          print("   Statutory GST Rate: $statutoryGSTRate");
+          print("   GST Rule Applied: $gstRuleApplied");
+        }
+      } else {
+        print("❌ Failed to fetch product details from API");
+      }
+
+      hideLoading(); // Hide loading indicator
+    } catch (e) {
+      hideLoading();
+      print("❌ Error fetching variant data: $e");
+    }
+
+    // ========================================
+    // ✅ FINAL VALIDATION & DEFAULTS
+    // ========================================
+
+    // Set safe defaults if still missing
+    hsnCode = hsnCode ?? "";
+    gstRate = gstRate ?? 0.0;
+    statutoryGSTRate = statutoryGSTRate ?? gstRate;
+    gstRuleApplied = gstRuleApplied ?? "VALUE_BASED";
+
+    print("==========================");
+    print("📦 Final Values:");
+    print("   Product ID: ${widget.productId}");
+    print("   Variant ID: $variantId");
+    print("   Price: ${productController.getDisplayPrice()}");
+    print("   MRP: ${productController.getDisplayMrp()}");
+    print("   HSN Code: $hsnCode");
+    print("   GST Rate: $gstRate");
+    print("   Statutory GST Rate: $statutoryGSTRate");
+    print("   GST Rule Applied: $gstRuleApplied");
+    print("==========================");
+
+    // Show warning if GST data is still missing
+    if (hsnCode.isEmpty || gstRate == 0) {
+      print("⚠️ Warning: GST data is incomplete!");
+      showAppSnackBar(
+          'Tax information incomplete. Proceeding with available data.',
+          type: SnackBarType.warning);
+    }
+
+    // ========================================
+    // ✅ NAVIGATE TO REVIEW ORDER SCREEN
+    // ========================================
     Get.to(() => ReviewOrderScreen(
           productId: widget.productId,
           variantId: variantId,
@@ -745,9 +853,43 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
           maxStock: stock,
           initialAddress:
               _addressSelected ? _addressResult as Map<String, dynamic>? : null,
+          hsnCode: hsnCode,
+          gstRate: gstRate,
+          statutoryGSTRate: statutoryGSTRate,
+          gstRuleApplied: gstRuleApplied,
         ));
   }
 
+// ========================================
+// ✅ HELPER METHODS
+// ========================================
+
+// Add these if not already in your class
+  void showLoading() {
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+  }
+
+  void hideLoading() {
+    if (Get.isDialogOpen ?? false) {
+      Get.back();
+    }
+  }
+
+// ========================================
+// ✅ HELPER METHOD TO EXTRACT DOUBLE
+// ========================================
+  double? _extractDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) {
+      return double.tryParse(value);
+    }
+    return null;
+  }
   // Razorpay callbacks
 
   Future<String> generateProductShareLink() async {
@@ -1235,7 +1377,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   final isGuest = prefs.getBool('skip') ?? false;
 
                   if (isGuest) {
-                    getSnackBar("Please login to add to wishlist");
+                    showAppSnackBar("Please login to add to wishlist",
+                        type: SnackBarType.error);
                     Get.toNamed('/login'); // or your login route
                     return;
                   }
@@ -1281,7 +1424,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   final isGuest = prefs.getBool('skip') ?? false;
 
                   if (isGuest) {
-                    getSnackBar("Please login to view cart");
+                    showAppSnackBar("Please login to view cart",
+                        type: SnackBarType.error);
                     Get.toNamed('/login');
                     return;
                   }
@@ -1618,8 +1762,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           padding:
                                               EdgeInsets.only(right: 10.sp),
                                           child: AppSpacingText(
-                                            text:
-                                                "₹${price.toStringAsFixed(0)}",
+                                            text: "₹$price", // ✅ exact value
                                             color: widget.backgroundcolor ==
                                                     whiteColor
                                                 ? nameText
@@ -1638,7 +1781,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             padding:
                                                 EdgeInsets.only(right: 10.sp),
                                             child: Text(
-                                              "₹${mrp.toStringAsFixed(0)}",
+                                              "₹$mrp", // ✅ exact value
                                               style: TextStyle(
                                                 color: searchTextColor,
                                                 letterSpacing: 0.65,
@@ -1667,7 +1810,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 vertical: 2.sp),
                                             child: AppSpacingText(
                                               text:
-                                                  "${((mrp - price) / mrp * 100).toStringAsFixed(0)}% OFF",
+                                                  "${(((mrp - price) / mrp) * 100).toStringAsFixed(2)}% OFF",
+                                              // ✅ exact percentage (2 decimals)
                                               color: widget.backgroundcolor ==
                                                       whiteColor
                                                   ? expressText
@@ -1682,14 +1826,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ),
                                 );
                               }),
+
                               Padding(
                                 padding: EdgeInsets.only(
                                     top: 8.sp, left: 12.sp, right: 16.sp),
                                 child: AppSpacingText(
                                   text: "Price inclusive of all taxes",
-                                  color: widget.backgroundcolor == whiteColor
-                                      ? subtitleColor
-                                      : searchTextColor,
+                                  color: lightPurpleColor,
                                   fontSize: 12,
                                   fontFamily: "Clash Display Regular",
                                   fontWeight: FontWeight.w400,
@@ -1737,7 +1880,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               style: TextStyle(
                                                 fontFamily: "Clash Display",
                                                 fontWeight: FontWeight.w600,
-                                                color: colorPrimary,
+                                                color: lightPurpleColor,
                                                 fontSize: 13.sp,
                                                 decoration:
                                                     TextDecoration.underline,
@@ -2006,14 +2149,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                   _selectedQuantity++;
                                                 });
                                               } else if (maxStock > 0) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                        'Maximum available quantity is $maxStock'),
-                                                    duration:
-                                                        Duration(seconds: 2),
-                                                  ),
+                                                showAppSnackBar(
+                                                  'Maximum available quantity is $maxStock',
+                                                  type: SnackBarType.warning,
                                                 );
                                               }
                                             },
@@ -2412,11 +2550,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               final variant =
                                   productController.getSelectedVariant();
                               if (variant == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content:
-                                          Text('Please select size and color')),
-                                );
+                                showAppSnackBar('Please select size and color',
+                                    type: SnackBarType.error);
                                 return;
                               }
 
@@ -2454,11 +2589,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               final variant =
                                   productController.getSelectedVariant();
                               if (variant == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content:
-                                          Text('Please select size and color')),
-                                );
+                                showAppSnackBar('Please select size and color',
+                                    type: SnackBarType.error);
                                 return;
                               }
 

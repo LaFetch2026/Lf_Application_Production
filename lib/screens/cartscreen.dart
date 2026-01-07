@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:lafetch/common/widget/bottom_sheets/bottomCoupon.dart';
 import 'package:lafetch/controllers/order_controller.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
@@ -145,6 +147,13 @@ class CartScreenState extends State<CartScreen> {
     ));
   }
 
+  String formatAmount(num value) {
+    if (value % 1 == 0) {
+      return value.toInt().toString(); // 3558.0 → 3558
+    }
+    return value.toString(); // 3558.6 → 3558.6
+  }
+
   num _computeCartTotalInRupees() {
     final num total = _asNum(controller.cartDetails["total"]);
     final num couponDiscount =
@@ -177,87 +186,187 @@ class CartScreenState extends State<CartScreen> {
     print('==================');
   }
 
+// ================= UPDATED _handleCheckout in CartScreen =================
+
   Future<void> _handleCheckout() async {
     try {
+      print("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+      print("🛒 CART CHECKOUT - START");
+      print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
       // ✅ Step 1: Validate address
+      print("\n📍 STEP 1: Validating Address");
       final address =
           controller.cartDetails["address"] ?? _pendingSelectedAddress;
+      print("   Cart address: ${controller.cartDetails["address"]}");
+      print("   Pending address: $_pendingSelectedAddress");
+      print("   Selected address: $address");
+
       if (address == null) {
+        print("   ❌ No address selected");
         _handleAddressSelection();
-        getSnackBar("Please select a shipping address to continue");
+        showAppSnackBar("Please select a shipping address to continue", type: SnackBarType.error);
         return;
       }
 
       final shippingAddressId = address["id"];
+      print("   ✅ Address ID: $shippingAddressId");
+
       if (shippingAddressId == null) {
-        getSnackBar("Invalid address selected. Please choose another address.");
+        print("   ❌ Invalid address ID");
+        showAppSnackBar("Invalid address selected. Please choose another address.", type: SnackBarType.error);
         return;
       }
 
       // ✅ Step 2: Validate user ID
+      print("\n👤 STEP 2: Validating User ID");
       final prefs = await SharedPreferences.getInstance();
       int? userId = prefs.getInt('userId') ?? prefs.getInt('user_id');
+      print("   userId from prefs: $userId");
+
       if (userId == null) {
-        getSnackBar("Please login to continue");
+        print("   ❌ No user ID found");
+        showAppSnackBar("Please login to continue", type: SnackBarType.error);
         Get.offAllNamed('/login');
         return;
       }
+      print("   ✅ User authenticated: userId=$userId");
 
       // ✅ Step 3: Validate cart total
+      print("\n💰 STEP 3: Validating Cart Total");
       final totalAmount = _computeCartTotalInRupees();
+      print("   Cart total: ₹$totalAmount");
+
       if (totalAmount <= 0) {
-        getSnackBar("Cart total must be greater than zero");
+        print("   ❌ Invalid cart total");
+        showAppSnackBar("Cart total must be greater than zero", type: SnackBarType.error);
         return;
       }
+      print("   ✅ Cart total valid");
 
-      // ✅ Step 4: Build payload for initiate-payment
+      // ✅ Step 4: Build items array with GST calculations
+      print("\n📦 STEP 4: Building Items Array");
+      print("   Number of items in cart: ${controller.orderList.length}");
       final List<Map<String, dynamic>> items = [];
-      for (final item in controller.orderList) {
+      num totalGst = 0;
+      final num couponDiscount =
+          _asNum(controller.cartDetails["coupon_discount"]);
+      print("   Coupon discount: ₹$couponDiscount");
+
+      for (int i = 0; i < controller.orderList.length; i++) {
+        final item = controller.orderList[i];
+        print("\n   🔸 Item ${i + 1}:");
         final product = Map<String, dynamic>.from(item["product"] ?? {});
         final inventory = Map<String, dynamic>.from(item["inventory"] ?? {});
 
-        items.add({
-          "productName": product["name"] ?? "",
-          "productId": product["id"],
-          "variantId": inventory["id"],
-          "quantity": item["quantity"] ?? 1,
-          "unitPrice": _asNum(product["price"]),
-          "total": _asNum(product["price"]) * _asNum(item["quantity"]),
-          "sku": "",
-          "hsn": "",
-        });
+        final num unitPrice = _asNum(product["price"]);
+        final int quantity = item["quantity"] ?? 1;
+        const num discount = 0;
+
+        print("      Product ID: ${product["id"]}");
+        print("      Variant ID: ${inventory["id"]}");
+        print("      Unit Price: ₹$unitPrice");
+        print("      Quantity: $quantity");
+
+        // Extract GST data from product/inventory
+        final String hsnCode = product["hsn_code"]?.toString() ??
+            inventory["hsn_code"]?.toString() ??
+            "";
+        final num gstRate =
+            _asNum(product["gst_rate"] ?? inventory["gst_rate"]);
+        final num statutoryGSTRate = _asNum(product["statutory_gst_rate"] ??
+            inventory["statutory_gst_rate"] ??
+            gstRate);
+        final String gstRuleApplied = product["gst_rule"]?.toString() ??
+            inventory["gst_rule"]?.toString() ??
+            "";
+
+        print("      HSN Code: $hsnCode");
+        print("      GST Rate: $gstRate%");
+
+        // Calculate GST: (unitPrice * quantity * gstRate / 100)
+        final num gstAmount = ((unitPrice * quantity) * gstRate / 100);
+        totalGst += gstAmount;
+
+        // Item total = (unitPrice * quantity) + gstAmount - discount
+        final num itemTotal = (unitPrice * quantity) + gstAmount - discount;
+
+        print("      GST Amount: ₹$gstAmount");
+        print("      Item Total: ₹$itemTotal");
+
+        // ✅ Use helper method to build item
+        items.add(orderController.buildOrderItem(
+          productId: product["id"],
+          variantId: inventory["id"],
+          quantity: quantity,
+          unitPrice: unitPrice,
+          discount: discount,
+          total: itemTotal,
+          tax: 0, // Keep as 0 (GST is separate)
+          gstAmount: gstAmount,
+          hsnCode: hsnCode,
+          gstRate: gstRate,
+          statutoryGSTRate: statutoryGSTRate,
+          gstRuleApplied: gstRuleApplied,
+        ));
       }
 
-      final orderPayload = {
-        "userId": userId,
-        "shippingAddressId": shippingAddressId,
-        "items": items,
-        "totalMRP": _asNum(controller.cartDetails["total_mrp"]),
-        "total": totalAmount,
-        "paymentMethod": "prepaid",
-      };
+      print("\n   ✅ Built ${items.length} items for payment");
+      print("   Total GST: ₹$totalGst");
 
-      // ✅ Step 5: Call initiate-payment API
-      final paymentInitData =
-          await orderController.initiatePayment(orderPayload);
+      // ✅ Step 5: Call initiate-payment API with named parameters
+      print("\n💳 STEP 5: Initiating Payment");
+      print("   Calling orderController.initiatePayment with:");
+      print("   • userId: $userId");
+      print("   • shippingAddressId: $shippingAddressId");
+      print("   • items count: ${items.length}");
+      print("   • totalMRP: ${_asNum(controller.cartDetails["total_mrp"])}");
+      print("   • couponDiscount: $couponDiscount");
+      print("   • tax: $totalGst");
+      print("   • total: $totalAmount");
+      print("   • paymentMethod: prepaid");
+
+      final paymentInitData = await orderController.initiatePayment(
+        userId: userId,
+        shippingAddressId: shippingAddressId,
+        items: items,
+        totalMRP: _asNum(controller.cartDetails["total_mrp"]),
+        couponDiscount: couponDiscount,
+        tax: totalGst,
+        total: totalAmount,
+        paymentMethod: "prepaid",
+      );
+
       if (paymentInitData == null) {
-        getSnackBar("Failed to initiate payment. Please try again.");
+        print("   ❌ Payment initiation failed - null response");
+        showAppSnackBar("Failed to initiate payment. Please try again.", type: SnackBarType.error);
         return;
       }
+
+      print("   ✅ Payment initiation successful");
+      print("   Response: $paymentInitData");
 
       final razorpayOrderId = paymentInitData["providerOrderId"];
+      print("   Razorpay Order ID: $razorpayOrderId");
+
       if (razorpayOrderId == null || razorpayOrderId.isEmpty) {
-        getSnackBar("Unable to start payment (missing Razorpay Order ID).");
+        print("   ❌ Missing or empty Razorpay Order ID");
+        showAppSnackBar("Unable to start payment (missing Razorpay Order ID).", type: SnackBarType.error);
         return;
       }
 
-      print("✅ Payment initiated. Razorpay Order ID: $razorpayOrderId");
-
       // ✅ Step 6: Open Razorpay checkout
+      print("\n🎯 STEP 6: Opening Razorpay Checkout");
+      print("   Razorpay Order ID: $razorpayOrderId");
+      print("   Amount: ₹$totalAmount");
+      print("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+      print("✅ CART CHECKOUT - COMPLETE, Opening Razorpay...");
+      print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+
       await _openRazorpayCheckout(orderId: razorpayOrderId);
     } catch (e) {
       print("🔥 Checkout error: $e");
-      getSnackBar("Something went wrong. Please try again.");
+      showAppSnackBar("Something went wrong. Please try again.", type: SnackBarType.error);
     }
   }
 
@@ -280,17 +389,84 @@ class CartScreenState extends State<CartScreen> {
   }
 
   Future<void> _openRazorpayCheckout({String? orderId}) async {
+    print("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    print("💳 OPENING RAZORPAY CHECKOUT");
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+    // ⚠️ Check if running on iOS Simulator
+    try {
+      final deviceInfo = DeviceInfoPlugin();
+      if (Platform.isIOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        if (!iosInfo.isPhysicalDevice) {
+          print("⚠️  RUNNING ON iOS SIMULATOR");
+          print("⚠️  Razorpay does NOT work on iOS simulators!");
+          print("⚠️  Please test on a REAL iOS device.");
+          print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+
+          if (!mounted) return;
+
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text('⚠️ iOS Simulator Detected'),
+              content: Text(
+                'Razorpay payment gateway does NOT work on iOS simulators.\n\n'
+                'To test payments:\n'
+                '• Use a REAL iPhone/iPad device\n'
+                '• Or test on Android emulator\n\n'
+                'Your order has been initiated successfully.\n'
+                'Order ID: $orderId\n\n'
+                'On a real device, the Razorpay payment window will open here.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    // Navigate to pending status for testing
+                    Get.offAll(() => const OrderStatusScreen(status: 'pending'));
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+          return;
+        }
+        print("✅ Running on REAL iOS device");
+      }
+    } catch (e) {
+      print("⚠️  Device detection failed: $e (continuing anyway...)");
+    }
+
+    // Validate order ID
     if (orderId == null || orderId.isEmpty) {
-      getSnackBar("Payment could not be started. Missing Razorpay Order ID.");
+      print("❌ ERROR: Order ID is null or empty");
+      showAppSnackBar("Payment could not be started. Missing Razorpay Order ID.", type: SnackBarType.error);
+      return;
+    }
+    print("✅ Order ID: $orderId");
+
+    // Validate Razorpay key
+    if (_razorpayKey.isEmpty) {
+      print("❌ ERROR: Razorpay key is empty");
+      showAppSnackBar("Payment configuration error. Please contact support.", type: SnackBarType.error);
+      return;
+    }
+    print("✅ Razorpay Key: ${_razorpayKey.substring(0, 10)}...");
+
+    // Calculate amount
+    final num cartTotalInRupees = _computeCartTotalInRupees();
+    final int amountInPaise = (cartTotalInRupees * 100).round();
+    print("💰 Amount: ₹$cartTotalInRupees (${amountInPaise} paise)");
+
+    if (amountInPaise <= 0) {
+      print("❌ ERROR: Invalid amount (must be > 0)");
+      showAppSnackBar("Invalid payment amount", type: SnackBarType.error);
       return;
     }
 
-    // ✅ Now includes coupon discount automatically
-    final num cartTotalInRupees = _computeCartTotalInRupees();
-    final int amountInPaise = (cartTotalInRupees * 100).round();
-
-    print("🧾 Razorpay payable (after coupon): ₹$cartTotalInRupees");
-
+    // Get user details
     final prefs = await SharedPreferences.getInstance();
     final String userName = (prefs.getString('user_name') ?? '').trim();
     final String userEmail = (prefs.getString('email') ?? '').trim();
@@ -301,6 +477,14 @@ class CartScreenState extends State<CartScreen> {
 
     final String phone = _sanitizeIndianPhone(rawPhone);
 
+    print("\n👤 User Details:");
+    print("   Name: ${userName.isEmpty ? 'Customer (default)' : userName}");
+    print("   Email: ${userEmail.isEmpty ? 'customer@example.com (default)' : userEmail}");
+    print("   Raw Phone: $rawPhone");
+    print("   Sanitized Phone: $phone");
+    print("   Final Contact: ${phone.length == 10 ? '+91$phone' : '+919999999999'}");
+
+    // Build Razorpay options
     final options = {
       'key': _razorpayKey,
       'amount': amountInPaise,
@@ -316,11 +500,18 @@ class CartScreenState extends State<CartScreen> {
       'theme': {'color': '#070707'},
     };
 
+    print("\n📦 Razorpay Options:");
+    print("   ${options.toString()}");
+
+    print("\n🚀 Attempting to open Razorpay...");
     try {
       _razorpay.open(options);
+      print("✅ Razorpay.open() called successfully");
+      print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
     } catch (e) {
-      print('🔥 Razorpay open error: $e');
-      getSnackBar('Unable to start payment: $e');
+      print("❌ Razorpay.open() failed with error: $e");
+      print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+      showAppSnackBar('Unable to start payment: $e', type: SnackBarType.error);
     }
   }
 
@@ -945,15 +1136,15 @@ class CartScreenState extends State<CartScreen> {
               padding: EdgeInsets.symmetric(vertical: 4.sp),
               child: Row(
                 children: [
-                  // MRP
+                  // MRP (Strikethrough)
                   Visibility(
                     visible: product["mrp"] != null &&
-                        product["mrp"] != product["price"] &&
+                        product["price"] != null &&
                         _asNum(product["mrp"]) > _asNum(product["price"]),
                     child: Padding(
                       padding: EdgeInsets.only(right: 10.sp),
                       child: Text(
-                        "₹${product["mrp"] ?? "0"}",
+                        "₹${product["mrp"]}", // ✅ exact API value
                         style: TextStyle(
                           color: widget.backgroundcolor == whiteColor
                               ? lightText
@@ -966,11 +1157,12 @@ class CartScreenState extends State<CartScreen> {
                       ),
                     ),
                   ),
-                  // Selling
+
+                  // Selling Price
                   Padding(
                     padding: EdgeInsets.only(right: 6.sp),
                     child: Text(
-                      "₹${product["price"] ?? "0"}",
+                      "₹${product["price"]}", // ✅ exact API value
                       style: TextStyle(
                         color: widget.backgroundcolor == whiteColor
                             ? nameText
@@ -981,18 +1173,22 @@ class CartScreenState extends State<CartScreen> {
                       ),
                     ),
                   ),
-                  // Discount chip
-                  if (_asNum(product["mrp"]) > _asNum(product["price"]))
+
+                  // Discount Chip
+                  if (product["mrp"] != null &&
+                      product["price"] != null &&
+                      _asNum(product["mrp"]) > _asNum(product["price"]))
                     Container(
                       decoration: BoxDecoration(
                         color: const Color(0xffA7F3D0),
-                        borderRadius: BorderRadius.all(Radius.circular(20.sp)),
+                        borderRadius: BorderRadius.circular(20.sp),
                       ),
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 10.sp, vertical: 4.sp),
                         child: Text(
-                          "${_calculateDiscountPercentage(product)} OFF",
+                          "${_calculateDiscountPercentage(product)}% OFF",
+                          // ✅ exact % (no rounding unless you want)
                           style: const TextStyle(
                             color: homeAppBarColor,
                             fontSize: 12,
@@ -1103,7 +1299,7 @@ class CartScreenState extends State<CartScreen> {
             // Total MRP
             _buildPriceRow(
               "Total MRP",
-              "₹${totalMrp.toStringAsFixed(0)}",
+              "₹${formatAmount(totalMrp)}",
               false,
             ),
 
@@ -1111,7 +1307,7 @@ class CartScreenState extends State<CartScreen> {
             if (discountOnMrp > 0)
               _buildPriceRow(
                 "Discount on MRP",
-                "- ₹${discountOnMrp.toStringAsFixed(0)}",
+                "- ₹${formatAmount(discountOnMrp)}",
                 false,
               ),
 
@@ -1141,7 +1337,7 @@ class CartScreenState extends State<CartScreen> {
                   ),
                   const Spacer(),
                   AppText(
-                    text: "₹${sellingTotal.toStringAsFixed(0)}",
+                    text: "₹${formatAmount(sellingTotal)}",
                     fontFamily: "Clash Display",
                     fontWeight: FontWeight.w500,
                     color: widget.backgroundcolor == whiteColor
@@ -1170,7 +1366,7 @@ class CartScreenState extends State<CartScreen> {
                     ),
                     const Spacer(),
                     AppText(
-                      text: "- ₹${couponDiscount.toStringAsFixed(0)}",
+                      text: "- ₹${formatAmount(couponDiscount)}",
                       fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: const Color(0xff059669),
@@ -1198,7 +1394,7 @@ class CartScreenState extends State<CartScreen> {
                   AppText(
                     text: deliveryCharges == 0
                         ? "Free"
-                        : "+ ₹${deliveryCharges.toStringAsFixed(0)}",
+                        : "+ ₹${formatAmount(deliveryCharges)}",
                     fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                     color: deliveryCharges == 0
@@ -1235,7 +1431,7 @@ class CartScreenState extends State<CartScreen> {
                 ),
                 const Spacer(),
                 AppText(
-                  text: "₹${finalTotal.toStringAsFixed(2)}",
+                  text: "₹${formatAmount(finalTotal)}",
                   fontFamily: "Clash Display",
                   fontWeight: FontWeight.w500,
                   color: widget.backgroundcolor == whiteColor
@@ -1311,7 +1507,7 @@ class CartScreenState extends State<CartScreen> {
                     await productController.getCoupons();
 
                     if (productController.couponList.isEmpty) {
-                      getSnackBar("No coupons available right now");
+                      showAppSnackBar("No coupons available right now", type: SnackBarType.info);
                       return;
                     }
 
@@ -1390,15 +1586,16 @@ class CartScreenState extends State<CartScreen> {
       );
 
       if (coupon.isEmpty) {
-        getSnackBar("Invalid or expired coupon");
+        showAppSnackBar("Invalid or expired coupon", type: SnackBarType.error);
         return;
       }
 
       final num total = _asNum(controller.cartDetails["total"]);
       final num minCart = _asNum(coupon['minCartValue']);
       if (total < minCart) {
-        getSnackBar(
-            "Coupon requires a minimum cart value of ₹${minCart.toStringAsFixed(0)}");
+        showAppSnackBar(
+            "Coupon requires a minimum cart value of ₹${minCart.toStringAsFixed(0)}",
+            type: SnackBarType.warning);
         return;
       }
 
@@ -1430,11 +1627,11 @@ class CartScreenState extends State<CartScreen> {
       await prefs.setString('applied_coupon_code', code);
       await prefs.setInt('applied_coupon_discount', discountValue.toInt());
 
-      getSnackBar("Coupon '$code' applied successfully");
+      showAppSnackBar("Coupon '$code' applied successfully", type: SnackBarType.success);
       controller.update();
     } catch (e) {
       print("✗ Error applying coupon: $e");
-      getSnackBar("Failed to apply coupon. Please try again.");
+      showAppSnackBar("Failed to apply coupon. Please try again.", type: SnackBarType.error);
     }
   }
 
@@ -1449,7 +1646,7 @@ class CartScreenState extends State<CartScreen> {
     await prefs.remove('applied_coupon_code');
     await prefs.remove('applied_coupon_discount');
 
-    getSnackBar("Coupon removed");
+    showAppSnackBar("Coupon removed", type: SnackBarType.success);
 
     // ✅ will instantly update all Obx UI
     controller.update();
@@ -1749,12 +1946,12 @@ class CartScreenState extends State<CartScreen> {
     final guestCartCount = await controller.getGuestCartCount();
 
     if (guestCartCount == 0) {
-      getSnackBar("Your cart is empty");
+      showAppSnackBar("Your cart is empty", type: SnackBarType.info);
       return;
     }
 
     // Show a message explaining cart will be saved
-    getSnackBar("Sign up to save your cart and checkout");
+    showAppSnackBar("Sign up to save your cart and checkout", type: SnackBarType.info);
 
     // Navigate to login/signup screen
     await analytics.logEvent(
@@ -1780,7 +1977,7 @@ class CartScreenState extends State<CartScreen> {
 
     // Check if product is out of stock
     if (availableStock == 0) {
-      getSnackBar("This item is out of stock");
+      showAppSnackBar("This item is out of stock", type: SnackBarType.error);
       return;
     }
 
@@ -1820,7 +2017,7 @@ class CartScreenState extends State<CartScreen> {
     if (!mounted) return;
 
     if (availableStock == 0) {
-      getSnackBar("This item is out of stock");
+      showAppSnackBar("This item is out of stock", type: SnackBarType.error);
       return;
     }
 
@@ -1878,8 +2075,9 @@ class CartScreenState extends State<CartScreen> {
                 if (newQty != currentQuantity) {
                   // Validate quantity before updating
                   if (newQty > availableStock) {
-                    getSnackBar(
-                        "Only $availableStock units available in stock");
+                    showAppSnackBar(
+                        "Only $availableStock units available in stock",
+                        type: SnackBarType.error);
                     return;
                   }
 
@@ -1933,7 +2131,7 @@ class CartScreenState extends State<CartScreen> {
 
         // Refresh guest cart display
         await controller.loadGuestCartForDisplay();
-        getSnackBar("Quantity updated to $newQuantity");
+        showAppSnackBar("Quantity updated to $newQuantity", type: SnackBarType.success);
       } else {
         // For logged-in users: use the new update-cart-quantity API
         controller.showLoading();
@@ -1962,10 +2160,10 @@ class CartScreenState extends State<CartScreen> {
           }
 
           controller.hideLoading();
-          getSnackBar("Quantity updated to $newQuantity");
+          showAppSnackBar("Quantity updated to $newQuantity", type: SnackBarType.success);
         } else {
           controller.hideLoading();
-          getSnackBar("Failed to update quantity");
+          showAppSnackBar("Failed to update quantity", type: SnackBarType.error);
         }
       }
 
@@ -1983,7 +2181,7 @@ class CartScreenState extends State<CartScreen> {
         controller.hideLoading();
       }
       debugPrint("❌ Error updating quantity: $e");
-      getSnackBar("Failed to update quantity. Please try again.");
+      showAppSnackBar("Failed to update quantity. Please try again.", type: SnackBarType.error);
     }
   }
 
@@ -2006,11 +2204,11 @@ class CartScreenState extends State<CartScreen> {
   String _calculateDiscountPercentage(Map product) {
     final mrp = _asNum(product["mrp"]);
     final price = _asNum(product["price"]);
-    if (mrp > price && mrp > 0) {
-      final discount = ((mrp - price) / mrp * 100).round();
-      return "$discount%";
-    }
-    return "0%";
+
+    if (mrp <= 0 || price <= 0 || mrp <= price) return "0";
+
+    final discount = ((mrp - price) / mrp) * 100;
+    return discount.toStringAsFixed(2); // 🔹 keep exact (2 decimals)
   }
 
   void _navigateToProductDetails(int index) async {

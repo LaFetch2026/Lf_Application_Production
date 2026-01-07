@@ -121,13 +121,15 @@ class CartController extends BaseController {
 
       List<Map<String, dynamic>> normalized = rows.map((m) {
         final prod = (m['product'] ?? const {}) as Map;
+        final pricing = (m['pricing'] ?? const {}) as Map;
 
         // ⭐ CORRECT product_variant block
         final rawVariant = (m['product_variant'] ?? const {}) as Map;
 
         final productVariant = {
           "id": rawVariant['id'],
-          "price": rawVariant['price'],
+          "price": rawVariant['price'], // base variant price
+          "unitPrice": pricing['unitPrice'], // ⭐ NEW (GST-inclusive)
           "title": rawVariant['title'],
           "imageSrc": rawVariant['imageSrc'],
           "selectedOptions": rawVariant['selectedOptions'] ?? [],
@@ -182,7 +184,8 @@ class CartController extends BaseController {
           "id": m['productId'] ?? prod['id'],
           "name": (prod['title'] ?? prod['name'] ?? "").toString(),
           "brand_name": (prod['brand'] ?? prod['brand_name'] ?? "").toString(),
-          "price": rawVariant['price'] ?? prod['price'] ?? 0,
+          "price":
+              pricing['unitPrice'] ?? rawVariant['price'] ?? prod['price'] ?? 0,
           "mrp": rawVariant['compareAtPrice'] ?? prod['mrp'] ?? 0,
           "images": wrapImages(prod['imageUrls'] ?? prod['images']),
           "express_delivery": prod['express_delivery'] == true,
@@ -478,7 +481,8 @@ class CartController extends BaseController {
   }
 
   // -------------------- DELETE CART ITEM --------------------
-  Future<void> callDeleteCart(Color backgroundColor, int productId, {int? variantId}) async {
+  Future<void> callDeleteCart(Color backgroundColor, int productId,
+      {int? variantId}) async {
     try {
       final client = _ensureClient();
       final prefs = await SharedPreferences.getInstance();
@@ -815,7 +819,7 @@ class CartController extends BaseController {
                     variant['compareAtPrice'] ?? currentProduct['mrp'],
                 'inventory': variant['inventory'],
               };
-              
+
               print(
                   "💾 Storing variant for guest cart: id=${variant['id']}, lfMsp=${variantDetails!['lfMsp']}, price=${variantDetails['price']}, mrp=${variantDetails['mrp']}");
             }
@@ -851,8 +855,8 @@ class CartController extends BaseController {
   }
 
   /// Wrapper for delete cart that handles both guest and logged-in users
-  Future<void> deleteFromCartUniversal(
-      Color backgroundColor, int productId, {int? variantId}) async {
+  Future<void> deleteFromCartUniversal(Color backgroundColor, int productId,
+      {int? variantId}) async {
     final isGuest = await isGuestUser();
 
     if (isGuest) {
@@ -997,9 +1001,9 @@ class CartController extends BaseController {
           }
 
           // Get price from variant - try multiple sources
-          // Priority: 
+          // Priority:
           // 1. Stored variant fields (lfMsp, price)
-          // 2. API variant fields (price, lfMsp)  
+          // 2. API variant fields (price, lfMsp)
           // 3. API product-level fields (lfMsp, msp)
           final variantPrice = parsePrice(variant['lfMsp'] ??
               variant['price'] ??
@@ -1026,7 +1030,8 @@ class CartController extends BaseController {
           final transformedProduct = {
             'id': product['id'] ?? productId,
             'name': (product['title'] ?? product['name'] ?? '').toString(),
-            'brand_name': '', // Empty to match logged-in cart UI (only shows product name)
+            'brand_name':
+                '', // Empty to match logged-in cart UI (only shows product name)
             'price': variantPrice,
             'mrp': variantMrp,
             'images': wrapImages(product['imageUrls'] ?? product['images']),

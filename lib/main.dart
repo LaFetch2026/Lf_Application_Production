@@ -203,7 +203,7 @@ Future<void> _initPushNotifications(prefs) async {
 
     // Get FCM Token with retry logic and error handling
     String? token;
-    for (int attempt = 0; attempt < 5; attempt++) {
+    for (int attempt = 0; attempt < 3; attempt++) {
       try {
         token = await messaging.getToken();
         if (token != null && token.isNotEmpty) {
@@ -211,16 +211,25 @@ Future<void> _initPushNotifications(prefs) async {
           await prefs.setString('pending_fcm_token', token);
           break;
         }
+        // If token is null, wait briefly before retry
+        if (attempt < 2) {
+          await Future.delayed(const Duration(milliseconds: 500));
+        }
       } catch (e) {
         print("⚠️ FCM Token retrieval attempt ${attempt + 1} failed: $e");
-        if (attempt < 4) {
-          await Future.delayed(Duration(seconds: attempt + 1));
+        // Shorter delay between retries
+        if (attempt < 2) {
+          await Future.delayed(const Duration(milliseconds: 500));
         }
       }
     }
 
     if (token == null) {
-      print('⚠️ Failed to obtain FCM token after all retries');
+      print('⚠️ Failed to obtain FCM token after retries. Push notifications may not work.');
+      print('   This is normal in simulators/emulators. On real devices, check:');
+      print('   - Firebase project configuration');
+      print('   - google-services.json (Android) or GoogleService-Info.plist (iOS)');
+      print('   - APNS certificates (iOS)');
     }
 
     // Listen for token refresh

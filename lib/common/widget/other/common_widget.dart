@@ -7,15 +7,74 @@ import '../../../core/constant/constants.dart';
 
 import 'package:get/get.dart';
 
-void getSnackBar(String message, {SnackPosition? snackPosition}) {
+enum SnackBarType { success, error, info, warning }
+
+void showAppSnackBar(
+  String message, {
+  SnackBarType type = SnackBarType.info,
+  SnackPosition position = SnackPosition.BOTTOM,
+  Duration duration = const Duration(seconds: 3),
+}) {
+  Color backgroundColor;
+  Color textColor;
+  IconData icon;
+
+  switch (type) {
+    case SnackBarType.success:
+      backgroundColor = const Color(0xff059669).withOpacity(0.1);
+      textColor = const Color(0xff059669);
+      icon = Icons.check_circle_outline;
+      break;
+    case SnackBarType.error:
+      backgroundColor = Colors.redAccent.withOpacity(0.1);
+      textColor = Colors.redAccent;
+      icon = Icons.error_outline;
+      break;
+    case SnackBarType.warning:
+      backgroundColor = Colors.orange.withOpacity(0.1);
+      textColor = Colors.orange.shade800;
+      icon = Icons.warning_amber_outlined;
+      break;
+    case SnackBarType.info:
+      backgroundColor = colorSecondary;
+      textColor = colorPrimary;
+      icon = Icons.info_outline;
+      break;
+  }
+
   Get.snackbar(
     '',
     message,
     titleText: Container(),
-    duration: const Duration(seconds: 2),
-    snackPosition: snackPosition ?? SnackPosition.TOP,
-    backgroundColor: colorSecondary,
-    colorText: colorPrimary,
+    duration: duration,
+    snackPosition: position,
+    backgroundColor: backgroundColor,
+    colorText: textColor,
+    icon: Icon(icon, color: textColor, size: 24.sp),
+    borderRadius: 8.sp,
+    margin: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
+    padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 12.sp),
+    isDismissible: true,
+    dismissDirection: DismissDirection.horizontal,
+    messageText: Text(
+      message,
+      style: TextStyle(
+        color: textColor,
+        fontSize: 13.sp,
+        fontFamily: "Clash Display Regular",
+        fontWeight: FontWeight.w500,
+      ),
+    ),
+  );
+}
+
+// Legacy support - keep old function name but use new implementation
+@Deprecated('Use showAppSnackBar instead')
+void getSnackBar(String message, {SnackPosition? snackPosition}) {
+  showAppSnackBar(
+    message,
+    type: SnackBarType.info,
+    position: snackPosition ?? SnackPosition.BOTTOM,
   );
 }
 

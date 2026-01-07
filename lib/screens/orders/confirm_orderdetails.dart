@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
+import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/core/constant/constants.dart';
 import 'package:lafetch/controllers/order_controller.dart';
 import 'package:lafetch/screens/orders/cancel_order.dart';
@@ -33,7 +34,7 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
   Future<void> _fetchOrderDetails() async {
     final orderId = widget.order['id'];
     if (orderId == null) {
-      Get.snackbar("Error", "Invalid order ID");
+      showAppSnackBar("Invalid order ID", type: SnackBarType.error);
       return;
     }
 

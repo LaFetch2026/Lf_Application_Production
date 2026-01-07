@@ -2,6 +2,7 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+import 'dart:io' show Platform;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +10,10 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:lafetch/common/widget/bottom_sheets/bottomCoupon.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
+import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/controllers/order_controller.dart';
 import 'package:lafetch/core/constant/constants.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
@@ -34,6 +37,12 @@ class ReviewOrderScreen extends StatefulWidget {
   final String? razorpayOrderId;
   final int maxStock;
 
+  // GST-related fields (from API)
+  final String? hsnCode;
+  final double? gstRate;
+  final double? statutoryGSTRate;
+  final String? gstRuleApplied;
+
   const ReviewOrderScreen({
     super.key,
     required this.productId,
@@ -48,6 +57,10 @@ class ReviewOrderScreen extends StatefulWidget {
     this.initialAddress,
     this.razorpayOrderId,
     this.maxStock = 10,
+    this.hsnCode,
+    this.gstRate,
+    this.statutoryGSTRate,
+    this.gstRuleApplied,
   });
 
   @override
@@ -83,16 +96,57 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     return num.tryParse('$v'.replaceAll(',', '').trim()) ?? 0;
   }
 
+  String formatAmount(num value) {
+    if (value % 1 == 0) {
+      return value.toInt().toString(); // 3558.0 → 3558
+    }
+    return value.toString(); // 3558.6 → 3558.6
+  }
+
   num _computePayable() {
-    final num sellingPrice = _totalPrice;
+    print("\n🧮 === COMPUTING PAYABLE AMOUNT ===");
+
+    final num sellingPrice = _totalPricee;
+    print("   Step 1 - Selling Price:");
+    print("      _totalPrice = price × quantity");
+    print("      _totalPrice = ${widget.price} × $_selectedQuantity");
+    print("      Selling Price: ₹$sellingPrice");
 
     // Apply coupon on selling
     final num discountedPrice = sellingPrice - _couponDiscount;
+    print("\n   Step 2 - Apply Coupon:");
+    print("      Coupon Discount: ₹$_couponDiscount");
+    print("      Discounted Price = $sellingPrice - $_couponDiscount");
+    print("      Discounted Price: ₹$discountedPrice");
 
     // Final total = discounted price + delivery + convenience
     final num total = discountedPrice + _delivery + _convenience;
+    print("\n   Step 3 - Add Charges:");
+    print("      Delivery Charges: ₹$_delivery");
+    print("      Convenience Charges: ₹$_convenience");
+    print("      Total = $discountedPrice + $_delivery + $_convenience");
+    print("      Total: ₹$total");
 
-    return total < 0 ? 0 : total;
+    final num finalTotal = total < 0 ? 0 : total;
+    print("\n   Final Payable: ₹$finalTotal");
+    print("   (Capped at 0 if negative)");
+    print("=================================\n");
+
+    return finalTotal;
+  }
+
+// Also add debug logging to _totalPrice getter
+  double get _totalPricee {
+    final price = widget.price;
+    final quantity = _selectedQuantity <= 0 ? 1 : _selectedQuantity;
+    final total = (price * quantity).toDouble();
+
+    print("📊 _totalPrice getter:");
+    print("   price: ₹$price");
+    print("   quantity: $quantity");
+    print("   total: ₹$total");
+
+    return total;
   }
 
   @override
@@ -143,87 +197,288 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   }
 
   // ================= Checkout flow =================
+// ================= UPDATED _confirmAndPay in ReviewOrderScreen =================
+
   Future<void> _confirmAndPay() async {
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    print("🚀 CONFIRM AND PAY - START");
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
     // 1) address
+    print("\n📍 STEP 1: Validating Address");
+    print(
+        "   Current address: ${_address != null ? 'Selected' : 'Not selected'}");
+
     if (_address == null) {
+      print("   ⚠️ No address selected, prompting user...");
       await _pickAddress();
       if (_address == null) {
-        _snack("Please select a shipping address to continue");
+        print("   ❌ User did not select address");
+        showAppSnackBar("Please select a shipping address to continue",
+            type: SnackBarType.error);
         return;
       }
     }
+
     final shippingAddressId = _address?['id'];
+    print("   ✅ Address ID: $shippingAddressId");
+    print("   📦 Full Address: $_address");
+
     if (shippingAddressId == null) {
-      _snack("Invalid address selected. Please choose another address.");
+      print("   ❌ Invalid address ID");
+      showAppSnackBar(
+          "Invalid address selected. Please choose another address.",
+          type: SnackBarType.error);
       return;
     }
 
     // 2) user id
+    print("\n👤 STEP 2: Validating User ID");
     final prefs = await SharedPreferences.getInstance();
     int? userId = prefs.getInt('userId') ?? prefs.getInt('user_id');
+    print("   User ID: $userId");
+
     if (userId == null) {
-      _snack("Please login to continue");
+      print("   ❌ No user ID found, redirecting to login");
+      showAppSnackBar("Please login to continue", type: SnackBarType.error);
       Get.offAllNamed('/login');
       return;
     }
+    print("   ✅ User authenticated");
 
     // 3) product sanity
+    print("\n📦 STEP 3: Validating Product Data");
+    print("   Product ID: ${widget.productId}");
+    print("   Variant ID: ${widget.variantId}");
+    print("   Quantity: $_selectedQuantity");
+    print("   Price: ${widget.price}");
+
     if (widget.productId <= 0 || _selectedQuantity <= 0 || widget.price <= 0) {
-      _snack("Invalid product data. Please try again.");
+      print("   ❌ Invalid product data");
+      showAppSnackBar("Invalid product data. Please try again.",
+          type: SnackBarType.error);
       return;
     }
+    print("   ✅ Product data valid");
 
     // 4) total validation
+    print("\n💰 STEP 4: Calculating Totals");
     final payable = _computePayable();
+    print("   Payable Amount: ₹$payable");
+
     if (payable <= 0) {
-      _snack("Order total must be greater than zero");
+      print("   ❌ Invalid payable amount");
+      showAppSnackBar("Order total must be greater than zero",
+          type: SnackBarType.error);
       return;
     }
+    print("   ✅ Payable amount valid");
 
-    // 5) build payload (note: send **final total** in `total`)
+    // 5) build payload with GST calculations
+    print("\n📊 STEP 5: Building Order Payload");
+    print("   ─────────────────────────────────");
+
+    final num unitPrice = widget.price;
+    const num discount = 0;
+    final num gstRate = widget.gstRate ?? 0;
+
+    print("   📌 Widget Data:");
+    print("      Product ID: ${widget.productId}");
+    print("      Variant ID: ${widget.variantId}");
+    print("      Title: ${widget.title}");
+    print("      Brand: ${widget.brandName}");
+    print("      Size Label: ${widget.sizeLabel}");
+    print("      Unit Price: ₹$unitPrice");
+    print("      MRP: ₹${widget.mrp}");
+    print("      Quantity: $_selectedQuantity");
+    print("      Max Stock: ${widget.maxStock}");
+    print("");
+    print("   📌 GST Data from Widget:");
+    print("      HSN Code: ${widget.hsnCode}");
+    print("      GST Rate: ${widget.gstRate}%");
+    print("      Statutory GST Rate: ${widget.statutoryGSTRate}%");
+    print("      GST Rule Applied: ${widget.gstRuleApplied}");
+    print("");
+    print("   🧮 GST Calculation:");
+    print("      Formula: (unitPrice × quantity × gstRate / 100)");
+    print(
+        "      Calculation: ($unitPrice × $_selectedQuantity × $gstRate / 100)");
+
+    final num gstAmount = ((unitPrice * _selectedQuantity) * gstRate / 100);
+    print("      GST Amount: ₹$gstAmount");
+    print("");
+    print("   💵 Item Total Calculation:");
+    print("      Formula: (unitPrice × quantity) + gstAmount - discount");
+    print(
+        "      Calculation: ($unitPrice × $_selectedQuantity) + $gstAmount - $discount");
+
+    final num itemTotal =
+        (unitPrice * _selectedQuantity) + gstAmount - discount;
+    print("      Item Total: ₹$itemTotal");
+    print("");
+    print("   🎟️ Coupon Details:");
+    print("      Coupon Code: $_couponCode");
+    print("      Coupon Discount: ₹$_couponDiscount");
+    print("      Has Discount: $_hasDiscount");
+
+    // ✅ Create item using helper method
+    print("\n   📦 Creating Order Item...");
+    final orderItem = orderController.buildOrderItem(
+      productId: widget.productId,
+      variantId: widget.variantId,
+      quantity: _selectedQuantity,
+      unitPrice: unitPrice,
+      discount: discount,
+      total: itemTotal,
+      tax: 0, // Keep as 0 (GST is separate)
+      gstAmount: gstAmount,
+      hsnCode: widget.hsnCode ?? "",
+      gstRate: gstRate,
+      statutoryGSTRate: widget.statutoryGSTRate ?? gstRate,
+      gstRuleApplied: widget.gstRuleApplied ?? "",
+    );
+
+    print("   ✅ Order Item Created:");
+    print(jsonEncode(orderItem));
+
+    // 6) local backup
+    print("\n💾 STEP 6: Creating Order Payload & Local Backup");
     final orderPayload = {
       "userId": userId,
       "shippingAddressId": shippingAddressId,
-      "items": [
-        {
-          "productName": widget.title,
-          "productId": widget.productId,
-          "variantId": widget.variantId,
-          "quantity": _selectedQuantity,
-          "unitPrice": widget.price,
-          "total": payable, // final payable for this line
-          "sku": "",
-          "hsn": ""
-        }
-      ],
+      "items": [orderItem],
       "totalMRP": widget.mrp,
+      "couponDiscount": _couponDiscount,
+      "tax": gstAmount,
       "total": payable,
       "paymentMethod": "prepaid",
     };
 
-    // 6) local backup
+    print("   📋 Complete Order Payload:");
+    print("   ─────────────────────────────────");
+    print(jsonEncode(orderPayload));
+    print("   ─────────────────────────────────");
+    print("");
+    print("   💾 Saving to SharedPreferences...");
+
     await prefs.setString('pending_order_payload', jsonEncode(orderPayload));
     await prefs.setInt('pending_order_total', payable.toInt());
     await prefs.setInt('pending_order_userId', userId);
     await prefs.setInt('pending_order_shippingAddressId', shippingAddressId);
 
-    // 7) initiate payment
-    final paymentInitData = await orderController.initiatePayment(orderPayload);
+    print("   ✅ Local backup saved");
+
+    // 7) ✅ Call initiate payment with named parameters
+    print("\n💳 STEP 7: Initiating Payment");
+    print("   Calling orderController.initiatePayment...");
+    print("   Parameters:");
+    print("      userId: $userId");
+    print("      shippingAddressId: $shippingAddressId");
+    print("      items count: ${[orderItem].length}");
+    print("      totalMRP: ${widget.mrp}");
+    print("      couponDiscount: $_couponDiscount");
+    print("      tax: $gstAmount");
+    print("      total: $payable");
+    print("      paymentMethod: prepaid");
+
+    final paymentInitData = await orderController.initiatePayment(
+      userId: userId,
+      shippingAddressId: shippingAddressId,
+      items: [orderItem],
+      totalMRP: widget.mrp,
+      couponDiscount: _couponDiscount,
+      tax: gstAmount,
+      total: payable,
+      paymentMethod: "prepaid",
+    );
+
+    print("\n   📥 Payment Init Response:");
     if (paymentInitData == null) {
-      _snack("Failed to initiate payment. Please try again.");
-      return;
-    }
-    final razorpayOrderId = paymentInitData["providerOrderId"];
-    if ((razorpayOrderId ?? '').toString().isEmpty) {
-      _snack("Unable to start payment (missing Razorpay Order ID).");
+      print("   ❌ Response is NULL");
+      showAppSnackBar("Failed to initiate payment. Please try again.",
+          type: SnackBarType.error);
       return;
     }
 
-    // 8) open Razorpay with **discounted** amount
+    print("   ✅ Response received:");
+    print(jsonEncode(paymentInitData));
+
+    final razorpayOrderId = paymentInitData["providerOrderId"];
+    print("\n   🔑 Razorpay Order ID: $razorpayOrderId");
+
+    if ((razorpayOrderId ?? '').toString().isEmpty) {
+      print("   ❌ Razorpay Order ID is empty");
+      showAppSnackBar("Unable to start payment (missing Razorpay Order ID).",
+          type: SnackBarType.error);
+      return;
+    }
+
+    print("   ✅ Razorpay Order ID valid");
+
+    // 8) open Razorpay with discounted amount
+    print("\n🎯 STEP 8: Opening Razorpay Checkout");
+    print("   Razorpay Order ID: $razorpayOrderId");
+    print("   Amount: ₹$payable");
+
+    print("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    print("✅ CONFIRM AND PAY - COMPLETE, Opening Razorpay...");
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+
     await _openRazorpayCheckout(orderId: razorpayOrderId);
   }
 
   Future<void> _openRazorpayCheckout({required String orderId}) async {
+    print("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    print("💳 OPENING RAZORPAY CHECKOUT (Review Order)");
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+    // ⚠️ Check if running on iOS Simulator
+    try {
+      final deviceInfo = DeviceInfoPlugin();
+      if (Platform.isIOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        if (!iosInfo.isPhysicalDevice) {
+          print("⚠️  RUNNING ON iOS SIMULATOR");
+          print("⚠️  Razorpay does NOT work on iOS simulators!");
+          print("⚠️  Please test on a REAL iOS device.");
+          print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+
+          if (!mounted) return;
+
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text('⚠️ iOS Simulator Detected'),
+              content: Text(
+                'Razorpay payment gateway does NOT work on iOS simulators.\n\n'
+                'To test payments:\n'
+                '• Use a REAL iPhone/iPad device\n'
+                '• Or test on Android emulator\n\n'
+                'Your order has been initiated successfully.\n'
+                'Order ID: $orderId\n\n'
+                'On a real device, the Razorpay payment window will open here.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    // Navigate to pending status for testing
+                    Get.offAll(
+                        () => const OrderStatusScreen(status: 'pending'));
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+          return;
+        }
+        print("✅ Running on REAL iOS device");
+      }
+    } catch (e) {
+      print("⚠️  Device detection failed: $e (continuing anyway...)");
+    }
+
     final num cartTotalInRupees = _computePayable();
     final int amountInPaise = (cartTotalInRupees * 100).round();
 
@@ -247,19 +502,21 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
 
     if (orderId.isEmpty) {
       print("❌ ERROR: orderId is EMPTY → Cannot open Razorpay");
-      _snack("Invalid Razorpay Payment Order ID");
+      showAppSnackBar("Invalid Razorpay Payment Order ID",
+          type: SnackBarType.error);
       return;
     }
 
     if (_razorpayKey.isEmpty) {
       print("❌ ERROR: Razorpay key missing!");
-      _snack("Payment configuration missing (Key)");
+      showAppSnackBar("Payment configuration missing (Key)",
+          type: SnackBarType.error);
       return;
     }
 
     if (amountInPaise <= 0) {
       print("❌ ERROR: amount is ZERO → Razorpay cannot open");
-      _snack("Invalid payable amount");
+      showAppSnackBar("Invalid payable amount", type: SnackBarType.error);
       return;
     }
 
@@ -273,9 +530,8 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
       'prefill': {
         'name': userName.isEmpty ? 'Customer' : userName,
         'email': userEmail.isEmpty ? 'customer@example.com' : userEmail,
-
-        // ONLY PHONE DIGITS for Razorpay
-        'contact': phone.isNotEmpty ? phone : '9999999999',
+        // ✅ Add +91 prefix for Razorpay (10 digits only)
+        'contact': phone.length == 10 ? '+91$phone' : '+919999999999',
       },
       'theme': {'color': '#070707'},
     };
@@ -288,7 +544,8 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
       print("✔ Razorpay checkout opened successfully!");
     } catch (e) {
       print("❌ ERROR opening Razorpay → $e");
-      _snack('Unable to start payment: ${e.toString()}');
+      showAppSnackBar('Unable to start payment: ${e.toString()}',
+          type: SnackBarType.error);
     }
   }
 
@@ -344,7 +601,8 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   }
 
   void _onExternalWallet(ExternalWalletResponse r) {
-    _snack('External wallet: ${r.walletName}');
+    showAppSnackBar('External wallet: ${r.walletName}',
+        type: SnackBarType.info);
   }
 
   // ================= Coupon section (CartScreen rules) =================
@@ -394,7 +652,8 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
 
                   await productController.getCoupons();
                   if (productController.couponList.isEmpty) {
-                    _snack("No coupons available right now");
+                    showAppSnackBar("No coupons available right now",
+                        type: SnackBarType.info);
                     return;
                   }
 
@@ -465,7 +724,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
       );
 
       if (coupon.isEmpty) {
-        _snack("Invalid or expired coupon");
+        showAppSnackBar("Invalid or expired coupon", type: SnackBarType.error);
         return;
       }
 
@@ -473,8 +732,9 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
       final num total = _asNum(_totalPrice);
       final num minCart = _asNum(coupon['minCartValue']);
       if (total < minCart) {
-        _snack(
-            "Coupon requires a minimum cart value of ₹${minCart.toStringAsFixed(0)}");
+        showAppSnackBar(
+            "Coupon requires a minimum cart value of ₹${minCart.toStringAsFixed(0)}",
+            type: SnackBarType.warning);
         return;
       }
 
@@ -507,10 +767,12 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
       await prefs.setString('applied_coupon_code', code);
       await prefs.setInt('applied_coupon_discount', discountValue.toInt());
 
-      _snack("Coupon '$code' applied successfully");
+      showAppSnackBar("Coupon '$code' applied successfully",
+          type: SnackBarType.success);
     } catch (e) {
       print("✗ Error applying coupon: $e");
-      _snack("Failed to apply coupon. Please try again.");
+      showAppSnackBar("Failed to apply coupon. Please try again.",
+          type: SnackBarType.error);
     }
   }
 
@@ -525,7 +787,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     await prefs.remove('applied_coupon_code');
     await prefs.remove('applied_coupon_discount');
 
-    _snack("Coupon removed");
+    showAppSnackBar("Coupon removed", type: SnackBarType.success);
   }
 
   // ================= UI =================
@@ -621,7 +883,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                       Padding(
                         padding: EdgeInsets.only(right: 8.sp),
                         child: Text(
-                          "₹${widget.mrp.toStringAsFixed(0)}",
+                          "₹${formatAmount(widget.mrp)}",
                           style: TextStyle(
                             color: searchTextColor,
                             fontSize: 12.sp,
@@ -632,7 +894,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                         ),
                       ),
                     AppText(
-                      text: "₹${widget.price.toStringAsFixed(0)}",
+                      text: "₹${formatAmount(widget.price)}",
                       fontFamily: "Clash Display",
                       fontWeight: FontWeight.w700,
                       color: nameText,
@@ -649,12 +911,17 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   }
 
   Widget _buildOrderDetails() {
-    final num subtotal = _totalPrice;
-    final num payable = _computePayable();
+    // Calculate totals like CartScreen
+    final num totalMrp = widget.mrp * _selectedQuantity;
+    final num sellingTotal = _totalPrice;
+    final num discountOnMrp = totalMrp - sellingTotal;
 
-    // discount on MRP (like Bag screen shows sometimes)
-    final num discountOnMrp = (widget.mrp - _totalPrice);
-    final bool hasMrpDiscount = discountOnMrp > 0;
+    // Apply coupon discount
+    final num afterCoupon = sellingTotal - _couponDiscount;
+
+    // Add delivery charges
+    final num payable = afterCoupon + _delivery + _convenience;
+    final num finalPayable = payable < 0 ? 0 : payable;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.sp),
@@ -668,72 +935,151 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
             color: homeAppBarColor,
             fontSize: 14,
           ),
-          SizedBox(height: 10.sp),
 
-          // Total MRP
-          _kv("Total MRP", "₹${widget.mrp.toStringAsFixed(2)}"),
-// Total MRP
-          _kv("Total MRP", "₹${widget.mrp.toStringAsFixed(2)}"),
-
-          // Discount on MRP (if any)
-          if (hasMrpDiscount)
-            _kvGreen(
-                "Discount on MRP", "- ₹${discountOnMrp.toStringAsFixed(2)}"),
-
-          // Subtotal (selling)
-          _kv("Subtotal", "₹${subtotal.toStringAsFixed(2)}"),
-
-          // Coupon discount (green)
-          if (_couponDiscount > 0)
-            _kvGreen(
-                "Coupon Discount", "- ₹${_couponDiscount.toStringAsFixed(2)}"),
-
-          // Delivery charges (Free in green)
-          Row(
-            children: [
-              const AppText(
-                text: "Delivery Charges",
-                fontFamily: "Clash Display Regular",
-                fontWeight: FontWeight.w400,
-                color: subtitleColor,
-                fontSize: 12,
-              ),
-              const Spacer(),
-              AppText(
-                text: _delivery == 0
-                    ? "Free"
-                    : "₹${_delivery.toStringAsFixed(2)}",
-                fontFamily: "Clash Display Regular",
-                fontWeight: FontWeight.w600,
-                color:
-                    _delivery == 0 ? const Color(0xff059669) : homeAppBarColor,
-                fontSize: 12,
-              ),
-            ],
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.sp),
+            child: Container(
+              width: double.infinity,
+              color: colorSecondary,
+              height: 1.sp,
+            ),
           ),
 
-          Divider(color: colorSecondary, height: 30.sp),
+          // ✅ Total MRP (only show if discount exists)
+          if (discountOnMrp > 0)
+            _buildPriceRow(
+              "Total MRP",
+              "₹${formatAmount(totalMrp)}",
+              false,
+            ),
 
-          // TOTAL AMOUNT
+          // ✅ Discount on MRP (only show if discount exists)
+          if (discountOnMrp > 0)
+            _buildPriceRow(
+              "Discount on MRP",
+              "- ₹${formatAmount(discountOnMrp)}",
+              false,
+            ),
+
+          // Divider after MRP discount
+          if (discountOnMrp > 0)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.sp),
+              child: Container(
+                width: double.infinity,
+                color: colorSecondary,
+                height: 0.5.sp,
+              ),
+            ),
+
+          // ✅ Subtotal (Selling Price) - always show
+          Padding(
+            padding: EdgeInsets.only(top: discountOnMrp > 0 ? 12.sp : 0),
+            child: Row(
+              children: [
+                const AppText(
+                  text: "Subtotal",
+                  fontFamily: "Clash Display Regular",
+                  fontWeight: FontWeight.w400,
+                  color: subtitleColor,
+                  fontSize: 12,
+                ),
+                const Spacer(),
+                AppText(
+                  text: "₹${formatAmount(sellingTotal)}",
+                  fontFamily: "Clash Display",
+                  fontWeight: FontWeight.w500,
+                  color: homeAppBarColor,
+                  fontSize: 12,
+                ),
+              ],
+            ),
+          ),
+
+          // ✅ Coupon Discount (only show if applied)
+          if (_couponDiscount > 0)
+            Padding(
+              padding: EdgeInsets.only(top: 12.sp),
+              child: Row(
+                children: [
+                  const AppText(
+                    text: "Coupon Discount",
+                    fontFamily: "Clash Display Regular",
+                    fontWeight: FontWeight.w400,
+                    color: subtitleColor,
+                    fontSize: 12,
+                  ),
+                  const Spacer(),
+                  AppText(
+                    text: "- ₹${formatAmount(_couponDiscount)}",
+                    fontFamily: "Clash Display Regular",
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xff059669),
+                    fontSize: 12,
+                  ),
+                ],
+              ),
+            ),
+
+          // ✅ Delivery Charges
+          Padding(
+            padding: EdgeInsets.only(top: 12.sp),
+            child: Row(
+              children: [
+                const AppText(
+                  text: "Delivery Charges",
+                  fontFamily: "Clash Display Regular",
+                  fontWeight: FontWeight.w400,
+                  color: subtitleColor,
+                  fontSize: 12,
+                ),
+                const Spacer(),
+                AppText(
+                  text:
+                      _delivery == 0 ? "Free" : "+ ₹${formatAmount(_delivery)}",
+                  fontFamily: "Clash Display Regular",
+                  fontWeight: FontWeight.w400,
+                  color: _delivery == 0
+                      ? const Color(0xff059669)
+                      : homeAppBarColor,
+                  fontSize: 12,
+                ),
+              ],
+            ),
+          ),
+
+          // Divider before total
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.sp),
+            child: Container(
+              width: double.infinity,
+              color: colorSecondary,
+              height: 1.5.sp,
+            ),
+          ),
+
+          // ✅ FINAL TOTAL AMOUNT
           Row(
             children: [
               const AppText(
                 text: "TOTAL AMOUNT",
                 fontFamily: "Clash Display",
-                fontWeight: FontWeight.w700,
-                color: blackColor,
-                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: colorPrimary,
+                fontSize: 15,
               ),
               const Spacer(),
               AppText(
-                text: "₹${payable.toStringAsFixed(2)}",
+                text: "₹${formatAmount(finalPayable)}",
                 fontFamily: "Clash Display",
-                fontWeight: FontWeight.w700,
-                color: blackColor,
-                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: colorPrimary,
+                fontSize: 15,
               ),
             ],
-          )
+          ),
+
+          SizedBox(height: 30.sp),
         ],
       ),
     );
@@ -796,62 +1142,41 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     );
   }
 
-  Widget _kv(String k, String v) {
-    return Padding(
-      padding: EdgeInsets.only(top: 8.sp, bottom: 4.sp),
-      child: Row(
-        children: [
-          const AppText(
-            text: "",
-            fontFamily: "Clash Display Regular",
-            fontWeight: FontWeight.w400,
-            color: subtitleColor,
-            fontSize: 12,
-          ),
-          // The key
-          Expanded(
-            child: AppText(
-              text: k,
-              fontFamily: "Clash Display Regular",
-              fontWeight: FontWeight.w400,
-              color: subtitleColor,
-              fontSize: 12,
-            ),
-          ),
-          AppText(
-            text: v,
-            fontFamily: "Clash Display Regular",
-            fontWeight: FontWeight.w400,
-            color: homeAppBarColor,
-            fontSize: 12,
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _buildPriceRow(String label, String value, bool hasIcon) {
+    final bool isDiscountRow =
+        label.toLowerCase().contains("discount") && !label.contains("Delivery");
 
-  Widget _kvGreen(String k, String v) {
+    final Color valueColor =
+        isDiscountRow ? const Color(0xff059669) : homeAppBarColor;
+
     return Padding(
-      padding: EdgeInsets.only(top: 8.sp, bottom: 4.sp),
+      padding: EdgeInsets.only(top: 12.sp),
       child: Row(
         children: [
           Expanded(
-            child: AppText(
-              text: k,
-              fontFamily: "Clash Display Regular",
-              fontWeight: FontWeight.w400,
-              color: subtitleColor,
-              fontSize: 12,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: AppText(
+                    text: label,
+                    fontFamily: "Clash Display Regular",
+                    fontWeight: FontWeight.w400,
+                    color: subtitleColor,
+                    fontSize: 12,
+                    maxLines: 1,
+                  ),
+                ),
+              ],
             ),
           ),
-          Text(
-            v,
-            style: TextStyle(
-              color: const Color(0xff059669),
-              fontSize: 12.sp,
-              fontFamily: "Clash Display Regular",
-              fontWeight: FontWeight.w600,
-            ),
+          SizedBox(width: 8.sp),
+          AppText(
+            text: value,
+            fontFamily: "Clash Display Regular",
+            fontWeight: FontWeight.w400,
+            color: valueColor,
+            fontSize: 12,
           ),
         ],
       ),
@@ -945,7 +1270,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     if (!mounted) return;
 
     if (availableStock == 0) {
-      _snack("This item is out of stock");
+      showAppSnackBar("This item is out of stock", type: SnackBarType.error);
       return;
     }
 
@@ -1003,7 +1328,9 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                 if (newQty != _selectedQuantity) {
                   // ✅ Validate quantity before updating
                   if (newQty > availableStock) {
-                    _snack("Only $availableStock units available in stock");
+                    showAppSnackBar(
+                        "Only $availableStock units available in stock",
+                        type: SnackBarType.error);
                     return;
                   }
 
@@ -1013,7 +1340,8 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
 
                   // ✅ Only update local quantity - Buy Now is independent of cart
                   // No need to sync with cart as this is a direct purchase flow
-                  _snack("Quantity updated to $newQty");
+                  showAppSnackBar("Quantity updated to $newQty",
+                      type: SnackBarType.success);
                 }
               },
             ),
@@ -1034,7 +1362,4 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
         ? cleanDigits.substring(cleanDigits.length - 10)
         : cleanDigits;
   }
-
-  void _snack(String msg) =>
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 }

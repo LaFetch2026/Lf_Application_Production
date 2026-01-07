@@ -71,7 +71,8 @@ class HomeController extends BaseController {
   ScrollController tagsController = ScrollController();
   ScrollController discountScreenController = ScrollController();
   List<bool> selected = List.generate(50, (i) => false).obs;
-
+  RxList<Map<String, dynamic>> genderTabs = <Map<String, dynamic>>[].obs;
+  RxBool isLoadingTabs = false.obs;
   @override
   void onInit() {
     super.onInit();
@@ -173,6 +174,52 @@ class HomeController extends BaseController {
       getSnackBar("An error occurred while loading banners.");
     } finally {
       isBanner1.value = false;
+    }
+  }
+
+  Future<void> getGenderTabs() async {
+    isLoadingTabs.value = true;
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+
+      final base = ApiConstants.baseUrl;
+      final uri = Uri.parse("$base/category-hierarchy");
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 20));
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body);
+
+        final List<Map<String, dynamic>> data =
+            (body is Map && body['data'] is List)
+                ? List<Map<String, dynamic>>.from(
+                    (body['data'] as List).whereType<Map>())
+                : <Map<String, dynamic>>[];
+
+        genderTabs.assignAll(data);
+
+        print("✅ Loaded ${genderTabs.length} gender tabs");
+
+        // Set default gender if not already set
+        if (genderTabs.isNotEmpty && homeGenderValue.value == 0) {
+          homeGenderValue.value = genderTabs.first['id'] ?? 1;
+          genderText.value = genderTabs.first['name'] ?? 'MEN';
+        }
+      } else {
+        print("❌ Failed to load gender tabs: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("❌ Error fetching gender tabs: $e");
+    } finally {
+      isLoadingTabs.value = false;
     }
   }
 

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
+import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/controllers/product_controller.dart';
 import 'package:lafetch/core/constant/constants.dart';
 import 'package:lafetch/controllers/order_controller.dart';
@@ -495,15 +496,15 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
   /// --------------------------------------------
   Future<void> _submitExchange() async {
     if (selectedColor == null) {
-      Get.snackbar("Select Color", "Please select a color");
+      showAppSnackBar("Please select a color", type: SnackBarType.error);
       return;
     }
     if (selectedSize == null || selectedVariantId == null) {
-      Get.snackbar("Select Size", "Please select a size");
+      showAppSnackBar("Please select a size", type: SnackBarType.error);
       return;
     }
     if (selectedReason == null) {
-      Get.snackbar("Select Reason", "Please select a reason");
+      showAppSnackBar("Please select a reason", type: SnackBarType.error);
       return;
     }
 

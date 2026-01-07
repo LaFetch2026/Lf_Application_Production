@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
+import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/core/constant/constants.dart';
 import 'package:lafetch/controllers/product_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -261,18 +262,12 @@ class _RateProductScreenState extends State<RateProductScreen> {
   /// ✅ Call API on Submit
   Future<void> _submitReview() async {
     if (_rating == 0) {
-      Get.snackbar('Alert', 'Please select a star rating before submitting.',
-          backgroundColor: Colors.redAccent.withOpacity(0.1),
-          colorText: Colors.redAccent,
-          snackPosition: SnackPosition.BOTTOM);
+      showAppSnackBar('Please select a star rating before submitting.', type: SnackBarType.error);
       return;
     }
 
     if (_reviewController.text.trim().isEmpty) {
-      Get.snackbar('Alert', 'Please write a short review before submitting.',
-          backgroundColor: Colors.orangeAccent.withOpacity(0.1),
-          colorText: Colors.orangeAccent,
-          snackPosition: SnackPosition.BOTTOM);
+      showAppSnackBar('Please write a short review before submitting.', type: SnackBarType.warning);
       return;
     }
 
@@ -299,16 +294,10 @@ class _RateProductScreenState extends State<RateProductScreen> {
     setState(() => _isSubmitting = false);
 
     if (success) {
-      Get.snackbar('Success', 'Your review has been submitted successfully.',
-          backgroundColor: Colors.green.withOpacity(0.1),
-          colorText: Colors.green.shade800,
-          snackPosition: SnackPosition.BOTTOM);
+      showAppSnackBar('Your review has been submitted successfully.', type: SnackBarType.success);
       Get.back();
     } else {
-      Get.snackbar('Error', 'Failed to submit review. Please try again.',
-          backgroundColor: Colors.redAccent.withOpacity(0.1),
-          colorText: Colors.redAccent,
-          snackPosition: SnackPosition.BOTTOM);
+      showAppSnackBar('Failed to submit review. Please try again.', type: SnackBarType.error);
     }
   }
 }

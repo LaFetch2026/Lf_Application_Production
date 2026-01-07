@@ -13,7 +13,7 @@ import '../common/widget/lists/dummy_container.dart';
 import '../common/widget/text/app_text.dart';
 import '../controllers/search_controller.dart';
 import '../core/constant/constants.dart';
-import '../screens/home/women/productviewscreen.dart';
+import 'search_results_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -121,12 +121,10 @@ class SearchScreenState extends State<SearchScreen> {
       return;
     }
 
-    // Navigate to ProductViewScreen with search results
-    Get.to(() => ProductViewScreen(
-          title: 'Search Results for "$q"',
-          genderName: 'search',
-          searchResults: items,
+    // Navigate to SearchResultsScreen with search results
+    Get.to(() => SearchResultsScreen(
           searchQuery: q,
+          searchResults: items,
         ));
   }
 

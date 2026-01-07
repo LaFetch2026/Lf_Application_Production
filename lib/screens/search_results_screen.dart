@@ -1,4 +1,5 @@
-// ProductViewScreen.dart - Updated with filters and sort
+// Search Results Screen - Dedicated screen for displaying search results
+// ignore_for_file: deprecated_member_use
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -13,47 +14,45 @@ import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shimmer/shimmer.dart';
-import '../../../common/widget/appbar/productlist_appbar.dart';
-import '../../../common/widget/lists/dummy_grid_list.dart';
-import '../../../common/widget/other/common_widget.dart';
-import '../../../common/widget/text/app_text.dart';
-import '../../../controllers/cart_controller.dart';
-import '../../../controllers/product_controller.dart';
-import '../../../controllers/wishlist_controller.dart';
-import '../../../controllers/brand_controller.dart';
-import '../../../controllers/catalog_controller.dart';
-import '../../../core/constant/constants.dart';
+import '../common/widget/appbar/productlist_appbar.dart';
+import '../common/widget/lists/dummy_grid_list.dart';
+import '../common/widget/other/common_widget.dart';
+import '../common/widget/text/app_text.dart';
+import '../controllers/cart_controller.dart';
+import '../controllers/product_controller.dart';
+import '../controllers/wishlist_controller.dart';
+import '../controllers/brand_controller.dart';
+import '../controllers/catalog_controller.dart';
+import '../core/constant/constants.dart';
 import 'dart:async';
 
-class ProductViewScreen extends StatefulWidget {
-  final String title;
-  final String genderName;
-  final List<Map<String, dynamic>>? searchResults;
-  final String? searchQuery;
+class SearchResultsScreen extends StatefulWidget {
+  final String searchQuery;
+  final List<Map<String, dynamic>> searchResults;
 
-  const ProductViewScreen({
+  const SearchResultsScreen({
     super.key,
-    required this.title,
-    required this.genderName,
-    this.searchResults,
-    this.searchQuery,
+    required this.searchQuery,
+    required this.searchResults,
   });
 
   @override
-  State<ProductViewScreen> createState() => ProductViewScreenState();
+  State<SearchResultsScreen> createState() => _SearchResultsScreenState();
 }
 
-class ProductViewScreenState extends State<ProductViewScreen> {
+class _SearchResultsScreenState extends State<SearchResultsScreen> {
   final productController = Get.find<ProductController>();
   final wishlistController = Get.put(WishlistController());
   final controller = Get.put(CartController());
   final brandController = Get.put(BrandController());
-  final catalogController = Get.put(CatalogController(), permanent: false);
+
+  // Use late initialization to avoid conflicts with other screens
+  late final CatalogController catalogController;
+
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
-  // ✅ Filter and Sort State
+  // Filter and Sort State
   List<int> _appliedBrandIds = [];
   List<String> _appliedColors = [];
   List<String> _appliedSizes = [];
@@ -62,20 +61,173 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   String _appliedSortOption = "recommended";
   bool _hasActiveFilters = false;
   bool _isFilterMetadataLoaded = false;
-  bool _isProductsLoaded = false;
 
-  // ✅ Hash tracking for change detection
-  String? _lastProductListHash;
-  String? _lastFilterHash;
-  String? _lastSortHash;
+  // Store original search results
+  late List<Map<String, dynamic>> _originalSearchResults;
 
-  // ✅ Store original home product IDs for client-side filtering
-  Set<int> _originalHomeProductIds = {};
+  // Pagination state
+  final RxInt _currentPage = 1.obs;
+  final RxBool _isLoadingMore = false.obs;
 
-  // ✅ Debounce timer
+  // Debounce timer
   Timer? _debounceTimer;
 
-  // ---- helpers ----
+  @override
+  void initState() {
+    super.initState();
+    _originalSearchResults = List.from(widget.searchResults);
+
+    // Initialize catalogController safely - find existing or create new
+    if (Get.isRegistered<CatalogController>()) {
+      catalogController = Get.find<CatalogController>();
+    } else {
+      catalogController = Get.put(CatalogController(), tag: 'search_results');
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Clear any previous filtered results to ensure fresh search results
+      // Must be done after frame is built to avoid setState during build
+      catalogController.categoryProductList.clear();
+
+      wishlistController.getWishlistData();
+
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: statusBarColor,
+        systemNavigationBarColor: statusBarColor,
+      ));
+
+      controller.getCartData();
+    });
+
+    _clearPreferenceValue();
+  }
+
+  Future<void> _clearPreferenceValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("brandList");
+    prefs.remove("colorList");
+    prefs.remove("sizeList");
+    prefs.remove("upper");
+    prefs.remove("lower");
+    prefs.remove("sortby");
+    prefs.remove("category");
+  }
+
+  // Load filter metadata if needed
+  Future<void> _loadFilterMetadataIfNeeded() async {
+    if (_isFilterMetadataLoaded) {
+      print("✅ Filter metadata already loaded - skipping");
+      return;
+    }
+
+    // For search results, we can use gender filter from productController
+    final currentGender = productController.categoryFilter.value;
+    await productController.getFilterMetadata(currentGender);
+    _isFilterMetadataLoaded = true;
+    print("✅ Filter metadata loaded successfully");
+  }
+
+  // Get displayed products - either filtered or original
+  List<Map<String, dynamic>> _getDisplayedProducts() {
+    // If we have filtered results from API, use those
+    if (catalogController.categoryProductList.isNotEmpty) {
+      return catalogController.categoryProductList
+          .whereType<Map<String, dynamic>>()
+          .toList();
+    }
+
+    // Otherwise, use original search results
+    return _originalSearchResults;
+  }
+
+  // Apply filters and sort
+  Future<void> _applyFiltersAndSort() async {
+    try {
+      // Get the original search result product IDs
+      final searchProductIds = _originalSearchResults
+          .map((p) => int.tryParse(p['id']?.toString() ?? ''))
+          .whereType<int>()
+          .toSet();
+
+      if (_hasActiveFilters) {
+        // Call filter API
+        print("🔹 Applying filters to search results");
+        print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
+        print("   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
+        print("   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
+        print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
+        print("   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
+
+        await catalogController.getFilterAndSortProducts(
+          brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
+          colors: _appliedColors.isNotEmpty ? _appliedColors : null,
+          sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
+          minPrice: _appliedMinPrice,
+          maxPrice: _appliedMaxPrice,
+          sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
+          superCatId: productController.categoryFilter.value,
+        );
+
+        // Filter to only include products from search results
+        final apiResults = List<dynamic>.from(catalogController.categoryProductList);
+        final filteredResults = apiResults.where((product) {
+          final productId = int.tryParse(product['id']?.toString() ?? '');
+          return productId != null && searchProductIds.contains(productId);
+        }).toList();
+
+        print("🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} from search results");
+        catalogController.categoryProductList.assignAll(filteredResults);
+
+        print("✅ Filter applied - ${catalogController.categoryProductList.length} products");
+      } else if (_appliedSortOption != "recommended") {
+        // Client-side sort only
+        print("🔧 Client-side sorting: $_appliedSortOption");
+
+        final productsToSort = List<dynamic>.from(_originalSearchResults);
+
+        productsToSort.sort((a, b) {
+          final priceA = (a['price'] ?? a['basePrice'] ?? a['displayPrice'] ?? 0) as num;
+          final priceB = (b['price'] ?? b['basePrice'] ?? b['displayPrice'] ?? 0) as num;
+
+          if (_appliedSortOption == 'price_asc') {
+            return priceA.compareTo(priceB);
+          } else if (_appliedSortOption == 'price_desc') {
+            return priceB.compareTo(priceA);
+          } else if (_appliedSortOption == 'whats_new') {
+            final idA = int.tryParse(a['id']?.toString() ?? '0') ?? 0;
+            final idB = int.tryParse(b['id']?.toString() ?? '0') ?? 0;
+            return idB.compareTo(idA);
+          }
+          return 0;
+        });
+
+        catalogController.categoryProductList.assignAll(productsToSort);
+        print("✅ Client-side sort complete - ${catalogController.categoryProductList.length} products");
+      } else {
+        // No filters, no sort - clear filtered results
+        catalogController.categoryProductList.clear();
+        print("✅ Showing original search results");
+      }
+
+      setState(() {
+        // Reset pagination when filters change
+        _currentPage.value = 1;
+      });
+    } catch (e) {
+      print("❌ Error applying filters/sort: $e");
+      getSnackBar("Something went wrong, please try again");
+    }
+  }
+
+  // Debounced update
+  void _applyFiltersAndSortDebounced() {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+      _applyFiltersAndSort();
+    });
+  }
+
+  // Helper methods
   String _firstImageUrl(Map<String, dynamic> item) {
     final imgs = item['images'];
     if (imgs is List && imgs.isNotEmpty) {
@@ -93,8 +245,6 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   }
 
   num? _priceOf(Map<String, dynamic> item) {
-    // Return the selling price (NOT mrp)
-    // API now provides displayPrice (= basePrice) for filtered products
     return item['displayPrice'] ??
         item['basePrice'] ??
         item['price'] ??
@@ -114,338 +264,17 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     return (item['title'] ?? item['name'] ?? '').toString();
   }
 
-  // ✅ Generate hash for product list to detect changes
-  String _generateProductHash(List<dynamic> products) {
-    if (products.isEmpty) return 'empty';
-    return products.map((p) => p['id'].toString()).join('|');
-  }
-
-  // ✅ Generate hash for current filter state
-  String _generateFilterHash() {
-    return '${_appliedBrandIds.join(',')}_${_appliedColors.join(',')}_${_appliedSizes.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_$_hasActiveFilters';
-  }
-
-  // ✅ Generate hash for current sort state
-  String _generateSortHash() {
-    return _appliedSortOption;
-  }
-  // ---- end helpers ----
-
-  @override
-  void initState() {
-    super.initState();
-
-    final g = widget.genderName.trim().toLowerCase();
-    if (g == 'men') {
-      productController.categoryFilter.value = 1;
-    } else if (g == 'women') {
-      productController.categoryFilter.value = 2;
-    } else {
-      productController.categoryFilter.value = 3;
-    }
-    productController.selectedCategoryGender.value = widget.genderName;
-
-    productController.handPickedProductList.clear();
-    productController.handpickedHasnextpage.value = true;
-    productController.handpickedLoadMore.value = false;
-    productController.isHandPicked.value = false;
-    productController.handpickedPage.value = 1;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      wishlistController.getWishlistData();
-
-      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: statusBarColor,
-        systemNavigationBarColor: statusBarColor,
-      ));
-
-      controller.getCartData();
-
-      productController.handpickedController.addListener(() {
-        productController.update();
-      });
-
-      // ✅ Only load products if NOT in search mode
-      if (widget.searchResults == null) {
-        // ✅ Use the SAME method with withLimit: false
-        final currentGender = productController.categoryFilter.value;
-        await productController.getHomeProduct(currentGender, withLimit: false);
-      }
-
-      // ✅ Load and track home products
-      _loadHomeProductsIfNeeded();
-    });
-
-    _clearPreferenceValue();
-  }
-
-  Future<void> _clearPreferenceValue() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.remove("brandList");
-    prefs.remove("colorList");
-    prefs.remove("sizeList");
-    prefs.remove("upper");
-    prefs.remove("lower");
-    prefs.remove("sortby");
-    prefs.remove("category");
-  }
-
-  // ✅ Load filter metadata for filter
-  Future<void> _loadFilterMetadataIfNeeded() async {
-    if (_isFilterMetadataLoaded) {
-      print("✅ Filter metadata already loaded - skipping");
-      return;
-    }
-
-    final currentGender = productController.categoryFilter.value;
-    await productController.getFilterMetadata(currentGender);
-    _isFilterMetadataLoaded = true;
-    print("✅ Filter metadata loaded successfully");
-  }
-
-  // ✅ Load initial home products
-  Future<void> _loadHomeProductsIfNeeded() async {
-    if (_isProductsLoaded) {
-      print("✅ Home products already loaded - skipping");
-      return;
-    }
-
-    // Home products should already be loaded from home screen
-    // Just store the original product IDs for filtering
-    final allProducts = _getAllProducts();
-    _originalHomeProductIds = allProducts
-        .map((p) => int.tryParse(p['id']?.toString() ?? ''))
-        .whereType<int>()
-        .toSet();
-
-    // Generate initial hashes
-    _lastProductListHash = _generateProductHash(allProducts);
-    _lastFilterHash = _generateFilterHash();
-    _lastSortHash = _generateSortHash();
-
-    _isProductsLoaded = true;
-    print("✅ Home products tracked (${_originalHomeProductIds.length} items)");
-  }
-
-  // ✅ Get categories based on super category (genderType from productController)
-  // Uses actual API-loaded categories from catalogController.catalogList
-  // ✅ Get all products from collections
-  List<Map<String, dynamic>> _getAllProducts() {
-    // If search results are provided, return them directly
-    if (widget.searchResults != null && widget.searchResults!.isNotEmpty) {
-      return widget.searchResults!;
-    }
-
-    final int selectedCollectionId = productController.tagId.value;
-    final int superCatId = productController.categoryFilter.value;
-
-    final List<Map<String, dynamic>> collections = productController
-        .homeProductList
-        .whereType<Map<String, dynamic>>()
-        .toList();
-
-    final List<Map<String, dynamic>> allProducts = <Map<String, dynamic>>[];
-
-    for (final c in collections) {
-      final List<Map<String, dynamic>> prods =
-          (c['products'] as List? ?? const [])
-              .whereType<Map<String, dynamic>>()
-              .toList();
-
-      for (final p in prods) {
-        if (selectedCollectionId != 0 &&
-            (p['collectionID'] != selectedCollectionId)) continue;
-
-        final sc = p['superCatId'];
-        if (superCatId != 0 && sc is int && sc != superCatId) continue;
-
-        allProducts.add(p);
-      }
-    }
-
-    return allProducts;
-  }
-
-  // ✅ Apply filters and sort using API (like categoryproduct.dart)
-  Future<void> _applyFiltersAndSort() async {
-    try {
-      // Check if filter/sort state has actually changed
-      final currentFilterHash = _generateFilterHash();
-      final currentSortHash = _generateSortHash();
-
-      final filterChanged = currentFilterHash != _lastFilterHash;
-      final sortChanged = currentSortHash != _lastSortHash;
-
-      if (!filterChanged && !sortChanged) {
-        print("⚠️ No filter/sort changes detected - skipping API call");
-        return;
-      }
-
-      print("🔄 Applying changes - Filter: $filterChanged, Sort: $sortChanged");
-
-      // ✅ Determine the action based on filters and sort state
-      // Case 1: Has filters → Call API (with or without sort)
-      // Case 2: Only sort (no filters) → Client-side sort
-      // Case 3: Neither filters nor sort → Show original
-      
-      if (_hasActiveFilters && filterChanged) {
-        // 📞 Case 1: Filters changed → Call /filter-products API
-        // Note: API does backend filtering + client-side price/brand safety net
-        print("🔹 Case 1: Filter changed (has active filters)");
-        print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
-        print("   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
-        print("   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
-        print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
-
-        await catalogController.getFilterAndSortProducts(
-          brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
-          colors: _appliedColors.isNotEmpty ? _appliedColors : null,
-          sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
-          minPrice: _appliedMinPrice,
-          maxPrice: _appliedMaxPrice,
-          sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
-          superCatId: productController.categoryFilter.value, // ✅ Pass gender type (Men/Women/Kids)
-          collectionId: productController.tagId.value > 0 ? productController.tagId.value : null, // ✅ Pass collection ID if selected
-        );
-
-        // ✅ Additional client-side filtering for view-specific constraints
-        // API already filtered by price & brand; we filter by home products
-        final apiResults = List<dynamic>.from(catalogController.categoryProductList);
-
-        // Restrict to home products only
-        final filteredResults = apiResults.where((product) {
-          final productId = int.tryParse(product['id']?.toString() ?? '');
-          return productId != null && _originalHomeProductIds.contains(productId);
-        }).toList();
-
-        print("🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} from home collections");
-        catalogController.categoryProductList.assignAll(filteredResults);
-        
-        _lastFilterHash = currentFilterHash;
-        if (sortChanged) _lastSortHash = currentSortHash;
-
-        print("✅ Filter applied - ${catalogController.categoryProductList.length} products");
-        
-      } else if (!_hasActiveFilters && _appliedSortOption != "recommended" && sortChanged) {
-        // 🔧 Case 2: ONLY sort changed (no filters) → Client-side sort
-        print("🔧 Client-side sorting: $_appliedSortOption (no filters, so not calling API)");
-        
-        // Get original products
-        final productsToSort = List<dynamic>.from(_getAllProducts());
-        
-        productsToSort.sort((a, b) {
-          final priceA = (a['price'] ?? a['basePrice'] ?? a['displayPrice'] ?? 0) as num;
-          final priceB = (b['price'] ?? b['basePrice'] ?? b['displayPrice'] ?? 0) as num;
-          
-          if (_appliedSortOption == 'price_asc') {
-            return priceA.compareTo(priceB);
-          } else if (_appliedSortOption == 'price_desc') {
-            return priceB.compareTo(priceA);
-          } else if (_appliedSortOption == 'whats_new') {
-            final idA = int.tryParse(a['id']?.toString() ?? '0') ?? 0;
-            final idB = int.tryParse(b['id']?.toString() ?? '0') ?? 0;
-            return idB.compareTo(idA);
-          }
-          return 0;
-        });
-        
-        // Store sorted results in catalogController
-        catalogController.categoryProductList.assignAll(productsToSort);
-        _lastSortHash = currentSortHash;
-        
-        print("✅ Client-side sort complete - ${catalogController.categoryProductList.length} products");
-        
-      } else if (_hasActiveFilters && sortChanged) {
-        // 🔧 Case 3: Filters already applied, but sort changed → Re-apply filters with new sort
-        // Note: API does backend filtering + client-side price/brand safety net
-        print("🔹 Case 3: Sort changed (filters already applied)");
-        print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
-        print("   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
-        print("   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
-        print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
-
-        await catalogController.getFilterAndSortProducts(
-          brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
-          colors: _appliedColors.isNotEmpty ? _appliedColors : null,
-          sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
-          minPrice: _appliedMinPrice,
-          maxPrice: _appliedMaxPrice,
-          sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
-          superCatId: productController.categoryFilter.value, // ✅ Pass gender type (Men/Women/Kids)
-          collectionId: productController.tagId.value > 0 ? productController.tagId.value : null, // ✅ Pass collection ID if selected
-        );
-
-        // ✅ Additional client-side filtering for view-specific constraints
-        // API already filtered by price & brand; we filter by home products
-        final apiResults = List<dynamic>.from(catalogController.categoryProductList);
-
-        // Restrict to home products only
-        final filteredResults = apiResults.where((product) {
-          final productId = int.tryParse(product['id']?.toString() ?? '');
-          return productId != null && _originalHomeProductIds.contains(productId);
-        }).toList();
-        catalogController.categoryProductList.assignAll(filteredResults);
-
-        _lastSortHash = currentSortHash;
-
-        print("✅ Filters re-applied with new sort - ${catalogController.categoryProductList.length} products");
-        
-      } else if (!_hasActiveFilters && filterChanged) {
-        // Filters cleared - clear filtered results
-        catalogController.categoryProductList.clear();
-        _lastFilterHash = currentFilterHash;
-        print("✅ Filters cleared - showing original products");
-      } else if (_appliedSortOption == "recommended" && sortChanged) {
-        // Sort reset to recommended - clear sorted results if no filters
-        if (!_hasActiveFilters) {
-          catalogController.categoryProductList.clear();
-        }
-        _lastSortHash = currentSortHash;
-        print("✅ Sort reset to recommended");
-      }
-
-      setState(() {
-        // Reset pagination when filters change
-        productController.handpickedPage.value = 1;
-      });
-
-      // Update final hash
-      final List<dynamic> productsForHash = catalogController.categoryProductList.isNotEmpty
-          ? List<dynamic>.from(catalogController.categoryProductList)
-          : _getAllProducts();
-      _lastProductListHash = _generateProductHash(productsForHash);
-    } catch (e) {
-      print("❌ Error applying filters/sort: $e");
-      getSnackBar("Something went wrong, please try again");
-    }
-  }
-
-  // ✅ Debounced update
-  void _applyFiltersAndSortDebounced() {
-    _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-      _applyFiltersAndSort();
-    });
-  }
-
-  // ✅ Get displayed products - either filtered or original
-  List<Map<String, dynamic>> _getDisplayedProducts() {
-    // If we have filtered results from API, use those
-    if (catalogController.categoryProductList.isNotEmpty) {
-      return catalogController.categoryProductList
-          .whereType<Map<String, dynamic>>()
-          .toList();
-    }
-
-    // Otherwise, use original products from home
-    return _getAllProducts();
-  }
-
   @override
   void dispose() {
     _debounceTimer?.cancel();
+    // Clear filtered results when leaving the screen
+    catalogController.categoryProductList.clear();
+
+    // Only delete the controller if we created it with a tag
+    if (Get.isRegistered<CatalogController>(tag: 'search_results')) {
+      Get.delete<CatalogController>(tag: 'search_results');
+    }
+
     super.dispose();
   }
 
@@ -458,7 +287,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ProductAppbar(
-            text: widget.title,
+            text: 'Search Results for "${widget.searchQuery}"',
             onPressedSearch: () async {
               Get.to(SearchScreen())?.then((_) {
                 setState(() {});
@@ -486,19 +315,9 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           ),
           SizedBox(height: 10.sp),
 
-          // ===== GRID =====
+          // Grid
           Expanded(
             child: Obx(() {
-              // ✅ Skip loading animation if search results are provided
-              final loading = widget.searchResults == null &&
-                  (productController.isHomeProduct.value ||
-                      productController.isHandPicked.value);
-
-              if (loading) {
-                return _buildSkeletonGrid();
-              }
-
-              // ✅ Calculate displayed products WITHOUT setState
               final items = _getDisplayedProducts();
 
               if (items.isEmpty) {
@@ -508,8 +327,22 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                     Image.asset(errorImage,
                         height: 200.sp, width: 220.sp, fit: BoxFit.cover),
                     SizedBox(height: 20.sp),
+                    const AppText(
+                      text: "No products found",
+                      fontSize: 16,
+                      fontFamily: "Clash Display Semibold",
+                      color: blackColor,
+                    ),
+                    SizedBox(height: 10.sp),
+                    const AppText(
+                      text: "Try adjusting your filters",
+                      fontSize: 14,
+                      fontFamily: "Clash Display Regular",
+                      color: subtitleColor,
+                    ),
+                    SizedBox(height: 20.sp),
                     getSingleButton(
-                      width: double.infinity,
+                      width: 200.sp,
                       label: "BACK TO HOME",
                       textColor: whiteColor,
                       fontSize: 13,
@@ -521,11 +354,9 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                 );
               }
 
-              // client-side paging (infinite scroll)
+              // Client-side pagination
               const int pageSize = 12;
-              final int page = (productController.handpickedPage.value <= 0)
-                  ? 1
-                  : productController.handpickedPage.value;
+              final int page = (_currentPage.value <= 0) ? 1 : _currentPage.value;
 
               final int maxToShow = page * pageSize;
               final int visibleCount =
@@ -536,21 +367,19 @@ class ProductViewScreenState extends State<ProductViewScreen> {
               return NotificationListener<ScrollNotification>(
                 onNotification: (n) {
                   if (n.metrics.pixels >= n.metrics.maxScrollExtent - 160) {
-                    final bool canLoadMore =
-                        displayItems.length < items.length &&
-                            !productController.handpickedLoadMore.value;
+                    final bool canLoadMore = displayItems.length < items.length &&
+                        !_isLoadingMore.value;
                     if (canLoadMore) {
-                      productController.handpickedLoadMore.value = true;
+                      _isLoadingMore.value = true;
                       Future.delayed(const Duration(milliseconds: 200), () {
-                        productController.handpickedPage.value += 1;
-                        productController.handpickedLoadMore.value = false;
+                        _currentPage.value += 1;
+                        _isLoadingMore.value = false;
                       });
                     }
                   }
                   return false;
                 },
                 child: CustomScrollView(
-                  controller: productController.handpickedController,
                   slivers: [
                     SliverPadding(
                       padding: EdgeInsets.symmetric(horizontal: 16.sp),
@@ -563,7 +392,6 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                             final brand = _brandOf(item);
                             final title = _titleOf(item);
                             final price = _priceOf(item);
-                            // API provides displayMrp (null if mrp = basePrice, otherwise mrp value)
                             final mrp = item['displayMrp'] ?? item['mrp'];
                             final express = item['express_delivery'] == true;
 
@@ -576,19 +404,15 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                     type: "add",
                                   ),
                                 )?.then((_) {
-                                  productController
-                                      .handpickedHasnextpage.value = true;
-                                  productController.handpickedLoadMore.value =
-                                      false;
-                                  productController.isHandPicked.value = false;
-                                  productController.handpickedPage.value = 1;
+                                  _currentPage.value = 1;
                                   controller.getCartData();
                                 });
 
                                 await analytics.logEvent(
-                                  name: 'category_product_details',
+                                  name: 'search_product_details',
                                   parameters: {
-                                    'page_name': 'category_product_details'
+                                    'page_name': 'search_product_details',
+                                    'search_query': widget.searchQuery,
                                   },
                                 );
                               },
@@ -651,7 +475,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                         discountPercent = (((numMrp - numPrice) / numMrp) * 100).round();
                                       }
 
-                                      // ✅ Case 1: Price is 0 or null - show only MRP (not crossed)
+                                      // Case 1: Price is 0 or null - show only MRP (not crossed)
                                       if (numPrice == 0 && numMrp > 0) {
                                         return AppText(
                                           text: "₹ ${numMrp.toString()}",
@@ -663,7 +487,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                         );
                                       }
 
-                                      // ✅ Case 2: Both exist and price < mrp - show base price, crossed MRP, and discount %
+                                      // Case 2: Both exist and price < mrp - show base price, crossed MRP, and discount %
                                       if (numPrice > 0 && numMrp > 0 && numPrice < numMrp) {
                                         return Row(
                                           children: [
@@ -708,7 +532,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                         );
                                       }
 
-                                      // ✅ Case 3: Only price exists - show price
+                                      // Case 3: Only price exists - show price
                                       if (numPrice > 0) {
                                         return AppText(
                                           text: "₹ ${numPrice.toString()}",
@@ -720,7 +544,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                         );
                                       }
 
-                                      // ✅ Case 4: Nothing to show
+                                      // Case 4: Nothing to show
                                       return const SizedBox.shrink();
                                     }(),
                                   ),
@@ -758,7 +582,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                       ),
                     ),
                     SliverToBoxAdapter(
-                      child: productController.handpickedLoadMore.value
+                      child: _isLoadingMore.value
                           ? const DummyGridList(size: 2)
                           : const SizedBox.shrink(),
                     ),
@@ -768,7 +592,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
             }),
           ),
 
-          // ===== bottom sort / category / filters row =====
+          // Bottom sort / filters row
           Container(
             color: statusBarColor,
             child: Column(
@@ -810,51 +634,6 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
                       Container(width: 1.sp, color: borderColor, height: 40.sp),
 
-                      // Only show category if NOT in search mode
-                      if (widget.searchResults == null) ...[
-                        // Category
-                        GestureDetector(
-                          onTap: () {},
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10.sp, horizontal: 5.sp),
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 5.sp),
-                                  child: Text(
-                                    "CATEGORY",
-                                    style: TextStyle(
-                                      color: const Color(0xFF374151),
-                                      fontSize: 13.sp,
-                                      fontFamily: "Clash Display",
-                                      fontWeight: FontWeight.w500,
-                                      decoration: TextDecoration.none,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 5.sp, right: 5.sp, top: 1.sp),
-                                  child: Text(
-                                    widget.genderName.toUpperCase(),
-                                    style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      fontFamily: "Clash Display Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: appBarColor,
-                                      fontSize: 10.sp,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        Container(width: 1.sp, color: borderColor, height: 40.sp),
-                      ],
-
                       // Filters
                       GestureDetector(
                         onTap: () => _showFilterBottomSheet(context),
@@ -893,22 +672,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     );
   }
 
-  /// ✅ Skeleton Grid
-  Widget _buildSkeletonGrid() {
-    return GridView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16.sp),
-      itemCount: 6,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 8.sp,
-        crossAxisSpacing: 5.sp,
-        childAspectRatio: 0.56,
-      ),
-      itemBuilder: (context, index) => _SkeletonProductTile(),
-    );
-  }
-
-  /// ✅ Filter Bottom Sheet
+  /// Filter Bottom Sheet
   Future<void> _showFilterBottomSheet(BuildContext context) async {
     String selectedFilter = "Brand";
 
@@ -927,7 +691,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
       "Size"
     ];
 
-    // ✅ Ensure filter metadata is loaded
+    // Ensure filter metadata is loaded
     await _loadFilterMetadataIfNeeded();
 
     if (productController.isFilterMetadata.value) {
@@ -944,7 +708,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
       return;
     }
 
-    // ✅ Restore previously applied brands
+    // Restore previously applied brands
     for (final id in _appliedBrandIds) {
       final brandData = productController.filterBrands.firstWhereOrNull((item) =>
           int.tryParse(item['id']?.toString() ?? '') == id);
@@ -1264,7 +1028,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                         selectedSizes.isNotEmpty;
 
                                 // Reset pagination
-                                productController.handpickedPage.value = 1;
+                                _currentPage.value = 1;
                               });
 
                               _applyFiltersAndSortDebounced();
@@ -1306,7 +1070,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     );
   }
 
-  /// ✅ Sort Bottom Sheet
+  /// Sort Bottom Sheet
   Future<void> _showSortBottomSheet(BuildContext context) async {
     final RxString selectedOption = _appliedSortOption.obs;
 
@@ -1387,7 +1151,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                           setState(() {
                             _appliedSortOption = selected;
                             // Reset pagination
-                            productController.handpickedPage.value = 1;
+                            _currentPage.value = 1;
                           });
 
                           _applyFiltersAndSortDebounced();
@@ -1405,49 +1169,6 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           ),
         );
       },
-    );
-  }
-}
-
-/// ✅ Skeleton Product Tile
-class _SkeletonProductTile extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AspectRatio(
-            aspectRatio: 0.75,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(6),
-              ),
-            ),
-          ),
-          SizedBox(height: 5.sp),
-          Container(
-            width: double.infinity,
-            height: 14.sp,
-            color: Colors.white,
-          ),
-          SizedBox(height: 4.sp),
-          Container(
-            width: double.infinity * 0.7,
-            height: 12.sp,
-            color: Colors.white,
-          ),
-          SizedBox(height: 6.sp),
-          Container(
-            width: 60.sp,
-            height: 14.sp,
-            color: Colors.white,
-          ),
-        ],
-      ),
     );
   }
 }
