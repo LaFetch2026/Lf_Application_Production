@@ -111,7 +111,6 @@ class HomeScreenState extends State<HomeScreen> {
       final savedGender = prefs.getInt('selectedGender');
       if (savedGender != null &&
           homeController.genderTabs.any((tab) => tab['id'] == savedGender)) {
-        // Use saved gender if it exists in API response
         homeController.homeGenderValue.value = savedGender;
         final tab = homeController.genderTabs.firstWhere(
           (tab) => tab['id'] == savedGender,
@@ -119,16 +118,13 @@ class HomeScreenState extends State<HomeScreen> {
         );
         homeController.genderText.value = tab['name']?.toString() ?? '';
       } else if (homeController.genderTabs.isNotEmpty) {
-        // Use first tab from API as default
         homeController.homeGenderValue.value =
             homeController.genderTabs.first['id'] ?? 1;
         homeController.genderText.value =
             homeController.genderTabs.first['name']?.toString() ?? 'MEN';
-        // Save this as the default
         await prefs.setInt(
             'selectedGender', homeController.homeGenderValue.value);
       } else {
-        // Fallback if API fails - use hardcoded default
         homeController.homeGenderValue.value = 1;
         homeController.genderText.value = 'Men';
         print("⚠️ No gender tabs from API, using default");
@@ -146,17 +142,21 @@ class HomeScreenState extends State<HomeScreen> {
 
       await checkUserConnection();
 
-      // ✅ NEW OPTIMIZED: Use centralized caching from HomeController
       final currentGender = homeController.homeGenderValue.value;
 
-      // Initialize home data (will use cache if available)
-      await homeController.initializeHomeData(currentGender);
+      // ✅ CRITICAL: Clear brand list before loading to ensure fresh data
+      brandController.brandList.clear();
 
-      // Load other data
+      // ✅ UPDATED: Load all data together including brands
       await Future.wait([
+        homeController.initializeHomeData(currentGender),
         catalogController.getCatalogData(currentGender),
         productController.getHomeProduct(currentGender),
+        brandController.getBrandData("featured"),
       ]);
+
+      // ✅ FORCE UPDATE: Trigger reactive update after all data is loaded
+      brandController.update();
 
       // One-time setup calls
       if (_isInitialLoad) {
@@ -178,11 +178,12 @@ class HomeScreenState extends State<HomeScreen> {
 
     final currentGender = homeController.homeGenderValue.value;
 
-    // Force refresh with forceRefresh flag
+    // ✅ UPDATED: Include brands in refresh
     await Future.wait([
       homeController.initializeHomeData(currentGender, forceRefresh: true),
       catalogController.getCatalogData(currentGender, forceRefresh: true),
       productController.getHomeProduct(currentGender, forceRefresh: true),
+      brandController.getBrandData("featured"), // ✅ ADD: Refresh brands too
     ]);
   }
 
@@ -190,14 +191,6 @@ class HomeScreenState extends State<HomeScreen> {
   static void clearCache() {
     print("🗑️ Clearing HomeScreen cache on logout");
     _isInitialLoad = true;
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (brandController.brandList.isEmpty && !brandController.isBrand.value) {
-      brandController.getBrandData("featured");
-    }
   }
 
   // ---- helpers ----
@@ -729,25 +722,32 @@ class HomeScreenState extends State<HomeScreen> {
                         ),
 
                         Obx(() {
-                          if (homeController.isBrand.value) {
+                          // ✅ Watch brandController instead of homeController
+                          if (brandController.isBrand.value) {
                             return const DummyHomeBrand();
                           }
-                          if (homeController.brandList.isEmpty) {
-                            return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8.0),
-                              child: Center(
-                                child: Text("No featured brands yet"),
-                              ),
-                            );
+
+                          // ✅ Get brands from brandController
+                          final brands = brandController.brandList
+                              .where((b) =>
+                                  b.containsKey("id") &&
+                                  (b["name"]?.toString().isNotEmpty ?? false))
+                              .toList();
+
+                          // ✅ If no brands, don't show anything (no empty space)
+                          if (brands.isEmpty) {
+                            return const SizedBox.shrink();
                           }
+
+                          // ✅ Show brands section
                           return _FeaturedBrandsRow(
                             homeController: homeController,
                             brandController: brandController,
                             analytics: analytics,
                             onPressedViewAll: () => widget.onPressed?.call(1),
+                            brands: brands,
                           );
                         }),
-
                         // Product Collections
                         Obx(() {
                           if (productController.isHomeProduct.value) {
@@ -2134,12 +2134,14 @@ class _FeaturedBrandsRow extends StatelessWidget {
   final BrandController brandController;
   final FirebaseAnalytics analytics;
   final VoidCallback onPressedViewAll;
+  final List<dynamic> brands; // ✅ ADD: Accept brands list
 
   const _FeaturedBrandsRow({
     required this.homeController,
     required this.brandController,
     required this.analytics,
     required this.onPressedViewAll,
+    required this.brands, // ✅ ADD: Required parameter
   });
 
   @override
@@ -2180,122 +2182,106 @@ class _FeaturedBrandsRow extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 12.sp), // ✅ REDUCED from 16.sp
+        SizedBox(height: 12.sp),
         SizedBox(
           height: 90.sp,
-          child: Obx(() {
-            if (brandController.isBrand.value) {
-              return const Center(child: CircularProgressIndicator());
-            }
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: brands.length,
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (ctx, index) {
+              final brand = brands[index];
+              final logo = (brand["logo"] ?? "").toString().trim();
+              final name = (brand["name"] ?? "").toString().trim();
+              final bgImage =
+                  (brand["background_image"] ?? "").toString().trim();
 
-            final brands = brandController.brandList
-                .where((b) =>
-                    b.containsKey("id") &&
-                    (b["name"]?.toString().isNotEmpty ?? false))
-                .toList();
+              return GestureDetector(
+                onTap: () async {
+                  brandController.brandbackground.value = bgImage;
+                  final id = brand["id"];
+                  final safeId = (id is int)
+                      ? id
+                      : int.tryParse(id?.toString() ?? '0') ?? 0;
 
-            if (brands.isEmpty) {
-              return const Center(child: Text("No featured brands yet"));
-            }
-
-            return ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: brands.length,
-              physics: const BouncingScrollPhysics(),
-              itemBuilder: (ctx, index) {
-                final brand = brands[index];
-                final logo = (brand["logo"] ?? "").toString().trim();
-                final name = (brand["name"] ?? "").toString().trim();
-                final bgImage =
-                    (brand["background_image"] ?? "").toString().trim();
-
-                return GestureDetector(
-                  onTap: () async {
-                    brandController.brandbackground.value = bgImage;
-                    final id = brand["id"];
-                    final safeId = (id is int)
-                        ? id
-                        : int.tryParse(id?.toString() ?? '0') ?? 0;
-
-                    Get.to(
-                      () => AllBrandScreen(
-                        id: safeId,
-                        screen: "home",
-                        slug: "",
-                      ),
-                    )?.then((_) {
-                      SystemChrome.setSystemUIOverlayStyle(
-                        const SystemUiOverlayStyle(
-                          statusBarColor: whiteColor,
-                          statusBarIconBrightness: Brightness.dark,
-                          systemNavigationBarColor: whiteColor,
-                        ),
-                      );
-                    });
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 16.sp),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          height: 64.sp,
-                          width: 64.sp,
-                          margin: EdgeInsets.only(
-                            right: index == brands.length - 1 ? 16.sp : 0,
-                          ),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: dividerColor,
-                              width: 1.sp,
-                            ),
-                          ),
-                          child: ClipOval(
-                            child: logo.isNotEmpty
-                                ? CachedNetworkImage(
-                                    imageUrl: logo,
-                                    height: 64.sp,
-                                    width: 64.sp,
-                                    fit: BoxFit.cover,
-                                    fadeInDuration:
-                                        const Duration(milliseconds: 300),
-                                    placeholder: (_, __) => Container(
-                                      color: Colors.black.withOpacity(0.05),
-                                    ),
-                                    errorWidget: (_, __, ___) => Image.asset(
-                                      downloadImage,
-                                      fit: BoxFit.contain,
-                                    ),
-                                  )
-                                : Image.asset(
-                                    dummyWishlistImage,
-                                    fit: BoxFit.cover,
-                                  ),
-                          ),
-                        ),
-                        SizedBox(height: 4.sp), // ✅ REDUCED from 8.sp
-                        SizedBox(
-                          width: 64.sp,
-                          child: Text(
-                            name.isNotEmpty ? name : 'Unnamed',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ],
+                  Get.to(
+                    () => AllBrandScreen(
+                      id: safeId,
+                      screen: "home",
+                      slug: "",
                     ),
+                  )?.then((_) {
+                    SystemChrome.setSystemUIOverlayStyle(
+                      const SystemUiOverlayStyle(
+                        statusBarColor: whiteColor,
+                        statusBarIconBrightness: Brightness.dark,
+                        systemNavigationBarColor: whiteColor,
+                      ),
+                    );
+                  });
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(left: 16.sp),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        height: 64.sp,
+                        width: 64.sp,
+                        margin: EdgeInsets.only(
+                          right: index == brands.length - 1 ? 16.sp : 0,
+                        ),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: dividerColor,
+                            width: 1.sp,
+                          ),
+                        ),
+                        child: ClipOval(
+                          child: logo.isNotEmpty
+                              ? CachedNetworkImage(
+                                  imageUrl: logo,
+                                  height: 64.sp,
+                                  width: 64.sp,
+                                  fit: BoxFit.cover,
+                                  fadeInDuration:
+                                      const Duration(milliseconds: 300),
+                                  placeholder: (_, __) => Container(
+                                    color: Colors.black.withOpacity(0.05),
+                                  ),
+                                  errorWidget: (_, __, ___) => Image.asset(
+                                    downloadImage,
+                                    fit: BoxFit.contain,
+                                  ),
+                                )
+                              : Image.asset(
+                                  dummyWishlistImage,
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
+                      ),
+                      SizedBox(height: 4.sp),
+                      SizedBox(
+                        width: 64.sp,
+                        child: Text(
+                          name.isNotEmpty ? name : 'Unnamed',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              },
-            );
-          }),
+                ),
+              );
+            },
+          ),
         ),
       ],
     );
