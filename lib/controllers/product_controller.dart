@@ -12,6 +12,7 @@ import '../core/constant/constants.dart';
 import '../screens/cartscreen.dart';
 
 import '../screens/loginscreen.dart';
+import '../services/cache_manager.dart';
 import 'base_controller.dart';
 
 class ProductController extends BaseController {
@@ -597,7 +598,29 @@ class ProductController extends BaseController {
     }
   }
 
-  Future<void> getHomeProduct(int gender, {bool withLimit = true}) async {
+  Future<void> getHomeProduct(int gender, {bool withLimit = true, bool forceRefresh = false}) async {
+    final cacheKey = 'home_products_${gender}_${withLimit ? "limited" : "all"}';
+
+    // Try to load from cache first
+    if (!forceRefresh) {
+      final cached = await CacheManager.get(key: cacheKey);
+      if (cached != null && cached is List) {
+        homeProductList.clear();
+        homeProductList.assignAll(
+          List<Map<String, dynamic>>.from(
+            cached.whereType<Map>()
+          )
+        );
+
+        if (homeProductList.isNotEmpty) {
+          tagname.value = homeProductList.first['name']?.toString() ?? '';
+        }
+
+        print("✅ Home products loaded from cache for gender: $gender (${homeProductList.length} collections)");
+        return;
+      }
+    }
+
     isHomeProduct.value = true;
     homeProductList.clear();
 
@@ -607,12 +630,14 @@ class ProductController extends BaseController {
     final base = ApiConstants.baseUrl;
     final uri = Uri.parse("$base/collection-with-products").replace(
       queryParameters: {
-        'gender': '$gender', // ✅ Changed from 'status' to 'gender'
+        'gender': '$gender',
         if (withLimit) 'limit': 'true',
       },
     );
 
     try {
+      print("🔄 Fetching collections from: $uri");
+
       final response = await http.get(
         uri,
         headers: {
@@ -630,31 +655,53 @@ class ProductController extends BaseController {
                     (body['data'] as List).whereType<Map>())
                 : <Map<String, dynamic>>[];
 
+        // ✅ Filter out collections with no products and process
+        final List<Map<String, dynamic>> collectionsWithProducts = [];
+
         for (final c in data) {
+          // Ensure products is a list
           if (c['products'] is! List) c['products'] = <dynamic>[];
 
+          final productsList = c['products'] as List;
+
+          // ✅ Skip collections with no products
+          if (productsList.isEmpty) {
+            print("⏭️ Skipping collection '${c['name']}' - no products");
+            continue;
+          }
+
           // Transform each product to add display prices
-          final transformedProducts = (c['products'] as List).map((p) {
+          final transformedProducts = productsList.map((p) {
             if (p is! Map<String, dynamic>) return p;
             return calculateDisplayPrices(p);
           }).toList();
 
           c['products'] = transformedProducts;
+
+          // ✅ Ensure banners is a list (could be null in API)
+          if (c['banners'] is! List) {
+            c['banners'] = <dynamic>[];
+          }
+
+          collectionsWithProducts.add(c);
+          print("✅ Collection '${c['name']}': ${transformedProducts.length} products, ${(c['banners'] as List).length} banners");
         }
 
-        homeProductList.assignAll(data);
+        // ✅ Cache the processed data
+        await CacheManager.save(key: cacheKey, data: collectionsWithProducts);
 
-        tagname.value =
-            data.isNotEmpty ? (data.first['name']?.toString() ?? '') : '';
+        homeProductList.assignAll(collectionsWithProducts);
+
+        tagname.value = collectionsWithProducts.isNotEmpty
+            ? (collectionsWithProducts.first['name']?.toString() ?? '')
+            : '';
 
         productsShuffleSeed ??= DateTime.now().millisecondsSinceEpoch;
 
-        print(
-            "✅ collections loaded: ${homeProductList.length} ${withLimit ? '(limited)' : '(all)'}");
+        print("✅ Collections loaded: ${homeProductList.length} (with products) for gender=$gender ${withLimit ? '(limited)' : '(all)'}");
       } else {
         homeProductList.clear();
-        print(
-            "❌ collections load failed: ${response.statusCode} ${response.reasonPhrase}");
+        print("❌ Collections load failed: ${response.statusCode} ${response.reasonPhrase}");
       }
     } on TimeoutException {
       homeProductList.clear();

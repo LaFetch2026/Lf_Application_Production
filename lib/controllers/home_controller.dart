@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
 import '../screens/loginscreen.dart';
+import '../services/cache_manager.dart';
 import 'base_controller.dart';
 import 'package:flutter/foundation.dart';
 
@@ -73,13 +74,19 @@ class HomeController extends BaseController {
   List<bool> selected = List.generate(50, (i) => false).obs;
   RxList<Map<String, dynamic>> genderTabs = <Map<String, dynamic>>[].obs;
   RxBool isLoadingTabs = false.obs;
+
+  // Track if initial data has been loaded
+  RxBool isInitialDataLoaded = false.obs;
+
   @override
   void onInit() {
     super.onInit();
-    _loadInitialGenderTab();
+    // ✅ REMOVED premature API calls - now only loads saved gender preference
+    _loadSavedGenderPreference();
   }
 
-  Future<void> _loadInitialGenderTab() async {
+  /// Load saved gender preference WITHOUT calling APIs
+  Future<void> _loadSavedGenderPreference() async {
     final prefs = await SharedPreferences.getInstance();
     final savedGender = prefs.getInt('selectedGender') ?? 1; // default to Men
 
@@ -95,10 +102,28 @@ class HomeController extends BaseController {
         genderText.value = "Accessories";
         break;
     }
+    print('✅ Gender preference loaded: ${genderText.value}');
+  }
 
-    getBannerData(savedGender);
-    getBrandData("home", savedGender);
-    getCategoryData(savedGender);
+  /// Initialize home data - Call this from HomeScreen after user is authenticated/skipped
+  Future<void> initializeHomeData(int gender, {bool forceRefresh = false}) async {
+    // Skip if already loaded and not forcing refresh
+    if (isInitialDataLoaded.value && !forceRefresh) {
+      print('✅ Home data already loaded, skipping...');
+      return;
+    }
+
+    print('🔄 Initializing home data for gender: $gender');
+
+    // Load data with caching
+    await Future.wait([
+      getBannerData(gender, forceRefresh: forceRefresh),
+      getBrandData("featured", gender, forceRefresh: forceRefresh),
+      getCategoryData(gender, forceRefresh: forceRefresh),
+    ]);
+
+    isInitialDataLoaded.value = true;
+    print('✅ Home data initialization complete');
   }
 
   void getDeviceName() async {
@@ -114,7 +139,19 @@ class HomeController extends BaseController {
     }
   }
 
-  Future<void> getBannerData(int gender) async {
+  Future<void> getBannerData(int gender, {bool forceRefresh = false}) async {
+    final cacheKey = 'banners_$gender';
+
+    // Try to load from cache first
+    if (!forceRefresh) {
+      final cached = await CacheManager.get(key: cacheKey);
+      if (cached != null) {
+        _updateBannerList(gender, cached as List<dynamic>);
+        print("✅ Banners loaded from cache for gender: $gender");
+        return;
+      }
+    }
+
     isBanner1.value = true;
 
     try {
@@ -133,7 +170,6 @@ class HomeController extends BaseController {
       );
 
       print("📥 Response Status: ${response.statusCode}");
-      print("📥 Response Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final decoded = json.decode(response.body) as Map<String, dynamic>;
@@ -147,20 +183,11 @@ class HomeController extends BaseController {
           return name.toUpperCase() == expected;
         }).toList();
 
+        // ✅ Cache the filtered data
+        await CacheManager.save(key: cacheKey, data: filtered);
+
         // ✅ Store into the specific list for that gender
-        switch (gender) {
-          case 1:
-            banner1List = filtered;
-            break;
-          case 2:
-            banner2List = filtered;
-            break;
-          case 3:
-            banner3List = filtered;
-            break;
-          default:
-            banner1List = filtered;
-        }
+        _updateBannerList(gender, filtered);
 
         print("✅ Banners for $expected: ${filtered.length}");
       } else if (response.statusCode == 401) {
@@ -174,6 +201,23 @@ class HomeController extends BaseController {
       getSnackBar("An error occurred while loading banners.");
     } finally {
       isBanner1.value = false;
+    }
+  }
+
+  /// Helper method to update banner list based on gender
+  void _updateBannerList(int gender, List<dynamic> data) {
+    switch (gender) {
+      case 1:
+        banner1List = data;
+        break;
+      case 2:
+        banner2List = data;
+        break;
+      case 3:
+        banner3List = data;
+        break;
+      default:
+        banner1List = data;
     }
   }
 
@@ -278,12 +322,24 @@ class HomeController extends BaseController {
     return null;
   }
 
-  Future<void> getBrandData(String type, int gender, {String? query}) async {
+  Future<void> getBrandData(String type, int gender, {String? query, bool forceRefresh = false}) async {
+    final cacheKey = 'brands_${type}_$gender';
+
+    // Try to load from cache first
+    if (!forceRefresh && query == null) {
+      final cached = await CacheManager.get(key: cacheKey);
+      if (cached != null) {
+        _processBrandData(cached as List<dynamic>, query);
+        print("✅ Brands loaded from cache for type: $type, gender: $gender");
+        return;
+      }
+    }
+
     isBrand.value = true;
     final prefs = await SharedPreferences.getInstance();
 
     try {
-      final base = ApiConstants.baseUrl; // use laFetch host per your API
+      const base = ApiConstants.baseUrl;
       final baseUri = Uri.parse(base);
 
       // Only server-side filter we know: isFeatured=true
@@ -340,45 +396,13 @@ class HomeController extends BaseController {
           ? decoded['data'] as List
           : const [];
 
-      // ✅ Client-side filter using provided query or the controller field
-      final q = (query ?? brandQuery.value).trim().toLowerCase();
-      final List<Map<String, dynamic>> filtered = (q.isEmpty
-              ? rawList
-              : rawList.where((b) {
-                  final name = (b is Map && b['name'] != null)
-                      ? b['name'].toString()
-                      : '';
-                  return name.toLowerCase().contains(q);
-                }))
-          .whereType<Map<String, dynamic>>()
-          .toList();
+      // ✅ Cache the raw data
+      await CacheManager.save(key: cacheKey, data: rawList);
 
-      // Group & sort alphabetically
-      final Map<String, List<Map<String, dynamic>>> grouped = {};
-      for (final item in filtered) {
-        final name = (item['name'] ?? '').toString().trim();
-        final key = name.isEmpty ? '#' : name[0].toUpperCase();
-        (grouped[key] ??= <Map<String, dynamic>>[]).add(item);
-      }
+      // Process the data
+      _processBrandData(rawList, query);
 
-      final sortedGroups = grouped.entries.toList()
-        ..sort((a, b) => a.key.compareTo(b.key));
-
-      brandList = [];
-      for (final g in sortedGroups) {
-        g.value.sort((a, b) => (a['name'] ?? '')
-            .toString()
-            .toLowerCase()
-            .compareTo((b['name'] ?? '').toString().toLowerCase()));
-        brandList.add({'alphabet': g.key});
-        brandList.addAll(g.value);
-      }
-
-      selected.clear();
-      selected = List<bool>.generate(brandList.length, (_) => false);
-
-      print(
-          "✅ Brands loaded: ${filtered.length} | Groups: ${sortedGroups.length}");
+      print("✅ Brands loaded: ${rawList.length}");
     } on TimeoutException {
       print("⏳ Brand API timeout");
       getSnackBar("Brands request timed out. Please try again.");
@@ -390,7 +414,59 @@ class HomeController extends BaseController {
     }
   }
 
-  Future<void> getCategoryData(int genderType) async {
+  /// Helper method to process brand data (filter and group)
+  void _processBrandData(List<dynamic> rawList, String? query) {
+    // ✅ Client-side filter using provided query or the controller field
+    final q = (query ?? brandQuery.value).trim().toLowerCase();
+    final List<Map<String, dynamic>> filtered = (q.isEmpty
+            ? rawList
+            : rawList.where((b) {
+                final name = (b is Map && b['name'] != null)
+                    ? b['name'].toString()
+                    : '';
+                return name.toLowerCase().contains(q);
+              }))
+        .whereType<Map<String, dynamic>>()
+        .toList();
+
+    // Group & sort alphabetically
+    final Map<String, List<Map<String, dynamic>>> grouped = {};
+    for (final item in filtered) {
+      final name = (item['name'] ?? '').toString().trim();
+      final key = name.isEmpty ? '#' : name[0].toUpperCase();
+      (grouped[key] ??= <Map<String, dynamic>>[]).add(item);
+    }
+
+    final sortedGroups = grouped.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+
+    brandList = [];
+    for (final g in sortedGroups) {
+      g.value.sort((a, b) => (a['name'] ?? '')
+          .toString()
+          .toLowerCase()
+          .compareTo((b['name'] ?? '').toString().toLowerCase()));
+      brandList.add({'alphabet': g.key});
+      brandList.addAll(g.value);
+    }
+
+    selected.clear();
+    selected = List<bool>.generate(brandList.length, (_) => false);
+  }
+
+  Future<void> getCategoryData(int genderType, {bool forceRefresh = false}) async {
+    final cacheKey = 'categories_$genderType';
+
+    // Try to load from cache first
+    if (!forceRefresh) {
+      final cached = await CacheManager.get(key: cacheKey);
+      if (cached != null) {
+        categoryList = cached as List<dynamic>;
+        print("✅ Categories loaded from cache for gender: $genderType");
+        return;
+      }
+    }
+
     isCategory.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -405,6 +481,10 @@ class HomeController extends BaseController {
       if (response.statusCode == 200) {
         if (responseData["data"] != null) {
           categoryList = responseData["data"];
+
+          // ✅ Cache the category data
+          await CacheManager.save(key: cacheKey, data: categoryList);
+          print("✅ Categories loaded: ${categoryList.length}");
         }
       } else if (response.statusCode == 500) {
       } else if (response.statusCode == 401) {

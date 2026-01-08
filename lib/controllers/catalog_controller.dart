@@ -11,6 +11,7 @@ import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
 import '../screens/loginscreen.dart';
 import '../screens/home/women/homescreen.dart';
+import '../services/cache_manager.dart';
 import 'base_controller.dart';
 import 'product_controller.dart';
 
@@ -30,7 +31,21 @@ class CatalogController extends BaseController {
   RxList<dynamic> sortedProductList = <dynamic>[].obs;
 
   /// Fetch catalog by gender
-  Future<void> getCatalogData(int gender) async {
+  Future<void> getCatalogData(int gender, {bool forceRefresh = false}) async {
+    final cacheKey = 'catalog_$gender';
+
+    // Try to load from cache first
+    if (!forceRefresh) {
+      final cached = await CacheManager.get(key: cacheKey);
+      if (cached != null && cached is List) {
+        catalogList.clear();
+        catalogList.assignAll(cached);
+        update();
+        print("✅ Catalog loaded from cache for gender: $gender (${catalogList.length} items)");
+        return;
+      }
+    }
+
     isCatalog.value = true;
 
     try {
@@ -58,15 +73,19 @@ class CatalogController extends BaseController {
 
       if (response.statusCode == 200) {
         if (responseData["data"] != null && responseData["data"] is List) {
+          final data = responseData["data"] as List;
+
+          // ✅ Cache the data
+          await CacheManager.save(key: cacheKey, data: data);
+
           // ✅ CRITICAL: Clear old data first, then assign new data
           catalogList.clear();
-          catalogList.assignAll(responseData["data"]);
+          catalogList.assignAll(data);
 
           // ✅ Force UI update
           update();
 
-          print(
-              "✅ Shop by Category loaded: ${catalogList.length} items for gender: $gender");
+          print("✅ Shop by Category loaded: ${catalogList.length} items for gender: $gender");
         } else {
           catalogList.clear();
           getSnackBar("No categories available");

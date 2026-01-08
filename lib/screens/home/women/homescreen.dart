@@ -1,10 +1,8 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:crypto/crypto.dart'; // ✅ For hash-based change detection
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -69,17 +67,7 @@ class HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController(initialPage: 0);
   Timer? timer;
   bool isGuest = false;
-
-  // ✅ OPTIMIZED: Enhanced cache management with hash-based change detection
-  static DateTime? _lastDataFetch;
-  static const Duration _cacheValidDuration =
-      Duration(minutes: 30); // Longer cache for performance
-  static int? _lastGenderValue;
-  static bool? _lastAuthState; // Track last auth state (guest/authenticated)
-  static Map<int, String> _dataHashByGender =
-      {}; // Track data fingerprint for each gender
   static bool _isInitialLoad = true;
-  static Map<String, dynamic> _cachedData = {}; // Store actual data in memory
 
   @override
   void initState() {
@@ -158,183 +146,49 @@ class HomeScreenState extends State<HomeScreen> {
 
       await checkUserConnection();
 
-      // ✅ OPTIMIZED: Smart data fetching with hash-based change detection
+      // ✅ NEW OPTIMIZED: Use centralized caching from HomeController
       final currentGender = homeController.homeGenderValue.value;
-      final shouldFetch = await _shouldFetchData(currentGender);
 
-      if (shouldFetch) {
-        print("🔄 Fetching fresh data for gender: $currentGender...");
-        await _fetchAllData(currentGender);
+      // Initialize home data (will use cache if available)
+      await homeController.initializeHomeData(currentGender);
+
+      // Load other data
+      await Future.wait([
+        catalogController.getCatalogData(currentGender),
+        productController.getHomeProduct(currentGender),
+      ]);
+
+      // One-time setup calls
+      if (_isInitialLoad) {
+        homeController.getDeviceName();
+        initPlatformState(); // OneSignal push notifications
         _isInitialLoad = false;
-      } else {
-        print(
-            "✅ Using cached data (last fetched: ${_getTimeSinceLastFetch()})");
-        // ✅ Restore from cache if available
-        _restoreFromCache(currentGender);
       }
 
       // ✅ Fix hot reload visibility issue
       if (catalogController.catalogList.isNotEmpty) {
         catalogController.update();
       }
-
-      // ✅ Profile is already initialized by BottomNavScreen, no need to call again
-      // This prevents "TextEditingController disposed" errors when controllers are recreated
     });
-  }
-
-  // ✅ OPTIMIZED: Sophisticated logic to determine if data should be fetched
-  Future<bool> _shouldFetchData(int currentGender) async {
-    // First time loading - always fetch
-    if (_isInitialLoad) {
-      print("📥 Initial load - fetching data");
-      return true;
-    }
-
-    // Gender changed - always fetch
-    if (_lastGenderValue != currentGender) {
-      print(
-          "🔄 Gender changed from $_lastGenderValue to $currentGender - fetching data");
-      return true;
-    }
-
-    // Authentication state changed (guest -> authenticated or vice versa)
-    if (_lastAuthState != null && _lastAuthState != isGuest) {
-      print(
-          "🔐 Authentication state changed (wasGuest: $_lastAuthState, isGuest: $isGuest) - forcing data refresh");
-      return true;
-    }
-
-    // Cache expired - check if _lastDataFetch exists
-    if (_lastDataFetch == null) {
-      return true;
-    }
-    final timeSinceLastFetch = DateTime.now().difference(_lastDataFetch!);
-    if (timeSinceLastFetch > _cacheValidDuration) {
-      return true;
-    }
-
-    // ✅ NEW: Check if backend data has changed using lightweight API call
-    // This is optional - you can implement a /api/checksum endpoint on your backend
-    // For now, we'll rely on time-based caching
-
-    print("✅ Cache is valid and gender unchanged - using cached data");
-    return false;
-  }
-
-// ✅ OPTIMIZED: Centralized data fetching method
-  Future<void> _fetchAllData(int gender) async {
-    print("📡 Fetching data for gender: $gender");
-
-    // Ensure gender tabs are loaded
-    if (homeController.genderTabs.isEmpty) {
-      print("⚠️ Gender tabs not loaded, fetching now...");
-      await homeController.getGenderTabs();
-    }
-
-    // ALWAYS hit these APIs (no JWT required)
-    await Future.wait([
-      homeController.getBannerData(gender),
-      catalogController.getCatalogData(gender),
-      homeController.getBrandData("featured", gender),
-      productController.getHomeProduct(gender),
-    ]);
-
-    // One-time setup calls
-    if (_isInitialLoad) {
-      homeController.getDeviceName();
-      initPlatformState(); // OneSignal push notifications
-    }
-
-    // ✅ Update cache metadata
-    _lastDataFetch = DateTime.now();
-    _lastGenderValue = gender;
-    _lastAuthState = isGuest;
-    print(
-        "📊 Cache updated: gender=$gender, isGuest=$isGuest, authState=$_lastAuthState");
-
-    // ✅ Store data hash to detect backend changes
-    _dataHashByGender[gender] = _generateDataHash(gender);
-
-    // ✅ Cache the actual data
-    _cacheCurrentData(gender);
-  }
-
-  // ✅ OPTIMIZED: Generate hash of current data to detect changes
-  String _generateDataHash(int gender) {
-    try {
-      final dataToHash = {
-        'banners': _currentBannerList().length,
-        'brands': homeController.brandList.length,
-        'products': productController.homeProductList.length,
-        'catalog': catalogController.catalogList.length,
-        'gender': gender,
-      };
-
-      final jsonStr = jsonEncode(dataToHash);
-      final bytes = utf8.encode(jsonStr);
-      final digest = sha256.convert(bytes);
-
-      return digest.toString();
-    } catch (e) {
-      print("⚠️ Error generating data hash: $e");
-      return DateTime.now().millisecondsSinceEpoch.toString();
-    }
-  }
-
-  // ✅ OPTIMIZED: Cache current data in memory
-  void _cacheCurrentData(int gender) {
-    _cachedData['gender_$gender'] = {
-      'banners': List.from(_currentBannerList()),
-      'brands': List.from(homeController.brandList),
-      'products': List.from(productController.homeProductList),
-      'catalog': List.from(catalogController.catalogList),
-      'timestamp': DateTime.now().toIso8601String(),
-    };
-  }
-
-  // ✅ OPTIMIZED: Restore data from memory cache
-  void _restoreFromCache(int gender) {
-    final cached = _cachedData['gender_$gender'];
-    if (cached != null) {
-      print("📦 Restoring cached data for gender: $gender");
-      // Data is already in controllers, no need to restore
-      // This method exists for future enhancements
-    }
-  }
-
-  // ✅ Helper method to get time since last fetch (for logging)
-  String _getTimeSinceLastFetch() {
-    if (_lastDataFetch == null) return "never";
-    final diff = DateTime.now().difference(_lastDataFetch!);
-    if (diff.inMinutes < 60) return "${diff.inMinutes} minutes ago";
-    return "${diff.inHours} hours ago";
   }
 
   // ✅ Method to force refresh data (call when pull-to-refresh or manual refresh)
   Future<void> forceRefreshData() async {
     print("🔄 Force refresh triggered");
-    setState(() {
-      _lastDataFetch = null; // Reset cache
-      _dataHashByGender.clear();
-    });
 
     final currentGender = homeController.homeGenderValue.value;
-    await _fetchAllData(currentGender);
 
-    _lastDataFetch = DateTime.now();
-    _lastGenderValue = currentGender;
-    _lastAuthState = isGuest;
+    // Force refresh with forceRefresh flag
+    await Future.wait([
+      homeController.initializeHomeData(currentGender, forceRefresh: true),
+      catalogController.getCatalogData(currentGender, forceRefresh: true),
+      productController.getHomeProduct(currentGender, forceRefresh: true),
+    ]);
   }
 
   // ✅ Static method to clear all cached data (call on logout)
   static void clearCache() {
     print("🗑️ Clearing HomeScreen cache on logout");
-    _lastDataFetch = null;
-    _lastGenderValue = null;
-    _lastAuthState = null;
-    _dataHashByGender.clear();
-    _cachedData.clear();
     _isInitialLoad = true;
   }
 
@@ -710,10 +564,13 @@ class HomeScreenState extends State<HomeScreen> {
 
                                     _resetForTab();
 
-                                    // ✅ Smart fetching only when needed
-                                    if (await _shouldFetchData(genderId)) {
-                                      await _fetchAllData(genderId);
-                                    }
+                                    // ✅ Load data for new gender tab
+                                    await Future.wait([
+                                      homeController
+                                          .initializeHomeData(genderId),
+                                      productController
+                                          .getHomeProduct(genderId),
+                                    ]);
 
                                     catalogController
                                         .selectCategoryGender.value = genderId;
@@ -901,71 +758,23 @@ class HomeScreenState extends State<HomeScreen> {
                             );
                           }
 
-                          final int selectedSuperCat =
-                              homeController.homeGenderValue.value;
-
-                          // ✅ DEBUG: Log raw data
-                          print(
-                              "🔍 DEBUG: Filtering collections for gender $selectedSuperCat");
-                          print(
-                              "🔍 DEBUG: Total collections in homeProductList: ${productController.homeProductList.length}");
-
+                          // ✅ Collections are already filtered by the API to only include those with products
+                          // ✅ Extra safety check: Filter out any collections with empty products
                           final List<Map<String, dynamic>> collections =
                               productController.homeProductList
                                   .whereType<Map<String, dynamic>>()
                                   .where((c) {
-                            // Check if collection has a name
-                            final collectionName =
-                                c['name']?.toString().trim() ?? '';
-                            if (collectionName.isEmpty) {
+                            final products = c['products'];
+                            if (products is! List || products.isEmpty) {
                               print(
-                                  "⚠️ Skipping collection without name: ${c['id']}");
+                                  "⚠️ Filtering out collection '${c['name']}' - no products");
                               return false;
                             }
-
-                            // Check if collection has products for the selected gender
-                            final List rawProducts = (c['products'] is List)
-                                ? List.from(c['products'] as List)
-                                : const [];
-
-                            print(
-                                "📦 Collection '$collectionName' (ID: ${c['id']}) has ${rawProducts.length} total products");
-
-                            final List<Map<String, dynamic>> filteredProducts =
-                                rawProducts
-                                    .whereType<Map<String, dynamic>>()
-                                    .where((p) {
-                              final v = p['superCatId'];
-                              final scId = v is int
-                                  ? v
-                                  : int.tryParse(v?.toString() ?? '') ?? 0;
-
-                              // ✅ WORKAROUND: If superCatId is 0 (missing), assume product matches
-                              // because API already filters by gender parameter (gender=1/2/3)
-                              if (scId == 0) {
-                                print(
-                                    "   ✅ Product ${p['id']} (${p['title']}) - no superCatId, assuming matches gender $selectedSuperCat");
-                                return true;
-                              }
-
-                              // ✅ DEBUG: Log product filtering
-                              if (scId != selectedSuperCat) {
-                                print(
-                                    "   ⏭️ Product ${p['id']} skipped (superCatId: $scId, need: $selectedSuperCat)");
-                              }
-
-                              return scId == selectedSuperCat;
-                            }).toList();
-
-                            print(
-                                "   ✅ After filtering: ${filteredProducts.length} products for gender $selectedSuperCat");
-
-                            // Only include collections that have products
-                            return filteredProducts.isNotEmpty;
+                            return true;
                           }).toList();
 
                           print(
-                              "📊 RESULT: ${collections.length} collections with products for gender $selectedSuperCat");
+                              "📊 Total collections with products: ${collections.length}");
 
                           if (collections.isEmpty) {
                             print(
@@ -1004,27 +813,25 @@ class HomeScreenState extends State<HomeScreen> {
                               final String subtitle =
                                   c['desc']?.toString() ?? '';
 
-                              final List rawProducts = (c['products'] is List)
-                                  ? List.from(c['products'] as List)
-                                  : const [];
+                              // ✅ Get banners for this collection
+                              final List<dynamic> banners =
+                                  (c['banners'] is List)
+                                      ? List.from(c['banners'] as List)
+                                      : const [];
 
-                              // ✅ FIXED: Apply the same filtering logic with superCatId=0 workaround
-                              final List<Map<String, dynamic>>
-                                  filteredProducts = rawProducts
-                                      .whereType<Map<String, dynamic>>()
-                                      .where((p) {
-                                final v = p['superCatId'];
-                                final scId = v is int
-                                    ? v
-                                    : int.tryParse(v?.toString() ?? '') ?? 0;
+                              final List<Map<String, dynamic>> products =
+                                  (c['products'] is List)
+                                      ? (c['products'] as List)
+                                          .whereType<Map<String, dynamic>>()
+                                          .toList()
+                                      : const [];
 
-                                // ✅ If superCatId is 0 (missing), assume product matches
-                                if (scId == 0) {
-                                  return true;
-                                }
-
-                                return scId == selectedSuperCat;
-                              }).toList();
+                              // ✅ Safety check: Skip rendering if no products
+                              if (products.isEmpty) {
+                                print(
+                                    "⚠️ Skipping render of collection '$title' - no products");
+                                return const SizedBox.shrink();
+                              }
 
                               final bool dark = index.isEven;
 
@@ -1083,10 +890,18 @@ class HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                     ),
+
+                                    // ✅ NEW: Display collection banners
+                                    if (banners.isNotEmpty)
+                                      _CollectionBanners(
+                                        banners: banners,
+                                        collectionName: title,
+                                      ),
+
                                     SizedBox(height: 6.sp),
-                                    if (filteredProducts.isNotEmpty)
+                                    if (products.isNotEmpty)
                                       _SectionStrip(
-                                        products: filteredProducts,
+                                        products: products,
                                         dark: dark,
                                         onProductTap: (productId) async {
                                           Get.to(
@@ -1625,65 +1440,51 @@ class _ExploreTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg =
-        dark ? Colors.white.withOpacity(0.12) : Colors.black.withOpacity(0.06);
-
     return GestureDetector(
       onTap: onTap,
-      child: SizedBox(
-        width: 160.sp,
-        child: Stack(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(4.sp),
-              child: (imageUrl != null && imageUrl!.trim().isNotEmpty)
-                  ? CachedNetworkImage(
-                      imageUrl: imageUrl!,
-                      height: 210.sp,
-                      width: 170.sp,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) => Container(
-                        height: 210.sp,
-                        width: 170.sp,
-                        color: bg,
-                      ),
-                      errorWidget: (_, __, ___) => Container(
-                        height: 210.sp,
-                        width: 170.sp,
-                        color: bg,
-                      ),
-                    )
-                  : Container(
-                      height: 200.sp,
-                      width: 170.sp,
-                      color: bg,
-                    ),
-            ),
+            // White button with black text (or vice versa for dark mode)
             Container(
-              height: 210.sp,
-              width: 170.sp,
+              padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 12.sp),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.sp),
-                color: Colors.black.withOpacity(0.25),
+                color: dark ? Colors.white : Colors.black,
+                borderRadius: BorderRadius.circular(8.sp),
+                border: Border.all(
+                  color: dark ? Colors.white : Colors.black,
+                  width: 2.sp,
+                ),
               ),
-            ),
-            Center(
-              child: Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.65),
-                  borderRadius: BorderRadius.circular(20.sp),
-                ),
-                child: const Text(
-                  "EXPLORE ALL",
-                  style: TextStyle(
-                    fontFamily: "Clash Display Semibold",
-                    fontSize: 12,
-                    color: Colors.white,
-                    letterSpacing: 0.5,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "VIEW ALL\nPRODUCTS",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: "Clash Display Semibold",
+                      fontSize: 12.sp,
+                      color: dark ? Colors.black : Colors.white,
+                      letterSpacing: 0.5,
+                      height: 1.3,
+                    ),
                   ),
-                ),
+                  SizedBox(width: 12.sp),
+                  Container(
+                    padding: EdgeInsets.all(8.sp),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: dark ? Colors.black : Colors.white,
+                    ),
+                    child: Icon(
+                      Icons.arrow_forward,
+                      size: 16.sp,
+                      color: dark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -2141,6 +1942,193 @@ class _ShopByCategorySection extends StatelessWidget {
           ),
           SizedBox(height: 0.sp),
         ],
+      ),
+    );
+  }
+}
+
+// ✅ NEW: Widget to display collection banners with auto-scroll
+class _CollectionBanners extends StatefulWidget {
+  final List<dynamic> banners;
+  final String collectionName;
+
+  const _CollectionBanners({
+    required this.banners,
+    required this.collectionName,
+  });
+
+  @override
+  State<_CollectionBanners> createState() => _CollectionBannersState();
+}
+
+class _CollectionBannersState extends State<_CollectionBanners> {
+  late PageController _pageController;
+  int _currentPage = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: 0);
+
+    // Auto-scroll only if there are multiple banners
+    if (widget.banners.length > 1) {
+      _timer = Timer.periodic(const Duration(seconds: 3), (_) {
+        if (_pageController.hasClients) {
+          final nextPage = (_currentPage + 1) % widget.banners.length;
+          _pageController.animateToPage(
+            nextPage,
+            duration: const Duration(milliseconds: 350),
+            curve: Curves.easeIn,
+          );
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.banners.isEmpty) return const SizedBox.shrink();
+
+    // Sort banners by position
+    final sortedBanners = List<Map<String, dynamic>>.from(
+      widget.banners.whereType<Map<String, dynamic>>(),
+    )..sort((a, b) {
+        final posA = a['position'] is int ? a['position'] as int : 999;
+        final posB = b['position'] is int ? b['position'] as int : 999;
+        return posA.compareTo(posB);
+      });
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Full width banner carousel
+          SizedBox(
+            height: 200.sp,
+            width: double.infinity,
+            child: PageView.builder(
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentPage = index;
+                });
+              },
+              itemCount: sortedBanners.length,
+              itemBuilder: (context, index) {
+                final banner = sortedBanners[index];
+                return _BannerItem(
+                  imageUrl: banner['imageUrl']?.toString() ?? '',
+                  redirectUrl: banner['redirectUrl']?.toString() ?? '',
+                  height: 200.sp,
+                );
+              },
+            ),
+          ),
+
+          // Page indicators (only show if more than 1 banner)
+          if (sortedBanners.length > 1) ...[
+            SizedBox(height: 8.sp),
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  sortedBanners.length,
+                  (index) => Container(
+                    margin: EdgeInsets.symmetric(horizontal: 4.sp),
+                    width: _currentPage == index ? 8.sp : 6.sp,
+                    height: _currentPage == index ? 8.sp : 6.sp,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _currentPage == index
+                          ? Colors.black
+                          : const Color(0xffE5E7EB),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// Banner item widget
+class _BannerItem extends StatelessWidget {
+  final String imageUrl;
+  final String redirectUrl;
+  final double height;
+
+  const _BannerItem({
+    required this.imageUrl,
+    required this.redirectUrl,
+    required this.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        if (redirectUrl.isNotEmpty) {
+          // Handle redirect - could navigate to category, product, etc.
+          print("📍 Banner tapped: $redirectUrl");
+          // TODO: Implement navigation based on redirectUrl
+        }
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.sp),
+        child: imageUrl.isNotEmpty
+            ? CachedNetworkImage(
+                imageUrl: imageUrl,
+                width: double.infinity,
+                height: height,
+                fit: BoxFit.cover,
+                placeholder: (_, __) => Container(
+                  width: double.infinity,
+                  height: height,
+                  color: Colors.black.withOpacity(0.04),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                errorWidget: (_, __, ___) => Container(
+                  width: double.infinity,
+                  height: height,
+                  color: Colors.black.withOpacity(0.04),
+                  child: const Center(
+                    child: Icon(
+                      Icons.image_not_supported,
+                      color: Colors.grey,
+                      size: 48,
+                    ),
+                  ),
+                ),
+              )
+            : Container(
+                width: double.infinity,
+                height: height,
+                color: Colors.black.withOpacity(0.04),
+                child: const Center(
+                  child: Icon(
+                    Icons.image,
+                    color: Colors.grey,
+                    size: 48,
+                  ),
+                ),
+              ),
       ),
     );
   }

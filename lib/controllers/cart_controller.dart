@@ -12,6 +12,7 @@ import '../core/constant/constants.dart';
 import '../screens/loginscreen.dart';
 import '../screens/paymentcheckscreen.dart';
 import '../screens/paymentsuccessscreen.dart';
+import '../services/cache_manager.dart';
 import 'auth_api_client.dart';
 import 'base_controller.dart';
 
@@ -64,10 +65,9 @@ class CartController extends BaseController {
   }
 
   // -------------------- GET CART DATA --------------------
-  Future<void> getCartData() async {
+  Future<void> getCartData({bool forceRefresh = false}) async {
     isOrder.value = true;
     try {
-      final client = _ensureClient();
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getInt('userId');
 
@@ -75,6 +75,26 @@ class CartController extends BaseController {
         _clearCartUi();
         return;
       }
+
+      final cacheKey = 'cart_data_$userId';
+
+      // Try to load from cache first (shorter duration for cart - 2 minutes)
+      if (!forceRefresh) {
+        final cached = await CacheManager.get(
+          key: cacheKey,
+          maxAge: const Duration(minutes: 2), // Shorter cache for cart
+        );
+
+        if (cached != null && cached is Map) {
+          final cachedData = Map<String, dynamic>.from(cached);
+          _restoreCartFromCache(cachedData);
+          print("✅ Cart data loaded from cache for user: $userId");
+          isOrder.value = false;
+          return;
+        }
+      }
+
+      final client = _ensureClient();
 
       final candidates = <Uri>[
         Uri.parse("${ApiConstants.baseUrl}/cart-items?userId=$userId"),
@@ -282,6 +302,9 @@ class CartController extends BaseController {
         cartDetails["discount"] = true;
       }
 
+      // ✅ Cache the cart data
+      await _cacheCartData(userId);
+
       debugPrint("🛒 Cart items parsed: ${orderList.length}");
     } catch (e, st) {
       debugPrint("❌ Exception in getCartData: $e\n$st");
@@ -290,6 +313,51 @@ class CartController extends BaseController {
     } finally {
       isOrder.value = false;
       update();
+    }
+  }
+
+  /// Cache cart data for quick access
+  Future<void> _cacheCartData(int userId) async {
+    try {
+      final cacheData = {
+        'orderList': orderList.toList(),
+        'cartDetails': Map<String, dynamic>.from(cartDetails),
+        'stockErrorText': stockErrorText.value,
+        'cartId': cartId.value,
+        'cartTotalValue': cartTotalValue.value,
+      };
+      await CacheManager.save(
+        key: 'cart_data_$userId',
+        data: cacheData,
+        duration: const Duration(minutes: 2),
+      );
+    } catch (e) {
+      print("⚠️ Failed to cache cart data: $e");
+    }
+  }
+
+  /// Restore cart from cache
+  void _restoreCartFromCache(Map<String, dynamic> cached) {
+    try {
+      if (cached['orderList'] != null && cached['orderList'] is List) {
+        orderList.assignAll(
+          List<Map<String, dynamic>>.from(
+            (cached['orderList'] as List).whereType<Map>()
+          )
+        );
+      }
+
+      if (cached['cartDetails'] != null && cached['cartDetails'] is Map) {
+        cartDetails.assignAll(Map<String, dynamic>.from(cached['cartDetails']));
+      }
+
+      stockErrorText.value = cached['stockErrorText']?.toString() ?? '';
+      cartId.value = cached['cartId'] ?? 0;
+      cartTotalValue.value = cached['cartTotalValue'] ?? 0;
+
+      update();
+    } catch (e) {
+      print("⚠️ Failed to restore cart from cache: $e");
     }
   }
 
@@ -415,6 +483,9 @@ class CartController extends BaseController {
       print("🛒 Added to cart successfully!");
       getSnackBar("Added to cart");
 
+      // ✅ Invalidate cart cache to fetch fresh data
+      await CacheManager.invalidateCartCache(userId: userId);
+
       if (backColor == whiteColor) {
         await getCartData();
       }
@@ -465,6 +536,10 @@ class CartController extends BaseController {
 
       if (resp.statusCode == 200 || resp.statusCode == 201) {
         print("✅ Cart quantity updated successfully");
+
+        // ✅ Invalidate cart cache to fetch fresh data
+        await CacheManager.invalidateCartCache(userId: userId);
+
         return true;
       } else if (resp.statusCode == 401) {
         getSnackBar("Unauthorized. Please log in again.");
@@ -512,8 +587,13 @@ class CartController extends BaseController {
       );
 
       if (resp.statusCode == 200) {
+        print("✅ Item deleted successfully from cart");
+
+        // ✅ Invalidate cart cache to fetch fresh data
+        await CacheManager.invalidateCartCache(userId: userId);
+
         if (backgroundColor == whiteColor) {
-          await getCartData();
+          await getCartData(forceRefresh: true);
         }
       } else if (resp.statusCode == 401) {
         getSnackBar("Unauthorized. Please log in again.");

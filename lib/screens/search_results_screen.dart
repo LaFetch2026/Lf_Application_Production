@@ -209,10 +209,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
         print("✅ Showing original search results");
       }
 
-      setState(() {
-        // Reset pagination when filters change
-        _currentPage.value = 1;
-      });
+      // Reset pagination when filters change
+      _currentPage.value = 1;
     } catch (e) {
       print("❌ Error applying filters/sort: $e");
       getSnackBar("Something went wrong, please try again");
@@ -1031,7 +1029,10 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                 _currentPage.value = 1;
                               });
 
-                              _applyFiltersAndSortDebounced();
+                              // Schedule filter application after current frame
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                _applyFiltersAndSortDebounced();
+                              });
 
                               if (_hasActiveFilters) {
                                 final filterParts = <String>[];
@@ -1154,7 +1155,10 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                             _currentPage.value = 1;
                           });
 
-                          _applyFiltersAndSortDebounced();
+                          // Schedule sort application after current frame
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            _applyFiltersAndSortDebounced();
+                          });
 
                           getSnackBar(
                               "Sorted by ${sortOptions[selected] ?? 'Recommended'}");

@@ -85,8 +85,21 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       productController.filterProductEnable.value = false;
       productController.categoryFilter.value = 0;
 
-      // Fetch brand details and products
-      await brandController.getBrandDetails(widget.id, widget.slug);
+      // ✅ Check if brand details are already loaded for this brand (prevents double API call)
+      final currentBrandId = (brandController.brandDetails["brandInfo"]?["id"] is int)
+          ? brandController.brandDetails["brandInfo"]["id"] as int
+          : int.tryParse(brandController.brandDetails["brandInfo"]?["id"]?.toString() ?? '0') ?? 0;
+
+      final needsToFetch = currentBrandId != widget.id ||
+                           brandController.brandDetails["brandInfo"] == null ||
+                           (brandController.brandDetails["products"] as List?)?.isEmpty == true;
+
+      if (needsToFetch) {
+        print("🔄 Fetching brand details for ID: ${widget.id}");
+        await brandController.getBrandDetails(widget.id, widget.slug);
+      } else {
+        print("✅ Using cached brand details for ID: ${widget.id}");
+      }
       // TEMPORARY FIX: Commenting out getBrandProducts because it returns incomplete data
       // TODO: Uncomment when backend fixes /brand-products API to return images and prices
       // await brandController.getBrandProducts(widget.id, showLoader: true);
