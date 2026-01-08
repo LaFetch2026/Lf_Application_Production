@@ -1442,52 +1442,47 @@ class _ExploreTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // White button with black text (or vice versa for dark mode)
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 12.sp),
-              decoration: BoxDecoration(
-                color: dark ? Colors.white : Colors.black,
-                borderRadius: BorderRadius.circular(8.sp),
-                border: Border.all(
+      child: Align(
+        alignment: const Alignment(0, -0.3),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 12.sp),
+          decoration: BoxDecoration(
+            color: dark ? Colors.black : Colors.white,
+            borderRadius: BorderRadius.circular(8.sp),
+            border: Border.all(
+              color: dark ? Colors.white : Colors.black,
+              width: 2.sp,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "VIEW ALL\nPRODUCTS",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: "Clash Display Semibold",
+                  fontSize: 12.sp,
                   color: dark ? Colors.white : Colors.black,
-                  width: 2.sp,
+                  letterSpacing: 0.5,
+                  height: 1.3,
                 ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "VIEW ALL\nPRODUCTS",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: "Clash Display Semibold",
-                      fontSize: 12.sp,
-                      color: dark ? Colors.black : Colors.white,
-                      letterSpacing: 0.5,
-                      height: 1.3,
-                    ),
-                  ),
-                  SizedBox(width: 12.sp),
-                  Container(
-                    padding: EdgeInsets.all(8.sp),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: dark ? Colors.black : Colors.white,
-                    ),
-                    child: Icon(
-                      Icons.arrow_forward,
-                      size: 16.sp,
-                      color: dark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                ],
+              SizedBox(width: 12.sp),
+              Container(
+                padding: EdgeInsets.all(8.sp),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: dark ? Colors.white : Colors.black,
+                ),
+                child: Icon(
+                  Icons.arrow_forward,
+                  size: 16.sp,
+                  color: dark ? Colors.black : Colors.white,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
