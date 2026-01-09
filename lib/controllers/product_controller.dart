@@ -598,8 +598,11 @@ class ProductController extends BaseController {
     }
   }
 
-  Future<void> getHomeProduct(int gender, {bool withLimit = true, bool forceRefresh = false}) async {
-    final cacheKey = 'home_products_${gender}_${withLimit ? "limited" : "all"}';
+  Future<void> getHomeProduct(int gender,
+      {bool withLimit = true, bool forceRefresh = false}) async {
+    // Map gender int to displayFor string
+    final displayFor = gender == 1 ? 'men' : gender == 0 ? 'women' : 'accessories';
+    final cacheKey = 'home_products_v2_${displayFor}_${withLimit ? "limited" : "all"}'; // v2: Added mobile banner filtering
 
     // Try to load from cache first
     if (!forceRefresh) {
@@ -607,16 +610,14 @@ class ProductController extends BaseController {
       if (cached != null && cached is List) {
         homeProductList.clear();
         homeProductList.assignAll(
-          List<Map<String, dynamic>>.from(
-            cached.whereType<Map>()
-          )
-        );
+            List<Map<String, dynamic>>.from(cached.whereType<Map>()));
 
         if (homeProductList.isNotEmpty) {
           tagname.value = homeProductList.first['name']?.toString() ?? '';
         }
 
-        print("✅ Home products loaded from cache for gender: $gender (${homeProductList.length} collections)");
+        print(
+            "✅ Home products loaded from cache for displayFor: $displayFor (${homeProductList.length} collections)");
         return;
       }
     }
@@ -630,7 +631,7 @@ class ProductController extends BaseController {
     final base = ApiConstants.baseUrl;
     final uri = Uri.parse("$base/collection-with-products").replace(
       queryParameters: {
-        'gender': '$gender',
+        'displayFor': displayFor,
         if (withLimit) 'limit': 'true',
       },
     );
@@ -659,10 +660,15 @@ class ProductController extends BaseController {
         final List<Map<String, dynamic>> collectionsWithProducts = [];
 
         for (final c in data) {
-          // Ensure products is a list
-          if (c['products'] is! List) c['products'] = <dynamic>[];
-
-          final productsList = c['products'] as List;
+          // ✅ Extract products from productMaps array (new API structure)
+          List<dynamic> productsList = [];
+          if (c['productMaps'] is List) {
+            final productMaps = c['productMaps'] as List;
+            productsList = productMaps
+                .where((pm) => pm is Map && pm['product'] != null)
+                .map((pm) => pm['product'])
+                .toList();
+          }
 
           // ✅ Skip collections with no products
           if (productsList.isEmpty) {
@@ -678,13 +684,43 @@ class ProductController extends BaseController {
 
           c['products'] = transformedProducts;
 
-          // ✅ Ensure banners is a list (could be null in API)
-          if (c['banners'] is! List) {
-            c['banners'] = <dynamic>[];
+          // ✅ Filter banners based on displayFor field and mobileImageUrl availability
+          List<dynamic> filteredBanners = [];
+          if (c['banners'] is List) {
+            final banners = c['banners'] as List;
+            filteredBanners = banners.where((banner) {
+              if (banner is! Map) return false;
+
+              // Check if banner matches displayFor
+              final bannerDisplayFor = banner['displayFor'];
+              if (bannerDisplayFor is! List || !bannerDisplayFor.contains(displayFor)) {
+                return false;
+              }
+
+              // ✅ Only include banners with valid mobileImageUrl
+              final mobileImageUrl = banner['mobileImageUrl'];
+              if (mobileImageUrl == null || mobileImageUrl.toString().trim().isEmpty) {
+                print("⏭️ Skipping banner ID ${banner['id']} - no mobileImageUrl");
+                return false;
+              }
+
+              return true;
+            }).map((banner) {
+              if (banner is Map<String, dynamic>) {
+                return {
+                  ...banner,
+                  'mobileImageUrl': banner['mobileImageUrl'],
+                };
+              }
+              return banner;
+            }).toList();
           }
 
+          c['banners'] = filteredBanners;
+
           collectionsWithProducts.add(c);
-          print("✅ Collection '${c['name']}': ${transformedProducts.length} products, ${(c['banners'] as List).length} banners");
+          print(
+              "✅ Collection '${c['name']}': ${transformedProducts.length} products, ${filteredBanners.length} banners (filtered for $displayFor)");
         }
 
         // ✅ Cache the processed data
@@ -698,10 +734,12 @@ class ProductController extends BaseController {
 
         productsShuffleSeed ??= DateTime.now().millisecondsSinceEpoch;
 
-        print("✅ Collections loaded: ${homeProductList.length} (with products) for gender=$gender ${withLimit ? '(limited)' : '(all)'}");
+        print(
+            "✅ Collections loaded: ${homeProductList.length} (with products) for displayFor=$displayFor ${withLimit ? '(limited)' : '(all)'}");
       } else {
         homeProductList.clear();
-        print("❌ Collections load failed: ${response.statusCode} ${response.reasonPhrase}");
+        print(
+            "❌ Collections load failed: ${response.statusCode} ${response.reasonPhrase}");
       }
     } on TimeoutException {
       homeProductList.clear();

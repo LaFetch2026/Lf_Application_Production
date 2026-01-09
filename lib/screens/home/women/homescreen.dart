@@ -2021,7 +2021,7 @@ class _CollectionBannersState extends State<_CollectionBanners> {
               itemBuilder: (context, index) {
                 final banner = sortedBanners[index];
                 return _BannerItem(
-                  imageUrl: banner['imageUrl']?.toString() ?? '',
+                  imageUrl: banner['mobileImageUrl']?.toString() ?? '',
                   redirectUrl: banner['redirectUrl']?.toString() ?? '',
                   height: 200.sp,
                 );
