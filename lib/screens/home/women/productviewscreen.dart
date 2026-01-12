@@ -145,11 +145,23 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     }
     productController.selectedCategoryGender.value = widget.genderName;
 
+    // ✅ CRITICAL FIX: Clear cached data when screen initializes
     productController.handPickedProductList.clear();
     productController.handpickedHasnextpage.value = true;
     productController.handpickedLoadMore.value = false;
     productController.isHandPicked.value = false;
     productController.handpickedPage.value = 1;
+
+    // ✅ CRITICAL FIX: Reset all filter/sort state flags to force reload
+    _isFilterMetadataLoaded = false;
+    _isProductsLoaded = false;
+    _lastProductListHash = null;
+    _lastFilterHash = null;
+    _lastSortHash = null;
+    _originalHomeProductIds = {};
+
+    // ✅ CRITICAL FIX: Clear API filter results cache
+    catalogController.categoryProductList.clear();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       wishlistController.getWishlistData();
@@ -188,6 +200,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     prefs.remove("lower");
     prefs.remove("sortby");
     prefs.remove("category");
+
+    print("🔄 ProductViewScreen initialized for collection: ${productController.tagId.value}, gender: ${widget.genderName}");
   }
 
   // ✅ Load filter metadata for filter
