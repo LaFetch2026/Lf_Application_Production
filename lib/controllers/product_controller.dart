@@ -288,8 +288,9 @@ class ProductController extends BaseController {
     if (images.isEmpty) {
       // fallback to imageSrc fallback
       final fallbackImg = variant["imageSrc"]?.toString() ?? "";
-      if (fallbackImg.isNotEmpty && fallbackImg != "null")
+      if (fallbackImg.isNotEmpty && fallbackImg != "null") {
         images.add(fallbackImg);
+      }
     }
 
     // if still empty → main product images

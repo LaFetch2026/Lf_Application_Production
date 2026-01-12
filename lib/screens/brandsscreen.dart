@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 
 import 'dart:async';
-import 'dart:math' show Random;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -334,6 +333,9 @@ class BrandsScreenState extends State<BrandsScreen> {
                                               itemCount: sortedAlphabets.length,
                                               padding: EdgeInsets.zero,
                                               scrollDirection: Axis.vertical,
+                                              addAutomaticKeepAlives: false,
+                                              addRepaintBoundaries: true,
+                                              cacheExtent: 500,
                                               itemBuilder: (ctx, a) {
                                                 String alphabet =
                                                     sortedAlphabets[a];
@@ -396,6 +398,8 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                 .length,
                                                         padding:
                                                             EdgeInsets.zero,
+                                                        addAutomaticKeepAlives: false,
+                                                        addRepaintBoundaries: true,
                                                         itemBuilder:
                                                             (ctx, index) {
                                                           final brand =
@@ -405,13 +409,27 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                   .selectIndex
                                                                   .value ==
                                                               brand["id"];
-                                                          // TEMPORARY FIX: Get products from brandDetails (from /view-brand API)
-                                                          // Only show products if this brand is expanded (to avoid showing wrong products)
+                                                          // TODO: WORKAROUND - Using /view-brand API instead of /brand-products
+                                                          // Root cause: /brand-products API returns incomplete data (only id + title)
+                                                          // Impact: Fetching products from brandDetails["products"] when brand is expanded
+                                                          // Action needed: Switch to getBrandProducts() when backend fixes the endpoint
                                                           final rawProducts = (isExpanded && val.selectIndex.value == brand["id"])
                                                               ? (brandController.brandDetails["products"] as List? ?? [])
                                                               : [];
-                                                          // Randomize and take 3 products
-                                                          final products = (List.from(rawProducts)..shuffle(Random())).take(3).toList();
+
+                                                          // 🔍 DEBUG: Log brand and product data
+                                                          if (isExpanded) {
+                                                            print("📦 Brand expanded: ${brand["name"]} (ID: ${brand["id"]})");
+                                                            print("   Brand logo URL: ${brand["logo"]}");
+                                                            print("   Products count: ${rawProducts.length}");
+                                                            if (rawProducts.isNotEmpty) {
+                                                              print("   First product: ${rawProducts.first}");
+                                                            }
+                                                          }
+
+                                                          // ✅ Show first 3 products in consistent order (by product ID)
+                                                          final sortedProducts = List.from(rawProducts)..sort((a, b) => (a["id"] ?? 0).compareTo(b["id"] ?? 0));
+                                                          final products = sortedProducts.take(3).toList();
 
                                                           return Column(
                                                             children: [
@@ -514,13 +532,26 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                 child: CachedNetworkImage(
                                                                                   cacheManager: CacheManager(
                                                                                     Config(
-                                                                                      "customCacheKey",
+                                                                                      "brandLogosCache",
                                                                                       stalePeriod: const Duration(days: 15),
+                                                                                      maxNrOfCacheObjects: 100,
                                                                                     ),
                                                                                   ),
                                                                                   fit: BoxFit.contain,
                                                                                   imageUrl: brand["logo"],
-                                                                                  errorWidget: (context, url, error) => Image.asset(downloadImage),
+                                                                                  placeholder: (context, url) => Container(
+                                                                                    color: Colors.grey[200],
+                                                                                    child: const Icon(Icons.storefront, size: 24, color: Colors.grey),
+                                                                                  ),
+                                                                                  errorWidget: (context, url, error) {
+                                                                                    print("❌ [BrandsScreen] Brand logo load failed");
+                                                                                    print("   URL: $url");
+                                                                                    print("   Error: $error");
+                                                                                    return Container(
+                                                                                      color: Colors.grey[200],
+                                                                                      child: const Icon(Icons.storefront, size: 24, color: Colors.grey),
+                                                                                    );
+                                                                                  },
                                                                                 ),
                                                                               ),
                                                                             )
@@ -552,10 +583,28 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                           if (isExpanded) {
                                                                             val.selectIndex.value = 0;
                                                                           } else {
-                                                                            val.selectIndex.value = brand["id"];
-                                                                            // TEMPORARY FIX: Fetch complete product data from /view-brand API
-                                                                            // because /brand-products only returns id and title
-                                                                            await brandController.getBrandDetails(brand["id"], "");
+                                                                            try {
+                                                                              val.selectIndex.value = brand["id"];
+
+                                                                              // TODO: WORKAROUND - Fetch complete product data from /view-brand API
+                                                                              // because /brand-products only returns id and title
+                                                                              // Only fetch if we don't have products cached for this brand
+                                                                              final currentBrandDetails = brandController.brandDetails;
+                                                                              final needsToFetch = currentBrandDetails.isEmpty ||
+                                                                                  currentBrandDetails["brandInfo"]?["id"] != brand["id"] ||
+                                                                                  (currentBrandDetails["products"] as List?)?.isEmpty == true;
+
+                                                                              if (needsToFetch) {
+                                                                                print("🔄 Fetching brand details for expanded brand: ${brand["name"]}");
+                                                                                await brandController.getBrandDetails(brand["id"], "");
+                                                                              } else {
+                                                                                print("✅ Using cached brand details for: ${brand["name"]}");
+                                                                              }
+                                                                            } catch (e) {
+                                                                              print("❌ Error fetching brand details on expand: $e");
+                                                                              // Collapse on error
+                                                                              val.selectIndex.value = 0;
+                                                                            }
                                                                           }
                                                                           val.update();
                                                                         },
@@ -599,14 +648,24 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                 physics: const ScrollPhysics(),
                                                                                 crossAxisSpacing: 10.sp,
                                                                                 mainAxisSpacing: 10.sp,
+                                                                                addAutomaticKeepAlives: false,
+                                                                                addRepaintBoundaries: true,
                                                                                 children: List.generate(products.length, (i) {
                                                                                   final product = products[i];
                                                                                   // Support both image formats: "images" array or "imageUrls" array
                                                                                   String? imageUrl;
-                                                                                  if (product["images"] != null && product["images"].isNotEmpty) {
-                                                                                    imageUrl = product["images"][0]["name"];
-                                                                                  } else if (product["imageUrls"] != null && product["imageUrls"].isNotEmpty) {
-                                                                                    imageUrl = product["imageUrls"][0];
+                                                                                  if (product["images"] != null &&
+                                                                                      product["images"] is List &&
+                                                                                      product["images"].isNotEmpty &&
+                                                                                      product["images"][0] != null &&
+                                                                                      product["images"][0] is Map &&
+                                                                                      product["images"][0]["name"] != null) {
+                                                                                    imageUrl = product["images"][0]["name"].toString();
+                                                                                  } else if (product["imageUrls"] != null &&
+                                                                                             product["imageUrls"] is List &&
+                                                                                             product["imageUrls"].isNotEmpty &&
+                                                                                             product["imageUrls"][0] != null) {
+                                                                                    imageUrl = product["imageUrls"][0].toString();
                                                                                   }
 
                                                                                   return GestureDetector(
@@ -652,17 +711,32 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                 child: CachedNetworkImage(
                                                                                                   cacheManager: CacheManager(
                                                                                                     Config(
-                                                                                                      "customCacheKey",
+                                                                                                      "productThumbnailsCache",
                                                                                                       stalePeriod: const Duration(days: 15),
+                                                                                                      maxNrOfCacheObjects: 150,
                                                                                                     ),
                                                                                                   ),
                                                                                                   fit: BoxFit.cover,
                                                                                                   imageUrl: imageUrl,
-                                                                                                  errorWidget: (context, url, error) => Image.asset(
-                                                                                                    downloadImage,
+                                                                                                  placeholder: (context, url) => Container(
                                                                                                     height: 97.sp,
                                                                                                     width: 97.sp,
+                                                                                                    color: Colors.grey[200],
+                                                                                                    child: const Center(
+                                                                                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                                                                                    ),
                                                                                                   ),
+                                                                                                  errorWidget: (context, url, error) {
+                                                                                                    print("❌ [BrandsScreen] Product image load failed");
+                                                                                                    print("   URL: $url");
+                                                                                                    print("   Error: $error");
+                                                                                                    return Container(
+                                                                                                      height: 97.sp,
+                                                                                                      width: 97.sp,
+                                                                                                      color: Colors.grey[200],
+                                                                                                      child: const Icon(Icons.image_not_supported, size: 35, color: Colors.grey),
+                                                                                                    );
+                                                                                                  },
                                                                                                 ),
                                                                                               )
                                                                                             : Image.asset(

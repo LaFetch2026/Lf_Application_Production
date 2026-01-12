@@ -1,7 +1,5 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 
-import 'dart:math' show Random;
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -86,12 +84,15 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       productController.categoryFilter.value = 0;
 
       // ✅ Check if brand details are already loaded for this brand (prevents double API call)
-      final currentBrandId = (brandController.brandDetails["brandInfo"]?["id"] is int)
-          ? brandController.brandDetails["brandInfo"]["id"] as int
-          : int.tryParse(brandController.brandDetails["brandInfo"]?["id"]?.toString() ?? '0') ?? 0;
+      final brandInfo = brandController.brandDetails["brandInfo"];
+      final currentBrandId = (brandInfo != null && brandInfo is Map)
+          ? ((brandInfo["id"] is int)
+              ? brandInfo["id"] as int
+              : int.tryParse(brandInfo["id"]?.toString() ?? '0') ?? 0)
+          : 0;
 
       final needsToFetch = currentBrandId != widget.id ||
-                           brandController.brandDetails["brandInfo"] == null ||
+                           brandInfo == null ||
                            (brandController.brandDetails["products"] as List?)?.isEmpty == true;
 
       if (needsToFetch) {
@@ -100,21 +101,27 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       } else {
         print("✅ Using cached brand details for ID: ${widget.id}");
       }
-      // TEMPORARY FIX: Commenting out getBrandProducts because it returns incomplete data
-      // TODO: Uncomment when backend fixes /brand-products API to return images and prices
+      // TODO: BACKEND FIX REQUIRED
+      // Uncomment when backend fixes /brand-products API endpoint
+      // Current issue: API only returns {id, title} - missing images, prices, variants
+      // Expected: Full product data including imageUrls[], basePrice, mrp, variants[]
+      // Tracking: Backend team to fix /brand-products endpoint
       // await brandController.getBrandProducts(widget.id, showLoader: true);
 
       // Clear cached normalized products to force recalculation with new data
       _cachedNormalizedProducts = null;
 
       // Cache values to avoid repeated map lookups
-      _cachedBrandName =
-          (brandController.brandDetails["brandInfo"]?["name"] ?? '').toString();
-      _cachedLogoUrl =
-          (brandController.brandDetails["brandInfo"]?["logo"] ?? '').toString();
-      final mediaUrl =
-          (brandController.brandDetails["brandInfo"]?["video"]?.toString() ??
-              "");
+      // Reuse brandInfo from above to avoid duplicate definition
+      _cachedBrandName = (brandInfo != null && brandInfo is Map)
+          ? (brandInfo["name"]?.toString() ?? '')
+          : '';
+      _cachedLogoUrl = (brandInfo != null && brandInfo is Map)
+          ? (brandInfo["logo"]?.toString() ?? '')
+          : '';
+      final mediaUrl = (brandInfo != null && brandInfo is Map)
+          ? (brandInfo["video"]?.toString() ?? '')
+          : '';
 
       if (mounted) setState(() {});
 
@@ -123,7 +130,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
         _cachedVideoUrl = mediaUrl;
         // Delay video initialization to prioritize UI rendering
         Future.delayed(const Duration(milliseconds: 100), () {
-          if (mounted) _initializeVideo(mediaUrl);
+          // ✅ Check if widget is still mounted before initializing video
+          if (!mounted) {
+            print("⚠️ Widget disposed before video initialization");
+            return;
+          }
+          _initializeVideo(mediaUrl);
         });
       } else {
         _hasVideoError = true;
@@ -155,6 +167,12 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
   Future<void> _initializeVideo(String videoUrl) async {
     try {
+      // ✅ Additional mounted check before creating controller
+      if (!mounted) {
+        print("⚠️ Widget disposed during video initialization");
+        return;
+      }
+
       _videoPlayerController = VideoPlayerController.networkUrl(
         Uri.parse(videoUrl),
         videoPlayerOptions: VideoPlayerOptions(
@@ -165,25 +183,34 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
       await _videoPlayerController!.initialize();
 
-      if (mounted) {
-        setState(() {
-          _isVideoInitialized = true;
-          _hasVideoError = false;
-        });
-
-        // Start playing after initialization
-        _videoPlayerController!.setLooping(true);
-        _videoPlayerController!.setVolume(1.0);
-        _videoPlayerController!.play();
+      // ✅ Check mounted state after async operation
+      if (!mounted) {
+        print("⚠️ Widget disposed after video initialization");
+        _videoPlayerController?.dispose();
+        _videoPlayerController = null;
+        return;
       }
+
+      setState(() {
+        _isVideoInitialized = true;
+        _hasVideoError = false;
+      });
+
+      // Start playing after initialization
+      _videoPlayerController!.setLooping(true);
+      _videoPlayerController!.setVolume(1.0);
+      _videoPlayerController!.play();
 
       // Add error listener
       _videoPlayerController!.addListener(_videoListener);
+
+      print("✅ Video initialized successfully: $videoUrl");
     } catch (e) {
+      print("❌ Video initialization failed: $e");
       if (mounted) {
         setState(() {
           _hasVideoError = true;
-          _videoErrorMessage = 'Video load failed: $e';
+          _videoErrorMessage = 'Video load failed: ${e.toString()}';
         });
       }
     }
@@ -265,14 +292,40 @@ class AllBrandScreenState extends State<AllBrandScreen> {
           width: double.infinity,
           color: cardBg,
           child: const Center(
-            child: CircularProgressIndicator(color: Colors.white),
+            child: CircularProgressIndicator(
+              color: Colors.white,
+              strokeWidth: 2.5,
+            ),
           ),
         ),
-        errorWidget: (_, __, ___) => Container(
-          height: 211.sp,
-          width: double.infinity,
-          color: cardBg,
-        ),
+        errorWidget: (context, url, error) {
+          print("❌ [AllBrandScreen] Banner placeholder load failed");
+          print("   URL: $url");
+          print("   Error: $error");
+          return Container(
+            height: 211.sp,
+            width: double.infinity,
+            color: cardBg,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.storefront,
+                  size: 60,
+                  color: Colors.white38
+                ),
+                SizedBox(height: 8.sp),
+                Text(
+                  'Brand banner unavailable',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: Colors.white54,
+                    fontFamily: "Clash Display Regular",
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       );
     }
 
@@ -296,24 +349,54 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       return _cachedNormalizedProducts!;
     }
 
-    // TEMPORARY FIX: Use brandDetails["products"] from /view-brand API instead of /brand-products
-    // because /brand-products only returns id and title (missing images and prices)
+    // TODO: WORKAROUND - Using /view-brand API instead of /brand-products
+    // Root cause: /brand-products API returns incomplete data (only id + title)
+    // Impact: Using brandDetails["products"] from /view-brand API as temporary solution
+    // Action needed: Switch to getBrandProducts() when backend fixes the endpoint
     final raw = (brandController.brandDetails["products"] as List?) ?? [];
     final brandName = _cachedBrandName ?? '';
 
-    // Randomize and limit to maximum 3 products
-    final shuffled = List.from(raw)..shuffle(Random());
-    final limitedRaw = shuffled.take(3).toList();
+    // ✅ Show first 3 products in consistent order (by product ID)
+    // Note: Consider using featured/popular products instead of arbitrary limit
+    final sortedRaw = List.from(raw)..sort((a, b) => (a["id"] ?? 0).compareTo(b["id"] ?? 0));
+    final limitedRaw = sortedRaw.take(3).toList();
 
     _cachedNormalizedProducts = limitedRaw.map<Map<String, dynamic>>((e) {
-      final m = Map<String, dynamic>.from(e as Map);
+      if (e == null || e is! Map) {
+        print("⚠️ Invalid product data (null or not a map)");
+        return {
+          "id": 0,
+          "name": "",
+          "brand_name": brandName,
+          "displayPrice": 0,
+          "displayMrp": null,
+          "images": [],
+        };
+      }
 
-      final id = m["id"];
-      final title = (m["title"] ?? m["name"] ?? "").toString();
+      final m = Map<String, dynamic>.from(e);
 
-      // Try multiple price fields from API response
-      final num base = (m["basePrice"] ?? m["msp"] ?? m["lfMsp"] ?? m["mrp"] ?? 0);
-      final num mrpVal = (m["mrp"] ?? 0);
+      // 🔍 DEBUG: Log product data structure
+      print("📦 Processing product: ${m["id"]} - ${m["title"] ?? m["name"]}");
+      print("   imageUrls field: ${m["imageUrls"]}");
+      print("   images field: ${m["images"]}");
+      print("   imageUrls type: ${m["imageUrls"]?.runtimeType}");
+      print("   imageUrls length: ${m["imageUrls"] is List ? (m["imageUrls"] as List).length : 'N/A'}");
+
+      final id = m["id"] ?? 0;
+      final title = (m["title"]?.toString() ?? m["name"]?.toString() ?? "");
+
+      // Try multiple price fields from API response - with null safety
+      final basePrice = m["basePrice"];
+      final msp = m["msp"];
+      final lfMsp = m["lfMsp"];
+      final mrp = m["mrp"];
+
+      final num base = (basePrice is num ? basePrice :
+                        msp is num ? msp :
+                        lfMsp is num ? lfMsp :
+                        mrp is num ? mrp : 0);
+      final num mrpVal = (mrp is num ? mrp : 0);
 
       bool hideMrp = (mrpVal == 0 || mrpVal == base);
       final num displayPrice = base;
@@ -322,8 +405,16 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       // Support multiple image field formats
       final List<dynamic> imageUrls = m["imageUrls"] ?? m["images"] ?? [];
       final images = imageUrls
-          .map((url) => {"name": url.toString()})
-          .where((img) => img["name"]!.isNotEmpty)
+          .map((url) {
+            // Handle both string URLs and Map objects
+            if (url is String) {
+              return {"name": url};
+            } else if (url is Map && url["name"] != null) {
+              return {"name": url["name"].toString()};
+            }
+            return {"name": ""};
+          })
+          .where((img) => img["name"] != null && img["name"].toString().trim().isNotEmpty)
           .toList();
 
       return {
@@ -381,10 +472,10 @@ class AllBrandScreenState extends State<AllBrandScreen> {
               Get.close(1);
             },
             onPressedShare: () async {
-              final website = (brandController.brandDetails["brandInfo"]
-                          ?["websiteLink"] ??
-                      "")
-                  .toString();
+              final brandInfo = brandController.brandDetails["brandInfo"];
+              final website = (brandInfo != null && brandInfo is Map)
+                  ? (brandInfo["websiteLink"]?.toString() ?? '')
+                  : '';
               if (website.isNotEmpty) {
                 Share.share(website);
               } else {
@@ -463,12 +554,45 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                             height: 211.sp,
                             width: double.infinity,
                             fit: BoxFit.cover,
-                            errorWidget: (_, __, ___) => Image.asset(
-                              brandback,
+                            placeholder: (context, url) => Container(
                               height: 211.sp,
                               width: double.infinity,
-                              fit: BoxFit.cover,
+                              color: cardBg,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2.5,
+                                ),
+                              ),
                             ),
+                            errorWidget: (context, url, error) {
+                              print("❌ [AllBrandScreen] Brand banner image load failed");
+                              print("   URL: $url");
+                              print("   Error: $error");
+                              return Container(
+                                height: 211.sp,
+                                width: double.infinity,
+                                color: cardBg,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.storefront,
+                                      size: 60,
+                                      color: Colors.white38
+                                    ),
+                                    SizedBox(height: 8.sp),
+                                    Text(
+                                      'Brand banner unavailable',
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: Colors.white54,
+                                        fontFamily: "Clash Display Regular",
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           );
                         }
 
@@ -510,7 +634,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         Config(
                                           "brandLogoCache",
                                           stalePeriod: const Duration(days: 15),
-                                          maxNrOfCacheObjects: 100,
+                                          maxNrOfCacheObjects: 50,
                                         ),
                                       ),
                                       fit: BoxFit.cover,
@@ -524,12 +648,16 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                           ),
                                         ),
                                       ),
-                                      errorWidget: (context, url, error) =>
-                                          Container(
-                                        color: Colors.white,
-                                        child: Icon(Icons.storefront,
-                                            size: 40.sp, color: colorPrimary),
-                                      ),
+                                      errorWidget: (context, url, error) {
+                                        print("❌ [AllBrandScreen] Brand logo load failed");
+                                        print("   URL: $url");
+                                        print("   Error: $error");
+                                        return Container(
+                                          color: Colors.white,
+                                          child: Icon(Icons.storefront,
+                                              size: 40.sp, color: colorPrimary),
+                                        );
+                                      },
                                     )
                                   : Container(
                                       color: Colors.white,
@@ -578,12 +706,10 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                   return const SizedBox(height: 0);
                                 }
 
-                                final desc =
-                                    (brandController.brandDetails["brandInfo"]
-                                                ?["description"] ??
-                                            "")
-                                        .toString()
-                                        .trim();
+                                final brandInfo = brandController.brandDetails["brandInfo"];
+                                final desc = (brandInfo != null && brandInfo is Map)
+                                    ? (brandInfo["description"]?.toString() ?? '').trim()
+                                    : '';
 
                                 if (desc.length <= 80) {
                                   return const SizedBox(height: 0);
@@ -783,14 +909,22 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
                       _pauseVideo();
 
+                      // Get brand ID safely
+                      final brandInfo = brandController.brandDetails["brandInfo"];
+                      final brandId = (brandInfo != null && brandInfo is Map)
+                          ? (brandInfo["id"] is int
+                              ? brandInfo["id"] as int
+                              : int.tryParse(brandInfo["id"]?.toString() ?? '0') ?? 0)
+                          : 0;
+
+                      if (!mounted) return;
+
                       Navigator.push(
                         context,
                         scaleIn(
                           BrandViewProductScreen(
                             expresshour: homeController.expressHour.value,
-                            brand_id: brandController.brandDetails["brandInfo"]
-                                    ["id"] ??
-                                0,
+                            brand_id: brandId,
                             title: brandName,
                             screen: "brand",
                             genderName: "",

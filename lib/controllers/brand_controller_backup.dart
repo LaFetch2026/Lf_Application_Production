@@ -2,19 +2,26 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
-import '../screens/loginscreen.dart';
+import '../services/api_service.dart';
 import 'base_controller.dart';
 
+/// ================================================================
+/// Optimized Brand Controller for Production
+/// - Uses ApiService with retry logic
+/// - Better error handling
+/// - Improved caching
+/// - Memory efficient
+/// ================================================================
 class BrandController extends BaseController {
+  // Get ApiService instance
+  final ApiService _apiService = Get.find<ApiService>();
+
   TextEditingController searchController = TextEditingController();
   RxInt page = 1.obs;
   RxBool isMuted = false.obs;
@@ -47,30 +54,31 @@ class BrandController extends BaseController {
   /// ✅ Map to store brand products by brandId for quick lookup
   RxMap<int, List<dynamic>> brandProductsMap = <int, List<dynamic>>{}.obs;
 
+  // Debounce timer for search
+  Timer? _searchDebounce;
+
   /// ================================================================
-  /// ✅ Fetch Brands (Featured or All)
+  /// ✅ Fetch Brands (Featured or All) - OPTIMIZED
   /// ================================================================
   Future<void> getBrandData(String type,
       [int? gender, bool showLoader = true]) async {
     if (showLoader) {
       isBrand.value = true;
     }
-    final prefs = await SharedPreferences.getInstance();
 
     try {
       final base = ApiConstants.baseUrl;
       final baseUri = Uri.parse(base);
 
-      // ✅ UPDATED: Always include status=true, and optionally isFeatured=true and gender
+      // Build query parameters
       final queryParams = <String, String>{
-        'status': 'true', // ✅ Always fetch only active brands
+        'status': 'true', // Only active brands
       };
 
       if (type == "featured") {
         queryParams["isFeatured"] = "true";
       }
 
-      // ✅ Add gender parameter if provided
       if (gender != null) {
         queryParams["gender"] = gender.toString();
       }
@@ -79,48 +87,22 @@ class BrandController extends BaseController {
         path: baseUri.path.endsWith('/')
             ? '${baseUri.path}brands'
             : '${baseUri.path}/brands',
-        queryParameters: queryParams,
       );
 
-      final headers = {
-        'Accept': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer ${prefs.getString('token') ?? ''}',
-      };
+      // Use ApiService with retry logic and caching
+      final response = await _apiService.get(
+        uri.toString(),
+        queryParams: queryParams,
+        useCache: true, // Enable caching for brand list
+        showErrorSnackbar: true,
+      );
 
-      print("➡️ Brand API URL: $uri");
-      final response = await http
-          .get(uri, headers: headers)
-          .timeout(const Duration(seconds: 20));
-
-      print("⬅️ Status Code: ${response.statusCode}");
-
-      // Handle expired session
-      if (response.statusCode == 401) {
-        getSnackBar("Session expired. Please log in again.");
-        Get.offAll(() => const LoginScreen(initialTab: 0));
+      // Check if request failed
+      if (response == null || response.statusCode != 200) {
         return;
       }
 
-      if (response.statusCode != 200) {
-        String msg = "Failed to fetch brands (${response.statusCode}).";
-        try {
-          final err = json.decode(response.body);
-          if (err is Map && err["message"] is String) {
-            msg = err["message"];
-          }
-        } catch (_) {}
-        getSnackBar(msg);
-        return;
-      }
-
-      // Ensure JSON
-      final contentType =
-          (response.headers['content-type'] ?? '').toLowerCase();
-      if (!contentType.contains('application/json')) {
-        getSnackBar("Unexpected response while fetching brands.");
-        return;
-      }
-
+      // Parse response
       final decoded = json.decode(response.body);
       final List<dynamic> allBrandsRaw =
           (decoded is Map && decoded['data'] is List)
@@ -138,14 +120,14 @@ class BrandController extends BaseController {
               return name.contains(q);
             }).toList();
 
-      // ✅ Sort alphabetically by brand name
+      // Sort alphabetically by brand name
       filtered.sort((a, b) {
         final aName = (a['name'] ?? '').toString().toLowerCase();
         final bName = (b['name'] ?? '').toString().toLowerCase();
         return aName.compareTo(bName);
       });
 
-      // ✅ CRITICAL: Clear old data first, then add new data
+      // Update brand list
       brandList.clear();
       brandList.addAll(
         filtered
@@ -160,25 +142,9 @@ class BrandController extends BaseController {
 
       print(
           "✅ Brands loaded: ${brandList.length} (type: $type${gender != null ? ', gender: $gender' : ''})");
-      print(
-          "🪪 Brand names: ${brandList.map((b) => b['name']).take(5).toList()}${brandList.length > 5 ? '...' : ''}");
-
-      // 🔍 DEBUG: Log first brand's logo URL
-      if (brandList.isNotEmpty) {
-        final firstBrand = brandList[0];
-        print("🔍 First brand logo check:");
-        print("   Brand: ${firstBrand['name']}");
-        print("   Logo URL: ${firstBrand['logo']}");
-        print("   Logo is null: ${firstBrand['logo'] == null}");
-        print("   Logo is empty: ${firstBrand['logo']?.toString().isEmpty}");
-      }
-    } on TimeoutException {
-      getSnackBar("Brands request timed out. Please try again.");
-    } on SocketException {
-      getSnackBar("No internet connection. Please check your network.");
     } catch (e) {
       print("❌ Error fetching brand data: $e");
-      getSnackBar("Something went wrong while fetching brands.");
+      showAppSnackBar("Something went wrong while fetching brands.");
     } finally {
       if (showLoader) {
         isBrand.value = false;
@@ -187,36 +153,24 @@ class BrandController extends BaseController {
   }
 
   /// ================================================================
-  /// ✅ Fetch Brand Details by ID
+  /// ✅ Fetch Brand Details by ID - OPTIMIZED
   /// ================================================================
   Future<void> getBrandDetails(int id, String slug) async {
     isDetails.value = true;
-    final prefs = await SharedPreferences.getInstance();
 
     try {
-      final token = prefs.getString('token') ?? '';
       final url = "${ApiConstants.baseUrl}/view-brand/$id";
       print("➡️ Fetching brand details: $url");
 
-      final response = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $token',
-        },
+      // Use ApiService with retry logic
+      final response = await _apiService.get(
+        url,
+        useCache: true, // Cache brand details
+        showErrorSnackbar: true,
       );
 
-      print("⬅️ Status Code: ${response.statusCode}");
-
-      if (response.statusCode == 401) {
-        getSnackBar("Session expired. Please log in again.");
-        Get.offAll(() => const LoginScreen(initialTab: 0));
-        return;
-      }
-
-      if (response.statusCode != 200) {
-        getSnackBar("Failed to fetch brand details.");
+      // Check if request failed
+      if (response == null || response.statusCode != 200) {
         return;
       }
 
@@ -246,68 +200,35 @@ class BrandController extends BaseController {
 
       print(
           "✅ Brand details fetched: ${brand_category_List.length} categories, ${brandProductDetailsList.length} products.");
-
-      // 🔍 DEBUG: Log first product to check image data
-      if (products.isNotEmpty) {
-        print("🔍 First product structure:");
-        print("   Product: ${products[0]}");
-        if (products[0] is Map) {
-          final p = products[0] as Map;
-          print("   Has 'imageUrls': ${p.containsKey('imageUrls')}");
-          print("   Has 'images': ${p.containsKey('images')}");
-          print("   imageUrls value: ${p['imageUrls']}");
-          print("   images value: ${p['images']}");
-        }
-      }
     } catch (e) {
       print("❌ Exception in getBrandDetails: $e");
-      getSnackBar("Something went wrong while fetching brand details.");
+      showAppSnackBar("Something went wrong while fetching brand details.");
     } finally {
       isDetails.value = false;
     }
   }
 
   /// ================================================================
-  /// ✅ Fetch Brand Products (random products for a brand)
+  /// ✅ Fetch Brand Products - OPTIMIZED
   /// ================================================================
   Future<void> getBrandProducts(int brandId, {bool showLoader = true}) async {
     if (showLoader) {
       isProductBrand.value = true;
     }
-    final prefs = await SharedPreferences.getInstance();
 
     try {
-      final token = prefs.getString('token') ?? '';
       final url = "${ApiConstants.baseUrl}/brand-products/$brandId";
       print("➡️ Fetching brand products: $url");
 
-      final response = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $token',
-        },
-      ).timeout(const Duration(seconds: 20));
+      // Use ApiService with retry logic
+      final response = await _apiService.get(
+        url,
+        useCache: true,
+        showErrorSnackbar: false, // Don't show error for optional data
+      );
 
-      print("⬅️ Status Code: ${response.statusCode}");
-
-      if (response.statusCode == 401) {
-        getSnackBar("Session expired. Please log in again.");
-        Get.offAll(() => const LoginScreen(initialTab: 0));
-        return;
-      }
-
-      if (response.statusCode != 200) {
-        String msg = "Failed to fetch brand products (${response.statusCode}).";
-        try {
-          final err = json.decode(response.body);
-          if (err is Map && err["message"] is String) {
-            msg = err["message"];
-          }
-        } catch (_) {}
-        print("⚠️ $msg");
-        // Don't show snackbar, just return empty list
+      // Check if request failed
+      if (response == null || response.statusCode != 200) {
         brandProductsMap[brandId] = [];
         return;
       }
@@ -323,12 +244,6 @@ class BrandController extends BaseController {
 
       print(
           "✅ Brand products loaded for brand $brandId: ${brandProductsMap[brandId]?.length ?? 0} products");
-    } on TimeoutException {
-      print("⚠️ Brand products request timed out.");
-      brandProductsMap[brandId] = [];
-    } on SocketException {
-      print("⚠️ No internet connection.");
-      brandProductsMap[brandId] = [];
     } catch (e) {
       print("❌ Exception in getBrandProducts: $e");
       brandProductsMap[brandId] = [];
@@ -337,5 +252,37 @@ class BrandController extends BaseController {
         isProductBrand.value = false;
       }
     }
+  }
+
+  /// ================================================================
+  /// ✅ Search Brands with Debouncing - NEW
+  /// ================================================================
+  void searchBrands(String query) {
+    // Cancel previous timer
+    _searchDebounce?.cancel();
+
+    // Update query text
+    queryText.value = query;
+
+    // Debounce search by 500ms
+    _searchDebounce = Timer(const Duration(milliseconds: 500), () {
+      // Trigger brand data refresh
+      getBrandData("all");
+    });
+  }
+
+  /// Clear search
+  void clearSearch() {
+    searchController.clear();
+    queryText.value = "";
+    getBrandData("all");
+  }
+
+  @override
+  void onClose() {
+    _searchDebounce?.cancel();
+    searchController.dispose();
+    brandListController.dispose();
+    super.onClose();
   }
 }

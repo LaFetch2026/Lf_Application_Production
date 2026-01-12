@@ -66,7 +66,11 @@ class BrandProductList extends StatelessWidget {
                             children: [
                               // ------- IMAGE -------
                               (item["images"] != null &&
-                                      item["images"].isNotEmpty)
+                                      item["images"] is List &&
+                                      item["images"].isNotEmpty &&
+                                      item["images"][0] != null &&
+                                      item["images"][0]["name"] != null &&
+                                      item["images"][0]["name"].toString().trim().isNotEmpty)
                                   ? ClipRRect(
                                       borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(radius.sp),
@@ -77,23 +81,56 @@ class BrandProductList extends StatelessWidget {
                                         width: 136.sp,
                                         child: CachedNetworkImage(
                                           cacheManager: CacheManager(Config(
-                                            "customCacheKey",
+                                            "brandProductImagesCache",
                                             stalePeriod:
                                                 const Duration(days: 15),
-                                            maxNrOfCacheObjects: 100,
+                                            maxNrOfCacheObjects: 200,
                                           )),
                                           fit: BoxFit.cover,
                                           fadeOutCurve: Curves.ease,
                                           fadeOutDuration:
                                               const Duration(milliseconds: 100),
-                                          imageUrl: item["images"][0]["name"],
-                                          errorWidget: (_, __, ___) =>
-                                              Image.asset(
-                                            downloadImage,
-                                            fit: BoxFit.cover,
+                                          imageUrl: item["images"][0]["name"].toString(),
+                                          placeholder: (context, url) => Container(
                                             height: 170.sp,
                                             width: 136.sp,
+                                            color: Colors.grey[200],
+                                            child: const Center(
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                valueColor: AlwaysStoppedAnimation<Color>(colorPrimary),
+                                              ),
+                                            ),
                                           ),
+                                          errorWidget: (context, url, error) {
+                                            print("❌ [BrandProductList] Image load failed");
+                                            print("   URL: $url");
+                                            print("   Error: $error");
+                                            return Container(
+                                              height: 170.sp,
+                                              width: 136.sp,
+                                              color: Colors.grey[200],
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(Icons.image_not_supported,
+                                                    size: 40.sp,
+                                                    color: Colors.grey[400]
+                                                  ),
+                                                  SizedBox(height: 4.sp),
+                                                  Text(
+                                                    'Image not available',
+                                                    style: TextStyle(
+                                                      fontSize: 9.sp,
+                                                      color: Colors.grey[500],
+                                                      fontFamily: "Clash Display Regular",
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ),
                                     )
@@ -122,20 +159,18 @@ class BrandProductList extends StatelessWidget {
                               Padding(
                                 padding: EdgeInsets.only(top: 8.sp),
                                 child: Row(
-                                  mainAxisAlignment: (list[index]
-                                              ["displayMrp"] ==
-                                          null)
+                                  mainAxisAlignment: (item["displayMrp"] == null)
                                       ? MainAxisAlignment
                                           .start // Price alone → normal left alignment
                                       : MainAxisAlignment
                                           .start, // MRP + Price → normal left alignment
                                   children: [
                                     // ---------- MRP ----------
-                                    if (list[index]["displayMrp"] != null)
+                                    if (item["displayMrp"] != null)
                                       Padding(
                                         padding: EdgeInsets.only(right: 6.sp),
                                         child: Text(
-                                          "₹ ${list[index]["displayMrp"]}",
+                                          "₹ ${item["displayMrp"]}",
                                           style: TextStyle(
                                             color: searchTextColor,
                                             fontSize: 11.sp,
@@ -149,7 +184,7 @@ class BrandProductList extends StatelessWidget {
 
                                     // ---------- PRICE ----------
                                     Text(
-                                      "₹ ${list[index]["displayPrice"]}",
+                                      "₹ ${item["displayPrice"] ?? 0}",
                                       style: TextStyle(
                                         color: whiteColor,
                                         fontSize: 11.sp,
