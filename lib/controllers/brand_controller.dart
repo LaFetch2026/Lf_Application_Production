@@ -36,6 +36,10 @@ class BrandController extends BaseController {
   RxBool isDetails = false.obs;
   var brandDetails = <String, dynamic>{}.obs;
 
+  // Track currently loaded brand to prevent duplicate API calls
+  RxInt currentLoadedBrandId = 0.obs;
+  RxBool isFetchingBrandDetails = false.obs;
+
   RxBool isCategory = false.obs;
   RxBool isProductBrand = false.obs;
   List categoryList = [].obs;
@@ -190,6 +194,22 @@ class BrandController extends BaseController {
   /// ✅ Fetch Brand Details by ID
   /// ================================================================
   Future<void> getBrandDetails(int id, String slug) async {
+    // ✅ Prevent duplicate API calls
+    if (isFetchingBrandDetails.value) {
+      print("⏳ Already fetching brand details, skipping...");
+      return;
+    }
+
+    // ✅ Check if brand data is already loaded and valid
+    if (currentLoadedBrandId.value == id &&
+        brandDetails.isNotEmpty &&
+        brandDetails["brandInfo"] != null &&
+        (brandDetails["products"] as List?)?.isNotEmpty == true) {
+      print("✅ Brand $id already loaded, using cached data");
+      return;
+    }
+
+    isFetchingBrandDetails.value = true;
     isDetails.value = true;
     final prefs = await SharedPreferences.getInstance();
 
@@ -205,7 +225,7 @@ class BrandController extends BaseController {
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer $token',
         },
-      );
+      ).timeout(const Duration(seconds: 30));
 
       print("⬅️ Status Code: ${response.statusCode}");
 
@@ -224,6 +244,7 @@ class BrandController extends BaseController {
       final data = decoded["data"] ?? {};
 
       brandDetails.value = data;
+      currentLoadedBrandId.value = id; // ✅ Mark this brand as loaded
 
       // Extract categories
       final brandInfo = data["brandInfo"] ?? {};
@@ -264,7 +285,19 @@ class BrandController extends BaseController {
       getSnackBar("Something went wrong while fetching brand details.");
     } finally {
       isDetails.value = false;
+      isFetchingBrandDetails.value = false;
     }
+  }
+
+  /// ================================================================
+  /// ✅ Clear cached brand details (call when navigating away)
+  /// ================================================================
+  void clearCachedBrandDetails() {
+    currentLoadedBrandId.value = 0;
+    brandDetails.clear();
+    brandProductDetailsList.clear();
+    brand_category_List.clear();
+    print("🗑️ Cleared cached brand details");
   }
 
   /// ================================================================

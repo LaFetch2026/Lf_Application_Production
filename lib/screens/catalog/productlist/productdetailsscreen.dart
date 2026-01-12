@@ -810,8 +810,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
           imageUrl: firstImg,
           sizeLabel: sizeLabel,
           quantity: initialQuantity,
-          price: productController.getDisplayPrice().toDouble(),
-          mrp: productController.getDisplayMrp().toDouble(),
+          price: (productController.getDisplayPrice() * initialQuantity).toDouble(),
+          mrp: (productController.getDisplayMrp() * initialQuantity).toDouble(),
           maxStock: stock,
           initialAddress:
               _addressSelected ? _addressResult as Map<String, dynamic>? : null,
@@ -1254,6 +1254,29 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         width: double.infinity,
                         height: 300.sp,
                         fit: BoxFit.contain,
+                        errorWidget: (context, url, error) => Container(
+                          width: double.infinity,
+                          height: 300.sp,
+                          color: Colors.black.withOpacity(0.06),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.broken_image_outlined,
+                                color: Colors.grey.withOpacity(0.5),
+                                size: 48.sp,
+                              ),
+                              SizedBox(height: 8.sp),
+                              Text(
+                                "Size guide image unavailable",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     )
                   else
@@ -2520,7 +2543,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               final variantId = variant['id'] as int;
 
                               await cartController.addToCartUniversal(
-                                quantity: 1,
+                                quantity: _selectedQuantity,
                                 page: "addproduct",
                                 variantId: variantId,
                                 productId: widget.productId,
@@ -2529,6 +2552,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 backColor: widget.backgroundcolor,
                                 oldInventoryId: variantId,
                               );
+
+                              // Reset quantity after adding to cart
+                              setState(() {
+                                _selectedQuantity = 1;
+                              });
 
                               await analytics.logEvent(
                                 name: 'productDetails_btnaddtocart',
@@ -2562,8 +2590,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 widget.boardId.toString(),
                                 widget.wishlistProductId.toString(),
                                 variantId.toString(),
-                                1,
+                                _selectedQuantity,
                               );
+
+                              // Reset quantity after moving to cart
+                              setState(() {
+                                _selectedQuantity = 1;
+                              });
 
                               await analytics.logEvent(
                                 name: 'productDetails_btnaddtocart',

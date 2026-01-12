@@ -1610,6 +1610,10 @@ class _ProductTileNoOverflow extends StatelessWidget {
                 ? CachedNetworkImage(
                     imageUrl: imageUrl!,
                     fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => Image.asset(
+                      dummyWishlistImage,
+                      fit: BoxFit.cover,
+                    ),
                   )
                 : Image.asset(dummyWishlistImage, fit: BoxFit.cover),
           ),

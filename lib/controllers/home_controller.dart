@@ -49,10 +49,10 @@ class HomeController extends BaseController {
   RxInt gender_Type = 0.obs;
   List FaqsList = [].obs;
   List brandList = [].obs;
-  List banner2List = [].obs;
+  RxList<dynamic> banner2List = <dynamic>[].obs;
   List cityList = [].obs;
-  List banner1List = [].obs;
-  List banner3List = [].obs;
+  RxList<dynamic> banner1List = <dynamic>[].obs;
+  RxList<dynamic> banner3List = <dynamic>[].obs;
   final RxString brandQuery = ''.obs;
 
   List bannerTag1Id = [].obs;
@@ -167,7 +167,7 @@ class HomeController extends BaseController {
           'Accept': 'application/json',
           if (token.isNotEmpty) 'Authorization': 'Bearer $token',
         },
-      );
+      ).timeout(const Duration(seconds: 30));
 
       print("📥 Response Status: ${response.statusCode}");
 
@@ -208,16 +208,16 @@ class HomeController extends BaseController {
   void _updateBannerList(int gender, List<dynamic> data) {
     switch (gender) {
       case 1:
-        banner1List = data;
+        banner1List.assignAll(data);
         break;
       case 2:
-        banner2List = data;
+        banner2List.assignAll(data);
         break;
       case 3:
-        banner3List = data;
+        banner3List.assignAll(data);
         break;
       default:
-        banner1List = data;
+        banner1List.assignAll(data);
     }
   }
 

@@ -557,6 +557,11 @@ class HomeScreenState extends State<HomeScreen> {
 
                                     _resetForTab();
 
+                                    // ✅ Reset banner page controller to first page
+                                    if (_pageController.hasClients) {
+                                      _pageController.jumpToPage(0);
+                                    }
+
                                     // ✅ Load data for new gender tab
                                     await Future.wait([
                                       homeController
@@ -564,6 +569,9 @@ class HomeScreenState extends State<HomeScreen> {
                                       productController
                                           .getHomeProduct(genderId),
                                     ]);
+
+                                    // ✅ Force update to ensure banners are displayed
+                                    homeController.update();
 
                                     catalogController
                                         .selectCategoryGender.value = genderId;
@@ -602,74 +610,88 @@ class HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Banner Section - ✅ REDUCED SPACING
-                        Obx(() => homeController.isBanner1.value
-                            ? Padding(
-                                padding:
-                                    EdgeInsets.symmetric(horizontal: 16.sp),
-                                child: SizedBox(
-                                  height: 210.sp,
-                                  width: double.infinity,
-                                  child: ListView.builder(
-                                    physics: const BouncingScrollPhysics(),
-                                    itemCount: 5,
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: (ctx, index) {
-                                      return Container(
-                                        height: 210.sp,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.04),
-                                        ),
-                                      );
-                                    },
-                                  ),
+                        // Banner Section - ✅ WITH LOADING STATE
+                        Obx(() {
+                          // Force Obx to track banner lists by accessing them
+                          final banners = _currentBannerList();
+                          final isLoading = homeController.isBanner1.value;
+                          final showBanners = banners.isNotEmpty &&
+                              productController.current.value == 50;
+
+                          if (isLoading) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                              child: Container(
+                                height: 210.sp,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.04),
+                                  borderRadius: BorderRadius.circular(4.sp),
                                 ),
-                              )
-                            : _currentBannerList().isNotEmpty &&
-                                    productController.current.value == 50
-                                ? Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                child: const Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 16.sp),
-                                        child: SizedBox(
-                                          height: 210.sp,
-                                          child: PageView(
-                                            controller: _pageController,
-                                            onPageChanged: (index) {
-                                              homeController.currentPage.value =
-                                                  index;
-                                              homeController.update();
-                                            },
-                                            children: widgitBannerList(),
-                                          ),
+                                      CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.black,
+                                      ),
+                                      SizedBox(height: 12),
+                                      Text(
+                                        'Loading banners...',
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                          fontSize: 12,
+                                          fontFamily: "Clash Display Regular",
                                         ),
                                       ),
-                                      SizedBox(
-                                          height: 8.sp), // ✅ REDUCED from 12.sp
-                                      _currentBannerList().length == 1
-                                          ? SizedBox.shrink()
-                                          : Center(
-                                              child: PageIndicator(
-                                                controller: _pageController,
-                                                count:
-                                                    _currentBannerList().length,
-                                                size: 6.0.sp,
-                                                activeColor: Colors.black,
-                                                color: const Color(0xffE5E7EB),
-                                                layout:
-                                                    PageIndicatorLayout.WARM,
-                                                scale: 0.65,
-                                                space: 8.sp,
-                                              ),
-                                            ),
                                     ],
-                                  )
-                                : const SizedBox.shrink()),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+
+                          if (showBanners) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 16.sp),
+                                  child: SizedBox(
+                                    height: 210.sp,
+                                    child: PageView(
+                                      controller: _pageController,
+                                      onPageChanged: (index) {
+                                        homeController.currentPage.value = index;
+                                        homeController.update();
+                                      },
+                                      children: widgitBannerList(),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 8.sp),
+                                banners.length == 1
+                                    ? const SizedBox.shrink()
+                                    : Center(
+                                        child: PageIndicator(
+                                          controller: _pageController,
+                                          count: banners.length,
+                                          size: 6.0.sp,
+                                          activeColor: Colors.black,
+                                          color: const Color(0xffE5E7EB),
+                                          layout: PageIndicatorLayout.WARM,
+                                          scale: 0.65,
+                                          space: 8.sp,
+                                        ),
+                                      ),
+                              ],
+                            );
+                          }
+
+                          return const SizedBox.shrink();
+                        }),
 
                         SizedBox(height: 10.sp), // ✅ REDUCED from 16.sp
 
@@ -1049,6 +1071,7 @@ class HomeScreenState extends State<HomeScreen> {
     productController.tagId.value = 0;
     productController.productCategory = [];
     productController.productTags = [];
+    // ✅ Don't reset isBanner1 here - let initializeHomeData handle it
   }
 
   Widget _buildGenderTab({required String label, required bool isSelected}) {
@@ -1237,6 +1260,16 @@ class _SectionStrip extends StatelessWidget {
                             height: 160.sp,
                             width: 150.sp,
                             fit: BoxFit.cover,
+                            errorWidget: (context, url, error) => Container(
+                              height: 160.sp,
+                              width: 150.sp,
+                              color: Colors.black.withOpacity(0.06),
+                              child: Icon(
+                                Icons.broken_image_outlined,
+                                color: Colors.grey.withOpacity(0.5),
+                                size: 40.sp,
+                              ),
+                            ),
                           )
                         : Container(
                             height: 170.sp,
@@ -1281,7 +1314,7 @@ class _SectionStrip extends StatelessWidget {
                           ),
                         ),
                         if (numMrp != null && numMrp > numPrice) ...[
-                          SizedBox(width: 5.sp),
+                          SizedBox(width: 4.sp),
                           Text(
                             "₹$numMrp",
                             style: TextStyle(
@@ -1293,14 +1326,18 @@ class _SectionStrip extends StatelessWidget {
                           ),
                         ],
                         if (discount != null && discount > 0) ...[
-                          SizedBox(width: 5.sp),
-                          Text(
-                            "($discount% OFF)",
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                              fontFamily: "Clash Display",
-                              fontWeight: FontWeight.w500,
-                              color: Colors.green[700],
+                          SizedBox(width: 4.sp),
+                          Flexible(
+                            child: Text(
+                              "($discount% OFF)",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                fontFamily: "Clash Display",
+                                fontWeight: FontWeight.w500,
+                                color: Colors.green[700],
+                              ),
                             ),
                           ),
                         ],

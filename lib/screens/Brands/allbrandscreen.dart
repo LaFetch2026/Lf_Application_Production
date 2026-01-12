@@ -23,7 +23,6 @@ import '../../controllers/brand_controller.dart';
 import '../../controllers/home_controller.dart';
 import '../../controllers/product_controller.dart';
 import '../../core/constant/constants.dart';
-import '../../core/utils/analytics_helper.dart';
 import '../cartscreen.dart';
 
 class AllBrandScreen extends StatefulWidget {
@@ -83,24 +82,9 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       productController.filterProductEnable.value = false;
       productController.categoryFilter.value = 0;
 
-      // ✅ Check if brand details are already loaded for this brand (prevents double API call)
-      final brandInfo = brandController.brandDetails["brandInfo"];
-      final currentBrandId = (brandInfo != null && brandInfo is Map)
-          ? ((brandInfo["id"] is int)
-              ? brandInfo["id"] as int
-              : int.tryParse(brandInfo["id"]?.toString() ?? '0') ?? 0)
-          : 0;
+      // ✅ Fetch brand details (controller handles caching and duplicate prevention)
+      await brandController.getBrandDetails(widget.id, widget.slug);
 
-      final needsToFetch = currentBrandId != widget.id ||
-                           brandInfo == null ||
-                           (brandController.brandDetails["products"] as List?)?.isEmpty == true;
-
-      if (needsToFetch) {
-        print("🔄 Fetching brand details for ID: ${widget.id}");
-        await brandController.getBrandDetails(widget.id, widget.slug);
-      } else {
-        print("✅ Using cached brand details for ID: ${widget.id}");
-      }
       // TODO: BACKEND FIX REQUIRED
       // Uncomment when backend fixes /brand-products API endpoint
       // Current issue: API only returns {id, title} - missing images, prices, variants
@@ -112,7 +96,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       _cachedNormalizedProducts = null;
 
       // Cache values to avoid repeated map lookups
-      // Reuse brandInfo from above to avoid duplicate definition
+      final brandInfo = brandController.brandDetails["brandInfo"];
       _cachedBrandName = (brandInfo != null && brandInfo is Map)
           ? (brandInfo["name"]?.toString() ?? '')
           : '';
