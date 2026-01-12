@@ -271,6 +271,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
         height: 211.sp,
         width: double.infinity,
         fit: BoxFit.cover,
+        memCacheHeight: (211.sp * MediaQuery.of(context).devicePixelRatio).round(),
         placeholder: (context, url) => Container(
           height: 211.sp,
           width: double.infinity,
@@ -538,6 +539,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                             height: 211.sp,
                             width: double.infinity,
                             fit: BoxFit.cover,
+                            memCacheHeight: (211.sp * MediaQuery.of(context).devicePixelRatio).round(),
                             placeholder: (context, url) => Container(
                               height: 211.sp,
                               width: double.infinity,
@@ -623,6 +625,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       ),
                                       fit: BoxFit.cover,
                                       imageUrl: logoUrl,
+                                      memCacheWidth: (80.sp * MediaQuery.of(context).devicePixelRatio).round(),
+                                      memCacheHeight: (80.sp * MediaQuery.of(context).devicePixelRatio).round(),
                                       placeholder: (context, url) => Container(
                                         color: cardBg,
                                         child: const Center(

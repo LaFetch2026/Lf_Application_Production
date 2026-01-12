@@ -539,6 +539,8 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                   ),
                                                                                   fit: BoxFit.contain,
                                                                                   imageUrl: brand["logo"],
+                                                                                  memCacheWidth: (48.sp * MediaQuery.of(context).devicePixelRatio).round(),
+                                                                                  memCacheHeight: (48.sp * MediaQuery.of(context).devicePixelRatio).round(),
                                                                                   placeholder: (context, url) => Container(
                                                                                     color: Colors.grey[200],
                                                                                     child: const Icon(Icons.storefront, size: 24, color: Colors.grey),
@@ -718,6 +720,8 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                   ),
                                                                                                   fit: BoxFit.cover,
                                                                                                   imageUrl: imageUrl,
+                                                                                                  memCacheWidth: (97.sp * MediaQuery.of(context).devicePixelRatio).round(),
+                                                                                                  memCacheHeight: (97.sp * MediaQuery.of(context).devicePixelRatio).round(),
                                                                                                   placeholder: (context, url) => Container(
                                                                                                     height: 97.sp,
                                                                                                     width: 97.sp,
