@@ -265,10 +265,9 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   @override
   void dispose() {
     _debounceTimer?.cancel();
-    // Clear filtered results when leaving the screen
-    catalogController.categoryProductList.clear();
 
     // Only delete the controller if we created it with a tag
+    // The controller deletion will handle cleanup of observables
     if (Get.isRegistered<CatalogController>(tag: 'search_results')) {
       Get.delete<CatalogController>(tag: 'search_results');
     }

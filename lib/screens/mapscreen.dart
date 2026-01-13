@@ -598,7 +598,7 @@ class MapScreenState extends State<MapScreen> {
                 latitude: shipController.lat.value,
                 longitude: shipController.lng.value,
               );
-              if (ok && mounted) Navigator.pop(context, true);
+              if (ok && mounted) Get.back(result: true);
             } else {
               await showModalBottomSheet(
                 context: context,

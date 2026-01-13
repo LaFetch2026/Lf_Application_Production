@@ -602,8 +602,8 @@ class ProductController extends BaseController {
   Future<void> getHomeProduct(int gender,
       {bool withLimit = true, bool forceRefresh = false}) async {
     // Map gender int to displayFor string
-    final displayFor = gender == 1 ? 'men' : gender == 0 ? 'women' : 'accessories';
-    final cacheKey = 'home_products_v2_${displayFor}_${withLimit ? "limited" : "all"}'; // v2: Added mobile banner filtering
+    final displayFor = gender == 1 ? 'men' : gender == 2 ? 'women' : 'accessories';
+    final cacheKey = 'home_products_v3_${displayFor}_${withLimit ? "limited" : "all"}'; // v3: Fixed gender mapping and banner filtering
 
     // Try to load from cache first
     if (!forceRefresh) {
@@ -671,6 +671,13 @@ class ProductController extends BaseController {
                 .toList();
           }
 
+          // ✅ Fallback to direct products array if productMaps is empty
+          if (productsList.isEmpty && c['products'] is List) {
+            productsList = (c['products'] as List)
+                .whereType<Map>()
+                .toList();
+          }
+
           // ✅ Skip collections with no products
           if (productsList.isEmpty) {
             print("⏭️ Skipping collection '${c['name']}' - no products");
@@ -692,9 +699,15 @@ class ProductController extends BaseController {
             filteredBanners = banners.where((banner) {
               if (banner is! Map) return false;
 
-              // Check if banner matches displayFor
+              // Check if banner matches displayFor (include "homepage" banners for all genders)
               final bannerDisplayFor = banner['displayFor'];
-              if (bannerDisplayFor is! List || !bannerDisplayFor.contains(displayFor)) {
+              if (bannerDisplayFor is! List) return false;
+
+              // Show banner if it contains the current gender OR "homepage"
+              final matchesGender = bannerDisplayFor.contains(displayFor);
+              final isHomepage = bannerDisplayFor.contains('homepage');
+
+              if (!matchesGender && !isHomepage) {
                 return false;
               }
 

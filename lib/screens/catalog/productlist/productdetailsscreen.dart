@@ -303,7 +303,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                       IconButton(
                         icon: Icon(Icons.close, size: 24.sp),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => Get.back(),
                       ),
                     ],
                   ),

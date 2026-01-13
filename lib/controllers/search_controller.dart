@@ -77,7 +77,7 @@ class SearchScreenController extends BaseController {
     try {
       final headers = await _headers();
       final uri =
-          _buildUri(ApiConstants.baseUrl, 'product-search', {'key': key});
+          _buildUri(ApiConstants.baseUrl, 'filter-products', {'key': key});
 
       final response = await http
           .post(uri, headers: headers)
@@ -102,8 +102,10 @@ class SearchScreenController extends BaseController {
       }
 
       final List<Map<String, dynamic>> items =
-          (decoded is Map && decoded['data'] is List)
-              ? (decoded['data'] as List)
+          (decoded is Map &&
+           decoded['data'] is Map &&
+           decoded['data']['products'] is List)
+              ? (decoded['data']['products'] as List)
                   .whereType<Map>()
                   .map((e) => e.map((k, v) => MapEntry(k.toString(), v)))
                   .toList()

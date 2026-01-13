@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:otp_text_field_v2/otp_field_style_v2.dart';
-import 'package:otp_text_field_v2/otp_field_v2.dart';
-import 'package:sms_autofill/sms_autofill.dart';
+import 'package:pinput/pinput.dart';
 
 import '../../common/widget/appbar/login_appbar.dart';
 import '../../common/widget/other/common_widget.dart';
@@ -24,23 +21,38 @@ class OTPVerficationScreen extends StatefulWidget {
   State<OTPVerficationScreen> createState() => _OTPVerficationScreenState();
 }
 
-class _OTPVerficationScreenState extends State<OTPVerficationScreen>
-    with CodeAutoFill {
+class _OTPVerficationScreenState extends State<OTPVerficationScreen> {
   final otpController = Get.put(LoginController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   Timer? timer;
+  final TextEditingController _pinController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     otpController.showButton.value = false;
     otpController.otpError.value = "";
-    otpController.secondsRemaining.value = 60; // Changed from default to 60
-    otpController.resendAttempts.value = 0; // Reset attempts on init
+    otpController.secondsRemaining.value = 60;
+    otpController.resendAttempts.value = 0;
 
-    if (Platform.isAndroid) {
-      listenForCode();
-    }
+    // Add listener to text controller for auto-fill detection
+    _pinController.addListener(() {
+      final text = _pinController.text;
+      debugPrint('📝 Pin controller text changed: $text');
+
+      // Sync with otpController if text changed externally (e.g., SMS auto-fill)
+      if (text.isNotEmpty && text != otpController.otp.value) {
+        otpController.otp.value = text;
+        otpController.showButton.value = text.length == 4;
+
+        // Auto-verify if valid OTP filled
+        if (text.length == 4 && otpController.checkOtpValidation(text)) {
+          debugPrint('🚀 Auto-verifying from controller listener...');
+          otpController.callVerifyOtp(widget.phoneMunber);
+        }
+      }
+    });
+
     startTimer();
   }
 
@@ -59,24 +71,8 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen>
   @override
   void dispose() {
     timer?.cancel();
-    cancel();
+    _pinController.dispose();
     super.dispose();
-  }
-
-  @override
-  void codeUpdated() {
-    if (code != null && code!.length >= 4) {
-      final otpCode = code!.replaceAll(RegExp(r'[^0-9]'), '');
-      if (otpCode.length >= 4) {
-        final otp = otpCode.substring(0, 4);
-        otpController.otp.value = otp;
-        otpController.controller.value.set(otp.split(""));
-        setState(() {});
-        if (otpController.checkOtpValidation(otp)) {
-          otpController.callVerifyOtp(widget.phoneMunber);
-        }
-      }
-    }
   }
 
   @override
@@ -130,49 +126,86 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen>
                     ),
                     SizedBox(height: 18.sp),
                     Obx(
-                      () => Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.sp),
-                        child: Center(
-                          child: OTPTextFieldV2(
-                            controller: otpController.controller.value,
-                            length: 4,
-                            autoFocus: false,
-                            width: MediaQuery.of(context).size.width,
-                            textFieldAlignment: MainAxisAlignment.spaceAround,
-                            spaceBetween: 4.sp,
-                            fieldWidth:
-                                (MediaQuery.of(context).size.width - 100) / 4,
-                            fieldStyle: FieldStyle.box,
-                            outlineBorderRadius: 1.sp,
-                            otpFieldStyle: OtpFieldStyle(
-                              focusBorderColor: homeAppBarColor,
-                              enabledBorderColor:
-                                  otpController.otp.value.length == 4
-                                      ? otpController.otpError.value.isNotEmpty
-                                          ? redColor
-                                          : homeAppBarColor
-                                      : borderColor,
-                            ),
-                            style: TextStyle(
-                              color: blackColor,
-                              fontSize: 20.sp,
-                              fontFamily: "Clash Display Regular",
-                            ),
-                            contentPadding:
-                                EdgeInsets.symmetric(vertical: 20.sp),
-                            cursorColor: borderColor,
-                            onChanged: (code) {
-                              otpController.otp.value = code;
-                            },
-                            onCompleted: (pin) {
-                              otpController.otp.value = pin;
-                              if (pin.length == 4) {
-                                otpController.showButton.value = true;
-                              }
-                            },
+                      () {
+                        final defaultPinTheme = PinTheme(
+                          width: 56.sp,
+                          height: 56.sp,
+                          textStyle: TextStyle(
+                            color: blackColor,
+                            fontSize: 20.sp,
+                            fontFamily: "Clash Display Regular",
                           ),
-                        ),
-                      ),
+                          decoration: BoxDecoration(
+                            color: whiteColor,
+                            border: Border.all(
+                              color: borderColor,
+                              width: 1.5,
+                            ),
+                            borderRadius: BorderRadius.circular(1),
+                          ),
+                        );
+
+                        final focusedPinTheme = defaultPinTheme.copyWith(
+                          decoration: BoxDecoration(
+                            color: whiteColor,
+                            border: Border.all(
+                              color: borderColor,
+                              width: 1.5,
+                            ),
+                            borderRadius: BorderRadius.circular(1),
+                          ),
+                        );
+
+                        final submittedPinTheme = defaultPinTheme.copyWith(
+                          decoration: BoxDecoration(
+                            color: whiteColor,
+                            border: Border.all(
+                              color: otpController.otpError.value.isNotEmpty
+                                  ? redColor
+                                  : homeAppBarColor,
+                              width: 1.5,
+                            ),
+                            borderRadius: BorderRadius.circular(1),
+                          ),
+                        );
+
+                        return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                          child: Center(
+                            child: Pinput(
+                              controller: _pinController,
+                              length: 4,
+                              defaultPinTheme: defaultPinTheme,
+                              focusedPinTheme: focusedPinTheme,
+                              submittedPinTheme: submittedPinTheme,
+                              autofocus: true,
+                              separatorBuilder: (index) => SizedBox(width: 4.sp),
+                              cursor: Container(
+                                width: 2,
+                                height: 24.sp,
+                                color: borderColor,
+                              ),
+                              onChanged: (code) {
+                                debugPrint('🔄 Pinput onChanged: $code');
+                                otpController.otp.value = code;
+                                otpController.showButton.value = code.length == 4;
+
+                                if (code.length == 4) {
+                                  if (otpController.checkOtpValidation(code)) {
+                                    debugPrint('🚀 Auto-verifying OTP from Pinput...');
+                                    otpController.callVerifyOtp(widget.phoneMunber);
+                                  }
+                                }
+                              },
+                              onCompleted: (code) {
+                                debugPrint('🎯 Pinput onCompleted: $code');
+                                otpController.otp.value = code;
+                                otpController.showButton.value = true;
+                              },
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     Obx(
                       () => otpController.otpError.value.isNotEmpty
@@ -232,13 +265,13 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen>
                           otpController.resendAttempts.value++;
                           otpController.enableResend.value = false;
                           otpController.secondsRemaining.value = 60;
+                          otpController.otp.value = '';
+                          _pinController.clear();
 
                           await otpController.callResendOtp(widget.phoneMunber);
-                          otpController.controller.value.clear();
-                          FocusScope.of(context).unfocus();
 
-                          if (Platform.isAndroid) {
-                            listenForCode();
+                          if (mounted) {
+                            FocusScope.of(context).unfocus();
                           }
 
                           startTimer();

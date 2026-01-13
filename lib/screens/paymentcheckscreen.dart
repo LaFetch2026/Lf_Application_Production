@@ -91,9 +91,10 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
+        // Block back navigation during payment processing
       },
       child: Scaffold(
         backgroundColor: whiteColor,

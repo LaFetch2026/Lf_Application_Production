@@ -1,14 +1,11 @@
 // ignore_for_file: avoid_print
-import 'dart:io';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:otp_text_field_v2/otp_field_style_v2.dart';
-import 'package:otp_text_field_v2/otp_field_v2.dart';
-import 'package:sms_autofill/sms_autofill.dart';
+import 'package:pinput/pinput.dart';
 
 import '../common/widget/appbar/backbutton_appbar.dart';
 import '../common/widget/other/common_widget.dart';
@@ -37,19 +34,24 @@ class EditProfileScreen extends StatefulWidget {
   State<EditProfileScreen> createState() => EditProfileScreenState();
 }
 
-class EditProfileScreenState extends State<EditProfileScreen>
-    with CodeAutoFill {
+class EditProfileScreenState extends State<EditProfileScreen> {
   final profileController = Get.put(ProfileController());
   final otpController = Get.put(LoginController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  final TextEditingController _pinController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     otpController.otp.value = "";
-    if (Platform.isAndroid) {
-      listenForCode();
-    }
+
+    // Add listener for auto-fill detection
+    _pinController.addListener(() {
+      final text = _pinController.text;
+      if (text.isNotEmpty && text != otpController.otp.value) {
+        otpController.otp.value = text;
+      }
+    });
 
     profileController.isEditNumber.value = true;
     profileController.isPhoneNumber.value = false;
@@ -85,23 +87,8 @@ class EditProfileScreenState extends State<EditProfileScreen>
   }
 
   @override
-  void codeUpdated() {
-    if (code != null && code!.isNotEmpty) {
-      final otpcode = code!.replaceAll(RegExp(r'[^0-9]'), '');
-      if (otpcode.length >= 4) {
-        final otp = otpcode.substring(0, 4);
-        otpController.otp.value = otp;
-        if (mounted) {
-          otpController.controller.value.set(otp.split(""));
-          setState(() {});
-        }
-      }
-    }
-  }
-
-  @override
   void dispose() {
-    cancel();
+    _pinController.dispose();
     super.dispose();
   }
 
@@ -181,6 +168,8 @@ class EditProfileScreenState extends State<EditProfileScreen>
                                 onTap: () async {
                                   profileController.isEditNumber.value = false;
                                   profileController.phoneController.clear();
+                                  _pinController.clear();
+                                  otpController.otp.value = '';
                                   await analytics.logEvent(
                                     name: 'change_number_click',
                                     parameters: {
@@ -217,46 +206,65 @@ class EditProfileScreenState extends State<EditProfileScreen>
                                 ),
                               ),
                               Obx(
-                                () => Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16.sp, vertical: 10.sp),
-                                  child: Center(
-                                    child: OTPTextFieldV2(
-                                      controller:
-                                          otpController.controller.value,
-                                      length: 4,
-                                      autoFocus: false,
-                                      width: MediaQuery.of(context).size.width,
-                                      textFieldAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      fieldWidth:
-                                          (MediaQuery.of(context).size.width -
-                                                  78) /
-                                              4,
-                                      spaceBetween: 4.sp,
-                                      fieldStyle: FieldStyle.box,
-                                      outlineBorderRadius: 1,
-                                      otpFieldStyle: OtpFieldStyle(
-                                          focusBorderColor: borderColor,
-                                          enabledBorderColor: borderColor),
-                                      style: const TextStyle(
-                                        color: loginText,
-                                        fontSize: 16,
-                                      ),
-                                      onChanged: (code) {
-                                        otpController.otp.value = code;
-                                      },
-                                      cursorColor: borderColor,
-                                      onCompleted: (pin) {
-                                        otpController.otp.value = pin;
-                                        if (otpController.otp.value.length ==
-                                            4) {
-                                          otpController.showButton.value = true;
-                                        }
-                                      },
+                                () {
+                                  final defaultPinTheme = PinTheme(
+                                    width: (MediaQuery.of(context).size.width - 78) / 4,
+                                    height: 56.sp,
+                                    textStyle: const TextStyle(
+                                      color: loginText,
+                                      fontSize: 16,
                                     ),
-                                  ),
-                                ),
+                                    decoration: BoxDecoration(
+                                      color: whiteColor,
+                                      border: Border.all(
+                                        color: borderColor,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(1),
+                                    ),
+                                  );
+
+                                  final focusedPinTheme = defaultPinTheme.copyWith(
+                                    decoration: BoxDecoration(
+                                      color: whiteColor,
+                                      border: Border.all(
+                                        color: borderColor,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(1),
+                                    ),
+                                  );
+
+                                  return Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 16.sp, vertical: 10.sp),
+                                    child: Center(
+                                      child: Pinput(
+                                        controller: _pinController,
+                                        length: 4,
+                                        defaultPinTheme: defaultPinTheme,
+                                        focusedPinTheme: focusedPinTheme,
+                                        submittedPinTheme: defaultPinTheme,
+                                        autofocus: false,
+                                        separatorBuilder: (index) => SizedBox(width: 4.sp),
+                                        cursor: Container(
+                                          width: 2,
+                                          height: 24.sp,
+                                          color: borderColor,
+                                        ),
+                                        onChanged: (code) {
+                                          otpController.otp.value = code;
+                                        },
+                                        onCompleted: (pin) {
+                                          otpController.otp.value = pin;
+                                          if (otpController.otp.value.length == 4) {
+                                            otpController.showButton.value = true;
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             ],
                           )
@@ -436,7 +444,7 @@ class EditProfileScreenState extends State<EditProfileScreen>
 
                       // ✅ Return to AccountScreen and refresh data
                       if (mounted) {
-                        Navigator.pop(context, true);
+                        Get.back(result: true);
                       }
                     }
                   },

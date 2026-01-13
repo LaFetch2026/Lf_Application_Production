@@ -208,12 +208,14 @@ class QuickScreenState extends State<QuickScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Get.offAll(const BottomNavScreen(
-          index: 0,
-        ));
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
+        if (!didPop) {
+          Get.offAll(() => const BottomNavScreen(
+            index: 0,
+          ));
+        }
       },
       child: ImageFiltered(
         imageFilter: ImageFilter.blur(
@@ -732,7 +734,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                     stalePeriod:
                                                         const Duration(days: 15),
                                                     maxNrOfCacheObjects: 100)),
-                                                fit: BoxFit.fill,
+                                                fit: BoxFit.cover,
                                                 imageUrl: homeController
                                                         .banner2List[itemIndex]
                                                     ["image"],
@@ -758,7 +760,11 @@ class QuickScreenState extends State<QuickScreen> {
                                                     (context, url, error) =>
                                                         Image.asset(
                                                   downloadImage,
+                                                  fit: BoxFit.cover,
                                                   height: 128.sp,
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
                                                 ),
                                               ),
                                             ),

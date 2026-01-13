@@ -380,7 +380,9 @@ class HomeScreenState extends State<HomeScreen> {
                   ),
                   errorWidget: (context, url, error) => Image.asset(
                     downloadImage,
+                    fit: BoxFit.cover,
                     height: 229.sp,
+                    width: MediaQuery.of(context).size.width,
                   ),
                 ),
         ),
@@ -664,7 +666,8 @@ class HomeScreenState extends State<HomeScreen> {
                                     child: PageView(
                                       controller: _pageController,
                                       onPageChanged: (index) {
-                                        homeController.currentPage.value = index;
+                                        homeController.currentPage.value =
+                                            index;
                                         homeController.update();
                                       },
                                       children: widgitBannerList(),

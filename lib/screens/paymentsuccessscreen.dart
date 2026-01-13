@@ -67,12 +67,14 @@ class PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Get.offAll(const BottomNavScreen(
-          index: 0,
-        ));
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
+        if (!didPop) {
+          Get.offAll(() => const BottomNavScreen(
+            index: 0,
+          ));
+        }
       },
       child: Scaffold(
           backgroundColor: whiteColor,

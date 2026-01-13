@@ -64,19 +64,22 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        final prefs = await SharedPreferences.getInstance();
-        prefs.remove("brandList");
-        prefs.remove("colorList");
-        prefs.remove("sizeList");
-        prefs.remove("upper");
-        prefs.remove("lower");
-        prefs.remove("sortby");
-        productController.size_ids.clear();
-        productController.color_ids.clear();
-        productController.brand_ids.clear();
-        return true;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) async {
+        if (!didPop) {
+          final prefs = await SharedPreferences.getInstance();
+          prefs.remove("brandList");
+          prefs.remove("colorList");
+          prefs.remove("sizeList");
+          prefs.remove("upper");
+          prefs.remove("lower");
+          prefs.remove("sortby");
+          productController.size_ids.clear();
+          productController.color_ids.clear();
+          productController.brand_ids.clear();
+          Get.back();
+        }
       },
       child: Scaffold(
           key: scaffoldKey,

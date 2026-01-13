@@ -167,12 +167,14 @@ class BrandsScreenState extends State<BrandsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => WillPopScope(
-          onWillPop: () async {
-            Get.offAll(const BottomNavScreen(
-              index: 0,
-            ));
-            return false;
+    return Obx(() => PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (bool didPop, dynamic result) {
+            if (!didPop) {
+              Get.offAll(() => const BottomNavScreen(
+                index: 0,
+              ));
+            }
           },
           child: Scaffold(
             backgroundColor: whiteColor,

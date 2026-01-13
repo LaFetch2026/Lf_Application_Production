@@ -259,6 +259,17 @@ class MyApp extends StatelessWidget {
           home: const SplashTwoScreen(),
           // Add this to ensure clean navigation on hot restart
           navigatorObservers: [GetObserver()],
+          // Enable iOS-style swipe-to-go-back on both platforms
+          defaultTransition: Transition.cupertino,
+          // Configure page transitions for swipe gesture
+          theme: ThemeData(
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: {
+                TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+              },
+            ),
+          ),
         );
       },
     );

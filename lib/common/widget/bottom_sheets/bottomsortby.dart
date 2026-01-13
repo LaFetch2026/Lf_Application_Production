@@ -34,7 +34,7 @@ class _BottomSortByState extends State<BottomSortBy> {
 
   closeSheet() {
     Timer(Duration(seconds: 1), () {
-      Navigator.pop(context);
+      Get.back();
     });
   }
 

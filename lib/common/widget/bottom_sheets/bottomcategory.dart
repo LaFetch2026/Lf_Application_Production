@@ -36,7 +36,7 @@ class _BottomCategoryState extends State<BottomCategory> {
 
   closeSheet() {
     Timer(Duration(seconds: 1), () {
-      Navigator.pop(context);
+      Get.back();
     });
   }
 

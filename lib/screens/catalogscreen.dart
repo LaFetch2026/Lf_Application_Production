@@ -38,12 +38,14 @@ class CatalogScreenState extends State<CatalogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Get.offAll(BottomNavScreen(
-          index: 0,
-        ));
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
+        if (!didPop) {
+          Get.offAll(() => const BottomNavScreen(
+            index: 0,
+          ));
+        }
       },
       child: DefaultTabController(
         length: 3,
@@ -74,10 +76,7 @@ class CatalogScreenState extends State<CatalogScreen> {
                 title: "Categories",
                 onPressedSearch: () async {
                   // searchController.searchController.clear();
-                  Navigator.push(context, scaleIn(SearchScreen()))
-                      .then((value) => setState(
-                            () {},
-                          ));
+                  Get.to(() => const SearchScreen())?.then((_) => setState(() {}));
                   await analytics.logEvent(
                     name: 'search_page',
                     parameters: <String, Object>{

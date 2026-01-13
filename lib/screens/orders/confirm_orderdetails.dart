@@ -61,6 +61,7 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
     // ✅ Extract nested objects safely
     final order = data['order'] ?? {};
     final product = data['product'] ?? {};
+    final shippingAddress = order['shippingAddress'] ?? {};
 
     // ✅ Handle product image and info
     final imageList = (product['imageUrls'] ?? []) as List;
@@ -76,7 +77,20 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
     // ✅ Use top-level status ("returned", "cancelled", etc.)
     final status = (data['status'] ?? 'pending').toString().toLowerCase();
 
+    // ✅ Order Information
+    final orderId = order['id']?.toString() ?? data['orderId']?.toString() ?? 'N/A';
+    final orderDate = order['orderedAt']?.toString() ?? order['createdAt']?.toString() ?? '';
+    final formattedDate = orderDate.isNotEmpty
+        ? orderDate.split('T')[0]
+        : 'N/A';
+    final awbCode = data['awbCode']?.toString() ?? '';
+    final paymentMethod = order['paymentMethod']?.toString().toUpperCase() ?? 'N/A';
+
     // ✅ Price values from nested order
+    final unitPrice = double.tryParse(data['unitPrice']?.toString() ?? '0') ?? 0.0;
+    final discount = double.tryParse(data['discount']?.toString() ?? '0') ?? 0.0;
+    final tax = double.tryParse(data['tax']?.toString() ?? '0') ?? 0.0;
+    final gstAmount = double.tryParse(data['gstAmount']?.toString() ?? '0') ?? 0.0;
     final total = double.tryParse(order['total']?.toString() ?? '0') ?? 0.0;
     final totalMRP =
         double.tryParse(order['totalMRP']?.toString() ?? '$total') ?? total;
@@ -84,6 +98,15 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
         double.tryParse(order['shippingCost']?.toString() ?? '0') ?? 0.0;
     final coupon =
         double.tryParse(order['couponDiscount']?.toString() ?? '0') ?? 0.0;
+
+    // ✅ Delivery Address
+    final addressName = shippingAddress['name']?.toString() ?? '';
+    final addressPhone = shippingAddress['phone']?.toString() ?? '';
+    final addressLine = shippingAddress['addressLine']?.toString() ?? '';
+    final city = shippingAddress['city']?.toString() ?? '';
+    final state = shippingAddress['state']?.toString() ?? '';
+    final postalCode = shippingAddress['postalCode']?.toString() ?? '';
+    final country = shippingAddress['country']?.toString() ?? '';
 
     // ✅ Dynamic status color mapping
     final statusColor = status == 'cancelled'
@@ -209,9 +232,86 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
               SizedBox(height: 28.sp),
             ],
 
-            // ✅ Order Summary
+            // ✅ Order Information Section
             const AppText(
-              text: "ORDER SUMMARY",
+              text: "ORDER INFORMATION",
+              fontFamily: "Clash Display",
+              fontWeight: FontWeight.w700,
+              color: blackColor,
+              fontSize: 14,
+            ),
+            SizedBox(height: 8.sp),
+            Divider(color: dividerColor),
+            SizedBox(height: 8.sp),
+            _infoRow("Order ID", "#$orderId"),
+            _infoRow("Order Date", formattedDate),
+            if (awbCode.isNotEmpty) _infoRow("Tracking Number", awbCode),
+            _infoRow("Payment Method", paymentMethod),
+            SizedBox(height: 24.sp),
+
+            // ✅ Delivery Address Section
+            if (addressLine.isNotEmpty || city.isNotEmpty) ...[
+              const AppText(
+                text: "DELIVERY ADDRESS",
+                fontFamily: "Clash Display",
+                fontWeight: FontWeight.w700,
+                color: blackColor,
+                fontSize: 14,
+              ),
+              SizedBox(height: 8.sp),
+              Divider(color: dividerColor),
+              SizedBox(height: 8.sp),
+              if (addressName.isNotEmpty)
+                AppText(
+                  text: addressName,
+                  fontFamily: "Clash Display",
+                  fontWeight: FontWeight.w600,
+                  color: blackColor,
+                  fontSize: 13,
+                ),
+              if (addressPhone.isNotEmpty) ...[
+                SizedBox(height: 4.sp),
+                AppText(
+                  text: addressPhone,
+                  fontFamily: "Clash Display Regular",
+                  fontWeight: FontWeight.w400,
+                  color: subtitleColor,
+                  fontSize: 12,
+                ),
+              ],
+              SizedBox(height: 6.sp),
+              AppText(
+                text: addressLine,
+                fontFamily: "Clash Display Regular",
+                fontWeight: FontWeight.w400,
+                color: nameText,
+                fontSize: 12,
+                maxLines: 3,
+              ),
+              SizedBox(height: 4.sp),
+              AppText(
+                text: "$city, $state - $postalCode",
+                fontFamily: "Clash Display Regular",
+                fontWeight: FontWeight.w400,
+                color: nameText,
+                fontSize: 12,
+              ),
+              if (country.isNotEmpty) ...[
+                SizedBox(height: 4.sp),
+                AppText(
+                  text: country,
+                  fontFamily: "Clash Display Regular",
+                  fontWeight: FontWeight.w400,
+                  color: nameText,
+                  fontSize: 12,
+                ),
+              ],
+              SizedBox(height: 24.sp),
+            ],
+
+            // ✅ Price Breakdown Section
+            const AppText(
+              text: "PRICE BREAKDOWN",
               fontFamily: "Clash Display",
               fontWeight: FontWeight.w700,
               color: blackColor,
@@ -221,11 +321,19 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
             Divider(color: dividerColor),
             SizedBox(height: 8.sp),
 
+            _priceRow("Item Price (${quantity}x)", "₹${unitPrice.toStringAsFixed(2)}"),
+            if (discount > 0)
+              _priceRow("Discount", "- ₹${discount.toStringAsFixed(2)}",
+                  color: const Color(0xFF10B981)),
+            if (gstAmount > 0)
+              _priceRow("GST", "₹${gstAmount.toStringAsFixed(2)}"),
+            if (tax > 0 && gstAmount == 0)
+              _priceRow("Tax", "₹${tax.toStringAsFixed(2)}"),
             _priceRow("Total MRP", "₹${totalMRP.toStringAsFixed(2)}"),
             _priceRow("Shipping Cost", "₹${shipping.toStringAsFixed(2)}"),
             if (coupon > 0)
               _priceRow("Coupon Discount", "- ₹${coupon.toStringAsFixed(2)}",
-                  color: Colors.green),
+                  color: const Color(0xFF10B981)),
             Divider(color: dividerColor),
             SizedBox(height: 8.sp),
 
@@ -276,6 +384,35 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
             fontWeight: FontWeight.w600,
             color: color,
             fontSize: 12,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _infoRow(String label, String value) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 4.sp),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppText(
+            text: label,
+            fontFamily: "Clash Display Regular",
+            fontWeight: FontWeight.w400,
+            color: subtitleColor,
+            fontSize: 12,
+          ),
+          Flexible(
+            child: AppText(
+              text: value,
+              fontFamily: "Clash Display",
+              fontWeight: FontWeight.w600,
+              color: nameText,
+              fontSize: 12,
+              textAlign: TextAlign.right,
+            ),
           ),
         ],
       ),

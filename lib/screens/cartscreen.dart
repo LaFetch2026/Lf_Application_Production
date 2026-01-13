@@ -773,13 +773,12 @@ class CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (widget.backgroundcolor == homeAppBarColor) {
-          Get.offAll(const BottomNavScreen(index: 0));
-          return false;
+    return PopScope(
+      canPop: widget.backgroundcolor != homeAppBarColor,
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
+        if (!didPop && widget.backgroundcolor == homeAppBarColor) {
+          Get.offAll(() => const BottomNavScreen(index: 0));
         }
-        return true;
       },
       child: Scaffold(
         backgroundColor: widget.backgroundcolor,
