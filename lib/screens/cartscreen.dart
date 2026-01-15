@@ -205,7 +205,8 @@ class CartScreenState extends State<CartScreen> {
       if (address == null) {
         print("   ❌ No address selected");
         _handleAddressSelection();
-        showAppSnackBar("Please select a shipping address to continue", type: SnackBarType.error);
+        showAppSnackBar("Please select a shipping address to continue",
+            type: SnackBarType.error);
         return;
       }
 
@@ -214,7 +215,9 @@ class CartScreenState extends State<CartScreen> {
 
       if (shippingAddressId == null) {
         print("   ❌ Invalid address ID");
-        showAppSnackBar("Invalid address selected. Please choose another address.", type: SnackBarType.error);
+        showAppSnackBar(
+            "Invalid address selected. Please choose another address.",
+            type: SnackBarType.error);
         return;
       }
 
@@ -239,7 +242,8 @@ class CartScreenState extends State<CartScreen> {
 
       if (totalAmount <= 0) {
         print("   ❌ Invalid cart total");
-        showAppSnackBar("Cart total must be greater than zero", type: SnackBarType.error);
+        showAppSnackBar("Cart total must be greater than zero",
+            type: SnackBarType.error);
         return;
       }
       print("   ✅ Cart total valid");
@@ -282,36 +286,39 @@ class CartScreenState extends State<CartScreen> {
 
         // Try to get from cart data (check both formats)
         hsnCode = (product["hsn_code"] ??
-                   product["hsnCode"] ??
-                   inventory["hsn_code"] ??
-                   inventory["hsnCode"] ??
-                   "").toString();
+                product["hsnCode"] ??
+                inventory["hsn_code"] ??
+                inventory["hsnCode"] ??
+                "")
+            .toString();
 
         gstRate = _asNum(product["gst_rate"] ??
-                        product["gstRate"] ??
-                        inventory["gst_rate"] ??
-                        inventory["gstRate"]);
+            product["gstRate"] ??
+            inventory["gst_rate"] ??
+            inventory["gstRate"]);
 
         statutoryGSTRate = _asNum(product["statutory_gst_rate"] ??
-                                  product["statutoryGSTRate"] ??
-                                  inventory["statutory_gst_rate"] ??
-                                  inventory["statutoryGSTRate"] ??
-                                  gstRate);
+            product["statutoryGSTRate"] ??
+            inventory["statutory_gst_rate"] ??
+            inventory["statutoryGSTRate"] ??
+            gstRate);
 
         gstRuleApplied = (product["gst_rule"] ??
-                          product["gstRule"] ??
-                          inventory["gst_rule"] ??
-                          inventory["gstRule"] ??
-                          "").toString();
+                product["gstRule"] ??
+                inventory["gst_rule"] ??
+                inventory["gstRule"] ??
+                "")
+            .toString();
 
         basePrice = _asNum(product["base_price"] ??
-                          product["basePrice"] ??
-                          inventory["base_price"] ??
-                          inventory["basePrice"]);
+            product["basePrice"] ??
+            inventory["base_price"] ??
+            inventory["basePrice"]);
 
         // ⚠️ If critical GST data is missing, fetch from ProductController memory or API
         if (hsnCode.isEmpty || gstRate == 0) {
-          print("      ⚠️ Missing GST data in cart, checking ProductController memory...");
+          print(
+              "      ⚠️ Missing GST data in cart, checking ProductController memory...");
 
           // 🔥 MEMORY-FIRST APPROACH (like Buy Now)
           // Check if product is already loaded in ProductController
@@ -331,23 +338,25 @@ class CartScreenState extends State<CartScreen> {
 
               if (matchingVariant.isNotEmpty) {
                 hsnCode = (matchingVariant["hsnCode"] ??
-                          matchingVariant["hsn_code"] ??
-                          "").toString();
+                        matchingVariant["hsn_code"] ??
+                        "")
+                    .toString();
 
-                gstRate = _asNum(matchingVariant["gstRate"] ??
-                                matchingVariant["gst_rate"]);
+                gstRate = _asNum(
+                    matchingVariant["gstRate"] ?? matchingVariant["gst_rate"]);
 
                 statutoryGSTRate = _asNum(matchingVariant["statutoryGSTRate"] ??
-                                        matchingVariant["statutory_gst_rate"] ??
-                                        gstRate);
+                    matchingVariant["statutory_gst_rate"] ??
+                    gstRate);
 
                 gstRuleApplied = (matchingVariant["gstRule"] ??
-                                 matchingVariant["gst_rule"] ??
-                                 matchingVariant["gstRuleApplied"] ??
-                                 "").toString();
+                        matchingVariant["gst_rule"] ??
+                        matchingVariant["gstRuleApplied"] ??
+                        "")
+                    .toString();
 
                 basePrice = _asNum(matchingVariant["basePrice"] ??
-                                  matchingVariant["base_price"]);
+                    matchingVariant["base_price"]);
 
                 print("      ✅ Extracted GST from memory:");
                 print("         HSN: $hsnCode");
@@ -362,7 +371,8 @@ class CartScreenState extends State<CartScreen> {
           if (hsnCode.isEmpty || gstRate == 0) {
             print("      ⚠️ Not in memory, fetching from product API...");
             try {
-              final productDetails = await productController.fetchProductDetails(productId);
+              final productDetails =
+                  await productController.fetchProductDetails(productId);
 
               if (productDetails != null) {
                 // Handle both direct response and wrapped response
@@ -377,29 +387,33 @@ class CartScreenState extends State<CartScreen> {
 
                   if (matchingVariant.isNotEmpty) {
                     hsnCode = (matchingVariant["hsnCode"] ??
-                              matchingVariant["hsn_code"] ??
-                              data["hsnCode"] ??
-                              data["hsn_code"] ??
-                              "").toString();
+                            matchingVariant["hsn_code"] ??
+                            data["hsnCode"] ??
+                            data["hsn_code"] ??
+                            "")
+                        .toString();
 
                     gstRate = _asNum(matchingVariant["gstRate"] ??
-                                    matchingVariant["gst_rate"]);
+                        matchingVariant["gst_rate"]);
 
-                    statutoryGSTRate = _asNum(matchingVariant["statutoryGSTRate"] ??
-                                            matchingVariant["statutory_gst_rate"] ??
-                                            gstRate);
+                    statutoryGSTRate = _asNum(
+                        matchingVariant["statutoryGSTRate"] ??
+                            matchingVariant["statutory_gst_rate"] ??
+                            gstRate);
 
                     gstRuleApplied = (matchingVariant["gstRule"] ??
-                                     matchingVariant["gst_rule"] ??
-                                     matchingVariant["gstRuleApplied"] ??
-                                     "").toString();
+                            matchingVariant["gst_rule"] ??
+                            matchingVariant["gstRuleApplied"] ??
+                            "")
+                        .toString();
 
                     basePrice = _asNum(matchingVariant["basePrice"] ??
-                                      matchingVariant["base_price"]);
+                        matchingVariant["base_price"]);
 
                     print("      ✅ Fetched GST data from API");
                   } else {
-                    print("      ⚠️ Variant $variantId not found in API response");
+                    print(
+                        "      ⚠️ Variant $variantId not found in API response");
                   }
                 } else {
                   print("      ⚠️ No variants in API response");
@@ -463,7 +477,8 @@ class CartScreenState extends State<CartScreen> {
           hsnCode: hsnCode,
           gstRate: gstRate,
           statutoryGSTRate: statutoryGSTRate,
-          gstRuleApplied: gstRuleApplied.isEmpty ? "VALUE_BASED" : gstRuleApplied,
+          gstRuleApplied:
+              gstRuleApplied.isEmpty ? "VALUE_BASED" : gstRuleApplied,
         ));
       }
 
@@ -495,7 +510,8 @@ class CartScreenState extends State<CartScreen> {
 
       if (paymentInitData == null) {
         print("   ❌ Payment initiation failed - null response");
-        showAppSnackBar("Failed to initiate payment. Please try again.", type: SnackBarType.error);
+        showAppSnackBar("Failed to initiate payment. Please try again.",
+            type: SnackBarType.error);
         return;
       }
 
@@ -507,7 +523,8 @@ class CartScreenState extends State<CartScreen> {
 
       if (razorpayOrderId == null || razorpayOrderId.isEmpty) {
         print("   ❌ Missing or empty Razorpay Order ID");
-        showAppSnackBar("Unable to start payment (missing Razorpay Order ID).", type: SnackBarType.error);
+        showAppSnackBar("Unable to start payment (missing Razorpay Order ID).",
+            type: SnackBarType.error);
         return;
       }
 
@@ -522,7 +539,8 @@ class CartScreenState extends State<CartScreen> {
       await _openRazorpayCheckout(orderId: razorpayOrderId);
     } catch (e) {
       print("🔥 Checkout error: $e");
-      showAppSnackBar("Something went wrong. Please try again.", type: SnackBarType.error);
+      showAppSnackBar("Something went wrong. Please try again.",
+          type: SnackBarType.error);
     }
   }
 
@@ -580,7 +598,8 @@ class CartScreenState extends State<CartScreen> {
                   onPressed: () {
                     Navigator.of(ctx).pop();
                     // Navigate to pending status for testing
-                    Get.offAll(() => const OrderStatusScreen(status: 'pending'));
+                    Get.offAll(
+                        () => const OrderStatusScreen(status: 'pending'));
                   },
                   child: const Text('OK'),
                 ),
@@ -598,7 +617,9 @@ class CartScreenState extends State<CartScreen> {
     // Validate order ID
     if (orderId == null || orderId.isEmpty) {
       print("❌ ERROR: Order ID is null or empty");
-      showAppSnackBar("Payment could not be started. Missing Razorpay Order ID.", type: SnackBarType.error);
+      showAppSnackBar(
+          "Payment could not be started. Missing Razorpay Order ID.",
+          type: SnackBarType.error);
       return;
     }
     print("✅ Order ID: $orderId");
@@ -606,7 +627,8 @@ class CartScreenState extends State<CartScreen> {
     // Validate Razorpay key
     if (_razorpayKey.isEmpty) {
       print("❌ ERROR: Razorpay key is empty");
-      showAppSnackBar("Payment configuration error. Please contact support.", type: SnackBarType.error);
+      showAppSnackBar("Payment configuration error. Please contact support.",
+          type: SnackBarType.error);
       return;
     }
     print("✅ Razorpay Key: ${_razorpayKey.substring(0, 10)}...");
@@ -635,10 +657,12 @@ class CartScreenState extends State<CartScreen> {
 
     print("\n👤 User Details:");
     print("   Name: ${userName.isEmpty ? 'Customer (default)' : userName}");
-    print("   Email: ${userEmail.isEmpty ? 'customer@example.com (default)' : userEmail}");
+    print(
+        "   Email: ${userEmail.isEmpty ? 'customer@example.com (default)' : userEmail}");
     print("   Raw Phone: $rawPhone");
     print("   Sanitized Phone: $phone");
-    print("   Final Contact: ${phone.length == 10 ? '+91$phone' : '+919999999999'}");
+    print(
+        "   Final Contact: ${phone.length == 10 ? '+91$phone' : '+919999999999'}");
 
     // Build Razorpay options
     final options = {
@@ -996,7 +1020,7 @@ class CartScreenState extends State<CartScreen> {
                             horizontal: 16.sp, vertical: 8.sp),
                         child: const AppText(
                           text: "OUT OF STOCK",
-                          color: redColor,
+                          color: lightPurpleColor,
                           fontSize: 10,
                           maxLines: 1,
                           fontFamily: "Clash Display",
@@ -1662,7 +1686,8 @@ class CartScreenState extends State<CartScreen> {
                     await productController.getCoupons();
 
                     if (productController.couponList.isEmpty) {
-                      showAppSnackBar("No coupons available right now", type: SnackBarType.info);
+                      showAppSnackBar("No coupons available right now",
+                          type: SnackBarType.info);
                       return;
                     }
 
@@ -1702,7 +1727,7 @@ class CartScreenState extends State<CartScreen> {
                             : Colors.transparent),
                     side: BorderSide(
                       color: hasDiscount
-                          ? redColor
+                          ? lightPurpleColor
                           : (widget.backgroundcolor == whiteColor
                               ? btnTextColor
                               : Colors.transparent),
@@ -1713,7 +1738,7 @@ class CartScreenState extends State<CartScreen> {
                   child: Text(
                     hasDiscount ? "REMOVE" : "SELECT",
                     style: TextStyle(
-                      color: hasDiscount ? redColor : whiteColor,
+                      color: hasDiscount ? lightPurpleColor : whiteColor,
                       fontSize: 12.sp,
                       fontFamily: "Clash Display",
                       fontWeight: FontWeight.w500,
@@ -1782,11 +1807,13 @@ class CartScreenState extends State<CartScreen> {
       await prefs.setString('applied_coupon_code', code);
       await prefs.setInt('applied_coupon_discount', discountValue.toInt());
 
-      showAppSnackBar("Coupon '$code' applied successfully", type: SnackBarType.success);
+      showAppSnackBar("Coupon '$code' applied successfully",
+          type: SnackBarType.success);
       controller.update();
     } catch (e) {
       print("✗ Error applying coupon: $e");
-      showAppSnackBar("Failed to apply coupon. Please try again.", type: SnackBarType.error);
+      showAppSnackBar("Failed to apply coupon. Please try again.",
+          type: SnackBarType.error);
     }
   }
 
@@ -1951,7 +1978,7 @@ class CartScreenState extends State<CartScreen> {
                     text: controller.addressError.value,
                     fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
-                    color: redColor,
+                    color: lightPurpleColor,
                     fontSize: 12,
                   ),
                 )
@@ -2106,7 +2133,8 @@ class CartScreenState extends State<CartScreen> {
     }
 
     // Show a message explaining cart will be saved
-    showAppSnackBar("Sign up to save your cart and checkout", type: SnackBarType.info);
+    showAppSnackBar("Sign up to save your cart and checkout",
+        type: SnackBarType.info);
 
     // Navigate to login/signup screen
     await analytics.logEvent(
@@ -2286,7 +2314,8 @@ class CartScreenState extends State<CartScreen> {
 
         // Refresh guest cart display
         await controller.loadGuestCartForDisplay();
-        showAppSnackBar("Quantity updated to $newQuantity", type: SnackBarType.success);
+        showAppSnackBar("Quantity updated to $newQuantity",
+            type: SnackBarType.success);
       } else {
         // For logged-in users: use the new update-cart-quantity API
         controller.showLoading();
@@ -2315,10 +2344,12 @@ class CartScreenState extends State<CartScreen> {
           }
 
           controller.hideLoading();
-          showAppSnackBar("Quantity updated to $newQuantity", type: SnackBarType.success);
+          showAppSnackBar("Quantity updated to $newQuantity",
+              type: SnackBarType.success);
         } else {
           controller.hideLoading();
-          showAppSnackBar("Failed to update quantity", type: SnackBarType.error);
+          showAppSnackBar("Failed to update quantity",
+              type: SnackBarType.error);
         }
       }
 
@@ -2336,7 +2367,8 @@ class CartScreenState extends State<CartScreen> {
         controller.hideLoading();
       }
       debugPrint("❌ Error updating quantity: $e");
-      showAppSnackBar("Failed to update quantity. Please try again.", type: SnackBarType.error);
+      showAppSnackBar("Failed to update quantity. Please try again.",
+          type: SnackBarType.error);
     }
   }
 
@@ -2347,7 +2379,7 @@ class CartScreenState extends State<CartScreen> {
         controller.stockErrorText.value,
         style: TextStyle(
           fontSize: 13.sp,
-          color: redColor,
+          color: lightPurpleColor,
           fontFamily: 'Clash Display',
         ),
       ),

@@ -70,7 +70,7 @@ class DeleteAccountScreenState extends State<DeleteAccountScreen> {
                             "Your account is scheduled to be deleted within 7 days. If you don't want this to be deleted, please reach out to support@la-fetch.com",
                         fontFamily: "Clash Display Regular",
                         fontWeight: FontWeight.w400,
-                        color: redColor,
+                        color: lightPurpleColor,
                         maxLines: 4,
                         fontSize: 14,
                       ),

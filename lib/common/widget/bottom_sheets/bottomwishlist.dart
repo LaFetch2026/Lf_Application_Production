@@ -213,7 +213,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                 const Expanded(child: SizedBox(height: 0)),
                 SvgPicture.asset(
                   redHeartSvgImage,
-                  color: redColor,
+                  color: lightPurpleColor,
                   height: 18.sp,
                   width: 18.sp,
                   fit: BoxFit.cover,
@@ -456,7 +456,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                 text: error,
                 fontFamily: "Clash Display Regular",
                 fontWeight: FontWeight.w400,
-                color: redColor,
+                color: lightPurpleColor,
                 fontSize: 12,
               ),
             ),

@@ -20,50 +20,51 @@ class CartAppbar extends StatefulWidget {
 }
 
 class _CartAppbarState extends State<CartAppbar> {
-  final controller = Get.put(CartController());
+  final CartController controller = Get.find<CartController>();
+
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 90.sp,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(color: statusBarColor),
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            InkWell(
-              onTap: () {
-                Get.back();
-              },
-              child: Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              InkWell(
+                onTap: () => Get.back(),
                 child: Padding(
                   padding: EdgeInsets.only(
-                      left: 16.sp, right: 12.sp, top: 48.sp, bottom: 10.sp),
-                  child: SvgPicture.asset(arrowBack,
-                      height: 15.sp, width: 15.sp, fit: BoxFit.cover),
-                ),
-              ),
-            ),
-            const Expanded(
-              child: SizedBox(
-                height: 0,
-              ),
-            ),
-            Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 40.sp),
-                  child: AppText(
-                    text: widget.text.toUpperCase(),
-                    fontFamily: "Clash Display Semibold",
-                    fontWeight: FontWeight.w600,
-                    color: appBarColor,
-                    fontSize: 16,
+                    left: 16.sp,
+                    right: 12.sp,
+                    top: 48.sp,
+                    bottom: 10.sp,
+                  ),
+                  child: SvgPicture.asset(
+                    arrowBack,
+                    height: 15.sp,
+                    width: 15.sp,
                   ),
                 ),
-                Obx(() => Padding(
+              ),
+              const Expanded(child: SizedBox()),
+              Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 40.sp),
+                    child: AppText(
+                      text: widget.text.toUpperCase(),
+                      fontFamily: "Clash Display Semibold",
+                      fontWeight: FontWeight.w600,
+                      color: appBarColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Obx(
+                    () => Padding(
                       padding: EdgeInsets.only(top: 1.sp),
                       child: controller.isOrder.value
                           ? DummyContainer(height: 8, width: 50)
@@ -76,30 +77,31 @@ class _CartAppbarState extends State<CartAppbar> {
                               color: subtitleColor,
                               fontSize: 10,
                             ),
-                    )),
-              ],
-            ),
-            const Expanded(
-              child: SizedBox(
-                height: 0,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            InkWell(
-              onTap: () {
-                widget.onPressedWishlist?.call();
-              },
-              child: Container(
+              const Expanded(child: SizedBox()),
+              InkWell(
+                onTap: () => widget.onPressedWishlist?.call(),
                 child: Padding(
                   padding: EdgeInsets.only(
-                      top: 40.sp, left: 16.sp, right: 19.sp, bottom: 5.sp),
-                  child: SvgPicture.asset(heartSvgImage,
-                      height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                    top: 40.sp,
+                    left: 16.sp,
+                    right: 19.sp,
+                    bottom: 5.sp,
+                  ),
+                  child: SvgPicture.asset(
+                    heartSvgImage,
+                    height: 18.sp,
+                    width: 18.sp,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ]),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

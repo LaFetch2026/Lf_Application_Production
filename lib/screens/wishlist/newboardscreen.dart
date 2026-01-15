@@ -155,7 +155,7 @@ class _NewBoardScreenState extends State<NewBoardScreen> {
                         text: wishlistController.boardError.value,
                         fontFamily: "Clash Display Regular",
                         fontWeight: FontWeight.w400,
-                        color: redColor,
+                        color: lightPurpleColor,
                         fontSize: 12,
                       ),
                     ),

@@ -613,7 +613,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                                 style:
                                                                     TextStyle(
                                                                   color:
-                                                                      redColor,
+                                                                      lightPurpleColor,
                                                                   fontSize:
                                                                       11.sp,
                                                                   fontFamily:

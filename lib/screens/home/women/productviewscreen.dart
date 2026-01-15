@@ -179,13 +179,30 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
       // ✅ Only load products if NOT in search mode
       if (widget.searchResults == null) {
-        // ✅ Use the SAME method with withLimit: false
-        final currentGender = productController.categoryFilter.value;
-        await productController.getHomeProduct(currentGender, withLimit: false);
-      }
+        // ✅ Check if we have a specific collectionId
+        final collectionId = productController.tagId.value;
 
-      // ✅ Load and track home products
-      _loadHomeProductsIfNeeded();
+        if (collectionId > 0) {
+          // ✅ NEW: Fetch products directly from /filter-products API for this collection
+          print("🔹 Loading products for collection $collectionId from API");
+          await catalogController.getFilterAndSortProducts(
+            superCatId: productController.categoryFilter.value,
+            collectionId: collectionId,
+            page: 1,
+            limit: 100, // Load all products for collection
+          );
+
+          _isProductsLoaded = true;
+          print("✅ Loaded ${catalogController.categoryProductList.length} products from API for collection $collectionId");
+        } else {
+          // ✅ Fallback: Use home products if no specific collection
+          final currentGender = productController.categoryFilter.value;
+          await productController.getHomeProduct(currentGender, withLimit: false);
+
+          // ✅ Load and track home products
+          _loadHomeProductsIfNeeded();
+        }
+      }
     });
 
     _clearPreferenceValue();
@@ -530,10 +547,12 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           // ===== GRID =====
           Expanded(
             child: Obx(() {
-              // ✅ Skip loading animation if search results are provided
+              // ✅ Show loading when fetching from API or home products
               final loading = widget.searchResults == null &&
                   (productController.isHomeProduct.value ||
-                      productController.isHandPicked.value);
+                      productController.isHandPicked.value ||
+                      catalogController.isSorting.value ||
+                      catalogController.isCategory.value);
 
               if (loading) {
                 return _buildSkeletonGrid();

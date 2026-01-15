@@ -134,13 +134,13 @@ class BottomSheetBoard extends StatelessWidget {
                       padding: EdgeInsets.only(right: 10.sp),
                       child: ImageIcon(
                         AssetImage(deleteBoardImage),
-                        color: redColor,
+                        color: lightPurpleColor,
                         size: 20.sp,
                       ),
                     ),
                     AppText(
                       text: "Delete board",
-                      color: redColor,
+                      color: lightPurpleColor,
                       fontSize: 16,
                       fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,

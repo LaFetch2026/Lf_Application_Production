@@ -683,7 +683,7 @@ class MapScreenState extends State<MapScreen> {
               child: Container(
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: redColor,
+                  color: lightPurpleColor,
                 ),
                 height: 10.sp,
                 width: 10.sp,

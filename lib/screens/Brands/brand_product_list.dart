@@ -51,7 +51,9 @@ class BrandProductList extends StatelessWidget {
                   return Column(
                     children: [
                       GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         onTap: () {
+                          print("🔵 [BrandProductList] Product tapped: ID=$id, Name=$name");
                           onPressed?.call(id, name);
                         },
                         child: AnimatedContainer(

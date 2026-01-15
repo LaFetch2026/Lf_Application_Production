@@ -167,7 +167,7 @@ class HorizontalCategoryList extends StatelessWidget {
                                         child: list[index]["wishlisted"]
                                             ? SvgPicture.asset(redHeartSvgImage,
                                                 // ignore: deprecated_member_use
-                                                color: redColor,
+                                                color: lightPurpleColor,
                                                 height: 12.sp,
                                                 width: 12.sp,
                                                 fit: BoxFit.cover)

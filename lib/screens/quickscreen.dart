@@ -213,8 +213,8 @@ class QuickScreenState extends State<QuickScreen> {
       onPopInvokedWithResult: (bool didPop, dynamic result) {
         if (!didPop) {
           Get.offAll(() => const BottomNavScreen(
-            index: 0,
-          ));
+                index: 0,
+              ));
         }
       },
       child: ImageFiltered(
@@ -532,7 +532,7 @@ class QuickScreenState extends State<QuickScreen> {
                                   AppText(
                                     text: "Please Turn on your device location",
                                     fontFamily: "Clash Display Regular",
-                                    color: redColor,
+                                    color: lightPurpleColor,
                                     fontSize: 12,
                                   ),
                                 ],
@@ -544,7 +544,7 @@ class QuickScreenState extends State<QuickScreen> {
                           )),
                     Obx(() => productController.locationText.isNotEmpty
                         ? Container(
-                            color: redColor,
+                            color: lightPurpleColor,
                             child: Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 16.sp, vertical: 4.sp),

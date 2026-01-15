@@ -810,7 +810,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
           imageUrl: firstImg,
           sizeLabel: sizeLabel,
           quantity: initialQuantity,
-          price: (productController.getDisplayPrice() * initialQuantity).toDouble(),
+          price: (productController.getDisplayPrice() * initialQuantity)
+              .toDouble(),
           mrp: (productController.getDisplayMrp() * initialQuantity).toDouble(),
           maxStock: stock,
           initialAddress:
@@ -1021,7 +1022,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             text: 'Only $sizeStock left',
                             fontFamily: "Clash Display Regular",
                             fontWeight: FontWeight.w400,
-                            color: redColor,
+                            color: lightPurpleColor,
                             fontSize: 10,
                           ),
                         ),
@@ -1128,7 +1129,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               'Only $stock left',
                               style: TextStyle(
                                 fontSize: 9.sp,
-                                color: redColor,
+                                color: lightPurpleColor,
                                 fontFamily: "Clash Display",
                               ),
                             ),
@@ -1885,7 +1886,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               .errorSizeMsg.value,
                                           fontFamily: "Clash Display Regular",
                                           fontWeight: FontWeight.w400,
-                                          color: redColor,
+                                          color: lightPurpleColor,
                                           fontSize: 14,
                                         ),
                                       ),
@@ -1954,7 +1955,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               .errorColorMsg.value,
                                           fontFamily: "Clash Display Regular",
                                           fontWeight: FontWeight.w400,
-                                          color: redColor,
+                                          color: lightPurpleColor,
                                           fontSize: 14,
                                         ),
                                       ),
@@ -2185,7 +2186,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           //           : '$maxStock available',
                                           //       fontFamily: "Clash Display Regular",
                                           //       fontWeight: FontWeight.w400,
-                                          //       color: maxStock <= 5 ? redColor : subtitleColor,
+                                          //       color: maxStock <= 5 ? lightPurpleColor : subtitleColor,
                                           //       fontSize: 12,
                                           //       maxLines: 1,
                                           //     ),
@@ -2394,7 +2395,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         isOk
                                             ? Icons.check_circle_outline
                                             : Icons.error_outline,
-                                        color: isOk ? Colors.green : Colors.red,
+                                        color: isOk ? purpleColor : purpleColor,
                                         size: 18.sp,
                                       ),
                                       SizedBox(width: 8.sp),
@@ -2403,9 +2404,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                           text: msg,
                                           fontFamily: "Clash Display Regular",
                                           fontWeight: FontWeight.w500,
-                                          color: isOk
-                                              ? Colors.green.shade700
-                                              : Colors.red,
+                                          color:
+                                              isOk ? purpleColor : purpleColor,
                                           fontSize: 13,
                                         ),
                                       ),

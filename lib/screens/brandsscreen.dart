@@ -11,12 +11,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
+import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 
 import '../common/widget/appbar/home_appbar.dart';
 import '../common/widget/lists/dummy_brand_list.dart';
+import '../common/widget/other/common_widget.dart';
 import '../common/widget/text/app_text.dart';
 import '../controllers/brand_controller.dart';
+import '../controllers/home_controller.dart';
+import '../controllers/product_controller.dart';
 import '../core/constant/constants.dart';
 import 'bottomnavscreen.dart';
 import 'cartscreen.dart';
@@ -42,6 +46,8 @@ class BrandsScreen extends StatefulWidget {
 
 class BrandsScreenState extends State<BrandsScreen> {
   final brandController = Get.put(BrandController());
+  final productController = Get.put(ProductController());
+  final homeController = Get.put(HomeController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   Timer? debounce;
   var brandDetails = {}.obs;
@@ -675,18 +681,39 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                   return GestureDetector(
                                                                                     onTap: () async {
                                                                                       try {
-                                                                                        brandController.brandlogo.value = brand["logo"];
-                                                                                        brandController.brandbackground.value = brand["background_image"] ?? "";
-                                                                                        brandController.brandName.value = brand["name"];
-                                                                                        brandController.showAllBrand.value = true;
-                                                                                        brandController.brandId.value = brand["id"];
+                                                                                        // ✅ Get product ID from the product
+                                                                                        final productId = product["id"];
+                                                                                        if (productId == null) {
+                                                                                          print("⚠️ Product ID is null, cannot navigate");
+                                                                                          return;
+                                                                                        }
 
-                                                                                        await brandController.getBrandDetails(brand["id"], "");
+                                                                                        // Show loading dialog
+                                                                                        Get.dialog(
+                                                                                          const Center(child: CircularProgressIndicator()),
+                                                                                          barrierDismissible: false,
+                                                                                        );
 
-                                                                                        await Get.to(() => AllBrandScreen(
-                                                                                              id: brand["id"],
-                                                                                              slug: "",
-                                                                                              screen: widget.screen ?? "",
+                                                                                        // ✅ Fetch product details
+                                                                                        await productController.getProductById(productId);
+
+                                                                                        // Close loading dialog
+                                                                                        if (Get.isDialogOpen ?? false) Get.back();
+
+                                                                                        // Check for errors
+                                                                                        final err = productController.errorMsg.value;
+                                                                                        if (err.isNotEmpty) {
+                                                                                          getSnackBar(err);
+                                                                                          return;
+                                                                                        }
+
+                                                                                        // ✅ Navigate to ProductDetailsScreen
+                                                                                        await Get.to(() => ProductDetailsScreen(
+                                                                                              expresshour: homeController.expressHour.value,
+                                                                                              backgroundcolor: whiteColor,
+                                                                                              brandName: brand["name"] ?? "",
+                                                                                              productId: productId,
+                                                                                              type: "add",
                                                                                             ));
 
                                                                                         SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -697,13 +724,15 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                         ));
 
                                                                                         await analytics.logEvent(
-                                                                                          name: 'brand_details',
+                                                                                          name: 'brandscreen_product_details',
                                                                                           parameters: {
-                                                                                            'page_name': 'brand_details'
+                                                                                            'page_name': 'brandscreen_product_details'
                                                                                           },
                                                                                         );
                                                                                       } catch (e) {
                                                                                         print("❌ Error on product tap: $e");
+                                                                                        // Close dialog if still open
+                                                                                        if (Get.isDialogOpen ?? false) Get.back();
                                                                                       }
                                                                                     },
                                                                                     child: Column(

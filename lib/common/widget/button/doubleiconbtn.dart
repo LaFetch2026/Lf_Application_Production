@@ -106,7 +106,7 @@ class DoubleIconButton extends StatelessWidget {
                             height: 18.sp,
                             color: secondIcon == heartSvgImage
                                 ? whiteColor
-                                : redColor,
+                                : lightPurpleColor,
                             width: 18.sp,
                             fit: BoxFit.cover),
                       ),

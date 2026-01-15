@@ -131,7 +131,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               text: profileController.nameError.value,
                               fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
-                              color: redColor,
+                              color: lightPurpleColor,
                               fontSize: 12,
                             ),
                           ),
@@ -155,7 +155,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               text: profileController.phoneError.value,
                               fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
-                              color: redColor,
+                              color: lightPurpleColor,
                               fontSize: 12,
                             ),
                           ),
@@ -208,7 +208,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               Obx(
                                 () {
                                   final defaultPinTheme = PinTheme(
-                                    width: (MediaQuery.of(context).size.width - 78) / 4,
+                                    width: (MediaQuery.of(context).size.width -
+                                            78) /
+                                        4,
                                     height: 56.sp,
                                     textStyle: const TextStyle(
                                       color: loginText,
@@ -224,7 +226,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                     ),
                                   );
 
-                                  final focusedPinTheme = defaultPinTheme.copyWith(
+                                  final focusedPinTheme =
+                                      defaultPinTheme.copyWith(
                                     decoration: BoxDecoration(
                                       color: whiteColor,
                                       border: Border.all(
@@ -246,7 +249,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                         focusedPinTheme: focusedPinTheme,
                                         submittedPinTheme: defaultPinTheme,
                                         autofocus: false,
-                                        separatorBuilder: (index) => SizedBox(width: 4.sp),
+                                        separatorBuilder: (index) =>
+                                            SizedBox(width: 4.sp),
                                         cursor: Container(
                                           width: 2,
                                           height: 24.sp,
@@ -257,8 +261,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                         },
                                         onCompleted: (pin) {
                                           otpController.otp.value = pin;
-                                          if (otpController.otp.value.length == 4) {
-                                            otpController.showButton.value = true;
+                                          if (otpController.otp.value.length ==
+                                              4) {
+                                            otpController.showButton.value =
+                                                true;
                                           }
                                         },
                                       ),
@@ -286,7 +292,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               text: profileController.emailError.value,
                               fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
-                              color: redColor,
+                              color: lightPurpleColor,
                               fontSize: 12,
                             ),
                           ),
@@ -343,7 +349,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               text: profileController.genderError.value,
                               fontFamily: "Clash Display Regular",
                               fontWeight: FontWeight.w400,
-                              color: redColor,
+                              color: lightPurpleColor,
                               fontSize: 12,
                             ),
                           ),

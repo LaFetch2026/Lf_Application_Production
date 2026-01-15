@@ -13,6 +13,9 @@ import '../screens/cartscreen.dart';
 
 import '../screens/loginscreen.dart';
 import '../services/cache_manager.dart';
+import '../models/collection_model.dart';
+import '../models/collection_extensions.dart';
+import '../models/collection_banner_model.dart';
 import 'base_controller.dart';
 
 class ProductController extends BaseController {
@@ -50,7 +53,8 @@ class ProductController extends BaseController {
   RxString returnPolicyDetails = "".obs;
   RxBool isRecommendations = false.obs;
   List tagsList = [].obs;
-  List homeProductList = [].obs;
+  RxList<CollectionModel> homeProductList = <CollectionModel>[].obs;
+  RxList<StandaloneCollectionBanner> collectionBanners = <StandaloneCollectionBanner>[].obs;
   List handPickedProductList = [].obs;
   List frequentlyProductList = [].obs;
   List tagProductList = [].obs;
@@ -599,27 +603,43 @@ class ProductController extends BaseController {
     }
   }
 
-  Future<void> getHomeProduct(int gender,
-      {bool withLimit = true, bool forceRefresh = false}) async {
-    // Map gender int to displayFor string
-    final displayFor = gender == 1 ? 'men' : gender == 2 ? 'women' : 'accessories';
-    final cacheKey = 'home_products_v3_${displayFor}_${withLimit ? "limited" : "all"}'; // v3: Fixed gender mapping and banner filtering
+  Future<void> getHomeProduct(
+    int gender, {
+    bool withLimit = true,
+    bool forceRefresh = false,
+  }) async {
+    // Map gender int to displayFor string (UI/banner filtering)
+    final displayFor = gender == 1
+        ? 'men'
+        : gender == 2
+            ? 'women'
+            : 'accessories';
 
-    // Try to load from cache first
+    final cacheKey =
+        'home_products_v4_${displayFor}_${withLimit ? "limited" : "all"}';
+
     if (!forceRefresh) {
       final cached = await CacheManager.get(key: cacheKey);
       if (cached != null && cached is List) {
-        homeProductList.clear();
-        homeProductList.assignAll(
-            List<Map<String, dynamic>>.from(cached.whereType<Map>()));
+        try {
+          final collections = cached
+              .whereType<Map<String, dynamic>>()
+              .map((json) => CollectionModel.fromJson(json))
+              .toList();
 
-        if (homeProductList.isNotEmpty) {
-          tagname.value = homeProductList.first['name']?.toString() ?? '';
+          homeProductList
+            ..clear()
+            ..assignAll(collections);
+
+          if (homeProductList.isNotEmpty) {
+            tagname.value = homeProductList.first.name;
+          }
+          print("✅ Loaded ${collections.length} collections from cache");
+          return;
+        } catch (e) {
+          print("⚠️ Error parsing cached collections: $e");
+          // Continue to fetch from API
         }
-
-        print(
-            "✅ Home products loaded from cache for displayFor: $displayFor (${homeProductList.length} collections)");
-        return;
       }
     }
 
@@ -630,15 +650,90 @@ class ProductController extends BaseController {
     final token = prefs.getString('token') ?? '';
 
     final base = ApiConstants.baseUrl;
+
+    /// ✅ API:
+    /// {{laFetchBaseUrl}}/collection-with-products?limit=true&gender=1
     final uri = Uri.parse("$base/collection-with-products").replace(
       queryParameters: {
-        'displayFor': displayFor,
         if (withLimit) 'limit': 'true',
+        'gender': gender.toString(), // 1=men, 2=women, 3=accessories
       },
     );
 
     try {
-      print("🔄 Fetching collections from: $uri");
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body);
+
+        // ✅ Parse with models
+        final collections = CollectionUtils.parseCollections(body['data']);
+
+        // ✅ Filter by gender and products
+        final validCollections = CollectionUtils.filterByGender(
+          collections,
+          displayFor,
+        );
+
+        homeProductList.assignAll(validCollections);
+
+        // ✅ Cache as JSON
+        await CacheManager.save(
+          key: cacheKey,
+          data: validCollections.map((c) => c.toJson()).toList(),
+        );
+
+        tagname.value =
+            validCollections.isNotEmpty ? validCollections.first.name : '';
+
+        print(
+            "✅ Loaded ${validCollections.length} collections for $displayFor");
+      } else {
+        homeProductList.clear();
+        print("❌ API Error: ${response.statusCode}");
+      }
+    } catch (e, stackTrace) {
+      print("❌ Error loading collections: $e");
+      print("Stack trace: $stackTrace");
+      homeProductList.clear();
+    } finally {
+      isHomeProduct.value = false;
+    }
+  }
+
+  /// Fetch collection banners from the API
+  Future<void> getCollectionBanners({bool forceRefresh = false}) async {
+    final cacheKey = 'collection_banners_v1';
+
+    // Try to load from cache first
+    if (!forceRefresh) {
+      final cached = await CacheManager.get(key: cacheKey);
+      if (cached != null && cached is List) {
+        try {
+          final banners = CollectionBannerUtils.parseBanners(cached);
+          collectionBanners.assignAll(banners);
+          print("✅ Loaded ${banners.length} collection banners from cache");
+          return;
+        } catch (e) {
+          print("⚠️ Error parsing cached banners: $e");
+        }
+      }
+    }
+
+    final base = ApiConstants.baseUrl;
+    final uri = Uri.parse("$base/collection-banners").replace(
+      queryParameters: {'status': 'true'},
+    );
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
 
       final response = await http.get(
         uri,
@@ -646,124 +741,42 @@ class ProductController extends BaseController {
           'Accept': 'application/json; charset=UTF-8',
           if (token.isNotEmpty) 'Authorization': 'Bearer $token',
         },
-      ).timeout(const Duration(seconds: 20));
+      );
 
       if (response.statusCode == 200) {
         final body = json.decode(response.body);
+        final banners = CollectionBannerUtils.parseBanners(body['data']);
 
-        final List<Map<String, dynamic>> data =
-            (body is Map && body['data'] is List)
-                ? List<Map<String, dynamic>>.from(
-                    (body['data'] as List).whereType<Map>())
-                : <Map<String, dynamic>>[];
+        collectionBanners.assignAll(banners);
 
-        // ✅ Filter out collections with no products and process
-        final List<Map<String, dynamic>> collectionsWithProducts = [];
+        // Cache the banners
+        await CacheManager.save(
+          key: cacheKey,
+          data: body['data'],
+        );
 
-        for (final c in data) {
-          // ✅ Extract products from productMaps array (new API structure)
-          List<dynamic> productsList = [];
-          if (c['productMaps'] is List) {
-            final productMaps = c['productMaps'] as List;
-            productsList = productMaps
-                .where((pm) => pm is Map && pm['product'] != null)
-                .map((pm) => pm['product'])
-                .toList();
-          }
-
-          // ✅ Fallback to direct products array if productMaps is empty
-          if (productsList.isEmpty && c['products'] is List) {
-            productsList = (c['products'] as List)
-                .whereType<Map>()
-                .toList();
-          }
-
-          // ✅ Skip collections with no products
-          if (productsList.isEmpty) {
-            print("⏭️ Skipping collection '${c['name']}' - no products");
-            continue;
-          }
-
-          // Transform each product to add display prices
-          final transformedProducts = productsList.map((p) {
-            if (p is! Map<String, dynamic>) return p;
-            return calculateDisplayPrices(p);
-          }).toList();
-
-          c['products'] = transformedProducts;
-
-          // ✅ Filter banners based on displayFor field and mobileImageUrl availability
-          List<dynamic> filteredBanners = [];
-          if (c['banners'] is List) {
-            final banners = c['banners'] as List;
-            filteredBanners = banners.where((banner) {
-              if (banner is! Map) return false;
-
-              // Check if banner matches displayFor (include "homepage" banners for all genders)
-              final bannerDisplayFor = banner['displayFor'];
-              if (bannerDisplayFor is! List) return false;
-
-              // Show banner if it contains the current gender OR "homepage"
-              final matchesGender = bannerDisplayFor.contains(displayFor);
-              final isHomepage = bannerDisplayFor.contains('homepage');
-
-              if (!matchesGender && !isHomepage) {
-                return false;
-              }
-
-              // ✅ Only include banners with valid mobileImageUrl
-              final mobileImageUrl = banner['mobileImageUrl'];
-              if (mobileImageUrl == null || mobileImageUrl.toString().trim().isEmpty) {
-                print("⏭️ Skipping banner ID ${banner['id']} - no mobileImageUrl");
-                return false;
-              }
-
-              return true;
-            }).map((banner) {
-              if (banner is Map<String, dynamic>) {
-                return {
-                  ...banner,
-                  'mobileImageUrl': banner['mobileImageUrl'],
-                };
-              }
-              return banner;
-            }).toList();
-          }
-
-          c['banners'] = filteredBanners;
-
-          collectionsWithProducts.add(c);
-          print(
-              "✅ Collection '${c['name']}': ${transformedProducts.length} products, ${filteredBanners.length} banners (filtered for $displayFor)");
-        }
-
-        // ✅ Cache the processed data
-        await CacheManager.save(key: cacheKey, data: collectionsWithProducts);
-
-        homeProductList.assignAll(collectionsWithProducts);
-
-        tagname.value = collectionsWithProducts.isNotEmpty
-            ? (collectionsWithProducts.first['name']?.toString() ?? '')
-            : '';
-
-        productsShuffleSeed ??= DateTime.now().millisecondsSinceEpoch;
-
-        print(
-            "✅ Collections loaded: ${homeProductList.length} (with products) for displayFor=$displayFor ${withLimit ? '(limited)' : '(all)'}");
+        print("✅ Loaded ${banners.length} collection banners from API");
       } else {
-        homeProductList.clear();
-        print(
-            "❌ Collections load failed: ${response.statusCode} ${response.reasonPhrase}");
+        collectionBanners.clear();
+        print("❌ Banner API Error: ${response.statusCode}");
       }
-    } on TimeoutException {
-      homeProductList.clear();
-      print("⏱️ Request timed out for $uri");
-    } catch (e) {
-      homeProductList.clear();
-      print("❌ Error fetching collections: $e");
-    } finally {
-      isHomeProduct.value = false;
+    } catch (e, stackTrace) {
+      print("❌ Error loading collection banners: $e");
+      print("Stack trace: $stackTrace");
+      collectionBanners.clear();
     }
+  }
+
+  /// Get banners for a specific collection and display type
+  List<StandaloneCollectionBanner> getBannersForCollection(
+    int collectionId,
+    String displayType,
+  ) {
+    return CollectionBannerUtils.filterBannersForCollection(
+      collectionBanners,
+      collectionId,
+      displayType,
+    );
   }
 
   /// Calculate minimum variant price and MRP for display in product lists

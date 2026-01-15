@@ -43,7 +43,7 @@ class SupportWidgets extends StatelessWidget {
           padding: EdgeInsets.only(top: 40.sp, left: 16.sp, right: 16.sp),
           child: AppText(
             text: "Support",
-            fontFamily: "Clash Display Bold",
+            fontFamily: "Clash Display SemiBold",
             fontWeight: FontWeight.w700,
             color: nameText,
             fontSize: 18,

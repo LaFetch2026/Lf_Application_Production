@@ -42,25 +42,18 @@ class WishlistAppbar extends StatefulWidget {
 }
 
 class _WishlistAppbarState extends State<WishlistAppbar> {
-  final controller = Get.put(CartController());
+  final CartController controller = Get.find<CartController>();
 
   void _handleBack() {
-    // If user passed a custom back callback, use that
     if (widget.onPressedBack != null) {
       widget.onPressedBack!();
       return;
     }
 
-    // Safely pop: only if navigator can pop
-    final canPop = Get.key.currentState?.canPop() ?? false;
-
-    if (canPop) {
-      Get.off(() => BottomNavScreen());
+    if (Get.key.currentState?.canPop() ?? false) {
+      Get.back();
     } else {
-      // Root screen: either do nothing or close the app.
-      // If you want to close app on root back button, uncomment:
-      // SystemNavigator.pop();
-      // For now, we just do nothing to avoid crash.
+      Get.offAll(() => BottomNavScreen());
     }
   }
 
@@ -86,8 +79,6 @@ class _WishlistAppbarState extends State<WishlistAppbar> {
                   ),
                 ),
               ),
-
-            /// Title (hand picked)
             if (widget.isHandPicked)
               Expanded(
                 child: AppText(
@@ -99,20 +90,14 @@ class _WishlistAppbarState extends State<WishlistAppbar> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-
             const Spacer(),
-
-            /// Logo
             if (!widget.isHandPicked)
               Image.asset(
                 lafetchLogoImage,
                 color: homeAppBarColor,
                 height: 25.sp,
               ),
-
             const Spacer(),
-
-            /// Search icon
             InkWell(
               onTap: () => widget.onPressedSearch?.call(),
               child: Padding(
@@ -124,8 +109,6 @@ class _WishlistAppbarState extends State<WishlistAppbar> {
                 ),
               ),
             ),
-
-            /// Heart icon
             if (widget.isWishlist)
               InkWell(
                 onTap: () => widget.onPressedHeart?.call(),
@@ -138,42 +121,6 @@ class _WishlistAppbarState extends State<WishlistAppbar> {
                   ),
                 ),
               ),
-
-            /// Cart icon with count
-            // if (widget.isCart)
-            //   InkWell(
-            //     onTap: () => widget.onPressedCart?.call(),
-            //     child: Padding(
-            //       padding: EdgeInsets.all(8.sp),
-            //       child: Stack(
-            //         children: [
-            //           SvgPicture.asset(
-            //             cartSvgImage,
-            //             height: 18.sp,
-            //             width: 18.sp,
-            //           ),
-            //           Obx(
-            //             () => controller.cartTotalValue.value != 0
-            //                 ? Positioned(
-            //                     right: 0,
-            //                     child: CircleAvatar(
-            //                       radius: 5.sp,
-            //                       backgroundColor: homeAppBarColor,
-            //                       child: Text(
-            //                         controller.cartTotalValue.value.toString(),
-            //                         style: TextStyle(
-            //                           fontSize: 8.sp,
-            //                           color: whiteColor,
-            //                         ),
-            //                       ),
-            //                     ),
-            //                   )
-            //                 : const SizedBox.shrink(),
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
           ],
         ),
       ),

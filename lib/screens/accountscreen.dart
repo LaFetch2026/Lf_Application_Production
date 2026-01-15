@@ -239,14 +239,21 @@ class AccountScreenState extends State<AccountScreen> {
                                             const Expanded(child: SizedBox()),
                                             GestureDetector(
                                               onTap: () async {
-                                                final profileData =
-                                                    controller.profileDetails.value ?? {};
+                                                final profileData = controller
+                                                        .profileDetails.value ??
+                                                    {};
 
                                                 Get.to(EditProfileScreen(
-                                                  name: profileData['fullName'] ?? '',
-                                                  email: profileData['email'] ?? '',
-                                                  number: profileData['phone'] ?? '',
-                                                  genderId: controller.genderId.value,
+                                                  name:
+                                                      profileData['fullName'] ??
+                                                          '',
+                                                  email: profileData['email'] ??
+                                                      '',
+                                                  number:
+                                                      profileData['phone'] ??
+                                                          '',
+                                                  genderId:
+                                                      controller.genderId.value,
                                                 ))?.then((value) {
                                                   SystemChrome
                                                       .setSystemUIOverlayStyle(
@@ -286,7 +293,7 @@ class AccountScreenState extends State<AccountScreen> {
                                       top: 10.sp, left: 16.sp, right: 16.sp),
                                   child: AppText(
                                     text: "My Account",
-                                    fontFamily: "Clash Display Bold",
+                                    fontFamily: "Clash Display SemiBold",
                                     fontWeight: FontWeight.w700,
                                     color: nameText,
                                     fontSize: 18,
@@ -521,9 +528,9 @@ class AccountScreenState extends State<AccountScreen> {
                                       top: 60.sp, bottom: 20.sp),
                                   child: SingleButton(
                                     label: "Logout",
-                                    textColor: redColor,
+                                    textColor: lightPurpleColor,
                                     backgroundColor: whiteColor,
-                                    borderColor: redColor,
+                                    borderColor: lightPurpleColor,
                                     onPressed: () {
                                       showDialog(
                                         barrierColor: Colors.black26,

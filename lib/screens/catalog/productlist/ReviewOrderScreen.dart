@@ -689,7 +689,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                   backgroundColor:
                       _hasDiscount ? Colors.transparent : homeAppBarColor,
                   side: BorderSide(
-                    color: _hasDiscount ? redColor : btnTextColor,
+                    color: _hasDiscount ? lightPurpleColor : btnTextColor,
                     width: 1.sp,
                   ),
                   padding: EdgeInsets.zero,
@@ -697,7 +697,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                 child: Text(
                   _hasDiscount ? "REMOVE" : "SELECT",
                   style: TextStyle(
-                    color: _hasDiscount ? redColor : whiteColor,
+                    color: _hasDiscount ? lightPurpleColor : whiteColor,
                     fontSize: 12.sp,
                     fontFamily: "Clash Display",
                     fontWeight: FontWeight.w500,

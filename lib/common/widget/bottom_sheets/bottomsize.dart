@@ -173,7 +173,7 @@ class BottomSizeState extends State<BottomSize> {
                                               '${i['stocks'].toString()} left',
                                           fontFamily: "Clash Display Regular",
                                           fontWeight: FontWeight.w400,
-                                          color: redColor,
+                                          color: lightPurpleColor,
                                           fontSize: 11,
                                         ),
                                       )
@@ -184,7 +184,7 @@ class BottomSizeState extends State<BottomSize> {
                       text: 'N/A',
                       fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
-                      color: redColor,
+                      color: lightPurpleColor,
                       fontSize: 11,
                     ),
             ),
