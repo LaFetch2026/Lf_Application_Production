@@ -54,7 +54,8 @@ class ProductController extends BaseController {
   RxBool isRecommendations = false.obs;
   List tagsList = [].obs;
   RxList<CollectionModel> homeProductList = <CollectionModel>[].obs;
-  RxList<StandaloneCollectionBanner> collectionBanners = <StandaloneCollectionBanner>[].obs;
+  RxList<StandaloneCollectionBanner> collectionBanners =
+      <StandaloneCollectionBanner>[].obs;
   List handPickedProductList = [].obs;
   List frequentlyProductList = [].obs;
   List tagProductList = [].obs;
@@ -1844,6 +1845,106 @@ class ProductController extends BaseController {
       getSnackBar("Error loading coupons");
     } finally {
       isCoupons.value = false;
+    }
+  }
+
+  /// ✅ Validate promo code via API
+  Future<Map<String, dynamic>?> validatePromoCode({
+    required String code,
+    required num cartTotal,
+  }) async {
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    print("🎟️ VALIDATING PROMO CODE");
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    print("   Code: $code");
+    print("   Cart Total: ₹$cartTotal");
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+
+    final uri = Uri.parse("${ApiConstants.baseUrl}/promo/validate");
+
+    try {
+      final body = {
+        "code": code,
+        "cartTotal": cartTotal,
+      };
+
+      print("   Request Body: $body");
+
+      final response = await http
+          .post(
+            uri,
+            headers: {
+              'Accept': 'application/json; charset=UTF-8',
+              'Content-Type': 'application/json; charset=UTF-8',
+              if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+            },
+            body: json.encode(body),
+          )
+          .timeout(const Duration(seconds: 20));
+
+      print("   Response Status: ${response.statusCode}");
+      print("   Response Body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body);
+
+        if (decoded is Map && decoded['data'] is Map) {
+          final data = Map<String, dynamic>.from(decoded['data']);
+
+          print("   ✅ Promo Valid");
+          print("   Promo Type: ${data['promoType']}");
+          print("   Discount Value: ${data['discountValue']}");
+          print("   Max Discount Cap: ${data['maxDiscountCap']}");
+          print("   Min Cart Value: ${data['minCartValue']}");
+          print("   Free Shipping: ${data['freeShipping']}");
+          print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+
+          return data;
+        } else {
+          print("   ❌ Unexpected response structure");
+          print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+          return null;
+        }
+      } else if (response.statusCode == 400) {
+        final decoded = json.decode(response.body);
+        final message = decoded['message'] ?? 'Invalid promo code';
+        print("   ❌ Validation Failed: $message");
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+        getSnackBar(message);
+        return null;
+      } else if (response.statusCode == 401) {
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+        getSnackBar("Authentication failed");
+        return null;
+      } else if (response.statusCode == 404) {
+        print("   ❌ Promo code not found");
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+        getSnackBar("Invalid or expired promo code");
+        return null;
+      } else if (response.statusCode == 500) {
+        print("   ❌ Server error");
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+        getSnackBar("Server error. Please try again.");
+        return null;
+      } else {
+        print("   ❌ Unexpected status: ${response.statusCode}");
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+        getSnackBar("Failed to validate promo code");
+        return null;
+      }
+    } on TimeoutException {
+      print("   ❌ Request timeout");
+      print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+      getSnackBar("Request timed out. Please try again.");
+      return null;
+    } catch (e, stacktrace) {
+      print("   ❌ Error: $e");
+      print("   Stack trace: $stacktrace");
+      print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+      getSnackBar("Error validating promo code");
+      return null;
     }
   }
 

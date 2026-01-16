@@ -227,7 +227,7 @@ class _BottomCouponState extends State<BottomCoupon> {
                                 AppText(
                                   text:
                                       "₹${coupon["maxDiscountCap"] ?? coupon["discountAmount"] ?? "0"}",
-                                  color: const Color(0xff059669),
+                                  color: const Color(0xFFB57EDC),
                                   fontSize: 12,
                                   fontFamily: "Clash Display Semibold",
                                 ),

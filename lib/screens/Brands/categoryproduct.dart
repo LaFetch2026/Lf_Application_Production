@@ -1691,7 +1691,7 @@ class _ProductTileNoOverflow extends StatelessWidget {
                     fontSize: 10,
                     fontFamily: "Clash Display",
                     fontWeight: FontWeight.w500,
-                    color: Colors.green[700],
+                    color: const Color(0xFF9575CD),
                   ),
                 ),
             ],

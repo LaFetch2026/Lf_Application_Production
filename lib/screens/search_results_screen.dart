@@ -521,7 +521,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                                     fontSize: 10.sp,
                                                     fontFamily: "Clash Display",
                                                     fontWeight: FontWeight.w500,
-                                                    color: Colors.green[700],
+                                                    color: const Color(0xFF9575CD),
                                                   ),
                                                 ),
                                               ),

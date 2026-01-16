@@ -596,7 +596,7 @@
 //                                                                           decoration:
 //                                                                               BoxDecoration(
 //                                                                             color:
-//                                                                                 lightGreen,
+//                                                                                 lightLavender,
 //                                                                             borderRadius:
 //                                                                                 BorderRadius.circular(20.sp),
 //                                                                             border:
@@ -621,7 +621,7 @@
 //                                                                                 child: AppText(
 //                                                                                   text: "${value.orderList[index]["status_details"]}".capitalize!,
 //                                                                                   //Delivered
-//                                                                                   color: deepGreen,
+//                                                                                   color: deepLavender,
 //                                                                                   fontSize: 12,
 //                                                                                   fontFamily: "Clash Display",
 //                                                                                   fontWeight: FontWeight.w500,
@@ -1059,7 +1059,7 @@
 //                                                                           decoration:
 //                                                                               BoxDecoration(
 //                                                                             color:
-//                                                                                 lightGreen,
+//                                                                                 lightLavender,
 //                                                                             borderRadius:
 //                                                                                 BorderRadius.circular(20.sp),
 //                                                                             border:
@@ -1075,7 +1075,7 @@
 //                                                                                 padding: EdgeInsets.symmetric(horizontal: 2.sp),
 //                                                                                 child: ImageIcon(
 //                                                                                   AssetImage(checkImage),
-//                                                                                   color: deepGreen,
+//                                                                                   color: deepLavender,
 //                                                                                   size: 14.sp,
 //                                                                                 ),
 //                                                                               ),
@@ -1084,7 +1084,7 @@
 //                                                                                 child: AppText(
 //                                                                                   text: "${value.orderList[index]["status_details"]}".capitalize!,
 //                                                                                   //Approved
-//                                                                                   color: deepGreen,
+//                                                                                   color: deepLavender,
 //                                                                                   fontSize: 12,
 //                                                                                   fontFamily: "Clash Display",
 //                                                                                   fontWeight: FontWeight.w500,

@@ -189,11 +189,11 @@ class LoginController extends BaseController {
 
         getSnackBar("OTP sent successfully!");
       } else {
-        final errorField = isLogin ? loginError : registerError;
-        errorField.value = data['errors']?['phone']?.first ??
+        // ✅ Show error only in snackbar, not below text field
+        final errorMessage = data['errors']?['phone']?.first ??
             data['message'] ??
             "Error sending OTP";
-        getSnackBar(errorField.value);
+        getSnackBar(errorMessage);
       }
     } catch (e) {
       getSnackBar("Network error: $e");
@@ -291,9 +291,23 @@ class LoginController extends BaseController {
 
   void _mapGenderToPrefs(String gender, SharedPreferences prefs) {
     final g = gender.toLowerCase();
-    if (g == 'male') prefs.setInt('gender', 1);
-    if (g == 'female') prefs.setInt('gender', 2);
-    if (g == 'non-binary') prefs.setInt('gender', 3);
+    int genderId = 0;
+
+    if (g == 'male') {
+      genderId = 1;
+      prefs.setInt('gender', 1);
+      prefs.setInt('selectedGender', 1); // Men tab
+    } else if (g == 'female') {
+      genderId = 2;
+      prefs.setInt('gender', 2);
+      prefs.setInt('selectedGender', 2); // Women tab
+    } else if (g == 'non-binary') {
+      genderId = 3;
+      prefs.setInt('gender', 3);
+      prefs.setInt('selectedGender', 1); // Default to Men tab
+    }
+
+    print("✅ Login: Gender saved - $gender (ID: $genderId, HomeTab: ${prefs.getInt('selectedGender')})");
   }
 
   Future<void> callResendOtp(String phone) async {

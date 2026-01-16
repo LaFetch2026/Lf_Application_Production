@@ -91,10 +91,11 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen> {
 
             /// BODY
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+              child: AutofillGroup(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                     Padding(
                       padding: EdgeInsets.only(top: 40.sp, left: 16.sp),
                       child: AppText(
@@ -180,8 +181,13 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen> {
                           autofocus: true,
                           keyboardType: TextInputType.number,
                           textInputAction: TextInputAction.done,
-                          autofillHints: const [AutofillHints.oneTimeCode],
+                          // ✅ Enhanced auto-fill support for iOS & Android
+                          autofillHints: const [
+                            AutofillHints.oneTimeCode,
+                          ],
                           enableSuggestions: true,
+                          // ✅ Enable paste from clipboard for OTP
+                          useNativeKeyboard: true,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           defaultPinTheme: defaultPinTheme,
                           focusedPinTheme: focusedPinTheme,
@@ -201,6 +207,7 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen> {
                             }
                           },
                           onCompleted: (code) {
+                            // ✅ Auto-verify when OTP is auto-filled or manually entered
                             if (otpController.checkOtpValidation(code)) {
                               otpController.callVerifyOtp(widget.phoneMunber);
                             }
@@ -226,6 +233,7 @@ class _OTPVerficationScreenState extends State<OTPVerficationScreen> {
                           : const SizedBox.shrink(),
                     ),
                   ],
+                ),
                 ),
               ),
             ),

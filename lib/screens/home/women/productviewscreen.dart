@@ -760,7 +760,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                     fontSize: 10.sp,
                                                     fontFamily: "Clash Display",
                                                     fontWeight: FontWeight.w500,
-                                                    color: Colors.green[700],
+                                                    color: const Color(0xFF9575CD),
                                                   ),
                                                 ),
                                               ),

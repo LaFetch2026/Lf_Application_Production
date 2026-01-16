@@ -76,9 +76,15 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   Razorpay? _rzp;
   Map<String, dynamic>? _address;
 
-  // --- coupon state (matches CartScreen semantics) ---
-  String _couponCode = "Apply Coupon";
-  bool _hasDiscount = false;
+  // --- Promo Code state (manual entry) ---
+  final TextEditingController _promoCodeController = TextEditingController();
+  String _promoCode = "";
+  bool _hasPromo = false;
+  num _promoDiscount = 0;
+
+  // --- Coupon state (from available coupons list) ---
+  String _couponCode = "";
+  bool _hasCoupon = false;
   num _couponDiscount = 0;
 
   // --- quantity state ---
@@ -112,11 +118,14 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     print("      _totalPrice = ${widget.price} × $_selectedQuantity");
     print("      Selling Price: ₹$sellingPrice");
 
-    // Apply coupon on selling
-    final num discountedPrice = sellingPrice - _couponDiscount;
-    print("\n   Step 2 - Apply Coupon:");
+    // Apply promo + coupon discounts
+    final num totalDiscount = _promoDiscount + _couponDiscount;
+    final num discountedPrice = sellingPrice - totalDiscount;
+    print("\n   Step 2 - Apply Discounts:");
+    print("      Promo Discount: ₹$_promoDiscount");
     print("      Coupon Discount: ₹$_couponDiscount");
-    print("      Discounted Price = $sellingPrice - $_couponDiscount");
+    print("      Total Discount: ₹$totalDiscount");
+    print("      Discounted Price = $sellingPrice - $totalDiscount");
     print("      Discounted Price: ₹$discountedPrice");
 
     // Final total = discounted price + delivery + convenience
@@ -169,19 +178,40 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
 
   Future<void> _restoreCouponFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    final savedCode = prefs.getString('applied_coupon_code');
-    final savedDiscount = prefs.getInt('applied_coupon_discount');
-    if (savedCode != null && savedDiscount != null && savedDiscount > 0) {
+
+    // Restore promo code
+    final savedPromoCode = prefs.getString('applied_promo_code');
+    final savedPromoDiscount = prefs.getInt('applied_promo_discount');
+    if (savedPromoCode != null &&
+        savedPromoDiscount != null &&
+        savedPromoDiscount > 0) {
       setState(() {
-        _couponCode = savedCode;
-        _couponDiscount = savedDiscount;
-        _hasDiscount = true;
+        _promoCode = savedPromoCode;
+        _promoDiscount = savedPromoDiscount;
+        _hasPromo = true;
+        _promoCodeController.text = savedPromoCode;
       });
+      print("✓ Restored promo: $_promoCode (₹$_promoDiscount)");
+    }
+
+    // Restore coupon
+    final savedCouponCode = prefs.getString('applied_coupon_code');
+    final savedCouponDiscount = prefs.getInt('applied_coupon_discount');
+    if (savedCouponCode != null &&
+        savedCouponDiscount != null &&
+        savedCouponDiscount > 0) {
+      setState(() {
+        _couponCode = savedCouponCode;
+        _couponDiscount = savedCouponDiscount;
+        _hasCoupon = true;
+      });
+      print("✓ Restored coupon: $_couponCode (₹$_couponDiscount)");
     }
   }
 
   @override
   void dispose() {
+    _promoCodeController.dispose();
     try {
       _rzp?.clear();
     } catch (_) {}
@@ -316,10 +346,14 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
         (unitPrice * _selectedQuantity) + gstAmount - discount;
     print("      Item Total: ₹$itemTotal");
     print("");
-    print("   🎟️ Coupon Details:");
-    print("      Coupon Code: $_couponCode");
+    print("   🎟️ Promo Code Details:");
+    print("      Promo Code: ${_hasPromo ? _promoCode : 'None'}");
+    print("      Promo Discount: ₹$_promoDiscount");
+    print("");
+    print("   🎫 Coupon Details:");
+    print("      Coupon Code: ${_hasCoupon ? _couponCode : 'None'}");
     print("      Coupon Discount: ₹$_couponDiscount");
-    print("      Has Discount: $_hasDiscount");
+    print("      Total Savings: ₹${_promoDiscount + _couponDiscount}");
 
     // ✅ Create item using helper method
     print("\n   📦 Creating Order Item...");
@@ -372,11 +406,16 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     print("\n💳 STEP 7: Initiating Payment");
     print("   Calling orderController.initiatePayment...");
     print("   Parameters:");
+    // ✅ Calculate total discount (promo + coupon)
+    final num totalDiscount = _promoDiscount + _couponDiscount;
+
     print("      userId: $userId");
     print("      shippingAddressId: $shippingAddressId");
     print("      items count: ${[orderItem].length}");
     print("      totalMRP: ${widget.mrp}");
+    print("      promoDiscount: $_promoDiscount");
     print("      couponDiscount: $_couponDiscount");
+    print("      totalDiscount: $totalDiscount");
     print("      tax: $gstAmount");
     print("      total: $payable");
     print("      paymentMethod: prepaid");
@@ -386,7 +425,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
       shippingAddressId: shippingAddressId,
       items: [orderItem],
       totalMRP: widget.mrp,
-      couponDiscount: _couponDiscount,
+      couponDiscount: totalDiscount, // Total of promo + coupon
       tax: gstAmount,
       total: payable,
       paymentMethod: "prepaid",
@@ -605,182 +644,499 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
         type: SnackBarType.info);
   }
 
-  // ================= Coupon section (CartScreen rules) =================
+  // ================= Coupon/Promo Code Section =================
   Widget _buildCouponSection() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 24.sp, horizontal: 16.sp),
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          border: Border.all(color: borderColor, width: 1.sp),
-          borderRadius: BorderRadius.circular(4),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 8.sp),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              couponSvgImage,
-              color: titleColor,
-              height: 20.sp,
-              width: 20.sp,
+      padding: EdgeInsets.symmetric(vertical: 16.sp, horizontal: 16.sp),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ✅ Section 1: Manual Promo Code Entry
+          const AppText(
+            text: "HAVE A PROMO CODE?",
+            fontFamily: "Clash Display",
+            fontWeight: FontWeight.w500,
+            color: homeAppBarColor,
+            fontSize: 12,
+          ),
+          SizedBox(height: 8.sp),
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              border: Border.all(color: borderColor, width: 1.sp),
+              borderRadius: BorderRadius.circular(4),
             ),
-            SizedBox(width: 8.sp),
-            Expanded(
-              child: Text(
-                _couponCode,
-                style: TextStyle(
-                  fontFamily: "Clash Display Regular",
-                  fontWeight: FontWeight.w500,
-                  color: titleColor,
-                  fontSize: 14.sp,
+            padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 4.sp),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _promoCodeController,
+                    decoration: InputDecoration(
+                      hintText: "Enter promo code",
+                      hintStyle: TextStyle(
+                        fontFamily: "Clash Display Regular",
+                        fontSize: 14.sp,
+                        color: subtitleColor,
+                      ),
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(vertical: 8.sp),
+                    ),
+                    style: TextStyle(
+                      fontFamily: "Clash Display Regular",
+                      fontSize: 14.sp,
+                      color: titleColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textCapitalization: TextCapitalization.characters,
+                    enabled: !_hasPromo,
+                  ),
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                SizedBox(width: 8.sp),
+                SizedBox(
+                  width: 80.sp,
+                  height: 32.sp,
+                  child: ElevatedButton(
+                    onPressed: _hasPromo
+                        ? _removePromoCode
+                        : () {
+                            final code = _promoCodeController.text.trim();
+                            if (code.isEmpty) {
+                              showAppSnackBar("Please enter a promo code",
+                                  type: SnackBarType.warning);
+                              return;
+                            }
+                            _applyPromoCode(code);
+                          },
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor:
+                          _hasPromo ? Colors.transparent : homeAppBarColor,
+                      side: BorderSide(
+                        color: _hasPromo ? lightPurpleColor : btnTextColor,
+                        width: 1.sp,
+                      ),
+                      padding: EdgeInsets.zero,
+                    ),
+                    child: Text(
+                      _hasPromo ? "REMOVE" : "APPLY",
+                      style: TextStyle(
+                        color: _hasPromo ? lightPurpleColor : whiteColor,
+                        fontSize: 12.sp,
+                        fontFamily: "Clash Display",
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // ✅ Show applied promo info
+          if (_hasPromo)
+            Padding(
+              padding: EdgeInsets.only(top: 8.sp),
+              child: Row(
+                children: [
+                  const Icon(Icons.check_circle,
+                      color: lightPurpleColor, size: 16),
+                  SizedBox(width: 6.sp),
+                  Expanded(
+                    child: AppText(
+                      text:
+                          "$_promoCode applied! You saved ₹${formatAmount(_promoDiscount)}",
+                      fontFamily: "Clash Display Regular",
+                      fontWeight: FontWeight.w500,
+                      color: lightPurpleColor,
+                      fontSize: 12,
+                      maxLines: 1,
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(width: 8.sp),
-            SizedBox(
-              width: 90.sp,
-              height: 30.sp,
-              child: ElevatedButton(
-                onPressed: () async {
-                  if (_hasDiscount) {
-                    _removeAppliedCoupon();
-                    return;
-                  }
 
-                  await productController.getCoupons();
-                  if (productController.couponList.isEmpty) {
-                    showAppSnackBar("No coupons available right now",
-                        type: SnackBarType.info);
-                    return;
-                  }
-
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(16)),
-                    ),
-                    builder: (ctx) {
-                      return FractionallySizedBox(
-                        heightFactor: 0.7,
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(16)),
-                          child: BottomCoupon(
-                            list: productController.couponList,
-                            backColor: whiteColor,
-                            onPressed: (code) {
-                              Navigator.pop(ctx);
-                              _applyCoupon(code);
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  backgroundColor:
-                      _hasDiscount ? Colors.transparent : homeAppBarColor,
-                  side: BorderSide(
-                    color: _hasDiscount ? lightPurpleColor : btnTextColor,
-                    width: 1.sp,
-                  ),
-                  padding: EdgeInsets.zero,
-                ),
-                child: Text(
-                  _hasDiscount ? "REMOVE" : "SELECT",
-                  style: TextStyle(
-                    color: _hasDiscount ? lightPurpleColor : whiteColor,
-                    fontSize: 12.sp,
+          // ✅ Divider with OR
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.sp),
+            child: Row(
+              children: [
+                Expanded(
+                    child: Divider(color: colorSecondary, thickness: 1.sp)),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12.sp),
+                  child: const AppText(
+                    text: "OR",
                     fontFamily: "Clash Display",
                     fontWeight: FontWeight.w500,
+                    color: subtitleColor,
+                    fontSize: 12,
                   ),
+                ),
+                Expanded(
+                    child: Divider(color: colorSecondary, thickness: 1.sp)),
+              ],
+            ),
+          ),
+
+          // ✅ Section 2: Select from Available Coupons
+          const AppText(
+            text: "SELECT FROM AVAILABLE COUPONS",
+            fontFamily: "Clash Display",
+            fontWeight: FontWeight.w500,
+            color: homeAppBarColor,
+            fontSize: 12,
+          ),
+          SizedBox(height: 8.sp),
+          GestureDetector(
+            onTap: () async {
+              await productController.getCoupons();
+              if (productController.couponList.isEmpty) {
+                showAppSnackBar("No coupons available right now",
+                    type: SnackBarType.info);
+                return;
+              }
+
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                builder: (ctx) {
+                  return FractionallySizedBox(
+                    heightFactor: 0.7,
+                    child: ClipRRect(
+                      borderRadius:
+                          const BorderRadius.vertical(top: Radius.circular(16)),
+                      child: BottomCoupon(
+                        list: productController.couponList,
+                        backColor: whiteColor,
+                        onPressed: (code) {
+                          Navigator.pop(ctx);
+                          // Don't fill promo code field - this is a separate coupon!
+                          _applyCoupon(code);
+                        },
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: whiteColor,
+                border: Border.all(
+                  color: homeAppBarColor,
+                  width: 1.sp,
+                ),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 12.sp),
+              child: Row(
+                children: [
+                  SvgPicture.asset(
+                    couponSvgImage,
+                    color: homeAppBarColor,
+                    height: 20.sp,
+                    width: 20.sp,
+                  ),
+                  SizedBox(width: 10.sp),
+                  Expanded(
+                    child: AppText(
+                      text: "View all available coupons",
+                      fontFamily: "Clash Display Regular",
+                      fontWeight: FontWeight.w500,
+                      color: titleColor,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 14.sp,
+                    color: titleColor,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // ✅ Show applied coupon info
+          if (_hasCoupon)
+            Padding(
+              padding: EdgeInsets.only(top: 12.sp),
+              child: Container(
+                padding: EdgeInsets.all(10.sp),
+                decoration: BoxDecoration(
+                  color: const Color(0xffEFF6FF),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: lightPurpleColor,
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.check_circle,
+                        color: lightPurpleColor, size: 18),
+                    SizedBox(width: 8.sp),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppText(
+                            text: "Coupon: $_couponCode",
+                            fontFamily: "Clash Display",
+                            fontWeight: FontWeight.w600,
+                            color: lightPurpleColor,
+                            fontSize: 13,
+                          ),
+                          AppText(
+                            text: "You saved ₹${formatAmount(_couponDiscount)}",
+                            fontFamily: "Clash Display Regular",
+                            fontWeight: FontWeight.w500,
+                            color: lightPurpleColor,
+                            fontSize: 11,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 8.sp),
+                    GestureDetector(
+                      onTap: _removeCoupon,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 8.sp, vertical: 4.sp),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: lightPurpleColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const AppText(
+                          text: "REMOVE",
+                          fontFamily: "Clash Display",
+                          fontWeight: FontWeight.w600,
+                          color: lightPurpleColor,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
 
-  Future<void> _applyCoupon(String code) async {
+  // ✅ Apply Promo Code (Manual Entry)
+  Future<void> _applyPromoCode(String code) async {
     try {
-      if (productController.couponList.isEmpty) {
-        await productController.getCoupons();
+      print("\n🎟️ ═══════════════════════════════════════════════════");
+      print("🎟️ APPLYING PROMO CODE - ReviewOrderScreen");
+      print("🎟️ ═══════════════════════════════════════════════════");
+      print("   Code: $code");
+
+      final num cartTotal = _totalPrice;
+      print("   Cart Total: ₹$cartTotal");
+
+      final promoData = await productController.validatePromoCode(
+        code: code,
+        cartTotal: cartTotal,
+      );
+
+      if (promoData == null) {
+        print("   ❌ Promo validation failed");
+        print("🎟️ ═══════════════════════════════════════════════════\n");
+        return;
       }
 
-      final coupon = productController.couponList.firstWhere(
+      final String promoType = promoData['promoType'] ?? '';
+      final num discountValue = _asNum(promoData['discountValue']);
+      final num maxDiscountCap = _asNum(promoData['maxDiscountCap']);
+
+      num finalDiscount = 0;
+      if (promoType == 'percentage_discount') {
+        finalDiscount = (cartTotal * discountValue / 100);
+      } else if (promoType == 'flat_discount') {
+        finalDiscount = discountValue;
+      }
+
+      if (maxDiscountCap > 0 && finalDiscount > maxDiscountCap) {
+        finalDiscount = maxDiscountCap;
+      }
+      finalDiscount = finalDiscount.round();
+
+      setState(() {
+        _promoCode = code.toUpperCase();
+        _promoDiscount = finalDiscount;
+        _hasPromo = true;
+      });
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('applied_promo_code', code.toUpperCase());
+      await prefs.setInt('applied_promo_discount', finalDiscount.toInt());
+
+      print("   ✅ Promo applied: $_promoCode (₹$finalDiscount)");
+      print("🎟️ ═══════════════════════════════════════════════════\n");
+
+      showAppSnackBar(
+        "Promo '$code' applied! You saved ₹$finalDiscount",
+        type: SnackBarType.success,
+      );
+    } catch (e) {
+      print("   ❌ Error: $e");
+      showAppSnackBar(
+        "Failed to apply promo code",
+        type: SnackBarType.error,
+      );
+    }
+  }
+
+  // ✅ Apply Coupon (from Available Coupons List - Bottom Sheet)
+  // This is SEPARATE from promo code manual entry
+  // User can have BOTH promo code + coupon applied simultaneously
+  // ✅ No API call - coupon data is already loaded from /coupons API
+  Future<void> _applyCoupon(String code) async {
+    try {
+      print("\n🎫 ═══════════════════════════════════════════════════");
+      print("🎫 APPLYING COUPON FROM LIST - ReviewOrderScreen");
+      print("🎫 ═══════════════════════════════════════════════════");
+      print("   Code: $code");
+      print("   Source: Bottom Sheet - Available Coupons (Local Calculation)");
+
+      final num cartTotal = _totalPrice;
+      print("   Cart Total: ₹$cartTotal");
+
+      // ✅ Find coupon data from already loaded couponList (no API call needed)
+      final couponData = productController.couponList.firstWhere(
         (c) =>
             (c['code']?.toString().toUpperCase() ?? '') == code.toUpperCase(),
         orElse: () => {},
       );
 
-      if (coupon.isEmpty) {
-        showAppSnackBar("Invalid or expired coupon", type: SnackBarType.error);
+      if (couponData.isEmpty) {
+        print("   ❌ Coupon not found in list");
+        print("🎫 ═══════════════════════════════════════════════════\n");
+        showAppSnackBar("Coupon not found", type: SnackBarType.error);
         return;
       }
 
-      // Requirements from CartScreen:
-      final num total = _asNum(_totalPrice);
-      final num minCart = _asNum(coupon['minCartValue']);
-      if (total < minCart) {
+      print("   ✅ Coupon Data Found:");
+      print("      Code: ${couponData['code']}");
+      print("      Name: ${couponData['name']}");
+      print("      Discount Type: ${couponData['discountType']}");
+      print("      Min Cart Value: ${couponData['minCartValue']}");
+      print("      Max Discount Cap: ${couponData['maxDiscountCap']}");
+
+      // ✅ Validate minimum cart value
+      final num minCartValue = _asNum(couponData['minCartValue']);
+      if (cartTotal < minCartValue) {
+        print("   ❌ Cart value too low");
+        print("      Required: ₹$minCartValue, Current: ₹$cartTotal");
+        print("🎫 ═══════════════════════════════════════════════════\n");
         showAppSnackBar(
-            "Coupon requires a minimum cart value of ₹${minCart.toStringAsFixed(0)}",
-            type: SnackBarType.warning);
+          "Minimum cart value of ₹${minCartValue.toStringAsFixed(0)} required",
+          type: SnackBarType.warning,
+        );
         return;
       }
 
-      // discountType examples: "10%" or "500"
-      final discountType =
-          (coupon['discountType'] ?? '').toString().toLowerCase();
-      num discountValue = 0;
-      if (discountType.contains('%')) {
+      // ✅ Parse discount type (e.g., "25% off", "500", "25%")
+      final String discountTypeStr =
+          (couponData['discountType'] ?? '').toString().toLowerCase();
+      final num maxDiscountCap = _asNum(couponData['maxDiscountCap']);
+
+      num finalDiscount = 0;
+
+      if (discountTypeStr.contains('%')) {
+        // Percentage discount - extract number
         final percent =
-            num.tryParse(discountType.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
-        discountValue = (total * percent / 100).round();
+            num.tryParse(discountTypeStr.replaceAll(RegExp(r'[^0-9.]'), '')) ??
+                0;
+        finalDiscount = (cartTotal * percent / 100);
+        print("   📊 Percentage Discount:");
+        print("      Percentage: $percent%");
+        print("      Calculation: $cartTotal × $percent / 100");
+        print("      Discount: ₹$finalDiscount");
       } else {
-        discountValue =
-            num.tryParse(discountType.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
+        // Flat discount - extract number
+        finalDiscount =
+            num.tryParse(discountTypeStr.replaceAll(RegExp(r'[^0-9.]'), '')) ??
+                0;
+        print("   📊 Flat Discount:");
+        print("      Discount: ₹$finalDiscount");
       }
 
-      // Cap
-      final maxDiscount = _asNum(coupon['maxDiscountCap']);
-      if (maxDiscount > 0 && discountValue > maxDiscount) {
-        discountValue = maxDiscount;
+      // ✅ Apply max discount cap
+      if (maxDiscountCap > 0 && finalDiscount > maxDiscountCap) {
+        print("   🛑 Discount capped:");
+        print("      Original: ₹$finalDiscount");
+        print("      Max Cap: ₹$maxDiscountCap");
+        finalDiscount = maxDiscountCap;
       }
+
+      finalDiscount = finalDiscount.round();
+      print("   💰 Final Discount: ₹$finalDiscount");
 
       setState(() {
-        _couponCode = code;
-        _couponDiscount = discountValue;
-        _hasDiscount = discountValue > 0;
+        _couponCode = code.toUpperCase();
+        _couponDiscount = finalDiscount;
+        _hasCoupon = true;
       });
 
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('applied_coupon_code', code);
-      await prefs.setInt('applied_coupon_discount', discountValue.toInt());
+      await prefs.setString('applied_coupon_code', code.toUpperCase());
+      await prefs.setInt('applied_coupon_discount', finalDiscount.toInt());
 
-      showAppSnackBar("Coupon '$code' applied successfully",
-          type: SnackBarType.success);
-    } catch (e) {
-      print("✗ Error applying coupon: $e");
-      showAppSnackBar("Failed to apply coupon. Please try again.",
-          type: SnackBarType.error);
+      print("   ✅ Coupon applied successfully!");
+      print("   💾 Saved to SharedPreferences");
+      print("🎫 ═══════════════════════════════════════════════════\n");
+
+      showAppSnackBar(
+        "Coupon '${couponData['name'] ?? code}' applied! You saved ₹$finalDiscount",
+        type: SnackBarType.success,
+      );
+    } catch (e, stackTrace) {
+      print("   ❌ Error: $e");
+      print("   Stack trace: $stackTrace");
+      print("🎫 ═══════════════════════════════════════════════════\n");
+      showAppSnackBar(
+        "Failed to apply coupon",
+        type: SnackBarType.error,
+      );
     }
   }
 
-  Future<void> _removeAppliedCoupon() async {
+  // ✅ Remove Promo Code
+  Future<void> _removePromoCode() async {
     setState(() {
-      _couponCode = "Apply Coupon";
+      _promoCode = "";
+      _promoDiscount = 0;
+      _hasPromo = false;
+      _promoCodeController.clear();
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('applied_promo_code');
+    await prefs.remove('applied_promo_discount');
+
+    showAppSnackBar("Promo code removed", type: SnackBarType.info);
+  }
+
+  // ✅ Remove Coupon
+  Future<void> _removeCoupon() async {
+    setState(() {
+      _couponCode = "";
       _couponDiscount = 0;
-      _hasDiscount = false;
+      _hasCoupon = false;
     });
 
     final prefs = await SharedPreferences.getInstance();
@@ -996,6 +1352,31 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
             ),
           ),
 
+          // ✅ Promo Code Discount (only show if applied)
+          if (_promoDiscount > 0)
+            Padding(
+              padding: EdgeInsets.only(top: 12.sp),
+              child: Row(
+                children: [
+                  const AppText(
+                    text: "Promo Code Discount",
+                    fontFamily: "Clash Display Regular",
+                    fontWeight: FontWeight.w400,
+                    color: subtitleColor,
+                    fontSize: 12,
+                  ),
+                  const Spacer(),
+                  AppText(
+                    text: "- ₹${formatAmount(_promoDiscount)}",
+                    fontFamily: "Clash Display Regular",
+                    fontWeight: FontWeight.w400,
+                    color: lightPurpleColor,
+                    fontSize: 12,
+                  ),
+                ],
+              ),
+            ),
+
           // ✅ Coupon Discount (only show if applied)
           if (_couponDiscount > 0)
             Padding(
@@ -1014,7 +1395,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                     text: "- ₹${formatAmount(_couponDiscount)}",
                     fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
-                    color: const Color(0xff059669),
+                    color: lightPurpleColor,
                     fontSize: 12,
                   ),
                 ],
@@ -1039,9 +1420,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                       _delivery == 0 ? "Free" : "+ ₹${formatAmount(_delivery)}",
                   fontFamily: "Clash Display Regular",
                   fontWeight: FontWeight.w400,
-                  color: _delivery == 0
-                      ? const Color(0xff059669)
-                      : homeAppBarColor,
+                  color: _delivery == 0 ? lightPurpleColor : homeAppBarColor,
                   fontSize: 12,
                 ),
               ],
@@ -1146,8 +1525,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
     final bool isDiscountRow =
         label.toLowerCase().contains("discount") && !label.contains("Delivery");
 
-    final Color valueColor =
-        isDiscountRow ? const Color(0xff059669) : homeAppBarColor;
+    final Color valueColor = isDiscountRow ? lightPurpleColor : homeAppBarColor;
 
     return Padding(
       padding: EdgeInsets.only(top: 12.sp),
@@ -1310,8 +1688,8 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                   stockMessage,
                   style: TextStyle(
                     color: availableStock <= 5
-                        ? Colors.red.shade800
-                        : Colors.orange.shade800,
+                        ? lightPurpleColor
+                        : lightPurpleColor,
                     fontSize: 12.sp,
                     fontFamily: "Clash Display",
                     fontWeight: FontWeight.w600,

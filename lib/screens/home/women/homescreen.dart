@@ -75,10 +75,10 @@ class HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    // Auto-scroll banners
+    // Auto-scroll banners (only if more than 1 banner)
     timer = Timer.periodic(const Duration(seconds: 3), (_) {
       final pageCount = _currentBannerList().length;
-      if (pageCount > 0) {
+      if (pageCount > 1) { // ✅ Only auto-scroll when multiple banners exist
         final nextPage = (homeController.currentPage.value + 1) % pageCount;
         homeController.currentPage.value = nextPage;
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -202,23 +202,35 @@ class HomeScreenState extends State<HomeScreen> {
     final currentGender = homeController.homeGenderValue.value;
 
     // Map gender IDs to banner lists
+    List<dynamic> bannerList;
     switch (currentGender) {
       case 1:
-        return homeController.banner1List;
+        bannerList = homeController.banner1List;
+        break;
       case 2:
-        return homeController.banner2List;
+        bannerList = homeController.banner2List;
+        break;
       case 3:
-        return homeController.banner3List;
+        bannerList = homeController.banner3List;
+        break;
       default:
         // Return first available banner list
-        if (homeController.banner1List.isNotEmpty)
-          return homeController.banner1List;
-        if (homeController.banner2List.isNotEmpty)
-          return homeController.banner2List;
-        if (homeController.banner3List.isNotEmpty)
-          return homeController.banner3List;
-        return [];
+        if (homeController.banner1List.isNotEmpty) {
+          bannerList = homeController.banner1List;
+        } else if (homeController.banner2List.isNotEmpty) {
+          bannerList = homeController.banner2List;
+        } else if (homeController.banner3List.isNotEmpty) {
+          bannerList = homeController.banner3List;
+        } else {
+          bannerList = [];
+        }
     }
+
+    // ✅ Filter to return ONLY banners with mobileImage (not null/empty)
+    return bannerList.where((item) {
+      final mobileImage = (item as Map?)?["mobileImage"]?.toString() ?? '';
+      return mobileImage.isNotEmpty;
+    }).toList();
   }
 
   static Future<bool> checkUserConnection() async {
@@ -250,7 +262,7 @@ class HomeScreenState extends State<HomeScreen> {
   // ------- BANNERS -------
 
   List<Widget> widgitBannerList() {
-    final currentBannerList = _currentBannerList();
+    final currentBannerList = _currentBannerList(); // ✅ Already filtered in _currentBannerList()
     final List<Widget> list = [];
 
     for (var i = 0; i < currentBannerList.length; i++) {
@@ -260,7 +272,10 @@ class HomeScreenState extends State<HomeScreen> {
         if (v is int) return v;
         return int.tryParse(v?.toString() ?? '') ?? 0;
       }();
-      final String imageUrl = item["image"]?.toString() ?? '';
+
+      // ✅ Use mobileImage only
+      final String imageUrl = item["mobileImage"]?.toString() ?? '';
+
       final String title =
           item["title"]?.toString() ?? item["name"]?.toString() ?? "Products";
 
@@ -1196,10 +1211,35 @@ class _SectionStrip extends StatelessWidget {
   }
 
   Map<String, dynamic> resolvePricing(Map<String, dynamic> p) {
+    // Extract price with multiple fallbacks (same as product details screen)
+    num price = 0;
+    final rawPrice = p['displayPrice'] ?? p['basePrice'] ?? p['price'] ?? p['netAmount'] ?? p['msp'];
+    if (rawPrice is num && rawPrice > 0) {
+      price = rawPrice;
+    } else {
+      price = num.tryParse(rawPrice?.toString() ?? '0') ?? 0;
+    }
+
+    // Extract MRP with multiple fallbacks (same as product details screen)
+    num? mrp;
+    final rawMrp = p['displayMrp'] ?? p['mrp'] ?? p['manufacturingAmount'];
+    if (rawMrp is num && rawMrp > 0) {
+      mrp = rawMrp;
+    } else {
+      final parsed = num.tryParse(rawMrp?.toString() ?? '0');
+      mrp = (parsed != null && parsed > 0) ? parsed : null;
+    }
+
+    // Calculate discount percentage if not provided
+    int? discountPercent = p['discountPercent'] as int?;
+    if (discountPercent == null && mrp != null && mrp > price && mrp > 0) {
+      discountPercent = (((mrp - price) / mrp) * 100).round();
+    }
+
     return {
-      'price': p['displayPrice'] ?? p['price'] ?? p['basePrice'] ?? 0,
-      'mrp': p['displayMrp'],
-      'discountPercent': p['discountPercent'],
+      'price': price,
+      'mrp': mrp,
+      'discountPercent': discountPercent,
     };
   }
 
@@ -1224,7 +1264,7 @@ class _SectionStrip extends StatelessWidget {
         : null;
 
     return SizedBox(
-      height: 240.sp,
+      height: 258.sp, // ✅ Increased from 240.sp to accommodate discount badge
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
@@ -1290,71 +1330,92 @@ class _SectionStrip extends StatelessWidget {
                             color: Colors.black.withOpacity(0.06),
                           ),
                   ),
-                  SizedBox(height: 6.sp),
+                  SizedBox(height: 4.sp), // ✅ Reduced from 6.sp
                   Text(
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontFamily: "Clash Display Semibold",
-                      fontSize: 13.sp,
+                      fontSize: 12.sp, // ✅ Slightly reduced from 13.sp
                       color: dark ? Colors.white : Colors.black,
                     ),
                   ),
                   if (brandName.isNotEmpty)
-                    Text(
-                      brandName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontFamily: "Clash Display",
-                        fontSize: 11.sp,
-                        color: dark
-                            ? Colors.white.withOpacity(0.85)
-                            : Colors.black.withOpacity(0.7),
+                    Padding(
+                      padding: EdgeInsets.only(top: 1.sp), // ✅ Added small spacing
+                      child: Text(
+                        brandName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: "Clash Display",
+                          fontSize: 10.sp, // ✅ Slightly reduced from 11.sp
+                          color: dark
+                              ? Colors.white.withOpacity(0.85)
+                              : Colors.black.withOpacity(0.7),
+                        ),
                       ),
                     ),
                   if (numPrice > 0)
-                    Row(
-                      children: [
-                        Text(
-                          "₹$numPrice",
-                          style: TextStyle(
-                            fontFamily: "Clash Display Semibold",
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.bold,
-                            color: dark ? Colors.white : Colors.black,
+                    Padding(
+                      padding: EdgeInsets.only(top: 3.sp), // ✅ Slightly increased for breathing room
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Price row
+                          Row(
+                            children: [
+                              // Selling Price (bold and prominent)
+                              Text(
+                                "₹$numPrice",
+                                style: TextStyle(
+                                  fontFamily: "Clash Display Semibold",
+                                  fontSize: 13.sp, // ✅ Slightly reduced from 14.sp
+                                  fontWeight: FontWeight.w700,
+                                  color: dark ? Colors.white : Colors.black,
+                                ),
+                              ),
+                              if (numMrp != null && numMrp > numPrice) ...[
+                                SizedBox(width: 4.sp), // ✅ Reduced from 6.sp
+                                // Strikethrough MRP
+                                Text(
+                                  "₹$numMrp",
+                                  style: TextStyle(
+                                    color: const Color(0xFF9CA3AF),
+                                    fontSize: 10.sp, // ✅ Slightly reduced from 11.sp
+                                    decoration: TextDecoration.lineThrough,
+                                    decorationColor: const Color(0xFF9CA3AF),
+                                    fontFamily: "Clash Display Regular",
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
-                        ),
-                        if (numMrp != null && numMrp > numPrice) ...[
-                          SizedBox(width: 4.sp),
-                          Text(
-                            "₹$numMrp",
-                            style: TextStyle(
-                              color: const Color(0xFF9CA3AF),
-                              fontSize: 11.sp,
-                              decoration: TextDecoration.lineThrough,
-                              fontFamily: "Clash Display Regular",
-                            ),
-                          ),
-                        ],
-                        if (discount != null && discount > 0) ...[
-                          SizedBox(width: 4.sp),
-                          Flexible(
-                            child: Text(
-                              "($discount% OFF)",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 10.sp,
-                                fontFamily: "Clash Display",
-                                fontWeight: FontWeight.w500,
-                                color: Colors.green[700],
+                          // Discount badge (on separate line if needed, or same line)
+                          if (discount != null && discount > 0)
+                            Padding(
+                              padding: EdgeInsets.only(top: 2.sp),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 5.sp, vertical: 1.5.sp), // ✅ Slightly reduced padding
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFE6D5FF),
+                                  borderRadius: BorderRadius.circular(3.sp),
+                                ),
+                                child: Text(
+                                  "$discount% OFF",
+                                  style: TextStyle(
+                                    fontSize: 8.5.sp, // ✅ Slightly reduced from 9.sp
+                                    fontFamily: "Clash Display",
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF9575CD),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
                         ],
-                      ],
+                      ),
                     ),
                 ],
               ),

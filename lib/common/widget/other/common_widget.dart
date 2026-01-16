@@ -21,23 +21,26 @@ void showAppSnackBar(
 
   switch (type) {
     case SnackBarType.success:
-      backgroundColor = const Color(0xff059669).withOpacity(0.1);
-      textColor = const Color(0xff059669);
+      backgroundColor = snackBarBrandColor.withOpacity(0.12);
+      textColor = snackBarBrandColor;
       icon = Icons.check_circle_outline;
       break;
+
     case SnackBarType.error:
-      backgroundColor = Colors.redAccent.withOpacity(0.1);
-      textColor = Colors.redAccent;
+      backgroundColor = snackBarBrandColor.withOpacity(0.12);
+      textColor = snackBarBrandColor;
       icon = Icons.error_outline;
       break;
+
     case SnackBarType.warning:
-      backgroundColor = Colors.orange.withOpacity(0.1);
-      textColor = Colors.orange.shade800;
+      backgroundColor = snackBarBrandColor.withOpacity(0.12);
+      textColor = snackBarBrandColor;
       icon = Icons.warning_amber_outlined;
       break;
+
     case SnackBarType.info:
-      backgroundColor = colorSecondary;
-      textColor = colorPrimary;
+      backgroundColor = snackBarBrandColor.withOpacity(0.12);
+      textColor = snackBarBrandColor;
       icon = Icons.info_outline;
       break;
   }
@@ -82,8 +85,8 @@ bool isImage(String path) {
   return path.contains('product_photo');
 }
 
-Widget getSingleButton({
-    required String label,
+Widget getSingleButton(
+    {required String label,
     double fontSize = 14,
     String fontFamily = "Clash Display",
     double roundness = 1,
@@ -138,8 +141,8 @@ Widget getSingleButton({
   );
 }
 
-Widget getSmallButton({
-    String label = "",
+Widget getSmallButton(
+    {String label = "",
     double fontSize = 14,
     String fontFamily = "Clash Display",
     double roundness = 1,
@@ -271,8 +274,8 @@ Widget showSingleBtnNonCancelableDailog({
   );
 }
 
-Widget showDoubleBtnDailog({
-    Color btncolor = colorPrimary,
+Widget showDoubleBtnDailog(
+    {Color btncolor = colorPrimary,
     required String text,
     required String btn1Text,
     required String btn2Text,

@@ -249,12 +249,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   // Add Review Modal State
   int _selectedRating = 0;
-  final TextEditingController _reviewController = TextEditingController();
 
   void _showAddReviewModal() {
     // Reset state
     _selectedRating = 0;
-    _reviewController.clear();
+
+    // Create a local controller for this modal
+    final localReviewController = TextEditingController();
 
     final firstImg = _imagesOnly().isNotEmpty ? _imagesOnly().first : '';
     final brandName = _brandText();
@@ -429,7 +430,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                         SizedBox(height: 12.sp),
                         TextField(
-                          controller: _reviewController,
+                          controller: localReviewController,
                           maxLines: 6,
                           maxLength: 500,
                           decoration: InputDecoration(
@@ -500,7 +501,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 return;
                               }
 
-                              if (_reviewController.text.trim().isEmpty) {
+                              if (localReviewController.text.trim().isEmpty) {
                                 showAppSnackBar('Please write a review',
                                     type: SnackBarType.error);
                                 return;
@@ -567,7 +568,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 orderItemId: 0, // 0 for reviews not from orders
                                 variantId: variantId,
                                 rating: _selectedRating,
-                                comment: _reviewController.text.trim(),
+                                comment: localReviewController.text.trim(),
                               );
 
                               if (success) {
@@ -630,7 +631,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
           );
         },
       ),
-    );
+    ).then((_) {
+      // Dispose the controller when modal is dismissed
+      localReviewController.dispose();
+    });
   }
 
   // Product Logger Helper Method
@@ -1322,7 +1326,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     try {
       _razorpay?.clear();
     } catch (_) {}
-    _reviewController.dispose();
     super.dispose();
   }
 
@@ -1787,7 +1790,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         Flexible(
                                           child: Container(
                                             decoration: BoxDecoration(
-                                              color: const Color(0xffA7F3D0),
+                                              color: const Color(0xFFE6D5FF),
                                               borderRadius:
                                                   BorderRadius.circular(18),
                                             ),
@@ -3025,7 +3028,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   padding:
                       EdgeInsets.symmetric(horizontal: 8.sp, vertical: 4.sp),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF00B67A),
+                    color: const Color(0xFF9575CD),
                     borderRadius: BorderRadius.circular(4.sp),
                   ),
                   child: Row(

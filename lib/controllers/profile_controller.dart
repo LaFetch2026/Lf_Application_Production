@@ -295,6 +295,16 @@ class ProfileController extends BaseController {
       await prefs.setString('phonenumber', phoneController.text);
       await prefs.setInt('gender', genderId.value);
 
+      // ✅ Map user's gender to home screen tab gender for existing users
+      // 1=Male→Men(1), 2=Female→Women(2), 3=Non-binary→Men(1)
+      int homeScreenGender = genderId.value;
+      if (homeScreenGender == 3) {
+        homeScreenGender = 1; // Non-binary defaults to Men tab
+      }
+      if (homeScreenGender > 0) {
+        await prefs.setInt('selectedGender', homeScreenGender);
+      }
+
       profileDetails.value = userData;
     } catch (e, st) {
       debugPrint("❌ Fetch error: $e\n$st");
@@ -373,6 +383,14 @@ class ProfileController extends BaseController {
           await prefs.setString('email', email);
           await prefs.setString('phonenumber', displayPhone);
           await prefs.setInt('gender', genderId.value);
+
+          // ✅ Map user's gender to home screen tab gender
+          // 1=Male→Men(1), 2=Female→Women(2), 3=Non-binary→Men(1)
+          int homeScreenGender = genderId.value;
+          if (homeScreenGender == 3) {
+            homeScreenGender = 1; // Non-binary defaults to Men tab
+          }
+          await prefs.setInt('selectedGender', homeScreenGender);
 
           if (userId != null) {
             await prefs.setInt('userId', userId);

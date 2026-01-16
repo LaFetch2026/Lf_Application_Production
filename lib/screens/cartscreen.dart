@@ -72,6 +72,9 @@ class CartScreenState extends State<CartScreen> {
   /// Holds an address chosen in SavedAddressScreen before backend attach.
   Map<String, dynamic>? _pendingSelectedAddress;
 
+  // Promo code text controller
+  final TextEditingController _promoCodeController = TextEditingController();
+
   // ---------- Utilities ----------
 
   String? _firstImageUrl(dynamic product) {
@@ -789,6 +792,7 @@ class CartScreenState extends State<CartScreen> {
 
   @override
   void dispose() {
+    _promoCodeController.dispose();
     _razorpay.clear(); // remove listeners & cleanup
     super.dispose();
   }
@@ -1297,7 +1301,7 @@ class CartScreenState extends State<CartScreen> {
                       padding: EdgeInsets.symmetric(vertical: 5.sp),
                       child: AppText(
                         text: controller.qtyText.value,
-                        color: deepRed,
+                        color: Color(0xFF988AFF),
                         fontSize: 12,
                         maxLines: 3,
                         fontFamily: "Clash Display Regular",
@@ -1359,7 +1363,7 @@ class CartScreenState extends State<CartScreen> {
                       _asNum(product["mrp"]) > _asNum(product["price"]))
                     Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xffA7F3D0),
+                        color: const Color(0xFF988AFF),
                         borderRadius: BorderRadius.circular(20.sp),
                       ),
                       child: Padding(
@@ -1548,7 +1552,7 @@ class CartScreenState extends State<CartScreen> {
                       text: "- ₹${formatAmount(couponDiscount)}",
                       fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
-                      color: const Color(0xff059669),
+                      color: const Color(0xFF988AFF),
                       fontSize: 12,
                     ),
                   ],
@@ -1577,7 +1581,7 @@ class CartScreenState extends State<CartScreen> {
                     fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                     color: deliveryCharges == 0
-                        ? const Color(0xff059669)
+                        ? const Color(0xFF988AFF)
                         : (widget.backgroundcolor == whiteColor
                             ? homeAppBarColor
                             : whiteColor),
@@ -1632,188 +1636,480 @@ class CartScreenState extends State<CartScreen> {
 
   Widget _buildCouponSection() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 24.sp),
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          border: Border.all(color: borderColor, width: 1.sp),
-          borderRadius: BorderRadius.circular(4),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 8.sp),
-        child: Obx(() {
-          final bool hasDiscount = controller.cartDetails["discount"] == true;
-          final String couponText = controller.couponText.value;
+      padding: EdgeInsets.symmetric(vertical: 16.sp),
+      child: Obx(() {
+        final bool hasDiscount = controller.cartDetails["discount"] == true;
+        final String couponCode = controller.couponText.value;
+        final num couponDiscount =
+            _asNum(controller.cartDetails["coupon_discount"]);
 
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SvgPicture.asset(
-                couponSvgImage,
-                color: widget.backgroundcolor == whiteColor
-                    ? titleColor
-                    : productSubtitleColor,
-                height: 20.sp,
-                width: 20.sp,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ✅ Section 1: Manual Promo Code Entry
+            AppText(
+              text: "HAVE A PROMO CODE?",
+              fontFamily: "Clash Display",
+              fontWeight: FontWeight.w500,
+              color: widget.backgroundcolor == whiteColor
+                  ? homeAppBarColor
+                  : whiteColor,
+              fontSize: 12,
+            ),
+            SizedBox(height: 8.sp),
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                border: Border.all(color: borderColor, width: 1.sp),
+                borderRadius: BorderRadius.circular(4),
               ),
-              SizedBox(width: 8.sp),
-              Expanded(
-                child: Text(
-                  couponText,
-                  style: TextStyle(
-                    fontFamily: "Clash Display Regular",
-                    fontWeight: FontWeight.w500,
-                    color: widget.backgroundcolor == whiteColor
-                        ? titleColor
-                        : productSubtitleColor,
-                    fontSize: 14.sp,
+              padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 4.sp),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _promoCodeController,
+                      decoration: InputDecoration(
+                        hintText: "Enter promo code",
+                        hintStyle: TextStyle(
+                          fontFamily: "Clash Display Regular",
+                          fontSize: 14.sp,
+                          color: widget.backgroundcolor == whiteColor
+                              ? subtitleColor
+                              : productSubtitleColor,
+                        ),
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(vertical: 8.sp),
+                      ),
+                      style: TextStyle(
+                        fontFamily: "Clash Display Regular",
+                        fontSize: 14.sp,
+                        color: widget.backgroundcolor == whiteColor
+                            ? titleColor
+                            : whiteColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textCapitalization: TextCapitalization.characters,
+                      enabled: !hasDiscount,
+                    ),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  SizedBox(width: 8.sp),
+                  SizedBox(
+                    width: 80.sp,
+                    height: 32.sp,
+                    child: ElevatedButton(
+                      onPressed: hasDiscount
+                          ? _removeAppliedCoupon
+                          : () {
+                              final code = _promoCodeController.text.trim();
+                              if (code.isEmpty) {
+                                showAppSnackBar("Please enter a promo code",
+                                    type: SnackBarType.warning);
+                                return;
+                              }
+                              _applyPromoCode(code);
+                            },
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: hasDiscount
+                            ? Colors.transparent
+                            : (widget.backgroundcolor == whiteColor
+                                ? homeAppBarColor
+                                : Colors.transparent),
+                        side: BorderSide(
+                          color: hasDiscount
+                              ? lightPurpleColor
+                              : (widget.backgroundcolor == whiteColor
+                                  ? btnTextColor
+                                  : whiteColor),
+                          width: 1.sp,
+                        ),
+                        padding: EdgeInsets.zero,
+                      ),
+                      child: Text(
+                        hasDiscount ? "REMOVE" : "APPLY",
+                        style: TextStyle(
+                          color: hasDiscount ? lightPurpleColor : whiteColor,
+                          fontSize: 12.sp,
+                          fontFamily: "Clash Display",
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // ✅ Show applied promo info
+            if (hasDiscount)
+              Padding(
+                padding: EdgeInsets.only(top: 8.sp),
+                child: Row(
+                  children: [
+                    const Icon(Icons.check_circle,
+                        color: lightPurpleColor, size: 16),
+                    SizedBox(width: 6.sp),
+                    Expanded(
+                      child: AppText(
+                        text:
+                            "$couponCode applied! You saved ₹${couponDiscount.toStringAsFixed(0)}",
+                        fontFamily: "Clash Display Regular",
+                        fontWeight: FontWeight.w500,
+                        color: lightPurpleColor,
+                        fontSize: 12,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(width: 8.sp),
-              SizedBox(
-                width: 90.sp,
-                height: 30.sp,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (hasDiscount) {
-                      await _removeAppliedCoupon();
-                      return;
-                    }
 
-                    // ✅ Always fetch live coupons before showing bottom sheet
-                    await productController.getCoupons();
-
-                    if (productController.couponList.isEmpty) {
-                      showAppSnackBar("No coupons available right now",
-                          type: SnackBarType.info);
-                      return;
-                    }
-
-                    showModalBottomSheet(
-                      context: context,
-                      backgroundColor: Colors.transparent,
-                      isScrollControlled: true,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(16)),
-                      ),
-                      builder: (ctx) {
-                        return FractionallySizedBox(
-                          heightFactor: 0.7, // 👈 Only covers 70% of the screen
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(16)),
-                            child: BottomCoupon(
-                              list: productController.couponList,
-                              backColor: widget.backgroundcolor,
-                              onPressed: (code) {
-                                Navigator.pop(ctx);
-                                _applyCoupon(code);
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: hasDiscount
-                        ? Colors.transparent
-                        : (widget.backgroundcolor == whiteColor
-                            ? homeAppBarColor
-                            : Colors.transparent),
-                    side: BorderSide(
-                      color: hasDiscount
-                          ? lightPurpleColor
-                          : (widget.backgroundcolor == whiteColor
-                              ? btnTextColor
-                              : Colors.transparent),
-                      width: 1.sp,
-                    ),
-                    padding: EdgeInsets.zero,
-                  ),
-                  child: Text(
-                    hasDiscount ? "REMOVE" : "SELECT",
-                    style: TextStyle(
-                      color: hasDiscount ? lightPurpleColor : whiteColor,
-                      fontSize: 12.sp,
+            // ✅ Divider
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.sp),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Divider(color: colorSecondary, thickness: 1.sp)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12.sp),
+                    child: AppText(
+                      text: "OR",
                       fontFamily: "Clash Display",
                       fontWeight: FontWeight.w500,
+                      color: widget.backgroundcolor == whiteColor
+                          ? subtitleColor
+                          : productSubtitleColor,
+                      fontSize: 12,
                     ),
                   ),
+                  Expanded(
+                      child: Divider(color: colorSecondary, thickness: 1.sp)),
+                ],
+              ),
+            ),
+
+            // ✅ Section 2: Select from Available Coupons
+            AppText(
+              text: "SELECT FROM AVAILABLE COUPONS",
+              fontFamily: "Clash Display",
+              fontWeight: FontWeight.w500,
+              color: widget.backgroundcolor == whiteColor
+                  ? homeAppBarColor
+                  : whiteColor,
+              fontSize: 12,
+            ),
+            SizedBox(height: 8.sp),
+            GestureDetector(
+              onTap: () async {
+                await productController.getCoupons();
+                if (productController.couponList.isEmpty) {
+                  showAppSnackBar("No coupons available right now",
+                      type: SnackBarType.info);
+                  return;
+                }
+
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(16)),
+                  ),
+                  builder: (ctx) {
+                    return FractionallySizedBox(
+                      heightFactor: 0.7,
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(16)),
+                        child: BottomCoupon(
+                          list: productController.couponList,
+                          backColor: widget.backgroundcolor,
+                          onPressed: (code) {
+                            Navigator.pop(ctx);
+                            _applyCoupon(code);
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: widget.backgroundcolor == whiteColor
+                      ? whiteColor
+                      : Colors.grey[850],
+                  border: Border.all(
+                    color: widget.backgroundcolor == whiteColor
+                        ? homeAppBarColor
+                        : whiteColor,
+                    width: 1.sp,
+                  ),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 12.sp, vertical: 12.sp),
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      couponSvgImage,
+                      colorFilter: ColorFilter.mode(
+                        widget.backgroundcolor == whiteColor
+                            ? homeAppBarColor
+                            : whiteColor,
+                        BlendMode.srcIn,
+                      ),
+                      height: 20.sp,
+                      width: 20.sp,
+                    ),
+                    SizedBox(width: 10.sp),
+                    Expanded(
+                      child: AppText(
+                        text: "View all available coupons",
+                        fontFamily: "Clash Display Regular",
+                        fontWeight: FontWeight.w500,
+                        color: widget.backgroundcolor == whiteColor
+                            ? titleColor
+                            : whiteColor,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14.sp,
+                      color: widget.backgroundcolor == whiteColor
+                          ? titleColor
+                          : whiteColor,
+                    ),
+                  ],
                 ),
               ),
-            ],
-          );
-        }),
-      ),
+            ),
+          ],
+        );
+      }),
     );
+  }
+
+  Future<void> _applyPromoCode(String code) async {
+    try {
+      print("\n🎟️ ═══════════════════════════════════════════════════");
+      print("🎟️ APPLYING PROMO CODE - CartScreen");
+      print("🎟️ ═══════════════════════════════════════════════════");
+      print("   Code: $code");
+
+      // ✅ Calculate cart total (selling price before discount)
+      final num cartTotal = _asNum(controller.cartDetails["total"]);
+      print("   Cart Total (Selling Price): ₹$cartTotal");
+
+      // ✅ Call API to validate promo code
+      final promoData = await productController.validatePromoCode(
+        code: code,
+        cartTotal: cartTotal,
+      );
+
+      if (promoData == null) {
+        print("   ❌ Promo validation failed");
+        print("🎟️ ═══════════════════════════════════════════════════\n");
+        // Error message already shown by validatePromoCode
+        return;
+      }
+
+      // ✅ Extract data from API response
+      final String promoType = promoData['promoType'] ?? '';
+      final num discountValue = _asNum(promoData['discountValue']);
+      final num maxDiscountCap = _asNum(promoData['maxDiscountCap']);
+      final num minCartValue = _asNum(promoData['minCartValue']);
+      final bool freeShipping = promoData['freeShipping'] ?? false;
+
+      print("   ✅ Promo Data Received:");
+      print("      Promo Type: $promoType");
+      print("      Discount Value: $discountValue");
+      print("      Max Discount Cap: $maxDiscountCap");
+      print("      Min Cart Value: $minCartValue");
+      print("      Free Shipping: $freeShipping");
+
+      // ✅ Calculate final discount
+      num finalDiscount = 0;
+
+      if (promoType == 'percentage_discount') {
+        // Percentage discount
+        finalDiscount = (cartTotal * discountValue / 100);
+        print("   📊 Calculating percentage discount:");
+        print("      Formula: cartTotal × discountValue / 100");
+        print("      Calculation: $cartTotal × $discountValue / 100");
+        print("      Discount: ₹$finalDiscount");
+      } else if (promoType == 'flat_discount') {
+        // Flat discount
+        finalDiscount = discountValue;
+        print("   📊 Applying flat discount:");
+        print("      Discount: ₹$finalDiscount");
+      } else {
+        print("   ⚠️ Unknown promo type: $promoType");
+        showAppSnackBar("Invalid promo type", type: SnackBarType.error);
+        print("🎟️ ══════════════��════════════════════════════════════\n");
+        return;
+      }
+
+      // ✅ Apply max discount cap
+      if (maxDiscountCap > 0 && finalDiscount > maxDiscountCap) {
+        print("   🛑 Discount capped:");
+        print("      Original Discount: ₹$finalDiscount");
+        print("      Max Cap: ₹$maxDiscountCap");
+        finalDiscount = maxDiscountCap;
+        print("      Final Discount: ₹$finalDiscount");
+      }
+
+      // ✅ Round to nearest rupee
+      finalDiscount = finalDiscount.round();
+      print("   💰 Final Discount (rounded): ₹$finalDiscount");
+
+      // ✅ Update cart controller state
+      controller.couponText.value = code.toUpperCase();
+      controller.cartDetails["coupon_discount"] = finalDiscount;
+      controller.cartDetails["discount"] = true;
+
+      // ✅ Save to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('applied_coupon_code', code.toUpperCase());
+      await prefs.setInt('applied_coupon_discount', finalDiscount.toInt());
+
+      print("   ✅ Promo code applied successfully!");
+      print("   💾 Saved to SharedPreferences");
+      print("🎟️ ═══════════════════════════════════════════════════\n");
+
+      // ✅ Show success message
+      showAppSnackBar(
+        "Promo '$code' applied! You saved ₹$finalDiscount",
+        type: SnackBarType.success,
+      );
+
+      // ✅ Update UI
+      controller.update();
+    } catch (e, stackTrace) {
+      print("   ❌ Error applying promo: $e");
+      print("   Stack trace: $stackTrace");
+      print("🎟️ ═══════════════════════════════════════════════════\n");
+      showAppSnackBar(
+        "Failed to apply promo code. Please try again.",
+        type: SnackBarType.error,
+      );
+    }
   }
 
   Future<void> _applyCoupon(String code) async {
     try {
-      if (productController.couponList.isEmpty) {
-        await productController.getCoupons();
-      }
+      print("\n🎁 ═══════════════════════════════════════════════════");
+      print("🎁 APPLYING COUPON (LOCAL) - CartScreen");
+      print("🎁 ═══════════════════════════════════════════════════");
+      print("   Code: $code");
 
-      final coupon = productController.couponList.firstWhere(
+      // ✅ Find coupon from already loaded couponList
+      final couponData = productController.couponList.firstWhere(
         (c) =>
             (c['code']?.toString().toUpperCase() ?? '') == code.toUpperCase(),
         orElse: () => {},
       );
 
-      if (coupon.isEmpty) {
-        showAppSnackBar("Invalid or expired coupon", type: SnackBarType.error);
+      if (couponData.isEmpty) {
+        print("   ❌ Coupon not found in local list");
+        print("🎁 ═══════════════════════════════════════════════════\n");
+        showAppSnackBar("Coupon not found", type: SnackBarType.error);
         return;
       }
 
-      final num total = _asNum(controller.cartDetails["total"]);
-      final num minCart = _asNum(coupon['minCartValue']);
-      if (total < minCart) {
+      // ✅ Calculate cart total
+      final num cartTotal = _asNum(controller.cartDetails["total"]);
+      print("   Cart Total: ₹$cartTotal");
+
+      // ✅ Validate minimum cart value
+      final num minCartValue = _asNum(couponData['minCartValue']);
+      if (minCartValue > 0 && cartTotal < minCartValue) {
+        print("   ❌ Min cart value not met: ₹$minCartValue");
+        print("🎁 ═══════════════════════════════════════════════════\n");
         showAppSnackBar(
-            "Coupon requires a minimum cart value of ₹${minCart.toStringAsFixed(0)}",
-            type: SnackBarType.warning);
+          "Minimum cart value ₹$minCartValue required for this coupon",
+          type: SnackBarType.warning,
+        );
         return;
       }
 
-      // Parse discount
-      final discountType =
-          (coupon['discountType'] ?? '').toString().toLowerCase();
-      num discountValue = 0;
+      // ✅ Parse discount type (e.g., "25% off" or "500")
+      final String discountType = couponData['discountType']?.toString() ?? '';
+      print("   Discount Type: $discountType");
+
+      num finalDiscount = 0;
+
       if (discountType.contains('%')) {
-        final percent =
-            num.tryParse(discountType.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
-        discountValue = (total * percent / 100).round();
+        // Percentage discount - extract number from "25% off"
+        final RegExp percentRegex = RegExp(r'(\d+(?:\.\d+)?)');
+        final match = percentRegex.firstMatch(discountType);
+
+        if (match != null) {
+          final num percentage = num.parse(match.group(1)!);
+          finalDiscount = (cartTotal * percentage / 100);
+          print("   📊 Percentage discount: $percentage%");
+          print(
+              "      Calculation: $cartTotal × $percentage / 100 = ₹$finalDiscount");
+        }
       } else {
-        discountValue =
-            num.tryParse(discountType.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
+        // Flat discount - extract number from "500"
+        final RegExp flatRegex = RegExp(r'(\d+(?:\.\d+)?)');
+        final match = flatRegex.firstMatch(discountType);
+
+        if (match != null) {
+          finalDiscount = num.parse(match.group(1)!);
+          print("   📊 Flat discount: ₹$finalDiscount");
+        }
       }
 
-      // Cap discount
-      final maxDiscount = _asNum(coupon['maxDiscountCap']);
-      if (maxDiscount > 0 && discountValue > maxDiscount) {
-        discountValue = maxDiscount;
+      // ✅ Apply max discount cap if specified
+      final num maxDiscountCap = _asNum(couponData['maxDiscountCap']);
+      if (maxDiscountCap > 0 && finalDiscount > maxDiscountCap) {
+        print("   🛑 Discount capped: ₹$finalDiscount → ₹$maxDiscountCap");
+        finalDiscount = maxDiscountCap;
       }
 
-      // Update state
-      controller.couponText.value = code;
-      controller.cartDetails["coupon_discount"] = discountValue;
+      // ✅ Round to nearest rupee
+      finalDiscount = finalDiscount.round();
+      print("   💰 Final Discount: ₹$finalDiscount");
+
+      // ✅ Update cart controller state
+      controller.couponText.value = code.toUpperCase();
+      controller.cartDetails["coupon_discount"] = finalDiscount;
       controller.cartDetails["discount"] = true;
 
+      // ✅ Save to SharedPreferences
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('applied_coupon_code', code);
-      await prefs.setInt('applied_coupon_discount', discountValue.toInt());
+      await prefs.setString('applied_coupon_code', code.toUpperCase());
+      await prefs.setInt('applied_coupon_discount', finalDiscount.toInt());
 
-      showAppSnackBar("Coupon '$code' applied successfully",
-          type: SnackBarType.success);
+      print("   ✅ Coupon applied successfully!");
+      print("   💾 Saved to SharedPreferences");
+      print("🎁 ═══════════════════════════════════════════════════\n");
+
+      // ✅ Show success message with coupon name
+      final String couponName = couponData['couponName']?.toString() ?? code;
+      showAppSnackBar(
+        "$couponName applied! You saved ₹$finalDiscount",
+        type: SnackBarType.success,
+      );
+
+      // ✅ Update UI
       controller.update();
-    } catch (e) {
-      print("✗ Error applying coupon: $e");
-      showAppSnackBar("Failed to apply coupon. Please try again.",
-          type: SnackBarType.error);
+    } catch (e, stackTrace) {
+      print("   ❌ Error applying coupon: $e");
+      print("   Stack trace: $stackTrace");
+      print("🎁 ═══════════════════════════════════════════════════\n");
+      showAppSnackBar(
+        "Failed to apply coupon. Please try again.",
+        type: SnackBarType.error,
+      );
     }
   }
 
@@ -1834,14 +2130,14 @@ class CartScreenState extends State<CartScreen> {
     controller.update();
   }
 
-// ---------- Price Row (Green discount values) ----------
+// ---------- Price Row (Lavender discount values) ----------
 
   Widget _buildPriceRow(String label, String value, bool hasIcon) {
     final bool isDiscountRow =
         label.toLowerCase().contains("discount") && !label.contains("Delivery");
 
     final Color valueColor = isDiscountRow
-        ? const Color(0xff059669)
+        ? const Color(0xFF988AFF)
         : widget.backgroundcolor == whiteColor
             ? homeAppBarColor
             : whiteColor;

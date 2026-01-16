@@ -168,7 +168,7 @@ class AccountScreenState extends State<AccountScreen> {
               // 🔒 Logged-in user UI (your existing code)
               return controller.isProfile.value
                   ? DummyAccount()
-                  : controller.profileDetails != ""
+                  : controller.profileDetails.value != null
                       ? Expanded(
                           child: SingleChildScrollView(
                             child: Column(
