@@ -78,7 +78,8 @@ class HomeScreenState extends State<HomeScreen> {
     // Auto-scroll banners (only if more than 1 banner)
     timer = Timer.periodic(const Duration(seconds: 3), (_) {
       final pageCount = _currentBannerList().length;
-      if (pageCount > 1) { // ✅ Only auto-scroll when multiple banners exist
+      if (pageCount > 1) {
+        // ✅ Only auto-scroll when multiple banners exist
         final nextPage = (homeController.currentPage.value + 1) % pageCount;
         homeController.currentPage.value = nextPage;
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -262,7 +263,8 @@ class HomeScreenState extends State<HomeScreen> {
   // ------- BANNERS -------
 
   List<Widget> widgitBannerList() {
-    final currentBannerList = _currentBannerList(); // ✅ Already filtered in _currentBannerList()
+    final currentBannerList =
+        _currentBannerList(); // ✅ Already filtered in _currentBannerList()
     final List<Widget> list = [];
 
     for (var i = 0; i < currentBannerList.length; i++) {
@@ -1213,7 +1215,11 @@ class _SectionStrip extends StatelessWidget {
   Map<String, dynamic> resolvePricing(Map<String, dynamic> p) {
     // Extract price with multiple fallbacks (same as product details screen)
     num price = 0;
-    final rawPrice = p['displayPrice'] ?? p['basePrice'] ?? p['price'] ?? p['netAmount'] ?? p['msp'];
+    final rawPrice = p['displayPrice'] ??
+        p['basePrice'] ??
+        p['price'] ??
+        p['netAmount'] ??
+        p['msp'];
     if (rawPrice is num && rawPrice > 0) {
       price = rawPrice;
     } else {
@@ -1343,7 +1349,8 @@ class _SectionStrip extends StatelessWidget {
                   ),
                   if (brandName.isNotEmpty)
                     Padding(
-                      padding: EdgeInsets.only(top: 1.sp), // ✅ Added small spacing
+                      padding:
+                          EdgeInsets.only(top: 1.sp), // ✅ Added small spacing
                       child: Text(
                         brandName,
                         maxLines: 1,
@@ -1359,7 +1366,8 @@ class _SectionStrip extends StatelessWidget {
                     ),
                   if (numPrice > 0)
                     Padding(
-                      padding: EdgeInsets.only(top: 3.sp), // ✅ Slightly increased for breathing room
+                      padding: EdgeInsets.only(
+                          top: 3.sp), // ✅ Slightly increased for breathing room
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -1371,7 +1379,8 @@ class _SectionStrip extends StatelessWidget {
                                 "₹$numPrice",
                                 style: TextStyle(
                                   fontFamily: "Clash Display Semibold",
-                                  fontSize: 13.sp, // ✅ Slightly reduced from 14.sp
+                                  fontSize:
+                                      13.sp, // ✅ Slightly reduced from 14.sp
                                   fontWeight: FontWeight.w700,
                                   color: dark ? Colors.white : Colors.black,
                                 ),
@@ -1383,7 +1392,8 @@ class _SectionStrip extends StatelessWidget {
                                   "₹$numMrp",
                                   style: TextStyle(
                                     color: const Color(0xFF9CA3AF),
-                                    fontSize: 10.sp, // ✅ Slightly reduced from 11.sp
+                                    fontSize:
+                                        10.sp, // ✅ Slightly reduced from 11.sp
                                     decoration: TextDecoration.lineThrough,
                                     decorationColor: const Color(0xFF9CA3AF),
                                     fontFamily: "Clash Display Regular",
@@ -1398,7 +1408,9 @@ class _SectionStrip extends StatelessWidget {
                               padding: EdgeInsets.only(top: 2.sp),
                               child: Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 5.sp, vertical: 1.5.sp), // ✅ Slightly reduced padding
+                                    horizontal: 5.sp,
+                                    vertical:
+                                        1.5.sp), // ✅ Slightly reduced padding
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFE6D5FF),
                                   borderRadius: BorderRadius.circular(3.sp),
@@ -1406,7 +1418,8 @@ class _SectionStrip extends StatelessWidget {
                                 child: Text(
                                   "$discount% OFF",
                                   style: TextStyle(
-                                    fontSize: 8.5.sp, // ✅ Slightly reduced from 9.sp
+                                    fontSize:
+                                        8.5.sp, // ✅ Slightly reduced from 9.sp
                                     fontFamily: "Clash Display",
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFF9575CD),

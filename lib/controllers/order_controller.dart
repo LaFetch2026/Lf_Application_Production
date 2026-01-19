@@ -359,7 +359,7 @@ class OrderController extends BaseController {
     }
   }
 
-  // ---------- 4) REQUEST EXCHANGE ----------
+  // ---------- 4) REQUEST x ----------
   /// Calls: POST {{laFetchBaseUrl}}/request-exchange
 
   Future<bool> requestExchange({

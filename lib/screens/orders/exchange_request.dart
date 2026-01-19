@@ -50,19 +50,49 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
   @override
   void initState() {
     super.initState();
+    // Debug: Log the entire order object to understand its structure
+    print("═══════════════════════════════════════════════════════════");
+    print("📦 EXCHANGE SCREEN - ORDER DATA RECEIVED");
+    print("═══════════════════════════════════════════════════════════");
+    print("Full Order Object: ${widget.order}");
+    print("───────────────────────────────────────────────────────────");
+    print("Order Keys: ${widget.order.keys.toList()}");
+    print("Product: ${widget.order['product']}");
+    print("Size: ${widget.order['size']}");
+    print("Color: ${widget.order['color']}");
+    print("Colour: ${widget.order['colour']}");
+    print("Quantity: ${widget.order['quantity']}");
+    print("Order ID: ${widget.order['id']}");
+    print("Order->Order: ${widget.order['order']}");
+    print("═══════════════════════════════════════════════════════════");
     _loadFullProductDetails();
+  }
+
+  /// Helper to extract product data from nested or flat structure
+  Map<String, dynamic> _extractProduct(dynamic rawProduct) {
+    if (rawProduct is Map) {
+      // Check if it's a nested API response: {status, message, data: {...}}
+      if (rawProduct.containsKey('data') && rawProduct['data'] is Map) {
+        return Map<String, dynamic>.from(rawProduct['data']);
+      }
+      return Map<String, dynamic>.from(rawProduct);
+    }
+    return {};
   }
 
   /// --------------------------------------------
   /// 🔥 UPDATED VARIANT LOGIC
   /// --------------------------------------------
   Future<void> _loadFullProductDetails() async {
-    final productId = widget.order['product']?['id'];
+    // Use productId directly from order item (not nested in product)
+    final productId = widget.order['productId'] ?? _extractProduct(widget.order['product'])['id'];
 
     if (productId == null) {
       print("❌ productId missing in order!");
       return;
     }
+
+    print("📦 Loading full product details for productId: $productId");
 
     final fullProduct =
         await Get.find<ProductController>().fetchProductDetails(productId);
@@ -71,6 +101,20 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
       print("❌ Failed to load full product details!");
       return;
     }
+
+    // Debug: Log what fetchProductDetails returned
+    print("═══════════════════════════════════════════════════════════");
+    print("📦 FULL PRODUCT LOADED");
+    print("═══════════════════════════════════════════════════════════");
+    print("fullProduct type: ${fullProduct.runtimeType}");
+    print("fullProduct keys: ${fullProduct is Map ? (fullProduct as Map).keys.toList() : 'N/A'}");
+
+    // Extract actual product data
+    final extractedProduct = _extractProduct(fullProduct);
+    print("extractedProduct keys: ${extractedProduct.keys.toList()}");
+    print("variants exists: ${extractedProduct.containsKey('variants')}");
+    print("variants: ${extractedProduct['variants']}");
+    print("═══════════════════════════════════════════════════════════");
 
     // Replace order.product with latest full product
     widget.order['product'] = fullProduct;
@@ -85,8 +129,9 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
   }
 
   void _initVariants() {
-    final product = widget.order['product'] ?? {};
+    final product = _extractProduct(widget.order['product']);
     final variants = (product['variants'] ?? []) as List;
+    print("📦 Initializing variants: found ${variants.length} variants");
 
     variantOptions.clear();
 
@@ -156,37 +201,41 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
   /// --------------------------------------------
   @override
   Widget build(BuildContext context) {
-    final product = widget.order['product'] ?? {};
-    final imageList = (product['imageUrls'] ?? []) as List;
-    final imageUrl =
-        imageList.isNotEmpty ? imageList.first.toString() : dummyWishlistImage;
+    // Access order item data
+    final orderItem = widget.order;
 
+    // Extract product from nested structure {status, message, data: {...}} or flat
+    final product = _extractProduct(orderItem['product']);
+
+    // Product display data
     final productName = product['title'] ?? "Unknown Product";
     final description = product['shortDescription'] ??
         product['description'] ??
         "No description available";
 
-    final qty = widget.order['quantity']?.toString() ?? "1";
+    // Image handling
+    final imageList = (product['imageUrls'] ?? []) as List;
+    final imageUrl =
+        imageList.isNotEmpty ? imageList.first.toString() : dummyWishlistImage;
 
-    /// Display safe values
-    final rawSize = widget.order['size']?.toString();
-    final rawColor =
-        widget.order['color']?.toString() ?? widget.order['colour']?.toString();
+    // Order item details
+    final qty = orderItem['quantity']?.toString() ?? "1";
 
-    final currentSize =
-        (rawSize == null || rawSize == "null" || rawSize.isEmpty)
-            ? selectedSize ?? "-"
-            : rawSize;
+    // Size/Color may be null on order item, show "-" if not available
+    final currentSize = orderItem['size']?.toString() ?? "-";
+    final currentColor = orderItem['color']?.toString() ??
+        orderItem['colour']?.toString() ??
+        "-";
 
-    final currentColor =
-        (rawColor == null || rawColor == "null" || rawColor.isEmpty)
-            ? selectedColor ?? "-"
-            : rawColor;
+    /// Check if product has colors
+    final hasColors = colorOptions.isNotEmpty;
 
-    /// Sizes available for selected color
-    final sizeOptionsForColor = selectedColor == null
-        ? []
-        : variantOptions.where((v) => v['color'] == selectedColor).toList();
+    /// Sizes available - if no colors, show all sizes; otherwise filter by selected color
+    final sizeOptionsForColor = hasColors
+        ? (selectedColor == null
+            ? <Map<String, dynamic>>[]
+            : variantOptions.where((v) => v['color'] == selectedColor).toList())
+        : variantOptions; // No colors = show all variants directly
 
     return Scaffold(
       backgroundColor: whiteColor,
@@ -255,21 +304,14 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
 
             SizedBox(height: 20.sp),
 
-            /// COLOR SELECTOR -------------------------------------
-            const AppText(
-              text: "CHOOSE THE COLOR",
-              fontWeight: FontWeight.w700,
-              fontSize: 13,
-            ),
-            SizedBox(height: 10.sp),
-
-            if (colorOptions.isEmpty)
+            /// COLOR SELECTOR ------------------------------------- (only show if colors exist)
+            if (hasColors) ...[
               const AppText(
-                text: "No colors available for exchange.",
-                color: subtitleColor,
-                fontSize: 12,
-              )
-            else
+                text: "CHOOSE THE COLOR",
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+              ),
+              SizedBox(height: 10.sp),
               Wrap(
                 spacing: 8.sp,
                 runSpacing: 8.sp,
@@ -314,8 +356,8 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
                   );
                 }).toList(),
               ),
-
-            SizedBox(height: 20.sp),
+              SizedBox(height: 20.sp),
+            ],
 
             /// SIZE SELECTOR -------------------------------------
             const AppText(
@@ -325,7 +367,8 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
             ),
             SizedBox(height: 10.sp),
 
-            if (selectedColor == null)
+            // Show "select color first" only if product has colors but none selected
+            if (hasColors && selectedColor == null)
               const AppText(
                 text: "Please select a color first.",
                 color: subtitleColor,
@@ -333,7 +376,7 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
               )
             else if (sizeOptionsForColor.isEmpty)
               const AppText(
-                text: "No sizes available for the selected color.",
+                text: "No sizes available.",
                 color: subtitleColor,
                 fontSize: 12,
               )
@@ -355,10 +398,15 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
                             setState(() {
                               selectedSize = s;
 
+                              // Find matching variant - handle both with and without colors
                               final match = variantOptions.firstWhere(
-                                (v) =>
-                                    v["color"] == selectedColor &&
-                                    v["size"] == s,
+                                (v) {
+                                  if (hasColors) {
+                                    return v["color"] == selectedColor && v["size"] == s;
+                                  } else {
+                                    return v["size"] == s;
+                                  }
+                                },
                                 orElse: () => {},
                               );
 
@@ -495,7 +543,9 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
   /// SUBMIT EXCHANGE REQUEST (NOW FIXED)
   /// --------------------------------------------
   Future<void> _submitExchange() async {
-    if (selectedColor == null) {
+    // Only require color if product has colors
+    final hasColors = colorOptions.isNotEmpty;
+    if (hasColors && selectedColor == null) {
       showAppSnackBar("Please select a color", type: SnackBarType.error);
       return;
     }
@@ -510,12 +560,31 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
 
     final reasonId = _getReasonId(selectedReason!); // int
 
+    // Log exchange request parameters
+    print("═══════════════════════════════════════════════════════════");
+    print("📦 EXCHANGE REQUEST - API CALL");
+    print("═══════════════════════════════════════════════════════════");
+    print("📋 Order Item ID: ${widget.order["id"]}");
+    print("👤 User ID: ${widget.order["order"]["userId"]}");
+    print("🔄 New Variant ID: $selectedVariantId");
+    print("🎨 Selected Color: $selectedColor");
+    print("📏 Selected Size: $selectedSize");
+    print("❓ Reason ID: $reasonId");
+    print("❓ Reason Text: $selectedReason");
+    print("═══════════════════════════════════════════════════════════");
+
     final success = await orderController.requestExchange(
       orderItemId: widget.order["id"],
       userId: widget.order["order"]["userId"],
       newVariantId: selectedVariantId!,
-      reason: reasonId.toString(), // 🔥 FIXED — backend expects STRING
+      reason: reasonId.toString(),
     );
+
+    print("═══════════════════════════════════════════════════════════");
+    print("📦 EXCHANGE REQUEST - RESPONSE");
+    print("═══════════════════════════════════════════════════════════");
+    print("✅ Success: $success");
+    print("═══════════════════════════════════════════════════════════");
 
     if (success) {
       Get.off(() => ExchangeStatusScreen(order: widget.order));

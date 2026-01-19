@@ -143,22 +143,22 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   // Apply filters and sort
   Future<void> _applyFiltersAndSort() async {
     try {
-      // Get the original search result product IDs
-      final searchProductIds = _originalSearchResults
-          .map((p) => int.tryParse(p['id']?.toString() ?? ''))
-          .whereType<int>()
-          .toSet();
+      print("═══════════════════════════════════════════════════════════");
+      print("🔹 APPLYING FILTERS/SORT TO SEARCH RESULTS");
+      print("═══════════════════════════════════════════════════════════");
+      print("   • Search Query → '${widget.searchQuery}'");
+      print("   • Brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all'}");
+      print("   • Colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all'}");
+      print("   • Sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all'}");
+      print("   • Price Range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
+      print("   • Sort Option  → $_appliedSortOption");
+      print("   • Has Filters  → $_hasActiveFilters");
+      print("═══════════════════════════════════════════════════════════");
 
-      if (_hasActiveFilters) {
-        // Call filter API
-        print("🔹 Applying filters to search results");
-        print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
-        print("   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
-        print("   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
-        print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
-
+      if (_hasActiveFilters || _appliedSortOption != "recommended") {
+        // ✅ FIX: Pass search query (key) to filter API so it filters within search context
         await catalogController.getFilterAndSortProducts(
+          key: widget.searchQuery, // Pass search query to filter within search results
           brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
           colors: _appliedColors.isNotEmpty ? _appliedColors : null,
           sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
@@ -168,45 +168,15 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
           superCatId: productController.categoryFilter.value,
         );
 
-        // Filter to only include products from search results
-        final apiResults = List<dynamic>.from(catalogController.categoryProductList);
-        final filteredResults = apiResults.where((product) {
-          final productId = int.tryParse(product['id']?.toString() ?? '');
-          return productId != null && searchProductIds.contains(productId);
-        }).toList();
-
-        print("🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} from search results");
-        catalogController.categoryProductList.assignAll(filteredResults);
-
-        print("✅ Filter applied - ${catalogController.categoryProductList.length} products");
-      } else if (_appliedSortOption != "recommended") {
-        // Client-side sort only
-        print("🔧 Client-side sorting: $_appliedSortOption");
-
-        final productsToSort = List<dynamic>.from(_originalSearchResults);
-
-        productsToSort.sort((a, b) {
-          final priceA = (a['price'] ?? a['basePrice'] ?? a['displayPrice'] ?? 0) as num;
-          final priceB = (b['price'] ?? b['basePrice'] ?? b['displayPrice'] ?? 0) as num;
-
-          if (_appliedSortOption == 'price_asc') {
-            return priceA.compareTo(priceB);
-          } else if (_appliedSortOption == 'price_desc') {
-            return priceB.compareTo(priceA);
-          } else if (_appliedSortOption == 'whats_new') {
-            final idA = int.tryParse(a['id']?.toString() ?? '0') ?? 0;
-            final idB = int.tryParse(b['id']?.toString() ?? '0') ?? 0;
-            return idB.compareTo(idA);
-          }
-          return 0;
-        });
-
-        catalogController.categoryProductList.assignAll(productsToSort);
-        print("✅ Client-side sort complete - ${catalogController.categoryProductList.length} products");
+        print("═══════════════════════════════════════════════════════════");
+        print("✅ FILTER API RESPONSE");
+        print("═══════════════════════════════════════════════════════════");
+        print("   Products returned: ${catalogController.categoryProductList.length}");
+        print("═══════════════════════════════════════════════════════════");
       } else {
-        // No filters, no sort - clear filtered results
+        // No filters, no sort - clear filtered results to show original
         catalogController.categoryProductList.clear();
-        print("✅ Showing original search results");
+        print("✅ Cleared filters - showing original search results (${_originalSearchResults.length} items)");
       }
 
       // Reset pagination when filters change
@@ -988,13 +958,12 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                             onPressed: () {
                               Get.back();
 
+                              // ✅ FIX: Use productController.filterBrands (same source as displayed brands)
                               final selectedBrandIds = <int>[];
                               for (final brandName in selectedBrands) {
-                                final brandData = brandController.brandList
+                                final brandData = productController.filterBrands
                                     .firstWhereOrNull((item) =>
-                                        item['alphabet'] == null &&
-                                        item['name']?.toString().trim() ==
-                                            brandName);
+                                        item['name']?.toString().trim() == brandName);
                                 if (brandData != null) {
                                   final id = int.tryParse(
                                       brandData['id']?.toString() ?? '');
@@ -1002,7 +971,9 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                 }
                               }
 
-                              print("✅ Filters configured:");
+                              print("═══════════════════════════════════════════════════════════");
+                              print("✅ FILTERS CONFIGURED");
+                              print("═══════════════════════════════════════════════════════════");
                               print("  Brands: ${selectedBrands.join(', ')}");
                               print("  Brand IDs: $selectedBrandIds");
                               print("  Price: ₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()}");

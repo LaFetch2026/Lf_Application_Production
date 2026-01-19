@@ -10,12 +10,23 @@ class CancelSuccessScreen extends StatelessWidget {
 
   const CancelSuccessScreen({super.key, required this.order});
 
+  /// Helper to extract product data from nested or flat structure
+  Map<String, dynamic> _extractProduct(dynamic rawProduct) {
+    if (rawProduct is Map) {
+      if (rawProduct.containsKey('data') && rawProduct['data'] is Map) {
+        return Map<String, dynamic>.from(rawProduct['data']);
+      }
+      return Map<String, dynamic>.from(rawProduct);
+    }
+    return {};
+  }
+
   @override
   Widget build(BuildContext context) {
     // ----------- SAME EXTRACTION LOGIC AS ConfirmOrderDetailsScreen -------------
     final data = order['data'] ?? order;
 
-    final product = data['product'] ?? {};
+    final product = _extractProduct(data['product']);
     final orderInfo = data['order'] ?? {};
     final variant = data['variant'] ?? {};
 

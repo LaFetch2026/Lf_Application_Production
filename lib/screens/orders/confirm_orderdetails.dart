@@ -25,6 +25,17 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
   Map<String, dynamic>? detailedOrder;
   bool isLoading = true;
 
+  /// Helper to extract product data from nested or flat structure
+  Map<String, dynamic> _extractProduct(dynamic rawProduct) {
+    if (rawProduct is Map) {
+      if (rawProduct.containsKey('data') && rawProduct['data'] is Map) {
+        return Map<String, dynamic>.from(rawProduct['data']);
+      }
+      return Map<String, dynamic>.from(rawProduct);
+    }
+    return {};
+  }
+
   @override
   void initState() {
     super.initState();
@@ -60,7 +71,7 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
 
     // ✅ Extract nested objects safely
     final order = data['order'] ?? {};
-    final product = data['product'] ?? {};
+    final product = _extractProduct(data['product']);
     final shippingAddress = order['shippingAddress'] ?? {};
 
     // ✅ Handle product image and info

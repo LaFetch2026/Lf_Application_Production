@@ -21,6 +21,17 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
   int? selectedReason;
   final TextEditingController otherReason = TextEditingController();
 
+  /// Helper to extract product data from nested or flat structure
+  Map<String, dynamic> _extractProduct(dynamic rawProduct) {
+    if (rawProduct is Map) {
+      if (rawProduct.containsKey('data') && rawProduct['data'] is Map) {
+        return Map<String, dynamic>.from(rawProduct['data']);
+      }
+      return Map<String, dynamic>.from(rawProduct);
+    }
+    return {};
+  }
+
   // ✅ Centralized reasons map
   final Map<int, String> cancelReason = const {
     25: "Other",
@@ -40,7 +51,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
   @override
   Widget build(BuildContext context) {
     final orderItem = widget.order;
-    final product = orderItem['product'] ?? {};
+    final product = _extractProduct(orderItem['product']);
     final order = orderItem['order'] ?? {};
 
     final imageUrls = (product['imageUrls'] ?? []) as List;

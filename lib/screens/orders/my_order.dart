@@ -26,6 +26,18 @@ class MyOrdersScreen extends StatefulWidget {
 class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
   final OrderController orderController = Get.put(OrderController());
 
+  /// Helper to extract product data from nested or flat structure
+  Map<String, dynamic> _extractProduct(dynamic rawProduct) {
+    if (rawProduct is Map) {
+      // Check if it's a nested API response: {status, message, data: {...}}
+      if (rawProduct.containsKey('data') && rawProduct['data'] is Map) {
+        return Map<String, dynamic>.from(rawProduct['data']);
+      }
+      return Map<String, dynamic>.from(rawProduct);
+    }
+    return {};
+  }
+
   DateTime _extractOrderDate(Map<String, dynamic> item) {
     final status = item["status"]?.toString().toLowerCase() ?? "";
     String? dateStr;
@@ -171,7 +183,9 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
 
   Widget _buildOrderItem(Map<String, dynamic> orderItem) {
     final order = orderItem['order'] ?? {};
-    final product = orderItem['product'] ?? {};
+
+    // Extract product from nested or flat structure
+    final product = _extractProduct(orderItem['product']);
 
     final status = (orderItem["status"] ?? "").toString().toLowerCase();
     final orderItemId = orderItem['id'] ?? 0;
@@ -186,6 +200,12 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
     final productName = product['title'] ?? "Unknown Product";
     final quantity = orderItem['quantity']?.toString() ?? "1";
     final price = double.tryParse(orderItem['total']?.toString() ?? "0") ?? 0.0;
+
+    // Get size/color from order item or variant
+    final size = orderItem['size']?.toString() ??
+        orderItem['variant']?['title']?.toString() ?? "-";
+    final color = orderItem['color']?.toString() ??
+        orderItem['colour']?.toString() ?? "-";
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 16.sp),
@@ -235,12 +255,22 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
                     ),
                     SizedBox(height: 4.sp),
                     AppText(
-                      text: "Qty: $quantity",
+                      text: "Size: $size  |  Qty: $quantity",
                       fontSize: 12,
                       fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
                       color: subtitleColor,
                     ),
+                    if (color != "-") ...[
+                      SizedBox(height: 2.sp),
+                      AppText(
+                        text: "Color: $color",
+                        fontSize: 12,
+                        fontFamily: "Clash Display Regular",
+                        fontWeight: FontWeight.w400,
+                        color: subtitleColor,
+                      ),
+                    ],
                     SizedBox(height: 8.sp),
                     AppText(
                       text: "₹${price.toStringAsFixed(2)}",

@@ -22,6 +22,17 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
   final OrderController orderController = Get.put(OrderController());
   String? selectedReason;
 
+  /// Helper to extract product data from nested or flat structure
+  Map<String, dynamic> _extractProduct(dynamic rawProduct) {
+    if (rawProduct is Map) {
+      if (rawProduct.containsKey('data') && rawProduct['data'] is Map) {
+        return Map<String, dynamic>.from(rawProduct['data']);
+      }
+      return Map<String, dynamic>.from(rawProduct);
+    }
+    return {};
+  }
+
   final Map<int, String> reasons = const {
     25: "Other",
     26: "Changed my mind",
@@ -40,7 +51,7 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
   @override
   Widget build(BuildContext context) {
     final orderItem = widget.order;
-    final product = orderItem['product'] ?? {};
+    final product = _extractProduct(orderItem['product']);
     final order = orderItem['order'] ?? {};
 
     /// REQUIRED FOR API (NO MORE ERRORS)

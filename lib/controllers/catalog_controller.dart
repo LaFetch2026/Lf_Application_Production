@@ -41,7 +41,8 @@ class CatalogController extends BaseController {
         catalogList.clear();
         catalogList.assignAll(cached);
         update();
-        print("✅ Catalog loaded from cache for gender: $gender (${catalogList.length} items)");
+        print(
+            "✅ Catalog loaded from cache for gender: $gender (${catalogList.length} items)");
         return;
       }
     }
@@ -85,7 +86,8 @@ class CatalogController extends BaseController {
           // ✅ Force UI update
           update();
 
-          print("✅ Shop by Category loaded: ${catalogList.length} items for gender: $gender");
+          print(
+              "✅ Shop by Category loaded: ${catalogList.length} items for gender: $gender");
         } else {
           catalogList.clear();
           getSnackBar("No categories available");
@@ -267,7 +269,8 @@ class CatalogController extends BaseController {
     String? key,
     int page = 1, // ✅ Page number for pagination
     int limit = 20, // ✅ Items per page
-    bool appendResults = false, // ✅ If true, append to existing list instead of replacing
+    bool appendResults =
+        false, // ✅ If true, append to existing list instead of replacing
   }) async {
     isSorting.value = true;
     isCategory.value = true;
@@ -381,7 +384,8 @@ class CatalogController extends BaseController {
         if (appendResults && page > 1) {
           categoryProductList.addAll(transformed);
           sortedProductList.addAll(transformed);
-          print("✅ Appended ${transformed.length} products (Total: ${categoryProductList.length})");
+          print(
+              "✅ Appended ${transformed.length} products (Total: ${categoryProductList.length})");
         } else {
           categoryProductList.assignAll(transformed);
           sortedProductList.assignAll(transformed);

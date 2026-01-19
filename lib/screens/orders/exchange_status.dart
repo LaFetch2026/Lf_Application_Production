@@ -10,6 +10,17 @@ class ExchangeStatusScreen extends StatelessWidget {
   final Map<String, dynamic> order;
   const ExchangeStatusScreen({super.key, required this.order});
 
+  /// Helper to extract product data from nested or flat structure
+  Map<String, dynamic> _extractProduct(dynamic rawProduct) {
+    if (rawProduct is Map) {
+      if (rawProduct.containsKey('data') && rawProduct['data'] is Map) {
+        return Map<String, dynamic>.from(rawProduct['data']);
+      }
+      return Map<String, dynamic>.from(rawProduct);
+    }
+    return {};
+  }
+
   final List<Map<String, String>> steps = const [
     {"title": "Exchange Request Submitted", "date": "16 Oct"},
     {"title": "Pickup Scheduled", "date": "17 Oct"},
@@ -23,7 +34,7 @@ class ExchangeStatusScreen extends StatelessWidget {
     // ----------- SAME EXTRACTION LOGIC AS ReturnStatus + CancelSuccess -------------
     final data = order['data'] ?? order;
 
-    final product = data['product'] ?? {};
+    final product = _extractProduct(data['product']);
     final orderInfo = data['order'] ?? {};
     final variant = data['variant'] ?? {};
 
