@@ -54,7 +54,7 @@ class ProfileBottom extends StatelessWidget {
               Column(
                 children: [
                   Image.asset(deliveredImage,
-                      height: 40.sp, width: 40.sp, fit: BoxFit.cover),
+                      height: 40.sp, width: 40.sp, fit: BoxFit.fill),
                   Padding(
                     padding: EdgeInsets.only(top: 4.sp),
                     child: AppText(
@@ -72,7 +72,7 @@ class ProfileBottom extends StatelessWidget {
               Column(
                 children: [
                   Image.asset(qualityImage,
-                      height: 40.sp, width: 40.sp, fit: BoxFit.cover),
+                      height: 40.sp, width: 40.sp, fit: BoxFit.fill),
                   Padding(
                     padding: EdgeInsets.only(top: 4.sp),
                     child: AppText(
@@ -90,7 +90,7 @@ class ProfileBottom extends StatelessWidget {
               Column(
                 children: [
                   Image.asset(locationBaseImage,
-                      height: 40.sp, width: 40.sp, fit: BoxFit.cover),
+                      height: 40.sp, width: 40.sp, fit: BoxFit.fill),
                   Padding(
                     padding: EdgeInsets.only(top: 4.sp),
                     child: AppText(
@@ -108,7 +108,7 @@ class ProfileBottom extends StatelessWidget {
               Column(
                 children: [
                   Image.asset(exchangeImage,
-                      height: 40.sp, width: 40.sp, fit: BoxFit.cover),
+                      height: 40.sp, width: 40.sp, fit: BoxFit.fill),
                   Padding(
                     padding: EdgeInsets.only(top: 4.sp),
                     child: AppText(

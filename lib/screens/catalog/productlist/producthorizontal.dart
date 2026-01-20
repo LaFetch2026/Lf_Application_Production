@@ -169,8 +169,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                   .productCategoryList[index]
                                                                       ["images"]
                                                                   .isNotEmpty &&
-                                                              productController.productCategoryList[index]
-                                                                      [
+                                                              productController
+                                                                          .productCategoryList[index][
                                                                       "images"] !=
                                                                   null
                                                           ? SizedBox(
@@ -241,7 +241,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                           .width /
                                                                       2) -
                                                                   24.sp,
-                                                              fit: BoxFit.cover),
+                                                              fit: BoxFit.fill),
                                                     ),
                                                     GestureDetector(
                                                       onTap: () async {

@@ -175,7 +175,7 @@
 //                             Get.back();
 //                           },
 //                           child: SvgPicture.asset(arrowBack,
-//                               height: 15.sp, width: 15.sp, fit: BoxFit.cover)),
+//                               height: 15.sp, width: 15.sp, fit: BoxFit.fill)),
 //                     ),
 //                     Padding(
 //                       padding: EdgeInsets.only(

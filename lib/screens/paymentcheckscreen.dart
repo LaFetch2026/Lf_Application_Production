@@ -117,7 +117,7 @@ class PaymentCheckScreenState extends State<PaymentCheckScreen> {
                 child: Lottie.asset(
                   width: 200.sp,
                   height: 200.sp,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fill,
                   sandLoader,
                 ),
               ),

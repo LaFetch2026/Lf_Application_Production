@@ -33,7 +33,7 @@ class LafetchCardWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 35),
               child: Image.asset(appNameImage,
-                  height: 16, width: 50, fit: BoxFit.cover),
+                  height: 16, width: 50, fit: BoxFit.fill),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 8),

@@ -178,8 +178,8 @@ class BrandsScreenState extends State<BrandsScreen> {
           onPopInvokedWithResult: (bool didPop, dynamic result) {
             if (!didPop) {
               Get.offAll(() => const BottomNavScreen(
-                index: 0,
-              ));
+                    index: 0,
+                  ));
             }
           },
           child: Scaffold(
@@ -263,7 +263,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                               color: titleColor,
                               height: 17.sp,
                               width: 17.sp,
-                              fit: BoxFit.cover),
+                              fit: BoxFit.fill),
                           onPressed: () {},
                         ),
                         focusedBorder: const OutlineInputBorder(
@@ -406,8 +406,10 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                 .length,
                                                         padding:
                                                             EdgeInsets.zero,
-                                                        addAutomaticKeepAlives: false,
-                                                        addRepaintBoundaries: true,
+                                                        addAutomaticKeepAlives:
+                                                            false,
+                                                        addRepaintBoundaries:
+                                                            true,
                                                         itemBuilder:
                                                             (ctx, index) {
                                                           final brand =
@@ -421,23 +423,46 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                           // Root cause: /brand-products API returns incomplete data (only id + title)
                                                           // Impact: Fetching products from brandDetails["products"] when brand is expanded
                                                           // Action needed: Switch to getBrandProducts() when backend fixes the endpoint
-                                                          final rawProducts = (isExpanded && val.selectIndex.value == brand["id"])
-                                                              ? (brandController.brandDetails["products"] as List? ?? [])
+                                                          final rawProducts = (isExpanded &&
+                                                                  val.selectIndex
+                                                                          .value ==
+                                                                      brand[
+                                                                          "id"])
+                                                              ? (brandController
+                                                                              .brandDetails[
+                                                                          "products"]
+                                                                      as List? ??
+                                                                  [])
                                                               : [];
 
                                                           // 🔍 DEBUG: Log brand and product data
                                                           if (isExpanded) {
-                                                            print("📦 Brand expanded: ${brand["name"]} (ID: ${brand["id"]})");
-                                                            print("   Brand logo URL: ${brand["logo"]}");
-                                                            print("   Products count: ${rawProducts.length}");
-                                                            if (rawProducts.isNotEmpty) {
-                                                              print("   First product: ${rawProducts.first}");
+                                                            print(
+                                                                "📦 Brand expanded: ${brand["name"]} (ID: ${brand["id"]})");
+                                                            print(
+                                                                "   Brand logo URL: ${brand["logo"]}");
+                                                            print(
+                                                                "   Products count: ${rawProducts.length}");
+                                                            if (rawProducts
+                                                                .isNotEmpty) {
+                                                              print(
+                                                                  "   First product: ${rawProducts.first}");
                                                             }
                                                           }
 
                                                           // ✅ Show first 3 products in consistent order (by product ID)
-                                                          final sortedProducts = List.from(rawProducts)..sort((a, b) => (a["id"] ?? 0).compareTo(b["id"] ?? 0));
-                                                          final products = sortedProducts.take(3).toList();
+                                                          final sortedProducts = List
+                                                              .from(rawProducts)
+                                                            ..sort((a, b) => (a[
+                                                                        "id"] ??
+                                                                    0)
+                                                                .compareTo(
+                                                                    b["id"] ??
+                                                                        0));
+                                                          final products =
+                                                              sortedProducts
+                                                                  .take(3)
+                                                                  .toList();
 
                                                           return Column(
                                                             children: [
@@ -516,12 +541,16 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                   color:
                                                                       statusBarColor,
                                                                   padding:
-                                                                      EdgeInsets.only(
-                                                                        left: 10.sp,
-                                                                        right: 10.sp,
-                                                                        top: 10.sp,
-                                                                        bottom: isExpanded ? 6.sp : 10.sp,
-                                                                      ),
+                                                                      EdgeInsets
+                                                                          .only(
+                                                                    left: 10.sp,
+                                                                    right:
+                                                                        10.sp,
+                                                                    top: 10.sp,
+                                                                    bottom: isExpanded
+                                                                        ? 6.sp
+                                                                        : 10.sp,
+                                                                  ),
                                                                   child: Row(
                                                                     children: [
                                                                       brand["logo"] !=
@@ -545,7 +574,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                       maxNrOfCacheObjects: 100,
                                                                                     ),
                                                                                   ),
-                                                                                  fit: BoxFit.contain,
+                                                                                  fit: BoxFit.fill,
                                                                                   imageUrl: brand["logo"],
                                                                                   memCacheWidth: (48.sp * MediaQuery.of(context).devicePixelRatio).round(),
                                                                                   memCacheHeight: (48.sp * MediaQuery.of(context).devicePixelRatio).round(),
@@ -591,7 +620,8 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                             () async {
                                                                           // Toggle expansion
                                                                           if (isExpanded) {
-                                                                            val.selectIndex.value = 0;
+                                                                            val.selectIndex.value =
+                                                                                0;
                                                                           } else {
                                                                             try {
                                                                               val.selectIndex.value = brand["id"];
@@ -600,9 +630,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                               // because /brand-products only returns id and title
                                                                               // Only fetch if we don't have products cached for this brand
                                                                               final currentBrandDetails = brandController.brandDetails;
-                                                                              final needsToFetch = currentBrandDetails.isEmpty ||
-                                                                                  currentBrandDetails["brandInfo"]?["id"] != brand["id"] ||
-                                                                                  (currentBrandDetails["products"] as List?)?.isEmpty == true;
+                                                                              final needsToFetch = currentBrandDetails.isEmpty || currentBrandDetails["brandInfo"]?["id"] != brand["id"] || (currentBrandDetails["products"] as List?)?.isEmpty == true;
 
                                                                               if (needsToFetch) {
                                                                                 print("🔄 Fetching brand details for expanded brand: ${brand["name"]}");
@@ -664,17 +692,9 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                   final product = products[i];
                                                                                   // Support both image formats: "images" array or "imageUrls" array
                                                                                   String? imageUrl;
-                                                                                  if (product["images"] != null &&
-                                                                                      product["images"] is List &&
-                                                                                      product["images"].isNotEmpty &&
-                                                                                      product["images"][0] != null &&
-                                                                                      product["images"][0] is Map &&
-                                                                                      product["images"][0]["name"] != null) {
+                                                                                  if (product["images"] != null && product["images"] is List && product["images"].isNotEmpty && product["images"][0] != null && product["images"][0] is Map && product["images"][0]["name"] != null) {
                                                                                     imageUrl = product["images"][0]["name"].toString();
-                                                                                  } else if (product["imageUrls"] != null &&
-                                                                                             product["imageUrls"] is List &&
-                                                                                             product["imageUrls"].isNotEmpty &&
-                                                                                             product["imageUrls"][0] != null) {
+                                                                                  } else if (product["imageUrls"] != null && product["imageUrls"] is List && product["imageUrls"].isNotEmpty && product["imageUrls"][0] != null) {
                                                                                     imageUrl = product["imageUrls"][0].toString();
                                                                                   }
 
@@ -749,7 +769,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                                                                                       maxNrOfCacheObjects: 150,
                                                                                                     ),
                                                                                                   ),
-                                                                                                  fit: BoxFit.cover,
+                                                                                                  fit: BoxFit.fill,
                                                                                                   imageUrl: imageUrl,
                                                                                                   memCacheWidth: (97.sp * MediaQuery.of(context).devicePixelRatio).round(),
                                                                                                   memCacheHeight: (97.sp * MediaQuery.of(context).devicePixelRatio).round(),
@@ -870,7 +890,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                                               child: Image.asset(errorImage,
                                                   height: 200.sp,
                                                   width: 220.sp,
-                                                  fit: BoxFit.cover),
+                                                  fit: BoxFit.fill),
                                             ),
                                           ),
                                           Padding(

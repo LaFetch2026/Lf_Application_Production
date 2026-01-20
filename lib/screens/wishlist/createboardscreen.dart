@@ -372,12 +372,12 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                       maxNrOfCacheObjects: 100,
                                                     ),
                                                   ),
-                                                  fit: BoxFit.cover,
+                                                  fit: BoxFit.fill,
                                                   imageUrl: img,
                                                   errorWidget: (_, __, ___) =>
                                                       Image.asset(
                                                     downloadImage,
-                                                    fit: BoxFit.cover,
+                                                    fit: BoxFit.fill,
                                                     height:
                                                         (MediaQuery.of(context)
                                                                     .size
@@ -405,7 +405,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                                                             .width /
                                                         2) -
                                                     24,
-                                                fit: BoxFit.cover,
+                                                fit: BoxFit.fill,
                                               ),
                                       ),
                                       // select / deselect tick

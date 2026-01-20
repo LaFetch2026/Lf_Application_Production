@@ -240,11 +240,11 @@ class _ReturnRequestScreenState extends State<ReturnRequestScreen> {
       return Image.network(url,
           height: 70.sp,
           width: 70.sp,
-          fit: BoxFit.cover,
+          fit: BoxFit.fill,
           errorBuilder: (_, __, ___) =>
               Image.asset(dummyWishlistImage, height: 70.sp, width: 70.sp));
     }
     return Image.asset(dummyWishlistImage,
-        height: 70.sp, width: 70.sp, fit: BoxFit.cover);
+        height: 70.sp, width: 70.sp, fit: BoxFit.fill);
   }
 }

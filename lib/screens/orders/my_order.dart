@@ -236,10 +236,10 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
                           maxNrOfCacheObjects: 150),
                     ),
                     imageUrl: imageUrl,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                     errorWidget: (_, __, ___) => Image.asset(
                       dummyWishlistImage,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     ),
                   ),
                 ),

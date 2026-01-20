@@ -486,7 +486,7 @@ class QuickScreenState extends State<QuickScreen> {
                                           color: searchTextColor,
                                           height: 17.sp,
                                           width: 17.sp,
-                                          fit: BoxFit.cover),
+                                          fit: BoxFit.fill),
                                       onPressed: () {},
                                     ),
                                     focusedBorder: OutlineInputBorder(
@@ -734,7 +734,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                     stalePeriod:
                                                         const Duration(days: 15),
                                                     maxNrOfCacheObjects: 100)),
-                                                fit: BoxFit.cover,
+                                                fit: BoxFit.fill,
                                                 imageUrl: homeController
                                                         .banner2List[itemIndex]
                                                     ["image"],
@@ -760,7 +760,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                     (context, url, error) =>
                                                         Image.asset(
                                                   downloadImage,
-                                                  fit: BoxFit.cover,
+                                                  fit: BoxFit.fill,
                                                   height: 128.sp,
                                                   width: MediaQuery.of(context)
                                                       .size
@@ -787,7 +787,7 @@ class QuickScreenState extends State<QuickScreen> {
                         width: double.infinity,
                         child: Lottie.asset(
                           width: double.infinity,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                           quickLottie,
                         ),
                       ),
@@ -1357,7 +1357,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                                               height: 32.sp,
                                                                               width: 32.sp,
                                                                               cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-                                                                              fit: BoxFit.cover,
+                                                                              fit: BoxFit.fill,
                                                                               imageUrl: value.brandProductList[index]["logo"],
                                                                               errorWidget: (context, url, error) => Image.asset(
                                                                                 downloadImage,
@@ -1400,7 +1400,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                                             child: Image.asset(dummyWishlistImage,
                                                                                 height: 32.sp,
                                                                                 width: 32.sp,
-                                                                                fit: BoxFit.cover),
+                                                                                fit: BoxFit.fill),
                                                                           ),
                                                                         ),
                                                                       ),
@@ -1729,7 +1729,7 @@ class QuickScreenState extends State<QuickScreen> {
                                             child: Image.asset(errorImage,
                                                 height: 200.sp,
                                                 width: 220.sp,
-                                                fit: BoxFit.cover),
+                                                fit: BoxFit.fill),
                                           ),
                                         )
                                       : SizedBox(

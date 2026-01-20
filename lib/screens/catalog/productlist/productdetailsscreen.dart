@@ -337,20 +337,20 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         imageUrl: firstImg,
                                         width: 80.sp,
                                         height: 80.sp,
-                                        fit: BoxFit.cover,
+                                        fit: BoxFit.fill,
                                         errorWidget: (context, url, error) =>
                                             Image.asset(
                                           dummyWishlistImage,
                                           width: 80.sp,
                                           height: 80.sp,
-                                          fit: BoxFit.cover,
+                                          fit: BoxFit.fill,
                                         ),
                                       )
                                     : Image.asset(
                                         dummyWishlistImage,
                                         width: 80.sp,
                                         height: 80.sp,
-                                        fit: BoxFit.cover,
+                                        fit: BoxFit.fill,
                                       ),
                               ),
                               SizedBox(width: 12.sp),
@@ -888,7 +888,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     final imagesOnly = _imagesOnly();
 
     if (imagesOnly.isEmpty) {
-      return [Image.asset(dummyWishlistImage, fit: BoxFit.cover)];
+      return [Image.asset(dummyWishlistImage, fit: BoxFit.fill)];
     }
 
     final List<Widget> list = [];
@@ -918,7 +918,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     maxNrOfCacheObjects: 100,
                   ),
                 ),
-                fit: BoxFit.cover, // ✅ Changed to cover
+                fit: BoxFit.fill, // ✅ Changed to cover
                 imageUrl: url,
                 width: double.infinity,
                 height: double.infinity,
@@ -927,7 +927,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   width: MediaQuery.of(context).size.width,
                 ),
                 errorWidget: (context, url, error) =>
-                    Image.asset(downloadImage, fit: BoxFit.cover),
+                    Image.asset(downloadImage, fit: BoxFit.fill),
               ),
             ),
           ),
@@ -1258,7 +1258,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         imageUrl: chart["sizeGuideImage"],
                         width: double.infinity,
                         height: 300.sp,
-                        fit: BoxFit.contain,
+                        fit: BoxFit.fill,
                         errorWidget: (context, url, error) => Container(
                           width: double.infinity,
                           height: 300.sp,
@@ -1464,7 +1464,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     color: whiteColor,
                                     height: 15.sp,
                                     width: 15.sp,
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.fill,
                                   ),
                                   onPressed: () => Get.back(),
                                 ),

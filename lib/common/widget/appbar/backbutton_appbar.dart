@@ -46,7 +46,7 @@ class BackButtonAppbar extends StatelessWidget {
                     padding: EdgeInsets.only(
                         left: 16.sp, right: 16.sp, top: 48.sp, bottom: 10.sp),
                     child: SvgPicture.asset(arrowBack,
-                        height: 15.sp, width: 15.sp, fit: BoxFit.cover),
+                        height: 15.sp, width: 15.sp, fit: BoxFit.fill),
                   ),
                 ),
               ),

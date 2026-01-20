@@ -153,7 +153,7 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                               color: titleColor,
                               height: 17.sp,
                               width: 17.sp,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.fill,
                             ),
                             onPressed: () {},
                           ),

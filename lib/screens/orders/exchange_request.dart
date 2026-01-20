@@ -85,7 +85,8 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
   /// --------------------------------------------
   Future<void> _loadFullProductDetails() async {
     // Use productId directly from order item (not nested in product)
-    final productId = widget.order['productId'] ?? _extractProduct(widget.order['product'])['id'];
+    final productId = widget.order['productId'] ??
+        _extractProduct(widget.order['product'])['id'];
 
     if (productId == null) {
       print("❌ productId missing in order!");
@@ -107,7 +108,8 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
     print("📦 FULL PRODUCT LOADED");
     print("═══════════════════════════════════════════════════════════");
     print("fullProduct type: ${fullProduct.runtimeType}");
-    print("fullProduct keys: ${fullProduct is Map ? (fullProduct as Map).keys.toList() : 'N/A'}");
+    print(
+        "fullProduct keys: ${fullProduct is Map ? (fullProduct as Map).keys.toList() : 'N/A'}");
 
     // Extract actual product data
     final extractedProduct = _extractProduct(fullProduct);
@@ -402,7 +404,8 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
                               final match = variantOptions.firstWhere(
                                 (v) {
                                   if (hasColors) {
-                                    return v["color"] == selectedColor && v["size"] == s;
+                                    return v["color"] == selectedColor &&
+                                        v["size"] == s;
                                   } else {
                                     return v["size"] == s;
                                   }
@@ -600,7 +603,7 @@ class _ExchangeRequestScreenState extends State<ExchangeRequestScreen> {
         url,
         height: 70.sp,
         width: 70.sp,
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
         errorBuilder: (_, __, ___) => Image.asset(
           dummyWishlistImage,
           height: 70.sp,

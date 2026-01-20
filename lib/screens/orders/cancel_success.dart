@@ -58,7 +58,7 @@ class CancelSuccessScreen extends StatelessWidget {
             Image.asset(
               cancelorder,
               height: 200.sp,
-              fit: BoxFit.contain,
+              fit: BoxFit.fill,
             ),
             SizedBox(height: 24.sp),
 
@@ -119,12 +119,12 @@ class CancelSuccessScreen extends StatelessWidget {
                         imageUrl,
                         height: 60.sp,
                         width: 60.sp,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                         errorBuilder: (_, __, ___) => Image.asset(
                           dummyWishlistImage,
                           height: 60.sp,
                           width: 60.sp,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                         ),
                       ),
                     ),

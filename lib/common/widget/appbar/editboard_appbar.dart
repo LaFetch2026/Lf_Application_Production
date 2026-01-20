@@ -37,7 +37,7 @@ class EditBoardAppbar extends StatelessWidget {
                   Get.back();
                 },
                 child: Image.asset(backArrowImage,
-                    height: 16.sp, width: 10.sp, fit: BoxFit.cover),
+                    height: 16.sp, width: 10.sp, fit: BoxFit.fill),
               ),
               const SizedBox(
                 width: 10,

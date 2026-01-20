@@ -175,7 +175,7 @@ class HorizontalHomeList extends StatelessWidget {
                                                                 days: 15),
                                                         maxNrOfCacheObjects:
                                                             100)),
-                                                fit: BoxFit.cover,
+                                                fit: BoxFit.fill,
                                                 /* fadeInCurve: Curves.easeIn,
                                                 fadeInDuration:
                                                     Duration(milliseconds: 100), */
@@ -192,7 +192,7 @@ class HorizontalHomeList extends StatelessWidget {
                                                     (context, url, error) =>
                                                         Image.asset(
                                                   downloadImage,
-                                                  fit: BoxFit.cover,
+                                                  fit: BoxFit.fill,
                                                   height: 150.sp,
                                                   width: 122.sp,
                                                 ),
@@ -201,7 +201,7 @@ class HorizontalHomeList extends StatelessWidget {
                                           : Image.asset(dummyWishlistImage,
                                               height: 150.sp,
                                               width: 122.sp,
-                                              fit: BoxFit.cover),
+                                              fit: BoxFit.fill),
                                       GestureDetector(
                                         onTap: () {
                                           onPressedHeart?.call(

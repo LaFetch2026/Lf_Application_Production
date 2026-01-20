@@ -163,7 +163,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
             logo,
             width: 24.w,
             height: 24.h,
-            fit: BoxFit.contain,
+            fit: BoxFit.fill,
           ),
         ),
       ),
@@ -185,7 +185,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return FittedBox(
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                     child: SizedBox(
                       width: media.size.width,
                       height: media.size.height,
@@ -222,7 +222,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
               child: Image.asset(
                 appNameImage,
                 height: 41.sp,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ),
             ),
           ),

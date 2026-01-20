@@ -82,7 +82,7 @@ class TotalTaxchargesState extends State<TotalTaxcharges> {
                             color: loginText,
                             height: 13.sp,
                             width: 13.sp,
-                            fit: BoxFit.cover),
+                            fit: BoxFit.fill),
                       ),
                     ),
                   ),

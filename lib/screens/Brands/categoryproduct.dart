@@ -303,7 +303,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
         minPrice: _appliedMinPrice,
         maxPrice: _appliedMaxPrice,
-        sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
+        sortOption:
+            _appliedSortOption != "recommended" ? _appliedSortOption : null,
         catId: widget.categoryId,
         superCatId: widget.genderType,
         page: _currentPage,
@@ -312,10 +313,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       );
 
       // Client-side filter
-      var apiResults = List<dynamic>.from(catalogController.categoryProductList);
+      var apiResults =
+          List<dynamic>.from(catalogController.categoryProductList);
       final filteredResults = apiResults.where((product) {
         final productId = int.tryParse(product['id']?.toString() ?? '');
-        return productId != null && _originalCategoryProductIds.contains(productId);
+        return productId != null &&
+            _originalCategoryProductIds.contains(productId);
       }).toList();
 
       catalogController.categoryProductList.assignAll(filteredResults);
@@ -376,8 +379,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         print("   • Current _appliedSortOption → $_appliedSortOption");
         print(
             "   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
-        print("   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
-        print("   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
+        print(
+            "   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
+        print(
+            "   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
         print("   • sortChanged  → $sortChanged");
         print(
@@ -392,7 +397,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           maxPrice: _appliedMaxPrice,
           sortOption:
               _appliedSortOption != "recommended" ? _appliedSortOption : null,
-          catId: widget.categoryId, // ✅ Pass category ID to filter by this category
+          catId: widget
+              .categoryId, // ✅ Pass category ID to filter by this category
           superCatId: widget.genderType, // ✅ Pass gender type
           page: 1, // ✅ Reset to page 1
           limit: 20, // ✅ Load 20 items per page
@@ -481,8 +487,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         print("   • New _appliedSortOption → $_appliedSortOption");
         print(
             "   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
-        print("   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
-        print("   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
+        print(
+            "   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
+        print(
+            "   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
         print(
             "   • Passing sortOption → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
@@ -495,7 +503,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           maxPrice: _appliedMaxPrice,
           sortOption:
               _appliedSortOption != "recommended" ? _appliedSortOption : null,
-          catId: widget.categoryId, // ✅ Pass category ID to filter by this category
+          catId: widget
+              .categoryId, // ✅ Pass category ID to filter by this category
           superCatId: widget.genderType, // ✅ Pass gender type
           page: 1, // ✅ Reset to first page
           limit: 20, // ✅ Fetch 20 items per page
@@ -679,8 +688,11 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                     return NotificationListener<ScrollNotification>(
                       onNotification: (ScrollNotification scrollInfo) {
                         // ✅ Detect when user scrolls near bottom (160px before end)
-                        if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 160) {
-                          if (_hasActiveFilters && _hasMoreData && !_isLoadingMore) {
+                        if (scrollInfo.metrics.pixels >=
+                            scrollInfo.metrics.maxScrollExtent - 160) {
+                          if (_hasActiveFilters &&
+                              _hasMoreData &&
+                              !_isLoadingMore) {
                             _loadMoreProducts();
                           }
                         }
@@ -688,7 +700,10 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                       },
                       child: GridView.builder(
                         padding: EdgeInsets.symmetric(horizontal: 10.sp),
-                        itemCount: items.length + (_isLoadingMore ? 2 : 0), // ✅ Add 2 for loading indicators
+                        itemCount: items.length +
+                            (_isLoadingMore
+                                ? 2
+                                : 0), // ✅ Add 2 for loading indicators
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           mainAxisSpacing: 10.sp,
@@ -709,58 +724,62 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                               ),
                             );
                           }
-                        final m = normalizeProduct(items[index]);
+                          final m = normalizeProduct(items[index]);
 
-                        final brand = (m['brandName'] ?? '').toString().trim();
-                        final title = (m['title'] ?? '').toString().trim();
-                        final shortDesc =
-                            (m['shortDescription'] ?? title).toString().trim();
-                        final img = _imageFrom(m);
+                          final brand =
+                              (m['brandName'] ?? '').toString().trim();
+                          final title = (m['title'] ?? '').toString().trim();
+                          final shortDesc = (m['shortDescription'] ?? title)
+                              .toString()
+                              .trim();
+                          final img = _imageFrom(m);
 
-                        num? price = _parseNum(m['displayPrice']);
-                        num? mrp = _parseNum(m['displayMrp']);
+                          num? price = _parseNum(m['displayPrice']);
+                          num? mrp = _parseNum(m['displayMrp']);
 
-                        final int pid =
-                            int.tryParse(m['id']?.toString() ?? '') ?? 0;
+                          final int pid =
+                              int.tryParse(m['id']?.toString() ?? '') ?? 0;
 
-                        return GestureDetector(
-                          onTap: () async {
-                            if (pid == 0) {
-                              getSnackBar("Product not available");
-                              return;
-                            }
+                          return GestureDetector(
+                            onTap: () async {
+                              if (pid == 0) {
+                                getSnackBar("Product not available");
+                                return;
+                              }
 
-                            Get.to(
-                              ProductDetailsScreen(
-                                brandName: brand.isEmpty ? title : brand,
-                                expressValue: widget.type == "express" ? 1 : 0,
-                                backgroundcolor: widget.type == "express"
-                                    ? homeAppBarColor
-                                    : whiteColor,
-                                productId: pid,
-                                type: "add",
-                              ),
-                            )?.then((_) async {
-                              await _loadCartIfNeeded(forceRefresh: true);
-                            });
+                              Get.to(
+                                ProductDetailsScreen(
+                                  brandName: brand.isEmpty ? title : brand,
+                                  expressValue:
+                                      widget.type == "express" ? 1 : 0,
+                                  backgroundcolor: widget.type == "express"
+                                      ? homeAppBarColor
+                                      : whiteColor,
+                                  productId: pid,
+                                  type: "add",
+                                ),
+                              )?.then((_) async {
+                                await _loadCartIfNeeded(forceRefresh: true);
+                              });
 
-                            await analytics.logEvent(
-                              name: 'category_product_details',
-                              parameters: {
-                                'page_name': 'category_product_details'
-                              },
-                            );
-                          },
-                          child: _ProductTileNoOverflow(
-                            imageUrl: img,
-                            brand: brand.isEmpty ? title : brand,
-                            description: shortDesc.isEmpty ? title : shortDesc,
-                            mrp: mrp,
-                            price: price,
-                            fmt: _fmtINR,
-                          ),
-                        );
-                      },
+                              await analytics.logEvent(
+                                name: 'category_product_details',
+                                parameters: {
+                                  'page_name': 'category_product_details'
+                                },
+                              );
+                            },
+                            child: _ProductTileNoOverflow(
+                              imageUrl: img,
+                              brand: brand.isEmpty ? title : brand,
+                              description:
+                                  shortDesc.isEmpty ? title : shortDesc,
+                              mrp: mrp,
+                              price: price,
+                              fmt: _fmtINR,
+                            ),
+                          );
+                        },
                       ), // Close GridView.builder
                     ); // Close NotificationListener
                   }),
@@ -966,8 +985,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
     // ✅ Restore previously applied brands
     for (final id in _appliedBrandIds) {
-      final brandData = productController.filterBrands.firstWhereOrNull((item) =>
-          int.tryParse(item['id']?.toString() ?? '') == id);
+      final brandData = productController.filterBrands.firstWhereOrNull(
+          (item) => int.tryParse(item['id']?.toString() ?? '') == id);
       if (brandData != null) {
         final name = brandData['name']?.toString().trim();
         if (name != null && name.isNotEmpty) {
@@ -1170,8 +1189,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                 itemCount: colors.length,
                                                 itemBuilder: (context, i) {
                                                   final color = colors[i];
-                                                  final checked =
-                                                      selectedColors.contains(color);
+                                                  final checked = selectedColors
+                                                      .contains(color);
 
                                                   return CheckboxListTile(
                                                     dense: true,
@@ -1182,16 +1201,19 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                       style: const TextStyle(
                                                         fontFamily:
                                                             "Clash Display Regular",
-                                                        fontWeight: FontWeight.w400,
+                                                        fontWeight:
+                                                            FontWeight.w400,
                                                         color: blackColor,
                                                       ),
                                                     ),
                                                     onChanged: (val) {
                                                       setModalState(() {
                                                         if (val == true) {
-                                                          selectedColors.add(color);
+                                                          selectedColors
+                                                              .add(color);
                                                         } else {
-                                                          selectedColors.remove(color);
+                                                          selectedColors
+                                                              .remove(color);
                                                         }
                                                       });
                                                     },
@@ -1215,15 +1237,18 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                     itemBuilder: (context, i) {
                                                       final size = sizes[i];
                                                       final checked =
-                                                          selectedSizes.contains(size);
+                                                          selectedSizes
+                                                              .contains(size);
 
                                                       return CheckboxListTile(
                                                         dense: true,
-                                                        activeColor: appBarColor,
+                                                        activeColor:
+                                                            appBarColor,
                                                         value: checked,
                                                         title: Text(
                                                           size.toUpperCase(),
-                                                          style: const TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             fontFamily:
                                                                 "Clash Display Regular",
                                                             fontWeight:
@@ -1234,7 +1259,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                                         onChanged: (val) {
                                                           setModalState(() {
                                                             if (val == true) {
-                                                              selectedSizes.add(size);
+                                                              selectedSizes
+                                                                  .add(size);
                                                             } else {
                                                               selectedSizes
                                                                   .remove(size);
@@ -1283,7 +1309,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                 final brandData = productController.filterBrands
                                     .firstWhereOrNull((item) =>
                                         item['name']?.toString().trim() ==
-                                            brandName);
+                                        brandName);
                                 if (brandData != null) {
                                   final id = int.tryParse(
                                       brandData['id']?.toString() ?? '');
@@ -1324,10 +1350,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                       .add("${selectedBrands.length} brand(s)");
                                 }
                                 if (selectedColors.isNotEmpty) {
-                                  filterParts.add("${selectedColors.length} color(s)");
+                                  filterParts
+                                      .add("${selectedColors.length} color(s)");
                                 }
                                 if (selectedSizes.isNotEmpty) {
-                                  filterParts.add("${selectedSizes.length} size(s)");
+                                  filterParts
+                                      .add("${selectedSizes.length} size(s)");
                                 }
                                 if (priceRange.start > 300 ||
                                     priceRange.end < 100000) {
@@ -1609,13 +1637,13 @@ class _ProductTileNoOverflow extends StatelessWidget {
             child: imageUrl != null
                 ? CachedNetworkImage(
                     imageUrl: imageUrl!,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                     errorWidget: (context, url, error) => Image.asset(
                       dummyWishlistImage,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     ),
                   )
-                : Image.asset(dummyWishlistImage, fit: BoxFit.cover),
+                : Image.asset(dummyWishlistImage, fit: BoxFit.fill),
           ),
         ),
 

@@ -165,13 +165,13 @@ class _BottomWishlistState extends State<BottomWishlist> {
                               maxNrOfCacheObjects: 100,
                             ),
                           ),
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                           imageUrl: widget.productImage,
                           errorWidget: (_, __, ___) => Image.asset(
                             downloadImage,
                             height: 85.sp,
                             width: 68.sp,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.fill,
                           ),
                         ),
                       )
@@ -179,7 +179,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                         dummyWishlistImage,
                         height: 85.sp,
                         width: 68.sp,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                       ),
                 Padding(
                   padding: EdgeInsets.only(left: 12.sp),
@@ -216,7 +216,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                   color: lightPurpleColor,
                   height: 18.sp,
                   width: 18.sp,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fill,
                 ),
               ],
             ),
@@ -308,14 +308,14 @@ class _BottomWishlistState extends State<BottomWishlist> {
                                                 maxNrOfCacheObjects: 100,
                                               ),
                                             ),
-                                            fit: BoxFit.cover,
+                                            fit: BoxFit.fill,
                                             imageUrl: firstImageUrl,
                                             errorWidget: (_, __, ___) =>
                                                 Image.asset(
                                               downloadImage,
                                               height: 64.sp,
                                               width: 64.sp,
-                                              fit: BoxFit.cover,
+                                              fit: BoxFit.fill,
                                             ),
                                           ),
                                         )
@@ -323,7 +323,7 @@ class _BottomWishlistState extends State<BottomWishlist> {
                                           dummyWishlistImage,
                                           height: 64.sp,
                                           width: 64.sp,
-                                          fit: BoxFit.cover,
+                                          fit: BoxFit.fill,
                                         ),
 
                                   // Board name + count

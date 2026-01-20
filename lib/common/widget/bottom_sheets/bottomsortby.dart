@@ -103,7 +103,7 @@ class _BottomSortByState extends State<BottomSortBy> {
                                       : dividerColor,
                                   height: 13.sp,
                                   width: 13.sp,
-                                  fit: BoxFit.cover),
+                                  fit: BoxFit.fill),
                             ),
                           ),
                         ),

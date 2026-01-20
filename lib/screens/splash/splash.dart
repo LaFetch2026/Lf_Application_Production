@@ -69,10 +69,10 @@
 //             height: 120.sp,
 //             decoration: const BoxDecoration(
 //                 image: DecorationImage(
-//                     image: AssetImage(logoBackImage), fit: BoxFit.cover)),
+//                     image: AssetImage(logoBackImage), fit: BoxFit.fill)),
 //             child: Center(
 //               child: Image.asset(logoImage,
-//                   height: 75.sp, width: 50.sp, fit: BoxFit.cover),
+//                   height: 75.sp, width: 50.sp, fit: BoxFit.fill),
 //             )),
 //       ),
 //     );

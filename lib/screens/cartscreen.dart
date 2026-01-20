@@ -1114,13 +1114,13 @@ class CartScreenState extends State<CartScreen> {
                 maxNrOfCacheObjects: 100,
               ),
             ),
-            fit: BoxFit.cover,
+            fit: BoxFit.fill,
             imageUrl: finalImage,
             errorWidget: (_, __, ___) => Image.asset(
               downloadImage,
               height: 130.sp,
               width: 100.sp,
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
             ),
           ),
         ),
@@ -1437,7 +1437,7 @@ class CartScreenState extends State<CartScreen> {
               : whiteColor,
           height: 9.sp,
           width: 9.sp,
-          fit: BoxFit.cover,
+          fit: BoxFit.fill,
         ),
       ),
     );
@@ -1821,198 +1821,196 @@ class CartScreenState extends State<CartScreen> {
               ),
             ),
 
-            // ✅ Divider
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.sp),
+          // ✅ Divider
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.sp),
+            child: Row(
+              children: [
+                Expanded(
+                    child: Divider(color: colorSecondary, thickness: 1.sp)),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12.sp),
+                  child: AppText(
+                    text: "OR",
+                    fontFamily: "Clash Display",
+                    fontWeight: FontWeight.w500,
+                    color: widget.backgroundcolor == whiteColor
+                        ? subtitleColor
+                        : productSubtitleColor,
+                    fontSize: 12,
+                  ),
+                ),
+                Expanded(
+                    child: Divider(color: colorSecondary, thickness: 1.sp)),
+              ],
+            ),
+          ),
+
+          // ✅ Section 2: Select from Available Coupons
+          AppText(
+            text: "SELECT FROM AVAILABLE COUPONS",
+            fontFamily: "Clash Display",
+            fontWeight: FontWeight.w500,
+            color: widget.backgroundcolor == whiteColor
+                ? homeAppBarColor
+                : whiteColor,
+            fontSize: 12,
+          ),
+          SizedBox(height: 8.sp),
+          GestureDetector(
+            onTap: () async {
+              await productController.getCoupons();
+              if (productController.couponList.isEmpty) {
+                showAppSnackBar("No coupons available right now",
+                    type: SnackBarType.info);
+                return;
+              }
+
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                builder: (ctx) {
+                  return FractionallySizedBox(
+                    heightFactor: 0.7,
+                    child: ClipRRect(
+                      borderRadius:
+                          const BorderRadius.vertical(top: Radius.circular(16)),
+                      child: BottomCoupon(
+                        list: productController.couponList,
+                        backColor: widget.backgroundcolor,
+                        onPressed: (code) {
+                          Navigator.pop(ctx);
+                          _applyCoupon(code);
+                        },
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: widget.backgroundcolor == whiteColor
+                    ? whiteColor
+                    : Colors.grey[850],
+                border: Border.all(
+                  color: widget.backgroundcolor == whiteColor
+                      ? homeAppBarColor
+                      : whiteColor,
+                  width: 1.sp,
+                ),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 12.sp),
               child: Row(
                 children: [
+                  SvgPicture.asset(
+                    couponSvgImage,
+                    colorFilter: ColorFilter.mode(
+                      widget.backgroundcolor == whiteColor
+                          ? homeAppBarColor
+                          : whiteColor,
+                      BlendMode.srcIn,
+                    ),
+                    height: 20.sp,
+                    width: 20.sp,
+                  ),
+                  SizedBox(width: 10.sp),
                   Expanded(
-                      child: Divider(color: colorSecondary, thickness: 1.sp)),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12.sp),
                     child: AppText(
-                      text: "OR",
-                      fontFamily: "Clash Display",
+                      text: "View all available coupons",
+                      fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w500,
-                      color: widget.backgroundcolor == whiteColor
-                          ? subtitleColor
-                          : productSubtitleColor,
-                      fontSize: 12,
-                    ),
-                  ),
-                  Expanded(
-                      child: Divider(color: colorSecondary, thickness: 1.sp)),
-                ],
-              ),
-            ),
-
-            // ✅ Section 2: Select from Available Coupons
-            AppText(
-              text: "SELECT FROM AVAILABLE COUPONS",
-              fontFamily: "Clash Display",
-              fontWeight: FontWeight.w500,
-              color: widget.backgroundcolor == whiteColor
-                  ? homeAppBarColor
-                  : whiteColor,
-              fontSize: 12,
-            ),
-            SizedBox(height: 8.sp),
-            GestureDetector(
-              onTap: () async {
-                await productController.getCoupons();
-                if (productController.couponList.isEmpty) {
-                  showAppSnackBar("No coupons available right now",
-                      type: SnackBarType.info);
-                  return;
-                }
-
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(16)),
-                  ),
-                  builder: (ctx) {
-                    return FractionallySizedBox(
-                      heightFactor: 0.7,
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(16)),
-                        child: BottomCoupon(
-                          list: productController.couponList,
-                          backColor: widget.backgroundcolor,
-                          onPressed: (code) {
-                            Navigator.pop(ctx);
-                            _applyCoupon(code);
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: widget.backgroundcolor == whiteColor
-                      ? whiteColor
-                      : Colors.grey[850],
-                  border: Border.all(
-                    color: widget.backgroundcolor == whiteColor
-                        ? homeAppBarColor
-                        : whiteColor,
-                    width: 1.sp,
-                  ),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                padding:
-                    EdgeInsets.symmetric(horizontal: 12.sp, vertical: 12.sp),
-                child: Row(
-                  children: [
-                    SvgPicture.asset(
-                      couponSvgImage,
-                      colorFilter: ColorFilter.mode(
-                        widget.backgroundcolor == whiteColor
-                            ? homeAppBarColor
-                            : whiteColor,
-                        BlendMode.srcIn,
-                      ),
-                      height: 20.sp,
-                      width: 20.sp,
-                    ),
-                    SizedBox(width: 10.sp),
-                    Expanded(
-                      child: AppText(
-                        text: "View all available coupons",
-                        fontFamily: "Clash Display Regular",
-                        fontWeight: FontWeight.w500,
-                        color: widget.backgroundcolor == whiteColor
-                            ? titleColor
-                            : whiteColor,
-                        fontSize: 14,
-                      ),
-                    ),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 14.sp,
                       color: widget.backgroundcolor == whiteColor
                           ? titleColor
                           : whiteColor,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 14.sp,
+                    color: widget.backgroundcolor == whiteColor
+                        ? titleColor
+                        : whiteColor,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // ✅ Show applied coupon info
+          if (_hasCoupon)
+            Padding(
+              padding: EdgeInsets.only(top: 12.sp),
+              child: Container(
+                padding: EdgeInsets.all(10.sp),
+                decoration: BoxDecoration(
+                  color: const Color(0xffEFF6FF),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: lightPurpleColor,
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.check_circle,
+                        color: lightPurpleColor, size: 18),
+                    SizedBox(width: 8.sp),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppText(
+                            text: "Coupon: $_couponCode",
+                            fontFamily: "Clash Display",
+                            fontWeight: FontWeight.w600,
+                            color: lightPurpleColor,
+                            fontSize: 13,
+                          ),
+                          AppText(
+                            text: "You saved ₹${formatAmount(_couponDiscount)}",
+                            fontFamily: "Clash Display Regular",
+                            fontWeight: FontWeight.w500,
+                            color: lightPurpleColor,
+                            fontSize: 11,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 8.sp),
+                    GestureDetector(
+                      onTap: _removeCoupon,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 8.sp, vertical: 4.sp),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: lightPurpleColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const AppText(
+                          text: "REMOVE",
+                          fontFamily: "Clash Display",
+                          fontWeight: FontWeight.w600,
+                          color: lightPurpleColor,
+                          fontSize: 10,
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-
-            // ✅ Show applied coupon info
-            if (_hasCoupon)
-              Padding(
-                padding: EdgeInsets.only(top: 12.sp),
-                child: Container(
-                  padding: EdgeInsets.all(10.sp),
-                  decoration: BoxDecoration(
-                    color: const Color(0xffEFF6FF),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: lightPurpleColor,
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.check_circle,
-                          color: lightPurpleColor, size: 18),
-                      SizedBox(width: 8.sp),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AppText(
-                              text: "Coupon: $_couponCode",
-                              fontFamily: "Clash Display",
-                              fontWeight: FontWeight.w600,
-                              color: lightPurpleColor,
-                              fontSize: 13,
-                            ),
-                            AppText(
-                              text: "You saved ₹${formatAmount(_couponDiscount)}",
-                              fontFamily: "Clash Display Regular",
-                              fontWeight: FontWeight.w500,
-                              color: lightPurpleColor,
-                              fontSize: 11,
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: 8.sp),
-                      GestureDetector(
-                        onTap: _removeCoupon,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 8.sp, vertical: 4.sp),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: lightPurpleColor,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const AppText(
-                            text: "REMOVE",
-                            fontFamily: "Clash Display",
-                            fontWeight: FontWeight.w600,
-                            color: lightPurpleColor,
-                            fontSize: 10,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-          ],
+        ],
       ),
     );
   }
@@ -2498,7 +2496,7 @@ class CartScreenState extends State<CartScreen> {
                           : lightgreyColor,
                       height: 16.sp,
                       width: 16.sp,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     ),
                   ),
                 ],

@@ -388,7 +388,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                         color: loginText,
                                                         height: 18.sp,
                                                         width: 18.sp,
-                                                        fit: BoxFit.cover),
+                                                        fit: BoxFit.fill),
                                                   )
                                                 ],
                                               ),
@@ -450,7 +450,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                 color: loginText,
                                 height: 18,
                                 width: 18,
-                                fit: BoxFit.cover),
+                                fit: BoxFit.fill),
                           )
                         ],
                       ),
@@ -941,7 +941,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                               Image.asset(questionIcon,
                                                   height: 16.sp,
                                                   width: 16.sp,
-                                                  fit: BoxFit.cover)
+                                                  fit: BoxFit.fill)
                                             ],
                                           ),
                                           const Expanded(
@@ -984,7 +984,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                               Image.asset(questionIcon,
                                                   height: 16.sp,
                                                   width: 16.sp,
-                                                  fit: BoxFit.cover)
+                                                  fit: BoxFit.fill)
                                             ],
                                           ),
                                           const Expanded(

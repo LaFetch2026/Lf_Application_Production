@@ -238,7 +238,7 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen> {
                                 imageUrl: (item['image'] ?? '').toString(),
                                 width: 90.sp,
                                 height: 100.sp,
-                                fit: BoxFit.cover,
+                                fit: BoxFit.fill,
                                 color: Colors.black.withOpacity(0.15),
                                 colorBlendMode: BlendMode.darken,
                                 placeholder: (_, __) => Container(

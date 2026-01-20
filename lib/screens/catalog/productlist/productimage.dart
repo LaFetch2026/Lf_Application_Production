@@ -178,7 +178,7 @@ class ProductImageScreenState extends State<ProductImageScreen> {
                                       icon: SvgPicture.asset(arrowBack,
                                           height: 15.sp,
                                           width: 15.sp,
-                                          fit: BoxFit.cover),
+                                          fit: BoxFit.fill),
                                       onPressed: () {
                                         Get.back();
                                       },

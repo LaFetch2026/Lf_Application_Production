@@ -38,7 +38,7 @@ class _SplashTwoScreenState extends State<SplashTwoScreen> {
       body: SizedBox.expand(
         child: Image.asset(
           splashNewGif,
-          fit: BoxFit.cover,
+          fit: BoxFit.fill,
         ),
       ),
     );

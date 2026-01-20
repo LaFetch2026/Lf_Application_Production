@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import '../../../controllers/cart_controller.dart';
 import '../../../core/constant/constants.dart';
 
-
 class AllBrandAppbar extends StatefulWidget {
   final Function? onPressedShare;
   final Function? onPressedCart;
@@ -55,7 +54,7 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
                       color: whiteColor,
                       height: 15.sp,
                       width: 15.sp,
-                      fit: BoxFit.cover),
+                      fit: BoxFit.fill),
                 ),
               ),
               const Expanded(
@@ -91,7 +90,7 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
                       color: whiteColor,
                       height: 18.sp,
                       width: 18.sp,
-                      fit: BoxFit.cover),
+                      fit: BoxFit.fill),
                 ),
               ),
               InkWell(
@@ -106,7 +105,7 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
                       color: whiteColor,
                       height: 18.sp,
                       width: 18.sp,
-                      fit: BoxFit.cover),
+                      fit: BoxFit.fill),
                 ),
               ),
               InkWell(
@@ -126,41 +125,41 @@ class AllBrandAppbarState extends State<AllBrandAppbar> {
                             color: whiteColor,
                             height: 18.sp,
                             width: 18.sp,
-                            fit: BoxFit.cover),
+                            fit: BoxFit.fill),
                       ),
                       Obx(() => controller.cartTotalValue.value != 0
                           ? Positioned(
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          width: 10.sp,
-                          height: 10.sp,
-                          child: Padding(
-                            padding: EdgeInsets.all(0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: whiteColor,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  controller.cartTotalValue.value
-                                      .toString(),
-                                  style: TextStyle(
-                                      fontSize: 8,
-                                      color: homeAppBarColor,
-                                      fontFamily:
-                                      "Libre Franklin Regular",
-                                      fontWeight: FontWeight.w400),
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                width: 10.sp,
+                                height: 10.sp,
+                                child: Padding(
+                                  padding: EdgeInsets.all(0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: whiteColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        controller.cartTotalValue.value
+                                            .toString(),
+                                        style: TextStyle(
+                                            fontSize: 8,
+                                            color: homeAppBarColor,
+                                            fontFamily:
+                                                "Libre Franklin Regular",
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                    ), // inner content
+                                  ),
                                 ),
-                              ), // inner content
-                            ),
-                          ),
-                        ),
-                      )
+                              ),
+                            )
                           : SizedBox(
-                        height: 0,
-                      ))
+                              height: 0,
+                            ))
                     ],
                   ),
                 ),

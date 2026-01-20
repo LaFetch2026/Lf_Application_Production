@@ -95,12 +95,12 @@
 //                                           "customCacheKey",
 //                                           stalePeriod: const Duration(days: 15),
 //                                           maxNrOfCacheObjects: 100)),
-//                                       fit: BoxFit.cover,
+//                                       fit: BoxFit.fill,
 //                                       imageUrl: widget.productimage,
 //                                       errorWidget: (context, url, error) =>
 //                                           Image.asset(
 //                                         downloadImage,
-//                                         fit: BoxFit.cover,
+//                                         fit: BoxFit.fill,
 //                                         height: 85.sp,
 //                                         width: 70.sp,
 //                                       ),

@@ -155,7 +155,7 @@ class DemoProductList extends StatelessWidget {
                                                                 days: 15),
                                                         maxNrOfCacheObjects:
                                                             100)),
-                                                fit: BoxFit.cover,
+                                                fit: BoxFit.fill,
                                                 fadeOutCurve: Curves.ease,
                                                 fadeOutDuration:
                                                     Duration(milliseconds: 100),
@@ -169,7 +169,7 @@ class DemoProductList extends StatelessWidget {
                                                     (context, url, error) =>
                                                         Image.asset(
                                                   downloadImage,
-                                                  fit: BoxFit.cover,
+                                                  fit: BoxFit.fill,
                                                   height: 150.sp,
                                                   width: 122.sp,
                                                 ),
@@ -178,7 +178,7 @@ class DemoProductList extends StatelessWidget {
                                           : Image.asset(dummyWishlistImage,
                                               height: 150.sp,
                                               width: 122.sp,
-                                              fit: BoxFit.cover),
+                                              fit: BoxFit.fill),
                                       GestureDetector(
                                         onTap: () {
                                           onPressedHeart?.call(

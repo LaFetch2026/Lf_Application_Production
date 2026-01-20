@@ -193,11 +193,13 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           );
 
           _isProductsLoaded = true;
-          print("✅ Loaded ${catalogController.categoryProductList.length} products from API for collection $collectionId");
+          print(
+              "✅ Loaded ${catalogController.categoryProductList.length} products from API for collection $collectionId");
         } else {
           // ✅ Fallback: Use home products if no specific collection
           final currentGender = productController.categoryFilter.value;
-          await productController.getHomeProduct(currentGender, withLimit: false);
+          await productController.getHomeProduct(currentGender,
+              withLimit: false);
 
           // ✅ Load and track home products
           _loadHomeProductsIfNeeded();
@@ -218,7 +220,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     prefs.remove("sortby");
     prefs.remove("category");
 
-    print("🔄 ProductViewScreen initialized for collection: ${productController.tagId.value}, gender: ${widget.genderName}");
+    print(
+        "🔄 ProductViewScreen initialized for collection: ${productController.tagId.value}, gender: ${widget.genderName}");
   }
 
   // ✅ Load filter metadata for filter
@@ -277,7 +280,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
     final List<Map<String, dynamic>> allProducts = <Map<String, dynamic>>[];
 
-    print("🔍 DEBUG: Getting products - selectedCollectionId: $selectedCollectionId, superCatId: $superCatId");
+    print(
+        "🔍 DEBUG: Getting products - selectedCollectionId: $selectedCollectionId, superCatId: $superCatId");
     print("🔍 DEBUG: Total collections: ${collections.length}");
 
     for (final c in collections) {
@@ -291,11 +295,13 @@ class ProductViewScreenState extends State<ProductViewScreen> {
               .whereType<Map<String, dynamic>>()
               .toList();
 
-      print("📦 Collection ID: $collectionId, Name: ${c['name']}, Products: ${prods.length}");
+      print(
+          "📦 Collection ID: $collectionId, Name: ${c['name']}, Products: ${prods.length}");
 
       // ✅ If a specific collection is selected, skip other collections
       if (selectedCollectionId != 0 && collectionId != selectedCollectionId) {
-        print("   ⏭️ Skipping collection $collectionId (looking for $selectedCollectionId)");
+        print(
+            "   ⏭️ Skipping collection $collectionId (looking for $selectedCollectionId)");
         continue;
       }
 
@@ -312,7 +318,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
         // ✅ Filter by gender if superCatId is set
         if (superCatId != 0 && scId != superCatId) {
-          print("   ⏭️ Product ${p['id']} skipped (superCatId: $scId, need: $superCatId)");
+          print(
+              "   ⏭️ Product ${p['id']} skipped (superCatId: $scId, need: $superCatId)");
           continue;
         }
 
@@ -345,16 +352,20 @@ class ProductViewScreenState extends State<ProductViewScreen> {
       // Case 1: Has filters → Call API (with or without sort)
       // Case 2: Only sort (no filters) → Client-side sort
       // Case 3: Neither filters nor sort → Show original
-      
+
       if (_hasActiveFilters && filterChanged) {
         // 📞 Case 1: Filters changed → Call /filter-products API
         // Note: API does backend filtering + client-side price/brand safety net
         print("🔹 Case 1: Filter changed (has active filters)");
-        print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
-        print("   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
-        print("   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
+        print(
+            "   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
+        print(
+            "   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
+        print(
+            "   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
+        print(
+            "   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
         await catalogController.getFilterAndSortProducts(
           brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
@@ -362,40 +373,52 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
           minPrice: _appliedMinPrice,
           maxPrice: _appliedMaxPrice,
-          sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
-          superCatId: productController.categoryFilter.value, // ✅ Pass gender type (Men/Women/Kids)
-          collectionId: productController.tagId.value > 0 ? productController.tagId.value : null, // ✅ Pass collection ID if selected
+          sortOption:
+              _appliedSortOption != "recommended" ? _appliedSortOption : null,
+          superCatId: productController
+              .categoryFilter.value, // ✅ Pass gender type (Men/Women/Kids)
+          collectionId: productController.tagId.value > 0
+              ? productController.tagId.value
+              : null, // ✅ Pass collection ID if selected
         );
 
         // ✅ Additional client-side filtering for view-specific constraints
         // API already filtered by price & brand; we filter by home products
-        final apiResults = List<dynamic>.from(catalogController.categoryProductList);
+        final apiResults =
+            List<dynamic>.from(catalogController.categoryProductList);
 
         // Restrict to home products only
         final filteredResults = apiResults.where((product) {
           final productId = int.tryParse(product['id']?.toString() ?? '');
-          return productId != null && _originalHomeProductIds.contains(productId);
+          return productId != null &&
+              _originalHomeProductIds.contains(productId);
         }).toList();
 
-        print("🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} from home collections");
+        print(
+            "🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} from home collections");
         catalogController.categoryProductList.assignAll(filteredResults);
-        
+
         _lastFilterHash = currentFilterHash;
         if (sortChanged) _lastSortHash = currentSortHash;
 
-        print("✅ Filter applied - ${catalogController.categoryProductList.length} products");
-        
-      } else if (!_hasActiveFilters && _appliedSortOption != "recommended" && sortChanged) {
+        print(
+            "✅ Filter applied - ${catalogController.categoryProductList.length} products");
+      } else if (!_hasActiveFilters &&
+          _appliedSortOption != "recommended" &&
+          sortChanged) {
         // 🔧 Case 2: ONLY sort changed (no filters) → Client-side sort
-        print("🔧 Client-side sorting: $_appliedSortOption (no filters, so not calling API)");
-        
+        print(
+            "🔧 Client-side sorting: $_appliedSortOption (no filters, so not calling API)");
+
         // Get original products
         final productsToSort = List<dynamic>.from(_getAllProducts());
-        
+
         productsToSort.sort((a, b) {
-          final priceA = (a['price'] ?? a['basePrice'] ?? a['displayPrice'] ?? 0) as num;
-          final priceB = (b['price'] ?? b['basePrice'] ?? b['displayPrice'] ?? 0) as num;
-          
+          final priceA =
+              (a['price'] ?? a['basePrice'] ?? a['displayPrice'] ?? 0) as num;
+          final priceB =
+              (b['price'] ?? b['basePrice'] ?? b['displayPrice'] ?? 0) as num;
+
           if (_appliedSortOption == 'price_asc') {
             return priceA.compareTo(priceB);
           } else if (_appliedSortOption == 'price_desc') {
@@ -407,22 +430,26 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           }
           return 0;
         });
-        
+
         // Store sorted results in catalogController
         catalogController.categoryProductList.assignAll(productsToSort);
         _lastSortHash = currentSortHash;
-        
-        print("✅ Client-side sort complete - ${catalogController.categoryProductList.length} products");
-        
+
+        print(
+            "✅ Client-side sort complete - ${catalogController.categoryProductList.length} products");
       } else if (_hasActiveFilters && sortChanged) {
         // 🔧 Case 3: Filters already applied, but sort changed → Re-apply filters with new sort
         // Note: API does backend filtering + client-side price/brand safety net
         print("🔹 Case 3: Sort changed (filters already applied)");
-        print("   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
-        print("   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
-        print("   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
+        print(
+            "   • brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all brands'}");
+        print(
+            "   • colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all colors'}");
+        print(
+            "   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
+        print(
+            "   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
         await catalogController.getFilterAndSortProducts(
           brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
@@ -430,26 +457,32 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
           minPrice: _appliedMinPrice,
           maxPrice: _appliedMaxPrice,
-          sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
-          superCatId: productController.categoryFilter.value, // ✅ Pass gender type (Men/Women/Kids)
-          collectionId: productController.tagId.value > 0 ? productController.tagId.value : null, // ✅ Pass collection ID if selected
+          sortOption:
+              _appliedSortOption != "recommended" ? _appliedSortOption : null,
+          superCatId: productController
+              .categoryFilter.value, // ✅ Pass gender type (Men/Women/Kids)
+          collectionId: productController.tagId.value > 0
+              ? productController.tagId.value
+              : null, // ✅ Pass collection ID if selected
         );
 
         // ✅ Additional client-side filtering for view-specific constraints
         // API already filtered by price & brand; we filter by home products
-        final apiResults = List<dynamic>.from(catalogController.categoryProductList);
+        final apiResults =
+            List<dynamic>.from(catalogController.categoryProductList);
 
         // Restrict to home products only
         final filteredResults = apiResults.where((product) {
           final productId = int.tryParse(product['id']?.toString() ?? '');
-          return productId != null && _originalHomeProductIds.contains(productId);
+          return productId != null &&
+              _originalHomeProductIds.contains(productId);
         }).toList();
         catalogController.categoryProductList.assignAll(filteredResults);
 
         _lastSortHash = currentSortHash;
 
-        print("✅ Filters re-applied with new sort - ${catalogController.categoryProductList.length} products");
-        
+        print(
+            "✅ Filters re-applied with new sort - ${catalogController.categoryProductList.length} products");
       } else if (!_hasActiveFilters && filterChanged) {
         // Filters cleared - clear filtered results
         catalogController.categoryProductList.clear();
@@ -470,9 +503,10 @@ class ProductViewScreenState extends State<ProductViewScreen> {
       });
 
       // Update final hash
-      final List<dynamic> productsForHash = catalogController.categoryProductList.isNotEmpty
-          ? List<dynamic>.from(catalogController.categoryProductList)
-          : _getAllProducts();
+      final List<dynamic> productsForHash =
+          catalogController.categoryProductList.isNotEmpty
+              ? List<dynamic>.from(catalogController.categoryProductList)
+              : _getAllProducts();
       _lastProductListHash = _generateProductHash(productsForHash);
     } catch (e) {
       print("❌ Error applying filters/sort: $e");
@@ -566,7 +600,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(errorImage,
-                        height: 200.sp, width: 220.sp, fit: BoxFit.cover),
+                        height: 200.sp, width: 220.sp, fit: BoxFit.fill),
                     SizedBox(height: 20.sp),
                     getSingleButton(
                       width: double.infinity,
@@ -661,7 +695,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                       aspectRatio: 0.75,
                                       child: CachedNetworkImage(
                                         imageUrl: imageUrl,
-                                        fit: BoxFit.cover,
+                                        fit: BoxFit.fill,
                                         width: double.infinity,
                                         height: double.infinity,
                                         cacheManager: CacheManager(
@@ -707,8 +741,13 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
                                       // Calculate discount percentage
                                       int? discountPercent;
-                                      if (numPrice > 0 && numMrp > 0 && numMrp > numPrice) {
-                                        discountPercent = (((numMrp - numPrice) / numMrp) * 100).round();
+                                      if (numPrice > 0 &&
+                                          numMrp > 0 &&
+                                          numMrp > numPrice) {
+                                        discountPercent =
+                                            (((numMrp - numPrice) / numMrp) *
+                                                    100)
+                                                .round();
                                       }
 
                                       // ✅ Case 1: Price is 0 or null - show only MRP (not crossed)
@@ -724,7 +763,9 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                       }
 
                                       // ✅ Case 2: Both exist and price < mrp - show base price, crossed MRP, and discount %
-                                      if (numPrice > 0 && numMrp > 0 && numPrice < numMrp) {
+                                      if (numPrice > 0 &&
+                                          numMrp > 0 &&
+                                          numPrice < numMrp) {
                                         return Row(
                                           children: [
                                             // Base Price
@@ -733,19 +774,24 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                               color: blackColor,
                                               maxLines: 1,
                                               fontSize: 12,
-                                              fontFamily: "Clash Display Semibold",
+                                              fontFamily:
+                                                  "Clash Display Semibold",
                                               fontWeight: FontWeight.w700,
                                             ),
                                             // MRP (crossed out)
                                             Padding(
-                                              padding: EdgeInsets.only(left: 5.sp),
+                                              padding:
+                                                  EdgeInsets.only(left: 5.sp),
                                               child: Text(
                                                 "₹ $numMrp",
                                                 style: TextStyle(
-                                                  color: const Color(0xFF9CA3AF),
+                                                  color:
+                                                      const Color(0xFF9CA3AF),
                                                   fontSize: 11.sp,
-                                                  decoration: TextDecoration.lineThrough,
-                                                  fontFamily: "Clash Display Regular",
+                                                  decoration: TextDecoration
+                                                      .lineThrough,
+                                                  fontFamily:
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               ),
@@ -753,14 +799,16 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                             // Discount %
                                             if (discountPercent != null)
                                               Padding(
-                                                padding: EdgeInsets.only(left: 5.sp),
+                                                padding:
+                                                    EdgeInsets.only(left: 5.sp),
                                                 child: Text(
                                                   "($discountPercent% OFF)",
                                                   style: TextStyle(
                                                     fontSize: 10.sp,
                                                     fontFamily: "Clash Display",
                                                     fontWeight: FontWeight.w500,
-                                                    color: const Color(0xFF9575CD),
+                                                    color:
+                                                        const Color(0xFF9575CD),
                                                   ),
                                                 ),
                                               ),
@@ -881,7 +929,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                             child: Column(
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 5.sp),
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 5.sp),
                                   child: Text(
                                     "CATEGORY",
                                     style: TextStyle(
@@ -912,7 +961,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                           ),
                         ),
 
-                        Container(width: 1.sp, color: borderColor, height: 40.sp),
+                        Container(
+                            width: 1.sp, color: borderColor, height: 40.sp),
                       ],
 
                       // Filters
@@ -1006,8 +1056,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
     // ✅ Restore previously applied brands
     for (final id in _appliedBrandIds) {
-      final brandData = productController.filterBrands.firstWhereOrNull((item) =>
-          int.tryParse(item['id']?.toString() ?? '') == id);
+      final brandData = productController.filterBrands.firstWhereOrNull(
+          (item) => int.tryParse(item['id']?.toString() ?? '') == id);
       if (brandData != null) {
         final name = brandData['name']?.toString().trim();
         if (name != null && name.isNotEmpty) {
@@ -1159,7 +1209,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                           children: [
                                             const Text("Select price range",
                                                 style: TextStyle(
-                                                    fontFamily: "Franklin Gothic",
+                                                    fontFamily:
+                                                        "Franklin Gothic",
                                                     fontWeight: FontWeight.w700,
                                                     fontSize: 15)),
                                             const SizedBox(height: 8),
@@ -1169,18 +1220,22 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                               max: 100000,
                                               divisions: 100,
                                               activeColor: appBarColor,
-                                              onChanged: (v) => setModalState(() {
+                                              onChanged: (v) =>
+                                                  setModalState(() {
                                                 priceRange = v;
                                               }),
                                             ),
                                             Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
-                                                Text("₹${priceRange.start.toInt()}",
+                                                Text(
+                                                    "₹${priceRange.start.toInt()}",
                                                     style: const TextStyle(
                                                         color: Colors.grey)),
-                                                Text("₹${priceRange.end.toInt()}",
+                                                Text(
+                                                    "₹${priceRange.end.toInt()}",
                                                     style: const TextStyle(
                                                         color: Colors.grey)),
                                               ],
@@ -1190,31 +1245,37 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                       : selectedFilter == "Color"
                                           ? colors.isEmpty
                                               ? const Center(
-                                                  child: Text("No colors available"))
+                                                  child: Text(
+                                                      "No colors available"))
                                               : ListView.builder(
                                                   itemCount: colors.length,
                                                   itemBuilder: (context, i) {
                                                     final color = colors[i];
                                                     final checked =
-                                                        selectedColors.contains(color);
+                                                        selectedColors
+                                                            .contains(color);
                                                     return CheckboxListTile(
                                                       value: checked,
                                                       onChanged: (val) {
                                                         setModalState(() {
                                                           if (val == true) {
-                                                            selectedColors.add(color);
+                                                            selectedColors
+                                                                .add(color);
                                                           } else {
-                                                            selectedColors.remove(color);
+                                                            selectedColors
+                                                                .remove(color);
                                                           }
                                                         });
                                                       },
                                                       controlAffinity:
-                                                          ListTileControlAffinity.leading,
+                                                          ListTileControlAffinity
+                                                              .leading,
                                                       title: Text(
                                                         color.toUpperCase(),
                                                         style: TextStyle(
                                                           fontSize: 14.sp,
-                                                          fontWeight: FontWeight.w400,
+                                                          fontWeight:
+                                                              FontWeight.w400,
                                                         ),
                                                       ),
                                                     );
@@ -1223,31 +1284,40 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                           : selectedFilter == "Size"
                                               ? sizes.isEmpty
                                                   ? const Center(
-                                                      child: Text("No sizes available"))
+                                                      child: Text(
+                                                          "No sizes available"))
                                                   : ListView.builder(
                                                       itemCount: sizes.length,
-                                                      itemBuilder: (context, i) {
+                                                      itemBuilder:
+                                                          (context, i) {
                                                         final size = sizes[i];
                                                         final checked =
-                                                            selectedSizes.contains(size);
+                                                            selectedSizes
+                                                                .contains(size);
                                                         return CheckboxListTile(
                                                           value: checked,
                                                           onChanged: (val) {
                                                             setModalState(() {
                                                               if (val == true) {
-                                                                selectedSizes.add(size);
+                                                                selectedSizes
+                                                                    .add(size);
                                                               } else {
-                                                                selectedSizes.remove(size);
+                                                                selectedSizes
+                                                                    .remove(
+                                                                        size);
                                                               }
                                                             });
                                                           },
                                                           controlAffinity:
-                                                              ListTileControlAffinity.leading,
+                                                              ListTileControlAffinity
+                                                                  .leading,
                                                           title: Text(
                                                             size.toUpperCase(),
                                                             style: TextStyle(
                                                               fontSize: 14.sp,
-                                                              fontWeight: FontWeight.w400,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
                                                             ),
                                                           ),
                                                         );
@@ -1304,7 +1374,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                               print("✅ Filters configured:");
                               print("  Brands: ${selectedBrands.join(', ')}");
                               print("  Brand IDs: $selectedBrandIds");
-                              print("  Price: ₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()}");
+                              print(
+                                  "  Price: ₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()}");
                               print("  Colors: ${selectedColors.join(', ')}");
                               print("  Sizes: ${selectedSizes.join(', ')}");
 
@@ -1332,18 +1403,24 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                               if (_hasActiveFilters) {
                                 final filterParts = <String>[];
                                 if (selectedBrands.isNotEmpty) {
-                                  filterParts.add("${selectedBrands.length} brand(s)");
+                                  filterParts
+                                      .add("${selectedBrands.length} brand(s)");
                                 }
-                                if (priceRange.start > 300 || priceRange.end < 100000) {
-                                  filterParts.add("₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
+                                if (priceRange.start > 300 ||
+                                    priceRange.end < 100000) {
+                                  filterParts.add(
+                                      "₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
                                 }
                                 if (selectedColors.isNotEmpty) {
-                                  filterParts.add("${selectedColors.length} color(s)");
+                                  filterParts
+                                      .add("${selectedColors.length} color(s)");
                                 }
                                 if (selectedSizes.isNotEmpty) {
-                                  filterParts.add("${selectedSizes.length} size(s)");
+                                  filterParts
+                                      .add("${selectedSizes.length} size(s)");
                                 }
-                                getSnackBar("Filtered by ${filterParts.join(', ')}");
+                                getSnackBar(
+                                    "Filtered by ${filterParts.join(', ')}");
                               } else {
                                 getSnackBar("Filters cleared");
                               }

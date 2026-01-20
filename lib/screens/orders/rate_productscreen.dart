@@ -245,16 +245,16 @@ class _RateProductScreenState extends State<RateProductScreen> {
         imageUrl: imageUrl,
         width: 80.sp,
         height: 100.sp,
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
         errorWidget: (_, __, ___) =>
-            Image.asset(dummyWishlistImage, fit: BoxFit.cover),
+            Image.asset(dummyWishlistImage, fit: BoxFit.fill),
       );
     } else {
       return Image.asset(
         dummyWishlistImage,
         width: 80.sp,
         height: 100.sp,
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
       );
     }
   }
@@ -262,12 +262,14 @@ class _RateProductScreenState extends State<RateProductScreen> {
   /// ✅ Call API on Submit
   Future<void> _submitReview() async {
     if (_rating == 0) {
-      showAppSnackBar('Please select a star rating before submitting.', type: SnackBarType.error);
+      showAppSnackBar('Please select a star rating before submitting.',
+          type: SnackBarType.error);
       return;
     }
 
     if (_reviewController.text.trim().isEmpty) {
-      showAppSnackBar('Please write a short review before submitting.', type: SnackBarType.warning);
+      showAppSnackBar('Please write a short review before submitting.',
+          type: SnackBarType.warning);
       return;
     }
 
@@ -294,10 +296,12 @@ class _RateProductScreenState extends State<RateProductScreen> {
     setState(() => _isSubmitting = false);
 
     if (success) {
-      showAppSnackBar('Your review has been submitted successfully.', type: SnackBarType.success);
+      showAppSnackBar('Your review has been submitted successfully.',
+          type: SnackBarType.success);
       Get.back();
     } else {
-      showAppSnackBar('Failed to submit review. Please try again.', type: SnackBarType.error);
+      showAppSnackBar('Failed to submit review. Please try again.',
+          type: SnackBarType.error);
     }
   }
 }

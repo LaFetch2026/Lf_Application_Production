@@ -464,18 +464,18 @@
 //                                                                                         width: 70.sp,
 //                                                                                         child: CachedNetworkImage(
 //                                                                                           cacheManager: CacheManager(Config("customCacheKey", stalePeriod: const Duration(days: 15), maxNrOfCacheObjects: 100)),
-//                                                                                           fit: BoxFit.cover,
+//                                                                                           fit: BoxFit.fill,
 //                                                                                           imageUrl: isImage(value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"]) ? value.orderList[index]["order_lines"][0]["product"]["images"][0]["name"] : value.orderList[index]["order_lines"][0]["product"]["images"][1]["name"],
 //                                                                                           errorWidget: (context, url, error) => Image.asset(
 //                                                                                             downloadImage,
-//                                                                                             fit: BoxFit.cover,
+//                                                                                             fit: BoxFit.fill,
 //                                                                                             height: 85.sp,
 //                                                                                             width: 70.sp,
 //                                                                                           ),
 //                                                                                         ),
 //                                                                                       )
-//                                                                                     : Image.asset(dummyWishlistImage, height: 85.sp, width: 70.sp, fit: BoxFit.cover)
-//                                                                                 : Image.asset(dummyWishlistImage, height: 85.sp, width: 70.sp, fit: BoxFit.cover)),
+//                                                                                     : Image.asset(dummyWishlistImage, height: 85.sp, width: 70.sp, fit: BoxFit.fill)
+//                                                                                 : Image.asset(dummyWishlistImage, height: 85.sp, width: 70.sp, fit: BoxFit.fill)),
 //                                                                         Expanded(
 //                                                                           flex:
 //                                                                               3,

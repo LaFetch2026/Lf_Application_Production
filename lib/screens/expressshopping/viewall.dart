@@ -359,7 +359,7 @@
 //                                                                             .width /
 //                                                                         2) -
 //                                                                     24.sp,
-//                                                                 fit: BoxFit.cover),
+//                                                                 fit: BoxFit.fill),
 //                                                       ),
 //                                                       GestureDetector(
 //                                                         onTap: () async {

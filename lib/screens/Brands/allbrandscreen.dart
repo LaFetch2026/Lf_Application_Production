@@ -270,8 +270,9 @@ class AllBrandScreenState extends State<AllBrandScreen> {
         imageUrl: _cachedLogoUrl!,
         height: 211.sp,
         width: double.infinity,
-        fit: BoxFit.cover,
-        memCacheHeight: (211.sp * MediaQuery.of(context).devicePixelRatio).round(),
+        fit: BoxFit.fill,
+        memCacheHeight:
+            (211.sp * MediaQuery.of(context).devicePixelRatio).round(),
         placeholder: (context, url) => Container(
           height: 211.sp,
           width: double.infinity,
@@ -294,10 +295,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.storefront,
-                  size: 60,
-                  color: Colors.white38
-                ),
+                const Icon(Icons.storefront, size: 60, color: Colors.white38),
                 SizedBox(height: 8.sp),
                 Text(
                   'Brand banner unavailable',
@@ -343,7 +341,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
     // ✅ Show first 3 products in consistent order (by product ID)
     // Note: Consider using featured/popular products instead of arbitrary limit
-    final sortedRaw = List.from(raw)..sort((a, b) => (a["id"] ?? 0).compareTo(b["id"] ?? 0));
+    final sortedRaw = List.from(raw)
+      ..sort((a, b) => (a["id"] ?? 0).compareTo(b["id"] ?? 0));
     final limitedRaw = sortedRaw.take(3).toList();
 
     _cachedNormalizedProducts = limitedRaw.map<Map<String, dynamic>>((e) {
@@ -366,7 +365,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       print("   imageUrls field: ${m["imageUrls"]}");
       print("   images field: ${m["images"]}");
       print("   imageUrls type: ${m["imageUrls"]?.runtimeType}");
-      print("   imageUrls length: ${m["imageUrls"] is List ? (m["imageUrls"] as List).length : 'N/A'}");
+      print(
+          "   imageUrls length: ${m["imageUrls"] is List ? (m["imageUrls"] as List).length : 'N/A'}");
 
       final id = m["id"] ?? 0;
       final title = (m["title"]?.toString() ?? m["name"]?.toString() ?? "");
@@ -377,10 +377,15 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       final lfMsp = m["lfMsp"];
       final mrp = m["mrp"];
 
-      final num base = (basePrice is num ? basePrice :
-                        msp is num ? msp :
-                        lfMsp is num ? lfMsp :
-                        mrp is num ? mrp : 0);
+      final num base = (basePrice is num
+          ? basePrice
+          : msp is num
+              ? msp
+              : lfMsp is num
+                  ? lfMsp
+                  : mrp is num
+                      ? mrp
+                      : 0);
       final num mrpVal = (mrp is num ? mrp : 0);
 
       bool hideMrp = (mrpVal == 0 || mrpVal == base);
@@ -399,7 +404,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
             }
             return {"name": ""};
           })
-          .where((img) => img["name"] != null && img["name"].toString().trim().isNotEmpty)
+          .where((img) =>
+              img["name"] != null && img["name"].toString().trim().isNotEmpty)
           .toList();
 
       return {
@@ -538,8 +544,10 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                             imageUrl: _cachedLogoUrl!,
                             height: 211.sp,
                             width: double.infinity,
-                            fit: BoxFit.cover,
-                            memCacheHeight: (211.sp * MediaQuery.of(context).devicePixelRatio).round(),
+                            fit: BoxFit.fill,
+                            memCacheHeight: (211.sp *
+                                    MediaQuery.of(context).devicePixelRatio)
+                                .round(),
                             placeholder: (context, url) => Container(
                               height: 211.sp,
                               width: double.infinity,
@@ -552,7 +560,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               ),
                             ),
                             errorWidget: (context, url, error) {
-                              print("❌ [AllBrandScreen] Brand banner image load failed");
+                              print(
+                                  "❌ [AllBrandScreen] Brand banner image load failed");
                               print("   URL: $url");
                               print("   Error: $error");
                               return Container(
@@ -563,9 +572,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     const Icon(Icons.storefront,
-                                      size: 60,
-                                      color: Colors.white38
-                                    ),
+                                        size: 60, color: Colors.white38),
                                     SizedBox(height: 8.sp),
                                     Text(
                                       'Brand banner unavailable',
@@ -586,7 +593,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           brandback,
                           height: 211.sp,
                           width: double.infinity,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                         );
                       }),
 
@@ -623,10 +630,16 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                           maxNrOfCacheObjects: 50,
                                         ),
                                       ),
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.fill,
                                       imageUrl: logoUrl,
-                                      memCacheWidth: (80.sp * MediaQuery.of(context).devicePixelRatio).round(),
-                                      memCacheHeight: (80.sp * MediaQuery.of(context).devicePixelRatio).round(),
+                                      memCacheWidth: (80.sp *
+                                              MediaQuery.of(context)
+                                                  .devicePixelRatio)
+                                          .round(),
+                                      memCacheHeight: (80.sp *
+                                              MediaQuery.of(context)
+                                                  .devicePixelRatio)
+                                          .round(),
                                       placeholder: (context, url) => Container(
                                         color: cardBg,
                                         child: const Center(
@@ -637,7 +650,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                         ),
                                       ),
                                       errorWidget: (context, url, error) {
-                                        print("❌ [AllBrandScreen] Brand logo load failed");
+                                        print(
+                                            "❌ [AllBrandScreen] Brand logo load failed");
                                         print("   URL: $url");
                                         print("   Error: $error");
                                         return Container(
@@ -694,9 +708,13 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                   return const SizedBox(height: 0);
                                 }
 
-                                final brandInfo = brandController.brandDetails["brandInfo"];
-                                final desc = (brandInfo != null && brandInfo is Map)
-                                    ? (brandInfo["description"]?.toString() ?? '').trim()
+                                final brandInfo =
+                                    brandController.brandDetails["brandInfo"];
+                                final desc = (brandInfo != null &&
+                                        brandInfo is Map)
+                                    ? (brandInfo["description"]?.toString() ??
+                                            '')
+                                        .trim()
                                     : '';
 
                                 if (desc.length <= 80) {
@@ -898,11 +916,14 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       _pauseVideo();
 
                       // Get brand ID safely
-                      final brandInfo = brandController.brandDetails["brandInfo"];
+                      final brandInfo =
+                          brandController.brandDetails["brandInfo"];
                       final brandId = (brandInfo != null && brandInfo is Map)
                           ? (brandInfo["id"] is int
                               ? brandInfo["id"] as int
-                              : int.tryParse(brandInfo["id"]?.toString() ?? '0') ?? 0)
+                              : int.tryParse(
+                                      brandInfo["id"]?.toString() ?? '0') ??
+                                  0)
                           : 0;
 
                       if (!mounted) return;

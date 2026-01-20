@@ -147,9 +147,12 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       print("🔹 APPLYING FILTERS/SORT TO SEARCH RESULTS");
       print("═══════════════════════════════════════════════════════════");
       print("   • Search Query → '${widget.searchQuery}'");
-      print("   • Brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all'}");
-      print("   • Colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all'}");
-      print("   • Sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all'}");
+      print(
+          "   • Brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all'}");
+      print(
+          "   • Colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all'}");
+      print(
+          "   • Sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all'}");
       print("   • Price Range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
       print("   • Sort Option  → $_appliedSortOption");
       print("   • Has Filters  → $_hasActiveFilters");
@@ -158,25 +161,29 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       if (_hasActiveFilters || _appliedSortOption != "recommended") {
         // ✅ FIX: Pass search query (key) to filter API so it filters within search context
         await catalogController.getFilterAndSortProducts(
-          key: widget.searchQuery, // Pass search query to filter within search results
+          key: widget
+              .searchQuery, // Pass search query to filter within search results
           brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
           colors: _appliedColors.isNotEmpty ? _appliedColors : null,
           sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
           minPrice: _appliedMinPrice,
           maxPrice: _appliedMaxPrice,
-          sortOption: _appliedSortOption != "recommended" ? _appliedSortOption : null,
+          sortOption:
+              _appliedSortOption != "recommended" ? _appliedSortOption : null,
           superCatId: productController.categoryFilter.value,
         );
 
         print("═══════════════════════════════════════════════════════════");
         print("✅ FILTER API RESPONSE");
         print("═══════════════════════════════════════════════════════════");
-        print("   Products returned: ${catalogController.categoryProductList.length}");
+        print(
+            "   Products returned: ${catalogController.categoryProductList.length}");
         print("═══════════════════════════════════════════════════════════");
       } else {
         // No filters, no sort - clear filtered results to show original
         catalogController.categoryProductList.clear();
-        print("✅ Cleared filters - showing original search results (${_originalSearchResults.length} items)");
+        print(
+            "✅ Cleared filters - showing original search results (${_originalSearchResults.length} items)");
       }
 
       // Reset pagination when filters change
@@ -292,7 +299,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(errorImage,
-                        height: 200.sp, width: 220.sp, fit: BoxFit.cover),
+                        height: 200.sp, width: 220.sp, fit: BoxFit.fill),
                     SizedBox(height: 20.sp),
                     const AppText(
                       text: "No products found",
@@ -323,7 +330,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 
               // Client-side pagination
               const int pageSize = 12;
-              final int page = (_currentPage.value <= 0) ? 1 : _currentPage.value;
+              final int page =
+                  (_currentPage.value <= 0) ? 1 : _currentPage.value;
 
               final int maxToShow = page * pageSize;
               final int visibleCount =
@@ -334,8 +342,9 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
               return NotificationListener<ScrollNotification>(
                 onNotification: (n) {
                   if (n.metrics.pixels >= n.metrics.maxScrollExtent - 160) {
-                    final bool canLoadMore = displayItems.length < items.length &&
-                        !_isLoadingMore.value;
+                    final bool canLoadMore =
+                        displayItems.length < items.length &&
+                            !_isLoadingMore.value;
                     if (canLoadMore) {
                       _isLoadingMore.value = true;
                       Future.delayed(const Duration(milliseconds: 200), () {
@@ -392,7 +401,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                       aspectRatio: 0.75,
                                       child: CachedNetworkImage(
                                         imageUrl: imageUrl,
-                                        fit: BoxFit.cover,
+                                        fit: BoxFit.fill,
                                         width: double.infinity,
                                         height: double.infinity,
                                         cacheManager: CacheManager(
@@ -438,8 +447,13 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 
                                       // Calculate discount percentage
                                       int? discountPercent;
-                                      if (numPrice > 0 && numMrp > 0 && numMrp > numPrice) {
-                                        discountPercent = (((numMrp - numPrice) / numMrp) * 100).round();
+                                      if (numPrice > 0 &&
+                                          numMrp > 0 &&
+                                          numMrp > numPrice) {
+                                        discountPercent =
+                                            (((numMrp - numPrice) / numMrp) *
+                                                    100)
+                                                .round();
                                       }
 
                                       // Case 1: Price is 0 or null - show only MRP (not crossed)
@@ -455,7 +469,9 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                       }
 
                                       // Case 2: Both exist and price < mrp - show base price, crossed MRP, and discount %
-                                      if (numPrice > 0 && numMrp > 0 && numPrice < numMrp) {
+                                      if (numPrice > 0 &&
+                                          numMrp > 0 &&
+                                          numPrice < numMrp) {
                                         return Row(
                                           children: [
                                             // Base Price
@@ -464,19 +480,24 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                               color: blackColor,
                                               maxLines: 1,
                                               fontSize: 12,
-                                              fontFamily: "Clash Display Semibold",
+                                              fontFamily:
+                                                  "Clash Display Semibold",
                                               fontWeight: FontWeight.w700,
                                             ),
                                             // MRP (crossed out)
                                             Padding(
-                                              padding: EdgeInsets.only(left: 5.sp),
+                                              padding:
+                                                  EdgeInsets.only(left: 5.sp),
                                               child: Text(
                                                 "₹ $numMrp",
                                                 style: TextStyle(
-                                                  color: const Color(0xFF9CA3AF),
+                                                  color:
+                                                      const Color(0xFF9CA3AF),
                                                   fontSize: 11.sp,
-                                                  decoration: TextDecoration.lineThrough,
-                                                  fontFamily: "Clash Display Regular",
+                                                  decoration: TextDecoration
+                                                      .lineThrough,
+                                                  fontFamily:
+                                                      "Clash Display Regular",
                                                   fontWeight: FontWeight.w400,
                                                 ),
                                               ),
@@ -484,14 +505,16 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                             // Discount %
                                             if (discountPercent != null)
                                               Padding(
-                                                padding: EdgeInsets.only(left: 5.sp),
+                                                padding:
+                                                    EdgeInsets.only(left: 5.sp),
                                                 child: Text(
                                                   "($discountPercent% OFF)",
                                                   style: TextStyle(
                                                     fontSize: 10.sp,
                                                     fontFamily: "Clash Display",
                                                     fontWeight: FontWeight.w500,
-                                                    color: const Color(0xFF9575CD),
+                                                    color:
+                                                        const Color(0xFF9575CD),
                                                   ),
                                                 ),
                                               ),
@@ -677,8 +700,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 
     // Restore previously applied brands
     for (final id in _appliedBrandIds) {
-      final brandData = productController.filterBrands.firstWhereOrNull((item) =>
-          int.tryParse(item['id']?.toString() ?? '') == id);
+      final brandData = productController.filterBrands.firstWhereOrNull(
+          (item) => int.tryParse(item['id']?.toString() ?? '') == id);
       if (brandData != null) {
         final name = brandData['name']?.toString().trim();
         if (name != null && name.isNotEmpty) {
@@ -830,7 +853,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                           children: [
                                             const Text("Select price range",
                                                 style: TextStyle(
-                                                    fontFamily: "Franklin Gothic",
+                                                    fontFamily:
+                                                        "Franklin Gothic",
                                                     fontWeight: FontWeight.w700,
                                                     fontSize: 15)),
                                             const SizedBox(height: 8),
@@ -840,18 +864,22 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                               max: 100000,
                                               divisions: 100,
                                               activeColor: appBarColor,
-                                              onChanged: (v) => setModalState(() {
+                                              onChanged: (v) =>
+                                                  setModalState(() {
                                                 priceRange = v;
                                               }),
                                             ),
                                             Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
-                                                Text("₹${priceRange.start.toInt()}",
+                                                Text(
+                                                    "₹${priceRange.start.toInt()}",
                                                     style: const TextStyle(
                                                         color: Colors.grey)),
-                                                Text("₹${priceRange.end.toInt()}",
+                                                Text(
+                                                    "₹${priceRange.end.toInt()}",
                                                     style: const TextStyle(
                                                         color: Colors.grey)),
                                               ],
@@ -861,31 +889,37 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                       : selectedFilter == "Color"
                                           ? colors.isEmpty
                                               ? const Center(
-                                                  child: Text("No colors available"))
+                                                  child: Text(
+                                                      "No colors available"))
                                               : ListView.builder(
                                                   itemCount: colors.length,
                                                   itemBuilder: (context, i) {
                                                     final color = colors[i];
                                                     final checked =
-                                                        selectedColors.contains(color);
+                                                        selectedColors
+                                                            .contains(color);
                                                     return CheckboxListTile(
                                                       value: checked,
                                                       onChanged: (val) {
                                                         setModalState(() {
                                                           if (val == true) {
-                                                            selectedColors.add(color);
+                                                            selectedColors
+                                                                .add(color);
                                                           } else {
-                                                            selectedColors.remove(color);
+                                                            selectedColors
+                                                                .remove(color);
                                                           }
                                                         });
                                                       },
                                                       controlAffinity:
-                                                          ListTileControlAffinity.leading,
+                                                          ListTileControlAffinity
+                                                              .leading,
                                                       title: Text(
                                                         color.toUpperCase(),
                                                         style: TextStyle(
                                                           fontSize: 14.sp,
-                                                          fontWeight: FontWeight.w400,
+                                                          fontWeight:
+                                                              FontWeight.w400,
                                                         ),
                                                       ),
                                                     );
@@ -894,31 +928,40 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                           : selectedFilter == "Size"
                                               ? sizes.isEmpty
                                                   ? const Center(
-                                                      child: Text("No sizes available"))
+                                                      child: Text(
+                                                          "No sizes available"))
                                                   : ListView.builder(
                                                       itemCount: sizes.length,
-                                                      itemBuilder: (context, i) {
+                                                      itemBuilder:
+                                                          (context, i) {
                                                         final size = sizes[i];
                                                         final checked =
-                                                            selectedSizes.contains(size);
+                                                            selectedSizes
+                                                                .contains(size);
                                                         return CheckboxListTile(
                                                           value: checked,
                                                           onChanged: (val) {
                                                             setModalState(() {
                                                               if (val == true) {
-                                                                selectedSizes.add(size);
+                                                                selectedSizes
+                                                                    .add(size);
                                                               } else {
-                                                                selectedSizes.remove(size);
+                                                                selectedSizes
+                                                                    .remove(
+                                                                        size);
                                                               }
                                                             });
                                                           },
                                                           controlAffinity:
-                                                              ListTileControlAffinity.leading,
+                                                              ListTileControlAffinity
+                                                                  .leading,
                                                           title: Text(
                                                             size.toUpperCase(),
                                                             style: TextStyle(
                                                               fontSize: 14.sp,
-                                                              fontWeight: FontWeight.w400,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
                                                             ),
                                                           ),
                                                         );
@@ -963,7 +1006,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                               for (final brandName in selectedBrands) {
                                 final brandData = productController.filterBrands
                                     .firstWhereOrNull((item) =>
-                                        item['name']?.toString().trim() == brandName);
+                                        item['name']?.toString().trim() ==
+                                        brandName);
                                 if (brandData != null) {
                                   final id = int.tryParse(
                                       brandData['id']?.toString() ?? '');
@@ -971,12 +1015,15 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                 }
                               }
 
-                              print("═══════════════════════════════════════════════════════════");
+                              print(
+                                  "═══════════════════════════════════════════════════════════");
                               print("✅ FILTERS CONFIGURED");
-                              print("═══════════════════════════════════════════════════════════");
+                              print(
+                                  "═══════════════════════════════════════════════════════════");
                               print("  Brands: ${selectedBrands.join(', ')}");
                               print("  Brand IDs: $selectedBrandIds");
-                              print("  Price: ₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()}");
+                              print(
+                                  "  Price: ₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()}");
                               print("  Colors: ${selectedColors.join(', ')}");
                               print("  Sizes: ${selectedSizes.join(', ')}");
 
@@ -1007,18 +1054,24 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                               if (_hasActiveFilters) {
                                 final filterParts = <String>[];
                                 if (selectedBrands.isNotEmpty) {
-                                  filterParts.add("${selectedBrands.length} brand(s)");
+                                  filterParts
+                                      .add("${selectedBrands.length} brand(s)");
                                 }
-                                if (priceRange.start > 300 || priceRange.end < 100000) {
-                                  filterParts.add("₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
+                                if (priceRange.start > 300 ||
+                                    priceRange.end < 100000) {
+                                  filterParts.add(
+                                      "₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
                                 }
                                 if (selectedColors.isNotEmpty) {
-                                  filterParts.add("${selectedColors.length} color(s)");
+                                  filterParts
+                                      .add("${selectedColors.length} color(s)");
                                 }
                                 if (selectedSizes.isNotEmpty) {
-                                  filterParts.add("${selectedSizes.length} size(s)");
+                                  filterParts
+                                      .add("${selectedSizes.length} size(s)");
                                 }
-                                getSnackBar("Filtered by ${filterParts.join(', ')}");
+                                getSnackBar(
+                                    "Filtered by ${filterParts.join(', ')}");
                               } else {
                                 getSnackBar("Filters cleared");
                               }

@@ -238,13 +238,13 @@ class WishlistScreenState extends State<WishlistScreen> {
                 borderRadius: BorderRadius.circular(6.sp),
                 child: CachedNetworkImage(
                   imageUrl: imageUrls[index],
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fill,
                   placeholder: (_, __) => Container(
                     color: const Color(0xFFEFF1F3),
                   ),
                   errorWidget: (_, __, ___) => Image.asset(
                     dummyWishlistImage,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                   ),
                 ),
               ),
@@ -333,14 +333,14 @@ class WishlistScreenState extends State<WishlistScreen> {
                                         maxNrOfCacheObjects: 120,
                                       ),
                                     ),
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.fill,
                                     imageUrl: coverUrl,
                                     placeholder: (_, __) => Container(
                                       color: const Color(0xFFEFF1F3),
                                     ),
                                     errorWidget: (_, __, ___) => Image.asset(
                                       dummyWishlistImage,
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.fill,
                                     ),
                                   ),
                                 )
@@ -352,7 +352,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                   width:
                                       (MediaQuery.of(context).size.width / 2) -
                                           24.sp,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.fill,
                                 ),
                         ),
                         Padding(

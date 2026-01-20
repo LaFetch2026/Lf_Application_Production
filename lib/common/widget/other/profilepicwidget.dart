@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../core/constant/constants.dart';
 import '../button/singlebtn.dart';
 
-
 class ProfilePicWidgets extends StatelessWidget {
   final Function? onPressedNotification;
 
@@ -20,7 +19,7 @@ class ProfilePicWidgets extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Center(
               child: Image.asset(profileImage,
-                  height: 100, width: 100, fit: BoxFit.cover)),
+                  height: 100, width: 100, fit: BoxFit.fill)),
         ),
         /* Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),

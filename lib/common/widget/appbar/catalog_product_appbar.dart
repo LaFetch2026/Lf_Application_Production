@@ -8,8 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/constant/constants.dart';
 
-
-
 class CatalogProductAppbar extends StatelessWidget {
   final Function? onPressedCart;
   final Function? onPressedSearch;
@@ -48,7 +46,7 @@ class CatalogProductAppbar extends StatelessWidget {
                     color: whiteColor,
                     height: 15.sp,
                     width: 15.sp,
-                    fit: BoxFit.cover),
+                    fit: BoxFit.fill),
               ),
               const Expanded(
                 child: SizedBox(
@@ -56,7 +54,7 @@ class CatalogProductAppbar extends StatelessWidget {
                 ),
               ),
               Image.asset(appNameImage,
-                  height: 28.sp, width: 70.sp, fit: BoxFit.cover),
+                  height: 28.sp, width: 70.sp, fit: BoxFit.fill),
               const Expanded(
                 child: SizedBox(
                   height: 0,

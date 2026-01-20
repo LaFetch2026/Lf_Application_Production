@@ -46,7 +46,7 @@ class LoginAppbarState extends State<LoginAppbar> {
                       child: Container(
                         padding: EdgeInsets.only(left: 16.sp, bottom: 6.sp),
                         child: SvgPicture.asset(arrowBack,
-                            height: 15.sp, width: 15.sp, fit: BoxFit.cover),
+                            height: 15.sp, width: 15.sp, fit: BoxFit.fill),
                       ),
                     )
                   : SizedBox(

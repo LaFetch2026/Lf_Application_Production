@@ -86,7 +86,7 @@ class HomeProductList extends StatelessWidget {
                                                                 days: 15),
                                                         maxNrOfCacheObjects:
                                                             100)),
-                                                fit: BoxFit.cover,
+                                                fit: BoxFit.fill,
                                                 fadeOutCurve: Curves.ease,
                                                 fadeOutDuration:
                                                     Duration(milliseconds: 100),
@@ -100,7 +100,7 @@ class HomeProductList extends StatelessWidget {
                                                     (context, url, error) =>
                                                         Image.asset(
                                                   downloadImage,
-                                                  fit: BoxFit.cover,
+                                                  fit: BoxFit.fill,
                                                   height: 170.sp,
                                                   width: 136.sp,
                                                 ),
@@ -110,7 +110,7 @@ class HomeProductList extends StatelessWidget {
                                         : Image.asset(dummyWishlistImage,
                                             height: 170.sp,
                                             width: 136.sp,
-                                            fit: BoxFit.cover),
+                                            fit: BoxFit.fill),
                                     Visibility(
                                       visible: list.length >= 4 && index == 3
                                           ? true

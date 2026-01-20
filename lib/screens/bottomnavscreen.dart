@@ -420,7 +420,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                       bagLogoImage,
                       width: 48.sp,
                       height: 48.sp,
-                      fit: BoxFit.contain,
+                      fit: BoxFit.fill,
                       color: Colors.white,
                     ),
                   ),

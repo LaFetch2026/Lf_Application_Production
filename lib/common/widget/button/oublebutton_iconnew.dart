@@ -62,7 +62,7 @@ class DoubleButtonIconNew extends StatelessWidget {
                                     ? homeAppBarColor
                                     : whiteColor,
                                 width: 15.sp,
-                                fit: BoxFit.cover),
+                                fit: BoxFit.fill),
                             style: ButtonStyle(
                                 shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(
@@ -156,7 +156,7 @@ class DoubleButtonIconNew extends StatelessWidget {
                             ))
                         : ElevatedButton.icon(
                             icon: SvgPicture.asset(buyNowSvgImage,
-                                height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                                height: 18.sp, width: 18.sp, fit: BoxFit.fill),
                             style: ButtonStyle(
                                 shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(borderRadius: BorderRadius.circular(0))),

@@ -92,16 +92,15 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
               cacheManager: CacheManager(Config("customCacheKey",
                   stalePeriod: const Duration(days: 15),
                   maxNrOfCacheObjects: 100)),
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
               imageUrl: productController.productCategoryList[index]["images"]
                   [i]["name"],
-              errorWidget: (context, url, error) =>
-                  Image.asset(
-                    downloadImage,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
-                  ),
+              errorWidget: (context, url, error) => Image.asset(
+                downloadImage,
+                fit: BoxFit.fill,
+                width: double.infinity,
+                height: double.infinity,
+              ),
             ),
           ));
         } else {
@@ -166,7 +165,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
     } else {
       list.add(Image.asset(
         dummyWishlistImage,
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
         width: double.infinity,
         height: double.infinity,
       ));
@@ -347,8 +346,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                   40.sp,
                                                               width: double
                                                                   .infinity,
-                                                              fit:
-                                                                  BoxFit.cover),
+                                                              fit: BoxFit.fill),
                                                       GestureDetector(
                                                         onTap: () async {
                                                           if (productController

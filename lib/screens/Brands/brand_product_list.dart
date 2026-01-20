@@ -53,7 +53,8 @@ class BrandProductList extends StatelessWidget {
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: () {
-                          print("🔵 [BrandProductList] Product tapped: ID=$id, Name=$name");
+                          print(
+                              "🔵 [BrandProductList] Product tapped: ID=$id, Name=$name");
                           onPressed?.call(id, name);
                         },
                         child: AnimatedContainer(
@@ -72,7 +73,10 @@ class BrandProductList extends StatelessWidget {
                                       item["images"].isNotEmpty &&
                                       item["images"][0] != null &&
                                       item["images"][0]["name"] != null &&
-                                      item["images"][0]["name"].toString().trim().isNotEmpty)
+                                      item["images"][0]["name"]
+                                          .toString()
+                                          .trim()
+                                          .isNotEmpty)
                                   ? ClipRRect(
                                       borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(radius.sp),
@@ -88,24 +92,29 @@ class BrandProductList extends StatelessWidget {
                                                 const Duration(days: 15),
                                             maxNrOfCacheObjects: 200,
                                           )),
-                                          fit: BoxFit.cover,
+                                          fit: BoxFit.fill,
                                           fadeOutCurve: Curves.ease,
                                           fadeOutDuration:
                                               const Duration(milliseconds: 100),
-                                          imageUrl: item["images"][0]["name"].toString(),
-                                          placeholder: (context, url) => Container(
+                                          imageUrl: item["images"][0]["name"]
+                                              .toString(),
+                                          placeholder: (context, url) =>
+                                              Container(
                                             height: 170.sp,
                                             width: 136.sp,
                                             color: Colors.grey[200],
                                             child: const Center(
                                               child: CircularProgressIndicator(
                                                 strokeWidth: 2,
-                                                valueColor: AlwaysStoppedAnimation<Color>(colorPrimary),
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                        Color>(colorPrimary),
                                               ),
                                             ),
                                           ),
                                           errorWidget: (context, url, error) {
-                                            print("❌ [BrandProductList] Image load failed");
+                                            print(
+                                                "❌ [BrandProductList] Image load failed");
                                             print("   URL: $url");
                                             print("   Error: $error");
                                             return Container(
@@ -113,19 +122,21 @@ class BrandProductList extends StatelessWidget {
                                               width: 136.sp,
                                               color: Colors.grey[200],
                                               child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 children: [
-                                                  Icon(Icons.image_not_supported,
-                                                    size: 40.sp,
-                                                    color: Colors.grey[400]
-                                                  ),
+                                                  Icon(
+                                                      Icons.image_not_supported,
+                                                      size: 40.sp,
+                                                      color: Colors.grey[400]),
                                                   SizedBox(height: 4.sp),
                                                   Text(
                                                     'Image not available',
                                                     style: TextStyle(
                                                       fontSize: 9.sp,
                                                       color: Colors.grey[500],
-                                                      fontFamily: "Clash Display Regular",
+                                                      fontFamily:
+                                                          "Clash Display Regular",
                                                     ),
                                                     textAlign: TextAlign.center,
                                                   ),
@@ -140,7 +151,7 @@ class BrandProductList extends StatelessWidget {
                                       dummyWishlistImage,
                                       height: 170.sp,
                                       width: 136.sp,
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.fill,
                                     ),
 
                               // ------- PRODUCT NAME -------
@@ -161,7 +172,8 @@ class BrandProductList extends StatelessWidget {
                               Padding(
                                 padding: EdgeInsets.only(top: 8.sp),
                                 child: Row(
-                                  mainAxisAlignment: (item["displayMrp"] == null)
+                                  mainAxisAlignment: (item["displayMrp"] ==
+                                          null)
                                       ? MainAxisAlignment
                                           .start // Price alone → normal left alignment
                                       : MainAxisAlignment

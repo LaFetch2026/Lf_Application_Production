@@ -60,7 +60,7 @@ class DoubleIconButton extends StatelessWidget {
                             height: 13.sp,
                             color: homeAppBarColor,
                             width: 13.sp,
-                            fit: BoxFit.cover),
+                            fit: BoxFit.fill),
                       ),
                       style: ButtonStyle(
                           shape: MaterialStateProperty.all(
@@ -108,7 +108,7 @@ class DoubleIconButton extends StatelessWidget {
                                 ? whiteColor
                                 : lightPurpleColor,
                             width: 18.sp,
-                            fit: BoxFit.cover),
+                            fit: BoxFit.fill),
                       ),
                       style: ButtonStyle(
                           shape: MaterialStateProperty.all(

@@ -35,7 +35,7 @@ class PaymentFailWidget extends StatelessWidget {
             child: Image.asset(image,
                 height: 200.sp,
                 width: text1 == "Order Placed Successfully" ? 200.sp : 220.sp,
-                fit: BoxFit.cover),
+                fit: BoxFit.fill),
           ),
         ),
         Padding(

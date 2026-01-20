@@ -107,7 +107,7 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                 applogSvgImage,
                 height: 28.sp,
                 width: 70.sp,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ),
 
             const Spacer(),
@@ -132,7 +132,7 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                         searchSvgImage,
                         height: 18.sp,
                         width: 18.sp,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                       ),
                     ),
                   ),
@@ -152,7 +152,7 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                       heartSvgImage,
                       height: 18.sp,
                       width: 18.sp,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     ),
                   ),
                 ),
@@ -175,7 +175,7 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                           cartSvgImage,
                           height: 20.sp,
                           width: 20.sp,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                         ),
 
                         // ✅ Only show badge for logged-in users

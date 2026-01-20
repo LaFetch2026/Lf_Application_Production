@@ -47,7 +47,7 @@ class BottomSizeChartState extends State<BottomSizeChart> {
                         color: Colors.transparent,
                         image: DecorationImage(
                             image: AssetImage(blackCrossImage),
-                            fit: BoxFit.cover),
+                            fit: BoxFit.fill),
                       ),
                     ),
                   ),
@@ -85,11 +85,11 @@ class BottomSizeChartState extends State<BottomSizeChart> {
                       cacheManager: CacheManager(Config("customCacheKey",
                           stalePeriod: const Duration(days: 15),
                           maxNrOfCacheObjects: 100)),
-                      fit: BoxFit.contain,
+                      fit: BoxFit.fill,
                       imageUrl: widget.productSizeChart,
                       errorWidget: (context, url, error) => Image.asset(
                         downloadImage,
-                        fit: BoxFit.contain,
+                        fit: BoxFit.fill,
                         height: 400.sp,
                         width: MediaQuery.sizeOf(context).width,
                       ),

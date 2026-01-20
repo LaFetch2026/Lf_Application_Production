@@ -39,7 +39,7 @@ class SaveAddressAppbar extends StatelessWidget {
                   padding: EdgeInsets.only(
                       left: 16.sp, right: 12.sp, top: 53.sp, bottom: 10.sp),
                   child: SvgPicture.asset(arrowBack,
-                      height: 15.sp, width: 15.sp, fit: BoxFit.cover),
+                      height: 15.sp, width: 15.sp, fit: BoxFit.fill),
                 ),
               ),
             ),
@@ -76,7 +76,7 @@ class SaveAddressAppbar extends StatelessWidget {
                             right: 16.sp,
                             bottom: 5.sp),
                         child: SvgPicture.asset(heartSvgImage,
-                            height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                            height: 18.sp, width: 18.sp, fit: BoxFit.fill),
                       ),
                     ),
                   )

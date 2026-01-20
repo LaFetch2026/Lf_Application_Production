@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../core/constant/constants.dart';
 
-
 class ShopWishlistAppbar extends StatefulWidget {
   final Function? onPressedheart;
   final Function? onPressedCart;
@@ -42,7 +41,7 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
                   padding: EdgeInsets.only(right: 10),
                   child: InkWell(
                     child: SvgPicture.asset(arrowBack,
-                        height: 15.sp, width: 15.sp, fit: BoxFit.cover),
+                        height: 15.sp, width: 15.sp, fit: BoxFit.fill),
                     onTap: () {
                       widget.onPressedBackButton?.call();
                     },
@@ -83,7 +82,7 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8.sp),
                     child: SvgPicture.asset(heartSvgImage,
-                        height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                        height: 18.sp, width: 18.sp, fit: BoxFit.fill),
                   ),
                 ),
               ),
@@ -98,7 +97,7 @@ class ShopWishlistAppbarState extends State<ShopWishlistAppbar> {
                     child: Padding(
                       padding: EdgeInsets.only(bottom: 3.sp),
                       child: SvgPicture.asset(cartSvgImage,
-                          height: 18.sp, width: 18.sp, fit: BoxFit.cover),
+                          height: 18.sp, width: 18.sp, fit: BoxFit.fill),
                     ),
                   ),
                 ),

@@ -271,7 +271,8 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
                   child: GestureDetector(
                     onTap: () async {
                       if (selectedReason == null) {
-                        showAppSnackBar('Please select a reason.', type: SnackBarType.error);
+                        showAppSnackBar('Please select a reason.',
+                            type: SnackBarType.error);
                         return;
                       }
 
@@ -320,12 +321,12 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
         imageUrl,
         height: 60.sp,
         width: 60.sp,
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
         errorBuilder: (_, __, ___) => Image.asset(
           dummyWishlistImage,
           height: 60.sp,
           width: 60.sp,
-          fit: BoxFit.cover,
+          fit: BoxFit.fill,
         ),
       );
     } else {
@@ -333,7 +334,7 @@ class _CancelOrderScreenState extends State<CancelOrderScreen> {
         dummyWishlistImage,
         height: 60.sp,
         width: 60.sp,
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
       );
     }
   }

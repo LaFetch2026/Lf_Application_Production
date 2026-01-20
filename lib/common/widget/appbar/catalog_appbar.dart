@@ -40,7 +40,7 @@ class CatalogAppbar extends StatelessWidget {
                     padding:
                         EdgeInsets.symmetric(horizontal: 10.sp, vertical: 2.sp),
                     child: Image.asset(backArrowImage,
-                        height: 16.sp, width: 10.sp, fit: BoxFit.cover),
+                        height: 16.sp, width: 10.sp, fit: BoxFit.fill),
                   ),
                 ),
               ),

@@ -400,7 +400,7 @@ class HomeScreenState extends State<HomeScreen> {
                   ),
                   errorWidget: (context, url, error) => Image.asset(
                     downloadImage,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                     height: 229.sp,
                     width: MediaQuery.of(context).size.width,
                   ),
@@ -709,7 +709,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 8.sp),
+                                SizedBox(height: 6.sp),
                                 banners.length == 1
                                     ? const SizedBox.shrink()
                                     : Center(
@@ -730,8 +730,6 @@ class HomeScreenState extends State<HomeScreen> {
 
                           return const SizedBox.shrink();
                         }),
-
-                        SizedBox(height: 8.sp), // ✅ REDUCED from 16.sp
 
                         // Marquee Banner
                         Container(
@@ -764,7 +762,7 @@ class HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
 
-                        SizedBox(height: 16.sp), // ✅ REDUCED from 24.sp
+                        SizedBox(height: 8.sp),
 
                         // Shop by Category Section
                         Obx(
@@ -781,38 +779,33 @@ class HomeScreenState extends State<HomeScreen> {
                                   : const SizedBox.shrink(),
                         ),
 
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: 8.sp,
-                          ),
-                          child: Obx(() {
-                            // ✅ Watch brandController instead of homeController
-                            if (brandController.isBrand.value) {
-                              return const DummyHomeBrand();
-                            }
+                        Obx(() {
+                          // ✅ Watch brandController instead of homeController
+                          if (brandController.isBrand.value) {
+                            return const DummyHomeBrand();
+                          }
 
-                            // ✅ Get brands from brandController
-                            final brands = brandController.brandList
-                                .where((b) =>
-                                    b.containsKey("id") &&
-                                    (b["name"]?.toString().isNotEmpty ?? false))
-                                .toList();
+                          // ✅ Get brands from brandController
+                          final brands = brandController.brandList
+                              .where((b) =>
+                                  b.containsKey("id") &&
+                                  (b["name"]?.toString().isNotEmpty ?? false))
+                              .toList();
 
-                            // ✅ If no brands, don't show anything (no empty space)
-                            if (brands.isEmpty) {
-                              return const SizedBox.shrink();
-                            }
+                          // ✅ If no brands, don't show anything (no empty space)
+                          if (brands.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
 
-                            // ✅ Show brands section
-                            return _FeaturedBrandsRow(
-                              homeController: homeController,
-                              brandController: brandController,
-                              analytics: analytics,
-                              onPressedViewAll: () => widget.onPressed?.call(1),
-                              brands: brands,
-                            );
-                          }),
-                        ),
+                          // ✅ Show brands section
+                          return _FeaturedBrandsRow(
+                            homeController: homeController,
+                            brandController: brandController,
+                            analytics: analytics,
+                            onPressedViewAll: () => widget.onPressed?.call(1),
+                            brands: brands,
+                          );
+                        }),
 
                         // Product Collections
                         Obx(() {
@@ -859,7 +852,7 @@ class HomeScreenState extends State<HomeScreen> {
                             shrinkWrap: true,
                             itemCount: collections.length,
                             separatorBuilder: (_, __) =>
-                                SizedBox(height: 16.sp),
+                                SizedBox(height: 8.sp),
                             itemBuilder: (context, index) {
                               final collection = collections[index];
                               final int collectionId = collection.id;
@@ -895,7 +888,7 @@ class HomeScreenState extends State<HomeScreen> {
                                     // ✅ Left-aligned collection heading
                                     Padding(
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: 16.sp, vertical: 12.sp),
+                                          horizontal: 16.sp, vertical: 8.sp),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -948,7 +941,6 @@ class HomeScreenState extends State<HomeScreen> {
                                         collectionName: title,
                                       ),
 
-                                    SizedBox(height: 6.sp),
                                     if (products.isNotEmpty)
                                       _SectionStrip(
                                         products: products,
@@ -1065,7 +1057,7 @@ class HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
                                       ),
-                                    SizedBox(height: 12.sp),
+                                    SizedBox(height: 4.sp),
                                   ],
                                 ),
                               );
@@ -1280,7 +1272,7 @@ class _SectionStrip extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: 16.sp),
         itemCount: columnPairs.length + 1, // +1 for VIEW ALL button
-        separatorBuilder: (_, __) => SizedBox(width: 12.sp),
+        separatorBuilder: (_, __) => SizedBox(width: 8.sp),
         itemBuilder: (context, index) {
           // Last item is VIEW ALL button
           if (index == columnPairs.length) {
@@ -1346,7 +1338,7 @@ class _SectionStrip extends StatelessWidget {
                 _buildProductCard(columnProducts[0]),
 
                 if (columnProducts.length > 1) ...[
-                  SizedBox(height: 12.sp),
+                  SizedBox(height: 8.sp),
                   // Bottom product
                   _buildProductCard(columnProducts[1]),
                 ],
@@ -1385,8 +1377,8 @@ class _SectionStrip extends StatelessWidget {
                 ? CachedNetworkImage(
                     imageUrl: imageUrl,
                     height: 180.sp,
-                    width: 150.sp,
-                    fit: BoxFit.cover,
+                    width: 160.sp,
+                    fit: BoxFit.fill,
                     errorWidget: (context, url, error) => Container(
                       height: 180.sp,
                       width: 150.sp,
@@ -1424,7 +1416,7 @@ class _SectionStrip extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: "Clash Display",
-                  fontSize: 10.sp,
+                  fontSize: 8.sp,
                   color: dark
                       ? Colors.white.withOpacity(0.85)
                       : Colors.black.withOpacity(0.7),
@@ -1443,7 +1435,7 @@ class _SectionStrip extends StatelessWidget {
                     "₹$numPrice",
                     style: TextStyle(
                       fontFamily: "Clash Display Semibold",
-                      fontSize: 13.sp,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.w700,
                       color: dark ? Colors.white : Colors.black,
                     ),
@@ -1470,7 +1462,7 @@ class _SectionStrip extends StatelessWidget {
                       child: Text(
                         "$discount% OFF",
                         style: TextStyle(
-                          fontSize: 8.5.sp,
+                          fontSize: 8.sp,
                           fontFamily: "Clash Display",
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF9575CD),
@@ -1659,8 +1651,8 @@ class BannerProductsScreen extends StatelessWidget {
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 0.56,
-                crossAxisSpacing: 12.sp, // ✅ REDUCED from 16.sp
-                mainAxisSpacing: 14.sp, // ✅ REDUCED from 18.sp
+                crossAxisSpacing: 10.sp,
+                mainAxisSpacing: 12.sp,
               ),
               itemBuilder: (context, index) {
                 final m = products[index];
@@ -1770,11 +1762,11 @@ class _BannerProductTile extends StatelessWidget {
                           maxNrOfCacheObjects: 100),
                     ),
                     imageUrl: imageUrl!,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                     errorWidget: (_, __, ___) =>
-                        Image.asset(downloadImage, fit: BoxFit.cover),
+                        Image.asset(downloadImage, fit: BoxFit.fill),
                   )
-                : Image.asset(dummyWishlistImage, fit: BoxFit.cover),
+                : Image.asset(dummyWishlistImage, fit: BoxFit.fill),
           ),
         ),
         Padding(
@@ -1871,7 +1863,7 @@ class _ShopByCategorySection extends StatelessWidget {
         children: [
           // ✅ Left-aligned section heading
           Padding(
-            padding: EdgeInsets.only(left: 16.sp, top: 0.sp, bottom: 12.sp),
+            padding: EdgeInsets.only(left: 16.sp, top: 0.sp, bottom: 8.sp),
             child: AppText(
               text: "SHOP BY CATEGORY",
               fontFamily: "Clash Display Semibold",
@@ -1890,7 +1882,7 @@ class _ShopByCategorySection extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 childAspectRatio: 0.55,
                 physics: const NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 10.sp, // ✅ REDUCED from 12.sp
+                crossAxisSpacing: 8.sp,
                 mainAxisSpacing: 0.sp,
                 children: List.generate(
                   min(6, catalogController.catalogList.length),
@@ -1943,20 +1935,20 @@ class _ShopByCategorySection extends StatelessWidget {
                                       catalog["image"].toString().isNotEmpty)
                                   ? CachedNetworkImage(
                                       imageUrl: catalog["image"],
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.fill,
                                       errorWidget: (_, __, ___) => Image.asset(
                                         dummyWishlistImage,
-                                        fit: BoxFit.cover,
+                                        fit: BoxFit.fill,
                                       ),
                                     )
                                   : Image.asset(
                                       dummyWishlistImage,
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.fill,
                                     ),
                             ),
                           ),
 
-                          SizedBox(height: 8.sp),
+                          SizedBox(height: 6.sp),
 
                           // 🏷 Category Name
                           AppText(
@@ -2005,7 +1997,7 @@ class _ShopByCategorySection extends StatelessWidget {
             },
             child: Padding(
               padding: EdgeInsets.symmetric(
-                  vertical: 6.sp, horizontal: 16.sp), // ✅ REDUCED from 16.sp
+                  vertical: 4.sp, horizontal: 16.sp),
               child: Container(
                 height: 42.sp,
                 color: homeAppBarColor,
@@ -2026,7 +2018,7 @@ class _ShopByCategorySection extends StatelessWidget {
                       color: whiteColor,
                       height: 7.sp,
                       width: 7.sp,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     ),
                   ],
                 ),
@@ -2093,7 +2085,7 @@ class _StandaloneCollectionBannersState
 
     // ✅ Edge-to-edge banners with vertical padding only
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.sp),
+      padding: EdgeInsets.symmetric(vertical: 4.sp),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2130,7 +2122,7 @@ class _StandaloneCollectionBannersState
 
           // Page indicators (only show if more than 1 banner)
           if (widget.banners.length > 1) ...[
-            SizedBox(height: 8.sp),
+            SizedBox(height: 6.sp),
             Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -2309,14 +2301,14 @@ class _FeaturedBrandsRow extends StatelessWidget {
                     arrowViewAllImage,
                     height: 11.sp,
                     width: 7.sp,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                   ),
                 ),
               ),
             ],
           ),
         ),
-        SizedBox(height: 12.sp),
+        SizedBox(height: 8.sp),
         SizedBox(
           height: 90.sp,
           child: ListView.builder(
@@ -2378,7 +2370,7 @@ class _FeaturedBrandsRow extends StatelessWidget {
                                   imageUrl: logo,
                                   height: 64.sp,
                                   width: 64.sp,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.fill,
                                   fadeInDuration:
                                       const Duration(milliseconds: 300),
                                   placeholder: (_, __) => Container(
@@ -2386,12 +2378,12 @@ class _FeaturedBrandsRow extends StatelessWidget {
                                   ),
                                   errorWidget: (_, __, ___) => Image.asset(
                                     downloadImage,
-                                    fit: BoxFit.contain,
+                                    fit: BoxFit.fill,
                                   ),
                                 )
                               : Image.asset(
                                   dummyWishlistImage,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.fill,
                                 ),
                         ),
                       ),

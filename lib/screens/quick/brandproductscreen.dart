@@ -485,7 +485,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                             errorImage,
                             height: 200.sp,
                             width: 220.sp,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.fill,
                           ),
                         ),
                         Padding(
@@ -598,12 +598,12 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                 maxNrOfCacheObjects: 100,
                                               ),
                                             ),
-                                            fit: BoxFit.cover,
+                                            fit: BoxFit.fill,
                                             imageUrl: img,
                                             errorWidget: (_, __, ___) =>
                                                 Image.asset(
                                               downloadImage,
-                                              fit: BoxFit.cover,
+                                              fit: BoxFit.fill,
                                               height: (MediaQuery.of(context)
                                                           .size
                                                           .width /
@@ -628,7 +628,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                             (MediaQuery.of(context).size.width /
                                                     2) -
                                                 24.sp,
-                                        fit: BoxFit.cover,
+                                        fit: BoxFit.fill,
                                       ),
                               ),
 

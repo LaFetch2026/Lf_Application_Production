@@ -35,7 +35,7 @@ class CartWidget extends StatelessWidget {
             visible: visible,
             child: Center(
               child: Image.asset(image!,
-                  height: 220.sp, width: 189.sp, fit: BoxFit.cover),
+                  height: 220.sp, width: 189.sp, fit: BoxFit.fill),
             )),
         Padding(
           padding: EdgeInsets.only(top: 30.sp, left: 20.sp, right: 20.sp),

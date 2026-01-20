@@ -64,7 +64,7 @@ class HorizontalCategoryList extends StatelessWidget {
                                                 stalePeriod:
                                                     const Duration(days: 15),
                                                 maxNrOfCacheObjects: 100)),
-                                            fit: BoxFit.cover,
+                                            fit: BoxFit.fill,
                                             imageUrl: isImage(list[index]
                                                     ["images"][0]["name"])
                                                 ? list[index]["images"][0]
@@ -75,7 +75,7 @@ class HorizontalCategoryList extends StatelessWidget {
                                                 (context, url, error) =>
                                                     Image.asset(
                                               downloadImage,
-                                              fit: BoxFit.cover,
+                                              fit: BoxFit.fill,
                                               width: 136.sp,
                                               height: 170.sp,
                                             ),
@@ -84,7 +84,7 @@ class HorizontalCategoryList extends StatelessWidget {
                                       : Image.asset(dummyWishlistImage,
                                           width: 136.sp,
                                           height: 170.sp,
-                                          fit: BoxFit.cover),
+                                          fit: BoxFit.fill),
                                   Visibility(
                                     visible:
                                         list[index]["aggregated_rating"] != 0
@@ -170,11 +170,11 @@ class HorizontalCategoryList extends StatelessWidget {
                                                 color: lightPurpleColor,
                                                 height: 12.sp,
                                                 width: 12.sp,
-                                                fit: BoxFit.cover)
+                                                fit: BoxFit.fill)
                                             : SvgPicture.asset(heartSvgImage,
                                                 height: 12.sp,
                                                 width: 12.sp,
-                                                fit: BoxFit.cover),
+                                                fit: BoxFit.fill),
                                       ),
                                     ) */
                                   ],

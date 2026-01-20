@@ -89,19 +89,24 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
     final status = (data['status'] ?? 'pending').toString().toLowerCase();
 
     // ✅ Order Information
-    final orderId = order['id']?.toString() ?? data['orderId']?.toString() ?? 'N/A';
-    final orderDate = order['orderedAt']?.toString() ?? order['createdAt']?.toString() ?? '';
-    final formattedDate = orderDate.isNotEmpty
-        ? orderDate.split('T')[0]
-        : 'N/A';
+    final orderId =
+        order['id']?.toString() ?? data['orderId']?.toString() ?? 'N/A';
+    final orderDate =
+        order['orderedAt']?.toString() ?? order['createdAt']?.toString() ?? '';
+    final formattedDate =
+        orderDate.isNotEmpty ? orderDate.split('T')[0] : 'N/A';
     final awbCode = data['awbCode']?.toString() ?? '';
-    final paymentMethod = order['paymentMethod']?.toString().toUpperCase() ?? 'N/A';
+    final paymentMethod =
+        order['paymentMethod']?.toString().toUpperCase() ?? 'N/A';
 
     // ✅ Price values from nested order
-    final unitPrice = double.tryParse(data['unitPrice']?.toString() ?? '0') ?? 0.0;
-    final discount = double.tryParse(data['discount']?.toString() ?? '0') ?? 0.0;
+    final unitPrice =
+        double.tryParse(data['unitPrice']?.toString() ?? '0') ?? 0.0;
+    final discount =
+        double.tryParse(data['discount']?.toString() ?? '0') ?? 0.0;
     final tax = double.tryParse(data['tax']?.toString() ?? '0') ?? 0.0;
-    final gstAmount = double.tryParse(data['gstAmount']?.toString() ?? '0') ?? 0.0;
+    final gstAmount =
+        double.tryParse(data['gstAmount']?.toString() ?? '0') ?? 0.0;
     final total = double.tryParse(order['total']?.toString() ?? '0') ?? 0.0;
     final totalMRP =
         double.tryParse(order['totalMRP']?.toString() ?? '$total') ?? total;
@@ -167,9 +172,9 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
                 imageUrl: imageUrl,
                 height: 200.sp,
                 width: double.infinity,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
                 errorWidget: (_, __, ___) =>
-                    Image.asset(dummyWishlistImage, fit: BoxFit.cover),
+                    Image.asset(dummyWishlistImage, fit: BoxFit.fill),
               ),
             ),
             SizedBox(height: 12.sp),
@@ -332,7 +337,8 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
             Divider(color: dividerColor),
             SizedBox(height: 8.sp),
 
-            _priceRow("Item Price (${quantity}x)", "₹${unitPrice.toStringAsFixed(2)}"),
+            _priceRow("Item Price (${quantity}x)",
+                "₹${unitPrice.toStringAsFixed(2)}"),
             if (discount > 0)
               _priceRow("Discount", "- ₹${discount.toStringAsFixed(2)}",
                   color: const Color(0xFF10B981)),

@@ -60,12 +60,10 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                         decoration: const BoxDecoration(
                             image: DecorationImage(
                                 image: AssetImage(blackBackImage),
-                                fit: BoxFit.cover)),
+                                fit: BoxFit.fill)),
                         child: Center(
                           child: Image.asset(whiteBellImage,
-                              height: 180.sp,
-                              width: 180.sp,
-                              fit: BoxFit.contain),
+                              height: 180.sp, width: 180.sp, fit: BoxFit.fill),
                         )),
                     GestureDetector(
                       onTap: () {
@@ -77,7 +75,7 @@ class NotificationSettingScreenState extends State<NotificationSettingScreen> {
                             color: whiteColor,
                             height: 16.sp,
                             width: 10.sp,
-                            fit: BoxFit.cover),
+                            fit: BoxFit.fill),
                       ),
                     ),
                   ],
