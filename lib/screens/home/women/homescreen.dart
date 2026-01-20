@@ -851,8 +851,7 @@ class HomeScreenState extends State<HomeScreen> {
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             itemCount: collections.length,
-                            separatorBuilder: (_, __) =>
-                                SizedBox(height: 8.sp),
+                            separatorBuilder: (_, __) => SizedBox(height: 8.sp),
                             itemBuilder: (context, index) {
                               final collection = collections[index];
                               final int collectionId = collection.id;
@@ -1333,6 +1332,7 @@ class _SectionStrip extends StatelessWidget {
           return SizedBox(
             width: 150.sp,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 // Top product
                 _buildProductCard(columnProducts[0]),
@@ -1403,7 +1403,7 @@ class _SectionStrip extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontFamily: "Clash Display Semibold",
-              fontSize: 12.sp,
+              fontSize: 10.sp,
               color: dark ? Colors.white : Colors.black,
             ),
           ),
@@ -1996,8 +1996,7 @@ class _ShopByCategorySection extends StatelessWidget {
               );
             },
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: 4.sp, horizontal: 16.sp),
+              padding: EdgeInsets.symmetric(vertical: 4.sp, horizontal: 16.sp),
               child: Container(
                 height: 42.sp,
                 color: homeAppBarColor,
