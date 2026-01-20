@@ -91,6 +91,8 @@
     <string>Used to capture audio for image picker.</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>To access photos for selecting a profile picture.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>To save downloaded invoices to your photo library.</string>
 
     <!-- Network Security -->
     <key>NSAppTransportSecurity</key>
@@ -108,6 +110,8 @@
         <string>fetch</string>
     </array>
     <key>UIFileSharingEnabled</key>
+    <true/>
+    <key>LSSupportsOpeningDocumentsInPlace</key>
     <true/>
 
     <!-- Launch -->

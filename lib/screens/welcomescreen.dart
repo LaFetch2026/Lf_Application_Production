@@ -67,6 +67,44 @@ class WelcomeScreenState extends State<WelcomeScreen>
     if (mounted) _videoController.play();
   }
 
+  /// ✅ Handle Google Login
+  Future<void> _handleGoogleLogin() async {
+    try {
+      await analytics.logEvent(
+        name: 'welcome_page_google_login',
+        parameters: <String, Object>{
+          'page_name': 'welcome_page_google_login',
+          'login_method': 'google',
+        },
+      );
+
+      // TODO: Implement Google Sign-In logic
+      // await loginController.signInWithGoogle();
+      print("Google login pressed");
+    } catch (e) {
+      print("❌ Error during Google login: $e");
+    }
+  }
+
+  /// ✅ Handle Facebook Login
+  Future<void> _handleFacebookLogin() async {
+    try {
+      await analytics.logEvent(
+        name: 'welcome_page_facebook_login',
+        parameters: <String, Object>{
+          'page_name': 'welcome_page_facebook_login',
+          'login_method': 'facebook',
+        },
+      );
+
+      // TODO: Implement Facebook Sign-In logic
+      // await loginController.signInWithFacebook();
+      print("Facebook login pressed");
+    } catch (e) {
+      print("❌ Error during Facebook login: $e");
+    }
+  }
+
   /// ✅ Handle SKIP button - Navigate to BottomNavScreen as guest
   Future<void> _handleSkip() async {
     if (_skipBusy.value) return; // Prevent double tap
@@ -96,6 +134,40 @@ class WelcomeScreenState extends State<WelcomeScreen>
     } finally {
       _skipBusy.value = false;
     }
+  }
+
+  /// ✅ Social Login Button Widget
+  Widget _buildSocialLoginButton({
+    required String logo,
+    required VoidCallback onPressed,
+  }) {
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(50.r),
+      child: Container(
+        width: 30.w,
+        height: 30.h,
+        decoration: BoxDecoration(
+          color: whiteColor,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Image.asset(
+            logo,
+            width: 24.w,
+            height: 24.h,
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -189,6 +261,25 @@ class WelcomeScreenState extends State<WelcomeScreen>
                     fontSize: 14,
                   ),
                 ),
+
+                // // ✅ SOCIAL LOGIN BUTTONS (Google & Facebook)
+                // Padding(
+                //   padding: EdgeInsets.only(top: 24.sp),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       _buildSocialLoginButton(
+                //         logo: googleImage, // Add your Google logo asset
+                //         onPressed: _handleGoogleLogin,
+                //       ),
+                //       SizedBox(width: 20.w),
+                //       _buildSocialLoginButton(
+                //         logo: facebookImage, // Add your Facebook logo asset
+                //         onPressed: _handleFacebookLogin,
+                //       ),
+                //     ],
+                //   ),
+                // ),
 
                 // I'M NEW HERE
                 Padding(

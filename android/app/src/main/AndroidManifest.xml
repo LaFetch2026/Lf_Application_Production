@@ -1,13 +1,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Permissions -->
+    <!-- Network -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Location (only if used for delivery / address / nearby services) -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Foreground services (only if actually used) -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!-- Advertising ID (only if ads / attribution are used) -->
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
 
     <!-- Allow deep linking -->
     <queries>
@@ -32,18 +36,33 @@
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />
 
+        <!-- Flutter config -->
         <meta-data android:name="flutterEmbedding" android:value="2" />
-        <meta-data android:name="io.flutter.embedding.android.NormalTheme" android:resource="@style/NormalTheme" />
-        <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
+        <meta-data
+            android:name="io.flutter.embedding.android.NormalTheme"
+            android:resource="@style/NormalTheme" />
+        <meta-data
+            android:name="flutter_deeplinking_enabled"
+            android:value="true" />
 
-        <!-- Facebook SDK Meta -->
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id" />
-        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token" />
-        <meta-data android:name="com.facebook.sdk.AutoLogAppEventsEnabled" android:value="true" />
-        <meta-data android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled" android:value="true" />
-        <meta-data android:name="com.facebook.sdk.CodelessDebugLogEnabled" android:value="true" />
+        <!-- Facebook SDK -->
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="@string/facebook_client_token" />
+        <meta-data
+            android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
+            android:value="true" />
+        <meta-data
+            android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
+            android:value="true" />
+        <meta-data
+            android:name="com.facebook.sdk.CodelessDebugLogEnabled"
+            android:value="true" />
 
-        <!-- Flutter Main Activity -->
+        <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -55,48 +74,32 @@
 
             <!-- Launcher -->
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- ========================= -->
-            <!-- ⭐ CUSTOM SCHEME DEEPLINKS -->
-            <!--  lafetch://product/1234   -->
-            <!-- ========================= -->
-<intent-filter android:autoVerify="true">
-    <action android:name="android.intent.action.VIEW" />
-
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-
-    <!-- Deep link scheme -->
-    <data android:scheme="lafetch" />
-
-    <!-- App Links (HTTPS) -->
-    <data
-        android:scheme="https"
-        android:host="lafetch.com"
-        android:pathPrefix="/" />
-</intent-filter>
-
-
-            <!-- ============================= -->
-            <!-- ⭐ UNIVERSAL LINKS (HTTPS)     -->
-            <!-- https://lafetch.onelink.me/... -->
-            <!-- https://lafetch.com/product   -->
-            <!-- ============================= -->
+            <!-- Custom scheme deep links -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!-- AppsFlyer OneLink -->
+                <data android:scheme="lafetch" />
+                <data
+                    android:scheme="https"
+                    android:host="lafetch.com"
+                    android:pathPrefix="/" />
+            </intent-filter>
+
+            <!-- Universal links -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:scheme="https"
                     android:host="lafetch.onelink.me" />
-
-                <!-- Your main domain -->
                 <data
                     android:scheme="https"
                     android:host="lafetch.com"
@@ -105,25 +108,23 @@
 
         </activity>
 
-        <!-- Facebook Login Activity -->
+        <!-- Facebook Login -->
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
 
-        <!-- Facebook Custom Tab -->
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
 
-        <!-- Facebook Content Provider -->
         <provider
             android:name="com.facebook.FacebookContentProvider"
             android:authorities="com.facebook.app.FacebookContentProvider915626513880487"

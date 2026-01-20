@@ -692,16 +692,21 @@ class HomeScreenState extends State<HomeScreen> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(
-                                  height: 230,
-                                  width: 410,
-                                  child: PageView(
-                                    controller: _pageController,
-                                    onPageChanged: (index) {
-                                      homeController.currentPage.value = index;
-                                      homeController.update();
-                                    },
-                                    children: widgitBannerList(),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: SizedBox(
+                                    height: 230,
+                                    width: 410,
+                                    child: PageView(
+                                      controller: _pageController,
+                                      onPageChanged: (index) {
+                                        homeController.currentPage.value =
+                                            index;
+                                        homeController.update();
+                                      },
+                                      children: widgitBannerList(),
+                                    ),
                                   ),
                                 ),
                                 SizedBox(height: 8.sp),
@@ -726,7 +731,7 @@ class HomeScreenState extends State<HomeScreen> {
                           return const SizedBox.shrink();
                         }),
 
-                        SizedBox(height: 10.sp), // ✅ REDUCED from 16.sp
+                        SizedBox(height: 8.sp), // ✅ REDUCED from 16.sp
 
                         // Marquee Banner
                         Container(
@@ -735,8 +740,8 @@ class HomeScreenState extends State<HomeScreen> {
                           width: MediaQuery.of(context).size.width,
                           child: Padding(
                             padding: EdgeInsets.only(
-                              top: Platform.isIOS ? 7.sp : 6.sp,
-                              bottom: Platform.isIOS ? 5.sp : 6.sp,
+                              top: Platform.isIOS ? 5.sp : 5.sp,
+                              bottom: Platform.isIOS ? 5.sp : 5.sp,
                             ),
                             child: Center(
                               child: Marquee(
@@ -1255,187 +1260,227 @@ class _SectionStrip extends StatelessWidget {
     final items = List<Map<String, dynamic>>.from(products)
       ..shuffle(Random(seed));
 
-    // ✅ Show 6 products total (3 visible at a time, scroll to see next 3)
-    final pick = items.take(6).toList();
-    final itemCount =
-        pick.length + 1; // 6 products + 1 VIEW ALL button = 7 total
+    // ✅ Show 12 products in 2 rows (6 columns) + 1 VIEW ALL button
+    final pick = items.take(12).toList();
 
-    Map<String, dynamic>? exploreCandidate = items.length > pick.length
-        ? items[pick.length]
-        : items.isNotEmpty
-            ? items.first
-            : null;
-
-    final exploreImageUrl = exploreCandidate != null
-        ? firstImageUrlFromProduct(exploreCandidate)
-        : null;
+    // Split into pairs for 2-row layout
+    final List<List<Map<String, dynamic>>> columnPairs = [];
+    for (int i = 0; i < pick.length; i += 2) {
+      if (i + 1 < pick.length) {
+        columnPairs.add([pick[i], pick[i + 1]]);
+      } else {
+        columnPairs.add([pick[i]]);
+      }
+    }
 
     return SizedBox(
-      height: 258.sp, // ✅ Increased from 240.sp to accommodate discount badge
+      height: 500.sp, // Height for 2 rows of products
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: 16.sp),
-        itemCount: itemCount,
+        itemCount: columnPairs.length + 1, // +1 for VIEW ALL button
         separatorBuilder: (_, __) => SizedBox(width: 12.sp),
         itemBuilder: (context, index) {
-          if (index == pick.length) {
-            return _ExploreTile(
-              dark: dark,
-              onTap: onExploreAll,
-              imageUrl: exploreImageUrl,
-              width: 150.sp,
+          // Last item is VIEW ALL button
+          if (index == columnPairs.length) {
+            return Container(
+              width: 200.sp,
+              alignment: Alignment.center,
+              child: GestureDetector(
+                onTap: onExploreAll,
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 22.sp, vertical: 14.sp),
+                  decoration: BoxDecoration(
+                    color: dark ? Colors.black : Colors.white,
+                    borderRadius: BorderRadius.circular(8.sp),
+                    border: Border.all(
+                      color: dark ? Colors.white : Colors.black,
+                      width: 2.sp,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "VIEW ALL\nPRODUCTS",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: "Clash Display Semibold",
+                          fontSize: 13.sp,
+                          color: dark ? Colors.white : Colors.black,
+                          letterSpacing: 0.3,
+                          height: 1.2,
+                        ),
+                      ),
+                      SizedBox(width: 12.sp),
+                      Container(
+                        padding: EdgeInsets.all(8.sp),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: dark ? Colors.white : Colors.black,
+                        ),
+                        child: Icon(
+                          Icons.arrow_forward,
+                          size: 16.sp,
+                          color: dark ? Colors.black : Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             );
           }
 
-          final p = pick[index];
-          final id = p['id'] is int
-              ? p['id']
-              : int.tryParse(p['id']?.toString() ?? '') ?? 0;
+          // Regular product columns (2 products stacked vertically)
+          final columnProducts = columnPairs[index];
 
-          final title = p['title']?.toString() ?? '';
-          final brandName = resolveBrandName(p);
-          final pricing = resolvePricing(p);
-          final numPrice = pricing['price'] as num;
-          final numMrp = pricing['mrp'] as num?;
-          final discount = pricing['discountPercent'] as int?;
+          return SizedBox(
+            width: 150.sp,
+            child: Column(
+              children: [
+                // Top product
+                _buildProductCard(columnProducts[0]),
 
-          String imageUrl = "";
-          if (p['imageUrls'] is List && (p['imageUrls'] as List).isNotEmpty) {
-            imageUrl = p['imageUrls'][0].toString();
-          }
+                if (columnProducts.length > 1) ...[
+                  SizedBox(height: 12.sp),
+                  // Bottom product
+                  _buildProductCard(columnProducts[1]),
+                ],
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
 
-          return GestureDetector(
-            onTap: () => onProductTap(id),
-            child: SizedBox(
-              width: 150.sp,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(4.sp),
-                    child: imageUrl.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: imageUrl,
-                            height: 180.sp,
-                            width: 150.sp,
-                            fit: BoxFit.cover,
-                            errorWidget: (context, url, error) => Container(
-                              height: 180.sp,
-                              width: 150.sp,
-                              color: Colors.black.withOpacity(0.06),
-                              child: Icon(
-                                Icons.broken_image_outlined,
-                                color: Colors.grey.withOpacity(0.5),
-                                size: 40.sp,
-                              ),
-                            ),
-                          )
-                        : Container(
-                            height: 180.sp,
-                            width: 150.sp,
-                            color: Colors.black.withOpacity(0.06),
-                          ),
+  Widget _buildProductCard(Map<String, dynamic> p) {
+    final id =
+        p['id'] is int ? p['id'] : int.tryParse(p['id']?.toString() ?? '') ?? 0;
+
+    final title = p['title']?.toString() ?? '';
+    final brandName = resolveBrandName(p);
+    final pricing = resolvePricing(p);
+    final numPrice = pricing['price'] as num;
+    final numMrp = pricing['mrp'] as num?;
+    final discount = pricing['discountPercent'] as int?;
+
+    String imageUrl = "";
+    if (p['imageUrls'] is List && (p['imageUrls'] as List).isNotEmpty) {
+      imageUrl = p['imageUrls'][0].toString();
+    }
+
+    return GestureDetector(
+      onTap: () => onProductTap(id),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4.sp),
+            child: imageUrl.isNotEmpty
+                ? CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    height: 180.sp,
+                    width: 150.sp,
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => Container(
+                      height: 180.sp,
+                      width: 150.sp,
+                      color: Colors.black.withOpacity(0.06),
+                      child: Icon(
+                        Icons.broken_image_outlined,
+                        color: Colors.grey.withOpacity(0.5),
+                        size: 40.sp,
+                      ),
+                    ),
+                  )
+                : Container(
+                    height: 180.sp,
+                    width: 150.sp,
+                    color: Colors.black.withOpacity(0.06),
                   ),
-                  SizedBox(height: 4.sp), // ✅ Reduced from 6.sp
+          ),
+          SizedBox(height: 4.sp),
+          Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontFamily: "Clash Display Semibold",
+              fontSize: 12.sp,
+              color: dark ? Colors.white : Colors.black,
+            ),
+          ),
+          if (brandName.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.only(top: 1.sp),
+              child: Text(
+                brandName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: "Clash Display",
+                  fontSize: 10.sp,
+                  color: dark
+                      ? Colors.white.withOpacity(0.85)
+                      : Colors.black.withOpacity(0.7),
+                ),
+              ),
+            ),
+          if (numPrice > 0)
+            Padding(
+              padding: EdgeInsets.only(top: 3.sp),
+              child: Wrap(
+                spacing: 4.sp,
+                runSpacing: 4.sp,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
                   Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    "₹$numPrice",
                     style: TextStyle(
                       fontFamily: "Clash Display Semibold",
-                      fontSize: 12.sp, // ✅ Slightly reduced from 13.sp
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w700,
                       color: dark ? Colors.white : Colors.black,
                     ),
                   ),
-                  if (brandName.isNotEmpty)
-                    Padding(
-                      padding:
-                          EdgeInsets.only(top: 1.sp), // ✅ Added small spacing
-                      child: Text(
-                        brandName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontFamily: "Clash Display",
-                          fontSize: 10.sp, // ✅ Slightly reduced from 11.sp
-                          color: dark
-                              ? Colors.white.withOpacity(0.85)
-                              : Colors.black.withOpacity(0.7),
-                        ),
+                  if (numMrp != null && numMrp > numPrice)
+                    Text(
+                      "₹$numMrp",
+                      style: TextStyle(
+                        color: const Color(0xFF9CA3AF),
+                        fontSize: 10.sp,
+                        decoration: TextDecoration.lineThrough,
+                        decorationColor: const Color(0xFF9CA3AF),
+                        fontFamily: "Clash Display Regular",
                       ),
                     ),
-                  if (numPrice > 0)
-                    Padding(
-                      padding: EdgeInsets.only(
-                          top: 3.sp), // ✅ Slightly increased for breathing room
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Price row
-                          Row(
-                            children: [
-                              // Selling Price (bold and prominent)
-                              Text(
-                                "₹$numPrice",
-                                style: TextStyle(
-                                  fontFamily: "Clash Display Semibold",
-                                  fontSize:
-                                      13.sp, // ✅ Slightly reduced from 14.sp
-                                  fontWeight: FontWeight.w700,
-                                  color: dark ? Colors.white : Colors.black,
-                                ),
-                              ),
-                              if (numMrp != null && numMrp > numPrice) ...[
-                                SizedBox(width: 4.sp), // ✅ Reduced from 6.sp
-                                // Strikethrough MRP
-                                Text(
-                                  "₹$numMrp",
-                                  style: TextStyle(
-                                    color: const Color(0xFF9CA3AF),
-                                    fontSize:
-                                        10.sp, // ✅ Slightly reduced from 11.sp
-                                    decoration: TextDecoration.lineThrough,
-                                    decorationColor: const Color(0xFF9CA3AF),
-                                    fontFamily: "Clash Display Regular",
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                          // Discount badge (on separate line if needed, or same line)
-                          if (discount != null && discount > 0)
-                            Padding(
-                              padding: EdgeInsets.only(top: 2.sp),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 5.sp,
-                                    vertical:
-                                        1.5.sp), // ✅ Slightly reduced padding
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFE6D5FF),
-                                  borderRadius: BorderRadius.circular(3.sp),
-                                ),
-                                child: Text(
-                                  "$discount% OFF",
-                                  style: TextStyle(
-                                    fontSize:
-                                        8.5.sp, // ✅ Slightly reduced from 9.sp
-                                    fontFamily: "Clash Display",
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF9575CD),
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
+                  if (discount != null && discount > 0)
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 5.sp, vertical: 1.5.sp),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE6D5FF),
+                        borderRadius: BorderRadius.circular(3.sp),
+                      ),
+                      child: Text(
+                        "$discount% OFF",
+                        style: TextStyle(
+                          fontSize: 8.5.sp,
+                          fontFamily: "Clash Display",
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF9575CD),
+                        ),
                       ),
                     ),
                 ],
               ),
             ),
-          );
-        },
+        ],
       ),
     );
   }
@@ -1541,75 +1586,11 @@ class _BannerVideoPlayerState extends State<BannerVideoPlayer> {
       height: widget.height,
       width: widget.width,
       child: FittedBox(
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
         child: SizedBox(
           width: _controller.value.size.width,
           height: _controller.value.size.height,
           child: VideoPlayer(_controller),
-        ),
-      ),
-    );
-  }
-}
-
-class _ExploreTile extends StatelessWidget {
-  final bool dark;
-  final VoidCallback onTap;
-  final String? imageUrl;
-  final double width;
-
-  const _ExploreTile({
-    required this.dark,
-    required this.onTap,
-    this.imageUrl,
-    required this.width,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Align(
-        alignment: const Alignment(0, -0.3),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 12.sp),
-          decoration: BoxDecoration(
-            color: dark ? Colors.black : Colors.white,
-            borderRadius: BorderRadius.circular(8.sp),
-            border: Border.all(
-              color: dark ? Colors.white : Colors.black,
-              width: 2.sp,
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "VIEW ALL\nPRODUCTS",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: "Clash Display Semibold",
-                  fontSize: 12.sp,
-                  color: dark ? Colors.white : Colors.black,
-                  letterSpacing: 0.5,
-                  height: 1.3,
-                ),
-              ),
-              SizedBox(width: 12.sp),
-              Container(
-                padding: EdgeInsets.all(8.sp),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: dark ? Colors.white : Colors.black,
-                ),
-                child: Icon(
-                  Icons.arrow_forward,
-                  size: 16.sp,
-                  color: dark ? Colors.black : Colors.white,
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -2117,27 +2098,33 @@ class _StandaloneCollectionBannersState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Full width banner carousel
-          SizedBox(
-            height: 200.sp,
-            width: double.infinity,
-            child: PageView.builder(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentPage = index;
-                });
-              },
-              itemCount: widget.banners.length,
-              itemBuilder: (context, index) {
-                final banner = widget.banners[index];
-                return _BannerItem(
-                  imageUrl: banner.getImageUrl(isMobile: true),
-                  redirectUrl: banner.redirectUrl,
-                  height: 200.sp,
-                  collectionId: banner.collectionId,
-                  collectionName: widget.collectionName,
-                );
-              },
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12.sp), // 👈 adjust radius
+              child: SizedBox(
+                height: 200.sp,
+                width: double.infinity,
+                child: PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _currentPage = index;
+                    });
+                  },
+                  itemCount: widget.banners.length,
+                  itemBuilder: (context, index) {
+                    final banner = widget.banners[index];
+                    return _BannerItem(
+                      imageUrl: banner.getImageUrl(isMobile: true),
+                      redirectUrl: banner.redirectUrl,
+                      height: 200.sp,
+                      collectionId: banner.collectionId,
+                      collectionName: widget.collectionName,
+                    );
+                  },
+                ),
+              ),
             ),
           ),
 
@@ -2235,7 +2222,7 @@ class _BannerItem extends StatelessWidget {
               imageUrl: imageUrl,
               width: double.infinity,
               height: height,
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
               placeholder: (_, __) => Container(
                 width: double.infinity,
                 height: height,

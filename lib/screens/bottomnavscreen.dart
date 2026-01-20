@@ -19,7 +19,7 @@ import '../screens/cartscreen.dart';
 import '../screens/catalog/women_catalog.dart';
 import '../screens/home/women/homescreen.dart';
 import '../screens/quickscreen.dart';
-import '../screens/loginscreen.dart'; // ✅ Add this import
+import '../screens/loginscreen.dart';
 import 'package:geolocator/geolocator.dart';
 
 class BottomNavScreen extends StatefulWidget {
@@ -62,7 +62,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 
     _loadGuestFlag();
 
-    // ✅ Only initialize profile for logged-in users
+    // Only initialize profile for logged-in users
     Future.microtask(() async {
       final prefs = await SharedPreferences.getInstance();
       final isGuestUser = prefs.getBool("skip") ?? false;
@@ -92,13 +92,10 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     setState(() => _currentIndex = index);
   }
 
-  // ✅ Updated to show SnackBar and navigate to login
   void _handleProtectedNavigation(VoidCallback onAllowed) {
     if (isGuest) {
-      // ✅ Show snackbar
-      showAppSnackBar("Please sign in to access your profile", type: SnackBarType.info);
-
-      // ✅ Navigate to login after delay
+      showAppSnackBar("Please sign in to access your profile",
+          type: SnackBarType.info);
       Future.delayed(const Duration(milliseconds: 500), () {
         Get.to(() => const LoginScreen(initialTab: 0));
       });
@@ -114,6 +111,10 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     // Check service enabled
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
+      showAppSnackBar(
+        "Please enable location services",
+        type: SnackBarType.error,
+      );
       await Geolocator.openLocationSettings();
       return false;
     }
@@ -178,22 +179,22 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
               label: "Quick",
               selected: _currentIndex == 4,
               onTap: () async {
-                // ✅ Start asking for location permission (async, system popup will appear)
-                _handleLocationPermission(context);
+                // ✅ Step 1: Ask for location permission
+                bool hasPermission = await _handleLocationPermission(context);
 
-                // ✅ Immediately show your custom Quick dialog (without waiting)
-                Future.delayed(const Duration(milliseconds: 300), () {
-                  _showQuickDialog(context);
-                });
+                if (hasPermission) {
+                  // ✅ Step 2: Try to get location in background
+                  try {
+                    final pos = await Geolocator.getCurrentPosition(
+                      desiredAccuracy: LocationAccuracy.high,
+                    );
+                    print("📍 Lat: ${pos.latitude}, Lng: ${pos.longitude}");
+                  } catch (e) {
+                    print("⚠️ Could not get location: $e");
+                  }
 
-                // (Optional) You can still try to fetch location in background
-                try {
-                  final pos = await Geolocator.getCurrentPosition(
-                    desiredAccuracy: LocationAccuracy.high,
-                  );
-                  print("📍 Lat: ${pos.latitude}, Lng: ${pos.longitude}");
-                } catch (e) {
-                  print("⚠️ Could not get location: $e");
+                  // ✅ Step 3: Show postal code input dialog
+                  _showPostalCodeDialog(context);
                 }
               },
             ),
@@ -225,7 +226,164 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     );
   }
 
-  void _showQuickDialog(BuildContext context) {
+  // ✅ NEW: Postal Code Input Dialog
+  void _showPostalCodeDialog(BuildContext context) {
+    final TextEditingController postalController = TextEditingController();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.sp),
+          ),
+          insetPadding: EdgeInsets.symmetric(horizontal: 20.sp),
+          backgroundColor: Colors.white,
+          child: Padding(
+            padding: EdgeInsets.all(24.sp),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title
+                Text(
+                  "Enter Your Postal Code",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.sp,
+                    fontFamily: "Clash Display",
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: 8.sp),
+
+                // Subtitle
+                Text(
+                  "We need your postal code to check service availability in your area.",
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 14.sp,
+                    fontFamily: "Clash Display Regular",
+                  ),
+                ),
+                SizedBox(height: 20.sp),
+
+                // Input Field
+                TextField(
+                  controller: postalController,
+                  keyboardType: TextInputType.number,
+                  maxLength: 6,
+                  decoration: InputDecoration(
+                    hintText: "Enter 6-digit postal code",
+                    hintStyle: TextStyle(
+                      color: Colors.grey[400],
+                      fontFamily: "Clash Display Regular",
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.sp),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.sp),
+                      borderSide:
+                          const BorderSide(color: homeAppBarColor, width: 2),
+                    ),
+                    counterText: "",
+                  ),
+                ),
+                SizedBox(height: 24.sp),
+
+                // Buttons Row
+                Row(
+                  children: [
+                    // Cancel Button
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => Get.back(),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 12.sp),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.sp),
+                            border: Border.all(color: Colors.grey[300]!),
+                            color: Colors.white,
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Cancel",
+                              style: TextStyle(
+                                color: Colors.grey[700],
+                                fontSize: 14.sp,
+                                fontFamily: "Clash Display",
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 12.sp),
+
+                    // Submit Button
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          String postalCode = postalController.text.trim();
+
+                          if (postalCode.isEmpty) {
+                            showAppSnackBar(
+                              "Please enter postal code",
+                              type: SnackBarType.error,
+                            );
+                            return;
+                          }
+
+                          if (postalCode.length != 6) {
+                            showAppSnackBar(
+                              "Postal code must be 6 digits",
+                              type: SnackBarType.error,
+                            );
+                            return;
+                          }
+
+                          // Close postal code dialog
+                          Get.back();
+
+                          // ✅ Show "out of area" dialog
+                          _showOutOfAreaDialog(context);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 12.sp),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.sp),
+                            color: homeAppBarColor,
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Submit",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontFamily: "Clash Display",
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // ✅ UPDATED: "Out of Area" Dialog
+  void _showOutOfAreaDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -249,7 +407,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // ⚡ Lightning-like custom icon using Flutter's built-in shapes
+                // Icon
                 Container(
                   width: 64.sp,
                   height: 40.sp,
@@ -259,20 +417,20 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                   ),
                   child: Center(
                     child: Image.asset(
-                      bagLogoImage, // ✅ constant from your constants.dart
+                      bagLogoImage,
                       width: 48.sp,
                       height: 48.sp,
                       fit: BoxFit.contain,
-                      color: Colors.white, // makes it white-tinted if needed
+                      color: Colors.white,
                     ),
                   ),
                 ),
 
                 SizedBox(height: 24.sp),
 
-                // 🟣 Title Text
+                // Title Text
                 const Text(
-                  "Currently out of your area's league. ",
+                  "Currently out of your area's league.",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -280,12 +438,13 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.2,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 6.sp),
 
-                // 🟣 Subtitle Text
+                // Subtitle Text
                 Text(
-                  " Manifest LaFetch harder.",
+                  "Manifest LaFetch harder.",
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.85),
                     fontSize: 14,
@@ -296,14 +455,13 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                 ),
                 SizedBox(height: 28.sp),
 
-                // ✅ DONE Button
+                // OK Button
                 GestureDetector(
                   onTap: () => Get.back(),
                   child: Container(
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(vertical: 14.sp),
                     decoration: BoxDecoration(
-                      // borderRadius: BorderRadius.circular(8.sp),
                       border: Border.all(color: Colors.white, width: 1),
                       color: Colors.transparent,
                     ),

@@ -15,6 +15,7 @@ import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/core/constant/constants.dart';
 import 'package:lafetch/controllers/order_controller.dart';
 import 'package:lafetch/screens/orders/confirm_orderdetails.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyOrdersScreen extends StatefulWidget {
   const MyOrdersScreen({super.key});
@@ -203,9 +204,11 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
 
     // Get size/color from order item or variant
     final size = orderItem['size']?.toString() ??
-        orderItem['variant']?['title']?.toString() ?? "-";
+        orderItem['variant']?['title']?.toString() ??
+        "-";
     final color = orderItem['color']?.toString() ??
-        orderItem['colour']?.toString() ?? "-";
+        orderItem['colour']?.toString() ??
+        "-";
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 16.sp),
@@ -334,10 +337,46 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
                 ),
               ],
             ],
-          )
+          ),
+          // Download Invoice Button (shown only if invoiceUrl is available)
+          if (orderItem['invoiceUrl'] != null &&
+              orderItem['invoiceUrl'].toString().isNotEmpty) ...[
+            SizedBox(height: 8.sp),
+            _buildButton(
+              text: "DOWNLOAD INVOICE",
+              isPrimary: false,
+              onTap: () => _handleDownloadInvoice(orderItem['invoiceUrl']),
+            ),
+          ],
         ],
       ),
     );
+  }
+
+  void _handleDownloadInvoice(String invoiceUrl) async {
+    try {
+      final Uri uri = Uri.parse(invoiceUrl);
+
+      // Check if URL can be launched
+      if (await canLaunchUrl(uri)) {
+        // Launch URL in external browser/PDF viewer
+        await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+        );
+      } else {
+        showAppSnackBar(
+          "Unable to open invoice URL",
+          type: SnackBarType.error,
+        );
+      }
+    } catch (e) {
+      print("🔥 Error opening invoice: $e");
+      showAppSnackBar(
+        "Failed to download invoice",
+        type: SnackBarType.error,
+      );
+    }
   }
 
   Widget _buildStatusHeader(String status, int orderItemId, String date,
