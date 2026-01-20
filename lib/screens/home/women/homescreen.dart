@@ -693,7 +693,8 @@ class HomeScreenState extends State<HomeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
-                                  height: 210.sp,
+                                  height: 230,
+                                  width: 410,
                                   child: PageView(
                                     controller: _pageController,
                                     onPageChanged: (index) {
