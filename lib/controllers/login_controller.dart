@@ -1,9 +1,11 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:otp_text_field_v2/otp_field_v2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -381,6 +383,153 @@ class LoginController extends BaseController {
     } catch (e) {
       print("⚠️ Error syncing guest cart after auth: $e");
       // Don't block the login flow if cart sync fails
+    }
+  }
+
+  // ----------------- GOOGLE SIGN-IN -----------------
+
+  // Lazy-loaded to avoid accessing before Firebase.initializeApp()
+  FirebaseAuth get _firebaseAuth => FirebaseAuth.instance;
+
+  GoogleSignIn? _googleSignInInstance;
+  GoogleSignIn get _googleSignIn => _googleSignInInstance ??= GoogleSignIn();
+
+  /// Sign in with Google and authenticate with backend
+  Future<bool> signInWithGoogle() async {
+    showLoading();
+    try {
+      // Trigger Google Sign-In flow
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        // User cancelled the sign-in
+        hideLoading();
+        return false;
+      }
+
+      // Get authentication details
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Create Firebase credential
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase
+      final UserCredential userCredential =
+          await _firebaseAuth.signInWithCredential(credential);
+
+      final User? firebaseUser = userCredential.user;
+
+      if (firebaseUser == null) {
+        getSnackBar("Google sign-in failed. Please try again.");
+        hideLoading();
+        return false;
+      }
+
+      print("✅ Google Sign-In successful: ${firebaseUser.email}");
+
+      // Send to backend for authentication/registration
+      final success = await _authenticateWithBackend(
+        email: firebaseUser.email ?? '',
+        name: firebaseUser.displayName ?? '',
+        googleId: firebaseUser.uid,
+        photoUrl: firebaseUser.photoURL,
+      );
+
+      if (success) {
+        // Sync guest cart after successful login
+        await _syncGuestCartAfterAuth();
+        Get.offAll(() => const BottomNavScreen());
+      }
+
+      return success;
+    } on FirebaseAuthException catch (e) {
+      print("❌ Firebase Auth Error: ${e.message}");
+      getSnackBar(e.message ?? "Google sign-in failed.");
+      return false;
+    } catch (e) {
+      print("❌ Google Sign-In Error: $e");
+      getSnackBar("An error occurred during Google sign-in.");
+      return false;
+    } finally {
+      hideLoading();
+    }
+  }
+
+  /// Authenticate with backend using Google credentials
+  Future<bool> _authenticateWithBackend({
+    required String email,
+    required String name,
+    required String googleId,
+    String? photoUrl,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse("${ApiConstants.baseUrl}/auth/social-login"),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email,
+          'name': name,
+          'provider': 'google',
+          'provider_id': googleId,
+          'photo_url': photoUrl,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final userData = data['data'];
+        final accessToken = userData?['token'];
+
+        if (accessToken == null) {
+          getSnackBar("Authentication failed. Please try again.");
+          return false;
+        }
+
+        // Save auth data
+        final prefs = await SharedPreferences.getInstance();
+        await setToken(accessToken);
+        await prefs.setBool('isLoggedIn', true);
+        await prefs.setInt('userId', userData?['id'] ?? 0);
+
+        final userName = userData?['name'] ?? name;
+        final userEmail = userData?['email'] ?? email;
+        final gender = userData?['gender'];
+
+        if (userName.isNotEmpty) await prefs.setString('name', userName);
+        if (userEmail.isNotEmpty) await prefs.setString('email', userEmail);
+        if (gender != null) _mapGenderToPrefs(gender, prefs);
+
+        // Clear guest mode
+        await prefs.remove('skip');
+        isGuest.value = false;
+
+        getSnackBar("Welcome, $userName!");
+        return true;
+      } else {
+        final errorMessage =
+            data['message'] ?? "Social login failed. Please try again.";
+        getSnackBar(errorMessage);
+        return false;
+      }
+    } catch (e) {
+      print("❌ Backend auth error: $e");
+      getSnackBar("Network error during authentication.");
+      return false;
+    }
+  }
+
+  /// Sign out from Google and Firebase
+  Future<void> signOutGoogle() async {
+    try {
+      await _googleSignIn.signOut();
+      await _firebaseAuth.signOut();
+    } catch (e) {
+      print("⚠️ Error signing out from Google: $e");
     }
   }
 }

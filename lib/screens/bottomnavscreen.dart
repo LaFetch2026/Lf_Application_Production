@@ -178,6 +178,8 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
               icon: _currentIndex == 4 ? quickSelectedSvgImage : quickSvgImage,
               label: "Quick",
               selected: _currentIndex == 4,
+              iconSize: 24.sp,
+              fixedColor: lightPurpleColor,
               onTap: () async {
                 // ✅ Step 1: Ask for location permission
                 bool hasPermission = await _handleLocationPermission(context);
@@ -493,8 +495,10 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     required String label,
     required bool selected,
     required VoidCallback onTap,
+    double? iconSize,
+    Color? fixedColor,
   }) {
-    final color = selected ? homeAppBarColor : const Color(0xFF9CA3AF);
+    final color = fixedColor ?? (selected ? homeAppBarColor : const Color(0xFF9CA3AF));
 
     return Expanded(
       child: InkWell(
@@ -507,7 +511,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SvgPicture.asset(icon, height: 19.sp, color: color),
+              SvgPicture.asset(icon, height: iconSize ?? 19.sp, color: color),
               SizedBox(height: 6.sp),
               Text(
                 label.toUpperCase(),

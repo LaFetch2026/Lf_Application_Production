@@ -25,7 +25,7 @@
     <key>CFBundleSignature</key>
     <string>????</string>
 
-    <!-- URL Scheme (Facebook + Custom App Scheme) -->
+    <!-- URL Scheme (Facebook + Custom App Scheme + Google Sign-In) -->
     <key>CFBundleURLTypes</key>
     <array>
         <dict>
@@ -35,14 +35,9 @@
             <array>
                 <string>fb915626513880487</string>
                 <string>lafetch</string>
+                <string>com.googleusercontent.apps.171013633754-0hpu1m3l01tm3h5ecehabidpriqefaej</string>
             </array>
         </dict>
-    </array>
-
-    <!-- Associated Domains -->
-    <key>AssociatedDomains</key>
-    <array>
-        <string>applinks:lafetch.onelink.me</string>
     </array>
 
     <!-- Facebook Config -->
@@ -76,6 +71,8 @@
 
     <!-- Location Permission -->
     <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Lafetch uses your location to show products available for quick delivery near you.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>Lafetch uses your location to show products available for quick delivery near you.</string>
 
     <!-- Camera / Gallery -->

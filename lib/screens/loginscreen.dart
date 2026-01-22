@@ -37,7 +37,8 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => LoginScreenState();
 }
 
-class LoginScreenState extends State<LoginScreen> {
+class LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
   // ✅ Use the globally bound controller (set up in main.dart initialBinding)
   final LoginController loginController = Get.find<LoginController>();
 
@@ -45,9 +46,22 @@ class LoginScreenState extends State<LoginScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   String _authStatus = 'Unknown';
 
+  // ✅ TabController for smooth swipe transitions
+  late TabController _tabController;
+
   @override
   void initState() {
     super.initState();
+
+    // ✅ Initialize TabController
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: widget.initialTab,
+    );
+
+    // ✅ Listen to tab changes (both tap and swipe)
+    _tabController.addListener(_onTabChanged);
 
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: statusBarColor,
@@ -64,6 +78,22 @@ class LoginScreenState extends State<LoginScreen> {
 
     requestNotificationPermission();
     WidgetsBinding.instance.addPostFrameCallback((_) => initPlugin());
+  }
+
+  void _onTabChanged() {
+    if (_tabController.indexIsChanging) return; // Wait for animation to complete
+    setState(() {
+      appbarColor = (_tabController.index == 0) ? colorPrimary : btnTextColor;
+      loginController.loginError.value = "";
+      loginController.registerError.value = "";
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_onTabChanged);
+    _tabController.dispose();
+    super.dispose();
   }
 
   Future<void> initPlugin() async {
@@ -115,110 +145,97 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      initialIndex: widget.initialTab,
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          backgroundColor: whiteColor,
-          body: Column(
-            children: [
-              LoginAppbar(
-                controller: loginController,
-                hideBack: widget.hideBack,
-                onPressedSkip: () async {
-                  try {
-                    // AnalyticsHelper.logInitiateCheckout(
-                    //   productId: 'guest_login',
-                    //   value: 0.0,
-                    // );
-                    await analytics.logEvent(
-                      name: 'login_skip',
-                      parameters: {'page_name': 'login_skip'},
-                    );
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: whiteColor,
+        body: Column(
+          children: [
+            LoginAppbar(
+              controller: loginController,
+              hideBack: widget.hideBack,
+              onPressedSkip: () async {
+                try {
+                  await analytics.logEvent(
+                    name: 'login_skip',
+                    parameters: {'page_name': 'login_skip'},
+                  );
 
-                    final prefs = await SharedPreferences.getInstance();
+                  final prefs = await SharedPreferences.getInstance();
 
-                    // ✅ Mark full guest mode (to prevent Splash nav)
-                    await prefs.setBool('skip', true);
-                    await prefs.setBool('isGuest', true);
-                    await prefs.setBool('isLoggedIn', false);
-                    await prefs.remove('token');
+                  // ✅ Mark full guest mode (to prevent Splash nav)
+                  await prefs.setBool('skip', true);
+                  await prefs.setBool('isGuest', true);
+                  await prefs.setBool('isLoggedIn', false);
+                  await prefs.remove('token');
 
-                    // ✅ Abort SplashController navigation if still running
-                    if (Get.isRegistered<SplashController>()) {}
+                  // ✅ Abort SplashController navigation if still running
+                  if (Get.isRegistered<SplashController>()) {}
 
-                    print("🟢 Guest mode (from LoginScreen) → BottomNavScreen");
-                  } catch (e) {
-                    print("❌ Skip error: $e");
-                  }
+                  print("🟢 Guest mode (from LoginScreen) → BottomNavScreen");
+                } catch (e) {
+                  print("❌ Skip error: $e");
+                }
 
-                  // ✅ Navigate & clear all previous routes
-                  Get.offAll(() => const BottomNavScreen());
-                },
-              ),
+                // ✅ Navigate & clear all previous routes
+                Get.offAll(() => const BottomNavScreen());
+              },
+            ),
 
-              // Tabs
-              Container(
-                color: whiteColor,
-                child: PreferredSize(
-                  preferredSize: Size.fromHeight(40.sp),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: TabBar(
-                      onTap: (value) {
-                        appbarColor =
-                            (value == 0) ? colorPrimary : btnTextColor;
-                        loginController.loginError.value = "";
-                        loginController.registerError.value = "";
-                        setState(() {});
-                      },
-                      isScrollable: false,
-                      physics: const NeverScrollableScrollPhysics(),
-                      indicatorColor: homeAppBarColor,
-                      dividerColor: lightgreyColor,
-                      unselectedLabelColor: searchTextColor,
-                      labelColor: homeAppBarColor,
-                      indicatorWeight: 2,
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      tabs: [
-                        Tab(
-                          child: Text(
-                            "Sign In".toUpperCase(),
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              fontFamily: "Clash Display Semibold",
-                              fontWeight: FontWeight.w400,
-                            ),
+            // Tabs with smooth swipe indicator
+            Container(
+              color: whiteColor,
+              child: PreferredSize(
+                preferredSize: Size.fromHeight(40.sp),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: TabBar(
+                    controller: _tabController, // ✅ Use TabController
+                    isScrollable: false,
+                    indicatorColor: homeAppBarColor,
+                    dividerColor: lightgreyColor,
+                    unselectedLabelColor: searchTextColor,
+                    labelColor: homeAppBarColor,
+                    indicatorWeight: 2,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    tabs: [
+                      Tab(
+                        child: Text(
+                          "Sign In".toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontFamily: "Clash Display Semibold",
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
-                        Tab(
-                          child: Text(
-                            "I’m new here".toUpperCase(),
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              fontFamily: "Clash Display Semibold",
-                              fontWeight: FontWeight.w400,
-                            ),
+                      ),
+                      Tab(
+                        child: Text(
+                          "I'm new here".toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontFamily: "Clash Display Semibold",
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
+            ),
 
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    buildLoginTab(),
-                    buildRegisterTab(),
-                  ],
-                ),
+            // ✅ TabBarView with swipe support
+            Expanded(
+              child: TabBarView(
+                controller: _tabController, // ✅ Use TabController
+                children: [
+                  buildLoginTab(),
+                  buildRegisterTab(),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

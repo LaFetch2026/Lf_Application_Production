@@ -55,7 +55,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => HomeScreenState();
 }
 
-class HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final homeController = Get.put(HomeController());
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
@@ -70,6 +70,9 @@ class HomeScreenState extends State<HomeScreen> {
   Timer? timer;
   bool isGuest = false;
   static bool _isInitialLoad = true;
+
+  // ✅ TabController for animated gender tabs
+  TabController? _genderTabController;
 
   @override
   void initState() {
@@ -112,6 +115,8 @@ class HomeScreenState extends State<HomeScreen> {
 
       // ✅ NEW: Load saved gender preference or use first tab from API
       final savedGender = prefs.getInt('selectedGender');
+      int initialTabIndex = 0;
+
       if (savedGender != null &&
           homeController.genderTabs.any((tab) => tab['id'] == savedGender)) {
         homeController.homeGenderValue.value = savedGender;
@@ -120,6 +125,11 @@ class HomeScreenState extends State<HomeScreen> {
           orElse: () => homeController.genderTabs.first,
         );
         homeController.genderText.value = tab['name']?.toString() ?? '';
+        // Find the index of the saved gender
+        initialTabIndex = homeController.genderTabs.indexWhere(
+          (tab) => tab['id'] == savedGender,
+        );
+        if (initialTabIndex < 0) initialTabIndex = 0;
       } else if (homeController.genderTabs.isNotEmpty) {
         homeController.homeGenderValue.value =
             homeController.genderTabs.first['id'] ?? 1;
@@ -127,11 +137,15 @@ class HomeScreenState extends State<HomeScreen> {
             homeController.genderTabs.first['name']?.toString() ?? 'MEN';
         await prefs.setInt(
             'selectedGender', homeController.homeGenderValue.value);
+        initialTabIndex = 0;
       } else {
         homeController.homeGenderValue.value = 1;
         homeController.genderText.value = 'Men';
         print("⚠️ No gender tabs from API, using default");
       }
+
+      // ✅ Initialize TabController for animated gender tabs
+      _initGenderTabController(initialTabIndex);
 
       homeController.showGenderList.value = false;
       homeController.currentPage.value = 0;
@@ -257,7 +271,43 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     timer?.cancel();
+    _genderTabController?.dispose();
     super.dispose();
+  }
+
+  // ✅ Initialize TabController for gender tabs with animated indicator
+  void _initGenderTabController(int initialIndex) {
+    _genderTabController?.dispose();
+    if (homeController.genderTabs.isNotEmpty) {
+      _genderTabController = TabController(
+        length: homeController.genderTabs.length,
+        vsync: this,
+        initialIndex:
+            initialIndex.clamp(0, homeController.genderTabs.length - 1),
+      );
+      _genderTabController!.addListener(_onGenderTabChanged);
+      setState(() {});
+    }
+  }
+
+  // ✅ Handle tab change from TabController (both tap and swipe)
+  void _onGenderTabChanged() {
+    if (_genderTabController == null) return;
+    if (_genderTabController!.indexIsChanging) return;
+
+    final index = _genderTabController!.index;
+    if (index < 0 || index >= homeController.genderTabs.length) return;
+
+    final tab = homeController.genderTabs[index];
+    final int genderId = tab['id'] is int
+        ? tab['id'] as int
+        : int.tryParse(tab['id']?.toString() ?? '') ?? 0;
+    final String genderName = tab['name']?.toString() ?? '';
+
+    // Only trigger if actually changed
+    if (homeController.homeGenderValue.value != genderId) {
+      _changeGenderTab(index);
+    }
   }
 
   // ------- BANNERS -------
@@ -531,7 +581,7 @@ class HomeScreenState extends State<HomeScreen> {
               },
             ),
 
-// Gender tabs...
+// Gender tabs with animated indicator
             Obx(
               () => homeController.isLoadingTabs.value
                   ? SizedBox(
@@ -543,95 +593,38 @@ class HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     )
-                  : homeController.genderTabs.isEmpty
+                  : homeController.genderTabs.isEmpty ||
+                          _genderTabController == null
                       ? const SizedBox.shrink()
                       : SizedBox(
+                          width: double.infinity,
                           height: 40.sp,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            shrinkWrap: true,
-                            physics: const ClampingScrollPhysics(),
-                            itemCount: homeController.genderTabs.length,
-                            itemBuilder: (context, index) {
-                              final tab = homeController.genderTabs[index];
-                              final int genderId = tab['id'] is int
-                                  ? tab['id'] as int
-                                  : int.tryParse(tab['id']?.toString() ?? '') ??
-                                      0;
+                          child: TabBar(
+                            controller: _genderTabController,
+                            isScrollable: false,
+                            indicatorColor: homeAppBarColor,
+                            indicatorWeight: 2.sp,
+                            indicatorSize: TabBarIndicatorSize.tab,
+                            labelColor: homeAppBarColor,
+                            unselectedLabelColor: searchTextColor,
+                            dividerColor: Colors.transparent,
+                            labelStyle: TextStyle(
+                              fontSize: 13.sp,
+                              fontFamily: "Clash Display Semibold",
+                              fontWeight: FontWeight.w500,
+                            ),
+                            unselectedLabelStyle: TextStyle(
+                              fontSize: 13.sp,
+                              fontFamily: "Clash Display",
+                              fontWeight: FontWeight.w500,
+                            ),
+                            tabs: homeController.genderTabs.map((tab) {
                               final String genderName =
                                   tab['name']?.toString() ?? '';
-
-                              // ✅ WRAP EACH TAB IN Obx TO MAKE IT REACTIVE
-                              return Obx(
-                                () => _genderTab(
-                                  genderName.toUpperCase(),
-                                  genderId,
-                                  onTap: () async {
-                                    homeController.genderText.value =
-                                        genderName;
-                                    homeController.homeGenderValue.value =
-                                        genderId;
-
-                                    final prefs =
-                                        await SharedPreferences.getInstance();
-                                    await prefs.setInt(
-                                        'selectedGender', genderId);
-
-                                    _resetForTab();
-
-                                    // ✅ Reset banner page controller to first page
-                                    if (_pageController.hasClients) {
-                                      _pageController.jumpToPage(0);
-                                    }
-
-                                    // ✅ Reset scroll position to top when changing tabs
-                                    if (homeController
-                                        .discountScreenController.hasClients) {
-                                      homeController.discountScreenController
-                                          .jumpTo(0);
-                                    }
-
-                                    // ✅ Load data for new gender tab
-                                    await Future.wait([
-                                      homeController
-                                          .initializeHomeData(genderId),
-                                      productController
-                                          .getHomeProduct(genderId),
-                                      productController.getCollectionBanners(),
-                                      catalogController
-                                          .getCatalogData(genderId),
-                                      brandController.getBrandData(
-                                          "featured", genderId),
-                                    ]);
-
-                                    // ✅ Force update to ensure banners are displayed
-                                    homeController.update();
-                                    catalogController.update();
-                                    brandController.update();
-
-                                    catalogController
-                                        .selectCategoryGender.value = genderId;
-                                    catalogController.categoryName.value =
-                                        genderName;
-
-                                    // ✅ Force fresh catalog data
-                                    catalogController.catalogList.clear();
-                                    await catalogController
-                                        .getCatalogData(genderId);
-
-                                    await analytics.logEvent(
-                                      name:
-                                          'home_page_${genderName.toLowerCase()}Click',
-                                      parameters: {
-                                        'page_name':
-                                            'home_page_${genderName.toLowerCase()}Click',
-                                        'gender_id': genderId,
-                                      },
-                                    );
-                                  },
-                                ),
+                              return Tab(
+                                text: genderName.toUpperCase(),
                               );
-                            },
+                            }).toList(),
                           ),
                         ),
             ),
@@ -639,320 +632,373 @@ class HomeScreenState extends State<HomeScreen> {
                 width: double.infinity, color: lightgreyColor, height: 2.sp),
 
             Expanded(
-              child: Stack(
-                children: [
-                  SingleChildScrollView(
-                    controller: homeController.discountScreenController,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Banner Section - ✅ WITH LOADING STATE
-                        Obx(() {
-                          // ✅ Track gender changes to trigger rebuild when switching tabs
-                          homeController.homeGenderValue.value;
+              child: GestureDetector(
+                // ✅ Detect horizontal swipe to change tabs
+                onHorizontalDragEnd: _onHorizontalSwipe,
+                behavior: HitTestBehavior.translucent,
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      controller: homeController.discountScreenController,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Banner Section - ✅ WITH LOADING STATE
+                          Obx(() {
+                            homeController.homeGenderValue.value;
 
-                          // Force Obx to track banner lists by accessing them
-                          final banners = _currentBannerList();
-                          final isLoading = homeController.isBanner1.value;
-                          final showBanners = banners.isNotEmpty &&
-                              productController.current.value == 50;
+                            final banners = _currentBannerList();
+                            final isLoading = homeController.isBanner1.value;
+                            final showBanners = banners.isNotEmpty &&
+                                productController.current.value == 50;
 
-                          if (isLoading) {
-                            return Container(
-                              height: 210.sp,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.04),
-                                borderRadius: BorderRadius.circular(4.sp),
-                              ),
-                              child: const Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.black,
-                                    ),
-                                    SizedBox(height: 12),
-                                    Text(
-                                      'Loading banners...',
-                                      style: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 12,
-                                        fontFamily: "Clash Display Regular",
+                            if (isLoading) {
+                              return Container(
+                                height: 210.sp,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.04),
+                                  // borderRadius: BorderRadius.circular(
+                                  //     8.sp), // ✅ radius added
+                                ),
+                                child: const Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.black,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }
-
-                          if (showBanners) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: SizedBox(
-                                    height: 230,
-                                    width: 410,
-                                    child: PageView(
-                                      controller: _pageController,
-                                      onPageChanged: (index) {
-                                        homeController.currentPage.value =
-                                            index;
-                                        homeController.update();
-                                      },
-                                      children: widgitBannerList(),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 6.sp),
-                                banners.length == 1
-                                    ? const SizedBox.shrink()
-                                    : Center(
-                                        child: PageIndicator(
-                                          controller: _pageController,
-                                          count: banners.length,
-                                          size: 6.0.sp,
-                                          activeColor: Colors.black,
-                                          color: const Color(0xffE5E7EB),
-                                          layout: PageIndicatorLayout.WARM,
-                                          scale: 0.65,
-                                          space: 8.sp,
+                                      SizedBox(height: 12),
+                                      Text(
+                                        'Loading banners...',
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                          fontSize: 12,
+                                          fontFamily: "Clash Display Regular",
                                         ),
                                       ),
-                              ],
-                            );
-                          }
-
-                          return const SizedBox.shrink();
-                        }),
-
-                        // Marquee Banner
-                        Container(
-                          height: 30.sp,
-                          color: const Color(0xff2D2D2E),
-                          width: MediaQuery.of(context).size.width,
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              top: Platform.isIOS ? 5.sp : 5.sp,
-                              bottom: Platform.isIOS ? 5.sp : 5.sp,
-                            ),
-                            child: Center(
-                              child: Marquee(
-                                text:
-                                    '|    More than 50+ Homegrown Brands   |    Fast and Reliable   |    Fashion for all occassions  |    Easy Returns & Exchanges   |    Secure Payments   ',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12.sp,
-                                  fontFamily: "Clash Display Regular",
-                                  fontWeight: FontWeight.w400,
+                                    ],
+                                  ),
                                 ),
-                                scrollAxis: Axis.horizontal,
+                              );
+                            }
+
+                            if (showBanners) {
+                              return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                velocity: 100.0,
-                                pauseAfterRound: Duration.zero,
-                                accelerationCurve: Curves.linear,
-                                decelerationCurve: Curves.easeOut,
+                                children: [
+                                  ClipRRect(
+                                    // ✅ BORDER RADIUS
+                                    child: SizedBox(
+                                      height: 230,
+                                      width: double.infinity,
+                                      child: PageView(
+                                        controller: _pageController,
+                                        onPageChanged: (index) {
+                                          homeController.currentPage.value =
+                                              index;
+                                        },
+                                        children: widgitBannerList(),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 10.sp),
+                                  banners.length == 1
+                                      ? const SizedBox.shrink()
+                                      : Center(
+                                          child: PageIndicator(
+                                            controller: _pageController,
+                                            count: banners.length,
+                                            size: 6.0.sp,
+                                            activeColor: Colors.black,
+                                            color: const Color(0xffE5E7EB),
+                                            layout: PageIndicatorLayout.WARM,
+                                            scale: 0.65,
+                                            space: 8.sp,
+                                          ),
+                                        ),
+                                ],
+                              );
+                            }
+
+                            return const SizedBox.shrink();
+                          }),
+
+                          // Marquee Banner
+                          Container(
+                            height: 30.sp,
+                            color: const Color(0xff2D2D2E),
+                            width: MediaQuery.of(context).size.width,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                top: Platform.isIOS ? 5.sp : 5.sp,
+                                bottom: Platform.isIOS ? 5.sp : 5.sp,
+                              ),
+                              child: Center(
+                                child: Marquee(
+                                  text:
+                                      '|    More than 50+ Homegrown Brands   |    Fast and Reliable   |    Fashion for all occassions  |    Easy Returns & Exchanges   |    Secure Payments   ',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12.sp,
+                                    fontFamily: "Clash Display Regular",
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  scrollAxis: Axis.horizontal,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  velocity: 100.0,
+                                  pauseAfterRound: Duration.zero,
+                                  accelerationCurve: Curves.linear,
+                                  decelerationCurve: Curves.easeOut,
+                                ),
                               ),
                             ),
                           ),
-                        ),
 
-                        SizedBox(height: 8.sp),
+                          SizedBox(height: 8.sp),
 
-                        // Shop by Category Section
-                        Obx(
-                          () => catalogController.isCatalog.value
-                              ? const DummyGridMostSearch(text: "")
-                              : catalogController.catalogList.isNotEmpty
-                                  ? _ShopByCategorySection(
-                                      catalogController: catalogController,
-                                      analytics: analytics,
-                                      homeController: homeController,
-                                      onPressedViewAll: () =>
-                                          widget.onPressed?.call(2),
-                                    )
-                                  : const SizedBox.shrink(),
-                        ),
+                          // Shop by Category Section
+                          Obx(
+                            () => catalogController.isCatalog.value
+                                ? const DummyGridMostSearch(text: "")
+                                : catalogController.catalogList.isNotEmpty
+                                    ? _ShopByCategorySection(
+                                        catalogController: catalogController,
+                                        analytics: analytics,
+                                        homeController: homeController,
+                                        onPressedViewAll: () =>
+                                            widget.onPressed?.call(2),
+                                      )
+                                    : const SizedBox.shrink(),
+                          ),
 
-                        Obx(() {
-                          // ✅ Watch brandController instead of homeController
-                          if (brandController.isBrand.value) {
-                            return const DummyHomeBrand();
-                          }
+                          Obx(() {
+                            // ✅ Watch brandController instead of homeController
+                            if (brandController.isBrand.value) {
+                              return const DummyHomeBrand();
+                            }
 
-                          // ✅ Get brands from brandController
-                          final brands = brandController.brandList
-                              .where((b) =>
-                                  b.containsKey("id") &&
-                                  (b["name"]?.toString().isNotEmpty ?? false))
-                              .toList();
+                            // ✅ Get brands from brandController
+                            final brands = brandController.brandList
+                                .where((b) =>
+                                    b.containsKey("id") &&
+                                    (b["name"]?.toString().isNotEmpty ?? false))
+                                .toList();
 
-                          // ✅ If no brands, don't show anything (no empty space)
-                          if (brands.isEmpty) {
-                            return const SizedBox.shrink();
-                          }
+                            // ✅ If no brands, don't show anything (no empty space)
+                            if (brands.isEmpty) {
+                              return const SizedBox.shrink();
+                            }
 
-                          // ✅ Show brands section
-                          return _FeaturedBrandsRow(
-                            homeController: homeController,
-                            brandController: brandController,
-                            analytics: analytics,
-                            onPressedViewAll: () => widget.onPressed?.call(1),
-                            brands: brands,
-                          );
-                        }),
-
-                        // Product Collections
-                        Obx(() {
-                          if (productController.isHomeProduct.value) {
-                            return DummyProductList(
-                              visibleSubtitle: true,
-                              text: (productController.tagname.value)
-                                  .toUpperCase(),
+                            // ✅ Show brands section
+                            return _FeaturedBrandsRow(
+                              homeController: homeController,
+                              brandController: brandController,
+                              analytics: analytics,
+                              onPressedViewAll: () => widget.onPressed?.call(1),
+                              brands: brands,
                             );
-                          }
+                          }),
 
-                          // ✅ Collections are already filtered by the API to only include those with products
-                          // ✅ Extra safety check: Filter out any collections with empty products
-                          final collections = productController.homeProductList
-                              .where((c) => c.hasProducts)
-                              .toList();
+                          // Product Collections
+                          Obx(() {
+                            if (productController.isHomeProduct.value) {
+                              return DummyProductList(
+                                visibleSubtitle: true,
+                                text: (productController.tagname.value)
+                                    .toUpperCase(),
+                              );
+                            }
 
-                          print(
-                              "📊 Total collections with products: ${collections.length}");
+                            // ✅ Collections are already filtered by the API to only include those with products
+                            // ✅ Extra safety check: Filter out any collections with empty products
+                            final collections = productController
+                                .homeProductList
+                                .where((c) => c.hasProducts)
+                                .toList();
 
-                          if (collections.isEmpty) {
                             print(
-                                "⚠️ No collections to display - showing empty space");
-                            return Column(
-                              children: [
-                                SizedBox(height: 20.sp),
-                                const Center(
-                                  child: Text(
-                                    "No products available for this category",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                      fontFamily: "Clash Display Regular",
+                                "📊 Total collections with products: ${collections.length}");
+
+                            if (collections.isEmpty) {
+                              print(
+                                  "⚠️ No collections to display - showing empty space");
+                              return Column(
+                                children: [
+                                  SizedBox(height: 20.sp),
+                                  const Center(
+                                    child: Text(
+                                      "No products available for this category",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                        fontFamily: "Clash Display Regular",
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(height: 20.sp),
-                              ],
-                            );
-                          }
-
-                          return ListView.separated(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: collections.length,
-                            separatorBuilder: (_, __) => SizedBox(height: 8.sp),
-                            itemBuilder: (context, index) {
-                              final collection = collections[index];
-                              final int collectionId = collection.id;
-                              final String title = collection.name;
-                              final String subtitle = collection.desc ?? '';
-
-                              // ✅ Get banners for current gender from standalone banner API
-                              final currentGender =
-                                  homeController.genderText.value.toLowerCase();
-                              final standaloneBanners =
-                                  productController.getBannersForCollection(
-                                collectionId,
-                                currentGender,
+                                  SizedBox(height: 20.sp),
+                                ],
                               );
+                            }
 
-                              // ✅ Convert products back to Map for existing widgets
-                              final products = collection.products
-                                  .map((p) => p.toJson())
-                                  .toList();
+                            return ListView.separated(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: collections.length,
+                              separatorBuilder: (_, __) =>
+                                  SizedBox(height: 4.sp),
+                              itemBuilder: (context, index) {
+                                final collection = collections[index];
+                                final int collectionId = collection.id;
+                                final String title = collection.name;
+                                final String subtitle = collection.desc ?? '';
 
-                              // ✅ Safety check: Skip rendering if no products
-                              if (products.isEmpty) {
-                                return const SizedBox.shrink();
-                              }
+                                // ✅ Get banners for current gender from standalone banner API
+                                final currentGender = homeController
+                                    .genderText.value
+                                    .toLowerCase();
+                                final standaloneBanners =
+                                    productController.getBannersForCollection(
+                                  collectionId,
+                                  currentGender,
+                                );
 
-                              final bool dark = index.isEven;
+                                // ✅ Convert products back to Map for existing widgets
+                                final products = collection.products
+                                    .map((p) => p.toJson())
+                                    .toList();
 
-                              return Container(
-                                color: dark ? Colors.black : Colors.transparent,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // ✅ Left-aligned collection heading
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 16.sp, vertical: 8.sp),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            title.toUpperCase(),
-                                            textAlign: TextAlign.left,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontFamily:
-                                                  "Clash Display Semibold",
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 18.sp,
-                                              color: dark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                              letterSpacing: 0.4,
-                                            ),
-                                          ),
-                                          if (subtitle.isNotEmpty)
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(top: 4.sp),
-                                              child: Text(
-                                                subtitle,
-                                                textAlign: TextAlign.left,
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  fontFamily: "Clash Display",
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 12.sp,
-                                                  color: dark
-                                                      ? Colors.white
-                                                          .withOpacity(0.85)
-                                                      : Colors.black
-                                                          .withOpacity(0.75),
-                                                ),
+                                // ✅ Safety check: Skip rendering if no products
+                                if (products.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
+
+                                final bool dark = index.isEven;
+
+                                return Container(
+                                  color:
+                                      dark ? Colors.black : Colors.transparent,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // ✅ Left-aligned collection heading
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 16.sp,
+                                            right: 16.sp,
+                                            top: 10.sp,
+                                            bottom: 8.sp),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              title.toUpperCase(),
+                                              textAlign: TextAlign.left,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontFamily:
+                                                    "Clash Display Semibold",
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 18.sp,
+                                                color: dark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                                letterSpacing: 0.4,
                                               ),
                                             ),
-                                        ],
+                                            if (subtitle.isNotEmpty)
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 6.sp),
+                                                child: Text(
+                                                  subtitle,
+                                                  textAlign: TextAlign.left,
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontFamily: "Clash Display",
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 12.sp,
+                                                    color: dark
+                                                        ? Colors.white
+                                                            .withOpacity(0.85)
+                                                        : Colors.black
+                                                            .withOpacity(0.75),
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
 
-                                    // ✅ NEW: Display collection banners from standalone API
-                                    if (standaloneBanners.isNotEmpty)
-                                      _StandaloneCollectionBanners(
-                                        banners: standaloneBanners,
-                                        collectionName: title,
-                                      ),
+                                      // ✅ NEW: Display collection banners from standalone API
+                                      if (standaloneBanners.isNotEmpty)
+                                        _StandaloneCollectionBanners(
+                                          banners: standaloneBanners,
+                                          collectionName: title,
+                                        ),
 
-                                    if (products.isNotEmpty)
-                                      _SectionStrip(
-                                        products: products,
-                                        dark: dark,
-                                        onProductTap: (productId) async {
-                                          Get.to(
-                                            ProductDetailsScreen(
-                                              productId: productId,
-                                              type: "add",
-                                              brandName: "",
-                                            ),
-                                          )?.then((_) {
-                                            setState(() {
+                                      if (products.isNotEmpty)
+                                        _SectionStrip(
+                                          products: products,
+                                          dark: dark,
+                                          onProductTap: (productId) async {
+                                            Get.to(
+                                              ProductDetailsScreen(
+                                                productId: productId,
+                                                type: "add",
+                                                brandName: "",
+                                              ),
+                                            )?.then((_) {
+                                              setState(() {
+                                                SystemChrome
+                                                    .setSystemUIOverlayStyle(
+                                                  const SystemUiOverlayStyle(
+                                                    statusBarColor: whiteColor,
+                                                    systemNavigationBarColor:
+                                                        whiteColor,
+                                                  ),
+                                                );
+                                              });
+                                            });
+
+                                            await analytics.logEvent(
+                                              name: 'product_details_home_page',
+                                              parameters: <String, Object>{
+                                                'page_name':
+                                                    'product_details_home_page',
+                                                'collection_id': collectionId,
+                                                'collection_name': title,
+                                                'product_id':
+                                                    productId.toString(),
+                                              },
+                                            );
+                                          },
+                                          onExploreAll: () async {
+                                            productController.tagId.value =
+                                                collectionId;
+                                            productController
+                                                .productSortBy.value = "";
+                                            productController
+                                                .filterProductEnable
+                                                .value = false;
+                                            productController
+                                                    .categoryFilter.value =
+                                                homeController
+                                                    .homeGenderValue.value;
+
+                                            Get.to(
+                                              ProductViewScreen(
+                                                title: title,
+                                                genderName: homeController
+                                                    .genderText.value,
+                                              ),
+                                            )?.then((_) {
                                               SystemChrome
                                                   .setSystemUIOverlayStyle(
                                                 const SystemUiOverlayStyle(
@@ -962,125 +1008,76 @@ class HomeScreenState extends State<HomeScreen> {
                                                 ),
                                               );
                                             });
-                                          });
 
-                                          await analytics.logEvent(
-                                            name: 'product_details_home_page',
-                                            parameters: <String, Object>{
-                                              'page_name':
-                                                  'product_details_home_page',
-                                              'collection_id': collectionId,
-                                              'collection_name': title,
-                                              'product_id':
-                                                  productId.toString(),
-                                            },
-                                          );
-                                        },
-                                        onExploreAll: () async {
-                                          productController.tagId.value =
-                                              collectionId;
-                                          productController
-                                              .productSortBy.value = "";
-                                          productController.filterProductEnable
-                                              .value = false;
-                                          productController
-                                                  .categoryFilter.value =
-                                              homeController
-                                                  .homeGenderValue.value;
-
-                                          Get.to(
-                                            ProductViewScreen(
-                                              title: title,
-                                              genderName: homeController
-                                                  .genderText.value,
-                                            ),
-                                          )?.then((_) {
-                                            SystemChrome
-                                                .setSystemUIOverlayStyle(
-                                              const SystemUiOverlayStyle(
-                                                statusBarColor: whiteColor,
-                                                systemNavigationBarColor:
-                                                    whiteColor,
-                                              ),
-                                            );
-                                          });
-
-                                          await analytics.logEvent(
-                                            name: 'homepage_productExploreAll',
-                                            parameters: <String, Object>{
-                                              'page_name':
+                                            await analytics.logEvent(
+                                              name:
                                                   'homepage_productExploreAll',
-                                              'collection_id': collectionId,
-                                              'collection_name': title,
-                                            },
-                                          );
-                                        },
-                                        seed: (productController
-                                                    .productsShuffleSeed ??
-                                                DateTime.now()
-                                                    .millisecondsSinceEpoch) +
-                                            collectionId,
-                                      )
-                                    else
-                                      Center(
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 16.sp,
-                                              vertical: 10.sp),
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                "Coming Soon",
-                                                style: TextStyle(
-                                                  fontFamily:
-                                                      "Clash Display Semibold",
-                                                  fontSize: 14.sp,
-                                                  color: dark
-                                                      ? Colors.white
-                                                      : Colors.black,
+                                              parameters: <String, Object>{
+                                                'page_name':
+                                                    'homepage_productExploreAll',
+                                                'collection_id': collectionId,
+                                                'collection_name': title,
+                                              },
+                                            );
+                                          },
+                                          seed: (productController
+                                                      .productsShuffleSeed ??
+                                                  DateTime.now()
+                                                      .millisecondsSinceEpoch) +
+                                              collectionId,
+                                        )
+                                      else
+                                        Center(
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 16.sp,
+                                                vertical: 10.sp),
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                  "Coming Soon",
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                        "Clash Display Semibold",
+                                                    fontSize: 14.sp,
+                                                    color: dark
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                  ),
                                                 ),
-                                              ),
-                                              SizedBox(height: 4.sp),
-                                              Text(
-                                                "Products will be added soon",
-                                                style: TextStyle(
-                                                  fontSize: 12.sp,
-                                                  color: dark
-                                                      ? Colors.white
-                                                          .withOpacity(0.7)
-                                                      : Colors.black
-                                                          .withOpacity(0.6),
+                                                SizedBox(height: 4.sp),
+                                                Text(
+                                                  "Products will be added soon",
+                                                  style: TextStyle(
+                                                    fontSize: 12.sp,
+                                                    color: dark
+                                                        ? Colors.white
+                                                            .withOpacity(0.7)
+                                                        : Colors.black
+                                                            .withOpacity(0.6),
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    SizedBox(height: 4.sp),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
-                        }),
-                      ],
+                                      SizedBox(height: 4.sp),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          }),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _genderTab(String label, int value, {required VoidCallback onTap}) {
-    final isSelected = homeController.homeGenderValue.value == value;
-    return InkWell(
-      onTap:
-          onTap, // Use the passed callback which properly sets both genderText and genderValue
-      child: _buildGenderTab(label: label, isSelected: isSelected),
     );
   }
 
@@ -1099,29 +1096,90 @@ class HomeScreenState extends State<HomeScreen> {
     brandController.brandList.clear();
   }
 
-  Widget _buildGenderTab({required String label, required bool isSelected}) {
-    return SizedBox(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          AppText(
-            text: label,
-            color: isSelected ? homeAppBarColor : searchTextColor,
-            fontSize: 13,
-            fontFamily: isSelected ? "Clash Display Semibold" : "Clash Display",
-            fontWeight: FontWeight.w500,
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 10.sp),
-            child: Container(
-              color: isSelected ? homeAppBarColor : Colors.transparent,
-              width: 110.sp,
-              height: 2.sp,
-            ),
-          ),
-        ],
-      ),
+  // ✅ Handle horizontal swipe to change gender tabs
+  void _onHorizontalSwipe(DragEndDetails details) {
+    if (homeController.genderTabs.isEmpty || _genderTabController == null) {
+      return;
+    }
+
+    final velocity = details.primaryVelocity ?? 0;
+    const swipeThreshold = 300.0; // Minimum velocity to trigger tab change
+
+    if (velocity.abs() < swipeThreshold) return;
+
+    final currentIndex = _genderTabController!.index;
+
+    int newIndex;
+    if (velocity > 0) {
+      // Swipe right -> go to previous tab
+      newIndex = currentIndex - 1;
+    } else {
+      // Swipe left -> go to next tab
+      newIndex = currentIndex + 1;
+    }
+
+    // Check bounds
+    if (newIndex < 0 || newIndex >= homeController.genderTabs.length) return;
+
+    // ✅ Animate the TabController (this will trigger _onGenderTabChanged)
+    _genderTabController!.animateTo(newIndex);
+  }
+
+  Future<void> _changeGenderTab(int tabIndex) async {
+    if (tabIndex < 0 || tabIndex >= homeController.genderTabs.length) return;
+
+    final tab = homeController.genderTabs[tabIndex];
+    final int genderId = tab['id'] is int
+        ? tab['id'] as int
+        : int.tryParse(tab['id']?.toString() ?? '') ?? 0;
+    final String genderName = tab['name']?.toString() ?? '';
+
+    homeController.genderText.value = genderName;
+    homeController.homeGenderValue.value = genderId;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('selectedGender', genderId);
+
+    _resetForTab();
+
+    // Reset banner page controller to first page
+    if (_pageController.hasClients) {
+      _pageController.jumpToPage(0);
+    }
+
+    // Reset scroll position to top
+    if (homeController.discountScreenController.hasClients) {
+      homeController.discountScreenController.jumpTo(0);
+    }
+
+    // Load data for new gender tab
+    await Future.wait([
+      homeController.initializeHomeData(genderId),
+      productController.getHomeProduct(genderId),
+      productController.getCollectionBanners(),
+      catalogController.getCatalogData(genderId),
+      brandController.getBrandData("featured", genderId),
+    ]);
+
+    // Force update
+    homeController.update();
+    catalogController.update();
+    brandController.update();
+
+    catalogController.selectCategoryGender.value = genderId;
+    catalogController.categoryName.value = genderName;
+
+    // Force fresh catalog data
+    catalogController.catalogList.clear();
+    await catalogController.getCatalogData(genderId);
+
+    await analytics.logEvent(
+      name: 'home_page_${genderName.toLowerCase()}Click',
+      parameters: {
+        'page_name': 'home_page_${genderName.toLowerCase()}Click',
+        'gender_id': genderId,
+        'swipe_gesture': 1,
+      },
     );
   }
 }
@@ -1271,7 +1329,7 @@ class _SectionStrip extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: 16.sp),
         itemCount: columnPairs.length + 1, // +1 for VIEW ALL button
-        separatorBuilder: (_, __) => SizedBox(width: 8.sp),
+        separatorBuilder: (_, __) => SizedBox(width: 12.sp),
         itemBuilder: (context, index) {
           // Last item is VIEW ALL button
           if (index == columnPairs.length) {
@@ -1282,10 +1340,10 @@ class _SectionStrip extends StatelessWidget {
                 onTap: onExploreAll,
                 child: Container(
                   padding:
-                      EdgeInsets.symmetric(horizontal: 22.sp, vertical: 14.sp),
+                      EdgeInsets.symmetric(horizontal: 24.sp, vertical: 16.sp),
                   decoration: BoxDecoration(
                     color: dark ? Colors.black : Colors.white,
-                    borderRadius: BorderRadius.circular(8.sp),
+                    borderRadius: BorderRadius.circular(12.sp),
                     border: Border.all(
                       color: dark ? Colors.white : Colors.black,
                       width: 2.sp,
@@ -1306,9 +1364,9 @@ class _SectionStrip extends StatelessWidget {
                           height: 1.2,
                         ),
                       ),
-                      SizedBox(width: 12.sp),
+                      SizedBox(width: 14.sp),
                       Container(
-                        padding: EdgeInsets.all(8.sp),
+                        padding: EdgeInsets.all(10.sp),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: dark ? Colors.white : Colors.black,
@@ -1338,7 +1396,7 @@ class _SectionStrip extends StatelessWidget {
                 _buildProductCard(columnProducts[0]),
 
                 if (columnProducts.length > 1) ...[
-                  SizedBox(height: 8.sp),
+                  SizedBox(height: 12.sp),
                   // Bottom product
                   _buildProductCard(columnProducts[1]),
                 ],
@@ -1372,7 +1430,7 @@ class _SectionStrip extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(4.sp),
+            borderRadius: BorderRadius.circular(8.sp),
             child: imageUrl.isNotEmpty
                 ? CachedNetworkImage(
                     imageUrl: imageUrl,
@@ -1396,7 +1454,7 @@ class _SectionStrip extends StatelessWidget {
                     color: Colors.black.withOpacity(0.06),
                   ),
           ),
-          SizedBox(height: 4.sp),
+          SizedBox(height: 6.sp),
           Text(
             title,
             maxLines: 1,
@@ -1409,7 +1467,7 @@ class _SectionStrip extends StatelessWidget {
           ),
           if (brandName.isNotEmpty)
             Padding(
-              padding: EdgeInsets.only(top: 1.sp),
+              padding: EdgeInsets.only(top: 3.sp),
               child: Text(
                 brandName,
                 maxLines: 1,
@@ -1425,9 +1483,9 @@ class _SectionStrip extends StatelessWidget {
             ),
           if (numPrice > 0)
             Padding(
-              padding: EdgeInsets.only(top: 3.sp),
+              padding: EdgeInsets.only(top: 4.sp),
               child: Wrap(
-                spacing: 4.sp,
+                spacing: 6.sp,
                 runSpacing: 4.sp,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
@@ -1454,10 +1512,10 @@ class _SectionStrip extends StatelessWidget {
                   if (discount != null && discount > 0)
                     Container(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 5.sp, vertical: 1.5.sp),
+                          horizontal: 6.sp, vertical: 2.sp),
                       decoration: BoxDecoration(
                         color: const Color(0xFFE6D5FF),
-                        borderRadius: BorderRadius.circular(3.sp),
+                        borderRadius: BorderRadius.circular(4.sp),
                       ),
                       child: Text(
                         "$discount% OFF",
@@ -1646,13 +1704,13 @@ class BannerProductsScreen extends StatelessWidget {
       body: products.isEmpty
           ? const Center(child: Text("No products found"))
           : GridView.builder(
-              padding: EdgeInsets.fromLTRB(16.sp, 8.sp, 16.sp, 20.sp),
+              padding: EdgeInsets.fromLTRB(16.sp, 12.sp, 16.sp, 24.sp),
               itemCount: products.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 0.56,
-                crossAxisSpacing: 10.sp,
-                mainAxisSpacing: 12.sp,
+                crossAxisSpacing: 12.sp,
+                mainAxisSpacing: 16.sp,
               ),
               itemBuilder: (context, index) {
                 final m = products[index];
@@ -1753,7 +1811,7 @@ class _BannerProductTile extends StatelessWidget {
       children: [
         Expanded(
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.sp),
             child: imageUrl != null && imageUrl!.trim().isNotEmpty
                 ? CachedNetworkImage(
                     cacheManager: CacheManager(
@@ -1770,8 +1828,7 @@ class _BannerProductTile extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(
-              6.sp, 6.sp, 6.sp, 0), // ✅ REDUCED top from 8.sp
+          padding: EdgeInsets.fromLTRB(8.sp, 8.sp, 8.sp, 0),
           child: Text(
             brand.toUpperCase(),
             maxLines: 1,
@@ -1785,8 +1842,7 @@ class _BannerProductTile extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(
-              6.sp, 3.sp, 6.sp, 0), // ✅ REDUCED top from 4.sp
+          padding: EdgeInsets.fromLTRB(8.sp, 4.sp, 8.sp, 0),
           child: Text(
             description,
             maxLines: 1,
@@ -1800,13 +1856,12 @@ class _BannerProductTile extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(
-              6.sp, 4.sp, 6.sp, 0), // ✅ REDUCED top from 6.sp
+          padding: EdgeInsets.fromLTRB(8.sp, 6.sp, 8.sp, 0),
           child: Row(
             children: [
               if (mrp != null && mrp! > 0)
                 Padding(
-                  padding: EdgeInsets.only(right: 6.sp),
+                  padding: EdgeInsets.only(right: 8.sp),
                   child: Text(
                     _fmtINR(mrp, cents: true),
                     maxLines: 1,
@@ -1863,7 +1918,7 @@ class _ShopByCategorySection extends StatelessWidget {
         children: [
           // ✅ Left-aligned section heading
           Padding(
-            padding: EdgeInsets.only(left: 16.sp, top: 0.sp, bottom: 8.sp),
+            padding: EdgeInsets.only(left: 16.sp, top: 8.sp, bottom: 12.sp),
             child: AppText(
               text: "SHOP BY CATEGORY",
               fontFamily: "Clash Display Semibold",
@@ -1882,8 +1937,8 @@ class _ShopByCategorySection extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 childAspectRatio: 0.55,
                 physics: const NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 8.sp,
-                mainAxisSpacing: 0.sp,
+                crossAxisSpacing: 12.sp,
+                mainAxisSpacing: 8.sp,
                 children: List.generate(
                   min(6, catalogController.catalogList.length),
                   (index) {
@@ -1919,18 +1974,18 @@ class _ShopByCategorySection extends StatelessWidget {
                             width: 100.sp,
                             height: 120.sp,
                             decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 201, 200, 200),
-                              borderRadius: BorderRadius.circular(22),
+                              color: const Color.fromARGB(255, 235, 233, 233),
+                              borderRadius: BorderRadius.circular(16.sp),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.04),
-                                  blurRadius: 6,
+                                  blurRadius: 8,
                                   offset: const Offset(0, 4),
                                 ),
                               ],
                             ),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(22),
+                              borderRadius: BorderRadius.circular(16.sp),
                               child: (catalog["image"] != null &&
                                       catalog["image"].toString().isNotEmpty)
                                   ? CachedNetworkImage(
@@ -1948,7 +2003,7 @@ class _ShopByCategorySection extends StatelessWidget {
                             ),
                           ),
 
-                          SizedBox(height: 6.sp),
+                          SizedBox(height: 8.sp),
 
                           // 🏷 Category Name
                           AppText(
@@ -1996,10 +2051,13 @@ class _ShopByCategorySection extends StatelessWidget {
               );
             },
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 4.sp, horizontal: 16.sp),
+              padding: EdgeInsets.symmetric(vertical: 8.sp, horizontal: 16.sp),
               child: Container(
-                height: 42.sp,
-                color: homeAppBarColor,
+                height: 44.sp,
+                decoration: BoxDecoration(
+                  color: homeAppBarColor,
+                  borderRadius: BorderRadius.circular(8.sp),
+                ),
                 width: double.infinity,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -2011,12 +2069,12 @@ class _ShopByCategorySection extends StatelessWidget {
                       color: whiteColor,
                       fontSize: 12,
                     ),
-                    SizedBox(width: 8.sp),
+                    SizedBox(width: 10.sp),
                     SvgPicture.asset(
                       arrowSearchImage,
                       color: whiteColor,
-                      height: 7.sp,
-                      width: 7.sp,
+                      height: 8.sp,
+                      width: 8.sp,
                       fit: BoxFit.fill,
                     ),
                   ],
@@ -2024,6 +2082,7 @@ class _ShopByCategorySection extends StatelessWidget {
               ),
             ),
           ),
+          SizedBox(height: 4.sp),
         ],
       ),
     );
@@ -2084,15 +2143,15 @@ class _StandaloneCollectionBannersState
 
     // ✅ Edge-to-edge banners with vertical padding only
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4.sp),
+      padding: EdgeInsets.symmetric(vertical: 8.sp),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Full width banner carousel
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: EdgeInsets.symmetric(horizontal: 16.sp),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(12.sp), // 👈 adjust radius
+              borderRadius: BorderRadius.circular(12.sp),
               child: SizedBox(
                 height: 200.sp,
                 width: double.infinity,
@@ -2121,7 +2180,7 @@ class _StandaloneCollectionBannersState
 
           // Page indicators (only show if more than 1 banner)
           if (widget.banners.length > 1) ...[
-            SizedBox(height: 6.sp),
+            SizedBox(height: 10.sp),
             Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -2271,144 +2330,147 @@ class _FeaturedBrandsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.sp),
-          child: Row(
-            children: [
-              const AppText(
-                text: "FEATURED BRANDS",
-                fontFamily: "Clash Display Semibold",
-                color: blackColor,
-                fontSize: 18,
-              ),
-              const Spacer(),
-              InkWell(
-                onTap: () async {
-                  onPressedViewAll();
-                  await analytics.logEvent(
-                    name: 'homepage_featurebrandviewAll',
-                    parameters: {'page_name': 'homepage_featurebrandviewAll'},
-                  );
-                },
-                child: Padding(
-                  padding:
-                      EdgeInsets.only(top: 2.sp, right: 12.sp, left: 20.sp),
-                  child: SvgPicture.asset(
-                    arrowViewAllImage,
-                    height: 11.sp,
-                    width: 7.sp,
-                    fit: BoxFit.fill,
+    return Padding(
+      padding: EdgeInsets.only(top: 8.sp, bottom: 4.sp),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.sp),
+            child: Row(
+              children: [
+                const AppText(
+                  text: "FEATURED BRANDS",
+                  fontFamily: "Clash Display Semibold",
+                  color: blackColor,
+                  fontSize: 18,
+                ),
+                const Spacer(),
+                InkWell(
+                  onTap: () async {
+                    onPressedViewAll();
+                    await analytics.logEvent(
+                      name: 'homepage_featurebrandviewAll',
+                      parameters: {'page_name': 'homepage_featurebrandviewAll'},
+                    );
+                  },
+                  child: Padding(
+                    padding:
+                        EdgeInsets.only(top: 2.sp, right: 16.sp, left: 20.sp),
+                    child: SvgPicture.asset(
+                      arrowViewAllImage,
+                      height: 12.sp,
+                      width: 8.sp,
+                      fit: BoxFit.fill,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        SizedBox(height: 8.sp),
-        SizedBox(
-          height: 90.sp,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: brands.length,
-            physics: const BouncingScrollPhysics(),
-            itemBuilder: (ctx, index) {
-              final brand = brands[index];
-              final logo = (brand["logo"] ?? "").toString().trim();
-              final name = (brand["name"] ?? "").toString().trim();
-              final bgImage =
-                  (brand["background_image"] ?? "").toString().trim();
+          SizedBox(height: 8.sp),
+          SizedBox(
+            height: 90.sp,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: brands.length,
+              physics: const BouncingScrollPhysics(),
+              itemBuilder: (ctx, index) {
+                final brand = brands[index];
+                final logo = (brand["logo"] ?? "").toString().trim();
+                final name = (brand["name"] ?? "").toString().trim();
+                final bgImage =
+                    (brand["background_image"] ?? "").toString().trim();
 
-              return GestureDetector(
-                onTap: () async {
-                  brandController.brandbackground.value = bgImage;
-                  final id = brand["id"];
-                  final safeId = (id is int)
-                      ? id
-                      : int.tryParse(id?.toString() ?? '0') ?? 0;
+                return GestureDetector(
+                  onTap: () async {
+                    brandController.brandbackground.value = bgImage;
+                    final id = brand["id"];
+                    final safeId = (id is int)
+                        ? id
+                        : int.tryParse(id?.toString() ?? '0') ?? 0;
 
-                  Get.to(
-                    () => AllBrandScreen(
-                      id: safeId,
-                      screen: "home",
-                      slug: "",
-                    ),
-                  )?.then((_) {
-                    SystemChrome.setSystemUIOverlayStyle(
-                      const SystemUiOverlayStyle(
-                        statusBarColor: whiteColor,
-                        statusBarIconBrightness: Brightness.dark,
-                        systemNavigationBarColor: whiteColor,
+                    Get.to(
+                      () => AllBrandScreen(
+                        id: safeId,
+                        screen: "home",
+                        slug: "",
                       ),
-                    );
-                  });
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(left: 16.sp),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        height: 64.sp,
-                        width: 64.sp,
-                        margin: EdgeInsets.only(
-                          right: index == brands.length - 1 ? 16.sp : 0,
+                    )?.then((_) {
+                      SystemChrome.setSystemUIOverlayStyle(
+                        const SystemUiOverlayStyle(
+                          statusBarColor: whiteColor,
+                          statusBarIconBrightness: Brightness.dark,
+                          systemNavigationBarColor: whiteColor,
                         ),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: dividerColor,
-                            width: 1.sp,
+                      );
+                    });
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 16.sp),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          height: 64.sp,
+                          width: 64.sp,
+                          margin: EdgeInsets.only(
+                            right: index == brands.length - 1 ? 16.sp : 0,
                           ),
-                        ),
-                        child: ClipOval(
-                          child: logo.isNotEmpty
-                              ? CachedNetworkImage(
-                                  imageUrl: logo,
-                                  height: 64.sp,
-                                  width: 64.sp,
-                                  fit: BoxFit.fill,
-                                  fadeInDuration:
-                                      const Duration(milliseconds: 300),
-                                  placeholder: (_, __) => Container(
-                                    color: Colors.black.withOpacity(0.05),
-                                  ),
-                                  errorWidget: (_, __, ___) => Image.asset(
-                                    downloadImage,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: dividerColor,
+                              width: 1.sp,
+                            ),
+                          ),
+                          child: ClipOval(
+                            child: logo.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: logo,
+                                    height: 64.sp,
+                                    width: 64.sp,
+                                    fit: BoxFit.fill,
+                                    fadeInDuration:
+                                        const Duration(milliseconds: 300),
+                                    placeholder: (_, __) => Container(
+                                      color: Colors.black.withOpacity(0.05),
+                                    ),
+                                    errorWidget: (_, __, ___) => Image.asset(
+                                      downloadImage,
+                                      fit: BoxFit.fill,
+                                    ),
+                                  )
+                                : Image.asset(
+                                    dummyWishlistImage,
                                     fit: BoxFit.fill,
                                   ),
-                                )
-                              : Image.asset(
-                                  dummyWishlistImage,
-                                  fit: BoxFit.fill,
-                                ),
-                        ),
-                      ),
-                      SizedBox(height: 4.sp),
-                      SizedBox(
-                        width: 64.sp,
-                        child: Text(
-                          name.isNotEmpty ? name : 'Unnamed',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 6.sp),
+                        SizedBox(
+                          width: 64.sp,
+                          child: Text(
+                            name.isNotEmpty ? name : 'Unnamed',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

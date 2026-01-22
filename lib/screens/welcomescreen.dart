@@ -78,11 +78,12 @@ class WelcomeScreenState extends State<WelcomeScreen>
         },
       );
 
-      // TODO: Implement Google Sign-In logic
-      // await loginController.signInWithGoogle();
-      print("Google login pressed");
+      _videoController.pause();
+      await loginController.signInWithGoogle();
+      if (mounted) _videoController.play();
     } catch (e) {
       print("❌ Error during Google login: $e");
+      if (mounted) _videoController.play();
     }
   }
 
@@ -262,7 +263,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
                   ),
                 ),
 
-                // // ✅ SOCIAL LOGIN BUTTONS (Google & Facebook)
+                // // // ✅ SOCIAL LOGIN BUTTONS (Google & Facebook)
                 // Padding(
                 //   padding: EdgeInsets.only(top: 24.sp),
                 //   child: Row(
@@ -280,28 +281,6 @@ class WelcomeScreenState extends State<WelcomeScreen>
                 //     ],
                 //   ),
                 // ),
-
-                // I'M NEW HERE
-                Padding(
-                  padding: EdgeInsets.only(top: 24.sp),
-                  child: getSingleButton(
-                    backgroundColor: statusBarColor,
-                    borderColor: statusBarColor,
-                    textColor: titleColor,
-                    label: "I'M NEW HERE",
-                    onPressed: () async {
-                      await analytics.logEvent(
-                        name: 'welcome_page_btnImNew',
-                        parameters: <String, Object>{
-                          'page_name': 'welcome_page_btnImNew',
-                        },
-                      );
-                      await _openLogin(initialTab: 1);
-                    },
-                    fontSize: 13,
-                  ),
-                ),
-
                 // SIGN IN
                 Padding(
                   padding: EdgeInsets.only(top: 24.sp),
@@ -318,6 +297,26 @@ class WelcomeScreenState extends State<WelcomeScreen>
                         },
                       );
                       await _openLogin(initialTab: 0);
+                    },
+                    fontSize: 13,
+                  ),
+                ),
+                // I'M NEW HERE
+                Padding(
+                  padding: EdgeInsets.only(top: 24.sp),
+                  child: getSingleButton(
+                    backgroundColor: statusBarColor,
+                    borderColor: statusBarColor,
+                    textColor: titleColor,
+                    label: "I'M NEW HERE",
+                    onPressed: () async {
+                      await analytics.logEvent(
+                        name: 'welcome_page_btnImNew',
+                        parameters: <String, Object>{
+                          'page_name': 'welcome_page_btnImNew',
+                        },
+                      );
+                      await _openLogin(initialTab: 1);
                     },
                     fontSize: 13,
                   ),
