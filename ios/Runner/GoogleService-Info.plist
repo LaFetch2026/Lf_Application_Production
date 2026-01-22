@@ -2,12 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CLIENT_ID</key>
-	<string>656354073125-010t37n5lh9ec75su77mgu7pmm9qjp1a.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.656354073125-010t37n5lh9ec75su77mgu7pmm9qjp1a</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>656354073125-0l8dgbuisu2o8qefhgkov4avl71a19lu.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyBRWXD2dx8llBpwxlulHntURgnwf0cE-jU</string>
 	<key>GCM_SENDER_ID</key>
@@ -19,7 +13,7 @@
 	<key>PROJECT_ID</key>
 	<string>la-fetch-3b250</string>
 	<key>STORAGE_BUCKET</key>
-	<string>la-fetch-3b250.firebasestorage.app</string>
+	<string>la-fetch-3b250.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
