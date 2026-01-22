@@ -796,13 +796,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     print("   Statutory GST Rate: $statutoryGSTRate");
     print("   GST Rule Applied: $gstRuleApplied");
     print("==========================");
-    // Show warning if GST data is still missing
-    if (hsnCode.isEmpty || gstRate == 0) {
-      print(":warning: Warning: GST data is incomplete!");
-      showAppSnackBar(
-          'Tax information incomplete. Proceeding with available data.',
-          type: SnackBarType.warning);
-    }
+
     // ========================================
     // :white_check_mark: NAVIGATE TO REVIEW ORDER SCREEN
     // ========================================

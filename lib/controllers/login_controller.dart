@@ -28,6 +28,10 @@ class GuestResult {
 }
 
 class LoginController extends BaseController {
+  // ---- Static Test Credentials for Google Play Review ----
+  static const String testPhoneNumber = "+919999999999";
+  static const String testOtp = "1234";
+
   // ---- UI state / inputs ----
   final phoneNumberLogin = TextEditingController();
   final phoneNumberRegister = TextEditingController();
@@ -166,6 +170,22 @@ class LoginController extends BaseController {
       enableResend.value = false;
 
       currentAuthFlowType.value = isLogin ? "login" : "signup";
+
+      // ✅ Handle static test credentials for Google Play Review
+      if (phoneNumber == testPhoneNumber) {
+        number.value = phoneNumber;
+        print("🔐 Test Mode: Using static OTP $testOtp for review");
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('phonenumber', phoneNumber);
+        await prefs.setString('authType', currentAuthFlowType.value);
+
+        hideLoading();
+        Get.to(() => OTPVerficationScreen(phoneMunber: phoneNumber));
+        getSnackBar("OTP sent successfully!");
+        return;
+      }
+
       final endpoint = isLogin ? "sign-in-send-otp" : "sign-up-send-otp";
 
       final response = await http.post(
@@ -215,6 +235,51 @@ class LoginController extends BaseController {
       }
 
       final isLoginFlow = currentAuthFlowType.value == "login";
+      final prefs = await SharedPreferences.getInstance();
+
+      // ✅ Handle static test credentials for Google Play Review
+      if (phone == testPhoneNumber && otp.value == testOtp) {
+        print("🔐 Test Mode: Verifying with static credentials");
+
+        if (isLoginFlow) {
+          // For test login, use a dummy token
+          await setToken("test_review_token_${DateTime.now().millisecondsSinceEpoch}");
+          await prefs.setBool('isLoggedIn', true);
+          await prefs.setString('phonenumber', phone);
+          await prefs.setString('authType', currentAuthFlowType.value);
+          await prefs.setInt('userId', 999999); // Test user ID
+          await prefs.setString('name', 'Test Reviewer');
+
+          await prefs.remove('skip');
+          isGuest.value = false;
+
+          await _syncGuestCartAfterAuth();
+
+          hideLoading();
+          getSnackBar("OTP verified successfully!");
+          Get.offAll(() => const BottomNavScreen());
+        } else {
+          // For test signup, go to user details screen
+          await prefs.setString('phonenumber', phone);
+          await prefs.setString('authType', currentAuthFlowType.value);
+          await setToken(null);
+          await prefs.remove('skip');
+          isGuest.value = false;
+
+          hideLoading();
+          getSnackBar("OTP verified successfully!");
+          Get.offAll(() => const UserDetailsScreen());
+        }
+        return;
+      }
+
+      // ✅ Show error for wrong OTP on test number
+      if (phone == testPhoneNumber && otp.value != testOtp) {
+        hideLoading();
+        otpError.value = "Invalid OTP";
+        getSnackBar("Invalid OTP");
+        return;
+      }
 
       final body = {
         'phone': phone,
@@ -230,7 +295,6 @@ class LoginController extends BaseController {
       );
 
       final data = jsonDecode(response.body);
-      final prefs = await SharedPreferences.getInstance();
 
       if (response.statusCode == 200) {
         final userData = data['data'];
