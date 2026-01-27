@@ -49,6 +49,10 @@ class CartController extends BaseController {
   final RxList<dynamic> tagsList = <dynamic>[].obs;
   final RxString addressError = "".obs;
 
+  // ✅ Cart banners state
+  final RxList<dynamic> cartBannerList = <dynamic>[].obs;
+  final RxBool isLoadingCartBanners = false.obs;
+
   List<bool> selected = List.generate(50, (i) => false).obs;
 
   AuthApiClient _ensureClient() {

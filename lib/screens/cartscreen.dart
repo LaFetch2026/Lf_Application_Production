@@ -821,6 +821,10 @@ class CartScreenState extends State<CartScreen> {
           // controller.getExpressCartData();
         }
       }
+
+      // ✅ Load cart banners for both guest and logged-in users
+      debugPrint("🎯 Loading cart banners");
+      await controller.getCartBanners();
     });
   }
 
@@ -1335,7 +1339,7 @@ class CartScreenState extends State<CartScreen> {
                       padding: EdgeInsets.symmetric(vertical: 5.sp),
                       child: AppText(
                         text: controller.qtyText.value,
-                        color: Color(0xFF988AFF),
+                        color: lightPurpleColor,
                         fontSize: 12,
                         maxLines: 3,
                         fontFamily: "Clash Display Regular",
@@ -1397,7 +1401,7 @@ class CartScreenState extends State<CartScreen> {
                       _asNum(product["mrp"]) > _asNum(product["price"]))
                     Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xFF988AFF),
+                        color: const Color.fromARGB(255, 181, 172, 248),
                         borderRadius: BorderRadius.circular(20.sp),
                       ),
                       child: Padding(
@@ -1586,7 +1590,7 @@ class CartScreenState extends State<CartScreen> {
                       text: "- ₹${formatAmount(_promoDiscount)}",
                       fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
-                      color: const Color(0xFF988AFF),
+                      color: lightPurpleColor,
                       fontSize: 12,
                     ),
                   ],
@@ -1613,7 +1617,7 @@ class CartScreenState extends State<CartScreen> {
                       text: "- ₹${formatAmount(_couponDiscount)}",
                       fontFamily: "Clash Display Regular",
                       fontWeight: FontWeight.w400,
-                      color: const Color(0xFF988AFF),
+                      color: lightPurpleColor,
                       fontSize: 12,
                     ),
                   ],
@@ -1642,7 +1646,7 @@ class CartScreenState extends State<CartScreen> {
                     fontFamily: "Clash Display Regular",
                     fontWeight: FontWeight.w400,
                     color: deliveryCharges == 0
-                        ? const Color(0xFF988AFF)
+                        ? lightPurpleColor
                         : (widget.backgroundcolor == whiteColor
                             ? homeAppBarColor
                             : whiteColor),
@@ -1685,6 +1689,9 @@ class CartScreenState extends State<CartScreen> {
                 ),
               ],
             ),
+
+            // ✅ Cart Banners Section
+            _buildCartBannersSection(),
 
             SizedBox(height: 30.sp),
             Cartbottom(backgroundColor: widget.backgroundcolor),
@@ -2338,6 +2345,102 @@ class CartScreenState extends State<CartScreen> {
         ],
       ),
     );
+  }
+
+  /// ✅ Cart Banners Section - Shows banners after order details
+  Widget _buildCartBannersSection() {
+    return Obx(() {
+      // Show loading state
+      if (controller.isLoadingCartBanners.value) {
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 20.sp),
+          child: const Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.black,
+            ),
+          ),
+        );
+      }
+
+      // If no banners, don't show anything
+      if (controller.cartBannerList.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      // Show banners
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 20.sp),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Banners list
+            ...controller.cartBannerList.map((banner) {
+              final bannerMap = banner as Map<String, dynamic>;
+              final String imageUrl =
+                  bannerMap['mobileImage']?.toString().trim() ?? '';
+              final int bannerId = bannerMap['id'] is int
+                  ? bannerMap['id']
+                  : int.tryParse(bannerMap['id']?.toString() ?? '') ?? 0;
+
+              // Skip if no image
+              if (imageUrl.isEmpty) return const SizedBox.shrink();
+
+              return GestureDetector(
+                onTap: () async {
+                  // Handle banner tap - you can navigate to products or category
+                  debugPrint("🎯 Cart banner tapped: $bannerId");
+                  // Add navigation logic here if needed
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.sp),
+                  child: CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    height: 180.sp,
+                    width: double.infinity,
+                    fit: BoxFit.fill,
+                    cacheManager: CacheManager(
+                      Config(
+                        "cartBannersCache",
+                        stalePeriod: const Duration(days: 7),
+                        maxNrOfCacheObjects: 30,
+                      ),
+                    ),
+                    placeholder: (context, url) => Container(
+                      height: 180.sp,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.04),
+                        borderRadius: BorderRadius.circular(8.sp),
+                      ),
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      height: 180.sp,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.06),
+                        borderRadius: BorderRadius.circular(8.sp),
+                      ),
+                      child: Icon(
+                        Icons.broken_image_outlined,
+                        color: Colors.grey.withOpacity(0.5),
+                        size: 40.sp,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildEmptyCart() {

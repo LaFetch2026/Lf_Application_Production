@@ -106,10 +106,13 @@ class HomeController extends BaseController {
   }
 
   /// Initialize home data - Call this from HomeScreen after user is authenticated/skipped
-  Future<void> initializeHomeData(int gender, {bool forceRefresh = false}) async {
+  Future<void> initializeHomeData(int gender,
+      {bool forceRefresh = false}) async {
     // Skip if already loaded and not forcing refresh
     if (isInitialDataLoaded.value && !forceRefresh) {
       print('✅ Home data already loaded, skipping...');
+      // ✅ Ensure loading states are off when skipping
+      isBanner1.value = false;
       return;
     }
 
@@ -142,23 +145,31 @@ class HomeController extends BaseController {
   Future<void> getBannerData(int gender, {bool forceRefresh = false}) async {
     final cacheKey = 'banners_$gender';
 
-    // Try to load from cache first
+    // ✅ Set loading state at the start
+    isBanner1.value = true;
+
+    // 🔹 Try cache first (with safety wrapper)
     if (!forceRefresh) {
-      final cached = await CacheManager.get(key: cacheKey);
-      if (cached != null) {
-        _updateBannerList(gender, cached as List<dynamic>);
-        print("✅ Banners loaded from cache for gender: $gender");
-        return;
+      try {
+        final cached = await CacheManager.get(key: cacheKey);
+        if (cached != null) {
+          _updateBannerList(gender, cached as List<dynamic>);
+          print("✅ Banners loaded from cache for gender: $gender");
+          isBanner1.value = false;  // ✅ Set loading to false after cache hit
+          return;
+        }
+      } catch (e) {
+        print("⚠️ Cache check failed, will fetch from API: $e");
       }
     }
-
-    isBanner1.value = true;
 
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = (prefs.getString('token') ?? '').trim();
 
+      // ✅ Home screen banners API (without isCartBanner query)
       final uri = Uri.parse("${ApiConstants.baseUrl}/banners");
+
       print("📤 Hitting banners API: $uri");
 
       final response = await http.get(
@@ -175,21 +186,36 @@ class HomeController extends BaseController {
         final decoded = json.decode(response.body) as Map<String, dynamic>;
         final List<dynamic> all = (decoded['data'] as List?) ?? const [];
 
-        // 🔎 Keep only items with category.name matching the tab
-        final String expected = _genderLabel(gender); // MEN/WOMEN/ACCESSORIES
+        print("📊 Total banners from API: ${all.length}");
+
+        // 🔎 Filter by gender category ONLY (show all banners regardless of isCartBanner)
+        final String expected =
+            _genderLabel(gender); // MEN / WOMEN / ACCESSORIES
+
+        print("🔍 Looking for gender category: $expected");
+
         final List<dynamic> filtered = all.where((b) {
-          final name =
-              (b is Map ? (b['category']?['name'] ?? '') : '').toString();
+          if (b is! Map) return false;
+
+          final name = (b['category']?['name'] ?? '').toString();
+          final isCartBanner = b['isCartBanner'] == true;
+
+          print("🔎 Banner: category='$name', isCartBanner=$isCartBanner, match=${name.toUpperCase() == expected}");
+
+          // ✅ HOME SCREEN: Show ALL banners (both isCartBanner true and false)
+          // Cart screen will use separate API: /banners?isCartBanner=true
           return name.toUpperCase() == expected;
         }).toList();
 
-        // ✅ Cache the filtered data
+        print("✅ Filtered banners for $expected: ${filtered.length}");
+
+        // ✅ Cache filtered data
         await CacheManager.save(key: cacheKey, data: filtered);
 
-        // ✅ Store into the specific list for that gender
+        // ✅ Update UI list
         _updateBannerList(gender, filtered);
 
-        print("✅ Banners for $expected: ${filtered.length}");
+        print("✅ Banner list updated successfully");
       } else if (response.statusCode == 401) {
         getSnackBar("Authentication failed");
         _redirectToLoginIfNotGuest();
@@ -206,18 +232,24 @@ class HomeController extends BaseController {
 
   /// Helper method to update banner list based on gender
   void _updateBannerList(int gender, List<dynamic> data) {
+    print("📝 _updateBannerList called: gender=$gender, dataCount=${data.length}");
+
     switch (gender) {
       case 1:
         banner1List.assignAll(data);
+        print("📝 banner1List updated: ${banner1List.length} items");
         break;
       case 2:
         banner2List.assignAll(data);
+        print("📝 banner2List updated: ${banner2List.length} items");
         break;
       case 3:
         banner3List.assignAll(data);
+        print("📝 banner3List updated: ${banner3List.length} items");
         break;
       default:
         banner1List.assignAll(data);
+        print("📝 banner1List updated (default): ${banner1List.length} items");
     }
   }
 
@@ -322,7 +354,8 @@ class HomeController extends BaseController {
     return null;
   }
 
-  Future<void> getBrandData(String type, int gender, {String? query, bool forceRefresh = false}) async {
+  Future<void> getBrandData(String type, int gender,
+      {String? query, bool forceRefresh = false}) async {
     final cacheKey = 'brands_${type}_$gender';
 
     // Try to load from cache first
@@ -421,9 +454,8 @@ class HomeController extends BaseController {
     final List<Map<String, dynamic>> filtered = (q.isEmpty
             ? rawList
             : rawList.where((b) {
-                final name = (b is Map && b['name'] != null)
-                    ? b['name'].toString()
-                    : '';
+                final name =
+                    (b is Map && b['name'] != null) ? b['name'].toString() : '';
                 return name.toLowerCase().contains(q);
               }))
         .whereType<Map<String, dynamic>>()
@@ -454,7 +486,8 @@ class HomeController extends BaseController {
     selected = List<bool>.generate(brandList.length, (_) => false);
   }
 
-  Future<void> getCategoryData(int genderType, {bool forceRefresh = false}) async {
+  Future<void> getCategoryData(int genderType,
+      {bool forceRefresh = false}) async {
     final cacheKey = 'categories_$genderType';
 
     // Try to load from cache first

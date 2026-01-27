@@ -78,73 +78,82 @@ class BrandProductList extends StatelessWidget {
                                           .trim()
                                           .isNotEmpty)
                                   ? ClipRRect(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(radius.sp),
-                                        topRight: Radius.circular(radius.sp),
-                                      ),
+                                      borderRadius: BorderRadius.circular(8.sp),
                                       child: SizedBox(
                                         height: 170.sp,
                                         width: 136.sp,
-                                        child: CachedNetworkImage(
-                                          cacheManager: CacheManager(Config(
-                                            "brandProductImagesCache",
-                                            stalePeriod:
-                                                const Duration(days: 15),
-                                            maxNrOfCacheObjects: 200,
-                                          )),
-                                          fit: BoxFit.fill,
-                                          fadeOutCurve: Curves.ease,
-                                          fadeOutDuration:
-                                              const Duration(milliseconds: 100),
-                                          imageUrl: item["images"][0]["name"]
-                                              .toString(),
-                                          placeholder: (context, url) =>
-                                              Container(
-                                            height: 170.sp,
-                                            width: 136.sp,
-                                            color: Colors.grey[200],
-                                            child: const Center(
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                                valueColor:
-                                                    AlwaysStoppedAnimation<
-                                                        Color>(colorPrimary),
-                                              ),
-                                            ),
-                                          ),
-                                          errorWidget: (context, url, error) {
-                                            print(
-                                                "❌ [BrandProductList] Image load failed");
-                                            print("   URL: $url");
-                                            print("   Error: $error");
-                                            return Container(
-                                              height: 170.sp,
-                                              width: 136.sp,
-                                              color: Colors.grey[200],
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Icon(
-                                                      Icons.image_not_supported,
-                                                      size: 40.sp,
-                                                      color: Colors.grey[400]),
-                                                  SizedBox(height: 4.sp),
-                                                  Text(
-                                                    'Image not available',
-                                                    style: TextStyle(
-                                                      fontSize: 9.sp,
-                                                      color: Colors.grey[500],
-                                                      fontFamily:
-                                                          "Clash Display Regular",
-                                                    ),
-                                                    textAlign: TextAlign.center,
+                                        child: (item["images"] != null &&
+                                                item["images"] is List &&
+                                                item["images"].isNotEmpty &&
+                                                item["images"][0]?["name"] !=
+                                                    null &&
+                                                item["images"][0]["name"]
+                                                    .toString()
+                                                    .trim()
+                                                    .isNotEmpty)
+                                            ? CachedNetworkImage(
+                                                cacheManager: CacheManager(
+                                                  Config(
+                                                    "brandProductImagesCache",
+                                                    stalePeriod: const Duration(
+                                                        days: 15),
+                                                    maxNrOfCacheObjects: 200,
                                                   ),
-                                                ],
+                                                ),
+                                                fit: BoxFit.fill,
+                                                imageUrl: item["images"][0]
+                                                        ["name"]
+                                                    .toString(),
+                                                placeholder: (context, url) =>
+                                                    Container(
+                                                  color: Colors.grey[200],
+                                                  child: const Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                      valueColor:
+                                                          AlwaysStoppedAnimation<
+                                                                  Color>(
+                                                              colorPrimary),
+                                                    ),
+                                                  ),
+                                                ),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Container(
+                                                  color: Colors.grey[200],
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Icon(
+                                                        Icons
+                                                            .image_not_supported,
+                                                        size: 40.sp,
+                                                        color: Colors.grey[400],
+                                                      ),
+                                                      SizedBox(height: 4.sp),
+                                                      Text(
+                                                        'Image not available',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 9.sp,
+                                                          color:
+                                                              Colors.grey[500],
+                                                          fontFamily:
+                                                              "Clash Display Regular",
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
+                                            : Image.asset(
+                                                dummyWishlistImage,
+                                                fit: BoxFit.fill,
                                               ),
-                                            );
-                                          },
-                                        ),
                                       ),
                                     )
                                   : Image.asset(

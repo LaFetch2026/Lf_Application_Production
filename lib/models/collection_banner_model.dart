@@ -8,6 +8,7 @@ class StandaloneCollectionBanner {
   final int? position;
   final List<String> displayFor;
   final String? mobileImageUrl;
+  final int tile;
   final String createdAt;
   final String updatedAt;
 
@@ -20,6 +21,7 @@ class StandaloneCollectionBanner {
     this.position,
     required this.displayFor,
     this.mobileImageUrl,
+    this.tile = 1,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -37,6 +39,7 @@ class StandaloneCollectionBanner {
               .toList() ??
           [],
       mobileImageUrl: json['mobileImageUrl'] as String?,
+      tile: json['tile'] as int? ?? 1,
       createdAt: json['createdAt'] as String,
       updatedAt: json['updatedAt'] as String,
     );
@@ -52,6 +55,7 @@ class StandaloneCollectionBanner {
       'position': position,
       'displayFor': displayFor,
       'mobileImageUrl': mobileImageUrl,
+      'tile': tile,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };
@@ -63,6 +67,12 @@ class StandaloneCollectionBanner {
       return mobileImageUrl!;
     }
     return imageUrl;
+  }
+
+  /// Check if the media URL is a video
+  bool isVideo({bool isMobile = true}) {
+    final url = getImageUrl(isMobile: isMobile).toLowerCase();
+    return url.endsWith('.mp4') || url.endsWith('.mov') || url.endsWith('.webm');
   }
 
   /// Check if banner should display for specific gender/type
@@ -101,11 +111,19 @@ class CollectionBannerUtils {
     int collectionId,
     String displayType,
   ) {
-    return allBanners
-        .where((banner) =>
-            banner.collectionId == collectionId &&
-            banner.isActive &&
-            banner.shouldDisplayFor(displayType))
+    print("🔍 Filtering banners for collectionId: $collectionId, displayType: $displayType");
+    print("📦 Total banners available: ${allBanners.length}");
+
+    final filtered = allBanners
+        .where((banner) {
+          final matches = banner.collectionId == collectionId &&
+              banner.isActive &&
+              banner.shouldDisplayFor(displayType);
+          if (banner.collectionId == collectionId) {
+            print("📌 Banner ${banner.id}: collectionId=${banner.collectionId}, isActive=${banner.isActive}, displayFor=${banner.displayFor}, isVideo=${banner.isVideo()}, matches=$matches");
+          }
+          return matches;
+        })
         .toList()
       ..sort((a, b) {
         // Sort by position, nulls last
@@ -114,5 +132,8 @@ class CollectionBannerUtils {
         if (b.position == null) return -1;
         return a.position!.compareTo(b.position!);
       });
+
+    print("✅ Filtered banners count: ${filtered.length}");
+    return filtered;
   }
 }

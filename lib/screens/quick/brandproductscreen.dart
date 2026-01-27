@@ -160,7 +160,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
 
   num _prodPrice(Map<String, dynamic> m) {
     final dynamic p =
-        m['price'] ?? m['msp'] ?? m['lfMsp'] ?? m['mrp'] ?? m['basePrice'] ?? 0;
+        m['price'] ?? m['msp'] ?? m['lfMsp'] ?? m['mrp'] ?? m['basePrice'];
     if (p is num) return p;
     return num.tryParse(p.toString()) ?? 0;
   }
@@ -525,6 +525,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                         final price = _prodPrice(m);
                         final mrp = _prodMrp(m);
                         final img = _firstImageUrl(m);
+                        final basePrice = m["basePrice"];
 
                         return GestureDetector(
                           onTap: () async {
@@ -646,15 +647,16 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                               ),
 
                               // price
+
                               Padding(
                                 padding: EdgeInsets.only(top: 8.sp),
                                 child: Row(
                                   children: [
-                                    if (mrp > 0)
+                                    if (mrp != basePrice)
                                       Padding(
                                         padding: EdgeInsets.only(right: 6.sp),
                                         child: Text(
-                                          "\u{20B9} $mrp",
+                                          "\u{20B9} ${mrp.toStringAsFixed(0)}",
                                           style: TextStyle(
                                             color: searchTextColor,
                                             fontSize: 11.sp,
@@ -667,7 +669,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                       ),
                                     AppText(
                                       text:
-                                          "\u{20B9} ${price.toStringAsFixed(0)}",
+                                          "\u{20B9} ${basePrice.toStringAsFixed(0)}",
                                       color: whiteColor,
                                       maxLines: 2,
                                       fontSize: 11,

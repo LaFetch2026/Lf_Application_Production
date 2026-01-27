@@ -74,43 +74,65 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   // ✅ TabController for animated gender tabs
   TabController? _genderTabController;
 
+  // ✅ Pagination variables
+  int _currentCollectionPage = 1;
+  bool _hasMoreCollections = true;
+  bool _isLoadingMoreCollections = false;
+  final int _collectionsPerPage =
+      3; // ✅ Reduced to 3 to prevent memory overload
+
   @override
   void initState() {
     super.initState();
 
+    // ✅ Add scroll listener for pagination
+    homeController.discountScreenController.addListener(_onScroll);
+
     // Auto-scroll banners (only if more than 1 banner)
     timer = Timer.periodic(const Duration(seconds: 3), (_) {
-      final pageCount = _currentBannerList().length;
-      if (pageCount > 1) {
-        // ✅ Only auto-scroll when multiple banners exist
-        final nextPage = (homeController.currentPage.value + 1) % pageCount;
-        homeController.currentPage.value = nextPage;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_pageController.hasClients) {
-            _pageController.animateToPage(
-              nextPage,
-              duration: const Duration(milliseconds: 350),
-              curve: Curves.easeIn,
-            );
-          }
-        });
+      try {
+        if (!mounted) return; // ✅ Don't scroll if widget is disposed
+
+        final pageCount = _currentBannerList().length;
+        if (pageCount > 1) {
+          // ✅ Only auto-scroll when multiple banners exist
+          final nextPage = (homeController.currentPage.value + 1) % pageCount;
+          homeController.currentPage.value = nextPage;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && _pageController.hasClients) {
+              _pageController.animateToPage(
+                nextPage,
+                duration: const Duration(milliseconds: 350),
+                curve: Curves.easeIn,
+              );
+            }
+          });
+        }
+      } catch (e) {
+        print("⚠️ Banner auto-scroll error: $e");
       }
     });
 
     // Apply UI styles and fetch data
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: whiteColor,
-        statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: whiteColor,
-        systemNavigationBarIconBrightness: Brightness.dark,
-      ));
+      if (!mounted) return; // ✅ Check if widget is still mounted
 
-      // ✅ NEW: Fetch gender tabs FIRST
-      await homeController.getGenderTabs();
+      try {
+        SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+          statusBarColor: whiteColor,
+          statusBarIconBrightness: Brightness.dark,
+          systemNavigationBarColor: whiteColor,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ));
+
+        // ✅ NEW: Fetch gender tabs FIRST
+        await homeController.getGenderTabs();
+        if (!mounted) return; // ✅ Check after async call
 
       // ✅ Check if user is guest
       final prefs = await SharedPreferences.getInstance();
+      if (!mounted) return; // ✅ Check after async call
+
       isGuest = prefs.getBool('skip') ?? false;
 
       // ✅ NEW: Load saved gender preference or use first tab from API
@@ -145,6 +167,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       }
 
       // ✅ Initialize TabController for animated gender tabs
+      if (!mounted) return; // ✅ Check before calling setState
       _initGenderTabController(initialTabIndex);
 
       homeController.showGenderList.value = false;
@@ -158,19 +181,32 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           homeController.homeGenderValue.value;
 
       await checkUserConnection();
+      if (!mounted) return; // ✅ Check after async call
 
       final currentGender = homeController.homeGenderValue.value;
 
       // ✅ CRITICAL: Clear brand list before loading to ensure fresh data
       brandController.brandList.clear();
+
+      // ✅ Reset any stuck loading states
+      homeController.isBanner1.value = false;
+
+      // ✅ Force refresh on initial load to ensure fresh data
+      final bool isFirstLoad = _isInitialLoad;
+
 // ✅ UPDATED: Load all data together including brands and collection banners
       await Future.wait([
-        homeController.initializeHomeData(currentGender),
-        catalogController.getCatalogData(currentGender),
-        productController.getHomeProduct(currentGender),
-        productController.getCollectionBanners(),
+        homeController.initializeHomeData(currentGender,
+            forceRefresh: isFirstLoad),
+        catalogController.getCatalogData(currentGender,
+            forceRefresh: isFirstLoad),
+        productController.getHomeProduct(currentGender,
+            forceRefresh: isFirstLoad),
+        productController.getCollectionBanners(forceRefresh: isFirstLoad),
         brandController.getBrandData("featured", currentGender),
       ]);
+
+      if (!mounted) return; // ✅ Check after async call
 
       // ✅ FORCE UPDATE: Trigger reactive update after all data is loaded
       brandController.update();
@@ -182,9 +218,17 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         _isInitialLoad = false;
       }
 
-      // ✅ Fix hot reload visibility issue
-      if (catalogController.catalogList.isNotEmpty) {
-        catalogController.update();
+        // ✅ Fix hot reload visibility issue
+        if (catalogController.catalogList.isNotEmpty) {
+          catalogController.update();
+        }
+      } catch (e, stackTrace) {
+        print("❌ Error during home screen initialization: $e");
+        print("Stack trace: $stackTrace");
+        // Show error to user but don't crash the app
+        if (mounted) {
+          getSnackBar("Failed to load some data. Please try refreshing.");
+        }
       }
     });
   }
@@ -216,6 +260,11 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   List<dynamic> _currentBannerList() {
     final currentGender = homeController.homeGenderValue.value;
 
+    print("🔍 _currentBannerList: currentGender=$currentGender");
+    print("🔍 banner1List.length=${homeController.banner1List.length}");
+    print("🔍 banner2List.length=${homeController.banner2List.length}");
+    print("🔍 banner3List.length=${homeController.banner3List.length}");
+
     // Map gender IDs to banner lists
     List<dynamic> bannerList;
     switch (currentGender) {
@@ -241,11 +290,23 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         }
     }
 
+    print("🔍 Selected bannerList.length=${bannerList.length}");
+
     // ✅ Filter to return ONLY banners with mobileImage (not null/empty)
-    return bannerList.where((item) {
+    final filtered = bannerList.where((item) {
       final mobileImage = (item as Map?)?["mobileImage"]?.toString() ?? '';
-      return mobileImage.isNotEmpty;
+      final hasImage = mobileImage.isNotEmpty;
+      if (mobileImage.isNotEmpty) {
+        final preview = mobileImage.length > 50
+            ? mobileImage.substring(0, 50)
+            : mobileImage;
+        print("🔍 Banner has mobileImage: $preview...");
+      }
+      return hasImage;
     }).toList();
+
+    print("🔍 Filtered banners count: ${filtered.length}");
+    return filtered;
   }
 
   static Future<bool> checkUserConnection() async {
@@ -271,12 +332,62 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void dispose() {
     timer?.cancel();
+    _pageController.dispose(); // ✅ Dispose banner PageController
     _genderTabController?.dispose();
+    homeController.discountScreenController.removeListener(_onScroll);
     super.dispose();
+  }
+
+  // ✅ Scroll listener for pagination
+  void _onScroll() {
+    if (!homeController.discountScreenController.hasClients) return;
+
+    final scrollController = homeController.discountScreenController;
+    final scrollPosition = scrollController.position;
+
+    // Trigger when scrolled 80% to the bottom
+    if (scrollPosition.pixels >= scrollPosition.maxScrollExtent * 0.8) {
+      _loadMoreCollections();
+    }
+  }
+
+  // ✅ Load more collections when scrolling
+  Future<void> _loadMoreCollections() async {
+    if (_isLoadingMoreCollections || !_hasMoreCollections) return;
+
+    if (!mounted) return; // ✅ Check before setState
+
+    setState(() {
+      _isLoadingMoreCollections = true;
+    });
+
+    try {
+      // Increment page
+      _currentCollectionPage++;
+
+      // Load more collections (this will be handled in the controller)
+      // For now, we'll just mark that we've loaded more
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      if (!mounted) return; // ✅ Check after async call
+
+      setState(() {
+        _isLoadingMoreCollections = false;
+      });
+    } catch (e) {
+      print("Error loading more collections: $e");
+      if (!mounted) return; // ✅ Check before setState
+
+      setState(() {
+        _isLoadingMoreCollections = false;
+      });
+    }
   }
 
   // ✅ Initialize TabController for gender tabs with animated indicator
   void _initGenderTabController(int initialIndex) {
+    if (!mounted) return; // ✅ Check if widget is still mounted
+
     _genderTabController?.dispose();
     if (homeController.genderTabs.isNotEmpty) {
       _genderTabController = TabController(
@@ -286,7 +397,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             initialIndex.clamp(0, homeController.genderTabs.length - 1),
       );
       _genderTabController!.addListener(_onGenderTabChanged);
-      setState(() {});
+      if (mounted) setState(() {}); // ✅ Check before setState
     }
   }
 
@@ -317,19 +428,35 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         _currentBannerList(); // ✅ Already filtered in _currentBannerList()
     final List<Widget> list = [];
 
+    // ✅ Safety check: Return empty list if no banners
+    if (currentBannerList.isEmpty) {
+      print("⚠️ No banners to display in widgitBannerList");
+      return list;
+    }
+
     for (var i = 0; i < currentBannerList.length; i++) {
-      final item = (currentBannerList[i] as Map?) ?? const {};
-      final int bannerId = () {
-        final v = item["id"];
-        if (v is int) return v;
-        return int.tryParse(v?.toString() ?? '') ?? 0;
-      }();
+      try {
+        final item = (currentBannerList[i] as Map?) ?? const {};
+        final int bannerId = () {
+          final v = item["id"];
+          if (v is int) return v;
+          return int.tryParse(v?.toString() ?? '') ?? 0;
+        }();
 
-      // ✅ Use mobileImage only
-      final String imageUrl = item["mobileImage"]?.toString() ?? '';
+        // ✅ Use mobileImage only with trim to remove whitespace
+        final String imageUrl = item["mobileImage"]?.toString().trim() ?? '';
 
-      final String title =
-          item["title"]?.toString() ?? item["name"]?.toString() ?? "Products";
+        // ✅ Skip banner if no valid image URL
+        if (imageUrl.isEmpty) {
+          print("⚠️ Banner $i has empty imageUrl, skipping");
+          continue;
+        }
+
+        print("🖼️ Banner $i: imageUrl='$imageUrl'");
+        print("🖼️ Banner $i: isVideo=${isVideoUrl(imageUrl)}");
+
+        final String title =
+            item["title"]?.toString() ?? item["name"]?.toString() ?? "Products";
 
       final int categoryIdFromList = () {
         final v = item["categoryId"];
@@ -431,32 +558,44 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     Config(
                       "customCacheKey",
                       stalePeriod: const Duration(days: 15),
-                      maxNrOfCacheObjects: 100,
+                      maxNrOfCacheObjects: 50, // ✅ Reduced from 100 to 50
                     ),
                   ),
                   fit: BoxFit.fill,
                   imageUrl: imageUrl,
                   height: 229.sp,
                   width: MediaQuery.of(context).size.width,
-                  progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      Center(
-                    child: Container(
+                  // ✅ Removed resize parameters - incompatible with custom CacheManager
+                  progressIndicatorBuilder: (context, url, downloadProgress) {
+                    print("🖼️ Loading banner image: $url");
+                    return Center(
+                      child: Container(
+                        height: 229.sp,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.04),
+                        ),
+                      ),
+                    );
+                  },
+                  errorWidget: (context, url, error) {
+                    print("❌ Banner image error: $url - Error: $error");
+                    return Image.asset(
+                      downloadImage,
+                      fit: BoxFit.fill,
                       height: 229.sp,
                       width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.04),
-                      ),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => Image.asset(
-                    downloadImage,
-                    fit: BoxFit.fill,
-                    height: 229.sp,
-                    width: MediaQuery.of(context).size.width,
-                  ),
+                    );
+                  },
                 ),
         ),
       );
+      } catch (e, stackTrace) {
+        print("❌ Error building banner $i: $e");
+        print("Stack trace: $stackTrace");
+        // Skip this banner and continue with next one
+        continue;
+      }
     }
 
     return list;
@@ -632,447 +771,429 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 width: double.infinity, color: lightgreyColor, height: 2.sp),
 
             Expanded(
-              child: GestureDetector(
-                // ✅ Detect horizontal swipe to change tabs
-                onHorizontalDragEnd: _onHorizontalSwipe,
-                behavior: HitTestBehavior.translucent,
-                child: Stack(
-                  children: [
-                    SingleChildScrollView(
-                      controller: homeController.discountScreenController,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Banner Section - ✅ WITH LOADING STATE
-                          Obx(() {
-                            homeController.homeGenderValue.value;
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    controller: homeController.discountScreenController,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Banner Section - ✅ WITH LOADING STATE
+                        Obx(() {
+                          homeController.homeGenderValue.value;
 
-                            final banners = _currentBannerList();
-                            final isLoading = homeController.isBanner1.value;
-                            final showBanners = banners.isNotEmpty &&
-                                productController.current.value == 50;
+                          final banners = _currentBannerList();
+                          final isLoading = homeController.isBanner1.value;
+                          final currentValue = productController.current.value;
+                          final showBanners =
+                              banners.isNotEmpty && currentValue == 50;
 
-                            if (isLoading) {
-                              return Container(
-                                height: 210.sp,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.04),
-                                  // borderRadius: BorderRadius.circular(
-                                  //     8.sp), // ✅ radius added
-                                ),
-                                child: const Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.black,
-                                      ),
-                                      SizedBox(height: 12),
-                                      Text(
-                                        'Loading banners...',
-                                        style: TextStyle(
-                                          color: Colors.black54,
-                                          fontSize: 12,
-                                          fontFamily: "Clash Display Regular",
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }
+                          print(
+                              "🎬 Banner Obx: isLoading=$isLoading, bannersCount=${banners.length}, currentValue=$currentValue, showBanners=$showBanners");
 
-                            if (showBanners) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClipRRect(
-                                    // ✅ BORDER RADIUS
-                                    child: SizedBox(
-                                      height: 230,
-                                      width: double.infinity,
-                                      child: PageView(
-                                        controller: _pageController,
-                                        onPageChanged: (index) {
-                                          homeController.currentPage.value =
-                                              index;
-                                        },
-                                        children: widgitBannerList(),
+                          if (isLoading) {
+                            print("🎬 Showing loading indicator");
+                            return Container(
+                              height: 210.sp,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.04),
+                                // borderRadius: BorderRadius.circular(
+                                //     8.sp), // ✅ radius added
+                              ),
+                              child: const Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.black,
+                                    ),
+                                    SizedBox(height: 12),
+                                    Text(
+                                      'Loading banners...',
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 12,
+                                        fontFamily: "Clash Display Regular",
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(height: 10.sp),
-                                  banners.length == 1
-                                      ? const SizedBox.shrink()
-                                      : Center(
-                                          child: PageIndicator(
-                                            controller: _pageController,
-                                            count: banners.length,
-                                            size: 6.0.sp,
-                                            activeColor: Colors.black,
-                                            color: const Color(0xffE5E7EB),
-                                            layout: PageIndicatorLayout.WARM,
-                                            scale: 0.65,
-                                            space: 8.sp,
-                                          ),
-                                        ),
-                                ],
-                              );
-                            }
-
-                            return const SizedBox.shrink();
-                          }),
-
-                          // Marquee Banner
-                          Container(
-                            height: 30.sp,
-                            color: const Color(0xff2D2D2E),
-                            width: MediaQuery.of(context).size.width,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                top: Platform.isIOS ? 5.sp : 5.sp,
-                                bottom: Platform.isIOS ? 5.sp : 5.sp,
-                              ),
-                              child: Center(
-                                child: Marquee(
-                                  text:
-                                      '|    More than 50+ Homegrown Brands   |    Fast and Reliable   |    Fashion for all occassions  |    Easy Returns & Exchanges   |    Secure Payments   ',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12.sp,
-                                    fontFamily: "Clash Display Regular",
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  scrollAxis: Axis.horizontal,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  velocity: 100.0,
-                                  pauseAfterRound: Duration.zero,
-                                  accelerationCurve: Curves.linear,
-                                  decelerationCurve: Curves.easeOut,
+                                  ],
                                 ),
                               ),
-                            ),
-                          ),
+                            );
+                          }
 
-                          SizedBox(height: 8.sp),
+                          if (showBanners) {
+                            print(
+                                "🎬 Showing banners: ${banners.length} banners");
 
-                          // Shop by Category Section
-                          Obx(
-                            () => catalogController.isCatalog.value
-                                ? const DummyGridMostSearch(text: "")
-                                : catalogController.catalogList.isNotEmpty
-                                    ? _ShopByCategorySection(
-                                        catalogController: catalogController,
-                                        analytics: analytics,
-                                        homeController: homeController,
-                                        onPressedViewAll: () =>
-                                            widget.onPressed?.call(2),
-                                      )
-                                    : const SizedBox.shrink(),
-                          ),
-
-                          Obx(() {
-                            // ✅ Watch brandController instead of homeController
-                            if (brandController.isBrand.value) {
-                              return const DummyHomeBrand();
-                            }
-
-                            // ✅ Get brands from brandController
-                            final brands = brandController.brandList
-                                .where((b) =>
-                                    b.containsKey("id") &&
-                                    (b["name"]?.toString().isNotEmpty ?? false))
-                                .toList();
-
-                            // ✅ If no brands, don't show anything (no empty space)
-                            if (brands.isEmpty) {
+                            // ✅ Safety: Build banner widgets and check if empty
+                            final bannerWidgets = widgitBannerList();
+                            if (bannerWidgets.isEmpty) {
+                              print("⚠️ No banner widgets to display");
                               return const SizedBox.shrink();
                             }
 
-                            // ✅ Show brands section
-                            return _FeaturedBrandsRow(
-                              homeController: homeController,
-                              brandController: brandController,
-                              analytics: analytics,
-                              onPressedViewAll: () => widget.onPressed?.call(1),
-                              brands: brands,
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  // ✅ BORDER RADIUS
+                                  child: SizedBox(
+                                    height: 230,
+                                    width: double.infinity,
+                                    child: PageView(
+                                      controller: _pageController,
+                                      onPageChanged: (index) {
+                                        if (index >= 0 && index < bannerWidgets.length) {
+                                          homeController.currentPage.value = index;
+                                        }
+                                      },
+                                      children: bannerWidgets,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 10.sp),
+                                banners.length == 1
+                                    ? const SizedBox.shrink()
+                                    : Center(
+                                        child: PageIndicator(
+                                          controller: _pageController,
+                                          count: banners.length,
+                                          size: 6.0.sp,
+                                          activeColor: Colors.black,
+                                          color: const Color(0xffE5E7EB),
+                                          layout: PageIndicatorLayout.WARM,
+                                          scale: 0.65,
+                                          space: 8.sp,
+                                        ),
+                                      ),
+                              ],
                             );
-                          }),
+                          }
 
-                          // Product Collections
-                          Obx(() {
-                            if (productController.isHomeProduct.value) {
-                              return DummyProductList(
-                                visibleSubtitle: true,
-                                text: (productController.tagname.value)
-                                    .toUpperCase(),
-                              );
+                          print("🎬 Not showing anything (SizedBox.shrink)");
+                          return const SizedBox.shrink();
+                        }),
+                        SizedBox(
+                          height: 6,
+                        ),
+                        // Marquee Banner
+                        Container(
+                          height: 30.sp,
+                          color: const Color(0xff2D2D2E),
+                          width: MediaQuery.of(context).size.width,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              top: Platform.isIOS ? 5.sp : 5.sp,
+                              bottom: Platform.isIOS ? 5.sp : 5.sp,
+                            ),
+                            child: Center(
+                              child: Marquee(
+                                text:
+                                    '|    More than 50+ Homegrown Brands   |    Fast and Reliable   |    Fashion for all occassions  |    Easy Returns & Exchanges   |    Secure Payments   ',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12.sp,
+                                  fontFamily: "Clash Display Regular",
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                scrollAxis: Axis.horizontal,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                velocity: 100.0,
+                                pauseAfterRound: Duration.zero,
+                                accelerationCurve: Curves.linear,
+                                decelerationCurve: Curves.easeOut,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 8.sp),
+
+                        // Shop by Category Section
+                        Obx(
+                          () => catalogController.isCatalog.value
+                              ? const DummyGridMostSearch(text: "")
+                              : catalogController.catalogList.isNotEmpty
+                                  ? _ShopByCategorySection(
+                                      catalogController: catalogController,
+                                      analytics: analytics,
+                                      homeController: homeController,
+                                      onPressedViewAll: () =>
+                                          widget.onPressed?.call(2),
+                                    )
+                                  : const SizedBox.shrink(),
+                        ),
+
+                        Obx(() {
+                          // ✅ Watch brandController instead of homeController
+                          if (brandController.isBrand.value) {
+                            return const DummyHomeBrand();
+                          }
+
+                          // ✅ Get brands from brandController
+                          final brands = brandController.brandList
+                              .where((b) =>
+                                  b.containsKey("id") &&
+                                  (b["name"]?.toString().isNotEmpty ?? false))
+                              .toList();
+
+                          // ✅ If no brands, don't show anything (no empty space)
+                          if (brands.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+
+                          // ✅ Show brands section
+                          return _FeaturedBrandsRow(
+                            homeController: homeController,
+                            brandController: brandController,
+                            analytics: analytics,
+                            onPressedViewAll: () => widget.onPressed?.call(1),
+                            brands: brands,
+                          );
+                        }),
+
+                        // Product Collections
+                        Obx(() {
+                          if (productController.isHomeProduct.value) {
+                            return DummyProductList(
+                              visibleSubtitle: true,
+                              text: (productController.tagname.value)
+                                  .toUpperCase(),
+                            );
+                          }
+
+                          // ✅ Collections are already filtered by the API to only include those with products
+                          // ✅ Extra safety check: Filter out any collections with empty products
+                          final allCollections = productController
+                              .homeProductList
+                              .where((c) => c.hasProducts)
+                              .toList();
+
+                          // ✅ PAGINATION: Only show a subset of collections
+                          final collectionsToShow =
+                              _currentCollectionPage * _collectionsPerPage;
+                          final collections =
+                              allCollections.take(collectionsToShow).toList();
+
+                          // Update hasMore flag
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (_hasMoreCollections !=
+                                (collections.length < allCollections.length)) {
+                              setState(() {
+                                _hasMoreCollections =
+                                    collections.length < allCollections.length;
+                              });
                             }
+                          });
 
-                            // ✅ Collections are already filtered by the API to only include those with products
-                            // ✅ Extra safety check: Filter out any collections with empty products
-                            final collections = productController
-                                .homeProductList
-                                .where((c) => c.hasProducts)
-                                .toList();
+                          print(
+                              "📊 Showing ${collections.length}/${allCollections.length} collections (page $_currentCollectionPage)");
 
+                          if (collections.isEmpty) {
                             print(
-                                "📊 Total collections with products: ${collections.length}");
+                                "⚠️ No collections to display - showing empty space");
+                            return Column(
+                              children: [
+                                SizedBox(height: 20.sp),
+                                const Center(
+                                  child: Text(
+                                    "No products available for this category",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                      fontFamily: "Clash Display Regular",
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 20.sp),
+                              ],
+                            );
+                          }
 
-                            if (collections.isEmpty) {
-                              print(
-                                  "⚠️ No collections to display - showing empty space");
-                              return Column(
-                                children: [
-                                  SizedBox(height: 20.sp),
-                                  const Center(
+                          return Column(
+                            children: [
+                              ListView.separated(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: collections.length,
+                                separatorBuilder: (_, __) =>
+                                    SizedBox(height: 4.sp),
+                                itemBuilder: (context, index) {
+                                  final collection = collections[index];
+                                  final int collectionId = collection.id;
+                                  final String title = collection.name;
+                                  final String subtitle = collection.desc ?? '';
+
+                                  // ✅ Get banners for current gender from standalone banner API
+                                  final currentGender = homeController
+                                      .genderText.value
+                                      .toLowerCase();
+                                  final standaloneBanners =
+                                      productController.getBannersForCollection(
+                                    collectionId,
+                                    currentGender,
+                                  );
+
+                                  // ✅ Convert products back to Map for existing widgets
+                                  final products = collection.products
+                                      .map((p) => p.toJson())
+                                      .toList();
+
+                                  // ✅ Safety check: Skip rendering if no products
+                                  if (products.isEmpty) {
+                                    return const SizedBox.shrink();
+                                  }
+
+                                  final bool dark = index.isEven;
+
+                                  return _CollectionSection(
+                                    collectionId: collectionId,
+                                    title: title,
+                                    subtitle: subtitle,
+                                    dark: dark,
+                                    products: products,
+                                    banners: standaloneBanners,
+                                    onProductTap: (productId) async {
+                                      Get.to(
+                                        ProductDetailsScreen(
+                                          productId: productId,
+                                          type: "add",
+                                          brandName: "",
+                                        ),
+                                      )?.then((_) {
+                                        setState(() {
+                                          SystemChrome.setSystemUIOverlayStyle(
+                                            const SystemUiOverlayStyle(
+                                              statusBarColor: whiteColor,
+                                              systemNavigationBarColor:
+                                                  whiteColor,
+                                            ),
+                                          );
+                                        });
+                                      });
+
+                                      await analytics.logEvent(
+                                        name: 'product_details_home_page',
+                                        parameters: <String, Object>{
+                                          'page_name':
+                                              'product_details_home_page',
+                                          'collection_id': collectionId,
+                                          'collection_name': title,
+                                          'product_id': productId.toString(),
+                                        },
+                                      );
+                                    },
+                                    onTitleTap: () {
+                                      productController.tagId.value =
+                                          collectionId;
+                                      productController.productSortBy.value =
+                                          "";
+                                      productController
+                                          .filterProductEnable.value = false;
+                                      productController.categoryFilter.value =
+                                          homeController.homeGenderValue.value;
+
+                                      Get.to(
+                                        ProductViewScreen(
+                                          title: title,
+                                          genderName:
+                                              homeController.genderText.value,
+                                        ),
+                                      )?.then((_) {
+                                        SystemChrome.setSystemUIOverlayStyle(
+                                          const SystemUiOverlayStyle(
+                                            statusBarColor: whiteColor,
+                                            systemNavigationBarColor:
+                                                whiteColor,
+                                          ),
+                                        );
+                                      });
+                                    },
+                                    onExploreAll: () async {
+                                      productController.tagId.value =
+                                          collectionId;
+                                      productController.productSortBy.value =
+                                          "";
+                                      productController
+                                          .filterProductEnable.value = false;
+                                      productController.categoryFilter.value =
+                                          homeController.homeGenderValue.value;
+
+                                      Get.to(
+                                        ProductViewScreen(
+                                          title: title,
+                                          genderName:
+                                              homeController.genderText.value,
+                                        ),
+                                      )?.then((_) {
+                                        SystemChrome.setSystemUIOverlayStyle(
+                                          const SystemUiOverlayStyle(
+                                            statusBarColor: whiteColor,
+                                            systemNavigationBarColor:
+                                                whiteColor,
+                                          ),
+                                        );
+                                      });
+
+                                      await analytics.logEvent(
+                                        name: 'homepage_productExploreAll',
+                                        parameters: <String, Object>{
+                                          'page_name':
+                                              'homepage_productExploreAll',
+                                          'collection_id': collectionId,
+                                          'collection_name': title,
+                                        },
+                                      );
+                                    },
+                                    seed: (productController
+                                                .productsShuffleSeed ??
+                                            DateTime.now()
+                                                .millisecondsSinceEpoch) +
+                                        collectionId,
+                                  );
+                                },
+                              ),
+
+                              // ✅ Loading indicator for pagination
+                              if (_isLoadingMoreCollections)
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(vertical: 20.sp),
+                                  child: const Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+
+                              // ✅ Bottom padding
+                              if (!_hasMoreCollections &&
+                                  collections.isNotEmpty)
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(vertical: 20.sp),
+                                  child: const Center(
                                     child: Text(
-                                      "No products available for this category",
+                                      "You've reached the end",
                                       style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 12,
                                         color: Colors.grey,
                                         fontFamily: "Clash Display Regular",
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 20.sp),
-                                ],
-                              );
-                            }
-
-                            return ListView.separated(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: collections.length,
-                              separatorBuilder: (_, __) =>
-                                  SizedBox(height: 4.sp),
-                              itemBuilder: (context, index) {
-                                final collection = collections[index];
-                                final int collectionId = collection.id;
-                                final String title = collection.name;
-                                final String subtitle = collection.desc ?? '';
-
-                                // ✅ Get banners for current gender from standalone banner API
-                                final currentGender = homeController
-                                    .genderText.value
-                                    .toLowerCase();
-                                final standaloneBanners =
-                                    productController.getBannersForCollection(
-                                  collectionId,
-                                  currentGender,
-                                );
-
-                                // ✅ Convert products back to Map for existing widgets
-                                final products = collection.products
-                                    .map((p) => p.toJson())
-                                    .toList();
-
-                                // ✅ Safety check: Skip rendering if no products
-                                if (products.isEmpty) {
-                                  return const SizedBox.shrink();
-                                }
-
-                                final bool dark = index.isEven;
-
-                                return Container(
-                                  color:
-                                      dark ? Colors.black : Colors.transparent,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // ✅ Left-aligned collection heading
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 16.sp,
-                                            right: 16.sp,
-                                            top: 10.sp,
-                                            bottom: 8.sp),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              title.toUpperCase(),
-                                              textAlign: TextAlign.left,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontFamily:
-                                                    "Clash Display Semibold",
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 18.sp,
-                                                color: dark
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                                letterSpacing: 0.4,
-                                              ),
-                                            ),
-                                            if (subtitle.isNotEmpty)
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 6.sp),
-                                                child: Text(
-                                                  subtitle,
-                                                  textAlign: TextAlign.left,
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    fontFamily: "Clash Display",
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 12.sp,
-                                                    color: dark
-                                                        ? Colors.white
-                                                            .withOpacity(0.85)
-                                                        : Colors.black
-                                                            .withOpacity(0.75),
-                                                  ),
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-
-                                      // ✅ NEW: Display collection banners from standalone API
-                                      if (standaloneBanners.isNotEmpty)
-                                        _StandaloneCollectionBanners(
-                                          banners: standaloneBanners,
-                                          collectionName: title,
-                                        ),
-
-                                      if (products.isNotEmpty)
-                                        _SectionStrip(
-                                          products: products,
-                                          dark: dark,
-                                          onProductTap: (productId) async {
-                                            Get.to(
-                                              ProductDetailsScreen(
-                                                productId: productId,
-                                                type: "add",
-                                                brandName: "",
-                                              ),
-                                            )?.then((_) {
-                                              setState(() {
-                                                SystemChrome
-                                                    .setSystemUIOverlayStyle(
-                                                  const SystemUiOverlayStyle(
-                                                    statusBarColor: whiteColor,
-                                                    systemNavigationBarColor:
-                                                        whiteColor,
-                                                  ),
-                                                );
-                                              });
-                                            });
-
-                                            await analytics.logEvent(
-                                              name: 'product_details_home_page',
-                                              parameters: <String, Object>{
-                                                'page_name':
-                                                    'product_details_home_page',
-                                                'collection_id': collectionId,
-                                                'collection_name': title,
-                                                'product_id':
-                                                    productId.toString(),
-                                              },
-                                            );
-                                          },
-                                          onExploreAll: () async {
-                                            productController.tagId.value =
-                                                collectionId;
-                                            productController
-                                                .productSortBy.value = "";
-                                            productController
-                                                .filterProductEnable
-                                                .value = false;
-                                            productController
-                                                    .categoryFilter.value =
-                                                homeController
-                                                    .homeGenderValue.value;
-
-                                            Get.to(
-                                              ProductViewScreen(
-                                                title: title,
-                                                genderName: homeController
-                                                    .genderText.value,
-                                              ),
-                                            )?.then((_) {
-                                              SystemChrome
-                                                  .setSystemUIOverlayStyle(
-                                                const SystemUiOverlayStyle(
-                                                  statusBarColor: whiteColor,
-                                                  systemNavigationBarColor:
-                                                      whiteColor,
-                                                ),
-                                              );
-                                            });
-
-                                            await analytics.logEvent(
-                                              name:
-                                                  'homepage_productExploreAll',
-                                              parameters: <String, Object>{
-                                                'page_name':
-                                                    'homepage_productExploreAll',
-                                                'collection_id': collectionId,
-                                                'collection_name': title,
-                                              },
-                                            );
-                                          },
-                                          seed: (productController
-                                                      .productsShuffleSeed ??
-                                                  DateTime.now()
-                                                      .millisecondsSinceEpoch) +
-                                              collectionId,
-                                        )
-                                      else
-                                        Center(
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 16.sp,
-                                                vertical: 10.sp),
-                                            child: Column(
-                                              children: [
-                                                Text(
-                                                  "Coming Soon",
-                                                  style: TextStyle(
-                                                    fontFamily:
-                                                        "Clash Display Semibold",
-                                                    fontSize: 14.sp,
-                                                    color: dark
-                                                        ? Colors.white
-                                                        : Colors.black,
-                                                  ),
-                                                ),
-                                                SizedBox(height: 4.sp),
-                                                Text(
-                                                  "Products will be added soon",
-                                                  style: TextStyle(
-                                                    fontSize: 12.sp,
-                                                    color: dark
-                                                        ? Colors.white
-                                                            .withOpacity(0.7)
-                                                        : Colors.black
-                                                            .withOpacity(0.6),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      SizedBox(height: 4.sp),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                          }),
-                        ],
-                      ),
+                                ),
+                            ],
+                          );
+                        }),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -1088,41 +1209,19 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     productController.tagId.value = 0;
     productController.productCategory = [];
     productController.productTags = [];
-    // ✅ DON'T clear banner lists - let new data replace old data naturally
-    // homeController.banner1List.clear();
-    // homeController.banner2List.clear();
-    // homeController.banner3List.clear();
+
+    // ✅ CLEAR all data lists including banners to prevent old data showing
+    homeController.banner1List.clear();
+    homeController.banner2List.clear();
+    homeController.banner3List.clear();
     catalogController.catalogList.clear();
     brandController.brandList.clear();
-  }
+    productController.homeProductList.clear();
 
-  // ✅ Handle horizontal swipe to change gender tabs
-  void _onHorizontalSwipe(DragEndDetails details) {
-    if (homeController.genderTabs.isEmpty || _genderTabController == null) {
-      return;
-    }
-
-    final velocity = details.primaryVelocity ?? 0;
-    const swipeThreshold = 300.0; // Minimum velocity to trigger tab change
-
-    if (velocity.abs() < swipeThreshold) return;
-
-    final currentIndex = _genderTabController!.index;
-
-    int newIndex;
-    if (velocity > 0) {
-      // Swipe right -> go to previous tab
-      newIndex = currentIndex - 1;
-    } else {
-      // Swipe left -> go to next tab
-      newIndex = currentIndex + 1;
-    }
-
-    // Check bounds
-    if (newIndex < 0 || newIndex >= homeController.genderTabs.length) return;
-
-    // ✅ Animate the TabController (this will trigger _onGenderTabChanged)
-    _genderTabController!.animateTo(newIndex);
+    // ✅ Reset pagination state
+    _currentCollectionPage = 1;
+    _hasMoreCollections = true;
+    _isLoadingMoreCollections = false;
   }
 
   Future<void> _changeGenderTab(int tabIndex) async {
@@ -1134,13 +1233,29 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         : int.tryParse(tab['id']?.toString() ?? '') ?? 0;
     final String genderName = tab['name']?.toString() ?? '';
 
+    // ✅ SET LOADING STATES FIRST to show loading UI
+    homeController.isBanner1.value = true;
+    catalogController.isCatalog.value = true;
+    brandController.isBrand.value = true;
+    productController.isHomeProduct.value = true;
+
+    // Update gender values
     homeController.genderText.value = genderName;
     homeController.homeGenderValue.value = genderId;
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('selectedGender', genderId);
 
+    // ✅ Clear all old data immediately after setting loading states
     _resetForTab();
+
+    // ✅ Clear image cache to free memory when switching tabs
+    try {
+      DefaultCacheManager().emptyCache();
+      print("🗑️ Cleared image cache on tab change");
+    } catch (e) {
+      print("⚠️ Failed to clear cache: $e");
+    }
 
     // Reset banner page controller to first page
     if (_pageController.hasClients) {
@@ -1152,26 +1267,23 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       homeController.discountScreenController.jumpTo(0);
     }
 
-    // Load data for new gender tab
+    // ✅ Load data for new gender tab with forceRefresh to ensure fresh data
     await Future.wait([
-      homeController.initializeHomeData(genderId),
-      productController.getHomeProduct(genderId),
-      productController.getCollectionBanners(),
-      catalogController.getCatalogData(genderId),
+      homeController.initializeHomeData(genderId, forceRefresh: true),
+      productController.getHomeProduct(genderId, forceRefresh: true),
+      productController.getCollectionBanners(forceRefresh: true),
+      catalogController.getCatalogData(genderId, forceRefresh: true),
       brandController.getBrandData("featured", genderId),
     ]);
 
-    // Force update
+    // Force update to trigger reactive rebuilds
     homeController.update();
     catalogController.update();
     brandController.update();
+    productController.update();
 
     catalogController.selectCategoryGender.value = genderId;
     catalogController.categoryName.value = genderName;
-
-    // Force fresh catalog data
-    catalogController.catalogList.clear();
-    await catalogController.getCatalogData(genderId);
 
     await analytics.logEvent(
       name: 'home_page_${genderName.toLowerCase()}Click',
@@ -1233,13 +1345,16 @@ class _SectionStrip extends StatelessWidget {
   final void Function(int productId) onProductTap;
   final VoidCallback onExploreAll;
   final int seed;
+  final bool skipShuffle;
 
   const _SectionStrip({
+    super.key,
     required this.products,
     required this.dark,
     required this.onProductTap,
     required this.onExploreAll,
     required this.seed,
+    this.skipShuffle = false,
   });
 
   String resolveBrandName(Map<String, dynamic> p) {
@@ -1306,104 +1421,134 @@ class _SectionStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = List<Map<String, dynamic>>.from(products)
-      ..shuffle(Random(seed));
-
-    // ✅ Show 12 products in 2 rows (6 columns) + 1 VIEW ALL button
-    final pick = items.take(12).toList();
-
-    // Split into pairs for 2-row layout
-    final List<List<Map<String, dynamic>>> columnPairs = [];
-    for (int i = 0; i < pick.length; i += 2) {
-      if (i + 1 < pick.length) {
-        columnPairs.add([pick[i], pick[i + 1]]);
-      } else {
-        columnPairs.add([pick[i]]);
-      }
+    final items = List<Map<String, dynamic>>.from(products);
+    if (!skipShuffle) {
+      items.shuffle(Random(seed));
     }
 
+    // ✅ Show maximum 8 products in 2 rows (4 each) - both rows scroll independently
+    // ✅ Reduced from 12 to 8 to prevent memory overload
+    final pick = items.take(8).toList();
+
+    // ✅ Dynamic layout based on product count
+    final totalProducts = pick.length;
+    final showTwoRows = totalProducts > 4;
+
+    // Split into rows dynamically
+    final row1Products = showTwoRows ? pick.take(4).toList() : pick;
+    final row2Products =
+        showTwoRows ? pick.skip(4).take(4).toList() : <Map<String, dynamic>>[];
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Row 1 - First products (independent scroll)
+        SizedBox(
+          height: 250.sp,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: 16.sp),
+            // ✅ If only 1 row, add VIEW ALL button at the end
+            itemCount:
+                showTwoRows ? row1Products.length : row1Products.length + 1,
+            separatorBuilder: (_, __) => SizedBox(width: 12.sp),
+            itemBuilder: (context, index) {
+              // ✅ VIEW ALL button for single row layout
+              if (!showTwoRows && index == row1Products.length) {
+                return _buildViewAllButton();
+              }
+
+              return SizedBox(
+                width: 150.sp,
+                child: _buildProductCard(row1Products[index]),
+              );
+            },
+          ),
+        ),
+
+        // ✅ Only show Row 2 if there are more than 4 products
+        if (showTwoRows) ...[
+          SizedBox(height: 12.sp),
+
+          // Row 2 - Next products + VIEW ALL button (independent scroll)
+          SizedBox(
+            height: 250.sp,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 16.sp),
+              itemCount: row2Products.length + 1, // +1 for VIEW ALL button
+              separatorBuilder: (_, __) => SizedBox(width: 12.sp),
+              itemBuilder: (context, index) {
+                // Last item is VIEW ALL button
+                if (index == row2Products.length) {
+                  return _buildViewAllButton();
+                }
+
+                return SizedBox(
+                  width: 150.sp,
+                  child: _buildProductCard(row2Products[index]),
+                );
+              },
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  // ✅ Helper method to build VIEW ALL button
+  Widget _buildViewAllButton() {
     return SizedBox(
-      height: 500.sp, // Height for 2 rows of products
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: 16.sp),
-        itemCount: columnPairs.length + 1, // +1 for VIEW ALL button
-        separatorBuilder: (_, __) => SizedBox(width: 12.sp),
-        itemBuilder: (context, index) {
-          // Last item is VIEW ALL button
-          if (index == columnPairs.length) {
-            return Container(
-              width: 200.sp,
-              alignment: Alignment.center,
-              child: GestureDetector(
-                onTap: onExploreAll,
-                child: Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 24.sp, vertical: 16.sp),
-                  decoration: BoxDecoration(
-                    color: dark ? Colors.black : Colors.white,
-                    borderRadius: BorderRadius.circular(12.sp),
-                    border: Border.all(
+      width: 180.sp,
+      child: Center(
+        child: GestureDetector(
+          onTap: onExploreAll,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 18.sp),
+            decoration: BoxDecoration(
+              color: dark ? Colors.black : Colors.white,
+              borderRadius: BorderRadius.circular(60.sp),
+              border: Border.all(
+                color: dark ? Colors.white : Colors.black,
+                width: 2.sp,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Text(
+                    "VIEW ALL PRODUCTS",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: "Clash Display Semibold",
+                      fontSize: 11.sp,
                       color: dark ? Colors.white : Colors.black,
-                      width: 2.sp,
+                      letterSpacing: 0.3,
+                      height: 1.3,
                     ),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "VIEW ALL\nPRODUCTS",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: "Clash Display Semibold",
-                          fontSize: 13.sp,
-                          color: dark ? Colors.white : Colors.black,
-                          letterSpacing: 0.3,
-                          height: 1.2,
-                        ),
-                      ),
-                      SizedBox(width: 14.sp),
-                      Container(
-                        padding: EdgeInsets.all(10.sp),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: dark ? Colors.white : Colors.black,
-                        ),
-                        child: Icon(
-                          Icons.arrow_forward,
-                          size: 16.sp,
-                          color: dark ? Colors.black : Colors.white,
-                        ),
-                      ),
-                    ],
+                ),
+                SizedBox(width: 8.sp),
+                Container(
+                  padding: EdgeInsets.all(10.sp),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: dark ? Colors.white : Colors.black,
+                  ),
+                  child: Icon(
+                    Icons.arrow_forward,
+                    size: 16.sp,
+                    color: dark ? Colors.black : Colors.white,
                   ),
                 ),
-              ),
-            );
-          }
-
-          // Regular product columns (2 products stacked vertically)
-          final columnProducts = columnPairs[index];
-
-          return SizedBox(
-            width: 150.sp,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Top product
-                _buildProductCard(columnProducts[0]),
-
-                if (columnProducts.length > 1) ...[
-                  SizedBox(height: 12.sp),
-                  // Bottom product
-                  _buildProductCard(columnProducts[1]),
-                ],
               ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -1437,6 +1582,11 @@ class _SectionStrip extends StatelessWidget {
                     height: 180.sp,
                     width: 160.sp,
                     fit: BoxFit.fill,
+                    // ✅ Add memory limits to prevent loading full-resolution images
+                    maxHeightDiskCache: 400,
+                    maxWidthDiskCache: 400,
+                    memCacheHeight: 400,
+                    memCacheWidth: 400,
                     errorWidget: (context, url, error) => Container(
                       height: 180.sp,
                       width: 150.sp,
@@ -1561,7 +1711,12 @@ class _BannerVideoPlayerState extends State<BannerVideoPlayer> {
   @override
   void initState() {
     super.initState();
-    _initializeVideo();
+    // ✅ Slight delay to prevent simultaneous loads
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) {
+        _initializeVideo();
+      }
+    });
   }
 
   Future<void> _initializeVideo() async {
@@ -1577,9 +1732,10 @@ class _BannerVideoPlayerState extends State<BannerVideoPlayer> {
           _isInitialized = true;
         });
 
-        // Autoplay with sound and loop
+        // Autoplay with reduced volume and loop
         _controller.setLooping(true);
-        _controller.setVolume(1.0); // Full volume
+        _controller
+            .setVolume(0.5); // ✅ Reduced volume to prevent audio overload
         _controller.play();
       }
     } catch (e) {
@@ -1817,10 +1973,15 @@ class _BannerProductTile extends StatelessWidget {
                     cacheManager: CacheManager(
                       Config("bannerProductsCache",
                           stalePeriod: const Duration(days: 15),
-                          maxNrOfCacheObjects: 100),
+                          maxNrOfCacheObjects: 50), // ✅ Reduced from 100
                     ),
                     imageUrl: imageUrl!,
                     fit: BoxFit.fill,
+                    // ✅ Add memory limits
+                    maxHeightDiskCache: 600,
+                    maxWidthDiskCache: 600,
+                    memCacheHeight: 600,
+                    memCacheWidth: 600,
                     errorWidget: (_, __, ___) =>
                         Image.asset(downloadImage, fit: BoxFit.fill),
                   )
@@ -1991,6 +2152,11 @@ class _ShopByCategorySection extends StatelessWidget {
                                   ? CachedNetworkImage(
                                       imageUrl: catalog["image"],
                                       fit: BoxFit.fill,
+                                      // ✅ Add memory limits for category images
+                                      maxHeightDiskCache: 300,
+                                      maxWidthDiskCache: 300,
+                                      memCacheHeight: 300,
+                                      memCacheWidth: 300,
                                       errorWidget: (_, __, ___) => Image.asset(
                                         dummyWishlistImage,
                                         fit: BoxFit.fill,
@@ -2053,29 +2219,23 @@ class _ShopByCategorySection extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 8.sp, horizontal: 16.sp),
               child: Container(
-                height: 44.sp,
+                height: 54.sp,
                 decoration: BoxDecoration(
-                  color: homeAppBarColor,
-                  borderRadius: BorderRadius.circular(8.sp),
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(12.sp),
                 ),
                 width: double.infinity,
+                padding:
+                    EdgeInsets.symmetric(horizontal: 24.sp, vertical: 12.sp),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const AppText(
                       text: "VIEW ALL",
-                      fontFamily: "Clash Display",
-                      fontWeight: FontWeight.w400,
+                      fontFamily: "Clash Display Semibold",
+                      fontWeight: FontWeight.w600,
                       color: whiteColor,
-                      fontSize: 12,
-                    ),
-                    SizedBox(width: 10.sp),
-                    SvgPicture.asset(
-                      arrowSearchImage,
-                      color: whiteColor,
-                      height: 8.sp,
-                      width: 8.sp,
-                      fit: BoxFit.fill,
+                      fontSize: 14,
                     ),
                   ],
                 ),
@@ -2089,226 +2249,558 @@ class _ShopByCategorySection extends StatelessWidget {
   }
 }
 
-// ✅ Widget to display standalone collection banners with auto-scroll
-class _StandaloneCollectionBanners extends StatefulWidget {
+// ✅ Widget to display standalone collection banners with horizontal scroll
+class _StandaloneCollectionBanners extends StatelessWidget {
   final List<StandaloneCollectionBanner> banners;
-  final String collectionName;
 
   const _StandaloneCollectionBanners({
     required this.banners,
-    required this.collectionName,
   });
 
   @override
-  State<_StandaloneCollectionBanners> createState() =>
-      _StandaloneCollectionBannersState();
-}
-
-class _StandaloneCollectionBannersState
-    extends State<_StandaloneCollectionBanners> {
-  late PageController _pageController;
-  int _currentPage = 0;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController(initialPage: 0);
-
-    // Auto-scroll only if there are multiple banners
-    if (widget.banners.length > 1) {
-      _timer = Timer.periodic(const Duration(seconds: 3), (_) {
-        if (_pageController.hasClients) {
-          final nextPage = (_currentPage + 1) % widget.banners.length;
-          _pageController.animateToPage(
-            nextPage,
-            duration: const Duration(milliseconds: 350),
-            curve: Curves.easeIn,
-          );
-        }
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (widget.banners.isEmpty) return const SizedBox.shrink();
+    if (banners.isEmpty) return const SizedBox.shrink();
 
-    // ✅ Edge-to-edge banners with vertical padding only
+    print("🖼️ Rendering ${banners.length} banners");
+    for (var b in banners) {
+      print(
+          "  - Banner ${b.id}: isVideo=${b.isVideo()}, url=${b.getImageUrl(isMobile: true)}");
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.sp),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Full width banner carousel
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.sp),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12.sp),
-              child: SizedBox(
-                height: 200.sp,
-                width: double.infinity,
-                child: PageView.builder(
-                  controller: _pageController,
-                  onPageChanged: (index) {
-                    setState(() {
-                      _currentPage = index;
-                    });
-                  },
-                  itemCount: widget.banners.length,
-                  itemBuilder: (context, index) {
-                    final banner = widget.banners[index];
-                    return _BannerItem(
-                      imageUrl: banner.getImageUrl(isMobile: true),
-                      redirectUrl: banner.redirectUrl,
-                      height: 200.sp,
-                      collectionId: banner.collectionId,
-                      collectionName: widget.collectionName,
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
+      child: SizedBox(
+        height: 200.sp,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: 16.sp),
+          itemCount: banners.length,
+          itemBuilder: (context, index) {
+            final banner = banners[index];
+            final isVideo = banner.isVideo(isMobile: true);
+            final mediaUrl = banner.getImageUrl(isMobile: true);
+            final itemWidth = banners.length == 1
+                ? MediaQuery.of(context).size.width - 32.sp
+                : MediaQuery.of(context).size.width * 0.85;
 
-          // Page indicators (only show if more than 1 banner)
-          if (widget.banners.length > 1) ...[
-            SizedBox(height: 10.sp),
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  widget.banners.length,
-                  (index) => Container(
-                    margin: EdgeInsets.symmetric(horizontal: 4.sp),
-                    width: _currentPage == index ? 8.sp : 6.sp,
-                    height: _currentPage == index ? 8.sp : 6.sp,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _currentPage == index
-                          ? Colors.black
-                          : const Color(0xffE5E7EB),
-                    ),
-                  ),
+            print("📌 Building banner $index: isVideo=$isVideo, url=$mediaUrl");
+
+            return Padding(
+              padding: EdgeInsets.only(
+                  right: index < banners.length - 1 ? 12.sp : 0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.sp),
+                child: SizedBox(
+                  width: itemWidth,
+                  height: 200.sp,
+                  child: isVideo
+                      ? _VideoBannerItem(
+                          videoUrl: mediaUrl,
+                          height: 200.sp,
+                        )
+                      : _BannerItem(
+                          imageUrl: mediaUrl,
+                          height: 200.sp,
+                        ),
                 ),
               ),
-            ),
-          ],
-        ],
+            );
+          },
+        ),
       ),
     );
   }
 }
 
-// Banner item widget
+// Video Banner item widget
+class _VideoBannerItem extends StatefulWidget {
+  final String videoUrl;
+  final double height;
+
+  const _VideoBannerItem({
+    required this.videoUrl,
+    required this.height,
+  });
+
+  @override
+  State<_VideoBannerItem> createState() => _VideoBannerItemState();
+}
+
+class _VideoBannerItemState extends State<_VideoBannerItem> {
+  VideoPlayerController? _controller;
+  bool _isInitialized = false;
+  bool _hasError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // ✅ Delayed initialization to prevent simultaneous video loads
+    Future.delayed(
+        Duration(milliseconds: 100 * _VideoBannerItemState._instanceCount++),
+        () {
+      if (mounted) {
+        _initializeVideo();
+      }
+    });
+  }
+
+  // ✅ Track number of instances to stagger initialization
+  static int _instanceCount = 0;
+
+  Future<void> _initializeVideo() async {
+    try {
+      print("🎬 Initializing video: ${widget.videoUrl}");
+      _controller =
+          VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl));
+      await _controller!.initialize();
+      if (mounted) {
+        print(
+            "✅ Video initialized: size=${_controller!.value.size}, duration=${_controller!.value.duration}");
+        _controller!.setLooping(true);
+        _controller!.setVolume(0); // Muted to prevent audio overload
+        _controller!.play();
+        setState(() {
+          _isInitialized = true;
+        });
+      }
+    } catch (e) {
+      print("❌ Video initialization error: $e");
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_hasError) {
+      return Container(
+        width: double.infinity,
+        height: widget.height,
+        color: Colors.black.withOpacity(0.04),
+        child: const Center(
+          child: Icon(
+            Icons.videocam_off,
+            color: Colors.grey,
+            size: 48,
+          ),
+        ),
+      );
+    }
+
+    if (_isInitialized &&
+        _controller != null &&
+        _controller!.value.isInitialized) {
+      return SizedBox.expand(
+        child: FittedBox(
+          fit: BoxFit.fill,
+          child: SizedBox(
+            width: _controller!.value.size.width,
+            height: _controller!.value.size.height,
+            child: VideoPlayer(_controller!),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      width: double.infinity,
+      height: widget.height,
+      color: Colors.black.withOpacity(0.04),
+      child: const Center(
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: Colors.black,
+        ),
+      ),
+    );
+  }
+}
+
+// Banner item widget (non-clickable)
 class _BannerItem extends StatelessWidget {
   final String imageUrl;
-  final String redirectUrl;
   final double height;
-  final int collectionId;
-  final String collectionName;
 
   const _BannerItem({
     required this.imageUrl,
-    required this.redirectUrl,
     required this.height,
-    required this.collectionId,
-    required this.collectionName,
   });
 
   @override
   Widget build(BuildContext context) {
-    final productController = Get.find<ProductController>();
-    final homeController = Get.find<HomeController>();
-
-    return GestureDetector(
-      onTap: () async {
-        if (redirectUrl.isNotEmpty) {
-          print("📍 Banner tapped: $redirectUrl");
-
-          // Navigate to the collection's product view
-          productController.tagId.value = collectionId;
-          productController.productSortBy.value = "";
-          productController.filterProductEnable.value = false;
-          productController.categoryFilter.value =
-              homeController.homeGenderValue.value;
-
-          Get.to(
-            ProductViewScreen(
-              title: collectionName,
-              genderName: homeController.genderText.value,
-            ),
-          )?.then((_) {
-            SystemChrome.setSystemUIOverlayStyle(
-              const SystemUiOverlayStyle(
-                statusBarColor: whiteColor,
-                systemNavigationBarColor: whiteColor,
-              ),
-            );
-          });
-
-          // Analytics tracking
-          final analytics = FirebaseAnalytics.instance;
-          await analytics.logEvent(
-            name: 'collection_banner_tap',
-            parameters: {
-              'collection_id': collectionId,
-              'collection_name': collectionName,
-              'redirect_url': redirectUrl,
-            },
-          );
-        }
-      },
-      // ✅ No border radius for edge-to-edge banners
-      child: imageUrl.isNotEmpty
-          ? CachedNetworkImage(
-              imageUrl: imageUrl,
+    return imageUrl.isNotEmpty
+        ? CachedNetworkImage(
+            imageUrl: imageUrl,
+            width: double.infinity,
+            height: height,
+            fit: BoxFit.fill,
+            // ✅ Add memory limits for collection banners
+            maxHeightDiskCache: 600,
+            maxWidthDiskCache: 800,
+            memCacheHeight: 600,
+            memCacheWidth: 800,
+            placeholder: (_, __) => Container(
               width: double.infinity,
               height: height,
-              fit: BoxFit.fill,
-              placeholder: (_, __) => Container(
-                width: double.infinity,
-                height: height,
-                color: Colors.black.withOpacity(0.04),
-                child: const Center(
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.black,
-                  ),
+              color: Colors.black.withOpacity(0.04),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.black,
                 ),
               ),
-              errorWidget: (_, __, ___) => Container(
-                width: double.infinity,
-                height: height,
-                color: Colors.black.withOpacity(0.04),
-                child: const Center(
-                  child: Icon(
-                    Icons.image_not_supported,
-                    color: Colors.grey,
-                    size: 48,
-                  ),
-                ),
-              ),
-            )
-          : Container(
+            ),
+            errorWidget: (_, __, ___) => Container(
               width: double.infinity,
               height: height,
               color: Colors.black.withOpacity(0.04),
               child: const Center(
                 child: Icon(
-                  Icons.image,
+                  Icons.image_not_supported,
                   color: Colors.grey,
                   size: 48,
                 ),
               ),
             ),
+          )
+        : Container(
+            width: double.infinity,
+            height: height,
+            color: Colors.black.withOpacity(0.04),
+            child: const Center(
+              child: Icon(
+                Icons.image,
+                color: Colors.grey,
+                size: 48,
+              ),
+            ),
+          );
+  }
+}
+
+// ✅ Sortable Collection Section Widget
+class _CollectionSection extends StatefulWidget {
+  final int collectionId;
+  final String title;
+  final String subtitle;
+  final bool dark;
+  final List<Map<String, dynamic>> products;
+  final List<StandaloneCollectionBanner> banners;
+  final Function(int) onProductTap;
+  final VoidCallback onTitleTap;
+  final VoidCallback onExploreAll;
+  final int seed;
+
+  const _CollectionSection({
+    required this.collectionId,
+    required this.title,
+    required this.subtitle,
+    required this.dark,
+    required this.products,
+    required this.banners,
+    required this.onProductTap,
+    required this.onTitleTap,
+    required this.onExploreAll,
+    required this.seed,
+  });
+
+  @override
+  State<_CollectionSection> createState() => _CollectionSectionState();
+}
+
+class _CollectionSectionState extends State<_CollectionSection> {
+  String _sortBy = 'none';
+  late List<Map<String, dynamic>> _displayProducts;
+
+  @override
+  void initState() {
+    super.initState();
+    _displayProducts = List.from(widget.products);
+  }
+
+  void _applySort(String sortType) {
+    setState(() {
+      _sortBy = sortType;
+      _displayProducts = List<Map<String, dynamic>>.from(widget.products);
+
+      if (sortType == 'price_low') {
+        _displayProducts.sort((a, b) {
+          final priceA = _getLowestPrice(a);
+          final priceB = _getLowestPrice(b);
+          return priceA.compareTo(priceB);
+        });
+        print("✅ Sorted LOW to HIGH");
+      } else if (sortType == 'price_high') {
+        _displayProducts.sort((a, b) {
+          final priceA = _getLowestPrice(a);
+          final priceB = _getLowestPrice(b);
+          return priceB.compareTo(priceA);
+        });
+        print("✅ Sorted HIGH to LOW");
+      } else if (sortType == 'discount') {
+        _displayProducts.sort((a, b) {
+          final discountA = _getMaxDiscount(a);
+          final discountB = _getMaxDiscount(b);
+          return discountB.compareTo(discountA);
+        });
+        print("✅ Sorted by DISCOUNT");
+      }
+
+      if (_displayProducts.isNotEmpty) {
+        print(
+            "   First product: ${_displayProducts.first['title'] ?? _displayProducts.first['name']} - ₹${_getLowestPrice(_displayProducts.first).toInt()}");
+      }
+    });
+  }
+
+  double _getLowestPrice(Map<String, dynamic> product) {
+    // Use same logic as _SectionStrip.resolvePricing
+    final rawPrice = product['displayPrice'] ??
+        product['basePrice'] ??
+        product['price'] ??
+        product['netAmount'] ??
+        product['msp'] ??
+        0;
+    if (rawPrice is num && rawPrice > 0) {
+      return rawPrice.toDouble();
+    }
+    return double.tryParse(rawPrice?.toString() ?? '0') ?? 0;
+  }
+
+  double _getMaxDiscount(Map<String, dynamic> product) {
+    // Get price
+    final rawPrice = product['displayPrice'] ??
+        product['basePrice'] ??
+        product['price'] ??
+        product['netAmount'] ??
+        product['msp'] ??
+        0;
+    double price = 0;
+    if (rawPrice is num && rawPrice > 0) {
+      price = rawPrice.toDouble();
+    } else {
+      price = double.tryParse(rawPrice?.toString() ?? '0') ?? 0;
+    }
+
+    // Get MRP
+    final rawMrp = product['displayMrp'] ??
+        product['mrp'] ??
+        product['manufacturingAmount'];
+    double mrp = 0;
+    if (rawMrp is num && rawMrp > 0) {
+      mrp = rawMrp.toDouble();
+    } else {
+      mrp = double.tryParse(rawMrp?.toString() ?? '0') ?? 0;
+    }
+
+    // Use discountPercent if available
+    final discountPercent = product['discountPercent'];
+    if (discountPercent is num && discountPercent > 0) {
+      return discountPercent.toDouble();
+    }
+
+    // Calculate discount
+    if (mrp > 0 && price < mrp) {
+      return ((mrp - price) / mrp) * 100;
+    }
+    return 0;
+  }
+
+  void _showSortOptions() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.sp)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.all(16.sp),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Sort By',
+                style: TextStyle(
+                  fontFamily: "Clash Display Semibold",
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(height: 16.sp),
+              _sortOption('Price: Low to High', 'price_low'),
+              _sortOption('Price: High to Low', 'price_high'),
+              _sortOption('Discount', 'discount'),
+              SizedBox(height: 8.sp),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _sortOption(String label, String value) {
+    final isSelected = _sortBy == value;
+    return InkWell(
+      onTap: () {
+        print("🔘 Sort option tapped: $value for ${widget.title}");
+        _applySort(value);
+        Navigator.pop(context);
+      },
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(vertical: 12.sp, horizontal: 16.sp),
+        margin: EdgeInsets.only(bottom: 8.sp),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.black : Colors.transparent,
+          borderRadius: BorderRadius.circular(12.sp),
+          border: Border.all(
+            color: isSelected ? Colors.black : Colors.grey.shade300,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontFamily: "Clash Display",
+            fontSize: 14.sp,
+            color: isSelected ? Colors.white : Colors.black,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print(
+        "🏗️ Building ${widget.title} - sortBy: $_sortBy, products: ${_displayProducts.length}");
+    if (_displayProducts.isNotEmpty) {
+      print(
+          "   First: ${_displayProducts.first['title'] ?? _displayProducts.first['name']} - ₹${_getLowestPrice(_displayProducts.first).toInt()}");
+    }
+    return Container(
+      color: widget.dark ? Colors.black : Colors.transparent,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with title and Sort By button
+          Padding(
+            padding: EdgeInsets.only(
+                left: 16.sp, right: 16.sp, top: 10.sp, bottom: 8.sp),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    // Clickable title
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: widget.onTitleTap,
+                        child: Text(
+                          widget.title.toUpperCase(),
+                          textAlign: TextAlign.left,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: "Clash Display Semibold",
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18.sp,
+                            color: widget.dark ? Colors.white : Colors.black,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Sort By button - outline style
+                    GestureDetector(
+                      onTap: _showSortOptions,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 12.sp, vertical: 6.sp),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(12.sp),
+                          border: Border.all(
+                            color: widget.dark ? Colors.white : Colors.black,
+                            width: 1.5.sp,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.sort,
+                              size: 14.sp,
+                              color: widget.dark ? Colors.white : Colors.black,
+                            ),
+                            SizedBox(width: 4.sp),
+                            Text(
+                              'Sort',
+                              style: TextStyle(
+                                fontFamily: "Clash Display",
+                                fontSize: 12.sp,
+                                color:
+                                    widget.dark ? Colors.white : Colors.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                if (widget.subtitle.isNotEmpty)
+                  Padding(
+                    padding: EdgeInsets.only(top: 6.sp),
+                    child: Text(
+                      widget.subtitle,
+                      textAlign: TextAlign.left,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: "Clash Display",
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12.sp,
+                        color: widget.dark
+                            ? Colors.white.withOpacity(0.85)
+                            : Colors.black.withOpacity(0.75),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
+          // Banners
+          if (widget.banners.isNotEmpty)
+            _StandaloneCollectionBanners(banners: widget.banners),
+
+          // Products
+          if (_displayProducts.isNotEmpty)
+            _SectionStrip(
+              key: ValueKey('${widget.collectionId}_$_sortBy'),
+              products: _displayProducts,
+              dark: widget.dark,
+              onProductTap: widget.onProductTap,
+              onExploreAll: widget.onExploreAll,
+              seed: widget.seed,
+              skipShuffle: _sortBy != 'none',
+            ),
+        ],
+      ),
     );
   }
 }
@@ -2431,6 +2923,11 @@ class _FeaturedBrandsRow extends StatelessWidget {
                                     height: 64.sp,
                                     width: 64.sp,
                                     fit: BoxFit.fill,
+                                    // ✅ Add memory limits for brand logos
+                                    maxHeightDiskCache: 150,
+                                    maxWidthDiskCache: 150,
+                                    memCacheHeight: 150,
+                                    memCacheWidth: 150,
                                     fadeInDuration:
                                         const Duration(milliseconds: 300),
                                     placeholder: (_, __) => Container(
