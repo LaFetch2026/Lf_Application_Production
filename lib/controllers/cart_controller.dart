@@ -1249,4 +1249,83 @@ class CartController extends BaseController {
       update();
     }
   }
+
+  /// Fetch cart banners from API
+  /// Endpoint: /banners?isCartBanner=true
+  Future<void> getCartBanners({bool forceRefresh = false}) async {
+    final cacheKey = 'cart_banners';
+
+    // ✅ Set loading state
+    isLoadingCartBanners.value = true;
+
+    try {
+      // 🔹 Try cache first
+      if (!forceRefresh) {
+        final cached = await CacheManager.get(key: cacheKey);
+        if (cached != null) {
+          cartBannerList.assignAll(cached as List<dynamic>);
+          print("✅ Cart banners loaded from cache: ${cartBannerList.length}");
+          isLoadingCartBanners.value = false;
+          return;
+        }
+      }
+
+      final prefs = await SharedPreferences.getInstance();
+      final token = (prefs.getString('token') ?? '').trim();
+
+      // ✅ Cart banners API with isCartBanner=true query
+      final uri = Uri.parse("${ApiConstants.baseUrl}/banners")
+          .replace(queryParameters: {'isCartBanner': 'true'});
+
+      print("📤 Hitting cart banners API: $uri");
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 30));
+
+      print("📥 Cart Banner Response Status: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body) as Map<String, dynamic>;
+        final List<dynamic> all = (decoded['data'] as List?) ?? const [];
+
+        print("📊 Total cart banners from API: ${all.length}");
+
+        // ✅ Filter only active banners with mobileImage
+        final List<dynamic> filtered = all.where((b) {
+          if (b is! Map) return false;
+
+          final isActive = b['isActive'] == true;
+          final mobileImage = (b['mobileImage']?.toString() ?? '').trim();
+          final hasImage = mobileImage.isNotEmpty;
+
+          print("🔎 Cart Banner: isActive=$isActive, hasImage=$hasImage");
+
+          return isActive && hasImage;
+        }).toList();
+
+        print("✅ Filtered cart banners: ${filtered.length}");
+
+        // ✅ Cache filtered data
+        await CacheManager.save(key: cacheKey, data: filtered);
+
+        // ✅ Update UI list
+        cartBannerList.assignAll(filtered);
+
+        print("✅ Cart banners updated successfully");
+      } else if (response.statusCode == 401) {
+        print("⚠️ Cart banners auth failed");
+      } else {
+        print("⚠️ Cart banners fetch failed: ${response.statusCode}");
+      }
+    } catch (e, st) {
+      print("❌ Cart banner fetch exception: $e\n$st");
+    } finally {
+      isLoadingCartBanners.value = false;
+    }
+  }
 }
