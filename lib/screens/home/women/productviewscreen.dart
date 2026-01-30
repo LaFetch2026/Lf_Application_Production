@@ -178,7 +178,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
       // ✅ Only load products if NOT in search mode
       if (widget.searchResults == null) {
         // ✅ Check if we have a specific collectionId
-        final collectionId = productController.tagId.value;
+        final collectionId = productController.collectionId.value;
 
         if (collectionId > 0) {
           // ✅ NEW: Fetch products directly from /filter-products API for this collection
@@ -219,7 +219,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     prefs.remove("category");
 
     print(
-        "🔄 ProductViewScreen initialized for collection: ${productController.tagId.value}, gender: ${widget.genderName}");
+        "🔄 ProductViewScreen initialized for collection: ${productController.collectionId.value}, gender: ${widget.genderName}");
   }
 
   // ✅ Load filter metadata for filter
@@ -268,7 +268,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
       return widget.searchResults!;
     }
 
-    final int selectedCollectionId = productController.tagId.value;
+    final int selectedCollectionId = productController.collectionId.value;
     final int superCatId = productController.categoryFilter.value;
 
     final List<Map<String, dynamic>> collections = productController
@@ -375,8 +375,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
               _appliedSortOption != "recommended" ? _appliedSortOption : null,
           superCatId: productController
               .categoryFilter.value, // ✅ Pass gender type (Men/Women/Kids)
-          collectionId: productController.tagId.value > 0
-              ? productController.tagId.value
+          collectionId: productController.collectionId.value > 0
+              ? productController.collectionId.value
               : null, // ✅ Pass collection ID if selected
         );
 
@@ -459,8 +459,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
               _appliedSortOption != "recommended" ? _appliedSortOption : null,
           superCatId: productController
               .categoryFilter.value, // ✅ Pass gender type (Men/Women/Kids)
-          collectionId: productController.tagId.value > 0
-              ? productController.tagId.value
+          collectionId: productController.collectionId.value > 0
+              ? productController.collectionId.value
               : null, // ✅ Pass collection ID if selected
         );
 
@@ -1114,8 +1114,6 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                       title: Text(
                                                         color.toUpperCase(),
                                                         style: TextStyle(
-                                                          fontFamily:
-                                                              "Clash Display",
                                                           fontSize: 14.sp,
                                                           fontWeight:
                                                               FontWeight.w400,

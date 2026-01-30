@@ -348,7 +348,7 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                                 genderType:
                                     homeController.homeGenderValue.value,
                                 categoryList: const [],
-                                tagIds: const [],
+                                collectionIds: const [],
                                 title: '',
                               ),
                             );

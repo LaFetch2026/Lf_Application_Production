@@ -67,7 +67,7 @@ class HomeController extends BaseController {
   RxInt cartValue = 0.obs;
 
   RxBool IsAnimateTag = true.obs;
-  RxInt tagId = 0.obs;
+  RxInt collectionId = 0.obs;
 
   ScrollController tagsController = ScrollController();
   ScrollController discountScreenController = ScrollController();
@@ -232,7 +232,8 @@ class HomeController extends BaseController {
           final name = (b['category']?['name'] ?? '').toString();
           final isCartBanner = b['isCartBanner'] == true;
 
-          print("🔎 Banner: category='$name', isCartBanner=$isCartBanner, match=${name.toUpperCase() == expected}");
+          print(
+              "🔎 Banner: category='$name', isCartBanner=$isCartBanner, match=${name.toUpperCase() == expected}");
 
           // ✅ HOME SCREEN: Show ALL banners (both isCartBanner true and false)
           // Cart screen will use separate API: /banners?isCartBanner=true
@@ -265,7 +266,8 @@ class HomeController extends BaseController {
 
   /// Helper method to update banner list based on gender
   void _updateBannerList(int gender, List<dynamic> data) {
-    print("📝 _updateBannerList called: gender=$gender, dataCount=${data.length}");
+    print(
+        "📝 _updateBannerList called: gender=$gender, dataCount=${data.length}");
 
     switch (gender) {
       case 1:

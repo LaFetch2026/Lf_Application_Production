@@ -31,7 +31,7 @@ class CategoryProductScreen extends StatefulWidget {
   final int categoryId;
   final int brandId;
   final int genderType;
-  final List tagIds;
+  final List collectionIds;
   final List categoryList;
   final String genderName;
   final String screen;
@@ -43,7 +43,7 @@ class CategoryProductScreen extends StatefulWidget {
     required this.categoryId,
     required this.brandId,
     required this.genderType,
-    required this.tagIds,
+    required this.collectionIds,
     required this.genderName,
     this.type = "category products",
     this.screen = "",
@@ -204,15 +204,16 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     }
 
     // ✅ Check if we should load by collection/tag ID instead of category ID
-    final hasTagIds = widget.tagIds.isNotEmpty;
+    final hascollectionIds = widget.collectionIds.isNotEmpty;
     final hasCategoryId = widget.categoryId > 0;
 
-    if (hasTagIds) {
+    if (hascollectionIds) {
       // Load products by collection/tag ID
-      print("🔹 Loading products by collection/tag ID: ${widget.tagIds}");
-      final collectionId = widget.tagIds.first is int
-          ? widget.tagIds.first
-          : int.tryParse(widget.tagIds.first?.toString() ?? '') ?? 0;
+      print(
+          "🔹 Loading products by collection/tag ID: ${widget.collectionIds}");
+      final collectionId = widget.collectionIds.first is int
+          ? widget.collectionIds.first
+          : int.tryParse(widget.collectionIds.first?.toString() ?? '') ?? 0;
 
       await catalogController.getFilterAndSortProducts(
         collectionId: collectionId,
@@ -227,7 +228,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       );
     } else {
       // No valid ID provided
-      print("⚠️ No valid categoryId or tagIds provided");
+      print("⚠️ No valid categoryId or collectionIds provided");
       catalogController.categoryProductList.clear();
       _isCategoryProductsLoaded = true;
       return;
@@ -422,13 +423,14 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
         // Load original products if needed
         if (!_isCategoryProductsLoaded) {
-          final hasTagIds = widget.tagIds.isNotEmpty;
+          final hascollectionIds = widget.collectionIds.isNotEmpty;
           final hasCategoryId = widget.categoryId > 0;
 
-          if (hasTagIds) {
-            final collectionId = widget.tagIds.first is int
-                ? widget.tagIds.first
-                : int.tryParse(widget.tagIds.first?.toString() ?? '') ?? 0;
+          if (hascollectionIds) {
+            final collectionId = widget.collectionIds.first is int
+                ? widget.collectionIds.first
+                : int.tryParse(widget.collectionIds.first?.toString() ?? '') ??
+                    0;
 
             await catalogController.getFilterAndSortProducts(
               collectionId: collectionId,
@@ -517,13 +519,13 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         // Filters cleared - reload original products
         print("🔹 Filters cleared - reloading original products");
 
-        final hasTagIds = widget.tagIds.isNotEmpty;
+        final hascollectionIds = widget.collectionIds.isNotEmpty;
         final hasCategoryId = widget.categoryId > 0;
 
-        if (hasTagIds) {
-          final collectionId = widget.tagIds.first is int
-              ? widget.tagIds.first
-              : int.tryParse(widget.tagIds.first?.toString() ?? '') ?? 0;
+        if (hascollectionIds) {
+          final collectionId = widget.collectionIds.first is int
+              ? widget.collectionIds.first
+              : int.tryParse(widget.collectionIds.first?.toString() ?? '') ?? 0;
 
           await catalogController.getFilterAndSortProducts(
             collectionId: collectionId,
@@ -541,13 +543,14 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         if (!_hasActiveFilters) {
           print("🔹 Sort reset to recommended - reloading original products");
 
-          final hasTagIds = widget.tagIds.isNotEmpty;
+          final hascollectionIds = widget.collectionIds.isNotEmpty;
           final hasCategoryId = widget.categoryId > 0;
 
-          if (hasTagIds) {
-            final collectionId = widget.tagIds.first is int
-                ? widget.tagIds.first
-                : int.tryParse(widget.tagIds.first?.toString() ?? '') ?? 0;
+          if (hascollectionIds) {
+            final collectionId = widget.collectionIds.first is int
+                ? widget.collectionIds.first
+                : int.tryParse(widget.collectionIds.first?.toString() ?? '') ??
+                    0;
 
             await catalogController.getFilterAndSortProducts(
               collectionId: collectionId,

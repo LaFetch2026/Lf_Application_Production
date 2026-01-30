@@ -100,7 +100,7 @@ class _WomenScreenState extends State<WomenScreen>
                                             onTap: () async {
                                               homeController.current.value =
                                                   index;
-                                              homeController.tagId.value =
+                                              homeController.collectionId.value =
                                                   homeController.tagsList[index]
                                                       ["id"];
                                               pageController.animateToPage(
@@ -186,7 +186,7 @@ class _WomenScreenState extends State<WomenScreen>
                                           onTap: () async {
                                             homeController.current.value =
                                                 index;
-                                            homeController.tagId.value =
+                                            homeController.collectionId.value =
                                                 homeController.tagsList[index]
                                                     ["id"];
                                             pageController.animateToPage(
@@ -318,7 +318,7 @@ class _WomenScreenState extends State<WomenScreen>
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 return HomeScreen(
-                    /*  tagId: productController.tagId.value,
+                    /*  collectionId: productController.collectionId.value,
                   genderType: widget.genderType, */
                     );
               },

@@ -33,10 +33,12 @@ class ProductController extends BaseController {
   bool _collectionBannersLoaded = false;
 
   /// Check if home products for a gender are already loaded
-  bool isHomeProductLoaded(int gender) => _loadedHomeProductGenders.contains(gender);
+  bool isHomeProductLoaded(int gender) =>
+      _loadedHomeProductGenders.contains(gender);
 
   /// Mark home products for gender as loaded
-  void markHomeProductLoaded(int gender) => _loadedHomeProductGenders.add(gender);
+  void markHomeProductLoaded(int gender) =>
+      _loadedHomeProductGenders.add(gender);
 
   /// Check if collection banners are loaded
   bool isCollectionBannersLoaded() => _collectionBannersLoaded;
@@ -46,6 +48,7 @@ class ProductController extends BaseController {
     _loadedHomeProductGenders.clear();
     _collectionBannersLoaded = false;
   }
+
   RxBool istags = false.obs;
   RxString errorMsg = "".obs;
   RxBool isCategoryProduct = false.obs;
@@ -63,7 +66,7 @@ class ProductController extends BaseController {
   RxBool isFrequentlyBought = false.obs;
   RxInt currentpage = 0.obs;
   RxInt inventoryId = 0.obs;
-  RxInt tagId = 0.obs;
+  RxInt collectionId = 0.obs;
   RxInt sizeInventoryId = 0.obs;
   RxInt colorInventoryId = 0.obs;
   RxInt fabricInventoryId = 0.obs;
@@ -635,8 +638,11 @@ class ProductController extends BaseController {
     bool forceRefresh = false,
   }) async {
     // ✅ Skip API call if data already loaded for this gender (unless force refresh)
-    if (!forceRefresh && isHomeProductLoaded(gender) && homeProductList.isNotEmpty) {
-      print('✅ Home products already loaded for gender: $gender, skipping API call');
+    if (!forceRefresh &&
+        isHomeProductLoaded(gender) &&
+        homeProductList.isNotEmpty) {
+      print(
+          '✅ Home products already loaded for gender: $gender, skipping API call');
       return;
     }
 
@@ -734,7 +740,9 @@ class ProductController extends BaseController {
   /// Fetch collection banners from the API
   Future<void> getCollectionBanners({bool forceRefresh = false}) async {
     // ✅ Skip if already loaded (unless force refresh)
-    if (!forceRefresh && _collectionBannersLoaded && collectionBanners.isNotEmpty) {
+    if (!forceRefresh &&
+        _collectionBannersLoaded &&
+        collectionBanners.isNotEmpty) {
       print('✅ Collection banners already loaded, skipping API call');
       return;
     }

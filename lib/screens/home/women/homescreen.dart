@@ -157,7 +157,7 @@ class HomeScreenState extends State<HomeScreen>
         homeController.showGenderList.value = false;
         homeController.currentPage.value = 0;
         productController.current.value = 50;
-        productController.tagId.value = 0;
+        productController.collectionId.value = 0;
         productController.tagname.value = "";
         productController.productCategory = [];
         productController.productTags = [];
@@ -561,7 +561,7 @@ class HomeScreenState extends State<HomeScreen>
                       genderName: homeController.genderText.value,
                       brandId: brandId,
                       genderType: homeController.homeGenderValue.value,
-                      tagIds: const [],
+                      collectionIds: const [],
                       categoryList: categoryId != 0 ? [categoryId] : const [],
                       title: '',
                     ),
@@ -1177,7 +1177,7 @@ class HomeScreenState extends State<HomeScreen>
                                         );
                                       },
                                       onTitleTap: () {
-                                        productController.tagId.value =
+                                        productController.collectionId.value =
                                             collectionId;
                                         productController.productSortBy.value =
                                             "";
@@ -1204,7 +1204,7 @@ class HomeScreenState extends State<HomeScreen>
                                         });
                                       },
                                       onExploreAll: () async {
-                                        productController.tagId.value =
+                                        productController.collectionId.value =
                                             collectionId;
                                         productController.productSortBy.value =
                                             "";
@@ -2285,7 +2285,7 @@ class _ShopByCategorySection extends StatelessWidget {
                             brandId: 0,
                             genderType: homeController.homeGenderValue.value,
                             categoryList: const [],
-                            tagIds: const [],
+                            collectionIds: const [],
                             title: '',
                           ),
                         );

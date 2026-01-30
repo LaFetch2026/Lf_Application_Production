@@ -297,7 +297,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                                 screen: "category",
                                                 genderType: widget.genderType,
                                                 categoryList: [],
-                                                tagIds: const [],
+                                                collectionIds: const [],
                                                 title: '',
                                               )));
                                           await analytics.logEvent(
