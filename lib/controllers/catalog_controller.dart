@@ -30,8 +30,26 @@ class CatalogController extends BaseController {
   RxList<dynamic> categoryProductList = <dynamic>[].obs;
   RxList<dynamic> sortedProductList = <dynamic>[].obs;
 
+  // ✅ Track which genders have already loaded catalog data
+  final Set<int> _loadedCatalogGenders = {};
+
+  /// Check if catalog for a gender is already loaded
+  bool isCatalogLoaded(int gender) => _loadedCatalogGenders.contains(gender);
+
+  /// Mark catalog for gender as loaded
+  void markCatalogLoaded(int gender) => _loadedCatalogGenders.add(gender);
+
+  /// Clear loaded tracking
+  void clearLoadedTracking() => _loadedCatalogGenders.clear();
+
   /// Fetch catalog by gender
   Future<void> getCatalogData(int gender, {bool forceRefresh = false}) async {
+    // ✅ Skip if already loaded (unless force refresh)
+    if (!forceRefresh && isCatalogLoaded(gender) && catalogList.isNotEmpty) {
+      print('✅ Catalog already loaded for gender: $gender, skipping API call');
+      return;
+    }
+
     final cacheKey = 'catalog_$gender';
 
     // Try to load from cache first
@@ -40,9 +58,12 @@ class CatalogController extends BaseController {
       if (cached != null && cached is List) {
         catalogList.clear();
         catalogList.assignAll(cached);
+        markCatalogLoaded(gender); // ✅ Mark as loaded
         update();
         print(
             "✅ Catalog loaded from cache for gender: $gender (${catalogList.length} items)");
+        isCatalog.value =
+            false; // ✅ Reset loading state when returning from cache
         return;
       }
     }
@@ -82,6 +103,9 @@ class CatalogController extends BaseController {
           // ✅ CRITICAL: Clear old data first, then assign new data
           catalogList.clear();
           catalogList.assignAll(data);
+
+          // ✅ Mark as loaded after successful API call
+          markCatalogLoaded(gender);
 
           // ✅ Force UI update
           update();
@@ -267,150 +291,158 @@ class CatalogController extends BaseController {
     int? brandId,
     int? collectionId,
     String? key,
-    int page = 1, // ✅ Page number for pagination
-    int limit = 20, // ✅ Items per page
-    bool appendResults =
-        false, // ✅ If true, append to existing list instead of replacing
+    int page = 1,
+    int limit = 20,
+    bool appendResults = false,
   }) async {
     isSorting.value = true;
     isCategory.value = true;
+
     final prefs = await SharedPreferences.getInstance();
 
     try {
-      // Build query parameters
       final Map<String, String> queryParams = {};
 
-      // Add filter parameters
+      /// ---------------- FILTERS ----------------
+
       if (brandIds != null && brandIds.isNotEmpty) {
         queryParams['brandIds'] = brandIds.join(',');
       }
+
       if (colors != null && colors.isNotEmpty) {
         queryParams['colors'] = colors.join(',');
       }
+
       if (sizes != null && sizes.isNotEmpty) {
         queryParams['sizes'] = sizes.join(',');
       }
+
       if (minPrice != null && minPrice.isNotEmpty) {
         queryParams['minPrice'] = minPrice;
       }
+
       if (maxPrice != null && maxPrice.isNotEmpty) {
         queryParams['maxPrice'] = maxPrice;
       }
+
       if (key != null && key.isNotEmpty) {
         queryParams['key'] = key;
       }
 
-      // Add sort parameter (skip if "recommended")
+      /// ---------------- SORT ----------------
+
       if (sortOption != null &&
           sortOption.isNotEmpty &&
           sortOption != 'recommended') {
         queryParams['sort'] = sortOption;
       }
 
-      // Add category filters
+      /// ---------------- CATEGORY ----------------
+
       if (superCatId != null && superCatId > 0) {
         queryParams['superCatId'] = superCatId.toString();
       }
+
       if (catId != null && catId > 0) {
         queryParams['catId'] = catId.toString();
       }
+
       if (subCatId != null && subCatId > 0) {
         queryParams['subCatId'] = subCatId.toString();
       }
+
       if (brandId != null && brandId > 0) {
         queryParams['brandId'] = brandId.toString();
       }
+
       if (collectionId != null && collectionId > 0) {
         queryParams['collectionId'] = collectionId.toString();
       }
 
-      // ✅ Add pagination parameters
+      /// ---------------- REQUIRED BY API ----------------
+
+      queryParams['status'] = 'true';
+
+      /// ---------------- PAGINATION ----------------
+
       queryParams['page'] = page.toString();
       queryParams['limit'] = limit.toString();
 
-      final uri = Uri.parse("${ApiConstants.baseUrl}/filter-products").replace(
-          queryParameters: queryParams.isNotEmpty ? queryParams : null);
+      final uri = Uri.parse(
+        "${ApiConstants.baseUrl}/filter-products",
+      ).replace(queryParameters: queryParams);
 
-      print("🔹 Filter & Sort Request → $uri (Page: $page, Limit: $limit)");
+      print("🔹 Filter API → $uri");
 
-      final response = await http.post(
+      final response = await http.get(
         uri,
         headers: {
-          'Accept': 'application/json; charset=UTF-8',
+          'Accept': 'application/json',
           'Authorization': 'Bearer ${prefs.getString('token')}',
         },
       ).timeout(
         const Duration(seconds: 30),
         onTimeout: () {
-          throw Exception('Request timeout');
+          throw TimeoutException("Request timeout");
         },
       );
 
-      // Validate response is JSON
+      /// ---------------- RESPONSE ----------------
+
       if (response.body.trim().startsWith('<!DOCTYPE') ||
           response.body.trim().startsWith('<html')) {
-        print("❌ Filter API returned HTML instead of JSON");
-        getSnackBar("Server error: Invalid response format");
+        getSnackBar("Server error");
         return;
       }
 
       final decoded = json.decode(response.body);
 
       if (response.statusCode == 200 && decoded["data"] != null) {
-        // ✅ FIX: Extract products from nested structure
         final data = decoded["data"];
         List<dynamic> products = [];
 
-        // Handle both response formats: {"data": [...]} or {"data": {"products": [...]}}
         if (data is List) {
           products = List<dynamic>.from(data);
         } else if (data is Map && data["products"] != null) {
           products = List<dynamic>.from(data["products"]);
         } else {
-          print("❌ Unexpected response format: $data");
           getSnackBar("Invalid response format");
           return;
         }
 
-        print("✅ Received ${products.length} products from API");
-
-        // ✅ Transform products to add displayPrice and displayMrp
         final transformed = products.map<Map<String, dynamic>>((p) {
-          if (p is! Map<String, dynamic>) return p;
+          if (p is! Map<String, dynamic>) return {};
           return ProductController.calculateDisplayPrices(p);
         }).toList();
 
-        // ✅ Update lists - append if pagination, replace otherwise
         if (appendResults && page > 1) {
           categoryProductList.addAll(transformed);
           sortedProductList.addAll(transformed);
-          print(
-              "✅ Appended ${transformed.length} products (Total: ${categoryProductList.length})");
         } else {
           categoryProductList.assignAll(transformed);
           sortedProductList.assignAll(transformed);
-          print("✅ Loaded ${categoryProductList.length} products");
         }
-      } else if (response.statusCode == 401) {
+
+        print("✅ Products loaded: ${transformed.length}");
+      }
+
+      /// ---------------- AUTH ----------------
+      else if (response.statusCode == 401) {
         await prefs.remove('token');
         HomeScreenState.clearCache();
         Get.offAll(() => const LoginScreen(initialTab: 0));
-        getSnackBar("Session expired, please login again");
-      } else if (response.statusCode == 500) {
-        getSnackBar("Server error, please try again later");
+        getSnackBar("Session expired");
       } else {
         getSnackBar(decoded["message"] ?? "Failed to fetch products");
-        print("❌ API Error [${response.statusCode}]: ${decoded["message"]}");
+        print("❌ API ${response.statusCode}: ${decoded["message"]}");
       }
     } on SocketException {
       getSnackBar("No internet connection");
     } on TimeoutException {
-      getSnackBar("Request timeout, please try again");
-    } on FormatException {
-      getSnackBar("Invalid response format");
+      getSnackBar("Request timeout");
     } catch (e) {
-      print("🚨 getFilterAndSortProducts error: $e");
-      getSnackBar("Something went wrong, please try again");
+      print("🚨 Filter error: $e");
+      getSnackBar("Something went wrong");
     } finally {
       isSorting.value = false;
       isCategory.value = false;

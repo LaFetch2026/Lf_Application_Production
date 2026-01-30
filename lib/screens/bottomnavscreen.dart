@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +8,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:video_player/video_player.dart';
 import '../common/widget/other/common_widget.dart';
 import '../controllers/cart_controller.dart';
+import '../controllers/home_controller.dart';
 import '../controllers/product_controller.dart';
 import '../controllers/profile_controller.dart';
 import '../core/constant/constants.dart';
@@ -34,21 +38,30 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final productController = Get.put(ProductController());
   final cartController = Get.put(CartController());
+  late final HomeController homeController;
   bool isGuest = false;
   int _currentIndex = 0;
 
-  late final List<Widget> _screens = [
-    HomeScreen(onPressed: (index) => _changeTab(index)),
-    const BrandsScreen(screen: "home"),
-    WomenCatalogScreen(),
-    AccountScreen(onPressed: () => _changeTab(2)),
-    const QuickScreen(),
-  ];
+  // ✅ Lazy loading: Track which tabs have been visited
+  final Set<int> _loadedTabs = {};
+
+  // ✅ Cache screens after first load to prevent rebuild
+  final Map<int, Widget> _cachedScreens = {};
+
+  // ✅ Video Ad State
+  VideoPlayerController? _videoAdController;
+  bool _showVideoAd = false;
+  bool _videoAdDismissed = false;
+  bool _videoAdLoading = false;
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.index ?? 0;
+    homeController = Get.put(HomeController());
+
+    // ✅ Mark initial tab as loaded
+    _loadedTabs.add(_currentIndex);
 
     // Status bar setup
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -61,6 +74,9 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     });
 
     _loadGuestFlag();
+
+    // ✅ Fetch video ad
+    _fetchVideoAd();
 
     // Only initialize profile for logged-in users
     Future.microtask(() async {
@@ -81,6 +97,92 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    _videoAdController?.dispose();
+    super.dispose();
+  }
+
+  // ✅ Fetch video ad from API
+  Future<void> _fetchVideoAd() async {
+    print("🎬 _fetchVideoAd called");
+    if (_videoAdDismissed || _videoAdLoading) {
+      print(
+          "🎬 Skipping - dismissed: $_videoAdDismissed, loading: $_videoAdLoading");
+      return;
+    }
+
+    setState(() => _videoAdLoading = true);
+
+    try {
+      final url = '${ApiConstants.baseUrl}/video-ad?status=true';
+      print("🎬 Fetching video ad from: $url");
+
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+      ).timeout(const Duration(seconds: 10));
+
+      print("🎬 Response: ${response.statusCode} - ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['status'] == 200 &&
+            data['data'] != null &&
+            (data['data'] as List).isNotEmpty) {
+          final videoData = data['data'][0];
+          final videoUrl = videoData['mobileVideoURL'] as String?;
+          print("🎬 Video URL: $videoUrl");
+
+          if (videoUrl != null && videoUrl.isNotEmpty) {
+            _initializeVideoPlayer(videoUrl);
+          } else {
+            print("🎬 Video URL is null or empty");
+          }
+        } else {
+          print("🎬 No video data in response");
+        }
+      } else {
+        print("🎬 Response status not 200: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("⚠️ Video ad fetch error: $e");
+    } finally {
+      if (mounted) {
+        setState(() => _videoAdLoading = false);
+      }
+    }
+  }
+
+  // ✅ Initialize video player
+  void _initializeVideoPlayer(String videoUrl) {
+    print("🎬 Initializing video player with URL: $videoUrl");
+    _videoAdController = VideoPlayerController.networkUrl(Uri.parse(videoUrl))
+      ..initialize().then((_) {
+        print("🎬 Video initialized! Size: ${_videoAdController?.value.size}");
+        if (mounted && !_videoAdDismissed) {
+          setState(() => _showVideoAd = true);
+          print("🎬 _showVideoAd set to TRUE");
+          _videoAdController?.setLooping(true);
+          _videoAdController?.setVolume(0); // Muted by default
+          _videoAdController?.play();
+        }
+      }).catchError((e) {
+        print("⚠️ Video player init error: $e");
+      });
+  }
+
+  // ✅ Dismiss video ad
+  void _dismissVideoAd() {
+    setState(() {
+      _showVideoAd = false;
+      _videoAdDismissed = true;
+    });
+    _videoAdController?.pause();
+    _videoAdController?.dispose();
+    _videoAdController = null;
+  }
+
   Future<void> _loadGuestFlag() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -89,7 +191,44 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   }
 
   void _changeTab(int index) {
+    // Reset scroll state when switching tabs
+    homeController.isScrolling.value = false;
+    // ✅ Mark tab as loaded when switching to it
+    _loadedTabs.add(index);
     setState(() => _currentIndex = index);
+  }
+
+  // ✅ Build screen only when needed (lazy loading)
+  Widget _buildScreen(int index) {
+    // Return cached screen if already built
+    if (_cachedScreens.containsKey(index)) {
+      return _cachedScreens[index]!;
+    }
+
+    // Build and cache the screen
+    Widget screen;
+    switch (index) {
+      case 0:
+        screen = HomeScreen(onPressed: (i) => _changeTab(i));
+        break;
+      case 1:
+        screen = const BrandsScreen(screen: "home");
+        break;
+      case 2:
+        screen = WomenCatalogScreen();
+        break;
+      case 3:
+        screen = AccountScreen(onPressed: () => _changeTab(2));
+        break;
+      case 4:
+        screen = const QuickScreen();
+        break;
+      default:
+        screen = const SizedBox.shrink();
+    }
+
+    _cachedScreens[index] = screen;
+    return screen;
   }
 
   void _handleProtectedNavigation(VoidCallback onAllowed) {
@@ -144,91 +283,403 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: whiteColor,
-      body: _currentIndex == 5
-          ? CartScreen(key: UniqueKey(), backgroundcolor: homeAppBarColor)
-          : _screens[_currentIndex],
-      bottomNavigationBar: BottomAppBar(
-        padding: EdgeInsets.zero,
-        color: whiteColor,
-        height: Platform.isIOS ? 55.sp : 60.sp,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _navItem(
-              icon: _currentIndex == 0 ? homeSelectedSvgImage : homeSvgImage,
-              label: "Home",
-              selected: _currentIndex == 0,
-              onTap: () {
-                _changeTab(0);
-                analytics.logEvent(name: 'home_page');
-              },
-            ),
-            _navItem(
-              icon: _currentIndex == 1 ? brandSelectedSvgImage : brandSvgImage,
-              label: "Brands",
-              selected: _currentIndex == 1,
-              onTap: () {
-                _changeTab(1);
-                analytics.logEvent(name: 'brands_page');
-              },
-            ),
-            _navItem(
-              icon: _currentIndex == 4 ? quickSelectedSvgImage : quickSvgImage,
-              label: "Quick",
-              selected: _currentIndex == 4,
-              iconSize: 24.sp,
-              fixedColor: lightPurpleColor,
-              onTap: () async {
-                // ✅ Step 1: Ask for location permission
-                bool hasPermission = await _handleLocationPermission(context);
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bottomNavHeight = Platform.isIOS
+        ? (55.sp + MediaQuery.of(context).padding.bottom)
+        : 60.sp;
 
-                if (hasPermission) {
-                  // ✅ Step 2: Try to get location in background
-                  try {
-                    final pos = await Geolocator.getCurrentPosition(
-                      desiredAccuracy: LocationAccuracy.high,
-                    );
-                    print("📍 Lat: ${pos.latitude}, Lng: ${pos.longitude}");
-                  } catch (e) {
-                    print("⚠️ Could not get location: $e");
-                  }
+    // Debug video state
+    print(
+        "🎬 BUILD - showVideoAd: $_showVideoAd, controller: ${_videoAdController != null}, initialized: ${_videoAdController?.value.isInitialized}");
 
-                  // ✅ Step 3: Show postal code input dialog
-                  _showPostalCodeDialog(context);
-                }
-              },
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: whiteColor,
+          extendBody: false,
+          // ✅ Lazy loading: Only build screens when visited, then keep them cached
+          body: _currentIndex == 5
+              ? CartScreen(key: UniqueKey(), backgroundcolor: homeAppBarColor)
+              : IndexedStack(
+                  index: _currentIndex,
+                  children: List.generate(5, (index) {
+                    // Only build screens that have been visited
+                    if (_loadedTabs.contains(index)) {
+                      return _buildScreen(index);
+                    }
+                    // Return empty placeholder for unvisited tabs
+                    return const SizedBox.shrink();
+                  }),
+                ),
+          bottomNavigationBar: Container(
+            padding: EdgeInsets.only(
+              bottom:
+                  Platform.isIOS ? MediaQuery.of(context).padding.bottom : 0,
             ),
-            _navItem(
-              icon: _currentIndex == 2
-                  ? categorySelectedSvgImage
-                  : categorySvgImage,
-              label: "Category",
-              selected: _currentIndex == 2,
-              onTap: () {
-                _changeTab(2);
-                analytics.logEvent(name: 'category_page');
-              },
+            decoration: BoxDecoration(
+              color: whiteColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, -2),
+                ),
+              ],
             ),
-            _navItem(
-              icon: _currentIndex == 3
-                  ? profileSelectedSvgImage
-                  : profileSvgImage,
-              label: "Profile",
-              selected: _currentIndex == 3,
-              onTap: () => _handleProtectedNavigation(() {
-                _changeTab(3);
-                analytics.logEvent(name: 'profile_page');
-              }),
+            height: Platform.isIOS
+                ? (55.sp + MediaQuery.of(context).padding.bottom)
+                : 60.sp,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _navItem(
+                  icon:
+                      _currentIndex == 0 ? homeSelectedSvgImage : homeSvgImage,
+                  label: "Home",
+                  selected: _currentIndex == 0,
+                  onTap: () {
+                    _changeTab(0);
+                    analytics.logEvent(name: 'home_page');
+                  },
+                ),
+                _navItem(
+                  icon: _currentIndex == 1
+                      ? brandSelectedSvgImage
+                      : brandSvgImage,
+                  label: "Brands",
+                  selected: _currentIndex == 1,
+                  onTap: () {
+                    _changeTab(1);
+                    analytics.logEvent(name: 'brands_page');
+                  },
+                ),
+                _navItem(
+                  icon: _currentIndex == 4
+                      ? quickSelectedSvgImage
+                      : quickSvgImage,
+                  label: "Quick",
+                  selected: _currentIndex == 4,
+                  iconSize: 24.sp,
+                  fixedColor: lightPurpleColor,
+                  onTap: () {
+                    // Show location choice dialog immediately
+                    _showLocationChoiceDialog(context);
+                  },
+                ),
+                _navItem(
+                  icon: _currentIndex == 2
+                      ? categorySelectedSvgImage
+                      : categorySvgImage,
+                  label: "Category",
+                  selected: _currentIndex == 2,
+                  onTap: () {
+                    _changeTab(2);
+                    analytics.logEvent(name: 'category_page');
+                  },
+                ),
+                _navItem(
+                  icon: _currentIndex == 3
+                      ? profileSelectedSvgImage
+                      : profileSvgImage,
+                  label: "Profile",
+                  selected: _currentIndex == 3,
+                  onTap: () => _handleProtectedNavigation(() {
+                    _changeTab(3);
+                    analytics.logEvent(name: 'profile_page');
+                  }),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+
+        // ✅ Video Ad Widget - Bottom Left (overlays on top of everything)
+        if (_showVideoAd &&
+            _videoAdController != null &&
+            _videoAdController!.value.isInitialized)
+          Positioned(
+            left: 12.sp,
+            bottom: bottomNavHeight + 12.sp,
+            child: Container(
+              width: screenWidth * 0.28,
+              height: screenHeight * 0.22,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.sp),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Stack(
+                children: [
+                  // Video Player
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8.sp),
+                    child: SizedBox(
+                      width: screenWidth * 0.28,
+                      height: screenHeight * 0.22,
+                      child: FittedBox(
+                        fit: BoxFit.fill,
+                        child: SizedBox(
+                          width: _videoAdController!.value.size.width,
+                          height: _videoAdController!.value.size.height,
+                          child: VideoPlayer(_videoAdController!),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Close Button - Top Right
+                  Positioned(
+                    top: 4.sp,
+                    right: 4.sp,
+                    child: GestureDetector(
+                      onTap: _dismissVideoAd,
+                      child: Container(
+                        width: 20.sp,
+                        height: 20.sp,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 14.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 
-  // ✅ NEW: Postal Code Input Dialog
+  // ✅ Location Choice Dialog - User chooses between postal code or live location
+  void _showLocationChoiceDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.sp),
+          ),
+          insetPadding: EdgeInsets.symmetric(horizontal: 20.sp),
+          backgroundColor: Colors.white,
+          child: Padding(
+            padding: EdgeInsets.all(24.sp),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title
+                Text(
+                  "Choose Location Method",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.sp,
+                    fontFamily: "Clash Display",
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: 8.sp),
+
+                // Subtitle
+                Text(
+                  "How would you like to verify your location?",
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 14.sp,
+                    fontFamily: "Clash Display Regular",
+                  ),
+                ),
+                SizedBox(height: 24.sp),
+
+                // Option 1: Use Live Location
+                GestureDetector(
+                  onTap: () async {
+                    Get.back(); // Close dialog first
+                    await _handleLiveLocationOption(context);
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(
+                        vertical: 14.sp, horizontal: 16.sp),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.sp),
+                      color: homeAppBarColor,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.my_location,
+                            color: Colors.white, size: 20.sp),
+                        SizedBox(width: 12.sp),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Use Live Location",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontFamily: "Clash Display",
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              SizedBox(height: 2.sp),
+                              Text(
+                                "Automatically detect your location",
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.8),
+                                  fontSize: 11.sp,
+                                  fontFamily: "Clash Display Regular",
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(Icons.arrow_forward_ios,
+                            color: Colors.white, size: 16.sp),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 12.sp),
+
+                // Option 2: Enter Postal Code
+                GestureDetector(
+                  onTap: () {
+                    Get.back(); // Close this dialog
+                    _showPostalCodeDialog(context); // Show postal code dialog
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(
+                        vertical: 14.sp, horizontal: 16.sp),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.sp),
+                      border: Border.all(color: Colors.grey[300]!),
+                      color: Colors.white,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.pin_drop_outlined,
+                            color: Colors.grey[700], size: 20.sp),
+                        SizedBox(width: 12.sp),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Enter Postal Code",
+                                style: TextStyle(
+                                  color: Colors.grey[800],
+                                  fontSize: 14.sp,
+                                  fontFamily: "Clash Display",
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              SizedBox(height: 2.sp),
+                              Text(
+                                "Manually enter your 6-digit postal code",
+                                style: TextStyle(
+                                  color: Colors.grey[500],
+                                  fontSize: 11.sp,
+                                  fontFamily: "Clash Display Regular",
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(Icons.arrow_forward_ios,
+                            color: Colors.grey[400], size: 16.sp),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16.sp),
+
+                // Cancel Button
+                Center(
+                  child: GestureDetector(
+                    onTap: () => Get.back(),
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 14.sp,
+                        fontFamily: "Clash Display",
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // ✅ Handle live location option
+  Future<void> _handleLiveLocationOption(BuildContext context) async {
+    if (!mounted) return;
+
+    // 1. First check if location services are enabled
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      showAppSnackBar(
+        "Please enable location services",
+        type: SnackBarType.error,
+      );
+      await Geolocator.openLocationSettings();
+      return;
+    }
+
+    // 2. Check current permission status
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    // 3. Request permission if denied (this triggers the system popup)
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    // ❌ user pressed "Don't allow"
+    if (permission == LocationPermission.denied) {
+      showAppSnackBar(
+        "Location permission denied",
+        type: SnackBarType.error,
+      );
+      return;
+    }
+
+    // ❌ permanently denied
+    if (permission == LocationPermission.deniedForever) {
+      showAppSnackBar(
+        "Enable location permission from app settings",
+        type: SnackBarType.error,
+      );
+      await Geolocator.openAppSettings();
+      return;
+    }
+
+    // ✅ permission allowed
+    // 🚫 NO LOADING
+    // 🚫 NO LOCATION FETCH
+
+    _showOutOfAreaDialog(context);
+  }
+
+  // ✅ Postal Code Input Dialog
   void _showPostalCodeDialog(BuildContext context) {
     final TextEditingController postalController = TextEditingController();
 
@@ -498,21 +949,23 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     double? iconSize,
     Color? fixedColor,
   }) {
-    final color = fixedColor ?? (selected ? homeAppBarColor : const Color(0xFF9CA3AF));
+    final color =
+        fixedColor ?? (selected ? homeAppBarColor : const Color(0xFF9CA3AF));
 
     return Expanded(
       child: InkWell(
         onTap: onTap,
         child: Padding(
           padding: EdgeInsets.only(
-            top: 10.sp,
-            bottom: Platform.isIOS ? 0 : 10.sp,
+            top: 8.sp,
+            bottom: Platform.isIOS ? 0 : 8.sp,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SvgPicture.asset(icon, height: iconSize ?? 19.sp, color: color),
-              SizedBox(height: 6.sp),
+              SizedBox(height: 4.sp),
               Text(
                 label.toUpperCase(),
                 style: TextStyle(

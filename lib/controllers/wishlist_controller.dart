@@ -456,8 +456,17 @@ class WishlistController extends BaseController {
           wishlistCount.value = 0;
           selected.clear();
         }
-        print("❌ fetchBoardProducts ${resp.statusCode} ${resp.reasonPhrase}");
-        getSnackBar("Failed to fetch board products.");
+
+        if (resp.statusCode == 404) {
+          // 404: Board doesn't have products yet or doesn't exist
+          print("⚠️ fetchBoardProducts 404: Board $boardId has no products or doesn't exist");
+          // Don't show error snackbar for empty board - it's a valid state
+        } else {
+          print("❌ fetchBoardProducts ${resp.statusCode} ${resp.reasonPhrase}");
+          if (!silent) {
+            getSnackBar("Failed to fetch board products.");
+          }
+        }
         return [];
       }
     } catch (e) {

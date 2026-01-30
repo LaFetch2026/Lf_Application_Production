@@ -514,10 +514,10 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                       crossAxisCount: 2,
                       scrollDirection: Axis.vertical,
                       padding: EdgeInsets.zero,
-                      childAspectRatio: 0.6,
+                      childAspectRatio: 0.55.sp,
                       physics: const ScrollPhysics(),
-                      crossAxisSpacing: 12.sp,
-                      mainAxisSpacing: 0.sp,
+                      crossAxisSpacing: 8.sp,
+                      mainAxisSpacing: 8.sp,
                       children: List.generate(items.length, (index) {
                         final m = items[index];
                         final pid = _prodId(m);
@@ -570,41 +570,23 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                               },
                             );
                           },
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // image
-                              Center(
-                                child: img.isNotEmpty
-                                    ? ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(8.sp),
-                                        child: SizedBox(
-                                          height: (MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  2) +
-                                              10.sp,
-                                          width: (MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  2) -
-                                              24.sp,
-                                          child: CachedNetworkImage(
-                                            cacheManager: CacheManager(
-                                              Config(
-                                                "brandGridCache",
-                                                stalePeriod:
-                                                    const Duration(days: 15),
-                                                maxNrOfCacheObjects: 100,
-                                              ),
-                                            ),
-                                            fit: BoxFit.fill,
-                                            imageUrl: img,
-                                            errorWidget: (_, __, ___) =>
-                                                Image.asset(
-                                              downloadImage,
-                                              fit: BoxFit.fill,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.sp),
+                                color: const Color.fromARGB(255, 47, 47, 47)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // image
+                                  Center(
+                                    child: img.isNotEmpty
+                                        ? ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8.sp),
+                                            child: SizedBox(
                                               height: (MediaQuery.of(context)
                                                           .size
                                                           .width /
@@ -615,71 +597,128 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                           .width /
                                                       2) -
                                                   24.sp,
+                                              child: CachedNetworkImage(
+                                                cacheManager: CacheManager(
+                                                  Config(
+                                                    "brandGridCache",
+                                                    stalePeriod: const Duration(
+                                                        days: 15),
+                                                    maxNrOfCacheObjects: 100,
+                                                  ),
+                                                ),
+                                                fit: BoxFit.fill,
+                                                imageUrl: img,
+                                                errorWidget: (_, __, ___) =>
+                                                    Image.asset(
+                                                  downloadImage,
+                                                  fit: BoxFit.fill,
+                                                  height:
+                                                      (MediaQuery.of(context)
+                                                                  .size
+                                                                  .width /
+                                                              2) +
+                                                          10.sp,
+                                                  width: (MediaQuery.of(context)
+                                                              .size
+                                                              .width /
+                                                          2) -
+                                                      24.sp,
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
-                                      )
-                                    : Image.asset(
-                                        dummyWishlistImage,
-                                        height:
-                                            (MediaQuery.of(context).size.width /
+                                          )
+                                        : Image.asset(
+                                            dummyWishlistImage,
+                                            height: (MediaQuery.of(context)
+                                                        .size
+                                                        .width /
                                                     2) +
                                                 10.sp,
-                                        width:
-                                            (MediaQuery.of(context).size.width /
+                                            width: (MediaQuery.of(context)
+                                                        .size
+                                                        .width /
                                                     2) -
                                                 24.sp,
-                                        fit: BoxFit.fill,
-                                      ),
-                              ),
-
-                              // name
-                              Padding(
-                                padding: EdgeInsets.only(top: 8.sp),
-                                child: AppText(
-                                  text: name,
-                                  color: productSubtitleColor,
-                                  maxLines: 1,
-                                  fontSize: 11,
-                                  fontFamily: "Clash Display Regular",
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-
-                              // price
-
-                              Padding(
-                                padding: EdgeInsets.only(top: 8.sp),
-                                child: Row(
-                                  children: [
-                                    if (mrp != basePrice)
-                                      Padding(
-                                        padding: EdgeInsets.only(right: 6.sp),
-                                        child: Text(
-                                          "\u{20B9} ${mrp.toStringAsFixed(0)}",
-                                          style: TextStyle(
-                                            color: searchTextColor,
-                                            fontSize: 11.sp,
-                                            decoration:
-                                                TextDecoration.lineThrough,
-                                            fontFamily: "Clash Display Regular",
-                                            fontWeight: FontWeight.w400,
+                                            fit: BoxFit.fill,
                                           ),
-                                        ),
-                                      ),
-                                    AppText(
-                                      text:
-                                          "\u{20B9} ${basePrice.toStringAsFixed(0)}",
-                                      color: whiteColor,
-                                      maxLines: 2,
+                                  ),
+
+                                  // name
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 8.sp),
+                                    child: AppText(
+                                      text: name,
+                                      color: productSubtitleColor,
+                                      maxLines: 1,
                                       fontSize: 11,
-                                      fontFamily: "Clash Display",
+                                      fontFamily: "Clash Display Regular",
                                       fontWeight: FontWeight.w500,
                                     ),
-                                  ],
-                                ),
+                                  ),
+
+                                  // price
+
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 8.sp),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        /// ✅ MRP (only if valid & greater)
+                                        if (mrp != null &&
+                                            mrp > 0 &&
+                                            mrp > basePrice)
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(right: 6.sp),
+                                            child: Text(
+                                              "₹${mrp.toStringAsFixed(0)}",
+                                              style: TextStyle(
+                                                color: searchTextColor,
+                                                fontSize: 11.sp,
+                                                decoration:
+                                                    TextDecoration.lineThrough,
+                                                fontFamily:
+                                                    "Clash Display Regular",
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ),
+
+                                        /// ✅ SELLING PRICE (always)
+                                        AppText(
+                                          text:
+                                              "₹${basePrice.toStringAsFixed(0)}",
+                                          color: whiteColor,
+                                          maxLines: 1,
+                                          fontSize: 11,
+                                          fontFamily: "Clash Display",
+                                          fontWeight: FontWeight.w500,
+                                        ),
+
+                                        /// ✅ OFF %
+                                        if (mrp != null &&
+                                            mrp > 0 &&
+                                            mrp > basePrice)
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(left: 6.sp),
+                                            child: Text(
+                                              "${(((mrp - basePrice) / mrp) * 100).round()}% OFF",
+                                              style: TextStyle(
+                                                fontSize: 9.sp,
+                                                fontFamily: "Clash Display",
+                                                fontWeight: FontWeight.w600,
+                                                color:
+                                                    lightPurpleColor, // 🔥 purple OFF
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  )
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         );
                       }),

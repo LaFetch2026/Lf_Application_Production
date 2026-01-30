@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -83,6 +84,7 @@ class BottomSizeState extends State<BottomSize> {
                   ),
                   GestureDetector(
                     onTap: () {
+                      HapticFeedback.lightImpact();
                       widget.onPressedCross.call();
                     },
                     child: Container(
@@ -124,6 +126,7 @@ class BottomSizeState extends State<BottomSize> {
                               children: [
                                 GestureDetector(
                                   onTap: () {
+                                    HapticFeedback.lightImpact();
                                     selectedProductSize = i;
                                     inventoryId = selectedProductSize["id"];
                                     print(inventoryId);

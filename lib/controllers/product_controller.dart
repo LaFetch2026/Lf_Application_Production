@@ -23,6 +23,29 @@ class ProductController extends BaseController {
   RxBool isFilter = false.obs;
   RxBool isMostSearch = false.obs;
   RxBool isHomeProduct = false.obs;
+
+  // ✅ Request deduplication flags - prevents concurrent duplicate API calls
+  bool _isHomeProductRequestInProgress = false;
+  bool _isCollectionBannersRequestInProgress = false;
+
+  // ✅ Track which genders have already loaded home products (to avoid duplicate API calls)
+  final Set<int> _loadedHomeProductGenders = {};
+  bool _collectionBannersLoaded = false;
+
+  /// Check if home products for a gender are already loaded
+  bool isHomeProductLoaded(int gender) => _loadedHomeProductGenders.contains(gender);
+
+  /// Mark home products for gender as loaded
+  void markHomeProductLoaded(int gender) => _loadedHomeProductGenders.add(gender);
+
+  /// Check if collection banners are loaded
+  bool isCollectionBannersLoaded() => _collectionBannersLoaded;
+
+  /// Clear loaded tracking (useful for force refresh)
+  void clearLoadedTracking() {
+    _loadedHomeProductGenders.clear();
+    _collectionBannersLoaded = false;
+  }
   RxBool istags = false.obs;
   RxString errorMsg = "".obs;
   RxBool isCategoryProduct = false.obs;
@@ -604,12 +627,21 @@ class ProductController extends BaseController {
     }
   }
 
+  int _activeGenderRequest = -1;
+
   Future<void> getHomeProduct(
     int gender, {
     bool withLimit = true,
     bool forceRefresh = false,
   }) async {
-    // Map gender int to displayFor string (UI/banner filtering)
+    // ✅ Skip API call if data already loaded for this gender (unless force refresh)
+    if (!forceRefresh && isHomeProductLoaded(gender) && homeProductList.isNotEmpty) {
+      print('✅ Home products already loaded for gender: $gender, skipping API call');
+      return;
+    }
+
+    _activeGenderRequest = gender; // ✅ mark latest request
+
     final displayFor = gender == 1
         ? 'men'
         : gender == 2
@@ -617,30 +649,25 @@ class ProductController extends BaseController {
             : 'accessories';
 
     final cacheKey =
-        'home_products_v4_${displayFor}_${withLimit ? "limited" : "all"}';
+        'home_products_v6_${displayFor}_${withLimit ? "limited" : "all"}';
 
+    /// ---------------- CACHE ----------------
     if (!forceRefresh) {
       final cached = await CacheManager.get(key: cacheKey);
       if (cached != null && cached is List) {
-        try {
-          final collections = cached
-              .whereType<Map<String, dynamic>>()
-              .map((json) => CollectionModel.fromJson(json))
-              .toList();
+        // ✅ VERY IMPORTANT CHECK
+        if (_activeGenderRequest != gender) return;
 
-          homeProductList
-            ..clear()
-            ..assignAll(collections);
+        final collections = cached
+            .whereType<Map<String, dynamic>>()
+            .map((e) => CollectionModel.fromJson(e))
+            .toList();
 
-          if (homeProductList.isNotEmpty) {
-            tagname.value = homeProductList.first.name;
-          }
-          print("✅ Loaded ${collections.length} collections from cache");
-          return;
-        } catch (e) {
-          print("⚠️ Error parsing cached collections: $e");
-          // Continue to fetch from API
-        }
+        homeProductList.assignAll(collections);
+        tagname.value = collections.isNotEmpty ? collections.first.name : '';
+        // ✅ Mark as loaded from cache
+        markHomeProductLoaded(gender);
+        return;
       }
     }
 
@@ -650,16 +677,11 @@ class ProductController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
 
-    final base = ApiConstants.baseUrl;
-
-    /// ✅ API:
-    /// {{laFetchBaseUrl}}/collection-with-products?limit=true&gender=1
-    final uri = Uri.parse("$base/collection-with-products").replace(
-      queryParameters: {
-        if (withLimit) 'limit': 'true',
-        'gender': gender.toString(), // 1=men, 2=women, 3=accessories
-      },
-    );
+    final uri = Uri.parse("${ApiConstants.baseUrl}/collection-with-products")
+        .replace(queryParameters: {
+      if (withLimit) 'limit': 'true',
+      'gender': gender.toString(),
+    });
 
     try {
       final response = await http.get(
@@ -670,46 +692,59 @@ class ProductController extends BaseController {
         },
       );
 
+      // ❌ ignore old response
+      if (_activeGenderRequest != gender) {
+        print("⛔ Ignored outdated response for gender=$gender");
+        return;
+      }
+
       if (response.statusCode == 200) {
         final body = json.decode(response.body);
 
-        // ✅ Parse with models
         final collections = CollectionUtils.parseCollections(body['data']);
 
-        // ✅ Filter by gender and products
-        final validCollections = CollectionUtils.filterByGender(
-          collections,
-          displayFor,
-        );
+        final validCollections =
+            CollectionUtils.filterByGender(collections, displayFor);
 
         homeProductList.assignAll(validCollections);
-
-        // ✅ Cache as JSON
-        await CacheManager.save(
-          key: cacheKey,
-          data: validCollections.map((c) => c.toJson()).toList(),
-        );
 
         tagname.value =
             validCollections.isNotEmpty ? validCollections.first.name : '';
 
-        print(
-            "✅ Loaded ${validCollections.length} collections for $displayFor");
-      } else {
-        homeProductList.clear();
-        print("❌ API Error: ${response.statusCode}");
+        await CacheManager.save(
+          key: cacheKey,
+          data: validCollections.map((e) => e.toJson()).toList(),
+        );
+
+        // ✅ Mark as loaded after successful API call
+        markHomeProductLoaded(gender);
+        print("✅ UI updated for gender=$gender");
       }
-    } catch (e, stackTrace) {
-      print("❌ Error loading collections: $e");
-      print("Stack trace: $stackTrace");
-      homeProductList.clear();
+    } catch (e) {
+      if (_activeGenderRequest == gender) {
+        homeProductList.clear();
+      }
     } finally {
-      isHomeProduct.value = false;
+      if (_activeGenderRequest == gender) {
+        isHomeProduct.value = false;
+      }
     }
   }
 
   /// Fetch collection banners from the API
   Future<void> getCollectionBanners({bool forceRefresh = false}) async {
+    // ✅ Skip if already loaded (unless force refresh)
+    if (!forceRefresh && _collectionBannersLoaded && collectionBanners.isNotEmpty) {
+      print('✅ Collection banners already loaded, skipping API call');
+      return;
+    }
+
+    // ✅ Prevent duplicate concurrent requests
+    if (_isCollectionBannersRequestInProgress) {
+      print("⏳ Collection banners request already in progress, skipping...");
+      return;
+    }
+
     final cacheKey = 'collection_banners_v1';
 
     // Try to load from cache first
@@ -719,6 +754,7 @@ class ProductController extends BaseController {
         try {
           final banners = CollectionBannerUtils.parseBanners(cached);
           collectionBanners.assignAll(banners);
+          _collectionBannersLoaded = true; // ✅ Mark as loaded
           print("✅ Loaded ${banners.length} collection banners from cache");
           return;
         } catch (e) {
@@ -727,6 +763,7 @@ class ProductController extends BaseController {
       }
     }
 
+    _isCollectionBannersRequestInProgress = true;
     final base = ApiConstants.baseUrl;
     final uri = Uri.parse("$base/collection-banners").replace(
       queryParameters: {'status': 'true'},
@@ -756,6 +793,7 @@ class ProductController extends BaseController {
           data: body['data'],
         );
 
+        _collectionBannersLoaded = true; // ✅ Mark as loaded
         print("✅ Loaded ${banners.length} collection banners from API");
       } else {
         collectionBanners.clear();
@@ -765,6 +803,8 @@ class ProductController extends BaseController {
       print("❌ Error loading collection banners: $e");
       print("Stack trace: $stackTrace");
       collectionBanners.clear();
+    } finally {
+      _isCollectionBannersRequestInProgress = false; // ✅ Reset request flag
     }
   }
 
@@ -947,8 +987,21 @@ class ProductController extends BaseController {
         String size = "";
         String color = "";
 
-        if (v["selectedOptions"] is List) {
-          for (final opt in v["selectedOptions"]) {
+        // ✅ Parse selectedOptions - handle both List and JSON String
+        dynamic selectedOptions = v["selectedOptions"];
+
+        // If it's a JSON string, parse it first
+        if (selectedOptions is String && selectedOptions.isNotEmpty) {
+          try {
+            selectedOptions = json.decode(selectedOptions);
+          } catch (e) {
+            print("⚠️ Failed to parse selectedOptions JSON: $e");
+            selectedOptions = null;
+          }
+        }
+
+        if (selectedOptions is List) {
+          for (final opt in selectedOptions) {
             if (opt == null || opt is! Map) continue;
 
             final optName = opt["name"]?.toString().toLowerCase() ?? "";
@@ -1842,7 +1895,7 @@ class ProductController extends BaseController {
       getSnackBar("Request timed out while fetching coupons");
     } catch (e, stacktrace) {
       print("✗ Error fetching coupons: $e\n$stacktrace");
-      getSnackBar("Error loading coupons");
+      getSnackBar("check your network connection");
     } finally {
       isCoupons.value = false;
     }
@@ -1964,6 +2017,10 @@ class ProductController extends BaseController {
         "deliveryPostalCode": deliveryPostalCode,
       };
 
+      // ✅ PRINT PAYLOAD
+      print("📦 Serviceability Payload:");
+      print(json.encode(body));
+
       final response = await http
           .post(
             uri,
@@ -1984,30 +2041,42 @@ class ProductController extends BaseController {
 
         if (data is Map && data['data'] != null && data['data'] is Map) {
           final delivery = data['data'];
+
+          final courier = delivery['courier']?.toString() ?? "";
           final date = delivery['estimatedDate']?.toString() ?? "";
           final days = delivery['estimatedDays']?.toString() ?? "";
 
+          courierName.value = courier;
           estimatedDate.value = date;
           estimatedDays.value = days;
           isServiceable.value = true;
 
-          // ✅ Only show delivery info
           serviceabilityMessage.value = "Delivery by $date ($days Days)";
 
+          print("✅ Courier: $courier");
           print("✅ Showing: ${serviceabilityMessage.value}");
           return data;
         } else {
           isServiceable.value = false;
+          courierName.value = "";
+          estimatedDate.value = "";
+          estimatedDays.value = "";
           serviceabilityMessage.value =
               "Service not available for this pincode";
         }
       } else {
         isServiceable.value = false;
+        courierName.value = "";
+        estimatedDate.value = "";
+        estimatedDays.value = "";
         serviceabilityMessage.value = "Failed to check serviceability";
       }
     } catch (e) {
       print("💥 checkServiceability error: $e");
       isServiceable.value = false;
+      courierName.value = "";
+      estimatedDate.value = "";
+      estimatedDays.value = "";
       serviceabilityMessage.value = "Error checking serviceability";
     } finally {
       isEstimateDate.value = false;
@@ -2131,7 +2200,6 @@ class ProductController extends BaseController {
       getSnackBar("Request timed out");
     } catch (e, s) {
       print("❌ getFilterMetadata error: $e\n$s");
-      getSnackBar("Error loading filters");
     } finally {
       isFilterMetadata.value = false;
     }

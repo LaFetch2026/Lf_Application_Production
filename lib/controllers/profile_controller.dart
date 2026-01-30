@@ -711,25 +711,46 @@ class ProfileController extends BaseController {
     try {
       final url =
           Uri.parse("${ApiConstants.baseUrl}/auth/delete-account/$userId");
-      final response = await _apiClient.delete(url);
-      final responseData = json.decode(response.body);
+      final headers = await _authHeaders();
+      final response = await http.post(url, headers: headers);
+
+      debugPrint("🗑️ Delete account response status: ${response.statusCode}");
+      debugPrint("🗑️ Delete account response body: ${response.body}");
 
       if (response.statusCode == 200) {
-        getSnackBar("Account deleted successfully!");
+        Map<String, dynamic>? responseData;
+        try {
+          responseData = json.decode(response.body);
+        } catch (_) {}
+
+        getSnackBar(responseData?['message'] ?? "Account deleted successfully!");
         await prefs.clear();
-        HomeScreenState.clearCache(); // ✅ Clear cache on account deletion
+        HomeScreenState.clearCache();
 
         Get.offAll(() => const ConfirmDeleteScreen());
+      } else if (response.statusCode == 401) {
+        getSnackBar("Session expired. Please login again.");
+        await prefs.clear();
+        HomeScreenState.clearCache();
+        Get.offAll(() => const LoginScreen(initialTab: 0));
       } else if (response.statusCode == 400) {
+        Map<String, dynamic>? responseData;
+        try {
+          responseData = json.decode(response.body);
+        } catch (_) {}
         getSnackBar(
-            "Account deletion failed: ${responseData['message'] ?? responseData['errors']?.values.first[0] ?? 'Bad request.'}");
+            "Account deletion failed: ${responseData?['message'] ?? responseData?['errors']?.values.first[0] ?? 'Bad request.'}");
       } else {
+        Map<String, dynamic>? responseData;
+        try {
+          responseData = json.decode(response.body);
+        } catch (_) {}
         getSnackBar(
-            "Account deletion failed: ${responseData['message'] ?? 'Unknown error'}");
+            "Account deletion failed: ${responseData?['message'] ?? 'Error ${response.statusCode}'}");
       }
     } catch (e) {
       print("❌ Error deleting account: $e");
-      getSnackBar("An error occurred: ${e.toString()}");
+      getSnackBar("An error occurred. Please check your network connection.");
     } finally {
       hideLoading();
     }

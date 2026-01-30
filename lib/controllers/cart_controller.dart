@@ -313,7 +313,7 @@ class CartController extends BaseController {
     } catch (e, st) {
       debugPrint("❌ Exception in getCartData: $e\n$st");
       _clearCartUi();
-      getSnackBar("Error loading cart");
+      getSnackBar("check your network connection");
     } finally {
       isOrder.value = false;
       update();
@@ -344,11 +344,8 @@ class CartController extends BaseController {
   void _restoreCartFromCache(Map<String, dynamic> cached) {
     try {
       if (cached['orderList'] != null && cached['orderList'] is List) {
-        orderList.assignAll(
-          List<Map<String, dynamic>>.from(
-            (cached['orderList'] as List).whereType<Map>()
-          )
-        );
+        orderList.assignAll(List<Map<String, dynamic>>.from(
+            (cached['orderList'] as List).whereType<Map>()));
       }
 
       if (cached['cartDetails'] != null && cached['cartDetails'] is Map) {

@@ -94,6 +94,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
       // Clear cached normalized products to force recalculation with new data
       _cachedNormalizedProducts = null;
+      _cachedNormalizedProducts2 = null;
 
       // Cache values to avoid repeated map lookups
       final brandInfo = brandController.brandDetails["brandInfo"];
@@ -326,9 +327,13 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 
   // Optimized product normalization - cache results
   List<Map<String, dynamic>>? _cachedNormalizedProducts;
+  List<Map<String, dynamic>>? _cachedNormalizedProducts2;
 
-  List<Map<String, dynamic>> _normalizedProducts() {
-    if (_cachedNormalizedProducts != null) {
+  List<Map<String, dynamic>> _normalizedProducts({bool secondList = false}) {
+    if (secondList && _cachedNormalizedProducts2 != null) {
+      return _cachedNormalizedProducts2!;
+    }
+    if (!secondList && _cachedNormalizedProducts != null) {
       return _cachedNormalizedProducts!;
     }
 
@@ -339,13 +344,16 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     final raw = (brandController.brandDetails["products"] as List?) ?? [];
     final brandName = _cachedBrandName ?? '';
 
-    // ✅ Show first 3 products in consistent order (by product ID)
-    // Note: Consider using featured/popular products instead of arbitrary limit
+    // ✅ Show products in consistent order (by product ID)
     final sortedRaw = List.from(raw)
       ..sort((a, b) => (a["id"] ?? 0).compareTo(b["id"] ?? 0));
-    final limitedRaw = sortedRaw.take(3).toList();
 
-    _cachedNormalizedProducts = limitedRaw.map<Map<String, dynamic>>((e) {
+    // First list: products 0-2, Second list: products 3-5
+    final limitedRaw = secondList
+        ? sortedRaw.skip(3).take(3).toList()
+        : sortedRaw.take(3).toList();
+
+    final normalizedList = limitedRaw.map<Map<String, dynamic>>((e) {
       if (e == null || e is! Map) {
         print("⚠️ Invalid product data (null or not a map)");
         return {
@@ -418,7 +426,13 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       };
     }).toList();
 
-    return _cachedNormalizedProducts!;
+    if (secondList) {
+      _cachedNormalizedProducts2 = normalizedList;
+      return _cachedNormalizedProducts2!;
+    } else {
+      _cachedNormalizedProducts = normalizedList;
+      return _cachedNormalizedProducts!;
+    }
   }
 
   void _pauseVideo() {
@@ -796,72 +810,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
 // Product List
                   Obx(() {
                     if (brandController.isProductBrand.value) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16.sp),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: 220.sp,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: 3,
-                            itemBuilder: (ctx, index) => Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(left: 16.sp),
-                                  height: 170.sp,
-                                  width: 136.sp,
-                                  decoration: BoxDecoration(
-                                    color: cardBg,
-                                    borderRadius: BorderRadius.circular(8.sp),
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(top: 8.sp, left: 16.sp),
-                                  child: Container(
-                                    height: 16.sp,
-                                    width: 100.sp,
-                                    decoration: BoxDecoration(
-                                      color: cardBg,
-                                      borderRadius: BorderRadius.circular(6.sp),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(top: 8.sp, left: 16.sp),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        height: 16.sp,
-                                        width: 40.sp,
-                                        decoration: BoxDecoration(
-                                          color: cardBg,
-                                          borderRadius:
-                                              BorderRadius.circular(6.sp),
-                                        ),
-                                      ),
-                                      SizedBox(width: 6.sp),
-                                      Container(
-                                        height: 16.sp,
-                                        width: 40.sp,
-                                        decoration: BoxDecoration(
-                                          color: cardBg,
-                                          borderRadius:
-                                              BorderRadius.circular(6.sp),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
+                      return const SizedBox.shrink();
                     }
-
                     final normalized = _normalizedProducts();
 
                     return BrandProductList(
@@ -869,8 +819,81 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       list: normalized,
                       scrollDirection: Axis.vertical,
                       onPressed: (productId, bName) async {
-                        // unchanged logic
+                        _pauseVideo();
+                        Get.to(
+                          ProductDetailsScreen(
+                            brandName: bName,
+                            productId: productId,
+                            type: "add",
+                          ),
+                        )?.then((_) {
+                          SystemChrome.setSystemUIOverlayStyle(
+                            const SystemUiOverlayStyle(
+                              statusBarColor: homeAppBarColor,
+                              statusBarIconBrightness: Brightness.light,
+                              statusBarBrightness: Brightness.dark,
+                              systemNavigationBarColor: homeAppBarColor,
+                            ),
+                          );
+                          _resumeVideo();
+                        });
+
+                        await analytics.logEvent(
+                          name: 'brand_product_details',
+                          parameters: {'page_name': 'brand_product_details'},
+                        );
                       },
+                    );
+                  }),
+
+                  // Second Product List
+                  Obx(() {
+                    if (brandController.isProductBrand.value) {
+                      return const SizedBox.shrink();
+                    }
+
+                    final normalized2 = _normalizedProducts(secondList: true);
+
+                    // Only show if there are products
+                    if (normalized2.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        BrandProductList(
+                          radius: 0,
+                          list: normalized2,
+                          scrollDirection: Axis.vertical,
+                          onPressed: (productId, bName) async {
+                            Get.to(
+                              ProductDetailsScreen(
+                                brandName: bName,
+                                productId: productId,
+                                type: "add",
+                              ),
+                            )?.then((_) {
+                              SystemChrome.setSystemUIOverlayStyle(
+                                const SystemUiOverlayStyle(
+                                  statusBarColor: homeAppBarColor,
+                                  statusBarIconBrightness: Brightness.light,
+                                  statusBarBrightness: Brightness.dark,
+                                  systemNavigationBarColor: homeAppBarColor,
+                                ),
+                              );
+                              _resumeVideo();
+                            });
+
+                            await analytics.logEvent(
+                              name: 'brand_product_details',
+                              parameters: {
+                                'page_name': 'brand_product_details'
+                              },
+                            );
+                          },
+                        ),
+                      ],
                     );
                   }),
 
@@ -929,7 +952,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 16.sp, vertical: 20.sp),
+                          horizontal: 16.sp, vertical: 16.sp),
                       child: Container(
                         height: 42.sp,
                         decoration: BoxDecoration(

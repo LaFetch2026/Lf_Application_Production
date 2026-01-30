@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../core/constant/constants.dart';
@@ -77,6 +78,7 @@ class DoubleIconButton extends StatelessWidget {
                             fontSize: firstFontSize,
                           ))),
                       onPressed: () {
+                        HapticFeedback.lightImpact();
                         onPressedFirst?.call();
                       },
                       label: Text(
@@ -126,6 +128,7 @@ class DoubleIconButton extends StatelessWidget {
                             fontSize: secondFontSize,
                           ))),
                       onPressed: () {
+                        HapticFeedback.lightImpact();
                         onPressedSecond?.call();
                       },
                       label: Text(

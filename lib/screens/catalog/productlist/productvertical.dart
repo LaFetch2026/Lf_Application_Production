@@ -15,6 +15,7 @@ import '../../../common/widget/bottom_sheets/bottomwishlist.dart';
 import '../../../common/widget/button/doublebtn.dart';
 import '../../../common/widget/lists/dummy_vertical_list.dart';
 import '../../../common/widget/other/productvedio.dart';
+import '../../../common/widget/other/product_price_display.dart';
 import '../../../common/widget/text/app_text.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
@@ -291,6 +292,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                 );
                                               },
                                               child: Column(
+                                                mainAxisSize: MainAxisSize.min,
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
@@ -476,6 +478,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                           height: 26.sp,
                                                           width: 80.sp,
                                                           child: Row(
+                                                            mainAxisSize: MainAxisSize.min,
                                                             children: [
                                                               Padding(
                                                                 padding: EdgeInsets
@@ -491,26 +494,28 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                   width: 16.sp,
                                                                 ),
                                                               ),
-                                                              AppText(
-                                                                text: productController.productCategoryList[index]
-                                                                            [
-                                                                            "aggregated_rating"] !=
-                                                                        null
-                                                                    ? productController
-                                                                        .productCategoryList[
-                                                                            index]
-                                                                            [
-                                                                            "aggregated_rating"]
-                                                                        .toString()
-                                                                    : "",
-                                                                color:
-                                                                    colorPrimary,
-                                                                fontSize: 12,
-                                                                fontFamily:
-                                                                    "Clash Display Regular",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
+                                                              Flexible(
+                                                                child: AppText(
+                                                                  text: productController.productCategoryList[index]
+                                                                              [
+                                                                              "aggregated_rating"] !=
+                                                                          null
+                                                                      ? productController
+                                                                          .productCategoryList[
+                                                                              index]
+                                                                              [
+                                                                              "aggregated_rating"]
+                                                                          .toString()
+                                                                      : "",
+                                                                  color:
+                                                                      colorPrimary,
+                                                                  fontSize: 12,
+                                                                  fontFamily:
+                                                                      "Clash Display Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
                                                               ),
                                                               Padding(
                                                                 padding: EdgeInsets
@@ -525,20 +530,22 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                   height: 16.sp,
                                                                 ),
                                                               ),
-                                                              AppText(
-                                                                text: productController
-                                                                    .productCategoryList[
-                                                                        index][
-                                                                        "reviews_count"]
-                                                                    .toString(),
-                                                                color:
-                                                                    colorPrimary,
-                                                                fontSize: 12,
-                                                                fontFamily:
-                                                                    "Clash Display Regular",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
+                                                              Flexible(
+                                                                child: AppText(
+                                                                  text: productController
+                                                                      .productCategoryList[
+                                                                          index][
+                                                                          "reviews_count"]
+                                                                      .toString(),
+                                                                  color:
+                                                                      colorPrimary,
+                                                                  fontSize: 12,
+                                                                  fontFamily:
+                                                                      "Clash Display Regular",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
                                                               ),
                                                             ],
                                                           ),
@@ -676,51 +683,19 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                         top: 10.sp,
                                                         left: 10.sp,
                                                         right: 1.sp),
-                                                    child: Row(
-                                                      children: [
-                                                        AppText(
-                                                          text:
-                                                              "\u{20B9} ${productController.productCategoryList[index]["price"] ?? ""}",
-                                                          color:
-                                                              deepGreytextColor,
-                                                          maxLines: 2,
-                                                          fontSize: 14,
-                                                          fontFamily:
-                                                              "Clash Display",
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                        Visibility(
-                                                          visible: productController
-                                                                              .productCategoryList[
-                                                                          index]
-                                                                      ["mrp"] !=
-                                                                  null
-                                                              ? true
-                                                              : false,
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 5.sp),
-                                                            child: Text(
-                                                              "\u{20B9} ${productController.productCategoryList[index]["mrp"] ?? ""}",
-                                                              style: TextStyle(
-                                                                color:
-                                                                    textHintColor,
-                                                                fontSize: 11.sp,
-                                                                decoration:
-                                                                    TextDecoration
-                                                                        .lineThrough,
-                                                                fontFamily:
-                                                                    "Clash Display Regular",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
+                                                    child: ProductPriceDisplay(
+                                                      price: productController
+                                                                  .productCategoryList[
+                                                              index]["price"] ??
+                                                          0,
+                                                      mrp: productController
+                                                              .productCategoryList[
+                                                          index]["mrp"],
+                                                      fontSize: 14,
+                                                      mrpFontSize: 11,
+                                                      discountFontSize: 11,
+                                                      fontWeight: FontWeight.w400,
+                                                      spacing: 5,
                                                     ),
                                                   ),
                                                   productController

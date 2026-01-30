@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -88,6 +89,7 @@ class DoubleButtonIconNew extends StatelessWidget {
                                         fontSize: 13.sp,
                                         fontFamily: fontFamily))),
                             onPressed: () {
+                              HapticFeedback.lightImpact();
                               onPressedFirst?.call();
                             },
                             label: Padding(
@@ -145,6 +147,7 @@ class DoubleButtonIconNew extends StatelessWidget {
                                     fontSize: 13.sp,
                                     fontFamily: fontFamily))),
                             onPressed: () {
+                              HapticFeedback.lightImpact();
                               onPressedSecond?.call();
                             },
                             child: Text(
@@ -165,6 +168,7 @@ class DoubleButtonIconNew extends StatelessWidget {
                                 backgroundColor: MaterialStateProperty.all(lineColor == dividerColor ? homeAppBarColor : lightPurpleColor),
                                 textStyle: MaterialStateProperty.all(TextStyle(color: whiteColor, fontSize: 13.sp, fontFamily: fontFamily))),
                             onPressed: () {
+                              HapticFeedback.lightImpact();
                               onPressedSecond?.call();
                             },
                             label: Padding(

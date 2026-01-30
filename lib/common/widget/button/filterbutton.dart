@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -62,6 +63,7 @@ class _FilterButtonState extends State<FilterButton> {
                                 fontSize: 13.sp,
                                 fontFamily: "Clash Display"))),
                         onPressed: () {
+                          HapticFeedback.lightImpact();
                           Get.back();
                         },
                         child: Text(
@@ -116,6 +118,7 @@ class _FilterButtonState extends State<FilterButton> {
                                     fontSize: 13.sp,
                                     fontFamily: "Clash Display"))),
                             onPressed: () {
+                              HapticFeedback.lightImpact();
                               setState(() {
                                 isFilter = true;
                               });

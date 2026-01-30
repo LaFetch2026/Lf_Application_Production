@@ -51,11 +51,31 @@ class BrandController extends BaseController {
   /// ✅ Map to store brand products by brandId for quick lookup
   RxMap<int, List<dynamic>> brandProductsMap = <int, List<dynamic>>{}.obs;
 
+  // ✅ Track which genders have already loaded brand data
+  final Set<String> _loadedBrandKeys = {};
+
+  /// Check if brand data for a type/gender is already loaded
+  bool isBrandLoaded(String type, int? gender) =>
+      _loadedBrandKeys.contains('${type}_${gender ?? 'all'}');
+
+  /// Mark brand data as loaded
+  void markBrandLoaded(String type, int? gender) =>
+      _loadedBrandKeys.add('${type}_${gender ?? 'all'}');
+
+  /// Clear loaded tracking
+  void clearLoadedTracking() => _loadedBrandKeys.clear();
+
   /// ================================================================
   /// ✅ Fetch Brands (Featured or All)
   /// ================================================================
   Future<void> getBrandData(String type,
       [int? gender, bool showLoader = true]) async {
+    // ✅ Skip if already loaded
+    if (isBrandLoaded(type, gender) && brandList.isNotEmpty) {
+      print('✅ Brand data already loaded for type: $type, gender: $gender, skipping API call');
+      return;
+    }
+
     if (showLoader) {
       isBrand.value = true;
     }
@@ -161,6 +181,9 @@ class BrandController extends BaseController {
       // Update selection list length
       selected.clear();
       selected = List<bool>.generate(brandList.length, (_) => false);
+
+      // ✅ Mark as loaded after successful API call
+      markBrandLoaded(type, gender);
 
       print(
           "✅ Brands loaded: ${brandList.length} (type: $type${gender != null ? ', gender: $gender' : ''})");

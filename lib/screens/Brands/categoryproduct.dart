@@ -1,14 +1,12 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 
 import 'dart:async';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
@@ -19,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../common/widget/appbar/productlist_appbar.dart';
+import '../../common/widget/cards/product_card.dart';
 import '../../common/widget/other/common_widget.dart';
 import '../../controllers/catalog_controller.dart';
 import '../../controllers/cart_controller.dart';
@@ -97,16 +96,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
   // ✅ Store original category product IDs for client-side filtering
   Set<int> _originalCategoryProductIds = {};
-
-  String _fmtINR(num? v, {bool cents = true}) {
-    if (v == null) return '';
-    final f = NumberFormat.currency(
-      locale: 'en_IN',
-      symbol: '₹ ',
-      decimalDigits: cents ? 2 : 0,
-    );
-    return f.format(v);
-  }
 
   String? _imageFrom(Map<String, dynamic> m) {
     final urlList = (m['imageUrls'] as List?)
@@ -740,7 +729,13 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                           final int pid =
                               int.tryParse(m['id']?.toString() ?? '') ?? 0;
 
-                          return GestureDetector(
+                          return ProductGridCard(
+                            imageUrl: img ?? '',
+                            title: shortDesc.isEmpty ? title : shortDesc,
+                            brandName: brand.isEmpty ? title : brand,
+                            price: price,
+                            mrp: mrp,
+                            showExpress: widget.type == "express",
                             onTap: () async {
                               if (pid == 0) {
                                 getSnackBar("Product not available");
@@ -769,15 +764,6 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                 },
                               );
                             },
-                            child: _ProductTileNoOverflow(
-                              imageUrl: img,
-                              brand: brand.isEmpty ? title : brand,
-                              description:
-                                  shortDesc.isEmpty ? title : shortDesc,
-                              mrp: mrp,
-                              price: price,
-                              fmt: _fmtINR,
-                            ),
                           );
                         },
                       ), // Close GridView.builder
@@ -1596,136 +1582,6 @@ class _SkeletonProductTile extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-/// ✅ Product Tile with Clash Display Font
-class _ProductTileNoOverflow extends StatelessWidget {
-  final String? imageUrl;
-  final String brand;
-  final String description;
-  final num? mrp;
-  final num? price;
-  final String Function(num?, {bool cents}) fmt;
-
-  const _ProductTileNoOverflow({
-    required this.imageUrl,
-    required this.brand,
-    required this.description,
-    required this.mrp,
-    required this.price,
-    required this.fmt,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    // Calculate discount percentage
-    int? discountPercent;
-    if (price != null && mrp != null && mrp! > price! && price! > 0) {
-      discountPercent = (((mrp! - price!) / mrp!) * 100).round();
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        /// IMAGE (takes fixed portion)
-        AspectRatio(
-          aspectRatio: 0.80,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: imageUrl != null
-                ? CachedNetworkImage(
-                    imageUrl: imageUrl!,
-                    fit: BoxFit.fill,
-                    errorWidget: (context, url, error) => Image.asset(
-                      dummyWishlistImage,
-                      fit: BoxFit.fill,
-                    ),
-                  )
-                : Image.asset(dummyWishlistImage, fit: BoxFit.fill),
-          ),
-        ),
-
-        SizedBox(height: 4.sp),
-
-        /// PRODUCT NAME
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 6.sp),
-          child: Text(
-            description.toUpperCase(),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              fontFamily: "Clash Display Semibold",
-              color: blackColor,
-            ),
-          ),
-        ),
-
-        /// BRAND NAME
-        Padding(
-          padding: EdgeInsets.only(left: 6.sp, right: 6.sp, top: 2.sp),
-          child: Text(
-            brand.toUpperCase(),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 11,
-              fontFamily: "Clash Display Regular",
-              fontWeight: FontWeight.w400,
-              color: Color(0xFF6B7280),
-            ),
-          ),
-        ),
-
-        /// PRICE ROW
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 6.sp),
-          child: Wrap(
-            spacing: 6.sp,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              // Base Price
-              if (price != null && price! > 0)
-                Text(
-                  fmt(price, cents: true),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: "Clash Display Semibold",
-                    color: blackColor,
-                  ),
-                ),
-              // MRP (crossed out)
-              if (mrp != null && price != null && mrp! > price!)
-                Text(
-                  fmt(mrp, cents: true),
-                  style: const TextStyle(
-                    fontSize: 11,
-                    decoration: TextDecoration.lineThrough,
-                    color: Color(0xFF9CA3AF),
-                    fontFamily: "Clash Display Regular",
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              // Discount %
-              if (discountPercent != null)
-                Text(
-                  "($discountPercent% OFF)",
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontFamily: "Clash Display",
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF9575CD),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

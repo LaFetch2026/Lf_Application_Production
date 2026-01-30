@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
@@ -11,6 +12,7 @@ import 'package:get/get_state_manager/src/simple/get_state.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../core/constant/constants.dart';
 import '../other/common_widget.dart';
+import '../other/product_price_display.dart';
 import '../text/app_text.dart';
 
 class HomeProductList extends StatelessWidget {
@@ -47,9 +49,11 @@ class HomeProductList extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (ctx, index) {
                     return Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         GestureDetector(
                           onTap: () {
+                            HapticFeedback.lightImpact();
                             onPressed?.call(list[index]["id"]);
                           },
                           child: AnimatedContainer(
@@ -59,6 +63,7 @@ class HomeProductList extends StatelessWidget {
                                 right: index == list.length - 1 ? 16.sp : 0.sp),
                             width: 136.sp,
                             child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Stack(
@@ -119,6 +124,7 @@ class HomeProductList extends StatelessWidget {
                                         padding: EdgeInsets.only(top: 60.sp),
                                         child: InkWell(
                                           onTap: () {
+                                            HapticFeedback.lightImpact();
                                             onPressedExplore?.call();
                                           },
                                           child: Container(
@@ -176,6 +182,31 @@ class HomeProductList extends StatelessWidget {
                                       fontSize: 11,
                                       fontFamily: "Clash Display Regular",
                                       fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                                // Price Display
+                                Padding(
+                                  padding: EdgeInsets.only(top: 4.sp),
+                                  child: Center(
+                                    child: ProductPriceDisplay(
+                                      price: list[index]["displayPrice"] ??
+                                          list[index]["basePrice"] ??
+                                          list[index]["price"] ??
+                                          0,
+                                      mrp: list[index]["displayMrp"] ??
+                                          list[index]["mrp"],
+                                      fontSize: 12,
+                                      mrpFontSize: 10,
+                                      discountFontSize: 10,
+                                      priceColor: parentIndex % 2 == 0
+                                          ? whiteColor
+                                          : deepGreytextColor,
+                                      mrpColor: parentIndex % 2 == 0
+                                          ? productSubtitleColor
+                                          : textHintColor,
+                                      spacing: 4,
+                                      isVertical: true,
                                     ),
                                   ),
                                 ),

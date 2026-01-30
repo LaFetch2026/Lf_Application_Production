@@ -10,6 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/other/common_widget.dart';
+import 'package:lafetch/common/widget/other/product_price_display.dart';
 import 'package:lafetch/controllers/cart_controller.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/ProductImageScreen.dart';
@@ -32,6 +33,8 @@ import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
 import '../../../core/utils/analytics_helper.dart';
 import '../../cartscreen.dart';
+import '../../wishlist/boardscreen.dart';
+import '../../wishlist/newboardscreen.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final int productId;
@@ -1381,12 +1384,40 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       controller: wishlistController,
                       wishlistList: wishlistController.wishlistList,
                       productImage: firstImg,
-                      onPressedBoard: () {/* open create board screen */},
+                      onPressedBoard: () {
+                        // Navigate to create new board screen
+                        Get.back(); // Close bottom sheet first
+                        Get.to(() => NewBoardScreen(
+                              title: "New Board",
+                              boardName: "",
+                              hintName: "Enter board name",
+                              boardId: 0,
+                              btnText: "Next",
+                              productId: productId,
+                              categoryId: 0,
+                              screen: "",
+                            ));
+                      },
                       onPressed: (boardId) async {
                         await wishlistController.addProductToBoard(
                             boardId, productId);
 
-                        Get.back();
+                        Get.back(); // Close bottom sheet
+
+                        // Navigate to BoardScreen after adding product
+                        final boardName = wishlistController.wishlistList
+                                .firstWhere(
+                                  (board) => board['id'] == boardId,
+                                  orElse: () => {'name': 'Board'},
+                                )['name']
+                                ?.toString() ??
+                            'Board';
+
+                        Get.to(() => BoardScreen(
+                              boardName: boardName,
+                              boardId: boardId,
+                              productId: productId,
+                            ));
                       },
                     ),
                   );
@@ -1732,80 +1763,23 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 final price =
                                     productController.getDisplayPrice();
                                 final mrp = productController.getDisplayMrp();
-                                final hasDiscount = mrp > price && mrp > 0;
 
                                 return Padding(
                                   padding: EdgeInsets.only(
                                       top: 8.sp, left: 12.sp, right: 12.sp),
-                                  child: Row(
-                                    children: [
-                                      // Selling Price
-                                      Flexible(
-                                        child: Padding(
-                                          padding:
-                                              EdgeInsets.only(right: 10.sp),
-                                          child: AppSpacingText(
-                                            text: "₹$price", // ✅ exact value
-                                            color: widget.backgroundcolor ==
-                                                    whiteColor
-                                                ? nameText
-                                                : whiteColor,
-                                            fontSize: 16,
-                                            fontFamily: "Clash Display",
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-
-                                      // MRP (strikethrough)
-                                      if (hasDiscount)
-                                        Flexible(
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsets.only(right: 10.sp),
-                                            child: Text(
-                                              "₹$mrp", // ✅ exact value
-                                              style: TextStyle(
-                                                color: searchTextColor,
-                                                letterSpacing: 0.65,
-                                                fontSize: 16.sp,
-                                                decoration:
-                                                    TextDecoration.lineThrough,
-                                                fontFamily:
-                                                    "Clash Display Regular",
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-
-                                      // Discount Badge
-                                      if (hasDiscount)
-                                        Flexible(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFFE6D5FF),
-                                              borderRadius:
-                                                  BorderRadius.circular(18),
-                                            ),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 8.sp,
-                                                vertical: 2.sp),
-                                            child: AppSpacingText(
-                                              text:
-                                                  "${(((mrp - price) / mrp) * 100).toStringAsFixed(2)}% OFF",
-                                              // ✅ exact percentage (2 decimals)
-                                              color: widget.backgroundcolor ==
-                                                      whiteColor
-                                                  ? expressText
-                                                  : homeAppBarColor,
-                                              fontSize: 12,
-                                              fontFamily: "Clash Display",
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                    ],
+                                  child: ProductPriceDisplay(
+                                    price: price,
+                                    mrp: mrp > price ? mrp : null,
+                                    fontSize: 16,
+                                    mrpFontSize: 16,
+                                    discountFontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    priceColor:
+                                        widget.backgroundcolor == whiteColor
+                                            ? nameText
+                                            : whiteColor,
+                                    mrpColor: searchTextColor,
+                                    spacing: 10,
                                   ),
                                 );
                               }),
@@ -2227,43 +2201,97 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 child: SizedBox(
                                   height: 44.sp,
                                   child: TextField(
-                                    controller:
-                                        productController.pincodeController,
-                                    keyboardType: TextInputType.number,
-                                    maxLength: 6,
-                                    decoration: InputDecoration(
-                                      counterText: "",
-                                      filled: true,
-                                      fillColor: whiteColor,
-                                      contentPadding: EdgeInsets.symmetric(
-                                          horizontal: 12.sp),
-                                      hintText: "Enter pincode",
-                                      hintStyle: TextStyle(
-                                        fontSize: 14.sp,
-                                        color: textHintColor,
-                                        fontFamily: "Clash Display",
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: borderColor),
-                                        borderRadius:
-                                            BorderRadius.circular(4.sp),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: borderColor),
-                                        borderRadius:
-                                            BorderRadius.circular(4.sp),
-                                      ),
-                                      suffixIcon: Obx(
-                                        () => TextButton(
-                                          onPressed: () async {
-                                            final pin = productController
-                                                .pincodeController.text
-                                                .trim();
+                                      controller:
+                                          productController.pincodeController,
+                                      keyboardType: TextInputType.number,
+                                      maxLength: 6,
+                                      decoration: InputDecoration(
+                                        counterText: "",
+                                        filled: true,
+                                        fillColor: whiteColor,
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 12.sp),
+                                        hintText: "Enter pincode",
+                                        hintStyle: TextStyle(
+                                          fontSize: 14.sp,
+                                          color: textHintColor,
+                                          fontFamily: "Clash Display",
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                              color: borderColor),
+                                          borderRadius:
+                                              BorderRadius.circular(4.sp),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                              color: borderColor),
+                                          borderRadius:
+                                              BorderRadius.circular(4.sp),
+                                        ),
 
-                                            if (productController
-                                                .checkPinvalidation(pin)) {
+                                        // ✅ CHECK BUTTON
+
+                                        suffixIcon: Obx(
+                                          () => TextButton(
+                                            onPressed: () async {
+                                              final pin = productController
+                                                  .pincodeController.text
+                                                  .trim();
+
+                                              print("👉 CLICKED CHECK BUTTON");
+
+                                              // PIN VALIDATION
+                                              if (!productController
+                                                  .checkPinvalidation(pin)) {
+                                                productController
+                                                        .serviceabilityMessage
+                                                        .value =
+                                                    "Enter valid pincode";
+                                                return;
+                                              }
+
+                                              // VARIANT VALIDATION - use getSelectedVariant()
+                                              final variant = productController
+                                                  .getSelectedVariant();
+
+                                              if (variant == null) {
+                                                // Check what needs to be selected
+                                                final hasSizes = productController
+                                                    .sizeInventoryList.isNotEmpty;
+                                                final hasColors = productController
+                                                    .colorInventoryList.isNotEmpty;
+                                                final sizeSelected = productController
+                                                    .selectedSize.value.isNotEmpty;
+                                                final colorSelected = productController
+                                                    .selectedColor.value.isNotEmpty;
+
+                                                String errorMsg = "Please select ";
+                                                if (hasSizes && !sizeSelected) {
+                                                  errorMsg += "size";
+                                                  if (hasColors) errorMsg += " and color";
+                                                } else if (hasColors && !colorSelected) {
+                                                  errorMsg += "color";
+                                                } else {
+                                                  errorMsg = "Product variant not available";
+                                                }
+
+                                                productController
+                                                        .serviceabilityMessage
+                                                        .value = errorMsg;
+                                                return;
+                                              }
+
+                                              final variantId = variant['id'] as int? ?? 0;
+                                              if (variantId == 0) {
+                                                productController
+                                                        .serviceabilityMessage
+                                                        .value =
+                                                    "Invalid variant selected";
+                                                return;
+                                              }
+
+                                              // RESET VALUES
                                               productController
                                                   .serviceabilityMessage
                                                   .value = "";
@@ -2276,102 +2304,93 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               productController
                                                   .estimatedDays.value = "";
 
+                                              print(
+                                                  "📦 Variant ID = $variantId");
+
                                               final result =
                                                   await productController
                                                       .checkServiceability(
-                                                variantId: productController
-                                                    .sizeInventoryId.value,
+                                                variantId: variantId,
                                                 deliveryPostalCode: pin,
                                               );
 
-                                              if (result != null) {
+                                              if (result != null &&
+                                                  result["data"] is Map) {
                                                 final data = result["data"];
-                                                if (data != null &&
-                                                    data is Map) {
-                                                  final date =
-                                                      data["estimatedDate"]
-                                                              ?.toString() ??
-                                                          "";
-                                                  final days =
-                                                      data["estimatedDays"]
-                                                              ?.toString() ??
-                                                          "";
-                                                  final courier =
-                                                      data["courier"]
-                                                              ?.toString() ??
-                                                          "";
 
-                                                  productController.courierName
-                                                      .value = courier;
-                                                  productController
-                                                      .estimatedDate
-                                                      .value = date;
-                                                  productController
-                                                      .estimatedDays
-                                                      .value = days;
-                                                  productController
-                                                      .isServiceable
-                                                      .value = true;
+                                                productController.courierName
+                                                    .value = data["courier"]
+                                                        ?.toString() ??
+                                                    "";
 
-                                                  // ✅ Show proper delivery info
-                                                  productController
-                                                          .serviceabilityMessage
-                                                          .value =
-                                                      "Delivery by $date ($days Days)";
-                                                } else {
-                                                  productController
-                                                      .isServiceable
-                                                      .value = false;
-                                                  productController
-                                                          .serviceabilityMessage
-                                                          .value =
-                                                      "Service not available for this pincode";
-                                                }
+                                                productController
+                                                        .estimatedDate.value =
+                                                    data["estimatedDate"]
+                                                            ?.toString() ??
+                                                        "";
+
+                                                productController
+                                                        .estimatedDays.value =
+                                                    data["estimatedDays"]
+                                                            ?.toString() ??
+                                                        "";
+
+                                                productController
+                                                    .isServiceable.value = true;
+
+                                                productController
+                                                        .serviceabilityMessage
+                                                        .value =
+                                                    "Delivery by ${productController.estimatedDate.value} "
+                                                    "(${productController.estimatedDays.value} Days)";
+                                              } else {
+                                                productController
+                                                        .serviceabilityMessage
+                                                        .value =
+                                                    "Service not available for this pincode";
                                               }
 
                                               FocusScope.of(context).unfocus();
-                                              await analytics.logEvent(
-                                                name:
-                                                    'check_pincode_productdetails',
-                                                parameters: <String, Object>{
-                                                  'page_name':
-                                                      'check_pincode_productdetails'
-                                                },
-                                              );
-                                            }
-                                          },
-                                          child: productController
-                                                  .isEstimateDate.value
-                                              ? const SizedBox(
-                                                  height: 14,
-                                                  width: 14,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                          strokeWidth: 2),
-                                                )
-                                              : Container(
-                                                  color: blackColor,
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 12.sp,
-                                                      vertical: 8.sp),
-                                                  child: const AppSpacingText(
-                                                    text: "CHECK",
-                                                    textAlign: TextAlign.center,
-                                                    fontFamily: "Clash Display",
-                                                    fontWeight: FontWeight.w600,
-                                                    color: whiteColor,
-                                                    fontSize: 13,
+                                            },
+                                            child: productController
+                                                    .isEstimateDate.value
+                                                ? const SizedBox(
+                                                    height: 16,
+                                                    width: 16,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                            strokeWidth: 2),
+                                                  )
+                                                : Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 12.sp,
+                                                            vertical: 8.sp),
+                                                    decoration: BoxDecoration(
+                                                      color: blackColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              4.sp),
+                                                    ),
+                                                    child: const AppSpacingText(
+                                                      text: "CHECK",
+                                                      fontFamily:
+                                                          "Clash Display",
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: whiteColor,
+                                                      fontSize: 13,
+                                                    ),
                                                   ),
-                                                ),
+                                          ),
                                         ),
                                       ),
+                                      style: TextStyle(
+                                        color: blackColor,
+                                        fontSize: 16.sp,
+                                        fontFamily: "Clash Display",
+                                      ),
                                     ),
-                                    style: TextStyle(
-                                      color: blackColor,
-                                      fontSize: 16.sp,
-                                      fontFamily: "Clash Display",
-                                    ),
-                                  ),
                                 ),
                               ),
 

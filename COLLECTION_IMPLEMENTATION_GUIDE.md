@@ -1,16 +1,19 @@
 # Collection Implementation Guide
 
 ## Overview
+
 This guide documents the collection data structure, implementation, and issues found in the LA Fetch app.
 
 ## Data Structure
 
 ### API Endpoint
+
 ```
 GET /collection-with-products?limit=true&gender={genderId}
 ```
 
 ### Response Structure
+
 ```json
 {
   "status": 200,
@@ -33,7 +36,9 @@ GET /collection-with-products?limit=true&gender={genderId}
 ## Issues Found
 
 ### 1. **No Type Safety** ❌
+
 **Current Implementation:**
+
 ```dart
 List homeProductList = [].obs;  // Raw list without type
 final c = collections[index];   // No type checking
@@ -41,12 +46,14 @@ final int collectionId = c['id'] is int ? c['id'] : 0;  // Runtime type checking
 ```
 
 **Issue:** Using raw Maps causes:
+
 - No compile-time type checking
 - Risk of runtime errors
 - Poor IDE autocomplete support
 - Difficult to maintain
 
 **Fix:** Use typed models
+
 ```dart
 RxList<CollectionModel> homeProductList = <CollectionModel>[].obs;
 final collection = collections[index];
@@ -54,7 +61,9 @@ final int collectionId = collection.id;  // Type-safe access
 ```
 
 ### 2. **Inconsistent Data Access** ❌
+
 **Current Implementation:**
+
 ```dart
 // Different ways to access the same data
 final name = c['name']?.toString() ?? '';
@@ -63,11 +72,13 @@ final products = (c['products'] as List<dynamic>?)?.whereType<Map<String, dynami
 ```
 
 **Issue:**
+
 - Multiple patterns for accessing nested data
 - Verbose null checks
 - Easy to make mistakes
 
 **Fix:** Use model methods
+
 ```dart
 final name = collection.name;
 final banners = collection.bannersFor('men');
@@ -75,7 +86,9 @@ final products = collection.products;
 ```
 
 ### 3. **Banner Filtering Logic Scattered** ❌
+
 **Current Implementation:**
+
 ```dart
 // Banner filtering happens in multiple places
 final List<dynamic> banners = (c['banners'] is List) ? List.from(c['banners'] as List) : [];
@@ -85,27 +98,33 @@ final currentGender = homeController.genderText.value.toLowerCase();
 ```
 
 **Issue:**
+
 - Banner filtering not applied consistently
 - May show wrong banners for current gender
 - Logic duplicated across the app
 
 **Fix:** Centralized filtering in model
+
 ```dart
 final banners = collection.bannersFor(currentGender);  // Automatically filtered and sorted
 ```
 
 ### 4. **Missing Error Handling** ❌
+
 **Current Implementation:**
+
 ```dart
 homeProductList.assignAll(data);  // No validation
 ```
 
 **Issue:**
+
 - Malformed data can crash the app
 - No graceful degradation
 - Silent failures
 
 **Fix:** Add validation
+
 ```dart
 try {
   final collections = CollectionUtils.parseCollections(decoded['data']);
@@ -118,7 +137,9 @@ try {
 ```
 
 ### 5. **Gender Filtering Issues** ⚠️
+
 **Current Issue:**
+
 ```dart
 // Collections are fetched with gender parameter
 // But productList may still contain items not meant for that gender
@@ -126,6 +147,7 @@ try {
 ```
 
 **Fix:** Filter collections properly
+
 ```dart
 final validCollections = CollectionUtils.filterByGender(
   collections,
@@ -134,17 +156,21 @@ final validCollections = CollectionUtils.filterByGender(
 ```
 
 ### 6. **Image URL Selection** ⚠️
+
 **Current Implementation:**
+
 ```dart
 final banner = sortedBanners[index];
 imageUrl: banner['mobileImageUrl']?.toString() ?? '',
 ```
 
 **Issue:**
+
 - Doesn't fall back to web image if mobile is null
 - Hardcoded platform detection
 
 **Fix:** Use helper method
+
 ```dart
 final banner = sortedBanners[index];
 imageUrl: banner.getImageUrl(isMobile: Platform.isAndroid || Platform.isIOS),
@@ -153,6 +179,7 @@ imageUrl: banner.getImageUrl(isMobile: Platform.isAndroid || Platform.isIOS),
 ## Current Implementation Status
 
 ### ✅ Working Features
+
 1. Collections are fetched and displayed correctly
 2. Products within collections show properly
 3. Banners are displayed with auto-scroll
@@ -160,6 +187,7 @@ imageUrl: banner.getImageUrl(isMobile: Platform.isAndroid || Platform.isIOS),
 5. Gender-based API calls work
 
 ### ⚠️ Issues to Fix
+
 1. Add type safety with models
 2. Improve error handling
 3. Centralize banner filtering
@@ -171,12 +199,14 @@ imageUrl: banner.getImageUrl(isMobile: Platform.isAndroid || Platform.isIOS),
 ### Step 1: Update ProductController
 
 **Add model import:**
+
 ```dart
 import '../models/collection_model.dart';
 import '../models/collection_extensions.dart';
 ```
 
 **Update observable:**
+
 ```dart
 // OLD
 List homeProductList = [].obs;
@@ -186,6 +216,7 @@ RxList<CollectionModel> homeProductList = <CollectionModel>[].obs;
 ```
 
 **Update getHomeProduct method:**
+
 ```dart
 Future<void> getHomeProduct(
   int gender, {
@@ -272,7 +303,7 @@ Future<void> getHomeProduct(
       print("❌ API Error: ${response.statusCode}");
     }
   } catch (e, stackTrace) {
-    print("❌ Error loading collections: $e");
+    print("check your network connection");
     print("Stack trace: $stackTrace");
     homeProductList.clear();
   } finally {
@@ -284,6 +315,7 @@ Future<void> getHomeProduct(
 ### Step 2: Update HomeScreen
 
 **Update collection rendering:**
+
 ```dart
 // OLD
 final c = collections[index];
@@ -297,6 +329,7 @@ final String title = collection.name;
 ```
 
 **Update banner access:**
+
 ```dart
 // OLD
 final List<dynamic> banners = (c['banners'] is List) ? List.from(c['banners'] as List) : [];
@@ -307,6 +340,7 @@ final banners = collection.bannersFor(currentGender);
 ```
 
 **Update product access:**
+
 ```dart
 // OLD
 final List<Map<String, dynamic>> products = (c['products'] as List<dynamic>?)

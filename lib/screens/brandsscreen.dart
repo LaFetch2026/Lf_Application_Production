@@ -44,7 +44,8 @@ class BrandsScreen extends StatefulWidget {
   State<BrandsScreen> createState() => BrandsScreenState();
 }
 
-class BrandsScreenState extends State<BrandsScreen> {
+class BrandsScreenState extends State<BrandsScreen>
+    with AutomaticKeepAliveClientMixin {
   final brandController = Get.put(BrandController());
   final productController = Get.put(ProductController());
   final homeController = Get.put(HomeController());
@@ -54,6 +55,10 @@ class BrandsScreenState extends State<BrandsScreen> {
   var brandProductDetailsList = <Map<String, dynamic>>[].obs;
   var brand_category_List = <int>[].obs;
   var isDetails = false.obs;
+
+  // Keep screen alive when switching tabs
+  @override
+  bool get wantKeepAlive => true;
 
   // ✅ Cache management - prevent unnecessary API calls
   static DateTime? _lastDataFetch;
@@ -121,11 +126,52 @@ class BrandsScreenState extends State<BrandsScreen> {
     }
   }
 
+  // Debounce timer for scroll end
+  Timer? _scrollEndTimer;
+
+  // Handle scroll notifications for navbar transparency
+  bool _handleScrollNotification(ScrollNotification notification) {
+    if (notification is ScrollStartNotification) {
+      _scrollEndTimer?.cancel();
+      homeController.isScrolling.value = true;
+    } else if (notification is ScrollEndNotification) {
+      _scrollEndTimer?.cancel();
+      _scrollEndTimer = Timer(const Duration(milliseconds: 150), () {
+        homeController.isScrolling.value = false;
+      });
+    }
+    return false;
+  }
+
+  // Track if screen has been initialized
+  static bool _isInitialized = false;
+
   @override
   void initState() {
     super.initState();
 
+    // Setup widget.screen specific settings first (always runs)
+    if (widget.screen == "search") {
+      brandController.showAllBrand.value = true;
+      brandController.brandlogo.value = widget.logo!;
+      brandController.brandbackground.value = widget.backImage!;
+      brandController.brandName.value = widget.name!;
+      brandController.brandId.value = widget.brandId!;
+      brandController.update();
+    } else {
+      brandController.showAllBrand.value = false;
+    }
+
+    brandController.text.value = "Expand All";
+    brandController.selectIndex.value = 0;
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // ✅ Skip if already initialized with data (prevents reload on tab switch)
+      if (_isInitialized && brandController.brandList.isNotEmpty) {
+        print("✅ Brands data already loaded, skipping");
+        return;
+      }
+
       brandController.hasnextpage.value = true;
       brandController.loadMore.value = false;
       brandController.isBrand.value = false;
@@ -148,31 +194,21 @@ class BrandsScreenState extends State<BrandsScreen> {
         print(
             "✅ Using cached brand data (fetched ${DateTime.now().difference(_lastDataFetch!).inMinutes} minutes ago)");
       }
+
+      _isInitialized = true;
     });
-
-    if (widget.screen == "search") {
-      brandController.showAllBrand.value = true;
-      brandController.brandlogo.value = widget.logo!;
-      brandController.brandbackground.value = widget.backImage!;
-      brandController.brandName.value = widget.name!;
-      brandController.brandId.value = widget.brandId!;
-      brandController.update();
-    } else {
-      brandController.showAllBrand.value = false;
-    }
-
-    brandController.text.value = "Expand All";
-    brandController.selectIndex.value = 0;
   }
 
   @override
   void dispose() {
     debounce?.cancel();
+    _scrollEndTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     return Obx(() => PopScope(
           canPop: false,
           onPopInvokedWithResult: (bool didPop, dynamic result) {
@@ -286,14 +322,16 @@ class BrandsScreenState extends State<BrandsScreen> {
                   ),
                 ),
                 Expanded(
-                  child: RefreshIndicator(
-                    // ✅ ADDED: Pull-to-refresh functionality
-                    onRefresh: forceRefreshData,
-                    child: SingleChildScrollView(
-                      controller: brandController.brandListController,
-                      physics:
-                          const AlwaysScrollableScrollPhysics(), // ✅ Enables pull-to-refresh even when content is short
-                      child: GestureDetector(
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: _handleScrollNotification,
+                    child: RefreshIndicator(
+                      // ✅ ADDED: Pull-to-refresh functionality
+                      onRefresh: forceRefreshData,
+                      child: SingleChildScrollView(
+                        controller: brandController.brandListController,
+                        physics:
+                            const AlwaysScrollableScrollPhysics(), // ✅ Enables pull-to-refresh even when content is short
+                        child: GestureDetector(
                         onTap: () {
                           FocusScope.of(context).requestFocus(FocusNode());
                           setState(() {});
@@ -934,6 +972,7 @@ class BrandsScreenState extends State<BrandsScreen> {
                         ),
                       ),
                     ),
+                  ),
                   ),
                 ),
               ],

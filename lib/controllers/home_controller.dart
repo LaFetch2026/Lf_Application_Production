@@ -72,11 +72,26 @@ class HomeController extends BaseController {
   ScrollController tagsController = ScrollController();
   ScrollController discountScreenController = ScrollController();
   List<bool> selected = List.generate(50, (i) => false).obs;
+
+  // Scroll state for navbar transparency
+  RxBool isScrolling = false.obs;
   RxList<Map<String, dynamic>> genderTabs = <Map<String, dynamic>>[].obs;
   RxBool isLoadingTabs = false.obs;
 
   // Track if initial data has been loaded
   RxBool isInitialDataLoaded = false.obs;
+
+  // ✅ Track which genders have already loaded data (to avoid duplicate API calls)
+  final Set<int> _loadedGenders = {};
+
+  // Announcements for marquee banner
+  RxList<Map<String, dynamic>> announcements = <Map<String, dynamic>>[].obs;
+  RxBool isLoadingAnnouncements = false.obs;
+
+  // ✅ Request deduplication flags - prevents concurrent duplicate API calls
+  bool _isBannerRequestInProgress = false;
+  bool _isCategoryRequestInProgress = false;
+  bool _isAnnouncementsRequestInProgress = false;
 
   @override
   void onInit() {
@@ -105,28 +120,38 @@ class HomeController extends BaseController {
     print('✅ Gender preference loaded: ${genderText.value}');
   }
 
+  /// Check if data for a gender is already loaded
+  bool isGenderDataLoaded(int gender) => _loadedGenders.contains(gender);
+
+  /// Mark gender data as loaded
+  void markGenderLoaded(int gender) => _loadedGenders.add(gender);
+
+  /// Clear loaded genders cache (useful for force refresh)
+  void clearLoadedGenders() => _loadedGenders.clear();
+
   /// Initialize home data - Call this from HomeScreen after user is authenticated/skipped
   Future<void> initializeHomeData(int gender,
       {bool forceRefresh = false}) async {
-    // Skip if already loaded and not forcing refresh
-    if (isInitialDataLoaded.value && !forceRefresh) {
-      print('✅ Home data already loaded, skipping...');
-      // ✅ Ensure loading states are off when skipping
-      isBanner1.value = false;
+    // ✅ Skip API calls if data already loaded for this gender (unless force refresh)
+    if (!forceRefresh && isGenderDataLoaded(gender)) {
+      print('✅ Data already loaded for gender: $gender, skipping API calls');
       return;
     }
 
     print('🔄 Initializing home data for gender: $gender');
 
-    // Load data with caching
+    // Load data with caching - each method handles its own caching
     await Future.wait([
       getBannerData(gender, forceRefresh: forceRefresh),
       getBrandData("featured", gender, forceRefresh: forceRefresh),
       getCategoryData(gender, forceRefresh: forceRefresh),
+      getAnnouncements(forceRefresh: forceRefresh),
     ]);
 
+    // ✅ Mark this gender as loaded
+    markGenderLoaded(gender);
     isInitialDataLoaded.value = true;
-    print('✅ Home data initialization complete');
+    print('✅ Home data initialization complete for gender: $gender');
   }
 
   void getDeviceName() async {
@@ -143,10 +168,13 @@ class HomeController extends BaseController {
   }
 
   Future<void> getBannerData(int gender, {bool forceRefresh = false}) async {
-    final cacheKey = 'banners_$gender';
+    // ✅ Prevent duplicate concurrent requests
+    if (_isBannerRequestInProgress) {
+      print("⏳ Banner request already in progress, skipping...");
+      return;
+    }
 
-    // ✅ Set loading state at the start
-    isBanner1.value = true;
+    final cacheKey = 'banners_$gender';
 
     // 🔹 Try cache first (with safety wrapper)
     if (!forceRefresh) {
@@ -155,13 +183,17 @@ class HomeController extends BaseController {
         if (cached != null) {
           _updateBannerList(gender, cached as List<dynamic>);
           print("✅ Banners loaded from cache for gender: $gender");
-          isBanner1.value = false;  // ✅ Set loading to false after cache hit
+          isBanner1.value = false;
           return;
         }
       } catch (e) {
         print("⚠️ Cache check failed, will fetch from API: $e");
       }
     }
+
+    // ✅ Mark request as in progress
+    _isBannerRequestInProgress = true;
+    isBanner1.value = true;
 
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -227,6 +259,7 @@ class HomeController extends BaseController {
       getSnackBar("An error occurred while loading banners.");
     } finally {
       isBanner1.value = false;
+      _isBannerRequestInProgress = false; // ✅ Reset request flag
     }
   }
 
@@ -307,7 +340,7 @@ class HomeController extends BaseController {
       case 2:
         return "WOMEN";
       case 3:
-        return "ACCESSORIES";
+        return "ESSENTIALS";
       default:
         return "MEN";
     }
@@ -488,6 +521,12 @@ class HomeController extends BaseController {
 
   Future<void> getCategoryData(int genderType,
       {bool forceRefresh = false}) async {
+    // ✅ Prevent duplicate concurrent requests
+    if (_isCategoryRequestInProgress) {
+      print("⏳ Category request already in progress, skipping...");
+      return;
+    }
+
     final cacheKey = 'categories_$genderType';
 
     // Try to load from cache first
@@ -500,6 +539,7 @@ class HomeController extends BaseController {
       }
     }
 
+    _isCategoryRequestInProgress = true;
     isCategory.value = true;
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -532,8 +572,10 @@ class HomeController extends BaseController {
       }
     } catch (e) {
       print("error$e");
+    } finally {
+      isCategory.value = false;
+      _isCategoryRequestInProgress = false; // ✅ Reset request flag
     }
-    isCategory.value = false;
   }
 
   // void callSendDeviceToken() async {
@@ -574,6 +616,82 @@ class HomeController extends BaseController {
   //     print(e.toString());
   //   }
   // }
+
+  /// Fetch announcements for the marquee banner
+  Future<void> getAnnouncements({bool forceRefresh = false}) async {
+    // ✅ Prevent duplicate concurrent requests
+    if (_isAnnouncementsRequestInProgress) {
+      print("⏳ Announcements request already in progress, skipping...");
+      return;
+    }
+
+    const cacheKey = 'announcements';
+
+    // Try cache first
+    if (!forceRefresh) {
+      try {
+        final cached = await CacheManager.get(key: cacheKey);
+        if (cached != null && cached is List) {
+          announcements.assignAll(
+            List<Map<String, dynamic>>.from(cached.whereType<Map>()),
+          );
+          print("✅ Announcements loaded from cache: ${announcements.length}");
+          return;
+        }
+      } catch (e) {
+        print("⚠️ Cache check failed for announcements: $e");
+      }
+    }
+
+    _isAnnouncementsRequestInProgress = true;
+    isLoadingAnnouncements.value = true;
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = (prefs.getString('token') ?? '').trim();
+
+      final uri = Uri.parse("${ApiConstants.baseUrl}/announcements");
+      print("📤 Fetching announcements: $uri");
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 20));
+
+      print("📥 Announcements Status: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body) as Map<String, dynamic>;
+        final List<dynamic> data = (decoded['data'] as List?) ?? [];
+
+        // Filter only active announcements
+        final activeAnnouncements = data
+            .whereType<Map<String, dynamic>>()
+            .where((a) => a['isActive'] == true)
+            .toList();
+
+        announcements.assignAll(activeAnnouncements);
+
+        // Cache the data
+        await CacheManager.save(key: cacheKey, data: activeAnnouncements);
+
+        print("✅ Announcements loaded: ${announcements.length}");
+      } else if (response.statusCode == 401) {
+        print("❌ Announcements auth failed");
+        _redirectToLoginIfNotGuest();
+      } else {
+        print("❌ Failed to load announcements: ${response.statusCode}");
+      }
+    } catch (e, st) {
+      print("❌ Announcements fetch error: $e\n$st");
+    } finally {
+      isLoadingAnnouncements.value = false;
+      _isAnnouncementsRequestInProgress = false; // ✅ Reset request flag
+    }
+  }
 
   getFaqData() async {
     isFaqs.value = true;

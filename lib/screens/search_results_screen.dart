@@ -1,11 +1,9 @@
 // Search Results Screen - Dedicated screen for displaying search results
 // ignore_for_file: deprecated_member_use
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -15,6 +13,7 @@ import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../common/widget/appbar/productlist_appbar.dart';
+import '../common/widget/cards/product_card.dart';
 import '../common/widget/lists/dummy_grid_list.dart';
 import '../common/widget/other/common_widget.dart';
 import '../common/widget/text/app_text.dart';
@@ -371,7 +370,13 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                             final mrp = item['displayMrp'] ?? item['mrp'];
                             final express = item['express_delivery'] == true;
 
-                            return GestureDetector(
+                            return ProductGridCard(
+                              imageUrl: imageUrl,
+                              title: title,
+                              brandName: brand,
+                              price: price,
+                              mrp: mrp,
+                              showExpress: express,
                               onTap: () async {
                                 Get.to(
                                   ProductDetailsScreen(
@@ -392,173 +397,6 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                   },
                                 );
                               },
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(6.sp),
-                                    child: AspectRatio(
-                                      aspectRatio: 0.75,
-                                      child: CachedNetworkImage(
-                                        imageUrl: imageUrl,
-                                        fit: BoxFit.fill,
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                        cacheManager: CacheManager(
-                                          Config("customCacheKey",
-                                              stalePeriod:
-                                                  const Duration(days: 15),
-                                              maxNrOfCacheObjects: 100),
-                                        ),
-                                        placeholder: (_, __) => Container(
-                                            color:
-                                                Colors.black.withOpacity(0.06)),
-                                        errorWidget: (_, __, ___) => Container(
-                                            color:
-                                                Colors.black.withOpacity(0.06)),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 5.sp),
-                                  // Product Name
-                                  AppText(
-                                    text: title.toUpperCase(),
-                                    color: blackColor,
-                                    maxLines: 1,
-                                    fontSize: 12,
-                                    fontFamily: "Clash Display Semibold",
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                  // Brand Name
-                                  AppText(
-                                    text: brand.toUpperCase(),
-                                    color: const Color(0xFF6B7280),
-                                    maxLines: 1,
-                                    fontSize: 11,
-                                    fontFamily: "Clash Display Regular",
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  // Price Row
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 4.sp),
-                                    child: () {
-                                      final numPrice = price is num ? price : 0;
-                                      final numMrp = mrp is num ? mrp : 0;
-
-                                      // Calculate discount percentage
-                                      int? discountPercent;
-                                      if (numPrice > 0 &&
-                                          numMrp > 0 &&
-                                          numMrp > numPrice) {
-                                        discountPercent =
-                                            (((numMrp - numPrice) / numMrp) *
-                                                    100)
-                                                .round();
-                                      }
-
-                                      // Case 1: Price is 0 or null - show only MRP (not crossed)
-                                      if (numPrice == 0 && numMrp > 0) {
-                                        return AppText(
-                                          text: "₹ ${numMrp.toString()}",
-                                          color: blackColor,
-                                          maxLines: 1,
-                                          fontSize: 12,
-                                          fontFamily: "Clash Display Semibold",
-                                          fontWeight: FontWeight.w700,
-                                        );
-                                      }
-
-                                      // Case 2: Both exist and price < mrp - show base price, crossed MRP, and discount %
-                                      if (numPrice > 0 &&
-                                          numMrp > 0 &&
-                                          numPrice < numMrp) {
-                                        return Row(
-                                          children: [
-                                            // Base Price
-                                            AppText(
-                                              text: "₹ ${numPrice.toString()}",
-                                              color: blackColor,
-                                              maxLines: 1,
-                                              fontSize: 12,
-                                              fontFamily:
-                                                  "Clash Display Semibold",
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                            // MRP (crossed out)
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 5.sp),
-                                              child: Text(
-                                                "₹ $numMrp",
-                                                style: TextStyle(
-                                                  color:
-                                                      const Color(0xFF9CA3AF),
-                                                  fontSize: 11.sp,
-                                                  decoration: TextDecoration
-                                                      .lineThrough,
-                                                  fontFamily:
-                                                      "Clash Display Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                            ),
-                                            // Discount %
-                                            if (discountPercent != null)
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 5.sp),
-                                                child: Text(
-                                                  "($discountPercent% OFF)",
-                                                  style: TextStyle(
-                                                    fontSize: 10.sp,
-                                                    fontFamily: "Clash Display",
-                                                    fontWeight: FontWeight.w500,
-                                                    color:
-                                                        const Color(0xFF9575CD),
-                                                  ),
-                                                ),
-                                              ),
-                                          ],
-                                        );
-                                      }
-
-                                      // Case 3: Only price exists - show price
-                                      if (numPrice > 0) {
-                                        return AppText(
-                                          text: "₹ ${numPrice.toString()}",
-                                          color: blackColor,
-                                          maxLines: 1,
-                                          fontSize: 12,
-                                          fontFamily: "Clash Display Semibold",
-                                          fontWeight: FontWeight.w700,
-                                        );
-                                      }
-
-                                      // Case 4: Nothing to show
-                                      return const SizedBox.shrink();
-                                    }(),
-                                  ),
-                                  if (express)
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 3.sp),
-                                      child: Row(
-                                        children: [
-                                          ImageIcon(AssetImage(truckImage),
-                                              color: expressText, size: 14.sp),
-                                          SizedBox(width: 5.sp),
-                                          AppText(
-                                            text: "Express",
-                                            color: expressText,
-                                            maxLines: 2,
-                                            fontSize: 11,
-                                            fontFamily: "Clash Display Regular",
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                ],
-                              ),
                             );
                           },
                           childCount: displayItems.length,
@@ -853,8 +691,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                           children: [
                                             const Text("Select price range",
                                                 style: TextStyle(
-                                                    fontFamily:
-                                                        "Franklin Gothic",
+                                                    fontFamily: "Clash Display",
                                                     fontWeight: FontWeight.w700,
                                                     fontSize: 15)),
                                             const SizedBox(height: 8),
@@ -877,10 +714,14 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                                 Text(
                                                     "₹${priceRange.start.toInt()}",
                                                     style: const TextStyle(
+                                                        fontFamily:
+                                                            "Clash Display",
                                                         color: Colors.grey)),
                                                 Text(
                                                     "₹${priceRange.end.toInt()}",
                                                     style: const TextStyle(
+                                                        fontFamily:
+                                                            "Clash Display",
                                                         color: Colors.grey)),
                                               ],
                                             ),
@@ -917,6 +758,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                                       title: Text(
                                                         color.toUpperCase(),
                                                         style: TextStyle(
+                                                          fontFamily:
+                                                              "Clash Display",
                                                           fontSize: 14.sp,
                                                           fontWeight:
                                                               FontWeight.w400,
@@ -958,6 +801,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                                           title: Text(
                                                             size.toUpperCase(),
                                                             style: TextStyle(
+                                                              fontFamily:
+                                                                  "Clash Display",
                                                               fontSize: 14.sp,
                                                               fontWeight:
                                                                   FontWeight

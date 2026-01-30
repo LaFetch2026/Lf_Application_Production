@@ -1,4 +1,6 @@
 // ignore_for_file: avoid_print
+import 'dart:async';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -62,6 +64,29 @@ class AccountScreenState extends State<AccountScreen> {
     }
 
     if (mounted) setState(() {});
+  }
+
+  // Debounce timer for scroll end
+  Timer? _scrollEndTimer;
+
+  // Handle scroll notifications for navbar transparency
+  bool _handleScrollNotification(ScrollNotification notification) {
+    if (notification is ScrollStartNotification) {
+      _scrollEndTimer?.cancel();
+      homeController.isScrolling.value = true;
+    } else if (notification is ScrollEndNotification) {
+      _scrollEndTimer?.cancel();
+      _scrollEndTimer = Timer(const Duration(milliseconds: 150), () {
+        homeController.isScrolling.value = false;
+      });
+    }
+    return false;
+  }
+
+  @override
+  void dispose() {
+    _scrollEndTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -170,8 +195,10 @@ class AccountScreenState extends State<AccountScreen> {
                   ? DummyAccount()
                   : controller.profileDetails.value != null
                       ? Expanded(
-                          child: SingleChildScrollView(
-                            child: Column(
+                          child: NotificationListener<ScrollNotification>(
+                            onNotification: _handleScrollNotification,
+                            child: SingleChildScrollView(
+                              child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Column(
@@ -562,6 +589,7 @@ class AccountScreenState extends State<AccountScreen> {
                                 const ProfileBottom(version: "1.0.7"),
                               ],
                             ),
+                          ),
                           ),
                         )
                       : DummyAccount();

@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SingleIconButton extends StatelessWidget {
@@ -55,6 +56,7 @@ class SingleIconButton extends StatelessWidget {
                   fontSize: fontSize.sp,
                 ))),
             onPressed: () {
+              HapticFeedback.lightImpact();
               onPressed?.call();
             },
             label: Text(

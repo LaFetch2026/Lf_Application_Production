@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DoubleButton extends StatelessWidget {
@@ -65,6 +66,7 @@ class DoubleButton extends StatelessWidget {
                               fontSize: firstFontSize.sp,
                             ))),
                         onPressed: () {
+                          HapticFeedback.lightImpact();
                           onPressedFirst?.call();
                         },
                         child: Text(
@@ -104,6 +106,7 @@ class DoubleButton extends StatelessWidget {
                               fontSize: secondFontSize.sp,
                             ))),
                         onPressed: () {
+                          HapticFeedback.lightImpact();
                           onPressedSecond?.call();
                         },
                         child: Text(

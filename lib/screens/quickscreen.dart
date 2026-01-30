@@ -90,6 +90,30 @@ class QuickScreenState extends State<QuickScreen> {
     });
   }
 
+  // Debounce timer for scroll end
+  Timer? _scrollEndTimer;
+
+  // Handle scroll notifications for navbar transparency
+  bool _handleScrollNotification(ScrollNotification notification) {
+    if (notification is ScrollStartNotification) {
+      _scrollEndTimer?.cancel();
+      homeController.isScrolling.value = true;
+    } else if (notification is ScrollEndNotification) {
+      _scrollEndTimer?.cancel();
+      _scrollEndTimer = Timer(const Duration(milliseconds: 150), () {
+        homeController.isScrolling.value = false;
+      });
+    }
+    return false;
+  }
+
+  @override
+  void dispose() {
+    debounce?.cancel();
+    _scrollEndTimer?.cancel();
+    super.dispose();
+  }
+
   /*  Future getPrefrenceValue() async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getString("expresshour") != null) {
@@ -222,9 +246,11 @@ class QuickScreenState extends State<QuickScreen> {
             sigmaX: isBottomSheet ? 1 : 0, sigmaY: isBottomSheet ? 1 : 0),
         child: Scaffold(
           backgroundColor: homeAppBarColor,
-          body: SingleChildScrollView(
-            controller: productController.quickProductListController,
-            child: Stack(
+          body: NotificationListener<ScrollNotification>(
+            onNotification: _handleScrollNotification,
+            child: SingleChildScrollView(
+              controller: productController.quickProductListController,
+              child: Stack(
               children: [
                 Positioned(
                   top: 0,
@@ -1200,6 +1226,8 @@ class QuickScreenState extends State<QuickScreen> {
                                                       itemBuilder:
                                                           (ctx, index) {
                                                         return Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
                                                           crossAxisAlignment:
                                                               CrossAxisAlignment
                                                                   .start,
@@ -1290,6 +1318,7 @@ class QuickScreenState extends State<QuickScreen> {
                                       scrollDirection: Axis.vertical,
                                       itemBuilder: (ctx, index) {
                                         return Column(
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Padding(
                                               padding: EdgeInsets.only(
@@ -1302,6 +1331,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                             8.sp),
                                                     color: cardBg),
                                                 child: Column(
+                                                  mainAxisSize: MainAxisSize.min,
                                                   children: [
                                                     GestureDetector(
                                                       onTap: () async {},
@@ -1926,6 +1956,8 @@ class QuickScreenState extends State<QuickScreen> {
                                                       itemBuilder:
                                                           (ctx, index) {
                                                         return Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
                                                           crossAxisAlignment:
                                                               CrossAxisAlignment
                                                                   .start,
@@ -2004,6 +2036,7 @@ class QuickScreenState extends State<QuickScreen> {
                 ),
               ],
             ),
+          ),
           ),
         ),
       ),

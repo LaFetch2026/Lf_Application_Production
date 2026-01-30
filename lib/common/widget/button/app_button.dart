@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppButton extends StatelessWidget {
@@ -51,6 +52,7 @@ class AppButton extends StatelessWidget {
                     fontSize: fontSize,
                   ))),
               onPressed: () {
+                HapticFeedback.lightImpact();
                 onPressed?.call();
               },
               child: Row(

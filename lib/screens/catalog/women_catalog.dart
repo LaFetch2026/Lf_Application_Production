@@ -30,7 +30,7 @@ class WomenCatalogScreen extends StatefulWidget {
 }
 
 class _WomenCatalogScreenState extends State<WomenCatalogScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   final CatalogController catalogController = Get.put(CatalogController());
   final SearchScreenController searchController =
       Get.put(SearchScreenController());
@@ -39,6 +39,11 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   TabController? _genderTabController;
+  static bool _isInitialized = false; // Static to persist across rebuilds
+
+  // Keep screen alive when switching tabs
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -53,10 +58,16 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
             ? 'Women'
             : 'Accessories';
 
-    catalogController.getCatalogData(gender);
-
-    // Initialize TabController after genderTabs are loaded
+    // Initialize TabController (always runs to prevent null errors)
     _initGenderTabController();
+
+    // Only fetch data if not already loaded
+    if (!_isInitialized || catalogController.catalogList.isEmpty) {
+      catalogController.getCatalogData(gender);
+      _isInitialized = true;
+    } else {
+      print("✅ WomenCatalogScreen already initialized, skipping API call");
+    }
   }
 
   void _initGenderTabController() {
@@ -78,14 +89,16 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
       _genderTabController = TabController(
         length: homeController.genderTabs.length,
         vsync: this,
-        initialIndex: initialIndex.clamp(0, homeController.genderTabs.length - 1),
+        initialIndex:
+            initialIndex.clamp(0, homeController.genderTabs.length - 1),
       );
       _genderTabController!.addListener(_onGenderTabChanged);
       setState(() {});
     } else {
       // If genderTabs not loaded yet, listen for changes
       ever(homeController.genderTabs, (_) {
-        if (homeController.genderTabs.isNotEmpty && _genderTabController == null) {
+        if (homeController.genderTabs.isNotEmpty &&
+            _genderTabController == null) {
           _initGenderTabController();
         }
       });
@@ -146,6 +159,7 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -158,7 +172,7 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
 
         /// AppBar
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(56),
+          preferredSize: Size.fromHeight(100.sp),
           child: HomeAppbar(
             showSearch: true,
             title: 'Categories',
@@ -331,7 +345,8 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                                 genderName: homeController.genderText.value,
                                 categoryId: categoryId,
                                 brandId: 0,
-                                genderType: homeController.homeGenderValue.value,
+                                genderType:
+                                    homeController.homeGenderValue.value,
                                 categoryList: const [],
                                 tagIds: const [],
                                 title: '',
@@ -364,8 +379,9 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                                   width: 90.sp,
                                   height: 100.sp,
                                   fit: BoxFit.fill,
-                                  color: const Color.fromARGB(255, 160, 159, 159)
-                                      .withOpacity(0.15),
+                                  color:
+                                      const Color.fromARGB(255, 160, 159, 159)
+                                          .withOpacity(0.15),
                                   colorBlendMode: BlendMode.darken,
                                   placeholder: (_, __) => Container(
                                     width: 90.sp,

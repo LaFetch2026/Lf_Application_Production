@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,9 +28,15 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
-        return windows;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -40,53 +49,20 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyB4j8-SPCbUmdFGtDrAdq1kxFk4LeBoQGI',
-    appId: '1:656354073125:web:fe4b90216cdbde8486fdcc',
-    messagingSenderId: '656354073125',
-    projectId: 'la-fetch-3b250',
-    authDomain: 'la-fetch-3b250.firebaseapp.com',
-    storageBucket: 'la-fetch-3b250.appspot.com',
-    measurementId: 'G-BR7YX5SDJ6',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCKveQDCOONBp6t6KOSrbg6fhoQWp8t-n0',
-    appId: '1:656354073125:android:ba443aa700205a2286fdcc',
-    messagingSenderId: '656354073125',
-    projectId: 'la-fetch-3b250',
-    storageBucket: 'la-fetch-3b250.appspot.com',
+    apiKey: 'AIzaSyDHRMshH3H1uMmPYPBlX7FZQHnakfvHfuc',
+    appId: '1:598072306679:android:cb6020b3984711588b1cf2',
+    messagingSenderId: '598072306679',
+    projectId: 'lafetch-11b74',
+    storageBucket: 'lafetch-11b74.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBRWXD2dx8llBpwxlulHntURgnwf0cE-jU',
-    appId: '1:656354073125:ios:ff85960cf322344686fdcc',
-    messagingSenderId: '656354073125',
-    projectId: 'la-fetch-3b250',
-    storageBucket: 'la-fetch-3b250.appspot.com',
-    androidClientId: '656354073125-0l8dgbuisu2o8qefhgkov4avl71a19lu.apps.googleusercontent.com',
-    iosClientId: '656354073125-7vht6l8p69chgg2il02c4pjv0r1okufb.apps.googleusercontent.com',
-    iosBundleId: 'com.example.demoProject',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBRWXD2dx8llBpwxlulHntURgnwf0cE-jU',
-    appId: '1:656354073125:ios:ff85960cf322344686fdcc',
-    messagingSenderId: '656354073125',
-    projectId: 'la-fetch-3b250',
-    storageBucket: 'la-fetch-3b250.appspot.com',
-    androidClientId: '656354073125-0l8dgbuisu2o8qefhgkov4avl71a19lu.apps.googleusercontent.com',
-    iosClientId: '656354073125-7vht6l8p69chgg2il02c4pjv0r1okufb.apps.googleusercontent.com',
-    iosBundleId: 'com.example.demoProject',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyB4j8-SPCbUmdFGtDrAdq1kxFk4LeBoQGI',
-    appId: '1:656354073125:web:a9341db18685768086fdcc',
-    messagingSenderId: '656354073125',
-    projectId: 'la-fetch-3b250',
-    authDomain: 'la-fetch-3b250.firebaseapp.com',
-    storageBucket: 'la-fetch-3b250.appspot.com',
-    measurementId: 'G-695V7YQ1V4',
+    apiKey: 'AIzaSyA5WMJfHlupFdkRo_DKkhv0zavtFcevKH8',
+    appId: '1:598072306679:ios:3ec5186797d952098b1cf2',
+    messagingSenderId: '598072306679',
+    projectId: 'lafetch-11b74',
+    storageBucket: 'lafetch-11b74.firebasestorage.app',
+    iosBundleId: 'com.lafetch.customer',
   );
 }

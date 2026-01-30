@@ -3,6 +3,9 @@
     <!-- Network -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Haptic Feedback / Vibration -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <!-- Location (only if used for delivery / address / nearby services) -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

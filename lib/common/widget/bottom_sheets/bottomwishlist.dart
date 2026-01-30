@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -239,7 +240,10 @@ class _BottomWishlistState extends State<BottomWishlist> {
                   ),
                 ),
                 InkWell(
-                  onTap: () => widget.onPressedBoard?.call(),
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    widget.onPressedBoard?.call();
+                  },
                   child: Container(
                     color: const Color(0xffDFC5FE),
                     child: Padding(
@@ -285,7 +289,10 @@ class _BottomWishlistState extends State<BottomWishlist> {
                         final isSelected = wishlistSelected[index];
 
                         return GestureDetector(
-                          onTap: () => _selectIndex(index),
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            _selectIndex(index);
+                          },
                           child: Container(
                             color: whiteColor,
                             width: double.infinity,

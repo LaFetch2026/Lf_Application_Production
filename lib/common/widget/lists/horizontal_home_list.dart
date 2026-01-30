@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
@@ -7,6 +8,7 @@ import 'package:get/get_state_manager/src/simple/get_state.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../core/constant/constants.dart';
 import '../other/common_widget.dart';
+import '../other/product_price_display.dart';
 import '../text/app_text.dart';
 
 class HorizontalHomeList extends StatelessWidget {
@@ -71,6 +73,7 @@ class HorizontalHomeList extends StatelessWidget {
             visibleViewAll
                 ? GestureDetector(
                     onTap: () {
+                      HapticFeedback.lightImpact();
                       onPressedViewAll?.call();
                     },
                     child: Container(
@@ -148,9 +151,11 @@ class HorizontalHomeList extends StatelessWidget {
                               )
                             : */
                             Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             GestureDetector(
                               onTap: () {
+                                HapticFeedback.lightImpact();
                                 onPressed?.call(list[index]["id"],
                                     list[index]["brand_name"]);
                               },
@@ -159,6 +164,7 @@ class HorizontalHomeList extends StatelessWidget {
                                 margin: EdgeInsets.only(right: 5.sp),
                                 width: 122.sp,
                                 child: Column(
+                                  mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Stack(children: [
@@ -204,6 +210,7 @@ class HorizontalHomeList extends StatelessWidget {
                                               fit: BoxFit.fill),
                                       GestureDetector(
                                         onTap: () {
+                                          HapticFeedback.lightImpact();
                                           onPressedHeart?.call(
                                               list[index]["id"], index);
                                         },
@@ -257,45 +264,21 @@ class HorizontalHomeList extends StatelessWidget {
                                     Padding(
                                       padding: EdgeInsets.only(
                                           top: 10.sp, left: 10.sp, right: 1.sp),
-                                      child: Row(
-                                        children: [
-                                          AppText(
-                                            text:
-                                                "\u{20B9} ${list[index]["price"] ?? ""}",
-                                            color: deepGreytextColor,
-                                            maxLines: 2,
-                                            fontSize: 11,
-                                            fontFamily: "Clash Display",
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                          Visibility(
-                                            visible: list[index]["mrp"] != null
-                                                ? true
-                                                : false,
-                                            child: Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 5.sp),
-                                              child: Text(
-                                                "\u{20B9} ${list[index]["mrp"] ?? ""}",
-                                                style: TextStyle(
-                                                  color: textHintColor,
-                                                  fontSize: 11.sp,
-                                                  decoration: TextDecoration
-                                                      .lineThrough,
-                                                  fontFamily:
-                                                      "Clash Display Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                      child: ProductPriceDisplay(
+                                        price: list[index]["price"] ?? 0,
+                                        mrp: list[index]["mrp"],
+                                        fontSize: 11,
+                                        mrpFontSize: 11,
+                                        discountFontSize: 11,
+                                        fontWeight: FontWeight.w500,
+                                        spacing: 5,
                                       ),
                                     ),
                                     Visibility(
                                       visible: visibleExpress,
                                       child: GestureDetector(
                                           onTap: () {
+                                            HapticFeedback.lightImpact();
                                             onPressedExpress?.call();
                                           },
                                           child: list[index]["express_delivery"]
@@ -305,6 +288,7 @@ class HorizontalHomeList extends StatelessWidget {
                                                       left: 10.sp,
                                                       right: 10.sp),
                                                   child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
                                                     children: [
                                                       ImageIcon(
                                                         AssetImage(truckImage),
@@ -319,7 +303,7 @@ class HorizontalHomeList extends StatelessWidget {
                                                         child: AppText(
                                                           text: "Express",
                                                           color: expressText,
-                                                          maxLines: 2,
+                                                          maxLines: 1,
                                                           fontSize: 11,
                                                           fontFamily:
                                                               "Clash Display Regular",

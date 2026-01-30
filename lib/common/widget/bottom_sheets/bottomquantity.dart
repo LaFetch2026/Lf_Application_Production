@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -83,6 +84,7 @@ class BottomQuantityState extends State<BottomQuantity> {
                   ),
                   GestureDetector(
                     onTap: () {
+                      HapticFeedback.lightImpact();
                       Get.back();
                     },
                     child: Container(
@@ -117,6 +119,7 @@ class BottomQuantityState extends State<BottomQuantity> {
                         children: [
                           GestureDetector(
                             onTap: () {
+                              HapticFeedback.lightImpact();
                               text = widget.qtyList[index];
                               print(text);
                               setState(() {});

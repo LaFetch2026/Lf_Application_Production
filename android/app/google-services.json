@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "656354073125",
-    "project_id": "la-fetch-3b250",
-    "storage_bucket": "la-fetch-3b250.appspot.com"
+    "project_number": "598072306679",
+    "project_id": "lafetch-11b74",
+    "storage_bucket": "lafetch-11b74.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:656354073125:android:ba443aa700205a2286fdcc",
+        "mobilesdk_app_id": "1:598072306679:android:cb6020b3984711588b1cf2",
         "android_client_info": {
           "package_name": "com.lafetch.customer"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCKveQDCOONBp6t6KOSrbg6fhoQWp8t-n0"
+          "current_key": "AIzaSyDHRMshH3H1uMmPYPBlX7FZQHnakfvHfuc"
         }
       ],
       "services": {

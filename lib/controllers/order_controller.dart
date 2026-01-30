@@ -544,61 +544,6 @@ class OrderController extends BaseController {
     return true;
   }
 
-  Future<void> checkServiceability(int variantId, String postalCode) async {
-    isEstimateDate.value = true;
-
-    try {
-      print(
-          "🚚 Checking serviceability for variantId: $variantId, pincode: $postalCode");
-
-      final uri = Uri.parse("${ApiConstants.baseUrl}/check-serviceability");
-      final res = await http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          "variantId": variantId,
-          "deliveryPostalCode": postalCode,
-        }),
-      );
-
-      print("📥 Response status: ${res.statusCode}");
-      print("📥 Response body: ${res.body}");
-
-      if (res.statusCode == 200) {
-        final responseData = json.decode(res.body);
-        final data = responseData["data"];
-
-        if (data != null) {
-          estimatedDate.value = data["estimatedDate"] ?? "";
-          estimatedDays.value = data["estimatedDays"] ?? "";
-          courierName.value = data["courier"] ?? "";
-
-          print("✅ Serviceable location:");
-          print("   📦 Estimated Date: ${estimatedDate.value}");
-          print("   ⏱️ Estimated Days: ${estimatedDays.value}");
-          print("   🚚 Courier: ${courierName.value}");
-        } else {
-          print("⚠️ Response has no data field.");
-          estimatedDate.value = "";
-          estimatedDays.value = "";
-          courierName.value = "";
-        }
-      } else {
-        print("❌ Serviceability check failed (${res.statusCode})");
-        estimatedDate.value = "";
-        estimatedDays.value = "";
-        courierName.value = "";
-      }
-    } catch (e) {
-      print("🔥 Error fetching serviceability: $e");
-      estimatedDate.value = "";
-      estimatedDays.value = "";
-      courierName.value = "";
-    } finally {
-      isEstimateDate.value = false;
-    }
-  }
-
   // ---------- 8) GET ORDER HISTORY (by userId) ----------
   /// Calls: GET {{laFetchBaseUrl}}/order-history/{userId}
   Future<void> getOrderHistoryByUser(int userId) async {

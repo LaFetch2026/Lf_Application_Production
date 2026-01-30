@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/base_controller.dart';
@@ -67,6 +68,7 @@ class DoubleButtonNew extends StatelessWidget {
                                   fontSize: 13.sp,
                                   fontFamily: fontFamily))),
                           onPressed: () {
+                            HapticFeedback.lightImpact();
                             onPressedFirst?.call();
                           },
                           child: Text(
@@ -118,6 +120,7 @@ class DoubleButtonNew extends StatelessWidget {
                                           fontSize: 13.sp,
                                           fontFamily: fontFamily))),
                                   onPressed: () {
+                                    HapticFeedback.lightImpact();
                                     onPressedSecond?.call();
                                   },
                                   child: Text(

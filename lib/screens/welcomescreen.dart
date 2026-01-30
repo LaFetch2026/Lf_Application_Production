@@ -30,7 +30,6 @@ class WelcomeScreenState extends State<WelcomeScreen>
   late VideoPlayerController _videoController;
   late Future<void> _initializeVideo;
 
-  // Local guard to prevent accidental double taps on Skip
   final RxBool _skipBusy = false.obs;
 
   @override
@@ -67,108 +66,30 @@ class WelcomeScreenState extends State<WelcomeScreen>
     if (mounted) _videoController.play();
   }
 
-  /// ✅ Handle Google Login
-  Future<void> _handleGoogleLogin() async {
-    try {
-      await analytics.logEvent(
-        name: 'welcome_page_google_login',
-        parameters: <String, Object>{
-          'page_name': 'welcome_page_google_login',
-          'login_method': 'google',
-        },
-      );
-
-      _videoController.pause();
-      await loginController.signInWithGoogle();
-      if (mounted) _videoController.play();
-    } catch (e) {
-      print("❌ Error during Google login: $e");
-      if (mounted) _videoController.play();
-    }
-  }
-
-  /// ✅ Handle Facebook Login
-  Future<void> _handleFacebookLogin() async {
-    try {
-      await analytics.logEvent(
-        name: 'welcome_page_facebook_login',
-        parameters: <String, Object>{
-          'page_name': 'welcome_page_facebook_login',
-          'login_method': 'facebook',
-        },
-      );
-
-      // TODO: Implement Facebook Sign-In logic
-      // await loginController.signInWithFacebook();
-      print("Facebook login pressed");
-    } catch (e) {
-      print("❌ Error during Facebook login: $e");
-    }
-  }
-
-  /// ✅ Handle SKIP button - Navigate to BottomNavScreen as guest
+  /// ✅ SKIP HANDLER
   Future<void> _handleSkip() async {
-    if (_skipBusy.value) return; // Prevent double tap
+    if (_skipBusy.value) return;
 
     _skipBusy.value = true;
 
     try {
-      // ✅ Save guest flag to SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('skip', true);
 
-      // ✅ Log analytics event
       await analytics.logEvent(
         name: 'welcome_page_skip',
-        parameters: <String, Object>{
+        parameters: {
           'page_name': 'welcome_page_skip',
           'user_type': 'guest',
         },
       );
 
-      // ✅ Navigate to BottomNavScreen
-      // Start at Home tab (index: 0)
       Get.offAll(() => const BottomNavScreen(index: 0));
     } catch (e) {
       print("❌ Error during skip: $e");
-      // Show error message if needed
     } finally {
       _skipBusy.value = false;
     }
-  }
-
-  /// ✅ Social Login Button Widget
-  Widget _buildSocialLoginButton({
-    required String logo,
-    required VoidCallback onPressed,
-  }) {
-    return InkWell(
-      onTap: onPressed,
-      borderRadius: BorderRadius.circular(50.r),
-      child: Container(
-        width: 30.w,
-        height: 30.h,
-        decoration: BoxDecoration(
-          color: whiteColor,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Center(
-          child: Image.asset(
-            logo,
-            width: 24.w,
-            height: 24.h,
-            fit: BoxFit.fill,
-          ),
-        ),
-      ),
-    );
   }
 
   @override
@@ -179,7 +100,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
       backgroundColor: blackColor,
       body: Stack(
         children: [
-          // Background video
+          /// 🔹 BACKGROUND VIDEO
           Positioned.fill(
             child: FutureBuilder(
               future: _initializeVideo,
@@ -199,7 +120,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
             ),
           ),
 
-          // Bottom gradient overlay
+          /// 🔹 GRADIENT OVERLAY
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -215,7 +136,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
             ),
           ),
 
-          // Logo
+          /// 🔹 TOP LOGO
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
@@ -223,12 +144,46 @@ class WelcomeScreenState extends State<WelcomeScreen>
               child: Image.asset(
                 appNameImage,
                 height: 41.sp,
-                fit: BoxFit.fill,
               ),
             ),
           ),
 
-          // Content
+          /// 🔹 TOP RIGHT SKIP
+          Positioned(
+            top: media.padding.top,
+            right: 16,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: _handleSkip,
+                child: Obx(
+                  () => _skipBusy.value
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: whiteColor,
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          child: AppText(
+                            text: "SKIP",
+                            fontFamily: "Clash Display Semibold",
+                            fontWeight: FontWeight.w600,
+                            color: whiteColor,
+                            fontSize: 12,
+                          ),
+                        ),
+                ),
+              ),
+            ),
+          ),
+
+          /// 🔹 CONTENT
           Positioned(
             bottom: 0,
             left: 0,
@@ -236,11 +191,10 @@ class WelcomeScreenState extends State<WelcomeScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Title
                 Padding(
                   padding: EdgeInsets.only(left: 16.sp),
                   child: AppText(
-                    text: "Welcome to Lafetch!".toUpperCase(),
+                    text: "WELCOME TO LAFETCH!",
                     fontFamily: "Clash Display",
                     fontWeight: FontWeight.w500,
                     color: whiteBack,
@@ -248,7 +202,6 @@ class WelcomeScreenState extends State<WelcomeScreen>
                   ),
                 ),
 
-                // Subtitle
                 Padding(
                   padding:
                       EdgeInsets.only(top: 8.sp, left: 16.sp, right: 16.sp),
@@ -263,25 +216,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
                   ),
                 ),
 
-                // // // ✅ SOCIAL LOGIN BUTTONS (Google & Facebook)
-                // Padding(
-                //   padding: EdgeInsets.only(top: 24.sp),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.center,
-                //     children: [
-                //       _buildSocialLoginButton(
-                //         logo: googleImage, // Add your Google logo asset
-                //         onPressed: _handleGoogleLogin,
-                //       ),
-                //       SizedBox(width: 20.w),
-                //       _buildSocialLoginButton(
-                //         logo: facebookImage, // Add your Facebook logo asset
-                //         onPressed: _handleFacebookLogin,
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // SIGN IN
+                /// SIGN IN
                 Padding(
                   padding: EdgeInsets.only(top: 24.sp),
                   child: getSingleButton(
@@ -292,16 +227,15 @@ class WelcomeScreenState extends State<WelcomeScreen>
                     onPressed: () async {
                       await analytics.logEvent(
                         name: 'welcome_page_btnsignin',
-                        parameters: <String, Object>{
-                          'page_name': 'welcome_page_btnsignin',
-                        },
+                        parameters: {'page_name': 'welcome_page_btnsignin'},
                       );
                       await _openLogin(initialTab: 0);
                     },
                     fontSize: 13,
                   ),
                 ),
-                // I'M NEW HERE
+
+                /// I'M NEW HERE
                 Padding(
                   padding: EdgeInsets.only(top: 24.sp),
                   child: getSingleButton(
@@ -312,9 +246,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
                     onPressed: () async {
                       await analytics.logEvent(
                         name: 'welcome_page_btnImNew',
-                        parameters: <String, Object>{
-                          'page_name': 'welcome_page_btnImNew',
-                        },
+                        parameters: {'page_name': 'welcome_page_btnImNew'},
                       );
                       await _openLogin(initialTab: 1);
                     },
@@ -322,38 +254,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
                   ),
                 ),
 
-                // SKIP - ✅ Updated with guest navigation
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: _handleSkip, // ✅ Call the skip handler
-                    child: Obx(() => _skipBusy.value
-                        ? Center(
-                            child: Transform.scale(
-                              scale: 0.3.sp,
-                              child: const CircularProgressIndicator(
-                                  color: whiteColor),
-                            ),
-                          )
-                        : Padding(
-                            padding: EdgeInsets.only(
-                                top: 24.sp,
-                                left: 12.sp,
-                                right: 12.sp,
-                                bottom: 40.sp),
-                            child: Center(
-                              child: AppText(
-                                text: "SKIP",
-                                textAlign: TextAlign.center,
-                                fontFamily: "Clash Display Semibold",
-                                fontWeight: FontWeight.w600,
-                                color: searchTextColor,
-                                fontSize: 12,
-                              ),
-                            ),
-                          )),
-                  ),
-                ),
+                SizedBox(height: 40.sp),
               ],
             ),
           ),
