@@ -577,7 +577,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Column(
-                                mainAxisSize: MainAxisSize.min,
+                                mainAxisSize: MainAxisSize.max,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   // image
@@ -591,7 +591,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                                                           .size
                                                           .width /
                                                       2) +
-                                                  10.sp,
+                                                  6.sp,
                                               width: (MediaQuery.of(context)
                                                           .size
                                                           .width /

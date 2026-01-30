@@ -1762,7 +1762,7 @@ class BannerVideoPlayer extends StatefulWidget {
 }
 
 class _BannerVideoPlayerState extends State<BannerVideoPlayer>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, WidgetsBindingObserver {
   VideoPlayerController? _controller;
 
   bool _isInitialized = false;
@@ -1779,7 +1779,10 @@ class _BannerVideoPlayerState extends State<BannerVideoPlayer>
   void initState() {
     super.initState();
 
-    /// slight delay prevents multiple videos loading together
+    // Add WidgetsBindingObserver to listen for app lifecycle changes
+    WidgetsBinding.instance.addObserver(this);
+
+    // Slight delay prevents multiple videos loading together
     Future.delayed(const Duration(milliseconds: 100), () {
       if (mounted) {
         _initializeVideo();
@@ -1865,11 +1868,28 @@ class _BannerVideoPlayerState extends State<BannerVideoPlayer>
     });
   }
 
+  // ---------------- APP LIFECYCLE HANDLING ----------------
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!_isInitialized || _controller == null) return;
+
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      // Pause the video when the app is paused or inactive
+      _controller!.pause();
+    } else if (state == AppLifecycleState.resumed && _isVisible) {
+      // Resume the video only if it's visible
+      _controller!.play();
+    }
+  }
+
   // ---------------- DISPOSE ----------------
 
   @override
   void dispose() {
     widget.scrollController?.removeListener(_onScroll);
+    WidgetsBinding.instance.removeObserver(this); // Remove observer
     _controller?.dispose();
     super.dispose();
   }
