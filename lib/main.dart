@@ -67,6 +67,11 @@ Future<void> main() async {
   // Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   PlatformDispatcher.instance.onError = (error, stack) {
+    // ✅ Silently skip non-critical cache cleanup errors
+    if (error is PathNotFoundException &&
+        error.path.toString().contains('Cache')) {
+      return true;
+    }
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };

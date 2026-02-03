@@ -2322,9 +2322,9 @@ class _ShopByCategorySection extends StatelessWidget {
                         final categoryId = catalog["id"];
                         final catalogName = catalog["name"] ?? "Category";
 
-                        await catalogController.getCategoryProductData(
+                        // ✅ Use sub-category-products API
+                        await catalogController.getSubCategoryProducts(
                           categoryId,
-                          homeController.homeGenderValue.value,
                         );
 
                         Get.to(

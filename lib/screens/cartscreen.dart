@@ -2617,6 +2617,9 @@ class CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildCheckoutButton() {
+    // Get bottom safe area padding for devices with navigation bar
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return FutureBuilder<bool>(
       future: controller.isGuestUser(),
       builder: (context, snapshot) {
@@ -2626,7 +2629,7 @@ class CartScreenState extends State<CartScreen> {
           onTap: isGuest ? _handleGuestSignUp : _handleCheckout,
           child: Container(
             width: double.infinity,
-            height: widget.backgroundcolor == whiteColor ? 70.sp : 50.sp,
+            padding: EdgeInsets.only(bottom: bottomPadding),
             color: widget.backgroundcolor == whiteColor
                 ? homeAppBarColor
                 : lightPurpleColor,
@@ -2634,7 +2637,7 @@ class CartScreenState extends State<CartScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: 16.sp),
+                  padding: EdgeInsets.only(top: 16.sp, bottom: 16.sp),
                   child: Obx(
                     () => controller.isOrder.value
                         ? const SizedBox.shrink()

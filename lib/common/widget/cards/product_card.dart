@@ -337,7 +337,7 @@ class ProductCard extends StatelessWidget {
 }
 
 /// A grid-based product card for use in GridView layouts
-/// This version uses fixed sizing appropriate for grid layouts
+/// This version uses dynamic sizing based on content
 class ProductGridCard extends StatelessWidget {
   final String imageUrl;
   final String title;
@@ -347,6 +347,9 @@ class ProductGridCard extends StatelessWidget {
   final bool showExpress;
   final VoidCallback? onTap;
   final Color backgroundColor;
+
+  /// Image height - defaults to 160.sp for compact cards
+  final double? imageHeight;
 
   const ProductGridCard({
     super.key,
@@ -358,10 +361,13 @@ class ProductGridCard extends StatelessWidget {
     this.showExpress = false,
     this.onTap,
     this.backgroundColor = const Color(0xFFF3F1F1),
+    this.imageHeight,
   });
 
   @override
   Widget build(BuildContext context) {
+    final double imgHeight = imageHeight ?? 160.sp;
+
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -373,20 +379,22 @@ class ProductGridCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(6.sp),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(8.sp),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              // Product Image - uses AspectRatio for consistent sizing
+              // Product Image - fixed height for consistency
               ClipRRect(
                 borderRadius: BorderRadius.circular(6.sp),
-                child: AspectRatio(
-                  aspectRatio: 0.75,
+                child: SizedBox(
+                  height: imgHeight,
+                  width: double.infinity,
                   child: _buildImage(),
                 ),
               ),
 
-              SizedBox(height: 5.sp),
+              SizedBox(height: 6.sp),
 
               // Product Title
               Text(
@@ -395,7 +403,7 @@ class ProductGridCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: "Clash Display Semibold",
-                  fontSize: 12.sp,
+                  fontSize: 11.sp,
                   fontWeight: FontWeight.w700,
                   color: blackColor,
                 ),
@@ -403,15 +411,18 @@ class ProductGridCard extends StatelessWidget {
 
               // Brand Name
               if (brandName.isNotEmpty)
-                Text(
-                  brandName.toUpperCase(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: "Clash Display Regular",
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w400,
-                    color: const Color(0xFF6B7280),
+                Padding(
+                  padding: EdgeInsets.only(top: 2.sp),
+                  child: Text(
+                    brandName.toUpperCase(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: "Clash Display Regular",
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xFF6B7280),
+                    ),
                   ),
                 ),
 
@@ -430,14 +441,14 @@ class ProductGridCard extends StatelessWidget {
                       ImageIcon(
                         AssetImage(truckImage),
                         color: expressText,
-                        size: 14.sp,
+                        size: 12.sp,
                       ),
-                      SizedBox(width: 5.sp),
+                      SizedBox(width: 4.sp),
                       Text(
                         "Express",
                         style: TextStyle(
                           color: expressText,
-                          fontSize: 11.sp,
+                          fontSize: 10.sp,
                           fontFamily: "Clash Display Regular",
                           fontWeight: FontWeight.w400,
                         ),
@@ -500,7 +511,7 @@ class ProductGridCard extends StatelessWidget {
         "₹ ${numMrp.toStringAsFixed(0)}",
         style: TextStyle(
           fontFamily: "Clash Display Semibold",
-          fontSize: 12.sp,
+          fontSize: 11.sp,
           fontWeight: FontWeight.w700,
           color: blackColor,
         ),
@@ -512,14 +523,14 @@ class ProductGridCard extends StatelessWidget {
       return ProductPriceDisplay(
         price: numPrice,
         mrp: numMrp > numPrice ? numMrp : null,
-        fontSize: 12,
-        mrpFontSize: 11,
-        discountFontSize: 10,
+        fontSize: 11,
+        mrpFontSize: 10,
+        discountFontSize: 9,
         fontWeight: FontWeight.w700,
         priceColor: blackColor,
         mrpColor: const Color(0xFF9CA3AF),
         discountColor: const Color(0xFF9575CD),
-        spacing: 5,
+        spacing: 4,
       );
     }
 
@@ -528,7 +539,7 @@ class ProductGridCard extends StatelessWidget {
       "Price not available",
       style: TextStyle(
         fontFamily: "Clash Display Regular",
-        fontSize: 11.sp,
+        fontSize: 10.sp,
         color: const Color(0xFF6B7280),
       ),
     );

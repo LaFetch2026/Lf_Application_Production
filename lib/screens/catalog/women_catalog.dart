@@ -5,11 +5,14 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 
 import 'package:lafetch/controllers/home_controller.dart';
 import 'package:lafetch/controllers/catalog_controller.dart';
 import 'package:lafetch/controllers/search_controller.dart';
+import 'package:lafetch/common/widget/other/haptic_helper.dart';
+import 'package:lafetch/common/widget/other/common_widget.dart';
 
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
@@ -309,103 +312,185 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                       );
                     }
 
-                    return ListView.separated(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 16.sp, vertical: 16.sp),
-                      itemCount: catalogController.catalogList.length,
-                      separatorBuilder: (_, __) => Divider(
-                        height: 24.sp,
-                        color: const Color.fromARGB(255, 255, 252, 252),
-                      ),
-                      itemBuilder: (context, index) {
-                        final item = catalogController.catalogList[index]
-                            as Map<String, dynamic>;
-
-                        final int categoryId = item['id'] is int
-                            ? item['id']
-                            : int.tryParse(
-                                  '${item['id'] ?? item['catId'] ?? item['categoryId']}',
-                                ) ??
-                                0;
-
-                        final String categoryName =
-                            (item['name'] ?? item['title'] ?? '').toString();
-
-                        return InkWell(
-                          onTap: () async {
-                            await catalogController.getCategoryProductData(
-                              categoryId,
-                              homeController.homeGenderValue.value,
-                            );
-
-                            Get.to(
-                              () => CategoryProductScreen(
-                                categoryName: categoryName,
-                                screen: 'category',
-                                genderName: homeController.genderText.value,
-                                categoryId: categoryId,
-                                brandId: 0,
-                                genderType:
-                                    homeController.homeGenderValue.value,
-                                categoryList: const [],
-                                collectionIds: const [],
-                                title: '',
-                              ),
-                            );
-
-                            await analytics.logEvent(
-                              name: 'categories_home_page',
-                              parameters: {'page_name': 'categories_home_page'},
-                            );
-                          },
-                          child: Row(
-                            children: [
-                              /// Category Name
-                              Expanded(
-                                child: AppText(
-                                  text: categoryName.toUpperCase(),
-                                  fontFamily: 'Clash Display Regular',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 18,
-                                  color: Colors.black,
-                                ),
-                              ),
-
-                              /// Category Image (Soft + Clean)
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: CachedNetworkImage(
-                                  imageUrl: (item['image'] ?? '').toString(),
-                                  width: 90.sp,
-                                  height: 100.sp,
-                                  fit: BoxFit.fill,
-                                  color:
-                                      const Color.fromARGB(255, 160, 159, 159)
-                                          .withOpacity(0.15),
-                                  colorBlendMode: BlendMode.darken,
-                                  placeholder: (_, __) => Container(
-                                    width: 90.sp,
-                                    height: 90.sp,
-                                    color: Colors.grey.shade200,
-                                  ),
-                                  errorWidget: (_, __, ___) => Container(
-                                    width: 90.sp,
-                                    height: 90.sp,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade200,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: const Icon(
-                                      Icons.category_outlined,
-                                      size: 22,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
+                    return RefreshIndicator(
+                      color: homeAppBarColor,
+                      onRefresh: () async {
+                        Haptic.light();
+                        await catalogController.getCatalogData(
+                          homeController.homeGenderValue.value,
                         );
                       },
+                      child: AnimationLimiter(
+                        child: ListView.builder(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.sp,
+                            vertical: 16.sp,
+                          ),
+                          itemCount: catalogController.catalogList.length,
+                          itemBuilder: (context, index) {
+                            final item = catalogController.catalogList[index]
+                                as Map<String, dynamic>;
+
+                            final int categoryId = item['id'] is int
+                                ? item['id']
+                                : int.tryParse(
+                                      '${item['id'] ?? item['catId'] ?? item['categoryId']}',
+                                    ) ??
+                                    0;
+
+                            final String categoryName =
+                                (item['name'] ?? item['title'] ?? '').toString();
+
+                            return AnimationConfiguration.staggeredList(
+                              position: index,
+                              duration: const Duration(milliseconds: 375),
+                              child: SlideAnimation(
+                                horizontalOffset: 50.0,
+                                child: FadeInAnimation(
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 12.sp),
+                                    decoration: BoxDecoration(
+                                      color: whiteBack,
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.04),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(12),
+                                        onTap: () async {
+                                          Haptic.light();
+
+                                          // ✅ Use sub-category-products API
+                                          await catalogController.getSubCategoryProducts(
+                                            categoryId,
+                                          );
+
+                                          if (!context.mounted) return;
+
+                                          Navigator.push(
+                                            context,
+                                            scaleIn(
+                                              CategoryProductScreen(
+                                                categoryName: categoryName,
+                                                screen: 'category',
+                                                genderName: homeController.genderText.value,
+                                                categoryId: categoryId,
+                                                brandId: 0,
+                                                genderType:
+                                                    homeController.homeGenderValue.value,
+                                                categoryList: const [],
+                                                collectionIds: const [],
+                                                title: '',
+                                              ),
+                                            ),
+                                          );
+
+                                          analytics.logEvent(
+                                            name: 'categories_home_page',
+                                            parameters: {'page_name': 'categories_home_page'},
+                                          );
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.all(12.sp),
+                                          child: Row(
+                                            children: [
+                                              /// Category Name & Explore hint
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    AppText(
+                                                      text: categoryName.toUpperCase(),
+                                                      fontFamily: 'Clash Display Semibold',
+                                                      fontWeight: FontWeight.w600,
+                                                      fontSize: 16,
+                                                      color: Colors.black,
+                                                    ),
+                                                    SizedBox(height: 6.sp),
+                                                    Row(
+                                                      children: [
+                                                        AppText(
+                                                          text: 'Explore',
+                                                          fontFamily: 'Clash Display Regular',
+                                                          fontWeight: FontWeight.w400,
+                                                          fontSize: 12,
+                                                          color: textHintColor,
+                                                        ),
+                                                        SizedBox(width: 4.sp),
+                                                        Icon(
+                                                          Icons.arrow_forward_ios,
+                                                          size: 10.sp,
+                                                          color: textHintColor,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
+                                              /// Category Image (Enhanced)
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(12),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black.withValues(alpha: 0.08),
+                                                      blurRadius: 6,
+                                                      offset: const Offset(0, 2),
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.circular(12),
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: (item['image'] ?? '').toString(),
+                                                    width: 100.sp,
+                                                    height: 110.sp,
+                                                    fit: BoxFit.cover,
+                                                    fadeInDuration: const Duration(milliseconds: 200),
+                                                    placeholder: (_, __) => Container(
+                                                      width: 100.sp,
+                                                      height: 110.sp,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.grey.shade200,
+                                                        borderRadius: BorderRadius.circular(12),
+                                                      ),
+                                                    ),
+                                                    errorWidget: (_, __, ___) => Container(
+                                                      width: 100.sp,
+                                                      height: 110.sp,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.grey.shade200,
+                                                        borderRadius: BorderRadius.circular(12),
+                                                      ),
+                                                      child: const Icon(
+                                                        Icons.category_outlined,
+                                                        size: 24,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     );
                   }),
                 ),

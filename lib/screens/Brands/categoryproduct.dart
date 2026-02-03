@@ -15,6 +15,7 @@ import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../../common/widget/appbar/productlist_appbar.dart';
 import '../../common/widget/cards/product_card.dart';
@@ -200,6 +201,25 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   Future<void> _loadCategoryProductsIfNeeded() async {
     if (_isCategoryProductsLoaded) {
       print("✅ Category products already loaded - skipping");
+      return;
+    }
+
+    // ✅ NEW: Check if categoryProductList already has data (loaded via getSubCategoryProducts)
+    if (catalogController.categoryProductList.isNotEmpty) {
+      print("✅ Products already loaded via sub-category API (${catalogController.categoryProductList.length} items) - skipping reload");
+
+      // ✅ Store original product IDs for client-side filtering
+      _originalCategoryProductIds = catalogController.categoryProductList
+          .map((p) => int.tryParse(p['id']?.toString() ?? ''))
+          .whereType<int>()
+          .toSet();
+
+      // Generate initial hash
+      _lastFilterHash = _generateFilterHash();
+      _lastSortHash = _generateSortHash();
+
+      _isCategoryProductsLoaded = true;
+      print("✅ Stored ${_originalCategoryProductIds.length} product IDs for filtering");
       return;
     }
 
@@ -690,31 +710,19 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                         }
                         return false;
                       },
-                      child: GridView.builder(
+                      child: MasonryGridView.count(
                         padding: EdgeInsets.symmetric(horizontal: 10.sp),
                         itemCount: items.length +
                             (_isLoadingMore
                                 ? 2
                                 : 0), // ✅ Add 2 for loading indicators
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 10.sp,
-                          crossAxisSpacing: 10.sp,
-                          childAspectRatio: 0.58,
-                        ),
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 10.sp,
+                        crossAxisSpacing: 10.sp,
                         itemBuilder: (context, index) {
                           // ✅ Show loading indicator at the end
                           if (index >= items.length) {
-                            return Shimmer.fromColors(
-                              baseColor: Colors.grey[300]!,
-                              highlightColor: Colors.grey[100]!,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                              ),
-                            );
+                            return _SkeletonProductTile();
                           }
                           final m = normalizeProduct(items[index]);
 
@@ -777,6 +785,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           /// ✅ Bottom bar
           Container(
             color: statusBarColor,
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
             child: Column(
               children: [
                 Container(height: 1.sp, color: dividerColor),
@@ -825,15 +834,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
   /// ✅ Skeleton Grid with shimmer effect
   Widget _buildSkeletonGrid() {
-    return GridView.builder(
+    return MasonryGridView.count(
       padding: EdgeInsets.symmetric(horizontal: 10.sp),
       itemCount: 6, // Show 6 skeleton items
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 10.sp,
-        crossAxisSpacing: 10.sp,
-        childAspectRatio: 0.58,
-      ),
+      crossAxisCount: 2,
+      mainAxisSpacing: 10.sp,
+      crossAxisSpacing: 10.sp,
       itemBuilder: (context, index) {
         return _SkeletonProductTile();
       },
@@ -1512,69 +1518,67 @@ class _SkeletonProductTile extends StatelessWidget {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
       highlightColor: Colors.grey[100]!,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image skeleton
-          AspectRatio(
-            aspectRatio: 0.88,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-          ),
-
-          SizedBox(height: 8.sp),
-
-          // Brand name skeleton
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 6.sp),
-            child: Container(
+      child: Container(
+        padding: EdgeInsets.all(8.sp),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF3F1F1),
+          borderRadius: BorderRadius.circular(6.sp),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Image skeleton - matches ProductGridCard image height
+            Container(
+              height: 160.sp,
               width: double.infinity,
-              height: 16.sp,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(6.sp),
               ),
             ),
-          ),
 
-          SizedBox(height: 6.sp),
+            SizedBox(height: 6.sp),
 
-          // Description skeleton
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 6.sp),
-            child: Container(
-              width: double.infinity * 0.8,
+            // Title skeleton
+            Container(
+              width: double.infinity,
               height: 14.sp,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
-          ),
 
-          SizedBox(height: 6.sp),
+            SizedBox(height: 4.sp),
 
-          // Price skeleton
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 6.sp),
-            child: Row(
+            // Brand name skeleton
+            Container(
+              width: 100.sp,
+              height: 12.sp,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+
+            SizedBox(height: 4.sp),
+
+            // Price skeleton
+            Row(
               children: [
                 Container(
-                  width: 60.sp,
-                  height: 14.sp,
+                  width: 50.sp,
+                  height: 12.sp,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
-                SizedBox(width: 8.sp),
+                SizedBox(width: 6.sp),
                 Container(
-                  width: 50.sp,
-                  height: 16.sp,
+                  width: 40.sp,
+                  height: 10.sp,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(4),
@@ -1582,8 +1586,8 @@ class _SkeletonProductTile extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

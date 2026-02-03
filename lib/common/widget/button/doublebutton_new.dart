@@ -30,8 +30,11 @@ class DoubleButtonNew extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get bottom safe area padding for devices with navigation bar
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Padding(
-      padding: EdgeInsets.only(top: 10.sp),
+      padding: EdgeInsets.only(top: 10.sp, bottom: bottomPadding),
       child: Column(
         children: [
           Container(

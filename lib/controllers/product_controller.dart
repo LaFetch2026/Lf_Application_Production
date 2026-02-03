@@ -2141,8 +2141,8 @@ class ProductController extends BaseController {
     }
   }
 
-  /// ✅ Fetch filter metadata (brands, colors, sizes) for a super category
-  Future<void> getFilterMetadata(int superCatId) async {
+  /// ✅ Fetch filter metadata (brands, colors, sizes) for a super category or brand
+  Future<void> getFilterMetadata(int superCatId, {int? brandId}) async {
     isFilterMetadata.value = true;
     filterBrands.clear();
     filterColors.clear();
@@ -2151,8 +2151,17 @@ class ProductController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
 
-    final uri = Uri.parse(
-        "${ApiConstants.baseUrl}/filter-metadata?superCatId=$superCatId");
+    // Build query parameters
+    final Map<String, String> queryParams = {};
+    if (superCatId > 0) {
+      queryParams['superCatId'] = superCatId.toString();
+    }
+    if (brandId != null && brandId > 0) {
+      queryParams['brandId'] = brandId.toString();
+    }
+
+    final uri = Uri.parse("${ApiConstants.baseUrl}/filter-metadata")
+        .replace(queryParameters: queryParams.isNotEmpty ? queryParams : null);
 
     try {
       final response = await http.get(
@@ -2202,10 +2211,11 @@ class ProductController extends BaseController {
         Get.offAll(() => const LoginScreen(initialTab: 0));
         getSnackBar("Authentication failed");
       } else {
-        getSnackBar("Failed to load filter metadata");
+        // Silent fail - filter will show empty options
+        print("❌ Failed to load filter metadata: ${response.statusCode}");
       }
     } on TimeoutException {
-      getSnackBar("Request timed out");
+      print("❌ Filter metadata request timed out");
     } catch (e, s) {
       print("❌ getFilterMetadata error: $e\n$s");
     } finally {

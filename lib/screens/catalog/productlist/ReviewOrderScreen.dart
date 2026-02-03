@@ -1503,11 +1503,14 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   }
 
   Widget _checkoutCta() {
+    // Get bottom safe area padding for devices with navigation bar
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return GestureDetector(
       onTap: _confirmAndPay,
       child: Container(
         width: double.infinity,
-        height: 70.sp,
+        padding: EdgeInsets.only(top: 20.sp, bottom: 20.sp + bottomPadding),
         color: homeAppBarColor,
         alignment: Alignment.center,
         child: const AppText(

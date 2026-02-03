@@ -123,48 +123,52 @@ class ProductPriceDisplay extends StatelessWidget {
     }
 
     // Horizontal layout (default)
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: alignment,
-      crossAxisAlignment: crossAlignment,
-      children: [
-        // Base Price
-        Text(
-          '$currencySymbol${price.toStringAsFixed(0)}',
-          style: TextStyle(
-            fontFamily: "Clash Display Regular",
-            fontSize: fontSize,
-            fontWeight: fontWeight,
-            color: priceColor ?? deepGreytextColor,
-          ),
-        ),
-        // MRP with strikethrough
-        if (mrp != null && discount != null && discount > 0) ...[
-          SizedBox(width: spacing),
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.centerLeft,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: alignment,
+        crossAxisAlignment: crossAlignment,
+        children: [
+          // Base Price
           Text(
-            '$currencySymbol${mrp!.toStringAsFixed(0)}',
+            '$currencySymbol${price.toStringAsFixed(0)}',
             style: TextStyle(
-              fontSize: mrpFontSize ?? (fontSize - 2),
-              fontWeight: mrpFontWeight ?? FontWeight.w400,
-              color: mrpColor ?? textHintColor,
-              decoration: TextDecoration.lineThrough,
               fontFamily: "Clash Display Regular",
-              decorationColor: mrpColor ?? textHintColor,
+              fontSize: fontSize,
+              fontWeight: fontWeight,
+              color: priceColor ?? deepGreytextColor,
             ),
           ),
-          SizedBox(width: spacing),
-          // Discount %
-          Text(
-            '$discount% OFF',
-            style: TextStyle(
-              fontSize: discountFontSize ?? (fontSize - 2),
-              fontWeight: discountFontWeight ?? FontWeight.w500,
-              fontFamily: "Clash Display Regular",
-              color: discountColor ?? lightPurpleColor,
+          // MRP with strikethrough
+          if (mrp != null && discount != null && discount > 0) ...[
+            SizedBox(width: spacing),
+            Text(
+              '$currencySymbol${mrp!.toStringAsFixed(0)}',
+              style: TextStyle(
+                fontSize: mrpFontSize ?? (fontSize - 2),
+                fontWeight: mrpFontWeight ?? FontWeight.w400,
+                color: mrpColor ?? textHintColor,
+                decoration: TextDecoration.lineThrough,
+                fontFamily: "Clash Display Regular",
+                decorationColor: mrpColor ?? textHintColor,
+              ),
             ),
-          ),
+            SizedBox(width: spacing),
+            // Discount %
+            Text(
+              '$discount% OFF',
+              style: TextStyle(
+                fontSize: discountFontSize ?? (fontSize - 2),
+                fontWeight: discountFontWeight ?? FontWeight.w500,
+                fontFamily: "Clash Display Regular",
+                color: discountColor ?? lightPurpleColor,
+              ),
+            ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }

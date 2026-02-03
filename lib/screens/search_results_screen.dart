@@ -403,7 +403,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                         ),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          childAspectRatio: 0.56,
+                          childAspectRatio: 0.68,
                           crossAxisSpacing: 5.sp,
                           mainAxisSpacing: 8.sp,
                         ),

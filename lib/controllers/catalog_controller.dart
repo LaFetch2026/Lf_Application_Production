@@ -201,6 +201,7 @@ class CatalogController extends BaseController {
       final uri = Uri.parse("${ApiConstants.baseUrl}/products")
           .replace(queryParameters: {
         "catId": categoryId.toString(),
+        "status": "true",
       });
 
       final response = await http.get(
@@ -237,6 +238,115 @@ class CatalogController extends BaseController {
       }
     } catch (e) {
       print("getCategoryProductData error: $e");
+    } finally {
+      isCategory.value = false;
+    }
+  }
+
+  /// Fetch products by sub-category ID using /sub-category-products API
+  Future<void> getSubCategoryProducts(int catId) async {
+    isCategory.value = true;
+    final prefs = await SharedPreferences.getInstance();
+
+    try {
+      final uri = Uri.parse(
+          "${ApiConstants.baseUrl}/sub-category-products?catId=$catId");
+
+      print("🔹 Sub-Category Products API → $uri");
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          "Authorization": "Bearer ${prefs.getString('token')}",
+        },
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw TimeoutException("Request timeout");
+        },
+      );
+
+      // Check if response is HTML instead of JSON
+      if (response.body.trim().startsWith('<!DOCTYPE') ||
+          response.body.trim().startsWith('<html')) {
+        print("❌ Sub-Category Products API returned HTML instead of JSON");
+        getSnackBar("Server returned invalid response");
+        return;
+      }
+
+      final decoded = json.decode(response.body);
+
+      if (response.statusCode == 200 && decoded["data"] != null) {
+        final data = decoded["data"];
+        List<dynamic> rawProducts = [];
+
+        print("🔍 Data type: ${data.runtimeType}");
+
+        // Handle response structure: data.children[].products
+        if (data is Map<String, dynamic>) {
+          final childrenRaw = data["children"];
+          print("🔍 Children type: ${childrenRaw.runtimeType}, value: ${childrenRaw != null ? 'exists' : 'null'}");
+
+          if (childrenRaw is List) {
+            for (int i = 0; i < childrenRaw.length; i++) {
+              final child = childrenRaw[i];
+              print("🔍 Child $i type: ${child.runtimeType}");
+
+              if (child is Map<String, dynamic>) {
+                final productsRaw = child["products"];
+                print("🔍 Child $i products type: ${productsRaw?.runtimeType}, count: ${productsRaw is List ? productsRaw.length : 'not a list'}");
+
+                if (productsRaw is List) {
+                  rawProducts.addAll(productsRaw);
+                  print("✅ Added ${productsRaw.length} products from child $i (${child['name']})");
+                }
+              }
+            }
+          }
+
+          // Also check for direct products array (fallback)
+          if (rawProducts.isEmpty && data["products"] is List) {
+            rawProducts = data["products"] as List;
+            print("🔍 Using direct products array: ${rawProducts.length}");
+          }
+        } else if (data is List) {
+          rawProducts = data;
+          print("🔍 Data is direct list: ${rawProducts.length}");
+        }
+
+        print("🔍 Total raw products collected: ${rawProducts.length}");
+
+        /// Transform Products
+        final transformed = rawProducts.map<Map<String, dynamic>>((p) {
+          if (p is! Map<String, dynamic>) {
+            print("⚠️ Product is not Map<String, dynamic>: ${p.runtimeType}");
+            return <String, dynamic>{};
+          }
+          return ProductController.calculateDisplayPrices(p);
+        }).where((p) => p.isNotEmpty).toList();
+
+        categoryProductList.assignAll(transformed);
+        print(
+            "✅ Sub-Category Products loaded: ${transformed.length} items for catId: $catId");
+      } else if (response.statusCode == 401) {
+        await prefs.remove('token');
+        HomeScreenState.clearCache();
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+        getSnackBar("Session expired, please login again");
+      } else if (response.statusCode == 500) {
+        getSnackBar("Server error, please try again later");
+      } else {
+        print("❌ Sub-Category Products API ${response.statusCode}: ${decoded["message"]}");
+        getSnackBar(decoded["message"] ?? "Failed to load products");
+      }
+    } on SocketException {
+      getSnackBar("No internet connection");
+    } on TimeoutException {
+      getSnackBar("Request timeout, please try again");
+    } catch (e) {
+      print("getSubCategoryProducts error: $e");
+      getSnackBar("Something went wrong, please try again");
     } finally {
       isCategory.value = false;
     }
@@ -391,7 +501,8 @@ class CatalogController extends BaseController {
 
       if (response.body.trim().startsWith('<!DOCTYPE') ||
           response.body.trim().startsWith('<html')) {
-        getSnackBar("Server error");
+        // Silent fail - screen will use fallback data from brandDetails
+        print("❌ Server returned HTML instead of JSON");
         return;
       }
 
@@ -406,7 +517,8 @@ class CatalogController extends BaseController {
         } else if (data is Map && data["products"] != null) {
           products = List<dynamic>.from(data["products"]);
         } else {
-          getSnackBar("Invalid response format");
+          // Empty or unexpected format - just return empty list silently
+          print("⚠️ Unexpected data format, returning empty list");
           return;
         }
 
@@ -433,16 +545,15 @@ class CatalogController extends BaseController {
         Get.offAll(() => const LoginScreen(initialTab: 0));
         getSnackBar("Session expired");
       } else {
-        getSnackBar(decoded["message"] ?? "Failed to fetch products");
+        // Don't show snackbar for filter/sort failures - just log and show empty state
         print("❌ API ${response.statusCode}: ${decoded["message"]}");
       }
     } on SocketException {
-      getSnackBar("No internet connection");
+      print("❌ No internet connection");
     } on TimeoutException {
-      getSnackBar("Request timeout");
+      print("❌ Request timeout");
     } catch (e) {
       print("🚨 Filter error: $e");
-      getSnackBar("Something went wrong");
     } finally {
       isSorting.value = false;
       isCategory.value = false;

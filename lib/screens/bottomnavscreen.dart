@@ -244,44 +244,6 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     }
   }
 
-  Future<bool> _handleLocationPermission(BuildContext context) async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Check service enabled
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      showAppSnackBar(
-        "Please enable location services",
-        type: SnackBarType.error,
-      );
-      await Geolocator.openLocationSettings();
-      return false;
-    }
-
-    permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-
-    if (permission == LocationPermission.denied) {
-      showAppSnackBar("Location permission denied", type: SnackBarType.error);
-      return false;
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      showAppSnackBar(
-        "Location permission permanently denied. Enable from settings.",
-        type: SnackBarType.error,
-      );
-      await Geolocator.openAppSettings();
-      return false;
-    }
-
-    return true;
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;

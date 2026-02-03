@@ -77,7 +77,7 @@ class SearchScreenController extends BaseController {
     try {
       final headers = await _headers();
       final uri =
-          _buildUri(ApiConstants.baseUrl, 'filter-products', {'key': key});
+          _buildUri(ApiConstants.baseUrl, 'filter-products', {'key': key, 'status': 'true'});
 
       final response = await http
           .post(uri, headers: headers)
