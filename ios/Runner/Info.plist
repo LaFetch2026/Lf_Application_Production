@@ -40,6 +40,10 @@
         </dict>
     </array>
 
+    <!-- Google Sign-In Config -->
+    <key>GIDClientID</key>
+    <string>171013633754-0hpu1m3l01tm3h5ecehabidpriqefaej.apps.googleusercontent.com</string>
+
     <!-- Facebook Config -->
     <key>FacebookAppID</key>
     <string>915626513880487</string>

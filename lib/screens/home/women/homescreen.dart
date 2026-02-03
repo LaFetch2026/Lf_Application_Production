@@ -46,6 +46,9 @@ import '../../../core/constant/constants.dart';
 import '../../../models/collection_extensions.dart';
 import '../../../models/collection_banner_model.dart';
 
+// ✅ Global RouteObserver for video auto-pause on navigation
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 class HomeScreen extends StatefulWidget {
   final Function(int)? onPressed;
 
@@ -838,9 +841,6 @@ class HomeScreenState extends State<HomeScreen>
                           )),
             ),
 
-            Container(
-                width: double.infinity, color: lightgreyColor, height: 2.sp),
-
             Expanded(
               child: Stack(
                 children: [
@@ -910,12 +910,11 @@ class HomeScreenState extends State<HomeScreen>
                               }
 
                               return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   ClipRRect(
                                     // ✅ BORDER RADIUS
                                     child: SizedBox(
-                                      height: 230,
+                                      height: 220,
                                       width: double.infinity,
                                       child: PageView(
                                         key: ValueKey(
@@ -932,7 +931,6 @@ class HomeScreenState extends State<HomeScreen>
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 10.sp),
                                   banners.length == 1
                                       ? const SizedBox.shrink()
                                       : Center(
@@ -954,7 +952,7 @@ class HomeScreenState extends State<HomeScreen>
                             print("🎬 Not showing anything (SizedBox.shrink)");
                             return const SizedBox.shrink();
                           }),
-                          SizedBox(height: 8.sp), // ✅ Consistent spacing
+                          // ✅ Consistent spacing
                           // Marquee Banner - Dynamic from API with icons
                           Obx(() {
                             final announcements = homeController.announcements;
@@ -1043,7 +1041,15 @@ class HomeScreenState extends State<HomeScreen>
 
                           // Product Collections
                           Obx(() {
-                            if (productController.isHomeProduct.value) {
+                            final currentGender =
+                                homeController.homeGenderValue.value;
+
+                            // ✅ Show loader if actively loading OR if data hasn't loaded yet for this gender
+                            if (productController.isHomeProduct.value ||
+                                (!productController
+                                        .isHomeProductLoaded(currentGender) &&
+                                    productController
+                                        .homeProductList.isEmpty)) {
                               return DummyProductList(
                                 visibleSubtitle: true,
                                 text: (productController.tagname.value)
@@ -1762,15 +1768,18 @@ class BannerVideoPlayer extends StatefulWidget {
 }
 
 class _BannerVideoPlayerState extends State<BannerVideoPlayer>
-    with AutomaticKeepAliveClientMixin, WidgetsBindingObserver {
+    with AutomaticKeepAliveClientMixin, WidgetsBindingObserver, RouteAware {
   VideoPlayerController? _controller;
 
   bool _isInitialized = false;
   bool _hasError = false;
   bool _isMuted = true;
   bool _isVisible = true;
+  bool _isRouteActive = true;
 
   final GlobalKey _videoKey = GlobalKey();
+  final HomeController _homeController = Get.find<HomeController>();
+  Worker? _tabListener;
 
   @override
   bool get wantKeepAlive => true;
@@ -1782,6 +1791,16 @@ class _BannerVideoPlayerState extends State<BannerVideoPlayer>
     // Add WidgetsBindingObserver to listen for app lifecycle changes
     WidgetsBinding.instance.addObserver(this);
 
+    // ✅ Listen for tab changes to pause/play video
+    _tabListener = ever(_homeController.isHomeTabActive, (isActive) {
+      if (!_isInitialized || _controller == null) return;
+      if (isActive && _isVisible && _isRouteActive) {
+        _controller!.play();
+      } else {
+        _controller!.pause();
+      }
+    });
+
     // Slight delay prevents multiple videos loading together
     Future.delayed(const Duration(milliseconds: 100), () {
       if (mounted) {
@@ -1790,6 +1809,32 @@ class _BannerVideoPlayerState extends State<BannerVideoPlayer>
     });
 
     widget.scrollController?.addListener(_onScroll);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // ✅ Subscribe to route observer for navigation detection
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+    }
+  }
+
+  // ✅ Called when navigating away from this screen
+  @override
+  void didPushNext() {
+    _isRouteActive = false;
+    _controller?.pause();
+  }
+
+  // ✅ Called when returning to this screen
+  @override
+  void didPopNext() {
+    _isRouteActive = true;
+    if (_isVisible && _homeController.isHomeTabActive.value) {
+      _controller?.play();
+    }
   }
 
   // ---------------- VIDEO INIT ----------------
@@ -1811,8 +1856,12 @@ class _BannerVideoPlayerState extends State<BannerVideoPlayer>
 
       _controller!
         ..setLooping(true)
-        ..setVolume(0.0)
-        ..play();
+        ..setVolume(0.0);
+
+      // ✅ Only play if home tab is active
+      if (_homeController.isHomeTabActive.value) {
+        _controller!.play();
+      }
 
       setState(() {
         _isInitialized = true;
@@ -1888,6 +1937,8 @@ class _BannerVideoPlayerState extends State<BannerVideoPlayer>
 
   @override
   void dispose() {
+    routeObserver.unsubscribe(this); // ✅ Unsubscribe from route observer
+    _tabListener?.dispose(); // ✅ Dispose tab listener
     widget.scrollController?.removeListener(_onScroll);
     WidgetsBinding.instance.removeObserver(this); // Remove observer
     _controller?.dispose();
@@ -2414,9 +2465,11 @@ class _ShopByCategorySection extends StatelessWidget {
 // ✅ Widget to display standalone collection banners with horizontal scroll
 class _StandaloneCollectionBanners extends StatelessWidget {
   final List<StandaloneCollectionBanner> banners;
+  final VoidCallback? onBannerTap;
 
   const _StandaloneCollectionBanners({
     required this.banners,
+    this.onBannerTap,
   });
 
   @override
@@ -2451,20 +2504,23 @@ class _StandaloneCollectionBanners extends StatelessWidget {
             return Padding(
               padding: EdgeInsets.only(
                   right: index < banners.length - 1 ? 12.sp : 0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12.sp),
-                child: SizedBox(
-                  width: itemWidth,
-                  height: 200.sp,
-                  child: isVideo
-                      ? _VideoBannerItem(
-                          videoUrl: mediaUrl,
-                          height: 200.sp,
-                        )
-                      : _BannerItem(
-                          imageUrl: mediaUrl,
-                          height: 200.sp,
-                        ),
+              child: GestureDetector(
+                onTap: onBannerTap,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.sp),
+                  child: SizedBox(
+                    width: itemWidth,
+                    height: 200.sp,
+                    child: isVideo
+                        ? _VideoBannerItem(
+                            videoUrl: mediaUrl,
+                            height: 200.sp,
+                          )
+                        : _BannerItem(
+                            imageUrl: mediaUrl,
+                            height: 200.sp,
+                          ),
+                  ),
                 ),
               ),
             );
@@ -2957,7 +3013,10 @@ class _CollectionSectionState extends State<_CollectionSection> {
 
           // Banners
           if (widget.banners.isNotEmpty)
-            _StandaloneCollectionBanners(banners: widget.banners),
+            _StandaloneCollectionBanners(
+              banners: widget.banners,
+              onBannerTap: widget.onTitleTap,
+            ),
 
           // Products
           if (_displayProducts.isNotEmpty)

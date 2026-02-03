@@ -495,12 +495,12 @@ class LoginController extends BaseController {
 
       print("✅ Google Sign-In successful: ${firebaseUser.email}");
 
-      // Send to backend for authentication/registration
-      final success = await _authenticateWithBackend(
+      // Call backend API for social sign-in
+      final success = await _socialSignIn(
         email: firebaseUser.email ?? '',
         name: firebaseUser.displayName ?? '',
-        googleId: firebaseUser.uid,
-        photoUrl: firebaseUser.photoURL,
+        provider: 'google.com',
+        providerId: firebaseUser.uid,
       );
 
       if (success) {
@@ -523,29 +523,31 @@ class LoginController extends BaseController {
     }
   }
 
-  /// Authenticate with backend using Google credentials
-  Future<bool> _authenticateWithBackend({
+  /// Call backend API for social sign-in
+  Future<bool> _socialSignIn({
     required String email,
     required String name,
-    required String googleId,
-    String? photoUrl,
+    required String provider,
+    required String providerId,
   }) async {
     try {
       final response = await http.post(
-        Uri.parse("${ApiConstants.baseUrl}/auth/social-login"),
+        Uri.parse("${ApiConstants.baseUrl}/auth/social-sign-in"),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': email,
           'name': name,
-          'provider': 'google',
-          'provider_id': googleId,
-          'photo_url': photoUrl,
+          'provider': provider,
+          'providerId': providerId,
         }),
       );
 
+      print("📡 Social Sign-In Response: ${response.statusCode}");
+      print("📡 Response Body: ${response.body}");
+
       final data = jsonDecode(response.body);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final userData = data['data'];
         final accessToken = userData?['token'];
 
@@ -558,14 +560,17 @@ class LoginController extends BaseController {
         final prefs = await SharedPreferences.getInstance();
         await setToken(accessToken);
         await prefs.setBool('isLoggedIn', true);
+        await prefs.setString('loginProvider', 'google');
         await prefs.setInt('userId', userData?['id'] ?? 0);
 
-        final userName = userData?['name'] ?? name;
+        final userName = userData?['name'] ?? userData?['fullName'] ?? name;
         final userEmail = userData?['email'] ?? email;
         final gender = userData?['gender'];
+        final phone = userData?['phone'];
 
         if (userName.isNotEmpty) await prefs.setString('name', userName);
         if (userEmail.isNotEmpty) await prefs.setString('email', userEmail);
+        if (phone != null) await prefs.setString('phonenumber', phone);
         if (gender != null) _mapGenderToPrefs(gender, prefs);
 
         // Clear guest mode
@@ -576,12 +581,12 @@ class LoginController extends BaseController {
         return true;
       } else {
         final errorMessage =
-            data['message'] ?? "Social login failed. Please try again.";
+            data['message'] ?? "Social sign-in failed. Please try again.";
         getSnackBar(errorMessage);
         return false;
       }
     } catch (e) {
-      print("❌ Backend auth error: $e");
+      print("❌ Social Sign-In API error: $e");
       getSnackBar("Network error during authentication.");
       return false;
     }

@@ -78,6 +78,9 @@ class HomeController extends BaseController {
   RxList<Map<String, dynamic>> genderTabs = <Map<String, dynamic>>[].obs;
   RxBool isLoadingTabs = false.obs;
 
+  // ✅ Track if home tab is active (for video auto-pause)
+  RxBool isHomeTabActive = true.obs;
+
   // Track if initial data has been loaded
   RxBool isInitialDataLoaded = false.obs;
 

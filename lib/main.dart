@@ -20,6 +20,7 @@ import 'controllers/login_controller.dart';
 import 'firebase_options.dart';
 import 'core/constant/constants.dart';
 import 'screens/splash/splashtwo.dart';
+import 'screens/home/women/homescreen.dart' show routeObserver;
 
 /// Background FCM handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -258,7 +259,7 @@ class MyApp extends StatelessWidget {
           // Always start from SplashTwoScreen
           home: const SplashTwoScreen(),
           // Add this to ensure clean navigation on hot restart
-          navigatorObservers: [GetObserver()],
+          navigatorObservers: [GetObserver(), routeObserver],
           // Enable iOS-style swipe-to-go-back on both platforms
           defaultTransition: Transition.cupertino,
           // Configure page transitions for swipe gesture

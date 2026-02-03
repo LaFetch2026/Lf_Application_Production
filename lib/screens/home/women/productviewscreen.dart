@@ -22,6 +22,7 @@ import '../../../controllers/wishlist_controller.dart';
 import '../../../controllers/brand_controller.dart';
 import '../../../controllers/catalog_controller.dart';
 import '../../../core/constant/constants.dart';
+import '../../../models/collection_model.dart';
 import 'dart:async';
 
 class ProductViewScreen extends StatefulWidget {
@@ -161,6 +162,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     // ✅ CRITICAL FIX: Clear API filter results cache
     catalogController.categoryProductList.clear();
 
+    // ✅ Set loading state BEFORE postFrameCallback to show skeleton on first build
+    if (widget.searchResults == null && productController.collectionId.value > 0) {
+      catalogController.isCategory.value = true;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       wishlistController.getWishlistData();
 
@@ -181,18 +187,46 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         final collectionId = productController.collectionId.value;
 
         if (collectionId > 0) {
-          // ✅ NEW: Fetch products directly from /filter-products API for this collection
-          print("🔹 Loading products for collection $collectionId from API");
-          await catalogController.getFilterAndSortProducts(
-            superCatId: productController.categoryFilter.value,
-            collectionId: collectionId,
-            page: 1,
-            limit: 100, // Load all products for collection
-          );
+          // ✅ First check if products are already in homeProductList
+          final homeProducts = _getAllProducts();
 
-          _isProductsLoaded = true;
-          print(
-              "✅ Loaded ${catalogController.categoryProductList.length} products from API for collection $collectionId");
+          if (homeProducts.isNotEmpty) {
+            // ✅ Use products from homeProductList (already loaded by homescreen)
+            print("✅ Using ${homeProducts.length} products from homeProductList for collection $collectionId");
+
+            // Track product IDs for filtering
+            _originalHomeProductIds = homeProducts
+                .map((p) => int.tryParse(p['id']?.toString() ?? ''))
+                .whereType<int>()
+                .toSet();
+
+            _isProductsLoaded = true;
+
+            // ✅ Reset loading state since we're not calling API
+            catalogController.isCategory.value = false;
+          } else {
+            // ✅ Fallback: Fetch from API if homeProductList is empty
+            print("🔹 Loading products for collection $collectionId from API");
+            await catalogController.getFilterAndSortProducts(
+              superCatId: productController.categoryFilter.value,
+              collectionId: collectionId,
+              page: 1,
+              limit: 100,
+            );
+
+            // Track loaded products for filtering
+            _originalHomeProductIds = catalogController.categoryProductList
+                .map((p) => int.tryParse(p['id']?.toString() ?? ''))
+                .whereType<int>()
+                .toSet();
+
+            _isProductsLoaded = true;
+            print(
+                "✅ Loaded ${catalogController.categoryProductList.length} products from API for collection $collectionId");
+          }
+
+          // ✅ Trigger UI rebuild
+          if (mounted) setState(() {});
         } else {
           // ✅ Fallback: Use home products if no specific collection
           final currentGender = productController.categoryFilter.value;
@@ -259,9 +293,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     print("✅ Home products tracked (${_originalHomeProductIds.length} items)");
   }
 
-  // ✅ Get categories based on super category (genderType from productController)
-  // Uses actual API-loaded categories from catalogController.catalogList
-  // ✅ Get all products from collections
+  // ✅ Get all products from collections (uses CollectionModel type)
   List<Map<String, dynamic>> _getAllProducts() {
     // If search results are provided, return them directly
     if (widget.searchResults != null && widget.searchResults!.isNotEmpty) {
@@ -269,59 +301,30 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     }
 
     final int selectedCollectionId = productController.collectionId.value;
-    final int superCatId = productController.categoryFilter.value;
 
-    final List<Map<String, dynamic>> collections = productController
-        .homeProductList
-        .whereType<Map<String, dynamic>>()
-        .toList();
+    // ✅ FIXED: homeProductList is RxList<CollectionModel>, not Map<String, dynamic>
+    final List<CollectionModel> collections = productController.homeProductList;
 
     final List<Map<String, dynamic>> allProducts = <Map<String, dynamic>>[];
 
     print(
-        "🔍 DEBUG: Getting products - selectedCollectionId: $selectedCollectionId, superCatId: $superCatId");
+        "🔍 DEBUG: Getting products - selectedCollectionId: $selectedCollectionId");
     print("🔍 DEBUG: Total collections: ${collections.length}");
 
-    for (final c in collections) {
-      // ✅ Get the collection ID from the collection object (not from products)
-      final collectionId = c['id'] is int
-          ? c['id']
-          : int.tryParse(c['id']?.toString() ?? '') ?? 0;
-
-      final List<Map<String, dynamic>> prods =
-          (c['products'] as List? ?? const [])
-              .whereType<Map<String, dynamic>>()
-              .toList();
-
+    for (final collection in collections) {
       print(
-          "📦 Collection ID: $collectionId, Name: ${c['name']}, Products: ${prods.length}");
+          "📦 Collection ID: ${collection.id}, Name: ${collection.name}, Products: ${collection.products.length}");
 
       // ✅ If a specific collection is selected, skip other collections
-      if (selectedCollectionId != 0 && collectionId != selectedCollectionId) {
+      if (selectedCollectionId != 0 && collection.id != selectedCollectionId) {
         print(
-            "   ⏭️ Skipping collection $collectionId (looking for $selectedCollectionId)");
+            "   ⏭️ Skipping collection ${collection.id} (looking for $selectedCollectionId)");
         continue;
       }
 
-      for (final p in prods) {
-        final sc = p['superCatId'];
-        final scId = sc is int ? sc : int.tryParse(sc?.toString() ?? '') ?? 0;
-
-        // ✅ Apply same workaround as homescreen: if superCatId is 0 (missing), assume it matches
-        // because API already filters by gender parameter
-        if (scId == 0) {
-          allProducts.add(p);
-          continue;
-        }
-
-        // ✅ Filter by gender if superCatId is set
-        if (superCatId != 0 && scId != superCatId) {
-          print(
-              "   ⏭️ Product ${p['id']} skipped (superCatId: $scId, need: $superCatId)");
-          continue;
-        }
-
-        allProducts.add(p);
+      // ✅ Convert Product objects to Map<String, dynamic>
+      for (final product in collection.products) {
+        allProducts.add(product.toJson());
       }
     }
 

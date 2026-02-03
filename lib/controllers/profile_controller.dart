@@ -99,6 +99,18 @@ class ProfileController extends BaseController {
     orderValue.value = isOrder.value ? 1 : 0;
     offerValue.value = isOffer.value ? 1 : 0;
     permotionValue.value = isPermotion.value ? 1 : 0;
+
+    // ✅ For Google Sign-In users, set profile details from local storage
+    final loginProvider = prefs.getString('loginProvider');
+    if (loginProvider == 'google') {
+      profileDetails.value = {
+        'fullName': prefs.getString('name') ?? '',
+        'email': prefs.getString('email') ?? '',
+        'phone': prefs.getString('phonenumber') ?? '',
+        'photoUrl': prefs.getString('photoUrl') ?? '',
+        'provider': 'google',
+      };
+    }
   }
 
   bool validateBasicProfileFields() {
@@ -181,6 +193,14 @@ class ProfileController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('userId');
     final token = prefs.getString('token');
+    final loginProvider = prefs.getString('loginProvider');
+
+    // ✅ For Google Sign-In users without backend userId, use local data
+    if (loginProvider == 'google' && token != null && token.isNotEmpty) {
+      debugPrint("✅ safeInitProfile(): Google user - using local data");
+      await _loadProfileFromPrefs();
+      return;
+    }
 
     // If there's no session, optionally redirect to Welcome/Login
     if (userId == null || token == null || token.isEmpty) {
@@ -203,6 +223,15 @@ class ProfileController extends BaseController {
     try {
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getInt('userId');
+      final loginProvider = prefs.getString('loginProvider');
+
+      // ✅ For Google Sign-In users without backend userId, use local data
+      if (loginProvider == 'google' && userId == null) {
+        debugPrint("✅ Google user - loading profile from local storage");
+        await _loadProfileFromPrefs();
+        isProfile.value = false;
+        return;
+      }
 
       if (userId == null) {
         debugPrint("⚠️ Skipping profile fetch: userId not found in prefs.");

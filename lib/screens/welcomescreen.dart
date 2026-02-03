@@ -254,6 +254,87 @@ class WelcomeScreenState extends State<WelcomeScreen>
                   ),
                 ),
 
+                /// OR DIVIDER
+                Padding(
+                  padding: EdgeInsets.only(top: 24.sp, left: 16.sp, right: 16.sp),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          color: whiteColor.withOpacity(0.5),
+                          thickness: 1,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                        child: AppText(
+                          text: "OR",
+                          fontFamily: "Clash Display",
+                          fontWeight: FontWeight.w500,
+                          color: whiteColor.withOpacity(0.7),
+                          fontSize: 12,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          color: whiteColor.withOpacity(0.5),
+                          thickness: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                /// CONTINUE WITH GOOGLE
+                Padding(
+                  padding: EdgeInsets.only(top: 24.sp, left: 16.sp, right: 16.sp),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 50.sp,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        await analytics.logEvent(
+                          name: 'welcome_page_btn_google',
+                          parameters: {'page_name': 'welcome_page_btn_google'},
+                        );
+                        _videoController.pause();
+                        await loginController.signInWithGoogle();
+                        if (mounted) _videoController.play();
+                      },
+                      style: ButtonStyle(
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(1.sp),
+                          ),
+                        ),
+                        side: WidgetStateProperty.all(
+                          BorderSide(width: 1.sp, color: whiteColor),
+                        ),
+                        elevation: WidgetStateProperty.all(0.0),
+                        backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/google.png',
+                            height: 20.sp,
+                            width: 20.sp,
+                          ),
+                          SizedBox(width: 10.sp),
+                          AppText(
+                            text: "CONTINUE WITH GOOGLE",
+                            fontFamily: "Clash Display",
+                            fontWeight: FontWeight.bold,
+                            color: whiteColor,
+                            fontSize: 13,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
                 SizedBox(height: 40.sp),
               ],
             ),

@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
 import 'dart:convert';
-import 'dart:io';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -195,6 +194,8 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     homeController.isScrolling.value = false;
     // ✅ Mark tab as loaded when switching to it
     _loadedTabs.add(index);
+    // ✅ Update home tab active state (for video auto-pause)
+    homeController.isHomeTabActive.value = (index == 0);
     setState(() => _currentIndex = index);
   }
 
@@ -285,9 +286,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    final bottomNavHeight = Platform.isIOS
-        ? (55.sp + MediaQuery.of(context).padding.bottom)
-        : 60.sp;
+    final bottomNavHeight = 55.sp + MediaQuery.of(context).padding.bottom;
 
     // Debug video state
     print(
@@ -314,8 +313,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                 ),
           bottomNavigationBar: Container(
             padding: EdgeInsets.only(
-              bottom:
-                  Platform.isIOS ? MediaQuery.of(context).padding.bottom : 0,
+              bottom: MediaQuery.of(context).padding.bottom,
             ),
             decoration: BoxDecoration(
               color: whiteColor,
@@ -327,9 +325,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                 ),
               ],
             ),
-            height: Platform.isIOS
-                ? (55.sp + MediaQuery.of(context).padding.bottom)
-                : 60.sp,
+            height: 55.sp + MediaQuery.of(context).padding.bottom,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -958,7 +954,6 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
         child: Padding(
           padding: EdgeInsets.only(
             top: 8.sp,
-            bottom: Platform.isIOS ? 0 : 8.sp,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
