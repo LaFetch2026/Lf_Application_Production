@@ -339,7 +339,8 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                                     0;
 
                             final String categoryName =
-                                (item['name'] ?? item['title'] ?? '').toString();
+                                (item['name'] ?? item['title'] ?? '')
+                                    .toString();
 
                             return AnimationConfiguration.staggeredList(
                               position: index,
@@ -354,7 +355,8 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                                       borderRadius: BorderRadius.circular(12),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withValues(alpha: 0.04),
+                                          color: Colors.black
+                                              .withValues(alpha: 0.04),
                                           blurRadius: 8,
                                           offset: const Offset(0, 2),
                                         ),
@@ -368,7 +370,8 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                                           Haptic.light();
 
                                           // ✅ Use sub-category-products API
-                                          await catalogController.getSubCategoryProducts(
+                                          await catalogController
+                                              .getSubCategoryProducts(
                                             categoryId,
                                           );
 
@@ -380,11 +383,12 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                                               CategoryProductScreen(
                                                 categoryName: categoryName,
                                                 screen: 'category',
-                                                genderName: homeController.genderText.value,
+                                                genderName: homeController
+                                                    .genderText.value,
                                                 categoryId: categoryId,
                                                 brandId: 0,
-                                                genderType:
-                                                    homeController.homeGenderValue.value,
+                                                genderType: homeController
+                                                    .homeGenderValue.value,
                                                 categoryList: const [],
                                                 collectionIds: const [],
                                                 title: '',
@@ -394,7 +398,10 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
 
                                           analytics.logEvent(
                                             name: 'categories_home_page',
-                                            parameters: {'page_name': 'categories_home_page'},
+                                            parameters: {
+                                              'page_name':
+                                                  'categories_home_page'
+                                            },
                                           );
                                         },
                                         child: Padding(
@@ -404,12 +411,16 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                                               /// Category Name & Explore hint
                                               Expanded(
                                                 child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     AppText(
-                                                      text: categoryName.toUpperCase(),
-                                                      fontFamily: 'Clash Display Semibold',
-                                                      fontWeight: FontWeight.w600,
+                                                      text: categoryName
+                                                          .toUpperCase(),
+                                                      fontFamily:
+                                                          'Clash Display Semibold',
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                       fontSize: 16,
                                                       color: Colors.black,
                                                     ),
@@ -418,14 +429,17 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                                                       children: [
                                                         AppText(
                                                           text: 'Explore',
-                                                          fontFamily: 'Clash Display Regular',
-                                                          fontWeight: FontWeight.w400,
+                                                          fontFamily:
+                                                              'Clash Display Regular',
+                                                          fontWeight:
+                                                              FontWeight.w400,
                                                           fontSize: 12,
                                                           color: textHintColor,
                                                         ),
                                                         SizedBox(width: 4.sp),
                                                         Icon(
-                                                          Icons.arrow_forward_ios,
+                                                          Icons
+                                                              .arrow_forward_ios,
                                                           size: 10.sp,
                                                           color: textHintColor,
                                                         ),
@@ -438,37 +452,54 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                                               /// Category Image (Enhanced)
                                               Container(
                                                 decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(12),
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
                                                   boxShadow: [
                                                     BoxShadow(
-                                                      color: Colors.black.withValues(alpha: 0.08),
+                                                      color: Colors.black
+                                                          .withValues(
+                                                              alpha: 0.08),
                                                       blurRadius: 6,
-                                                      offset: const Offset(0, 2),
+                                                      offset:
+                                                          const Offset(0, 2),
                                                     ),
                                                   ],
                                                 ),
                                                 child: ClipRRect(
-                                                  borderRadius: BorderRadius.circular(12),
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
                                                   child: CachedNetworkImage(
-                                                    imageUrl: (item['image'] ?? '').toString(),
+                                                    imageUrl:
+                                                        (item['image'] ?? '')
+                                                            .toString(),
                                                     width: 100.sp,
                                                     height: 110.sp,
-                                                    fit: BoxFit.cover,
-                                                    fadeInDuration: const Duration(milliseconds: 200),
-                                                    placeholder: (_, __) => Container(
+                                                    fit: BoxFit.fill,
+                                                    fadeInDuration:
+                                                        const Duration(
+                                                            milliseconds: 200),
+                                                    placeholder: (_, __) =>
+                                                        Container(
                                                       width: 100.sp,
                                                       height: 110.sp,
                                                       decoration: BoxDecoration(
-                                                        color: Colors.grey.shade200,
-                                                        borderRadius: BorderRadius.circular(12),
+                                                        color: Colors
+                                                            .grey.shade200,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
                                                       ),
                                                     ),
-                                                    errorWidget: (_, __, ___) => Container(
+                                                    errorWidget: (_, __, ___) =>
+                                                        Container(
                                                       width: 100.sp,
                                                       height: 110.sp,
                                                       decoration: BoxDecoration(
-                                                        color: Colors.grey.shade200,
-                                                        borderRadius: BorderRadius.circular(12),
+                                                        color: Colors
+                                                            .grey.shade200,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
                                                       ),
                                                       child: const Icon(
                                                         Icons.category_outlined,

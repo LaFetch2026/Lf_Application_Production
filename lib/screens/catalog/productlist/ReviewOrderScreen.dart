@@ -14,6 +14,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:lafetch/common/widget/bottom_sheets/bottomCoupon.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
 import 'package:lafetch/common/widget/other/common_widget.dart';
+import 'package:lafetch/common/widget/newsletter/newsletter_section.dart';
 import 'package:lafetch/controllers/order_controller.dart';
 import 'package:lafetch/core/constant/constants.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
@@ -1176,6 +1177,9 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                 _buildProductRow(),
                 _buildCouponSection(),
                 _buildOrderDetails(),
+                const NewsletterSection(
+                  title: "NEWS LETTERS",
+                ),
               ],
             ),
           ),

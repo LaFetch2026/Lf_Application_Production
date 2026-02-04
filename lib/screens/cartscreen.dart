@@ -42,6 +42,7 @@ import '../controllers/product_controller.dart';
 import '../controllers/profile_controller.dart';
 import '../controllers/wishlist_controller.dart';
 import '../core/constant/constants.dart';
+import '../common/widget/newsletter/newsletter_section.dart';
 import 'catalog/productlist/productdetailsscreen.dart';
 
 class CartScreen extends StatefulWidget {
@@ -990,6 +991,11 @@ class CartScreenState extends State<CartScreen> {
                                           : controller.orderList.isNotEmpty
                                               ? _buildCartItemsList()
                                               : _buildEmptyCart(),
+                                    ),
+
+                                    // Newsletter Section
+                                    const NewsletterSection(
+                                      title: "NEWS LETTERS",
                                     ),
                                   ],
                                 ),

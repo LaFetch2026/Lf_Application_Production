@@ -192,7 +192,20 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       return;
     }
 
-    await productController.getFilterMetadata(widget.genderType);
+    // Extract collectionId if available
+    final collectionId = widget.collectionIds.isNotEmpty
+        ? (widget.collectionIds.first is int
+            ? widget.collectionIds.first
+            : int.tryParse(widget.collectionIds.first?.toString() ?? ''))
+        : null;
+
+    await productController.getFilterMetadata(
+      superCatId: widget.genderType,
+      catId: widget.categoryId > 0 ? widget.categoryId : null,
+      subCatId: null,
+      collectionId: collectionId != null && collectionId > 0 ? collectionId : null,
+      brandId: widget.brandId > 0 ? widget.brandId : null,
+    );
     _isFilterMetadataLoaded = true;
     print("✅ Filter metadata loaded successfully");
   }

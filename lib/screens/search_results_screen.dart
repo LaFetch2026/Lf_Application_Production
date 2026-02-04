@@ -121,7 +121,13 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 
     // For search results, we can use gender filter from productController
     final currentGender = productController.categoryFilter.value;
-    await productController.getFilterMetadata(currentGender);
+    await productController.getFilterMetadata(
+      superCatId: currentGender,
+      catId: null,
+      subCatId: null,
+      collectionId: null,
+      brandId: null,
+    );
     _isFilterMetadataLoaded = true;
     print("✅ Filter metadata loaded successfully");
   }
@@ -291,6 +297,9 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
           // Grid
           Expanded(
             child: Obx(() {
+              // ✅ Watch categoryProductList for reactivity (triggers rebuild when filters applied)
+              final _ = catalogController.categoryProductList.length;
+
               final items = _getDisplayedProducts();
 
               if (items.isEmpty) {

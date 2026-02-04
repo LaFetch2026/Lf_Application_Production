@@ -286,7 +286,8 @@ class CatalogController extends BaseController {
         // Handle response structure: data.children[].products
         if (data is Map<String, dynamic>) {
           final childrenRaw = data["children"];
-          print("🔍 Children type: ${childrenRaw.runtimeType}, value: ${childrenRaw != null ? 'exists' : 'null'}");
+          print(
+              "🔍 Children type: ${childrenRaw.runtimeType}, value: ${childrenRaw != null ? 'exists' : 'null'}");
 
           if (childrenRaw is List) {
             for (int i = 0; i < childrenRaw.length; i++) {
@@ -295,11 +296,13 @@ class CatalogController extends BaseController {
 
               if (child is Map<String, dynamic>) {
                 final productsRaw = child["products"];
-                print("🔍 Child $i products type: ${productsRaw?.runtimeType}, count: ${productsRaw is List ? productsRaw.length : 'not a list'}");
+                print(
+                    "🔍 Child $i products type: ${productsRaw?.runtimeType}, count: ${productsRaw is List ? productsRaw.length : 'not a list'}");
 
                 if (productsRaw is List) {
                   rawProducts.addAll(productsRaw);
-                  print("✅ Added ${productsRaw.length} products from child $i (${child['name']})");
+                  print(
+                      "✅ Added ${productsRaw.length} products from child $i (${child['name']})");
                 }
               }
             }
@@ -318,13 +321,17 @@ class CatalogController extends BaseController {
         print("🔍 Total raw products collected: ${rawProducts.length}");
 
         /// Transform Products
-        final transformed = rawProducts.map<Map<String, dynamic>>((p) {
-          if (p is! Map<String, dynamic>) {
-            print("⚠️ Product is not Map<String, dynamic>: ${p.runtimeType}");
-            return <String, dynamic>{};
-          }
-          return ProductController.calculateDisplayPrices(p);
-        }).where((p) => p.isNotEmpty).toList();
+        final transformed = rawProducts
+            .map<Map<String, dynamic>>((p) {
+              if (p is! Map<String, dynamic>) {
+                print(
+                    "⚠️ Product is not Map<String, dynamic>: ${p.runtimeType}");
+                return <String, dynamic>{};
+              }
+              return ProductController.calculateDisplayPrices(p);
+            })
+            .where((p) => p.isNotEmpty)
+            .toList();
 
         categoryProductList.assignAll(transformed);
         print(
@@ -337,7 +344,8 @@ class CatalogController extends BaseController {
       } else if (response.statusCode == 500) {
         getSnackBar("Server error, please try again later");
       } else {
-        print("❌ Sub-Category Products API ${response.statusCode}: ${decoded["message"]}");
+        print(
+            "❌ Sub-Category Products API ${response.statusCode}: ${decoded["message"]}");
         getSnackBar(decoded["message"] ?? "Failed to load products");
       }
     } on SocketException {

@@ -115,17 +115,24 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
   Future<void> _loadFilterMetadata() async {
     if (_isFilterMetadataLoaded) return;
 
-    // Use superCatId based on gender or default to 0 for all
+    // 🔹 Resolve superCatId from gender
     final g = widget.genderName.trim().toLowerCase();
     int superCatId = 0;
+
     if (g == 'men') {
       superCatId = 1;
     } else if (g == 'women') {
       superCatId = 2;
     }
 
-    // Pass brandId to get brand-specific colors and sizes
-    await productController.getFilterMetadata(superCatId, brandId: widget.brand_id);
+    await productController.getFilterMetadata(
+      superCatId: superCatId,
+      catId: null,
+      subCatId: null,
+      collectionId: null,
+      brandId: widget.brand_id > 0 ? widget.brand_id : null,
+    );
+
     _isFilterMetadataLoaded = true;
   }
 
@@ -1078,6 +1085,9 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
             // Body
             Expanded(
               child: Obx(() {
+                // ✅ Watch categoryProductList for reactivity (triggers rebuild when filters applied)
+                final _ = catalogController.categoryProductList.length;
+
                 if (isLoading) {
                   return const DummyGridBlack(size: 2);
                 }

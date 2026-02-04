@@ -45,6 +45,7 @@ import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
 import '../../../models/collection_extensions.dart';
 import '../../../models/collection_banner_model.dart';
+import '../../../common/widget/newsletter/newsletter_section.dart';
 
 // ✅ Global RouteObserver for video auto-pause on navigation
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -1268,28 +1269,16 @@ class HomeScreenState extends State<HomeScreen>
                                       ),
                                     ),
                                   ),
-
-                                // ✅ End message
-                                if (!_hasMoreCollections &&
-                                    collections.isNotEmpty)
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical:
-                                            24.sp), // ✅ Consistent spacing
-                                    child: const Center(
-                                      child: Text(
-                                        "You've reached the end",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                          fontFamily: "Clash Display Regular",
-                                        ),
-                                      ),
-                                    ),
-                                  ),
                               ],
                             );
                           }),
+                          SizedBox(
+                            height: 10.sp,
+                          ),
+                          // Newsletter Section
+                          const NewsletterSection(
+                            title: "NEWS LETTERS",
+                          ),
                         ],
                       ),
                     ),
@@ -1637,7 +1626,7 @@ class _SectionStrip extends StatelessWidget {
                           ? CachedNetworkImage(
                               imageUrl: imageUrl,
                               width: double.infinity,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.fill,
                               maxHeightDiskCache: 400,
                               maxWidthDiskCache: 400,
                               memCacheHeight: 400,

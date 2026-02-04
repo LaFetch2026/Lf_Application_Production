@@ -12,9 +12,9 @@ import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../../common/widget/appbar/productlist_appbar.dart';
 import '../../../common/widget/cards/product_card.dart';
-import '../../../common/widget/lists/dummy_grid_list.dart';
 import '../../../common/widget/other/common_widget.dart';
 import '../../../controllers/cart_controller.dart';
 import '../../../controllers/product_controller.dart';
@@ -54,6 +54,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
   // ✅ Filter and Sort State
   List<int> _appliedBrandIds = [];
+  List<String> _appliedBrandNames = []; // For client-side filtering fallback
   List<String> _appliedColors = [];
   List<String> _appliedSizes = [];
   String _appliedMinPrice = "300";
@@ -163,7 +164,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     catalogController.categoryProductList.clear();
 
     // ✅ Set loading state BEFORE postFrameCallback to show skeleton on first build
-    if (widget.searchResults == null && productController.collectionId.value > 0) {
+    if (widget.searchResults == null &&
+        productController.collectionId.value > 0) {
       catalogController.isCategory.value = true;
     }
 
@@ -192,7 +194,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
           if (homeProducts.isNotEmpty) {
             // ✅ Use products from homeProductList (already loaded by homescreen)
-            print("✅ Using ${homeProducts.length} products from homeProductList for collection $collectionId");
+            print(
+                "✅ Using ${homeProducts.length} products from homeProductList for collection $collectionId");
 
             // Track product IDs for filtering
             _originalHomeProductIds = homeProducts
@@ -264,7 +267,14 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     }
 
     final currentGender = productController.categoryFilter.value;
-    await productController.getFilterMetadata(currentGender);
+    final collectionId = productController.collectionId.value;
+    await productController.getFilterMetadata(
+      superCatId: currentGender,
+      catId: null,
+      subCatId: null,
+      collectionId: collectionId > 0 ? collectionId : null,
+      brandId: null,
+    );
     _isFilterMetadataLoaded = true;
     print("✅ Filter metadata loaded successfully");
   }
@@ -368,6 +378,9 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         print(
             "   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
+        // 🔄 Clear previous results before API call (so fallback can detect API failure)
+        catalogController.categoryProductList.clear();
+
         await catalogController.getFilterAndSortProducts(
           brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
           colors: _appliedColors.isNotEmpty ? _appliedColors : null,
@@ -388,16 +401,56 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         final apiResults =
             List<dynamic>.from(catalogController.categoryProductList);
 
-        // Restrict to home products only
-        final filteredResults = apiResults.where((product) {
-          final productId = int.tryParse(product['id']?.toString() ?? '');
-          return productId != null &&
-              _originalHomeProductIds.contains(productId);
-        }).toList();
+        // 🔄 Fallback: If API returned 0 products (failed or no results), apply client-side filtering
+        if (apiResults.isEmpty && _hasActiveFilters) {
+          print(
+              "⚠️ API returned 0 products - applying client-side filtering fallback");
 
-        print(
-            "🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} from home collections");
-        catalogController.categoryProductList.assignAll(filteredResults);
+          // Get original products from home collections
+          final originalProducts = List<dynamic>.from(_getAllProducts());
+
+          // Apply client-side brand filter
+          final clientFilteredResults = originalProducts.where((product) {
+            // Check product ID is in original home products
+            final productId = int.tryParse(product['id']?.toString() ?? '');
+            if (productId == null ||
+                !_originalHomeProductIds.contains(productId)) {
+              return false;
+            }
+
+            // Filter by brand name if brands are selected
+            if (_appliedBrandNames.isNotEmpty) {
+              final productBrand = _brandOf(product).toLowerCase().trim();
+              final matchesBrand = _appliedBrandNames.any((selectedBrand) =>
+                  productBrand == selectedBrand.toLowerCase().trim());
+              if (!matchesBrand) return false;
+            }
+
+            // Filter by price range
+            final price = _priceOf(product) ?? 0;
+            final minPrice = double.tryParse(_appliedMinPrice) ?? 300;
+            final maxPrice = double.tryParse(_appliedMaxPrice) ?? 100000;
+            if (price < minPrice || price > maxPrice) return false;
+
+            return true;
+          }).toList();
+
+          print(
+              "🔍 Client-side filtered to ${clientFilteredResults.length} products");
+          catalogController.categoryProductList
+              .assignAll(clientFilteredResults);
+        } else {
+          // Restrict to home products only
+          final filteredResults = apiResults.where((product) {
+            final productId = int.tryParse(product['id']?.toString() ?? '');
+            return productId != null &&
+                _originalHomeProductIds.contains(productId);
+          }).toList();
+
+          print(
+              "🔍 API returned ${apiResults.length} products, filtered to ${filteredResults.length} from home collections");
+          catalogController.categoryProductList.assignAll(filteredResults);
+        }
 
         _lastFilterHash = currentFilterHash;
         if (sortChanged) _lastSortHash = currentSortHash;
@@ -452,6 +505,9 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         print(
             "   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
+        // 🔄 Clear previous results before API call (so fallback can detect API failure)
+        catalogController.categoryProductList.clear();
+
         await catalogController.getFilterAndSortProducts(
           brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
           colors: _appliedColors.isNotEmpty ? _appliedColors : null,
@@ -472,13 +528,63 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         final apiResults =
             List<dynamic>.from(catalogController.categoryProductList);
 
-        // Restrict to home products only
-        final filteredResults = apiResults.where((product) {
-          final productId = int.tryParse(product['id']?.toString() ?? '');
-          return productId != null &&
-              _originalHomeProductIds.contains(productId);
-        }).toList();
-        catalogController.categoryProductList.assignAll(filteredResults);
+        // 🔄 Fallback: If API returned 0 products (failed or no results), apply client-side filtering
+        if (apiResults.isEmpty && _hasActiveFilters) {
+          print(
+              "⚠️ API returned 0 products - applying client-side filtering fallback (Case 3)");
+
+          // Get original products from home collections
+          final originalProducts = List<dynamic>.from(_getAllProducts());
+
+          // Apply client-side brand filter
+          final clientFilteredResults = originalProducts.where((product) {
+            final productId = int.tryParse(product['id']?.toString() ?? '');
+            if (productId == null ||
+                !_originalHomeProductIds.contains(productId)) {
+              return false;
+            }
+
+            if (_appliedBrandNames.isNotEmpty) {
+              final productBrand = _brandOf(product).toLowerCase().trim();
+              final matchesBrand = _appliedBrandNames.any((selectedBrand) =>
+                  productBrand == selectedBrand.toLowerCase().trim());
+              if (!matchesBrand) return false;
+            }
+
+            final price = _priceOf(product) ?? 0;
+            final minPrice = double.tryParse(_appliedMinPrice) ?? 300;
+            final maxPrice = double.tryParse(_appliedMaxPrice) ?? 100000;
+            if (price < minPrice || price > maxPrice) return false;
+
+            return true;
+          }).toList();
+
+          // Apply sorting to client-filtered results
+          if (_appliedSortOption != "recommended") {
+            clientFilteredResults.sort((a, b) {
+              final priceA = _priceOf(a) ?? 0;
+              final priceB = _priceOf(b) ?? 0;
+              if (_appliedSortOption == 'price_asc')
+                return priceA.compareTo(priceB);
+              if (_appliedSortOption == 'price_desc')
+                return priceB.compareTo(priceA);
+              return 0;
+            });
+          }
+
+          print(
+              "🔍 Client-side filtered to ${clientFilteredResults.length} products");
+          catalogController.categoryProductList
+              .assignAll(clientFilteredResults);
+        } else {
+          // Restrict to home products only
+          final filteredResults = apiResults.where((product) {
+            final productId = int.tryParse(product['id']?.toString() ?? '');
+            return productId != null &&
+                _originalHomeProductIds.contains(productId);
+          }).toList();
+          catalogController.categoryProductList.assignAll(filteredResults);
+        }
 
         _lastSortHash = currentSortHash;
 
@@ -582,6 +688,9 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           // ===== GRID =====
           Expanded(
             child: Obx(() {
+              // ✅ Watch categoryProductList for reactivity (triggers rebuild when filters applied)
+              final _ = catalogController.categoryProductList.length;
+
               // ✅ Show loading when fetching from API or home products
               final loading = widget.searchResults == null &&
                   (productController.isHomeProduct.value ||
@@ -593,7 +702,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                 return _buildSkeletonGrid();
               }
 
-              // ✅ Calculate displayed products WITHOUT setState
+              // ✅ Calculate displayed products
               final items = _getDisplayedProducts();
 
               if (items.isEmpty) {
@@ -644,74 +753,60 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                   }
                   return false;
                 },
-                child: CustomScrollView(
+                child: MasonryGridView.count(
                   controller: productController.handpickedController,
-                  slivers: [
-                    SliverPadding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.sp),
-                      sliver: SliverGrid(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final item = displayItems[index];
+                  padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 8.sp,
+                  crossAxisSpacing: 5.sp,
+                  itemCount: displayItems.length +
+                      (productController.handpickedLoadMore.value ? 2 : 0),
+                  itemBuilder: (context, index) {
+                    // Show loading skeleton at the end
+                    if (index >= displayItems.length) {
+                      return _SkeletonProductTile();
+                    }
 
-                            final imageUrl = _firstImageUrl(item);
-                            final brand = _brandOf(item);
-                            final title = _titleOf(item);
-                            final price = _priceOf(item);
-                            // API provides displayMrp (null if mrp = basePrice, otherwise mrp value)
-                            final mrp = item['displayMrp'] ?? item['mrp'];
-                            final express = item['express_delivery'] == true;
+                    final item = displayItems[index];
 
-                            // ✅ Use ProductGridCard for consistent display
-                            return ProductGridCard(
-                              imageUrl: imageUrl,
-                              title: title,
-                              brandName: brand,
-                              price: price,
-                              mrp: mrp,
-                              showExpress: express,
-                              onTap: () async {
-                                Get.to(
-                                  ProductDetailsScreen(
-                                    brandName: brand,
-                                    productId: item["id"],
-                                    type: "add",
-                                  ),
-                                )?.then((_) {
-                                  productController
-                                      .handpickedHasnextpage.value = true;
-                                  productController.handpickedLoadMore.value =
-                                      false;
-                                  productController.isHandPicked.value = false;
-                                  productController.handpickedPage.value = 1;
-                                  controller.getCartData();
-                                });
+                    final imageUrl = _firstImageUrl(item);
+                    final brand = _brandOf(item);
+                    final title = _titleOf(item);
+                    final price = _priceOf(item);
+                    // API provides displayMrp (null if mrp = basePrice, otherwise mrp value)
+                    final mrp = item['displayMrp'] ?? item['mrp'];
+                    final express = item['express_delivery'] == true;
 
-                                await analytics.logEvent(
-                                  name: 'category_product_details',
-                                  parameters: {
-                                    'page_name': 'category_product_details'
-                                  },
-                                );
-                              },
-                            );
-                          },
-                          childCount: displayItems.length,
-                        ),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.56,
-                          crossAxisSpacing: 5.sp,
-                          mainAxisSpacing: 8.sp,
-                        ),
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: productController.handpickedLoadMore.value
-                          ? const DummyGridList(size: 2)
-                          : const SizedBox.shrink(),
-                    ),
-                  ],
+                    // ✅ Use ProductGridCard for consistent display
+                    return ProductGridCard(
+                      imageUrl: imageUrl,
+                      title: title,
+                      brandName: brand,
+                      price: price,
+                      mrp: mrp,
+                      showExpress: express,
+                      onTap: () async {
+                        Get.to(
+                          ProductDetailsScreen(
+                            brandName: brand,
+                            productId: item["id"],
+                            type: "add",
+                          ),
+                        )?.then((_) {
+                          productController.handpickedHasnextpage.value = true;
+                          productController.handpickedLoadMore.value = false;
+                          productController.isHandPicked.value = false;
+                          productController.handpickedPage.value = 1;
+                          controller.getCartData();
+                        });
+
+                        await analytics.logEvent(
+                          name: 'category_product_details',
+                          parameters: {'page_name': 'category_product_details'},
+                        );
+                      },
+                    );
+                  },
                 ),
               );
             }),
@@ -861,8 +956,6 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
   /// ✅ Filter Bottom Sheet
   Future<void> _showFilterBottomSheet(BuildContext context) async {
-    String selectedFilter = "Brand";
-
     List<String> selectedBrands = [];
     List<String> selectedColors = List.from(_appliedColors);
     List<String> selectedSizes = List.from(_appliedSizes);
@@ -870,13 +963,6 @@ class ProductViewScreenState extends State<ProductViewScreen> {
       double.parse(_appliedMinPrice),
       double.parse(_appliedMaxPrice),
     );
-
-    final List<String> filterCategories = [
-      "Brand",
-      "Price Range",
-      "Color",
-      "Size"
-    ];
 
     // ✅ Ensure filter metadata is loaded
     await _loadFilterMetadataIfNeeded();
@@ -890,10 +976,20 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         .where((name) => name.isNotEmpty)
         .toList();
 
-    if (allBrands.isEmpty) {
-      getSnackBar("No brands available for filtering");
-      return;
-    }
+    final colors = productController.filterColors.toList();
+    final sizes = productController.filterSizes.toList();
+
+    // ✅ Build filter categories dynamically based on available data
+    final List<String> filterCategories = [
+      if (allBrands.isNotEmpty) "Brand",
+      "Price Range", // Always available
+      if (colors.isNotEmpty) "Color",
+      if (sizes.isNotEmpty) "Size",
+    ];
+
+    // Default to Price Range if no other filters available
+    String selectedFilter =
+        filterCategories.contains("Brand") ? "Brand" : "Price Range";
 
     // ✅ Restore previously applied brands
     for (final id in _appliedBrandIds) {
@@ -908,8 +1004,6 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     }
 
     final brands = ["Select All", ...allBrands];
-    final colors = productController.filterColors.toList();
-    final sizes = productController.filterSizes.toList();
 
     await showModalBottomSheet(
       context: context,
@@ -1117,6 +1211,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                       title: Text(
                                                         color.toUpperCase(),
                                                         style: TextStyle(
+                                                          fontFamily:
+                                                              "Clash Display",
                                                           fontSize: 14.sp,
                                                           fontWeight:
                                                               FontWeight.w400,
@@ -1158,6 +1254,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                           title: Text(
                                                             size.toUpperCase(),
                                                             style: TextStyle(
+                                                              fontFamily:
+                                                                  "Clash Display Regular",
                                                               fontSize: 14.sp,
                                                               fontWeight:
                                                                   FontWeight
@@ -1201,16 +1299,32 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                             onPressed: () {
                               Get.back();
 
+                              // 🔍 DEBUG: Print filterBrands structure
+                              print("🔍 DEBUG filterBrands structure:");
+                              for (int i = 0;
+                                  i < productController.filterBrands.length &&
+                                      i < 3;
+                                  i++) {
+                                print(
+                                    "   Brand[$i]: ${productController.filterBrands[i]}");
+                              }
+
+                              // ✅ FIX: Use productController.filterBrands (same source as displayed brands)
                               final selectedBrandIds = <int>[];
                               for (final brandName in selectedBrands) {
-                                final brandData = brandController.brandList
+                                final brandData = productController.filterBrands
                                     .firstWhereOrNull((item) =>
-                                        item['alphabet'] == null &&
                                         item['name']?.toString().trim() ==
-                                            brandName);
+                                        brandName);
+                                print(
+                                    "🔍 Looking for '$brandName' -> found: $brandData");
                                 if (brandData != null) {
+                                  // Try both 'id' and 'brandId' keys
                                   final id = int.tryParse(
-                                      brandData['id']?.toString() ?? '');
+                                      brandData['id']?.toString() ??
+                                          brandData['brandId']?.toString() ??
+                                          '');
+                                  print("🔍 Extracted ID: $id");
                                   if (id != null) selectedBrandIds.add(id);
                                 }
                               }
@@ -1225,6 +1339,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
                               setState(() {
                                 _appliedBrandIds = selectedBrandIds;
+                                _appliedBrandNames = List.from(
+                                    selectedBrands); // Store names for client-side fallback
                                 _appliedMinPrice =
                                     priceRange.start.toInt().toString();
                                 _appliedMaxPrice =

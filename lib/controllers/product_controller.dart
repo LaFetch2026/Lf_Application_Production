@@ -277,7 +277,21 @@ class ProductController extends BaseController {
 
     // FIND VARIANT MATCHING COLOR + SIZE (prefer exact match)
     Map? variant = variants.firstWhereOrNull((v) {
-      final opts = (v["selectedOptions"] ?? []) as List;
+      // Handle selectedOptions that might be a JSON string or a List
+      dynamic selectedOptions = v["selectedOptions"];
+
+      // If it's a JSON string, parse it first
+      if (selectedOptions is String && selectedOptions.isNotEmpty) {
+        try {
+          selectedOptions = json.decode(selectedOptions);
+        } catch (e) {
+          print("⚠️ Failed to parse selectedOptions JSON: $e");
+          selectedOptions = [];
+        }
+      }
+
+      final opts = (selectedOptions is List) ? selectedOptions : [];
+
       final hasColor = opts.any((o) =>
           o["name"].toString().toLowerCase() == "color" &&
           o["value"].toString().toLowerCase() == color);
@@ -467,14 +481,18 @@ class ProductController extends BaseController {
 
     colorInventoryList.assignAll(colors);
 
-    // ❌ DO NOT auto-select - user must select color
-    // Reset selected color when size changes
-    selectedColor.value = '';
-
-    if (colors.isNotEmpty) {
-      print("✅ Colors available: $colors");
-      print("⚠️ No auto-selection - user must choose color");
+    // ✅ Auto-select if only ONE color is available
+    if (colors.length == 1) {
+      selectedColor.value = colors.first;
+      print("✅ Auto-selected single color: ${colors.first}");
+      updateImagesForSelectedColor();
     } else {
+      // Reset selected color when size changes (multiple colors available)
+      selectedColor.value = '';
+      print("⚠️ Multiple colors available - user must choose color");
+    }
+
+    if (colors.isEmpty) {
       print("⚠️ No colors available for size $size");
     }
 
@@ -1087,7 +1105,15 @@ class ProductController extends BaseController {
 
         colorInventoryList.assignAll(uniqueColors);
         print("✅ Colors available: $uniqueColors");
-        print("⚠️ No auto-selection - user must choose color");
+
+        // ✅ Auto-select if only ONE color is available
+        if (uniqueColors.length == 1) {
+          selectedColor.value = uniqueColors.first;
+          print("✅ Auto-selected single color: ${uniqueColors.first}");
+          updateImagesForSelectedColor();
+        } else {
+          print("⚠️ Multiple colors - user must choose color");
+        }
       }
       // ✅ Handle products with SIZE + COLOR (clothing)
       else if (hasSize && hasColor) {
@@ -2142,7 +2168,13 @@ class ProductController extends BaseController {
   }
 
   /// ✅ Fetch filter metadata (brands, colors, sizes) for a super category or brand
-  Future<void> getFilterMetadata(int superCatId, {int? brandId}) async {
+  Future<void> getFilterMetadata({
+    required int superCatId,
+    int? catId,
+    int? subCatId,
+    int? collectionId,
+    int? brandId,
+  }) async {
     isFilterMetadata.value = true;
     filterBrands.clear();
     filterColors.clear();
@@ -2151,17 +2183,17 @@ class ProductController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
 
-    // Build query parameters
-    final Map<String, String> queryParams = {};
-    if (superCatId > 0) {
-      queryParams['superCatId'] = superCatId.toString();
-    }
-    if (brandId != null && brandId > 0) {
-      queryParams['brandId'] = brandId.toString();
-    }
+    /// 🔹 Only include params with actual values (not null/0)
+    final Map<String, String> queryParams = {
+      'superCatId': superCatId.toString(),
+      if (catId != null && catId > 0) 'catId': catId.toString(),
+      if (subCatId != null && subCatId > 0) 'subCatId': subCatId.toString(),
+      if (collectionId != null && collectionId > 0) 'collectionId': collectionId.toString(),
+      if (brandId != null && brandId > 0) 'brandId': brandId.toString(),
+    };
 
     final uri = Uri.parse("${ApiConstants.baseUrl}/filter-metadata")
-        .replace(queryParameters: queryParams.isNotEmpty ? queryParams : null);
+        .replace(queryParameters: queryParams);
 
     try {
       final response = await http.get(
@@ -2172,8 +2204,9 @@ class ProductController extends BaseController {
         },
       ).timeout(const Duration(seconds: 20));
 
-      print("🔍 Filter Metadata → ${response.statusCode}");
-      print("🔍 Response Body → ${response.body}");
+      print("🔍 Filter Metadata URL → $uri");
+      print("🔍 Status → ${response.statusCode}");
+      print("🔍 Body → ${response.body}");
 
       if (response.statusCode == 200) {
         final decoded = json.decode(response.body);
@@ -2181,38 +2214,23 @@ class ProductController extends BaseController {
         if (decoded is Map && decoded['data'] is Map) {
           final data = decoded['data'];
 
-          // ✅ Parse brands
           if (data['brands'] is List) {
             filterBrands.assignAll(
               List<Map<String, dynamic>>.from(data['brands']),
             );
-            print("✅ Brands loaded: ${filterBrands.length}");
           }
 
-          // ✅ Parse colors
           if (data['colors'] is List) {
-            filterColors.assignAll(
-              List<String>.from(data['colors']),
-            );
-            print("✅ Colors loaded: ${filterColors.length}");
+            filterColors.assignAll(List<String>.from(data['colors']));
           }
 
-          // ✅ Parse sizes
           if (data['sizes'] is List) {
-            filterSizes.assignAll(
-              List<String>.from(data['sizes']),
-            );
-            print("✅ Sizes loaded: ${filterSizes.length}");
+            filterSizes.assignAll(List<String>.from(data['sizes']));
           }
-        } else {
-          print("⚠ Unexpected response structure");
         }
       } else if (response.statusCode == 401) {
         Get.offAll(() => const LoginScreen(initialTab: 0));
         getSnackBar("Authentication failed");
-      } else {
-        // Silent fail - filter will show empty options
-        print("❌ Failed to load filter metadata: ${response.statusCode}");
       }
     } on TimeoutException {
       print("❌ Filter metadata request timed out");
