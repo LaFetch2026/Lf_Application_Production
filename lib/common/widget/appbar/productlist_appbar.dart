@@ -39,157 +39,156 @@ class _ProductAppbarState extends State<ProductAppbar> {
   final controller = Get.put(CartController());
   @override
   Widget build(BuildContext context) {
+    final statusBarHeight = MediaQuery.of(context).padding.top;
     return Container(
-      // height: 80.sp,
       width: MediaQuery.of(context).size.width,
       color: widget.backColor,
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Padding(
-          padding: EdgeInsets.only(right: 10.sp, top: 56.sp, bottom: 8.sp),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              InkWell(
-                onTap: () {
-                  Get.back();
-                },
-                child: Container(
-                  alignment: Alignment.bottomCenter,
-                  padding:
-                      EdgeInsets.only(left: 16.sp, right: 12.sp, top: 4.sp),
-                  child: SvgPicture.asset(
-                    arrowBack,
-                    height: 15.sp,
-                    width: 15.sp,
-                    fit: BoxFit.fill,
-                  ),
+      child: Padding(
+        padding: EdgeInsets.only(
+            left: 16.sp, top: statusBarHeight + 8.sp, right: 10.sp, bottom: 8.sp),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            InkWell(
+              onTap: () {
+                Get.back();
+              },
+              child: Container(
+                alignment: Alignment.bottomCenter,
+                padding:
+                    EdgeInsets.only(right: 12.sp, top: 4.sp),
+                child: SvgPicture.asset(
+                  arrowBack,
+                  height: 15.sp,
+                  width: 15.sp,
+                  fit: BoxFit.fill,
                 ),
               ),
-              Visibility(
-                visible: widget.isHandPicked,
-                child: Container(
-                  height: 28.sp,
-                  width: MediaQuery.of(context).size.width / 2.sp,
-                  alignment: Alignment.bottomLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 0),
-                    child: AppText(
-                      text: widget.text,
-                      color: homeAppBarColor,
-                      fontSize: 16,
-                      fontFamily: "Clash Display Semibold",
-                      textAlign: TextAlign.center,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-              const Expanded(
-                child: SizedBox(
-                  height: 0,
-                ),
-              ),
-              Visibility(
-                visible: !widget.isHandPicked,
+            ),
+            Visibility(
+              visible: widget.isHandPicked,
+              child: Container(
+                height: 28.sp,
+                width: MediaQuery.of(context).size.width / 2.sp,
+                alignment: Alignment.bottomLeft,
                 child: Padding(
-                  padding: EdgeInsets.only(left: 76.sp),
-                  child: Image.asset(
-                    lafetchLogoImage,
+                  padding: EdgeInsets.only(left: 0),
+                  child: AppText(
+                    text: widget.text,
                     color: homeAppBarColor,
-                    height: 25.sp,
-                    width: 20.sp,
+                    fontSize: 16,
+                    fontFamily: "Clash Display Semibold",
+                    textAlign: TextAlign.center,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
-              const Expanded(
-                child: SizedBox(
-                  height: 0,
+            ),
+            const Expanded(
+              child: SizedBox(
+                height: 0,
+              ),
+            ),
+            Visibility(
+              visible: !widget.isHandPicked,
+              child: Padding(
+                padding: EdgeInsets.only(left: 76.sp),
+                child: Image.asset(
+                  lafetchLogoImage,
+                  color: homeAppBarColor,
+                  height: 25.sp,
+                  width: 20.sp,
                 ),
               ),
-              InkWell(
+            ),
+            const Expanded(
+              child: SizedBox(
+                height: 0,
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                widget.onPressedSearch?.call();
+              },
+              child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
+                child: SvgPicture.asset(searchSvgImage,
+                    height: 18.sp, width: 18.sp, fit: BoxFit.fill),
+              ),
+            ),
+            Visibility(
+              visible: widget.isWishlist,
+              child: InkWell(
                 onTap: () {
-                  widget.onPressedSearch?.call();
+                  widget.onPressedHeart?.call();
                 },
                 child: Padding(
                   padding:
                       EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
-                  child: SvgPicture.asset(searchSvgImage,
+                  child: SvgPicture.asset(heartSvgImage,
                       height: 18.sp, width: 18.sp, fit: BoxFit.fill),
                 ),
               ),
-              Visibility(
-                visible: widget.isWishlist,
-                child: InkWell(
-                  onTap: () {
-                    widget.onPressedHeart?.call();
-                  },
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
-                    child: SvgPicture.asset(heartSvgImage,
-                        height: 18.sp, width: 18.sp, fit: BoxFit.fill),
-                  ),
-                ),
-              ),
-              Visibility(
-                visible: widget.isCart,
-                child: InkWell(
-                  onTap: () {
-                    widget.onPressedCart?.call();
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        right: 10.sp, left: 8.sp, top: 8.sp, bottom: 5.sp),
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 3.sp),
-                          child: SvgPicture.asset(cartSvgImage,
-                              height: 18.sp, width: 18.sp, fit: BoxFit.fill),
-                        ),
-                        Obx(() => controller.cartTotalValue.value != 0
-                            ? Positioned(
-                                right: 0,
-                                bottom: 0,
-                                child: Container(
-                                  width: 10.sp,
-                                  height: 10.sp,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: homeAppBarColor,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          controller.cartTotalValue.value
-                                              .toString(),
-                                          style: TextStyle(
-                                              fontSize: 8,
-                                              color: whiteColor,
-                                              fontFamily:
-                                                  "Libre Franklin Regular",
-                                              fontWeight: FontWeight.w400),
-                                        ),
-                                      ), // inner content
+            ),
+            Visibility(
+              visible: widget.isCart,
+              child: InkWell(
+                onTap: () {
+                  widget.onPressedCart?.call();
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      right: 10.sp, left: 8.sp, top: 8.sp, bottom: 5.sp),
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 3.sp),
+                        child: SvgPicture.asset(cartSvgImage,
+                            height: 18.sp, width: 18.sp, fit: BoxFit.fill),
+                      ),
+                      Obx(() => controller.cartTotalValue.value != 0
+                          ? Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                width: 10.sp,
+                                height: 10.sp,
+                                child: Padding(
+                                  padding: EdgeInsets.all(0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: homeAppBarColor,
                                     ),
+                                    child: Center(
+                                      child: Text(
+                                        controller.cartTotalValue.value
+                                            .toString(),
+                                        style: TextStyle(
+                                            fontSize: 8,
+                                            color: whiteColor,
+                                            fontFamily:
+                                                "Libre Franklin Regular",
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                    ), // inner content
                                   ),
                                 ),
-                              )
-                            : SizedBox(
-                                height: 0,
-                              ))
-                      ],
-                    ),
+                              ),
+                            )
+                          : SizedBox(
+                              height: 0,
+                            ))
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ]),
+      ),
     );
   }
 }

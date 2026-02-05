@@ -202,8 +202,8 @@ class HomeController extends BaseController {
       final prefs = await SharedPreferences.getInstance();
       final token = (prefs.getString('token') ?? '').trim();
 
-      // ✅ Home screen banners API (without isCartBanner query)
-      final uri = Uri.parse("${ApiConstants.baseUrl}/banners");
+      // ✅ Home screen banners API with status=true to get only active banners
+      final uri = Uri.parse("${ApiConstants.baseUrl}/banners?status=true");
 
       print("📤 Hitting banners API: $uri");
 
@@ -356,7 +356,7 @@ class HomeController extends BaseController {
       final prefs = await SharedPreferences.getInstance();
       final rawToken = (prefs.getString('token') ?? '').trim();
 
-      final uri = Uri.parse("${ApiConstants.baseUrl}/banner/$bannerId");
+      final uri = Uri.parse("${ApiConstants.baseUrl}/banner/$bannerId?status=true");
       print("📤 Hitting banner detail API: $uri");
 
       final headers = <String, String>{

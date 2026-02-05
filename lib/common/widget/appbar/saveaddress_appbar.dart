@@ -20,12 +20,14 @@ class SaveAddressAppbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final statusBarHeight = MediaQuery.of(context).padding.top;
     return Container(
-      height: 90.sp,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(color: statusBarColor),
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Row(
+      child: Padding(
+        padding: EdgeInsets.only(
+            left: 16.sp, top: statusBarHeight + 8.sp, right: 10.sp, bottom: 8.sp),
+        child: Row(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -34,13 +36,10 @@ class SaveAddressAppbar extends StatelessWidget {
               onTap: () {
                 Get.back();
               },
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      left: 16.sp, right: 12.sp, top: 53.sp, bottom: 10.sp),
-                  child: SvgPicture.asset(arrowBack,
-                      height: 15.sp, width: 15.sp, fit: BoxFit.fill),
-                ),
+              child: Padding(
+                padding: EdgeInsets.only(right: 12.sp),
+                child: SvgPicture.asset(arrowBack,
+                    height: 15.sp, width: 15.sp, fit: BoxFit.fill),
               ),
             ),
             const Expanded(
@@ -48,15 +47,12 @@ class SaveAddressAppbar extends StatelessWidget {
                 height: 0,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 45.sp),
-              child: AppText(
-                text: text.toUpperCase(),
-                fontFamily: "Clash Display Semibold",
-                fontWeight: FontWeight.w600,
-                color: appBarColor,
-                fontSize: 16,
-              ),
+            AppText(
+              text: text.toUpperCase(),
+              fontFamily: "Clash Display Semibold",
+              fontWeight: FontWeight.w600,
+              color: appBarColor,
+              fontSize: 16,
             ),
             const Expanded(
               child: SizedBox(
@@ -68,16 +64,12 @@ class SaveAddressAppbar extends StatelessWidget {
                     onTap: () {
                       onPressedWishlist?.call();
                     },
-                    child: Container(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            top: 45.sp,
-                            left: 16.sp,
-                            right: 16.sp,
-                            bottom: 5.sp),
-                        child: SvgPicture.asset(heartSvgImage,
-                            height: 18.sp, width: 18.sp, fit: BoxFit.fill),
-                      ),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          left: 16.sp,
+                          right: 6.sp),
+                      child: SvgPicture.asset(heartSvgImage,
+                          height: 18.sp, width: 18.sp, fit: BoxFit.fill),
                     ),
                   )
                 : SizedBox(
@@ -85,7 +77,7 @@ class SaveAddressAppbar extends StatelessWidget {
                   ),
           ],
         ),
-      ]),
+      ),
     );
   }
 }

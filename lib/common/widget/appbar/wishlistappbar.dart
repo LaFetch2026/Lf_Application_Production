@@ -59,11 +59,13 @@ class _WishlistAppbarState extends State<WishlistAppbar> {
 
   @override
   Widget build(BuildContext context) {
+    final statusBarHeight = MediaQuery.of(context).padding.top;
     return Container(
       width: MediaQuery.of(context).size.width,
       color: widget.backColor,
       child: Padding(
-        padding: EdgeInsets.only(right: 10.sp, top: 56.sp, bottom: 8.sp),
+        padding: EdgeInsets.only(
+            left: 16.sp, top: statusBarHeight + 8.sp, right: 10.sp, bottom: 8.sp),
         child: Row(
           children: [
             if (widget.showBack)
@@ -71,7 +73,7 @@ class _WishlistAppbarState extends State<WishlistAppbar> {
                 onTap: _handleBack,
                 child: Padding(
                   padding:
-                      EdgeInsets.only(left: 16.sp, right: 12.sp, top: 4.sp),
+                      EdgeInsets.only(right: 12.sp, top: 4.sp),
                   child: SvgPicture.asset(
                     arrowBack,
                     height: 15.sp,

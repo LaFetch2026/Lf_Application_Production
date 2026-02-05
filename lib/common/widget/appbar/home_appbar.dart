@@ -79,12 +79,13 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final statusBarHeight = MediaQuery.of(context).padding.top;
     return Container(
       width: double.infinity,
       color: whiteColor,
       child: Padding(
         padding: EdgeInsets.only(
-            left: 16.sp, top: 56.sp, right: 10.sp, bottom: 8.sp),
+            left: 16.sp, top: statusBarHeight + 8.sp, right: 10.sp, bottom: 8.sp),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [

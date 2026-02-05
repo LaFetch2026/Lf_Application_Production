@@ -63,166 +63,159 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
 
   @override
   Widget build(BuildContext context) {
+    final statusBarHeight = MediaQuery.of(context).padding.top;
     final iconColor = widget.dark ? Colors.white : Colors.black;
 
     return Container(
       width: MediaQuery.of(context).size.width,
       color: statusBarColor,
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(
-              right: 10.sp,
-              top: 56.sp,
-              bottom: 8.sp,
+      child: Padding(
+        padding: EdgeInsets.only(
+            left: 16.sp, top: statusBarHeight + 8.sp, right: 10.sp, bottom: 8.sp),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // BACK BUTTON
+            InkWell(
+              onTap: () => Get.back(),
+              child: Padding(
+                padding: EdgeInsets.only(right: 12.sp, bottom: 4.sp),
+                child: SvgPicture.asset(
+                  arrowBack,
+                  height: 15.sp,
+                  width: 15.sp,
+                  colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+                ),
+              ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                // BACK BUTTON
-                InkWell(
-                  onTap: () => Get.back(),
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        left: 16.sp, right: 12.sp, bottom: 4.sp),
-                    child: SvgPicture.asset(
-                      arrowBack,
-                      height: 15.sp,
-                      width: 15.sp,
-                      colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-                    ),
-                  ),
-                ),
 
-                const Expanded(child: SizedBox()),
+            const Expanded(child: SizedBox()),
 
-                // CENTER LOGO
-                Padding(
-                  padding: EdgeInsets.only(left: 40.sp, right: 10.sp),
-                  child: Image.asset(
-                    lafetchLogoImage,
-                    color: homeAppBarColor,
-                    height: 25.sp,
-                    width: 20.sp,
-                  ),
-                ),
+            // CENTER LOGO
+            Padding(
+              padding: EdgeInsets.only(left: 40.sp, right: 10.sp),
+              child: Image.asset(
+                lafetchLogoImage,
+                color: homeAppBarColor,
+                height: 25.sp,
+                width: 20.sp,
+              ),
+            ),
 
-                const Expanded(child: SizedBox()),
+            const Expanded(child: SizedBox()),
 
-                // HEART ICON
-                InkWell(
-                  onTap: () => widget.onPressedHeart?.call(),
-                  child: Obx(
-                    () => Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 8.sp, vertical: 8.sp),
-                      child: wishlistController.isWishlisted.value
-                          ? SvgPicture.asset(
-                              redHeartSvgImage,
-                              height: 18.sp,
-                              width: 18.sp,
-                            )
-                          : SvgPicture.asset(
-                              heartSvgImage,
-                              height: 18.sp,
-                              width: 18.sp,
-                              colorFilter:
-                                  ColorFilter.mode(iconColor, BlendMode.srcIn),
-                            ),
-                    ),
-                  ),
-                ),
-
-                // CART ICON
-                InkWell(
-                  onTap: () async {
-                    await widget.onPressedCart?.call();
-                    if (!isGuest) {
-                      await cartController.getCartData();
-                    }
-                  },
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        SvgPicture.asset(
-                          cartSvgImage,
+            // HEART ICON
+            InkWell(
+              onTap: () => widget.onPressedHeart?.call(),
+              child: Obx(
+                () => Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 8.sp, vertical: 8.sp),
+                  child: wishlistController.isWishlisted.value
+                      ? SvgPicture.asset(
+                          redHeartSvgImage,
+                          height: 18.sp,
+                          width: 18.sp,
+                        )
+                      : SvgPicture.asset(
+                          heartSvgImage,
                           height: 18.sp,
                           width: 18.sp,
                           colorFilter:
                               ColorFilter.mode(iconColor, BlendMode.srcIn),
                         ),
-
-                        // Only show badge for logged-in users
-                        if (!isGuest)
-                          Positioned(
-                            right: -5.sp,
-                            top: 6.sp,
-                            child: Obx(() {
-                              final count = cartController.cartTotalValue.value;
-                              if (count == 0) return const SizedBox.shrink();
-                              return Container(
-                                padding: EdgeInsets.all(2.sp),
-                                constraints: BoxConstraints(
-                                  minWidth: 14.sp,
-                                  minHeight: 14.sp,
-                                ),
-                                decoration: const BoxDecoration(
-                                  color: homeAppBarColor,
-                                  shape: BoxShape.circle,
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  count.toString(),
-                                  style: TextStyle(
-                                    fontSize: 8.sp,
-                                    color: whiteColor,
-                                    fontFamily: "Clash Display Regular",
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              );
-                            }),
-                          ),
-                      ],
-                    ),
-                  ),
                 ),
-
-                // SHARE BUTTON
-                InkWell(
-                  onTap: () async {
-                    final link =
-                        await ShareLinkGenerator.generateProductShareLink(
-                      productId: widget.productId,
-                      slug: widget.slug,
-                      brandName: widget.brandName,
-                      type: widget.type,
-                    );
-
-                    Share.share("Lafetch:\n$link");
-                  },
-                  child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 3.sp),
-                      child: SvgPicture.asset(
-                        shareSvgImage,
-                        height: 18.sp,
-                        width: 18.sp,
-                        colorFilter:
-                            ColorFilter.mode(iconColor, BlendMode.srcIn),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+
+            // CART ICON
+            InkWell(
+              onTap: () async {
+                await widget.onPressedCart?.call();
+                if (!isGuest) {
+                  await cartController.getCartData();
+                }
+              },
+              child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    SvgPicture.asset(
+                      cartSvgImage,
+                      height: 18.sp,
+                      width: 18.sp,
+                      colorFilter:
+                          ColorFilter.mode(iconColor, BlendMode.srcIn),
+                    ),
+
+                    // Only show badge for logged-in users
+                    if (!isGuest)
+                      Positioned(
+                        right: -5.sp,
+                        top: 6.sp,
+                        child: Obx(() {
+                          final count = cartController.cartTotalValue.value;
+                          if (count == 0) return const SizedBox.shrink();
+                          return Container(
+                            padding: EdgeInsets.all(2.sp),
+                            constraints: BoxConstraints(
+                              minWidth: 14.sp,
+                              minHeight: 14.sp,
+                            ),
+                            decoration: const BoxDecoration(
+                              color: homeAppBarColor,
+                              shape: BoxShape.circle,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              count.toString(),
+                              style: TextStyle(
+                                fontSize: 8.sp,
+                                color: whiteColor,
+                                fontFamily: "Clash Display Regular",
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+
+            // SHARE BUTTON
+            InkWell(
+              onTap: () async {
+                final link =
+                    await ShareLinkGenerator.generateProductShareLink(
+                  productId: widget.productId,
+                  slug: widget.slug,
+                  brandName: widget.brandName,
+                  type: widget.type,
+                );
+
+                Share.share("Lafetch:\n$link");
+              },
+              child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 3.sp),
+                  child: SvgPicture.asset(
+                    shareSvgImage,
+                    height: 18.sp,
+                    width: 18.sp,
+                    colorFilter:
+                        ColorFilter.mode(iconColor, BlendMode.srcIn),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

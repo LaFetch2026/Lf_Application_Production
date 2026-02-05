@@ -24,83 +24,72 @@ class _CartAppbarState extends State<CartAppbar> {
 
   @override
   Widget build(BuildContext context) {
+    final statusBarHeight = MediaQuery.of(context).padding.top;
     return Container(
-      height: 90.sp,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(color: statusBarColor),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              InkWell(
-                onTap: () => Get.back(),
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: 16.sp,
-                    right: 12.sp,
-                    top: 48.sp,
-                    bottom: 10.sp,
-                  ),
-                  child: SvgPicture.asset(
-                    arrowBack,
-                    height: 15.sp,
-                    width: 15.sp,
-                  ),
+      child: Padding(
+        padding: EdgeInsets.only(
+            left: 16.sp, top: statusBarHeight + 8.sp, right: 10.sp, bottom: 8.sp),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            InkWell(
+              onTap: () => Get.back(),
+              child: Padding(
+                padding: EdgeInsets.only(right: 12.sp),
+                child: SvgPicture.asset(
+                  arrowBack,
+                  height: 15.sp,
+                  width: 15.sp,
                 ),
               ),
-              const Expanded(child: SizedBox()),
-              Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 40.sp),
-                    child: AppText(
-                      text: widget.text.toUpperCase(),
-                      fontFamily: "Clash Display Semibold",
-                      fontWeight: FontWeight.w600,
-                      color: appBarColor,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Obx(
-                    () => Padding(
-                      padding: EdgeInsets.only(top: 1.sp),
-                      child: controller.isOrder.value
-                          ? DummyContainer(height: 8, width: 50)
-                          : AppText(
-                              text: controller.orderList.length == 1
-                                  ? "${controller.orderList.length} Product"
-                                  : "${controller.orderList.length} Products",
-                              fontFamily: "Clash Display Regular",
-                              fontWeight: FontWeight.w600,
-                              color: subtitleColor,
-                              fontSize: 10,
-                            ),
-                    ),
-                  ),
-                ],
-              ),
-              const Expanded(child: SizedBox()),
-              InkWell(
-                onTap: () => widget.onPressedWishlist?.call(),
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    top: 40.sp,
-                    left: 16.sp,
-                    right: 19.sp,
-                    bottom: 5.sp,
-                  ),
-                  child: SvgPicture.asset(
-                    heartSvgImage,
-                    height: 18.sp,
-                    width: 18.sp,
+            ),
+            const Expanded(child: SizedBox()),
+            Column(
+              children: [
+                AppText(
+                  text: widget.text.toUpperCase(),
+                  fontFamily: "Clash Display Semibold",
+                  fontWeight: FontWeight.w600,
+                  color: appBarColor,
+                  fontSize: 16,
+                ),
+                Obx(
+                  () => Padding(
+                    padding: EdgeInsets.only(top: 1.sp),
+                    child: controller.isOrder.value
+                        ? DummyContainer(height: 8, width: 50)
+                        : AppText(
+                            text: controller.orderList.length == 1
+                                ? "${controller.orderList.length} Product"
+                                : "${controller.orderList.length} Products",
+                            fontFamily: "Clash Display Regular",
+                            fontWeight: FontWeight.w600,
+                            color: subtitleColor,
+                            fontSize: 10,
+                          ),
                   ),
                 ),
+              ],
+            ),
+            const Expanded(child: SizedBox()),
+            InkWell(
+              onTap: () => widget.onPressedWishlist?.call(),
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 16.sp,
+                  right: 9.sp,
+                ),
+                child: SvgPicture.asset(
+                  heartSvgImage,
+                  height: 18.sp,
+                  width: 18.sp,
+                ),
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

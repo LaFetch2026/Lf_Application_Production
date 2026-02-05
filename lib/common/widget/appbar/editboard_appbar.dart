@@ -21,66 +21,55 @@ class EditBoardAppbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final statusBarHeight = MediaQuery.of(context).padding.top;
     return Container(
-      height: 80.sp,
       width: MediaQuery.of(context).size.width,
       color: whiteTextColor,
-      child: Column(children: [
-        Padding(
-          padding: EdgeInsets.only(left: 16.sp, top: 40.sp, right: 16.sp),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              InkWell(
-                onTap: () {
-                  Get.back();
-                },
-                child: Image.asset(backArrowImage,
-                    height: 16.sp, width: 10.sp, fit: BoxFit.fill),
+      child: Padding(
+        padding: EdgeInsets.only(
+            left: 16.sp, top: statusBarHeight + 8.sp, right: 16.sp, bottom: 8.sp),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            InkWell(
+              onTap: () {
+                Get.back();
+              },
+              child: Image.asset(backArrowImage,
+                  height: 16.sp, width: 10.sp, fit: BoxFit.fill),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            AppText(
+              text: text,
+              fontFamily: "Clash Display Regular",
+              fontWeight: FontWeight.w400,
+              color: appbarText,
+              fontSize: 22,
+            ),
+            const Expanded(
+              child: SizedBox(
+                height: 0,
               ),
-              const SizedBox(
-                width: 10,
-              ),
-              AppText(
-                text: text,
-                fontFamily: "Clash Display Regular",
-                fontWeight: FontWeight.w400,
-                color: appbarText,
-                fontSize: 22,
-              ),
-              const Expanded(
-                child: SizedBox(
-                  height: 0,
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  onPressedDelete?.call();
-                },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.sp),
-                  child: ImageIcon(
-                    AssetImage(deleteImage),
-                    color: appbarText,
-                    size: 20.sp,
-                  ),
-                ),
-              ),
-              /*  GestureDetector(
-                onTap: () {
-                  onPressedShare?.call();
-                },
-                child: const ImageIcon(
-                  AssetImage(shareImage),
+            ),
+            InkWell(
+              onTap: () {
+                onPressedDelete?.call();
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.sp),
+                child: ImageIcon(
+                  AssetImage(deleteImage),
                   color: appbarText,
-                  size: 16.sp,
+                  size: 20.sp,
                 ),
-              ), */
-            ],
-          ),
+              ),
+            ),
+          ],
         ),
-      ]),
+      ),
     );
   }
 }

@@ -75,7 +75,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     _loadGuestFlag();
 
     // ✅ Fetch video ad
-    _fetchVideoAd();
+    // _fetchVideoAd();
 
     // Only initialize profile for logged-in users
     Future.microtask(() async {

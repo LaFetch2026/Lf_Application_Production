@@ -499,101 +499,11 @@ class HomeScreenState extends State<HomeScreen>
         print("🖼️ Banner $i: imageUrl='$imageUrl'");
         print("🖼️ Banner $i: isVideo=${isVideoUrl(imageUrl)}");
 
-        final String title =
-            item["title"]?.toString() ?? item["name"]?.toString() ?? "Products";
-
-        final int categoryIdFromList = () {
-          final v = item["categoryId"];
-          if (v is int) return v;
-          return int.tryParse(v?.toString() ?? '') ?? 0;
-        }();
-        final int brandIdFromList = () {
-          final v = item["brandId"];
-          if (v is int) return v;
-          return int.tryParse(v?.toString() ?? '') ?? 0;
-        }();
-
         list.add(
-          GestureDetector(
+          Container(
             key: ValueKey(
                 'banner_${currentGender}_$bannerId'), // ✅ Unique key per gender + banner
-            onTap: () async {
-              try {
-                // Fetch detail (contains products, category, brand)
-                final data = await homeController.getBannerDetail(bannerId);
-                final List<Map<String, dynamic>> products =
-                    (data?['products'] as List?)
-                            ?.whereType<Map<String, dynamic>>()
-                            .toList() ??
-                        const [];
-
-                // Pull ids from detail if available, fallback to list values
-                final int categoryId = () {
-                  final v = data?["categoryId"] ?? data?["category"]?["id"];
-                  if (v is int) return v;
-                  return int.tryParse(v?.toString() ?? '') ??
-                      categoryIdFromList;
-                }();
-
-                final int brandId = () {
-                  final v = data?["brandId"] ?? data?["brand"]?["id"];
-                  if (v is int) return v;
-                  return int.tryParse(v?.toString() ?? '') ?? brandIdFromList;
-                }();
-
-                // If the detail call returned products, show them directly.
-                if (products.isNotEmpty) {
-                  Get.to(
-                    () => BannerProductsScreen(
-                      title: title,
-                      products: products,
-                      genderName: homeController.genderText.value,
-                    ),
-                  )?.then((_) {
-                    SystemChrome.setSystemUIOverlayStyle(
-                        const SystemUiOverlayStyle(
-                      statusBarColor: whiteColor,
-                      systemNavigationBarColor: whiteColor,
-                    ));
-                  });
-                } else {
-                  // Fallback: open category route (old behavior)
-                  Get.to(
-                    () => CategoryProductScreen(
-                      categoryName: title,
-                      categoryId: categoryId,
-                      genderName: homeController.genderText.value,
-                      brandId: brandId,
-                      genderType: homeController.homeGenderValue.value,
-                      collectionIds: const [],
-                      categoryList: categoryId != 0 ? [categoryId] : const [],
-                      title: '',
-                    ),
-                  )?.then((_) {
-                    SystemChrome.setSystemUIOverlayStyle(
-                        const SystemUiOverlayStyle(
-                      statusBarColor: whiteColor,
-                      systemNavigationBarColor: whiteColor,
-                    ));
-                  });
-                }
-
-                // Analytics
-                await analytics.logEvent(
-                  name: 'banner_home_page',
-                  parameters: {
-                    'banner_id': bannerId,
-                    'banner_title': title,
-                    'category_id': categoryId,
-                    'brand_id': brandId,
-                    'products_count': products.length,
-                  },
-                );
-              } catch (e) {
-                print("Banner tap error: $e");
-                getSnackBar("Unable to open banner right now");
-              }
-            },
+            // ✅ Banner tap disabled - no navigation
             child: imageUrl.isNotEmpty && isVideoUrl(imageUrl)
                 ? BannerVideoPlayer(
                     videoUrl: imageUrl,
@@ -1114,6 +1024,8 @@ class HomeScreenState extends State<HomeScreen>
                                 ListView.builder(
                                   physics: const NeverScrollableScrollPhysics(),
                                   shrinkWrap: true,
+                                  padding: EdgeInsets
+                                      .zero, // ✅ Remove default ListView padding
                                   itemCount: collections.length,
                                   // ✅ No separator needed - each _CollectionSection has consistent bottom padding
                                   itemBuilder: (context, index) {
@@ -2444,7 +2356,7 @@ class _ShopByCategorySection extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 16.sp),
+          SizedBox(height: 8.sp),
         ],
       ),
     );
@@ -2913,8 +2825,8 @@ class _CollectionSectionState extends State<_CollectionSection> {
             padding: EdgeInsets.only(
                 left: 16.sp,
                 right: 16.sp,
-                top: 12.sp,
-                bottom: 10.sp), // ✅ Consistent spacing
+                top: 12.sp, // ✅ Reduced from 12.sp to minimize whitespace
+                bottom: 10.sp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -3046,7 +2958,7 @@ class _FeaturedBrandsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding:
-          EdgeInsets.only(top: 12.sp, bottom: 12.sp), // ✅ Consistent spacing
+          EdgeInsets.only(top: 4.sp, bottom: 12.sp), // ✅ Minimal bottom padding
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -3085,7 +2997,7 @@ class _FeaturedBrandsRow extends StatelessWidget {
           ),
           SizedBox(height: 12.sp), // ✅ Consistent spacing
           SizedBox(
-            height: 90.sp,
+            height: 86.sp, // ✅ Reduced from 90.sp to remove excess whitespace
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: brands.length,
