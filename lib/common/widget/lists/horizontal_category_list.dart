@@ -4,6 +4,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constant/constants.dart';
+import '../../../core/utils/image_helper.dart';
 import '../other/common_widget.dart';
 import '../text/app_text.dart';
 
@@ -65,12 +66,12 @@ class HorizontalCategoryList extends StatelessWidget {
                                                     const Duration(days: 15),
                                                 maxNrOfCacheObjects: 100)),
                                             fit: BoxFit.fill,
-                                            imageUrl: isImage(list[index]
+                                            imageUrl: ImageHelper.toWebP(isImage(list[index]
                                                     ["images"][0]["name"])
                                                 ? list[index]["images"][0]
                                                     ["name"]
                                                 : list[index]["images"][1]
-                                                    ["name"],
+                                                    ["name"]),
                                             errorWidget:
                                                 (context, url, error) =>
                                                     Image.asset(

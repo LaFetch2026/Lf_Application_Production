@@ -6,6 +6,7 @@ import 'package:get/get_state_manager/src/simple/get_state.dart';
 
 import '../../../controllers/product_controller.dart';
 import '../../../core/constant/constants.dart';
+import '../../../core/utils/image_helper.dart';
 
 import '../other/common_widget.dart';
 import '../text/app_text.dart';
@@ -159,12 +160,12 @@ class DemoProductList extends StatelessWidget {
                                                 fadeOutCurve: Curves.ease,
                                                 fadeOutDuration:
                                                     Duration(milliseconds: 100),
-                                                imageUrl: isImage(list[index]
+                                                imageUrl: ImageHelper.toWebP(isImage(list[index]
                                                         ["images"][0]["name"])
                                                     ? list[index]["images"][0]
                                                         ["name"]
                                                     : list[index]["images"][1]
-                                                        ["name"],
+                                                        ["name"]),
                                                 errorWidget:
                                                     (context, url, error) =>
                                                         Image.asset(

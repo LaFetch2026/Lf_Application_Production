@@ -46,6 +46,7 @@ import '../../../core/constant/constants.dart';
 import '../../../models/collection_extensions.dart';
 import '../../../models/collection_banner_model.dart';
 import '../../../common/widget/newsletter/newsletter_section.dart';
+import '../../../core/utils/image_helper.dart';
 
 // ✅ Global RouteObserver for video auto-pause on navigation
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -520,7 +521,7 @@ class HomeScreenState extends State<HomeScreen>
                       ),
                     ),
                     fit: BoxFit.fill,
-                    imageUrl: imageUrl,
+                    imageUrl: ImageHelper.toWebP(imageUrl),
                     height: 229.sp,
                     width: MediaQuery.of(context).size.width,
                     // ✅ Removed resize parameters - incompatible with custom CacheManager
@@ -1536,7 +1537,7 @@ class _SectionStrip extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8.sp),
                       child: imageUrl.isNotEmpty
                           ? CachedNetworkImage(
-                              imageUrl: imageUrl,
+                              imageUrl: ImageHelper.toWebP(imageUrl),
                               width: double.infinity,
                               fit: BoxFit.fill,
                               maxHeightDiskCache: 400,
@@ -1881,12 +1882,14 @@ class _BannerVideoPlayerState extends State<BannerVideoPlayer>
       child: Stack(
         children: [
           /// VIDEO
-          FittedBox(
-            fit: BoxFit.fill,
-            child: SizedBox(
-              width: _controller!.value.size.width,
-              height: _controller!.value.size.height,
-              child: VideoPlayer(_controller!),
+          Positioned.fill(
+            child: FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: _controller!.value.size.width,
+                height: _controller!.value.size.height,
+                child: VideoPlayer(_controller!),
+              ),
             ),
           ),
 
@@ -2088,7 +2091,7 @@ class _BannerProductTile extends StatelessWidget {
                           stalePeriod: const Duration(days: 15),
                           maxNrOfCacheObjects: 50), // ✅ Reduced from 100
                     ),
-                    imageUrl: imageUrl!,
+                    imageUrl: ImageHelper.toWebP(imageUrl!),
                     fit: BoxFit.fill,
                     // ✅ Add memory limits
                     maxHeightDiskCache: 600,
@@ -2264,7 +2267,7 @@ class _ShopByCategorySection extends StatelessWidget {
                               child: (catalog["image"] != null &&
                                       catalog["image"].toString().isNotEmpty)
                                   ? CachedNetworkImage(
-                                      imageUrl: catalog["image"],
+                                      imageUrl: ImageHelper.toWebP(catalog["image"]),
                                       fit: BoxFit.fill,
                                       // ✅ Add memory limits for category images
                                       maxHeightDiskCache: 300,
@@ -2565,7 +2568,7 @@ class _BannerItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return imageUrl.isNotEmpty
         ? CachedNetworkImage(
-            imageUrl: imageUrl,
+            imageUrl: ImageHelper.toWebP(imageUrl),
             width: double.infinity,
             height: height,
             fit: BoxFit.fill,
@@ -3051,7 +3054,7 @@ class _FeaturedBrandsRow extends StatelessWidget {
                           child: ClipOval(
                             child: logo.isNotEmpty
                                 ? CachedNetworkImage(
-                                    imageUrl: logo,
+                                    imageUrl: ImageHelper.toWebP(logo),
                                     height: 64.sp,
                                     width: 64.sp,
                                     fit: BoxFit.fill,
@@ -3196,7 +3199,7 @@ class _AnnouncementMarqueeState extends State<_AnnouncementMarquee> {
                   Padding(
                     padding: EdgeInsets.only(right: 6.sp),
                     child: CachedNetworkImage(
-                      imageUrl: iconUrl,
+                      imageUrl: ImageHelper.toWebP(iconUrl),
                       height: 16.sp,
                       width: 16.sp,
                       fit: BoxFit.contain,

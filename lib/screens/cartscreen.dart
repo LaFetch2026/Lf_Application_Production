@@ -2450,17 +2450,19 @@ class CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildEmptyCart() {
-    return Padding(
-      padding: EdgeInsets.only(top: 60.sp),
-      child: CartWidget(
-        image: shopBagImage,
-        backColor: widget.backgroundcolor,
-        text1: "There is still room for more",
-        onPressed: () => Get.offAll(const BottomNavScreen(index: 0)),
-        text2:
-            "Looking for items you previously saved?\nSign in to pick up where you left out",
-        btntext: "Continue Shopping",
-        visible: true,
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.65,
+      child: Center(
+        child: CartWidget(
+          image: shopBagImage,
+          backColor: widget.backgroundcolor,
+          text1: "There is still room for more",
+          onPressed: () => Get.offAll(const BottomNavScreen(index: 0)),
+          text2:
+              "Looking for items you previously saved?\nSign in to pick up where you left out",
+          btntext: "Continue Shopping",
+          visible: true,
+        ),
       ),
     );
   }

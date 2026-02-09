@@ -22,6 +22,7 @@ import '../controllers/brand_controller.dart';
 import '../controllers/home_controller.dart';
 import '../controllers/product_controller.dart';
 import '../core/constant/constants.dart';
+import '../core/utils/image_helper.dart';
 import 'bottomnavscreen.dart';
 import 'cartscreen.dart';
 
@@ -613,7 +614,7 @@ class BrandsScreenState extends State<BrandsScreen>
                                                                                     ),
                                                                                   ),
                                                                                   fit: BoxFit.fill,
-                                                                                  imageUrl: brand["logo"],
+                                                                                  imageUrl: ImageHelper.toWebP(brand["logo"]),
                                                                                   memCacheWidth: (48.sp * MediaQuery.of(context).devicePixelRatio).round(),
                                                                                   memCacheHeight: (48.sp * MediaQuery.of(context).devicePixelRatio).round(),
                                                                                   placeholder: (context, url) => Container(
@@ -808,7 +809,7 @@ class BrandsScreenState extends State<BrandsScreen>
                                                                                                     ),
                                                                                                   ),
                                                                                                   fit: BoxFit.fill,
-                                                                                                  imageUrl: imageUrl,
+                                                                                                  imageUrl: ImageHelper.toWebP(imageUrl),
                                                                                                   memCacheWidth: (97.sp * MediaQuery.of(context).devicePixelRatio).round(),
                                                                                                   memCacheHeight: (97.sp * MediaQuery.of(context).devicePixelRatio).round(),
                                                                                                   placeholder: (context, url) => Container(

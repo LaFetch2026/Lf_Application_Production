@@ -8,6 +8,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constant/constants.dart';
+import '../../../core/utils/image_helper.dart';
 import '../other/product_price_display.dart';
 
 /// A reusable product card widget that displays product image, title, brand, and price
@@ -252,7 +253,7 @@ class ProductCard extends StatelessWidget {
     }
 
     return CachedNetworkImage(
-      imageUrl: imageUrl,
+      imageUrl: ImageHelper.toWebP(imageUrl),
       fit: BoxFit.fill,
       width: double.infinity,
       height: double.infinity,
@@ -476,7 +477,7 @@ class ProductGridCard extends StatelessWidget {
     }
 
     return CachedNetworkImage(
-      imageUrl: imageUrl,
+      imageUrl: ImageHelper.toWebP(imageUrl),
       fit: BoxFit.fill,
       width: double.infinity,
       height: double.infinity,
