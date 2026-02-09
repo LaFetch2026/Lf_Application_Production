@@ -187,29 +187,39 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
             ),
 
             // SHARE BUTTON
-            InkWell(
-              onTap: () async {
-                final link =
-                    await ShareLinkGenerator.generateProductShareLink(
-                  productId: widget.productId,
-                  slug: widget.slug,
-                  brandName: widget.brandName,
-                  type: widget.type,
-                );
+            Builder(
+              builder: (shareContext) => InkWell(
+                onTap: () async {
+                  final box = shareContext.findRenderObject() as RenderBox?;
+                  final shareOrigin = box != null
+                      ? box.localToGlobal(Offset.zero) & box.size
+                      : null;
 
-                Share.share("Lafetch:\n$link");
-              },
-              child: Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
+                  final link =
+                      await ShareLinkGenerator.generateProductShareLink(
+                    productId: widget.productId,
+                    slug: widget.slug,
+                    brandName: widget.brandName,
+                    type: widget.type,
+                  );
+
+                  Share.share(
+                    "Lafetch:\n$link",
+                    sharePositionOrigin: shareOrigin,
+                  );
+                },
                 child: Padding(
-                  padding: EdgeInsets.only(bottom: 3.sp),
-                  child: SvgPicture.asset(
-                    shareSvgImage,
-                    height: 18.sp,
-                    width: 18.sp,
-                    colorFilter:
-                        ColorFilter.mode(iconColor, BlendMode.srcIn),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 3.sp),
+                    child: SvgPicture.asset(
+                      shareSvgImage,
+                      height: 18.sp,
+                      width: 18.sp,
+                      colorFilter:
+                          ColorFilter.mode(iconColor, BlendMode.srcIn),
+                    ),
                   ),
                 ),
               ),

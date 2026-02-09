@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/controllers/SplashController.dart';
+import 'package:lafetch/core/utils/deeplink_handler.dart';
 import '../../core/constant/constants.dart';
 
 class SplashTwoScreen extends StatefulWidget {
@@ -18,6 +19,9 @@ class _SplashTwoScreenState extends State<SplashTwoScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Initialize deep link handler for AppsFlyer
+      DeepLinkHandler.init();
+
       // Force clean state on every load
       Get.delete<SplashController>(force: true);
 

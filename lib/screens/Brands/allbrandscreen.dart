@@ -482,7 +482,13 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                   ? (brandInfo["websiteLink"]?.toString() ?? '')
                   : '';
               if (website.isNotEmpty) {
-                Share.share(website);
+                final box = context.findRenderObject() as RenderBox?;
+                Share.share(
+                  website,
+                  sharePositionOrigin: box != null
+                      ? box.localToGlobal(Offset.zero) & box.size
+                      : null,
+                );
               } else {
                 getSnackBar("No website link available for this brand.");
               }

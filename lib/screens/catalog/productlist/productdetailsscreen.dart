@@ -1424,13 +1424,35 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 },
                 onPressedShare: () async {
                   // ✅ Share doesn't require authentication - safe for guests
-                  final title = _titleText();
-                  Share.share(title.isNotEmpty ? title : "Check this product");
+                  final box = context.findRenderObject() as RenderBox?;
+                  final shareOrigin = box != null
+                      ? box.localToGlobal(Offset.zero) & box.size
+                      : null;
 
-                  await analytics.logEvent(
-                    name: 'share_product',
-                    parameters: <String, Object>{'page_name': 'share_product'},
-                  );
+                  try {
+                    final shareLink = await generateProductShareLink();
+                    final title = _titleText();
+                    final shareText = title.isNotEmpty
+                        ? "Check out $title on LaFetch!\n$shareLink"
+                        : "Check this product on LaFetch!\n$shareLink";
+                    Share.share(shareText, sharePositionOrigin: shareOrigin);
+
+                    await analytics.logEvent(
+                      name: 'share_product',
+                      parameters: <String, Object>{
+                        'page_name': 'share_product',
+                        'product_id': widget.productId,
+                      },
+                    );
+                  } catch (e) {
+                    print("❌ Share error: $e");
+                    // Fallback to basic share if link generation fails
+                    final title = _titleText();
+                    Share.share(
+                      title.isNotEmpty ? title : "Check this product",
+                      sharePositionOrigin: shareOrigin,
+                    );
+                  }
                 },
                 onPressedCart: () async {
                   // ✅ Check if user is guest

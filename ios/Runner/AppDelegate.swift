@@ -1,6 +1,7 @@
 import UIKit
 import Flutter
 import GoogleMaps
+import AppsFlyerLib
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -8,7 +9,7 @@ import GoogleMaps
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    
+
     GMSServices.provideAPIKey("AIzaSyCBFuMTFiBOwMOAbiCNJFInpiknSupbfEc")
 
     // REMOVE Facebook SDK initialization (you no longer use Facebook)
@@ -30,5 +31,16 @@ import GoogleMaps
     // }
 
     return super.application(app, open: url, options: options)
+  }
+
+  // Handle Universal Links - forward to AppsFlyer
+  override func application(
+    _ application: UIApplication,
+    continue userActivity: NSUserActivity,
+    restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+  ) -> Bool {
+    // Forward Universal Links to AppsFlyer
+    AppsFlyerLib.shared().continue(userActivity, restorationHandler: nil)
+    return super.application(application, continue: userActivity, restorationHandler: restorationHandler)
   }
 }
