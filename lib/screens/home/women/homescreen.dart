@@ -1359,9 +1359,10 @@ class _SectionStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = List<Map<String, dynamic>>.from(products);
-    if (!skipShuffle) {
-      items.shuffle(Random(seed));
-    }
+    // ✅ Shuffle disabled - products maintain their original order
+    // if (!skipShuffle) {
+    //   items.shuffle(Random(seed));
+    // }
 
     // ✅ Show maximum 8 products in 2 rows (4 each) - both rows scroll independently
     // ✅ Reduced from 12 to 8 to prevent memory overload
