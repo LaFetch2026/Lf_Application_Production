@@ -485,7 +485,10 @@ class LoginController extends BaseController {
   FirebaseAuth get _firebaseAuth => FirebaseAuth.instance;
 
   GoogleSignIn? _googleSignInInstance;
-  GoogleSignIn get _googleSignIn => _googleSignInInstance ??= GoogleSignIn();
+  GoogleSignIn get _googleSignIn => _googleSignInInstance ??= GoogleSignIn(
+        serverClientId:
+            '598072306679-orm3i1tit1upj3a1rrt984dkf6u7jgpq.apps.googleusercontent.com',
+      );
 
   /// Sign in with Google and authenticate with backend
   Future<bool> signInWithGoogle() async {
@@ -539,12 +542,19 @@ class LoginController extends BaseController {
       }
 
       return success;
-    } on FirebaseAuthException catch (e) {
-      print("❌ Firebase Auth Error: ${e.message}");
+    } on FirebaseAuthException catch (e, stack) {
+      print("❌ Firebase Auth Error: ${e.code} - ${e.message}");
+      print("❌ Stack: $stack");
       getSnackBar(e.message ?? "Google sign-in failed.");
       return false;
-    } catch (e) {
+    } on PlatformException catch (e, stack) {
+      print("❌ Platform Error: ${e.code} - ${e.message} - ${e.details}");
+      print("❌ Stack: $stack");
+      getSnackBar("Google sign-in failed. Please try again.");
+      return false;
+    } catch (e, stack) {
       print("❌ Google Sign-In Error: $e");
+      print("❌ Stack: $stack");
       getSnackBar("An error occurred during Google sign-in.");
       return false;
     } finally {

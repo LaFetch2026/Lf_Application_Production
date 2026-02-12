@@ -20,6 +20,13 @@
 -dontwarn org.woocommerce.**
 
 #######################
+# GOOGLE SIGN-IN / GMS AUTH
+#######################
+-keep class com.google.android.gms.auth.** { *; }
+-keep class com.google.android.gms.common.** { *; }
+-dontwarn com.google.android.gms.**
+
+#######################
 # KOTLIN REFLECTION FIX
 #######################
 -keepclassmembers class kotlin.** { *; }

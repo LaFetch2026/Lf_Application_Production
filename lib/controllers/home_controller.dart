@@ -735,7 +735,6 @@ class HomeController extends BaseController {
     required String deviceType,
   }) async {
     final prefs = await SharedPreferences.getInstance();
-    final savedToken = prefs.getString('fcm_token');
     final authToken = prefs.getString('token')?.trim() ?? '';
 
     // ✅ Validate auth token before proceeding
@@ -746,12 +745,6 @@ class HomeController extends BaseController {
 
     if (userId <= 0) {
       print("⚠️ Invalid userId - cannot send FCM token");
-      return;
-    }
-
-    // ✅ Skip API if token already saved locally (same device token)
-    if (savedToken == token) {
-      print("✅ FCM token already registered locally — skipping API call");
       return;
     }
 

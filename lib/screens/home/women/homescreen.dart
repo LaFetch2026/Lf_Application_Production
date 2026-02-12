@@ -24,7 +24,6 @@ import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:marquee/marquee.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
@@ -213,7 +212,6 @@ class HomeScreenState extends State<HomeScreen>
         // One-time setup calls
         if (_isInitialLoad) {
           homeController.getDeviceName();
-          initPlatformState(); // OneSignal push notifications
           _isInitialLoad = false;
         }
 
@@ -582,28 +580,6 @@ class HomeScreenState extends State<HomeScreen>
     }
   }
 
-  Future<void> initPlatformState() async {
-    OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-    OneSignal.initialize("ee370d7a-1d35-45bb-8f86-09e43c87c15a");
-    OneSignal.Notifications.clearAll();
-    OneSignal.User.pushSubscription.addObserver((state) {
-      print(OneSignal.User.pushSubscription.optedIn);
-      print("player id${OneSignal.User.pushSubscription.id}");
-      print("token${OneSignal.User.pushSubscription.token}");
-      homeController.playerId.value =
-          OneSignal.User.pushSubscription.id.toString();
-    });
-
-    OneSignal.Notifications.addPermissionObserver((state) {
-      print("Has permission $state");
-    });
-
-    OneSignal.Notifications.addClickListener((event) {
-      print('NOTIFICATION CLICK LISTENER CALLED WITH EVENT: $event');
-      setState(() {});
-    });
-    OneSignal.Notifications.requestPermission(true);
-  }
 
   Future<void> onGenderChanged(int genderId) async {
     if (homeController.homeGenderValue.value == genderId) return;

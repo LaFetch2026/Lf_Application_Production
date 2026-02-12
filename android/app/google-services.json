@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "598072306679-p65mlij33pkc22lonjdrsmh2rlrdctgj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lafetch.customer",
+            "certificate_hash": "e912b0079f8bd3e9f3d8b8afece1ea03f39c6f68"
+          }
+        },
+        {
           "client_id": "598072306679-orm3i1tit1upj3a1rrt984dkf6u7jgpq.apps.googleusercontent.com",
           "client_type": 3
         }
