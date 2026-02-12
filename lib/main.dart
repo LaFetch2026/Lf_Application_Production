@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -142,6 +143,23 @@ Future<void> _initPushNotifications(prefs) async {
     if (settings.authorizationStatus == AuthorizationStatus.denied) {
       print('⚠️ User denied notification permissions');
       return;
+    }
+
+    // Android 13+ runtime notification permission
+    if (Platform.isAndroid) {
+      final status = await Permission.notification.status;
+      if (!status.isGranted) {
+        await Permission.notification.request();
+      }
+    }
+
+    // iOS: Show notifications even when app is in foreground
+    if (Platform.isIOS) {
+      await messaging.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
     }
 
     // Background message handler

@@ -3,6 +3,9 @@
     <!-- Network -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Push Notifications (required for Android 13+ / API 33+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <!-- Haptic Feedback / Vibration -->
     <uses-permission android:name="android.permission.VIBRATE" />
 

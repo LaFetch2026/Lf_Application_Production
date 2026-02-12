@@ -2,6 +2,8 @@ import UIKit
 import Flutter
 import GoogleMaps
 import AppsFlyerLib
+import FirebaseMessaging
+import FirebaseCore
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -12,11 +14,31 @@ import AppsFlyerLib
 
     GMSServices.provideAPIKey("AIzaSyCBFuMTFiBOwMOAbiCNJFInpiknSupbfEc")
 
-    // REMOVE Facebook SDK initialization (you no longer use Facebook)
-    // ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
-
     GeneratedPluginRegistrant.register(with: self)
+
+    // Register for remote notifications (required when FirebaseAppDelegateProxyEnabled = false)
+    if #available(iOS 10.0, *) {
+      UNUserNotificationCenter.current().delegate = self
+    }
+    application.registerForRemoteNotifications()
+
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  // CRITICAL: Manually pass APNS token to Firebase since FirebaseAppDelegateProxyEnabled = false
+  override func application(
+    _ application: UIApplication,
+    didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+  ) {
+    Messaging.messaging().apnsToken = deviceToken
+    super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+  }
+
+  override func application(
+    _ application: UIApplication,
+    didFailToRegisterForRemoteNotificationsWithError error: Error
+  ) {
+    print("Failed to register for remote notifications: \(error.localizedDescription)")
   }
 
   override func application(

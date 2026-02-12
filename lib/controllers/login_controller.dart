@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -17,6 +18,7 @@ import '../screens/otpverficationscreen.dart';
 import '../screens/userdetails.dart';
 import 'base_controller.dart';
 import 'cart_controller.dart';
+import 'home_controller.dart';
 
 class GuestResult {
   final bool ok;
@@ -99,6 +101,30 @@ class LoginController extends BaseController {
       _token.value = '';
 
       // don't touch skip here
+    }
+  }
+
+  /// Send pending FCM token to server after successful login.
+  Future<void> _sendPendingFcmToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final fcmToken = prefs.getString('pending_fcm_token');
+      if (fcmToken == null || fcmToken.isEmpty) return;
+
+      final userId = prefs.getInt('userId') ?? 0;
+      final authToken = prefs.getString('token')?.trim() ?? '';
+      if (userId <= 0 || authToken.isEmpty) return;
+
+      final homeController = Get.find<HomeController>();
+      await homeController.sendFcmToken(
+        userId: userId,
+        token: fcmToken,
+        deviceType: Platform.isAndroid ? "android" : "ios",
+      );
+      await prefs.remove('pending_fcm_token');
+      print('✅ FCM token sent to server after login');
+    } catch (e) {
+      print('⚠️ Failed to send FCM token after login: $e');
     }
   }
 
@@ -325,6 +351,9 @@ class LoginController extends BaseController {
 
           // 🛒 SYNC GUEST CART after successful login
           await _syncGuestCartAfterAuth();
+
+          // Send pending FCM token to server
+          await _sendPendingFcmToken();
 
           Get.offAll(() => const BottomNavScreen());
         } else {
@@ -576,6 +605,9 @@ class LoginController extends BaseController {
         // Clear guest mode
         await prefs.remove('skip');
         isGuest.value = false;
+
+        // Send pending FCM token to server
+        await _sendPendingFcmToken();
 
         getSnackBar("Welcome, $userName!");
         return true;
