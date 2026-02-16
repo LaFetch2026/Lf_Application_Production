@@ -20,14 +20,12 @@ import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/home/women/productviewscreen.dart';
 import 'package:lafetch/screens/loginscreen.dart';
-
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:marquee/marquee.dart';
 import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
-
 import '../../../common/widget/appbar/home_appbar.dart';
 import '../../../common/widget/lists/dummy_grid_mostsearch.dart';
 import '../../../common/widget/lists/dummy_home_brand.dart';
@@ -579,7 +577,6 @@ class HomeScreenState extends State<HomeScreen>
       print("Location enable ${position.latitude}");
     }
   }
-
 
   Future<void> onGenderChanged(int genderId) async {
     if (homeController.homeGenderValue.value == genderId) return;
@@ -1209,7 +1206,11 @@ class HomeScreenState extends State<HomeScreen>
   }
 }
 
-// ---------- helper sections ----------
+// ---------- helper sections ----------`````ERT~Y!2aq34ws7e8d59fr6v0gt7b-hn8[ijmo]kp\,l[.…æ?˘]
+// ---------- helper sections ----------`````ERT~Y!2aq34ws7e8d59fr6v0gt7b-hn8[ijmo]kp\,l[.…æ?˘knjbhgvfytcdrsexawq ;L'DEGIŘ  ESWAZDRXYGUIJIOJ-=TYG-GT6B]
+
+
+
 
 // ✅ Helper to check if URL is a video
 bool isVideoUrl(String url) {
@@ -2244,7 +2245,8 @@ class _ShopByCategorySection extends StatelessWidget {
                               child: (catalog["image"] != null &&
                                       catalog["image"].toString().isNotEmpty)
                                   ? CachedNetworkImage(
-                                      imageUrl: ImageHelper.toWebP(catalog["image"]),
+                                      imageUrl:
+                                          ImageHelper.toWebP(catalog["image"]),
                                       fit: BoxFit.fill,
                                       // ✅ Add memory limits for category images
                                       maxHeightDiskCache: 300,

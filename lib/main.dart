@@ -26,7 +26,42 @@ import 'screens/home/women/homescreen.dart' show routeObserver;
 /// Background FCM handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  print("🔔 Background message received: ${message.notification?.title}");
+  print("🔔 Background message received:");
+  print("   notification: ${message.notification?.title}");
+  print("   data: ${message.data}");
+
+  // For data-only messages, show a local notification manually
+  if (message.notification == null && message.data.isNotEmpty) {
+    final plugin = FlutterLocalNotificationsPlugin();
+
+    const initSettings = InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      iOS: DarwinInitializationSettings(),
+    );
+    await plugin.initialize(initSettings);
+
+    final title = message.data['title'] ?? 'LaFetch';
+    final body =
+        message.data['body'] ?? message.data['message'] ?? '';
+
+    if (body.toString().isNotEmpty) {
+      await plugin.show(
+        DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        title,
+        body,
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'high_importance_channel',
+            'High Importance Notifications',
+            icon: '@mipmap/ic_launcher',
+            importance: Importance.max,
+            priority: Priority.high,
+          ),
+          iOS: DarwinNotificationDetails(),
+        ),
+      );
+    }
+  }
 }
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -129,6 +164,19 @@ Future<void> _sendFcmTokenIfLoggedIn() async {
   }
 }
 
+/// Handle notification tap — navigate based on data payload
+void _handleNotificationTap(RemoteMessage message) {
+  final data = message.data;
+  print("🔔 Handling notification tap with data: $data");
+
+  // Navigate based on data payload from backend
+  // Example: {"type": "order", "orderId": "123"}
+  // Add your navigation logic here based on what your backend sends
+  if (data.containsKey('route')) {
+    Get.toNamed(data['route']!);
+  }
+}
+
 Future<void> _initPushNotifications(prefs) async {
   try {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -188,20 +236,45 @@ Future<void> _initPushNotifications(prefs) async {
 
     // Foreground message listener
     FirebaseMessaging.onMessage.listen((message) {
+      print("🔔 Foreground message received!");
+      print("   notification: ${message.notification?.title} - ${message.notification?.body}");
+      print("   data: ${message.data}");
+
       RemoteNotification? notification = message.notification;
 
+      String? title;
+      String? body;
+
       if (notification != null) {
+        // Message has notification payload
+        title = notification.title;
+        body = notification.body;
+      } else if (message.data.isNotEmpty) {
+        // Data-only message — extract title/body from data
+        title = message.data['title'] ?? 'LaFetch';
+        body = message.data['body'] ?? message.data['message'];
+      }
+
+      if (title != null || (body != null && body.isNotEmpty)) {
         flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
+          DateTime.now().millisecondsSinceEpoch ~/ 1000,
+          title ?? 'LaFetch',
+          body ?? '',
           const NotificationDetails(
             android: AndroidNotificationDetails(
               'high_importance_channel',
               'High Importance Notifications',
               icon: '@mipmap/ic_launcher',
+              importance: Importance.max,
+              priority: Priority.high,
+              playSound: true,
+              enableVibration: true,
             ),
-            iOS: DarwinNotificationDetails(),
+            iOS: DarwinNotificationDetails(
+              presentAlert: true,
+              presentBadge: true,
+              presentSound: true,
+            ),
           ),
         );
       }
@@ -254,6 +327,21 @@ Future<void> _initPushNotifications(prefs) async {
       print('   - Firebase project configuration');
       print('   - google-services.json (Android) or GoogleService-Info.plist (iOS)');
       print('   - APNS certificates (iOS)');
+    }
+
+    // Handle notification tap when app is in background (but not terminated)
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print("🔔 Notification tapped (background): ${message.notification?.title}");
+      print("   data: ${message.data}");
+      _handleNotificationTap(message);
+    });
+
+    // Handle notification tap when app was terminated
+    RemoteMessage? initialMessage = await messaging.getInitialMessage();
+    if (initialMessage != null) {
+      print("🔔 App opened from terminated via notification: ${initialMessage.notification?.title}");
+      print("   data: ${initialMessage.data}");
+      _handleNotificationTap(initialMessage);
     }
 
     // Listen for token refresh
