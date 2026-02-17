@@ -31,7 +31,7 @@ import '../../../controllers/brand_controller.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
-import '../../../core/utils/analytics_helper.dart';
+
 import '../../cartscreen.dart';
 import '../../wishlist/boardscreen.dart';
 import '../../wishlist/newboardscreen.dart';

@@ -14,7 +14,7 @@ import '../common/widget/appbar/shopwishlist_appbar.dart';
 import '../common/widget/other/paymentfailwidget.dart';
 import '../controllers/cart_controller.dart';
 import '../core/constant/constants.dart';
-import '../core/utils/analytics_helper.dart';
+
 
 class PaymentSuccessScreen extends StatefulWidget {
   final String text1;

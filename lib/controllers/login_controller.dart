@@ -145,6 +145,8 @@ class LoginController extends BaseController {
     showLoading();
     try {
       await clearTokenAndSession();
+      // ✅ FIX: Sign out from Google to clear cached account (fixes Android auto-login issue)
+      await signOutGoogle();
       getSnackBar("You have been logged out successfully.");
       Get.offAllNamed('/welcome');
     } catch (e) {
@@ -494,6 +496,9 @@ class LoginController extends BaseController {
   Future<bool> signInWithGoogle() async {
     showLoading();
     try {
+      // ✅ FIX: Sign out first to force account picker every time (fixes Android auto-login)
+      await _googleSignIn.signOut();
+
       // Trigger Google Sign-In flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 

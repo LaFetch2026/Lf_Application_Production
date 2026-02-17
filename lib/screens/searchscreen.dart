@@ -62,24 +62,27 @@ class SearchScreenState extends State<SearchScreen> {
     _saveRecent();
   }
 
-  List<String> _normalizeSuggestions(Iterable<String> raw, String query) {
-    final out = <String>[];
+  List<Map<String, dynamic>> _normalizeSuggestions(
+      Iterable<Map<String, dynamic>> raw, String query) {
+    final out = <Map<String, dynamic>>[];
     final seen = <String>{};
     final q = query.trim();
     final qLower = q.toLowerCase();
 
-    for (final s in raw) {
-      final t = s.trim();
-      if (t.isEmpty) continue;
-      final key = t.toLowerCase();
+    for (final item in raw) {
+      final keyword = (item['keyword'] ?? '').toString().trim();
+      if (keyword.isEmpty) continue;
+      final key = keyword.toLowerCase();
       if (seen.contains(key)) continue;
       seen.add(key);
-      out.add(t);
+      out.add(item);
       if (out.length >= 10) break;
     }
 
-    if (q.isNotEmpty && !out.any((e) => e.toLowerCase() == qLower)) {
-      out.insert(0, q);
+    if (q.isNotEmpty &&
+        !out.any(
+            (e) => (e['keyword'] ?? '').toString().toLowerCase() == qLower)) {
+      out.insert(0, {'keyword': q, 'count': 0});
     }
     return out;
   }
@@ -294,7 +297,8 @@ class SearchScreenState extends State<SearchScreen> {
                   }
                 }
 
-                if (children.isEmpty) return const SizedBox.shrink();
+                // Add category images at the end of content (scrollable)
+                children.add(_buildCategorySection());
 
                 // ✅ No top padding — flush under divider
                 return ListView(
@@ -309,32 +313,52 @@ class SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildSuggestionsList(List<String> terms) {
+  Widget _buildSuggestionsList(List<Map<String, dynamic>> terms) {
     return Padding(
       // ✅ start exactly under divider, no gap
       padding: EdgeInsets.fromLTRB(16.sp, 0, 16.sp, 0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: List.generate(terms.length, (i) {
-          final term = terms[i];
+          final item = terms[i];
+          final keyword = (item['keyword'] ?? '').toString();
+          final count = item['count'] ?? 0;
           return Column(
             children: [
               InkWell(
-                onTap: () => _openResults(term),
+                onTap: () => _openResults(keyword),
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 6.sp),
                   child: Row(
                     children: [
                       Expanded(
-                        child: AppText(
-                          text: "Search for '$term'",
-                          maxLines: 1,
-                          fontFamily: "Clash Display Regular",
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                          color: homeAppBarColor,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: AppText(
+                                text: "Search for '$keyword'",
+                                maxLines: 1,
+                                fontFamily: "Clash Display Regular",
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                color: homeAppBarColor,
+                              ),
+                            ),
+                            if (count > 0)
+                              Padding(
+                                padding: EdgeInsets.only(left: 8.sp),
+                                child: AppText(
+                                  text: "($count)",
+                                  fontFamily: "Clash Display Regular",
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: subtitleColor,
+                                ),
+                              ),
+                          ],
                         ),
                       ),
+                      SizedBox(width: 8.sp),
                       SvgPicture.asset(
                         arrowSearchImage,
                         color: homeAppBarColor,
@@ -373,6 +397,39 @@ class SearchScreenState extends State<SearchScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  // ------------------ CATEGORY SECTION (Static, non-clickable) ------------------
+  Widget _buildCategorySection() {
+    final categories = [
+      {'image': 'assets/images/WOMEN.png'},
+      {'image': 'assets/images/MEN.png'},
+      {'image': 'assets/images/ACCESSORIES.png'},
+    ];
+
+    return Container(
+      padding: EdgeInsets.fromLTRB(12.sp, 8.sp, 12.sp, 8.sp),
+      color: whiteColor,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: categories.map((category) {
+          return Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 3.sp),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: Image.asset(
+                  category['image']!,
+                  height: 80.sp,
+                  width: double.infinity,
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

@@ -1206,12 +1206,6 @@ class HomeScreenState extends State<HomeScreen>
   }
 }
 
-// ---------- helper sections ----------`````ERT~Y!2aq34ws7e8d59fr6v0gt7b-hn8[ijmo]kp\,l[.…æ?˘]
-// ---------- helper sections ----------`````ERT~Y!2aq34ws7e8d59fr6v0gt7b-hn8[ijmo]kp\,l[.…æ?˘knjbhgvfytcdrsexawq ;L'DEGIŘ  ESWAZDRXYGUIJIOJ-=TYG-GT6B]
-
-
-
-
 // ✅ Helper to check if URL is a video
 bool isVideoUrl(String url) {
   final videoExtensions = [

@@ -58,7 +58,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   List<String> _appliedColors = [];
   List<String> _appliedSizes = [];
   String _appliedMinPrice = "300";
-  String _appliedMaxPrice = "100000";
+  String _appliedMaxPrice = "10000000";
   String _appliedSortOption = "recommended";
   bool _hasActiveFilters = false;
   bool _isFilterMetadataLoaded = false;

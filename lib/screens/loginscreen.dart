@@ -16,12 +16,13 @@ import 'package:url_launcher/url_launcher.dart';
 import '../common/widget/appbar/login_appbar.dart';
 import '../common/widget/other/common_widget.dart';
 import '../common/widget/other/login_widget.dart';
+import '../common/widget/other/or_widget.dart';
 import '../common/widget/text/app_text.dart';
 import '../common/widget/text/multiple_text.dart';
 import '../common/widget/text/number_widget.dart';
 import '../controllers/login_controller.dart';
 import '../core/constant/constants.dart';
-import '../core/utils/analytics_helper.dart';
+
 
 class LoginScreen extends StatefulWidget {
   final int initialTab;
@@ -321,6 +322,8 @@ class LoginScreenState extends State<LoginScreen>
             ),
           ),
           buildTermsWidget(),
+          const ORWidget(),
+          buildGoogleSignInButton(),
         ],
       ),
     );
@@ -406,7 +409,58 @@ class LoginScreenState extends State<LoginScreen>
             ),
           ),
           buildTermsWidget(),
+          const ORWidget(),
+          buildGoogleSignInButton(),
         ],
+      ),
+    );
+  }
+
+  Widget buildGoogleSignInButton() {
+    return Padding(
+      padding: EdgeInsets.only(left: 16.sp, right: 16.sp, bottom: 40.sp),
+      child: SizedBox(
+        width: double.infinity,
+        height: 50.sp,
+        child: ElevatedButton(
+          onPressed: () async {
+            await analytics.logEvent(
+              name: 'login_google_signin',
+              parameters: {'page_name': 'login_google_signin'},
+            );
+            await loginController.signInWithGoogle();
+          },
+          style: ButtonStyle(
+            shape: WidgetStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(1.sp),
+              ),
+            ),
+            side: WidgetStateProperty.all(
+              BorderSide(width: 1.sp, color: homeAppBarColor),
+            ),
+            elevation: WidgetStateProperty.all(0.0),
+            backgroundColor: WidgetStateProperty.all(whiteColor),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/google.png',
+                height: 20.sp,
+                width: 20.sp,
+              ),
+              SizedBox(width: 10.sp),
+              AppText(
+                text: "CONTINUE WITH GOOGLE",
+                fontFamily: "Clash Display Semibold",
+                fontWeight: FontWeight.w600,
+                color: homeAppBarColor,
+                fontSize: 13,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

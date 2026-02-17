@@ -22,7 +22,7 @@ class SearchScreenController extends BaseController {
 
   // Suggestions state
   final RxBool isSuggesting = false.obs;
-  final RxList<String> suggestions = <String>[].obs;
+  final RxList<Map<String, dynamic>> suggestions = <Map<String, dynamic>>[].obs;
 
   // ---- helpers --------------------------------------------------------------
 
@@ -165,9 +165,17 @@ class SearchScreenController extends BaseController {
         return;
       }
 
-      final List<String> items = (decoded is Map && decoded['data'] is List)
-          ? (decoded['data'] as List).whereType<String>().toList()
-          : <String>[];
+      // Parse response - data is array of objects with 'keyword' and 'count'
+      final List<Map<String, dynamic>> items = (decoded is Map && decoded['data'] is List)
+          ? (decoded['data'] as List)
+              .whereType<Map>()
+              .map((item) => {
+                    'keyword': item['keyword']?.toString() ?? '',
+                    'count': item['count'] ?? 0,
+                  })
+              .where((item) => (item['keyword'] as String).isNotEmpty)
+              .toList()
+          : <Map<String, dynamic>>[];
 
       suggestions.assignAll(items);
     } on TimeoutException {
