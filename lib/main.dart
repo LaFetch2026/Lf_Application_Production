@@ -18,6 +18,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'controllers/home_controller.dart';
 import 'controllers/login_controller.dart';
+import 'controllers/product_controller.dart';
+import 'controllers/cart_controller.dart';
+import 'controllers/wishlist_controller.dart';
+import 'controllers/brand_controller.dart';
+import 'controllers/catalog_controller.dart';
 import 'firebase_options.dart';
 import 'core/constant/constants.dart';
 import 'screens/splash/splashtwo.dart';
@@ -88,6 +93,27 @@ Future<void> main() async {
 
   if (!Get.isRegistered<HomeController>()) {
     Get.put(HomeController(), permanent: true);
+  }
+
+  // ✅ CRITICAL FIX: Register core controllers as permanent to prevent data loss
+  if (!Get.isRegistered<ProductController>()) {
+    Get.put(ProductController(), permanent: true);
+  }
+
+  if (!Get.isRegistered<CartController>()) {
+    Get.put(CartController(), permanent: true);
+  }
+
+  if (!Get.isRegistered<WishlistController>()) {
+    Get.put(WishlistController(), permanent: true);
+  }
+
+  if (!Get.isRegistered<BrandController>()) {
+    Get.put(BrandController(), permanent: true);
+  }
+
+  if (!Get.isRegistered<CatalogController>()) {
+    Get.put(CatalogController(), permanent: true);
   }
 
   // ---------------- Firebase Init -----------------------

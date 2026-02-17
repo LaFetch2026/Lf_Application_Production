@@ -138,6 +138,10 @@ class HomeController extends BaseController {
     // ✅ Skip API calls if data already loaded for this gender (unless force refresh)
     if (!forceRefresh && isGenderDataLoaded(gender)) {
       print('✅ Data already loaded for gender: $gender, skipping API calls');
+      // ✅ Ensure loading states are false when skipping
+      isBanner1.value = false;
+      isBanner2.value = false;
+      isCategory.value = false;
       return;
     }
 

@@ -59,8 +59,9 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     _currentIndex = widget.index ?? 0;
     homeController = Get.put(HomeController());
 
-    // ✅ Mark initial tab as loaded
+    // ✅ Mark initial tab as loaded and build it immediately
     _loadedTabs.add(_currentIndex);
+    _buildScreen(_currentIndex);
 
     // Status bar setup
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -192,6 +193,12 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   void _changeTab(int index) {
     // Reset scroll state when switching tabs
     homeController.isScrolling.value = false;
+
+    // ✅ Build screen before changing tab to ensure it's cached
+    if (!_loadedTabs.contains(index)) {
+      _buildScreen(index);
+    }
+
     // ✅ Mark tab as loaded when switching to it
     _loadedTabs.add(index);
     // ✅ Update home tab active state (for video auto-pause)
@@ -264,14 +271,23 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
               ? CartScreen(key: UniqueKey(), backgroundcolor: homeAppBarColor)
               : IndexedStack(
                   index: _currentIndex,
-                  children: List.generate(5, (index) {
-                    // Only build screens that have been visited
-                    if (_loadedTabs.contains(index)) {
-                      return _buildScreen(index);
-                    }
-                    // Return empty placeholder for unvisited tabs
-                    return const SizedBox.shrink();
-                  }),
+                  children: [
+                    _cachedScreens.containsKey(0)
+                        ? _cachedScreens[0]!
+                        : const SizedBox.shrink(),
+                    _cachedScreens.containsKey(1)
+                        ? _cachedScreens[1]!
+                        : const SizedBox.shrink(),
+                    _cachedScreens.containsKey(2)
+                        ? _cachedScreens[2]!
+                        : const SizedBox.shrink(),
+                    _cachedScreens.containsKey(3)
+                        ? _cachedScreens[3]!
+                        : const SizedBox.shrink(),
+                    _cachedScreens.containsKey(4)
+                        ? _cachedScreens[4]!
+                        : const SizedBox.shrink(),
+                  ],
                 ),
           bottomNavigationBar: Container(
             padding: EdgeInsets.only(

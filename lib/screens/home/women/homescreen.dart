@@ -602,6 +602,21 @@ class HomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
+
+    // ✅ CRITICAL FIX: Reset loading states if data already exists
+    // This prevents skeleton loaders from showing when navigating back to home
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (productController.homeProductList.isNotEmpty) {
+        productController.isHomeProduct.value = false;
+      }
+      if (homeController.banner1List.isNotEmpty) {
+        homeController.isBanner1.value = false;
+      }
+      if (homeController.banner2List.isNotEmpty) {
+        homeController.isBanner2.value = false;
+      }
+    });
+
     return Scaffold(
       backgroundColor: whiteColor,
       body: RefreshIndicator(
@@ -750,7 +765,8 @@ class HomeScreenState extends State<HomeScreen>
                             print(
                                 "🎬 Banner Obx: isLoading=$isLoading, bannersCount=${banners.length}, currentValue=$currentValue, showBanners=$showBanners");
 
-                            if (isLoading) {
+                            // ✅ FIXED: Only show loading if actually no banners exist
+                            if (isLoading && banners.isEmpty) {
                               print("🎬 Showing loading indicator");
                               return Container(
                                 height: 210.sp,
@@ -929,12 +945,12 @@ class HomeScreenState extends State<HomeScreen>
                             final currentGender =
                                 homeController.homeGenderValue.value;
 
-                            // ✅ Show loader if actively loading OR if data hasn't loaded yet for this gender
-                            if (productController.isHomeProduct.value ||
-                                (!productController
-                                        .isHomeProductLoaded(currentGender) &&
-                                    productController
-                                        .homeProductList.isEmpty)) {
+                            // ✅ Show loader ONLY if actively loading AND list is empty
+                            // ✅ FIXED: Don't show skeleton if data already exists, even if loading flag is true
+                            if (productController.homeProductList.isEmpty &&
+                                (productController.isHomeProduct.value ||
+                                    !productController
+                                        .isHomeProductLoaded(currentGender))) {
                               return DummyProductList(
                                 visibleSubtitle: true,
                                 text: (productController.tagname.value)

@@ -661,6 +661,8 @@ class ProductController extends BaseController {
         homeProductList.isNotEmpty) {
       print(
           '✅ Home products already loaded for gender: $gender, skipping API call');
+      // ✅ Ensure loading state is false when skipping
+      isHomeProduct.value = false;
       return;
     }
 
@@ -695,8 +697,21 @@ class ProductController extends BaseController {
       }
     }
 
-    isHomeProduct.value = true;
-    homeProductList.clear();
+    // ✅ CRITICAL: Only set loading and clear if we're actually going to fetch
+    // Don't clear if we have existing data unless force refresh
+    if (forceRefresh) {
+      isHomeProduct.value = true;
+      homeProductList.clear();
+    } else if (homeProductList.isEmpty) {
+      isHomeProduct.value = true;
+      // List is already empty, no need to clear
+    } else {
+      // ✅ We have data but checks failed - shouldn't reach here
+      // Reset loading state and try to use cached data
+      isHomeProduct.value = false;
+      print("⚠️ Unexpected state: attempting to load but data exists");
+      return;
+    }
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
@@ -746,7 +761,12 @@ class ProductController extends BaseController {
       }
     } catch (e) {
       if (_activeGenderRequest == gender) {
-        homeProductList.clear();
+        // ✅ Only clear if we were doing a force refresh
+        // Otherwise keep existing data to avoid showing empty screen
+        if (forceRefresh) {
+          homeProductList.clear();
+        }
+        print("❌ Error loading home products: $e");
       }
     } finally {
       if (_activeGenderRequest == gender) {
