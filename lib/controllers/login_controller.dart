@@ -253,13 +253,13 @@ class LoginController extends BaseController {
     }
   }
 
-  Future<void> callVerifyOtp(String phone) async {
+  Future<bool> callVerifyOtp(String phone, {String? type, int? userId}) async {
     showLoading();
     try {
       otpError.value = "";
       if (!checkOtpValidation(otp.value)) {
         hideLoading();
-        return;
+        return false;
       }
 
       final isLoginFlow = currentAuthFlowType.value == "login";
@@ -298,7 +298,7 @@ class LoginController extends BaseController {
           getSnackBar("OTP verified successfully!");
           Get.offAll(() => const UserDetailsScreen());
         }
-        return;
+        return true;
       }
 
       // ✅ Show error for wrong OTP on test number
@@ -306,13 +306,15 @@ class LoginController extends BaseController {
         hideLoading();
         otpError.value = "Invalid OTP";
         getSnackBar("Invalid OTP");
-        return;
+        return false;
       }
 
       final body = {
         'phone': phone,
         'otp': otp.value,
-        if (isLoginFlow) 'type': 'login',
+        if (type != null) 'type': type,
+        if (type == null && isLoginFlow) 'type': 'login',
+        if (userId != null) 'userId': userId,
       };
 
       final url = "${ApiConstants.baseUrl}/auth/verify-otp";
@@ -327,11 +329,27 @@ class LoginController extends BaseController {
       if (response.statusCode == 200) {
         final userData = data['data'];
 
+        // updateProfile flow (phone change) — save new token if returned, no navigation
+        if (type != null && type != 'login') {
+          final newToken = userData?['token'];
+          if (newToken != null) {
+            await setToken(newToken);
+          }
+          // Update phone in local prefs
+          if (phone.isNotEmpty) {
+            await prefs.setString('phonenumber', phone.replaceAll('+91', ''));
+          }
+          // Do NOT show snackbar here — the calling screen will show the
+          // success message AFTER navigating back, so no overlay is open
+          // when Get.back() is called.
+          return true;
+        }
+
         if (isLoginFlow) {
           final accessToken = userData?['token'];
           if (accessToken == null) {
             getSnackBar("Something went wrong during login.");
-            return;
+            return false;
           }
 
           await setToken(accessToken);
@@ -371,16 +389,20 @@ class LoginController extends BaseController {
         }
 
         getSnackBar("OTP verified successfully!");
+        return true;
       } else {
         final error = data['errors']?['otp']?.first ??
+            data['errors']?['phone']?.first ??
             data['message'] ??
             "OTP verification failed";
         otpError.value = error;
         getSnackBar(error);
+        return false;
       }
     } catch (e) {
       print("❌ Exception during OTP verification: $e");
       getSnackBar("Unexpected error during OTP verification.");
+      return false;
     } finally {
       hideLoading();
     }
@@ -407,32 +429,41 @@ class LoginController extends BaseController {
     print("✅ Login: Gender saved - $gender (ID: $genderId, HomeTab: ${prefs.getInt('selectedGender')})");
   }
 
-  Future<void> callResendOtp(String phone) async {
+  Future<bool> callResendOtp(String phone, {String? type, int? userId}) async {
     secondsRemaining.value = 30;
     enableResend.value = false;
     otpError.value = "";
     showLoading();
 
     try {
+      final body = {
+        'phone': phone,
+        if (userId != null) 'userId': userId,
+        if (type != null) 'type': type,
+      };
+
       final response = await http.post(
         Uri.parse("${ApiConstants.baseUrl}/auth/resend-otp"),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'phone': phone}),
+        body: jsonEncode(body),
       );
 
       if (response.statusCode == 200) {
-        getSnackBar("OTP resent successfully!");
+        getSnackBar("OTP sent successfully!");
+        return true;
       } else {
         final data = jsonDecode(response.body);
         final errorMessage = data['errors']?['phone']?.first ??
             data['message'] ??
-            "Error during OTP resend.";
+            "Error sending OTP.";
         otpError.value = errorMessage;
         getSnackBar(errorMessage);
+        return false;
       }
     } catch (e) {
       getSnackBar("An error occurred: $e");
       print("Error resending OTP: $e");
+      return false;
     } finally {
       hideLoading();
     }

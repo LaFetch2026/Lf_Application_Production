@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/appbar/backbutton_appbar.dart';
 import '../common/widget/other/common_widget.dart';
@@ -160,37 +161,137 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                             ),
                           ),
                         )),
-                    Obx(() => profileController.isEditNumber.value
-                        ? Row(
-                            children: [
-                              const Expanded(child: SizedBox()),
-                              GestureDetector(
-                                onTap: () async {
-                                  profileController.isEditNumber.value = false;
-                                  profileController.phoneController.clear();
-                                  _pinController.clear();
-                                  otpController.otp.value = '';
-                                  await analytics.logEvent(
-                                    name: 'change_number_click',
-                                    parameters: {
-                                      'page_name': 'change_number_click'
-                                    },
-                                  );
-                                },
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 16.sp, vertical: 5.sp),
-                                  child: AppText(
-                                    text: "Change number",
-                                    fontFamily: "Clash Display",
-                                    fontSize: 14,
-                                    color: colorPrimary,
-                                  ),
+                    Obx(() {
+                      final isEdit = profileController.isEditNumber.value;
+                      final isOtpVisible = profileController.isPhoneNumber.value;
+
+                      if (isEdit) {
+                        // Show "Change number" button
+                        return Row(
+                          children: [
+                            const Expanded(child: SizedBox()),
+                            GestureDetector(
+                              onTap: () async {
+                                profileController.isEditNumber.value = false;
+                                profileController.phoneController.clear();
+                                _pinController.clear();
+                                otpController.otp.value = '';
+                                await analytics.logEvent(
+                                  name: 'change_number_click',
+                                  parameters: {
+                                    'page_name': 'change_number_click'
+                                  },
+                                );
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16.sp, vertical: 5.sp),
+                                child: AppText(
+                                  text: "Change number",
+                                  fontFamily: "Clash Display",
+                                  fontSize: 14,
+                                  color: colorPrimary,
                                 ),
                               ),
-                            ],
-                          )
-                        : const SizedBox()),
+                            ),
+                          ],
+                        );
+                      } else if (!isOtpVisible) {
+                        // Show "Get OTP" button
+                        return Row(
+                          children: [
+                            const Expanded(child: SizedBox()),
+                            GestureDetector(
+                              onTap: () async {
+                                String phone = profileController
+                                    .phoneController.text
+                                    .trim();
+                                if (!profileController
+                                    .validatePhoneNumber(phone)) {
+                                  return;
+                                }
+
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                final userId = prefs.getInt('userId');
+
+                                final success =
+                                    await otpController.callResendOtp(
+                                  '+91$phone',
+                                  type: 'updateProfile',
+                                  userId: userId,
+                                );
+
+                                if (success) {
+                                  profileController.isPhoneNumber.value = true;
+                                  profileController.phoneError.value = '';
+                                } else {
+                                  // Show API error under phone field
+                                  if (otpController.otpError.value.isNotEmpty) {
+                                    profileController.phoneError.value =
+                                        otpController.otpError.value;
+                                  }
+                                }
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16.sp, vertical: 5.sp),
+                                child: AppText(
+                                  text: "Get OTP",
+                                  fontFamily: "Clash Display",
+                                  fontSize: 14,
+                                  color: colorPrimary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      } else {
+                        // Show "Resend OTP" button
+                        return Row(
+                          children: [
+                            const Expanded(child: SizedBox()),
+                            GestureDetector(
+                              onTap: () async {
+                                String phone = profileController
+                                    .phoneController.text
+                                    .trim();
+
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                final userId = prefs.getInt('userId');
+
+                                final success =
+                                    await otpController.callResendOtp(
+                                  '+91$phone',
+                                  type: 'updateProfile',
+                                  userId: userId,
+                                );
+
+                                if (!success) {
+                                  // API failed - hide OTP box and show error
+                                  profileController.isPhoneNumber.value = false;
+                                  if (otpController.otpError.value.isNotEmpty) {
+                                    profileController.phoneError.value =
+                                        otpController.otpError.value;
+                                  }
+                                }
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16.sp, vertical: 5.sp),
+                                child: AppText(
+                                  text: "Resend OTP",
+                                  fontFamily: "Clash Display",
+                                  fontSize: 14,
+                                  color: colorPrimary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    }),
                     Obx(() => profileController.isPhoneNumber.value
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,8 +306,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                   color: colorPrimary,
                                 ),
                               ),
-                              Obx(
-                                () {
+                              Builder(
+                                builder: (context) {
                                   final defaultPinTheme = PinTheme(
                                     width: (MediaQuery.of(context).size.width -
                                             78) /
@@ -413,45 +514,85 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     bool basicFieldsValid =
                         profileController.validateBasicProfileFields();
 
+                    if (!basicFieldsValid) return;
+
                     bool isPhoneBeingEdited =
                         profileController.isPhoneNumber.value;
-                    String phoneNumber =
-                        profileController.phoneController.text.trim();
-                    String otpValue = otpController.otp.value;
 
-                    bool phoneNeedsValidation = isPhoneBeingEdited;
+                    if (isPhoneBeingEdited) {
+                      // Phone change flow → verify OTP first, then update profile
+                      String phoneNumber =
+                          profileController.phoneController.text.trim();
+                      String otpValue = otpController.otp.value;
 
-                    if (basicFieldsValid) {
-                      if (phoneNeedsValidation) {
-                        bool phoneValid =
-                            profileController.validatePhoneNumber(phoneNumber);
-                        if (phoneValid) {
-                          if (isPhoneBeingEdited) {
-                            if (otpController.checkOtpValidation(otpValue)) {
-                              await profileController.updatePhoneNumberWithOtp(
-                                  phone: phoneNumber, otp: otpValue);
-                            }
-                          } else {
-                            await profileController.updateBasicProfile(
-                                isInitialSetup: false);
-                          }
+                      if (!profileController.validatePhoneNumber(phoneNumber)) {
+                        return;
+                      }
+                      if (!otpController.checkOtpValidation(otpValue)) return;
+
+                      final prefs = await SharedPreferences.getInstance();
+                      final userId = prefs.getInt('userId');
+
+                      // Step 1: Verify OTP { phone, otp, type: 'updateProfile', userId }
+                      final verified = await otpController.callVerifyOtp(
+                        '+91$phoneNumber',
+                        type: 'updateProfile',
+                        userId: userId,
+                      );
+
+                      if (!verified) {
+                        // Show API error under phone field
+                        if (otpController.otpError.value.isNotEmpty) {
+                          profileController.phoneError.value =
+                              otpController.otpError.value;
                         }
-                      } else {
-                        await profileController.updateBasicProfile(
-                            isInitialSetup: false);
+                        return;
                       }
 
-                      await analytics.logEvent(
+                      // Update local profile data with new phone
+                      final currentProfile =
+                          profileController.profileDetails.value ?? {};
+                      currentProfile['phone'] = '+91$phoneNumber';
+                      profileController.profileDetails.value =
+                          Map<String, dynamic>.from(currentProfile);
+                      profileController.phoneController.text = phoneNumber;
+
+                      // Reset OTP state on success
+                      profileController.isPhoneNumber.value = false;
+                      profileController.isEditNumber.value = true;
+                      _pinController.clear();
+                      otpController.otp.value = '';
+
+                      // Navigate back FIRST — no snackbar is open at this
+                      // point so Get.back() will pop the route correctly.
+                      // The accountscreen's .then() will show the success msg.
+                      if (mounted) {
+                        Get.back(result: 'phone_changed');
+                      }
+
+                      // Fire analytics after navigation (non-blocking)
+                      analytics.logEvent(
                         name: 'editprofile_save_btnclick',
                         parameters: {
                           'page_name': 'editprofile_save_btnclick',
                         },
                       );
+                      return;
+                    } else {
+                      // Normal profile update (name, email, gender)
+                      await profileController.updateBasicProfile(
+                          isInitialSetup: false);
+                    }
 
-                      // ✅ Return to AccountScreen and refresh data
-                      if (mounted) {
-                        Get.back(result: true);
-                      }
+                    await analytics.logEvent(
+                      name: 'editprofile_save_btnclick',
+                      parameters: {
+                        'page_name': 'editprofile_save_btnclick',
+                      },
+                    );
+
+                    if (mounted) {
+                      Get.back(result: true);
                     }
                   },
                 ),

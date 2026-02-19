@@ -139,7 +139,7 @@ class ProfileController extends BaseController {
 
   bool validatePhoneNumber(String phone) {
     phoneError.value = "";
-    String pattern = r'(^(?:[+0]9)?[0-9]{10,12}\$)';
+    String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
     RegExp regExPhone = RegExp(pattern);
 
     if (phone.isEmpty) {

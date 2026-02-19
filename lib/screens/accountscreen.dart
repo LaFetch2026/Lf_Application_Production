@@ -288,7 +288,18 @@ class AccountScreenState extends State<AccountScreen> {
                                                         statusBarColor:
                                                             whiteColor),
                                                   );
-                                                  controller.getProfileData();
+                                                  if (value == 'phone_changed') {
+                                                    // Phone was updated via verify-otp — profileDetails is
+                                                    // already updated in memory. Just show success message.
+                                                    // Do NOT call getProfileData() — the token may have been
+                                                    // invalidated by the backend after a phone change.
+                                                    showAppSnackBar(
+                                                      "Phone number updated successfully!",
+                                                      type: SnackBarType.success,
+                                                    );
+                                                  } else {
+                                                    controller.getProfileData();
+                                                  }
                                                 });
                                                 await analytics.logEvent(
                                                   name: 'edit_profile',

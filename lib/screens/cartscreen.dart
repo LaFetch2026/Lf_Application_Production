@@ -37,6 +37,7 @@ import '../common/widget/other/cartwidgets.dart';
 import '../common/widget/other/common_widget.dart';
 import '../common/widget/text/app_text.dart';
 import '../controllers/base_controller.dart';
+import '../core/services/meta_event_service.dart';
 import '../controllers/cart_controller.dart';
 import '../controllers/product_controller.dart';
 import '../controllers/profile_controller.dart';
@@ -265,6 +266,10 @@ class CartScreenState extends State<CartScreen> {
         return;
       }
       print("   ✅ Cart total valid");
+
+      // Meta: InitiateCheckout
+      MetaEventService.instance.logInitiateCheckout(totalPrice: totalAmount.toDouble());
+
 
       // ✅ Step 4: Build items array with GST calculations
       print("\n📦 STEP 4: Building Items Array");
@@ -708,6 +713,8 @@ class CartScreenState extends State<CartScreen> {
 
     print("\n🚀 Attempting to open Razorpay...");
     try {
+      // Meta: AddPaymentInfo
+      MetaEventService.instance.logAddPaymentInfo();
       _razorpay.open(options);
       print("✅ Razorpay.open() called successfully");
       print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");

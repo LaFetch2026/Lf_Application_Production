@@ -512,10 +512,6 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                                     'default_addressClick',
                                               },
                                             );
-                                            // AnalyticsHelper.logInitiateCheckout(
-                                            //   productId: 'guest_login',
-                                            //   value: 0.0,
-                                            // );
                                           },
                                         ),
                                       ),
@@ -536,10 +532,6 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                                                   'default_addressClick',
                                             },
                                           );
-                                          // AnalyticsHelper.logInitiateCheckout(
-                                          //   productId: 'guest_login',
-                                          //   value: 0.0,
-                                          // );
                                         },
                                         child: const AppText(
                                           text: "Make this my default address",
@@ -568,8 +560,6 @@ class ShippingAddressScreenState extends State<ShippingAddressScreen> {
                 Get.back();
               },
               onPressedSecond: () async {
-                // AnalyticsHelper.logInitiateCheckout(
-                //     productId: 'guest_login', value: 0.0);
                 FocusScope.of(context).unfocus();
 
                 // Keep your existing field validation

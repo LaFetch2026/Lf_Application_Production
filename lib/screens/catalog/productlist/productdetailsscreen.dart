@@ -31,6 +31,7 @@ import '../../../controllers/brand_controller.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
+import '../../../core/services/meta_event_service.dart';
 
 import '../../cartscreen.dart';
 import '../../wishlist/boardscreen.dart';
@@ -1202,6 +1203,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
         wishlistController.checkIfWishlisted(productId);
         productController.getProductReviews(productId);
+
+        // Meta: ViewContent
+        MetaEventService.instance.logViewContent(
+          contentId: productId.toString(),
+        );
       });
     });
 
@@ -1401,6 +1407,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       onPressed: (boardId) async {
                         await wishlistController.addProductToBoard(
                             boardId, productId);
+
+                        // Meta: AddToWishlist
+                        MetaEventService.instance.logAddToWishlist(
+                          contentId: productId.toString(),
+                        );
 
                         Get.back(); // Close bottom sheet
 
@@ -2601,6 +2612,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 parameters: {
                                   'page_name': 'productDetails_btnaddtocart'
                                 },
+                              );
+
+                              // Meta: AddToCart
+                              MetaEventService.instance.logAddToCart(
+                                contentId: widget.productId.toString(),
                               );
 
                               // ✅ Navigate to cart screen immediately after adding
