@@ -126,6 +126,10 @@ Future<void> main() async {
     await FirebaseCrashlytics.instance.recordError(e, stack, fatal: true);
   }
 
+  // MUST be called right here — Firebase requirement: register background handler
+  // as a top-level call immediately after initializeApp(), before runApp().
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   // Crashlytics
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   PlatformDispatcher.instance.onError = (error, stack) {
@@ -235,9 +239,6 @@ Future<void> _initPushNotifications(prefs) async {
         sound: true,
       );
     }
-
-    // Background message handler
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     // Android notification channel setup
     const AndroidNotificationChannel channel = AndroidNotificationChannel(

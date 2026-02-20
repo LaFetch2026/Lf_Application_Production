@@ -93,32 +93,34 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Custom scheme deep links -->
+            <!-- Custom URI scheme (lafetch://) — no autoVerify for custom schemes -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="lafetch" />
+            </intent-filter>
+
+            <!-- AppsFlyer OneLink App Links — separate filter so lafetch.com
+                 verification failure does NOT break onelink.me links -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="lafetch.onelink.me" />
+            </intent-filter>
 
-                <data android:scheme="lafetch" />
+            <!-- lafetch.com App Links -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:scheme="https"
                     android:host="lafetch.com"
                     android:pathPrefix="/" />
-            </intent-filter>
-
-            <!-- Universal links -->
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:scheme="https"
-                    android:host="lafetch.onelink.me" />
-                <data
-                    android:scheme="https"
-                    android:host="lafetch.com"
-                    android:pathPrefix="/product" />
             </intent-filter>
 
         </activity>

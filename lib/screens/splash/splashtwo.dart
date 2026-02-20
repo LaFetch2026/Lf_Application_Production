@@ -18,10 +18,11 @@ class _SplashTwoScreenState extends State<SplashTwoScreen> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Initialize deep link handler for AppsFlyer
-      DeepLinkHandler.init();
+    // Initialize AppsFlyer deep link handler as early as possible so that
+    // onDeepLinking fires before the OS link-handling timeout.
+    DeepLinkHandler.init();
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       // Force clean state on every load
       Get.delete<SplashController>(force: true);
 

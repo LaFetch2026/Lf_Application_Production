@@ -2,137 +2,106 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-
-    <!-- General App Info -->
-    <key>CFBundleDevelopmentRegion</key>
-    <string>$(DEVELOPMENT_LANGUAGE)</string>
-    <key>CFBundleDisplayName</key>
-    <string>Lafetch</string>
-    <key>CFBundleExecutable</key>
-    <string>$(EXECUTABLE_NAME)</string>
-    <key>CFBundleIdentifier</key>
-    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-    <key>CFBundleInfoDictionaryVersion</key>
-    <string>6.0</string>
-    <key>CFBundleName</key>
-    <string>Lafetch</string>
-    <key>CFBundlePackageType</key>
-    <string>APPL</string>
-    <key>CFBundleShortVersionString</key>
-    <string>$(MARKETING_VERSION)</string>
-    <key>CFBundleVersion</key>
-    <string>$(FLUTTER_BUILD_NUMBER)</string>
-    <key>CFBundleSignature</key>
-    <string>????</string>
-
-    <!-- URL Scheme (Facebook + Custom App Scheme + Google Sign-In) -->
-    <key>CFBundleURLTypes</key>
-    <array>
-        <dict>
-            <key>CFBundleTypeRole</key>
-            <string>Editor</string>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>fb915626513880487</string>
-                <string>lafetch</string>
-                <string>com.googleusercontent.apps.598072306679-9u79rltkrib7ld01e844js8usfpc7qo4</string>
-            </array>
-        </dict>
-    </array>
-
-    <!-- Google Sign-In Config -->
-    <key>GIDClientID</key>
-    <string>598072306679-9u79rltkrib7ld01e844js8usfpc7qo4.apps.googleusercontent.com</string>
-
-    <!-- Facebook Config -->
-    <key>FacebookAppID</key>
-    <string>915626513880487</string>
-    <key>FacebookDisplayName</key>
-    <string>Lafetch</string>
-    <key>FacebookClientToken</key>
-    <string>bc1c2ad93de1bfbe0f46761e9c26a956</string>
-
-    <!-- LSApplicationQueriesSchemes (Facebook + Razorpay REQUIRED) -->
-    <key>LSApplicationQueriesSchemes</key>
-    <array>
-        <!-- Facebook -->
-        <string>fbapi</string>
-        <string>fb-messenger-share-api</string>
-        <string>fbauth2</string>
-        <string>fbshareextension</string>
-
-        <!-- Razorpay Required Schemes -->
-        <string>tez</string>            <!-- Google Pay -->
-        <string>phonepe</string>        <!-- PhonePe -->
-        <string>paytm</string>          <!-- Paytm -->
-        <string>razorpay</string>       <!-- Razorpay internal -->
-        <string>upi</string>            <!-- UPI intent -->
-    </array>
-
-    <!-- Tracking & Permissions -->
-    <key>NSUserTrackingUsageDescription</key>
-    <string>This identifier will be used to show you quick delivery products near you and deliver it to your location.</string>
-
-    <!-- Location Permission -->
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Lafetch uses your location to show products available for quick delivery near you.</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Lafetch uses your location to show products available for quick delivery near you.</string>
-
-    <!-- Camera / Gallery -->
-    <key>NSCameraUsageDescription</key>
-    <string>To choose your profile picture.</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>To access photos for selecting a profile picture.</string>
-    <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>To save downloaded invoices to your photo library.</string>
-
-    <!-- UI + Background -->
-    <key>UIApplicationSupportsIndirectInputEvents</key>
-    <true/>
-    <key>UIBackgroundModes</key>
-    <array>
-        <string>remote-notification</string>
-        <string>fetch</string>
-    </array>
-    <key>UIFileSharingEnabled</key>
-    <true/>
-    <key>LSSupportsOpeningDocumentsInPlace</key>
-    <true/>
-
-    <!-- Launch -->
-    <key>UILaunchStoryboardName</key>
-    <string>LaunchScreen</string>
-    <key>UIMainStoryboardFile</key>
-    <string>Main</string>
-
-    <!-- Orientations -->
-    <key>UISupportedInterfaceOrientations</key>
-    <array>
-        <string>UIInterfaceOrientationPortrait</string>
-        <string>UIInterfaceOrientationPortraitUpsideDown</string>
-        <string>UIInterfaceOrientationLandscapeLeft</string>
-        <string>UIInterfaceOrientationLandscapeRight</string>
-    </array>
-
-    <key>UIViewControllerBasedStatusBarAppearance</key>
-    <false/>
-
-    <!-- Firebase -->
-    <key>FirebaseCrashlyticsCollectionEnabled</key>
-    <true/>
-    <key>FirebaseAppDelegateProxyEnabled</key>
-    <false/>
-
-    <!-- AppsFlyer -->
-    <key>AppsFlyerDevKey</key>
-    <string>tzivSReYr7ZyuqVbEP6z6d</string>
-    <key>AppID</key>
-    <string>6739497338</string>
-
-    <!-- Performance -->
-    <key>CADisableMinimumFrameDurationOnPhone</key>
-    <true/>
-
+	<key>AppID</key>
+	<string>6739497338</string>
+	<key>AppsFlyerDevKey</key>
+	<string>tzivSReYr7ZyuqVbEP6z6d</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Lafetch</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Lafetch</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb915626513880487</string>
+				<string>lafetch</string>
+				<string>com.googleusercontent.apps.598072306679-9u79rltkrib7ld01e844js8usfpc7qo4</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FacebookAppID</key>
+	<string>915626513880487</string>
+	<key>FacebookClientToken</key>
+	<string>bc1c2ad93de1bfbe0f46761e9c26a956</string>
+	<key>FacebookDisplayName</key>
+	<string>Lafetch</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>FirebaseCrashlyticsCollectionEnabled</key>
+	<true/>
+	<key>GIDClientID</key>
+	<string>598072306679-9u79rltkrib7ld01e844js8usfpc7qo4.apps.googleusercontent.com</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+		<string>tez</string>
+		<string>phonepe</string>
+		<string>paytm</string>
+		<string>razorpay</string>
+		<string>upi</string>
+	</array>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>To choose your profile picture.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Lafetch uses your location to show products available for quick delivery near you.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Lafetch uses your location to show products available for quick delivery near you.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>To save downloaded invoices to your photo library.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To access photos for selecting a profile picture.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This identifier will be used to show you quick delivery products near you and deliver it to your location.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+		<string>fetch</string>
+		<string>bluetooth-peripheral</string>
+		<string>audio</string>
+	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 </dict>
 </plist>

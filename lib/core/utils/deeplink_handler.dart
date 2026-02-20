@@ -32,6 +32,7 @@ class DeepLinkHandler {
     await _appsflyerSdk!.initSdk(
       registerConversionDataCallback: true,
       registerOnAppOpenAttributionCallback: true,
+      registerOnDeepLinkingCallback: true, // required for onDeepLinking (Unified Deep Link API)
     );
 
     if (!_listenersRegistered) {
