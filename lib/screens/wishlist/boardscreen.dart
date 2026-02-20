@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
+import '../../core/utils/share_link_generator.dart';
 import '../wishlistscreen.dart';
 import '../../common/widget/appbar/backbutton_appbar.dart';
 import '../../common/widget/bottom_sheets/bottomsheetboard.dart';
@@ -63,6 +65,28 @@ class BoardScreenState extends State<BoardScreen> {
 
     _sheet = st.showBottomSheet(
       (context) => BottomSheetBoard(
+        onPressedShare: () async {
+          // Capture render-box position before the sheet is dismissed,
+          // so iOS has a valid non-zero sharePositionOrigin for the popover.
+          final box = scaffoldKey.currentContext?.findRenderObject() as RenderBox?;
+          final shareOrigin = box != null
+              ? box.localToGlobal(Offset.zero) & box.size
+              : null;
+
+          _closeSheet();
+          final link = await ShareLinkGenerator.generateBoardShareLink(
+            boardId: widget.boardId,
+            boardName: widget.boardName,
+          );
+          Share.share(
+            "Check out my wishlist board on Lafetch:\n$link",
+            sharePositionOrigin: shareOrigin,
+          );
+          await analytics.logEvent(
+            name: 'board_share_click',
+            parameters: {'page_name': 'board_share_click'},
+          );
+        },
         onPressedEdit: () async {
           _closeSheet();
           Get.to(() => CreateBoardScreen(
@@ -239,6 +263,26 @@ class BoardScreenState extends State<BoardScreen> {
               icon: threeDotImage,
               backgroundColor: isDrawer ? const Color(0xF2F7F7F5) : whiteColor,
               onPressedThreeDot: _openSheet,
+              onPressedShare: () async {
+                final box = scaffoldKey.currentContext
+                    ?.findRenderObject() as RenderBox?;
+                final shareOrigin = box != null
+                    ? box.localToGlobal(Offset.zero) & box.size
+                    : null;
+                final link =
+                    await ShareLinkGenerator.generateBoardShareLink(
+                  boardId: widget.boardId,
+                  boardName: widget.boardName,
+                );
+                Share.share(
+                  "Check out my wishlist board on Lafetch:\n$link",
+                  sharePositionOrigin: shareOrigin,
+                );
+                await analytics.logEvent(
+                  name: 'board_share_click',
+                  parameters: {'page_name': 'board_share_click'},
+                );
+              },
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -328,10 +372,13 @@ class BoardScreenState extends State<BoardScreen> {
                                                               1) ==
                                                           0));
 
-                                              final brand =
-                                                  (product['brand_name'] ??
-                                                          product['brand'] ??
-                                                          '')
+                                              final rawBrand = product[
+                                                      'brand_name'] ??
+                                                  product['brand'];
+                                              final brand = rawBrand is Map
+                                                  ? (rawBrand['name'] ?? '')
+                                                      .toString()
+                                                  : (rawBrand ?? '')
                                                       .toString();
                                               final name = (product['name'] ??
                                                       product['title'] ??
@@ -434,6 +481,52 @@ class BoardScreenState extends State<BoardScreen> {
                                                                           .cover,
                                                                     ),
                                                         ),
+                                                        // Sold out overlay
+                                                        if (isUnavailable)
+                                                          Positioned.fill(
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: Colors
+                                                                    .black
+                                                                    .withValues(
+                                                                        alpha:
+                                                                            0.35),
+                                                              ),
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              child: Container(
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                  horizontal:
+                                                                      10.sp,
+                                                                  vertical:
+                                                                      4.sp,
+                                                                ),
+                                                                color: Colors
+                                                                    .white
+                                                                    .withValues(
+                                                                        alpha:
+                                                                            0.85),
+                                                                child: Text(
+                                                                  "Sold Out",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color:
+                                                                        colorPrimary,
+                                                                    fontSize:
+                                                                        11.sp,
+                                                                    fontFamily:
+                                                                        "Clash Display Regular",
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
                                                         // Per-item remove (product)
                                                         Positioned(
                                                           right: 12.sp,
@@ -598,81 +691,7 @@ class BoardScreenState extends State<BoardScreen> {
                                                       ),
                                                     ),
 
-                                                    // Move to bag / unavailable
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          top: 6.sp),
-                                                      child: isUnavailable
-                                                          ? Padding(
-                                                              padding: EdgeInsets
-                                                                  .only(
-                                                                      left:
-                                                                          8.sp),
-                                                              child: Text(
-                                                                "Item not available",
-                                                                style:
-                                                                    TextStyle(
-                                                                  color:
-                                                                      lightPurpleColor,
-                                                                  fontSize:
-                                                                      11.sp,
-                                                                  fontFamily:
-                                                                      "Clash Display Regular",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                              ),
-                                                            )
-                                                          : Center(
-                                                              child:
-                                                                  getSmallButton(
-                                                                label:
-                                                                    "View Product",
-                                                                textColor:
-                                                                    btnTextColor,
-                                                                backgroundColor:
-                                                                    whiteColor,
-                                                                borderColor:
-                                                                    btnTextColor,
-                                                                onPressed:
-                                                                    () async {
-                                                                  if (isDrawer)
-                                                                    return;
-                                                                  await Navigator.of(
-                                                                          context)
-                                                                      .push(
-                                                                    MaterialPageRoute(
-                                                                      builder:
-                                                                          (_) =>
-                                                                              ProductDetailsScreen(
-                                                                        productId:
-                                                                            pid,
-                                                                        type:
-                                                                            "add",
-                                                                        brandName:
-                                                                            "",
-                                                                      ),
-                                                                    ),
-                                                                  );
-                                                                  await analytics
-                                                                      .logEvent(
-                                                                    name:
-                                                                        'board_product_movetobagClick',
-                                                                    parameters: {
-                                                                      'page_name':
-                                                                          'board_product_movetobagClick'
-                                                                    },
-                                                                  );
-                                                                },
-                                                                width: MediaQuery.of(context)
-                                                                            .size
-                                                                            .width /
-                                                                        2 -
-                                                                    28.sp,
-                                                              ),
-                                                            ),
-                                                    ),
+                                                    SizedBox(height: 8.sp),
                                                   ],
                                                 ),
                                               );

@@ -10,6 +10,7 @@ class BottomSheetBoard extends StatelessWidget {
   final Function? onPressedDelete;
   final Function? onPressedRename;
   final Function? onPressedAddItem;
+  final Function? onPressedShare;
 
   const BottomSheetBoard({
     Key? key,
@@ -17,12 +18,13 @@ class BottomSheetBoard extends StatelessWidget {
     this.onPressedDelete,
     this.onPressedRename,
     this.onPressedAddItem,
+    this.onPressedShare,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 220.sp,
+      height: 270.sp,
       width: double.infinity,
       decoration: const BoxDecoration(
         color: whiteColor,
@@ -113,6 +115,32 @@ class BottomSheetBoard extends StatelessWidget {
                     ),
                     AppText(
                       text: "Rename board",
+                      color: colorPrimary,
+                      fontSize: 16,
+                      fontFamily: "Clash Display Regular",
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                onPressedShare?.call();
+              },
+              child: Padding(
+                padding: EdgeInsets.only(top: 20.sp),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: 10.sp),
+                      child: ImageIcon(
+                        AssetImage(shareImage),
+                        size: 20.sp,
+                      ),
+                    ),
+                    AppText(
+                      text: "Share board",
                       color: colorPrimary,
                       fontSize: 16,
                       fontFamily: "Clash Display Regular",

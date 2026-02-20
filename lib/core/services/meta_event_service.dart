@@ -76,7 +76,7 @@ class MetaEventService {
   Future<void> logAddPaymentInfo() async {
     if (!kReleaseMode) return;
     await _facebookAppEvents.logEvent(
-      name: 'fb_mobile_add_payment_info',
+      name: 'fb_mobile_add_payment_info', 
     );
   }
 

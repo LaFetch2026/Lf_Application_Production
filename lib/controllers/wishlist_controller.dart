@@ -207,7 +207,11 @@ class WishlistController extends BaseController {
       "product": {
         "id": p["id"],
         "name": (p["title"] ?? p["name"] ?? "").toString(),
-        "brand_name": (p["brand_name"] ?? p["brand"] ?? "").toString(),
+        "brand_name": () {
+          final b = p["brand_name"] ?? p["brand"];
+          if (b is Map) return (b["name"] ?? "").toString();
+          return (b ?? "").toString();
+        }(),
         "price": p["basePrice"] ?? p["price"] ?? 0,
         "mrp": p["mrp"] ?? 0,
         "images": wrapImages(p["imageUrls"] ?? p["images"]),

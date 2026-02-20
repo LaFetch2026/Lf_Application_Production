@@ -23,6 +23,15 @@ PODS:
   - AppsFlyerFramework/Main (6.17.8)
   - device_info_plus (0.0.1):
     - Flutter
+  - facebook_app_events (0.24.0):
+    - FBSDKCoreKit (~> 18.0)
+    - Flutter
+  - FBAEMKit (18.0.2):
+    - FBSDKCoreKit_Basics (= 18.0.2)
+  - FBSDKCoreKit (18.0.2):
+    - FBAEMKit (= 18.0.2)
+    - FBSDKCoreKit_Basics (= 18.0.2)
+  - FBSDKCoreKit_Basics (18.0.2)
   - Firebase/Analytics (11.15.0):
     - Firebase/Core
   - Firebase/Auth (11.15.0):
@@ -272,6 +281,7 @@ DEPENDENCIES:
   - app_tracking_transparency (from `.symlinks/plugins/app_tracking_transparency/ios`)
   - appsflyer_sdk (from `.symlinks/plugins/appsflyer_sdk/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
+  - facebook_app_events (from `.symlinks/plugins/facebook_app_events/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
@@ -302,6 +312,9 @@ SPEC REPOS:
     - AppAuth
     - AppCheckCore
     - AppsFlyerFramework
+    - FBAEMKit
+    - FBSDKCoreKit
+    - FBSDKCoreKit_Basics
     - Firebase
     - FirebaseAnalytics
     - FirebaseAppCheckInterop
@@ -340,6 +353,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/appsflyer_sdk/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
+  facebook_app_events:
+    :path: ".symlinks/plugins/facebook_app_events/ios"
   firebase_analytics:
     :path: ".symlinks/plugins/firebase_analytics/ios"
   firebase_auth:
@@ -397,6 +412,10 @@ SPEC CHECKSUMS:
   appsflyer_sdk: 8e77c7f47570e4596545b9fa16eb9114676c71e3
   AppsFlyerFramework: 63577b60d6b9fcdab60135289979e7d1c9ec79b9
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
+  facebook_app_events: 624619e3066b67d12f26600ea952fdf5dee39654
+  FBAEMKit: 56a4f5a9607957b547b6458b17a98c5bb2736367
+  FBSDKCoreKit: 54f1240567e16862ab71c53c33dc347db5c524c5
+  FBSDKCoreKit_Basics: eb530cd6a79030dbb11df460aafb2767bcad9028
   Firebase: d99ac19b909cd2c548339c2241ecd0d1599ab02e
   firebase_analytics: bf93e20703c95030404d6ddbb1adf05bf5c3885b
   firebase_auth: 5342db41af2ba5ed32a6177d9e326eecbebda912

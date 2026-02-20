@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Network -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -73,7 +74,8 @@
             android:value="false" />
         <meta-data
             android:name="com.facebook.sdk.CodelessDebugLogEnabled"
-            android:value="false" />
+            android:value="false"
+            tools:replace="android:value" />
 
         <!-- Main Activity -->
         <activity

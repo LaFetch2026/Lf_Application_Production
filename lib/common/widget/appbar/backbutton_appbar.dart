@@ -11,6 +11,7 @@ class BackButtonAppbar extends StatelessWidget {
   final bool threeDot;
   final String icon;
   final Function? onPressedThreeDot;
+  final Function? onPressedShare;
   final Color backgroundColor;
 
   const BackButtonAppbar(
@@ -19,7 +20,8 @@ class BackButtonAppbar extends StatelessWidget {
       required this.threeDot,
       required this.icon,
       this.backgroundColor = whiteTextColor,
-      this.onPressedThreeDot})
+      this.onPressedThreeDot,
+      this.onPressedShare})
       : super(key: key);
 
   @override
@@ -62,6 +64,18 @@ class BackButtonAppbar extends StatelessWidget {
                 height: 0,
               ),
             ),
+            if (onPressedShare != null)
+              InkWell(
+                onTap: () => onPressedShare?.call(),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.sp),
+                  child: Icon(
+                    Icons.ios_share,
+                    size: 20.sp,
+                    color: appbarText,
+                  ),
+                ),
+              ),
             Visibility(
               visible: threeDot,
               child: InkWell(

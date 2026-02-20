@@ -26,4 +26,24 @@ class ShareLinkGenerator {
 
     return link.toString();
   }
+
+  /// Generates a OneLink URL for sharing a wishlist board.
+  static Future<String> generateBoardShareLink({
+    required int boardId,
+    required String boardName,
+  }) async {
+    final Uri link = Uri.https(
+      "lafetch.onelink.me",
+      "/rxDU",
+      {
+        "board_id": boardId.toString(),
+        "board_name": boardName,
+        "af_dp": "lafetch://board/$boardId",
+        "af_channel": "board_share",
+        "c": "board_share",
+        "deep_link_value": "board_details",
+      },
+    );
+    return link.toString();
+  }
 }

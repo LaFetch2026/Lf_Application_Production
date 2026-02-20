@@ -8,6 +8,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:lafetch/common/widget/appbar/wishlistappbar.dart';
+import 'package:share_plus/share_plus.dart';
+import '../core/utils/share_link_generator.dart';
 
 import 'cartscreen.dart';
 import 'searchscreen.dart';
@@ -289,13 +291,14 @@ class WishlistScreenState extends State<WishlistScreen> {
 
                 final coverUrl = _boardCoverFromItem(item);
 
+                final parsedBoardId =
+                    boardId is int ? boardId : int.tryParse('$boardId') ?? 0;
+
                 return GestureDetector(
                   onTap: () async {
                     await Get.to(() => BoardScreen(
                           boardName: boardName,
-                          boardId: boardId is int
-                              ? boardId
-                              : int.tryParse('$boardId') ?? 0,
+                          boardId: parsedBoardId,
                           productId: 0,
                         ));
                     // refresh boards after coming back
@@ -315,45 +318,100 @@ class WishlistScreenState extends State<WishlistScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0.sp),
-                          child: (coverUrl != null && coverUrl.isNotEmpty)
-                              ? SizedBox(
-                                  height:
-                                      (MediaQuery.of(context).size.width / 2) -
+                        Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0.sp),
+                              child: (coverUrl != null && coverUrl.isNotEmpty)
+                                  ? SizedBox(
+                                      height: (MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2) -
                                           24.sp,
-                                  width:
-                                      (MediaQuery.of(context).size.width / 2) -
+                                      width: (MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2) -
                                           24.sp,
-                                  child: CachedNetworkImage(
-                                    cacheManager: CacheManager(
-                                      Config(
-                                        "wishlistBoardCovers",
-                                        stalePeriod: const Duration(days: 15),
-                                        maxNrOfCacheObjects: 120,
+                                      child: CachedNetworkImage(
+                                        cacheManager: CacheManager(
+                                          Config(
+                                            "wishlistBoardCovers",
+                                            stalePeriod:
+                                                const Duration(days: 15),
+                                            maxNrOfCacheObjects: 120,
+                                          ),
+                                        ),
+                                        fit: BoxFit.fill,
+                                        imageUrl: coverUrl,
+                                        placeholder: (_, __) => Container(
+                                          color: const Color(0xFFEFF1F3),
+                                        ),
+                                        errorWidget: (_, __, ___) =>
+                                            Image.asset(
+                                          dummyWishlistImage,
+                                          fit: BoxFit.fill,
+                                        ),
                                       ),
-                                    ),
-                                    fit: BoxFit.fill,
-                                    imageUrl: coverUrl,
-                                    placeholder: (_, __) => Container(
-                                      color: const Color(0xFFEFF1F3),
-                                    ),
-                                    errorWidget: (_, __, ___) => Image.asset(
+                                    )
+                                  : Image.asset(
                                       dummyWishlistImage,
+                                      height: (MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2) -
+                                          24.sp,
+                                      width: (MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2) -
+                                          24.sp,
                                       fit: BoxFit.fill,
                                     ),
+                            ),
+                            Positioned(
+                              top: 8.sp,
+                              right: 8.sp,
+                              child: GestureDetector(
+                                onTap: () async {
+                                  final box = context.findRenderObject()
+                                      as RenderBox?;
+                                  final shareOrigin = box != null
+                                      ? box.localToGlobal(Offset.zero) &
+                                          box.size
+                                      : null;
+                                  final link = await ShareLinkGenerator
+                                      .generateBoardShareLink(
+                                    boardId: parsedBoardId,
+                                    boardName: boardName,
+                                  );
+                                  Share.share(
+                                    "Check out my wishlist board on Lafetch:\n$link",
+                                    sharePositionOrigin: shareOrigin,
+                                  );
+                                  await analytics.logEvent(
+                                    name: 'board_share_click',
+                                    parameters: {
+                                      'page_name': 'board_share_click'
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(6.sp),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
                                   ),
-                                )
-                              : Image.asset(
-                                  dummyWishlistImage,
-                                  height:
-                                      (MediaQuery.of(context).size.width / 2) -
-                                          24.sp,
-                                  width:
-                                      (MediaQuery.of(context).size.width / 2) -
-                                          24.sp,
-                                  fit: BoxFit.fill,
+                                  child: Icon(
+                                    Icons.ios_share,
+                                    size: 14.sp,
+                                    color: Colors.black,
+                                  ),
                                 ),
+                              ),
+                            ),
+                          ],
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
