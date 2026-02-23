@@ -27,7 +27,7 @@ class MetaEventService {
       price: price,
     );
   }
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
   // 2. AddToWishlist — Clicking add-to-wishlist
   Future<void> logAddToWishlist({
     String contentId = '',
