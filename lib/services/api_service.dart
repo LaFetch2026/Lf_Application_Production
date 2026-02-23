@@ -171,6 +171,18 @@ class ApiService extends GetxService {
         }
         Get.offAll(() => const LoginScreen(initialTab: 0));
         return null;
+      } else if (response.statusCode == 429 && retryCount < maxRetries) {
+        // Rate limited — wait with backoff, never show error snackbar
+        final delay = Duration(seconds: 3 * (retryCount + 1));
+        print('⚠️ Rate limited (429) - Retry ${retryCount + 1}/$maxRetries after ${delay.inSeconds}s: $url');
+        await Future.delayed(delay);
+        return _executeWithRetry(
+          request,
+          url: url,
+          useCache: useCache,
+          showErrorSnackbar: showErrorSnackbar,
+          retryCount: retryCount + 1,
+        );
       } else if (response.statusCode >= 500 && retryCount < maxRetries) {
         // Retry on server errors
         print('⚠️ Server error (${response.statusCode}) - Retry ${retryCount + 1}/$maxRetries');

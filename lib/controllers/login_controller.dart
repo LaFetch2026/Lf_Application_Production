@@ -116,13 +116,17 @@ class LoginController extends BaseController {
       if (userId <= 0 || authToken.isEmpty) return;
 
       final homeController = Get.find<HomeController>();
-      await homeController.sendFcmToken(
+      final success = await homeController.sendFcmToken(
         userId: userId,
         token: fcmToken,
         deviceType: Platform.isAndroid ? "android" : "ios",
       );
-      await prefs.remove('pending_fcm_token');
-      print('✅ FCM token sent to server after login');
+      if (success) {
+        await prefs.remove('pending_fcm_token');
+        print('✅ FCM token sent to server after login');
+      } else {
+        print('⚠️ FCM token send failed after login — will retry on next app start');
+      }
     } catch (e) {
       print('⚠️ Failed to send FCM token after login: $e');
     }

@@ -568,6 +568,9 @@ class HomeController extends BaseController {
           await CacheManager.save(key: cacheKey, data: categoryList);
           print("✅ Categories loaded: ${categoryList.length}");
         }
+      } else if (response.statusCode == 429) {
+        // Rate limited — silently skip, data will load on next refresh
+        print("⚠️ Category request rate limited (429) — will retry on next load");
       } else if (response.statusCode == 500) {
       } else if (response.statusCode == 401) {
         Get.offAll(
@@ -577,7 +580,7 @@ class HomeController extends BaseController {
         );
         getSnackBar("Authentication failed");
       } else {
-        getSnackBar("get category failed");
+        print("❌ Get category failed: ${response.statusCode}");
       }
     } catch (e) {
       print("error$e");
@@ -733,7 +736,7 @@ class HomeController extends BaseController {
     isFaqs.value = false;
   }
 
-  Future<void> sendFcmToken({
+  Future<bool> sendFcmToken({
     required int userId,
     required String token,
     required String deviceType,
@@ -741,15 +744,14 @@ class HomeController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     final authToken = prefs.getString('token')?.trim() ?? '';
 
-    // ✅ Validate auth token before proceeding
     if (authToken.isEmpty) {
       print("⚠️ No auth token available - cannot send FCM token");
-      return;
+      return false;
     }
 
     if (userId <= 0) {
       print("⚠️ Invalid userId - cannot send FCM token");
-      return;
+      return false;
     }
 
     final uri = Uri.parse("${ApiConstants.baseUrl}/fcm-token");
@@ -776,25 +778,24 @@ class HomeController extends BaseController {
       print("📥 Response: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // ✅ Save token locally so we don't hit again
         await prefs.setString('fcm_token', token);
         print("✅ FCM token registered and saved locally");
+        return true;
       } else if (response.statusCode == 409) {
-        // ✅ If backend says "already exists", still store it to skip next time
         await prefs.setString('fcm_token', token);
-        print(
-            "⚠️ Token already exists on server — stored locally to avoid repeat");
+        print("⚠️ Token already exists on server — stored locally to avoid repeat");
+        return true;
       } else if (response.statusCode == 401) {
         print("❌ Authentication failed - auth token may be invalid");
-        getSnackBar("Authentication failed");
         _redirectToLoginIfNotGuest();
+        return false;
       } else {
-        final decoded = json.decode(response.body);
-        getSnackBar(decoded['message'] ?? "Failed to send FCM token");
+        print("❌ FCM token registration failed: ${response.statusCode} ${response.body}");
+        return false;
       }
     } catch (e, st) {
       print("❌ FCM token error: $e\n$st");
-      getSnackBar("An error occurred while sending FCM token.");
+      return false;
     }
   }
 }

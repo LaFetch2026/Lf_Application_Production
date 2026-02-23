@@ -4,12 +4,10 @@ import 'package:lafetch/common/widget/text/app_text.dart';
 import 'package:lafetch/core/constant/constants.dart';
 
 class SettingWidgets extends StatelessWidget {
-  final Function? onPressedNotification;
   final Function? onPressedDelete;
 
   const SettingWidgets({
     Key? key,
-    this.onPressedNotification,
     this.onPressedDelete,
   }) : super(key: key);
 
@@ -26,21 +24,6 @@ class SettingWidgets extends StatelessWidget {
             fontWeight: FontWeight.w700,
             color: nameText,
             fontSize: 18,
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            onPressedNotification?.call();
-          },
-          child: Padding(
-            padding: EdgeInsets.only(top: 20.sp, left: 16.sp, right: 16.sp),
-            child: AppText(
-              text: "Notifications & Settings",
-              fontFamily: "Clash Display Regular",
-              fontWeight: FontWeight.w400,
-              color: nameText,
-              fontSize: 14,
-            ),
           ),
         ),
         GestureDetector(

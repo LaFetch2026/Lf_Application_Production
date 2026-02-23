@@ -1,4 +1,16 @@
 #######################
+# FIREBASE MESSAGING (FCM)
+#######################
+-keep class com.google.firebase.** { *; }
+-dontwarn com.google.firebase.**
+
+#######################
+# APPSFLYER
+#######################
+-keep class com.appsflyer.** { *; }
+-dontwarn com.appsflyer.**
+
+#######################
 # RAZORPAY REQUIRED
 #######################
 -keep class com.razorpay.** { *; }

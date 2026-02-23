@@ -187,10 +187,15 @@ class HomeScreenState extends State<HomeScreen>
         // ✅ Force refresh on initial load to ensure fresh data
         final bool isFirstLoad = _isInitialLoad;
 
-        // ✅ Load all data together including brands and collection banners
+        // ✅ Load home data first (banners, categories, announcements, brands)
+        // then load the remaining data — prevents hitting backend rate limits
+        // from too many simultaneous requests (429 Too Many Requests)
+        await homeController.initializeHomeData(currentGender,
+            forceRefresh: isFirstLoad);
+
+        if (!mounted) return;
+
         await Future.wait([
-          homeController.initializeHomeData(currentGender,
-              forceRefresh: isFirstLoad),
           catalogController.getCatalogData(currentGender,
               forceRefresh: isFirstLoad),
           productController.getHomeProduct(currentGender,

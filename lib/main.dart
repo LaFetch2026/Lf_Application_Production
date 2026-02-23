@@ -40,7 +40,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     final plugin = FlutterLocalNotificationsPlugin();
 
     const initSettings = InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      android: AndroidInitializationSettings('@drawable/ic_notification'),
       iOS: DarwinInitializationSettings(),
     );
     await plugin.initialize(initSettings);
@@ -58,7 +58,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
           android: AndroidNotificationDetails(
             'high_importance_channel',
             'High Importance Notifications',
-            icon: '@mipmap/ic_launcher',
+            icon: '@drawable/ic_notification',
             importance: Importance.max,
             priority: Priority.high,
           ),
@@ -173,17 +173,19 @@ Future<void> _sendFcmTokenIfLoggedIn() async {
 
       if (userId > 0 && authToken.isNotEmpty) {
         final homeController = Get.find<HomeController>();
-        await homeController.sendFcmToken(
+        final success = await homeController.sendFcmToken(
           userId: userId,
           token: token,
           deviceType: Platform.isAndroid ? "android" : "ios",
         );
-        print('✅ FCM Token sent to server');
-
-        // Clear pending token after successful send
-        await prefs.remove('pending_fcm_token');
+        if (success) {
+          print('✅ FCM Token sent to server');
+          await prefs.remove('pending_fcm_token');
+        } else {
+          print('⚠️ FCM token send failed — will retry on next app start');
+        }
       } else {
-        print('⚠️ User is not logged in yet, will send token later.');
+        print('⚠️ User is not logged in yet, will send token after login.');
       }
     } else {
       print('⚠️ No pending FCM token found');
@@ -231,12 +233,14 @@ Future<void> _initPushNotifications(prefs) async {
       }
     }
 
-    // iOS: Show notifications even when app is in foreground
+    // iOS: Disable auto-display in foreground — flutter_local_notifications
+    // handles showing it in onMessage.listen. Without this, iOS shows the
+    // notification twice (once via APNs auto-display + once via flutter_local_notifications).
     if (Platform.isIOS) {
       await messaging.setForegroundNotificationPresentationOptions(
-        alert: true,
+        alert: false,
         badge: true,
-        sound: true,
+        sound: false,
       );
     }
 
@@ -255,7 +259,7 @@ Future<void> _initPushNotifications(prefs) async {
 
     // Initialize local notifications
     const initializationSettings = InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      android: AndroidInitializationSettings('@drawable/ic_notification'),
       iOS: DarwinInitializationSettings(),
     );
 
@@ -291,7 +295,7 @@ Future<void> _initPushNotifications(prefs) async {
             android: AndroidNotificationDetails(
               'high_importance_channel',
               'High Importance Notifications',
-              icon: '@mipmap/ic_launcher',
+              icon: '@drawable/ic_notification',
               importance: Importance.max,
               priority: Priority.high,
               playSound: true,

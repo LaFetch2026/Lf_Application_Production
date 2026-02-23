@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 import 'package:lafetch/commonwidget/accountwidgets/settingwidgit.dart';
 import 'package:lafetch/screens/account/customercare.dart';
 import 'package:lafetch/screens/account/deleteaccount.dart';
-import 'package:lafetch/screens/account/notification_setting.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/editprofilescreen.dart';
@@ -455,43 +454,7 @@ class AccountScreenState extends State<AccountScreen> {
                                           },
                                         );
                                       },
-                                      onPressedNotification: () async {
-                                        final profile =
-                                            controller.profileDetails.value ??
-                                                {};
-                                        controller.isOrder.value = (profile[
-                                                    "order_notification_enabled"] ??
-                                                0) ==
-                                            1;
-                                        controller.isOffer.value = (profile[
-                                                    "offer_notification_enabled"] ??
-                                                0) ==
-                                            1;
-                                        controller.isPermotion.value = (profile[
-                                                    "promotional_notification_enabled"] ??
-                                                0) ==
-                                            1;
 
-                                        Get.to(NotificationSettingScreen())
-                                            ?.then((value) {
-                                          SystemChrome.setSystemUIOverlayStyle(
-                                            const SystemUiOverlayStyle(
-                                              statusBarColor: statusBarColor,
-                                              statusBarIconBrightness:
-                                                  Brightness.dark,
-                                              statusBarBrightness:
-                                                  Brightness.light,
-                                            ),
-                                          );
-                                          controller.getProfileData();
-                                        });
-                                        await analytics.logEvent(
-                                          name: 'notification_screen',
-                                          parameters: {
-                                            'page_name': 'notification_screen'
-                                          },
-                                        );
-                                      },
                                     ),
                                   ],
                                 ),
