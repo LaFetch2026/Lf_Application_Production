@@ -68,19 +68,14 @@ class BrandsScreenState extends State<BrandsScreen>
 
   onSearchChanged(String query) {
     if (debounce?.isActive ?? false) debounce?.cancel();
-    debounce = Timer(const Duration(milliseconds: 500), () async {
+    debounce = Timer(const Duration(milliseconds: 300), () {
       brandController.queryText.value = query;
+      brandController.filterBrandsLocally(query);
 
-      // ✅ Reset cache when search query changes
-      _lastDataFetch = null;
-      _lastSearchQuery = query;
-
-      brandController.getBrandData("brand");
-      await analytics.logEvent(
+      // Fire analytics without blocking the filter
+      analytics.logEvent(
         name: 'brand_page_search',
-        parameters: <String, Object>{
-          'page_name': 'brand_page_search',
-        },
+        parameters: <String, Object>{'page_name': 'brand_page_search'},
       );
     });
   }
@@ -111,16 +106,12 @@ class BrandsScreenState extends State<BrandsScreen>
   Future<void> forceRefreshData() async {
     print("🔄 Force refresh triggered - Brands");
 
-    setState(() {
-      _lastDataFetch = null;
-      _lastSearchQuery = null;
-    });
+    // ✅ Clear loaded tracking so API call is not skipped
+    brandController.clearLoadedTracking();
+    brandController.queryText.value = "";
+    brandController.searchController.clear();
 
-    // ✅ Pass showLoader: false to prevent skeleton loader during pull-to-refresh
     await brandController.getBrandData("brand");
-
-    _lastDataFetch = DateTime.now();
-    _lastSearchQuery = brandController.queryText.value;
 
     if (mounted) {
       setState(() {});
@@ -245,7 +236,7 @@ class BrandsScreenState extends State<BrandsScreen>
                     );
                   },
                   onPressedCart: () async {
-                    Get.to(CartScreen())?.then(
+                    Get.to(const CartScreen())?.then(
                       (value) {
                         SystemChrome.setSystemUIOverlayStyle(
                             const SystemUiOverlayStyle(
@@ -273,13 +264,8 @@ class BrandsScreenState extends State<BrandsScreen>
                       print(value);
                       if (value is RawKeyDownEvent) {
                         brandController.queryText.value = "";
-
-                        // ✅ Reset cache when clearing search
-                        _lastDataFetch = null;
-                        _lastSearchQuery = "";
-
-                        brandController.getBrandData("brand");
-                        _lastDataFetch = DateTime.now();
+                        // ✅ Filter locally — no API call needed
+                        brandController.filterBrandsLocally("");
                       }
                     },
                     child: TextField(
@@ -762,7 +748,7 @@ class BrandsScreenState extends State<BrandsScreen>
                                                                                         // Check for errors
                                                                                         final err = productController.errorMsg.value;
                                                                                         if (err.isNotEmpty) {
-                                                                                          getSnackBar(err);
+                                                                                          showAppSnackBar(err);
                                                                                           return;
                                                                                         }
 
@@ -879,7 +865,7 @@ class BrandsScreenState extends State<BrandsScreen>
                                                                                   height: 42.sp,
                                                                                   color: homeAppBarColor,
                                                                                   width: double.infinity,
-                                                                                  child: Center(
+                                                                                  child: const Center(
                                                                                     child: AppText(
                                                                                       text: "EXPLORE BRAND",
                                                                                       fontFamily: "Clash Display",
@@ -946,13 +932,13 @@ class BrandsScreenState extends State<BrandsScreen>
                                                   ? Text(
                                                       "No ${brandController.searchController.text.toString().trim()} found"
                                                           .toUpperCase(),
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 12,
                                                           color:
                                                               homeAppBarColor,
                                                           fontFamily:
                                                               "Clash Display"))
-                                                  : Text(
+                                                  : const Text(
                                                       "Coming Soon to Your Area",
                                                       textAlign:
                                                           TextAlign.center,

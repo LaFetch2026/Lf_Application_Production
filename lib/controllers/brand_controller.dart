@@ -65,13 +65,42 @@ class BrandController extends BaseController {
   /// Clear loaded tracking
   void clearLoadedTracking() => _loadedBrandKeys.clear();
 
+  /// ✅ Raw brands cache (full list before any filtering)
+  final List<Map<String, dynamic>> _allBrandsCache = [];
+
+  /// ✅ Pre-computed lowercase brand names for fast filtering
+  final List<String> _brandNamesLower = [];
+
+  /// ✅ Last applied filter query — skip if same
+  String _lastFilterQuery = '\x00'; // sentinel value, never matches user input
+
+  /// ✅ Filter brands locally from cache (no API call needed)
+  void filterBrandsLocally(String query) {
+    final q = query.trim().toLowerCase();
+
+    // Skip if query hasn't changed
+    if (q == _lastFilterQuery) return;
+    _lastFilterQuery = q;
+
+    final filtered = q.isEmpty
+        ? _allBrandsCache
+        : [
+            for (int i = 0; i < _allBrandsCache.length; i++)
+              if (_brandNamesLower[i].contains(q)) _allBrandsCache[i],
+          ];
+
+    brandList.assignAll(filtered);
+    update(); // ensure GetBuilder refreshes
+    print("🔍 Local filter: '$q' → ${brandList.length} brands");
+  }
+
   /// ================================================================
   /// ✅ Fetch Brands (Featured or All)
   /// ================================================================
   Future<void> getBrandData(String type,
       [int? gender, bool showLoader = true]) async {
-    // ✅ Skip if already loaded
-    if (isBrandLoaded(type, gender) && brandList.isNotEmpty) {
+    // ✅ Skip if already loaded AND no search query (search always re-filters)
+    if (isBrandLoaded(type, gender) && _allBrandsCache.isNotEmpty && queryText.value.trim().isEmpty) {
       print('✅ Brand data already loaded for type: $type, gender: $gender, skipping API call');
       return;
     }
@@ -120,7 +149,8 @@ class BrandController extends BaseController {
 
       // Handle expired session
       if (response.statusCode == 401) {
-        getSnackBar("Session expired. Please log in again.");
+        showAppSnackBar("Session expired. Please log in again.",
+            type: SnackBarType.error);
         Get.offAll(() => const LoginScreen(initialTab: 0));
         return;
       }
@@ -133,7 +163,7 @@ class BrandController extends BaseController {
             msg = err["message"];
           }
         } catch (_) {}
-        getSnackBar(msg);
+        showAppSnackBar(msg, type: SnackBarType.error);
         return;
       }
 
@@ -141,7 +171,8 @@ class BrandController extends BaseController {
       final contentType =
           (response.headers['content-type'] ?? '').toLowerCase();
       if (!contentType.contains('application/json')) {
-        getSnackBar("Unexpected response while fetching brands.");
+        showAppSnackBar("Unexpected response while fetching brands.",
+            type: SnackBarType.error);
         return;
       }
 
@@ -151,32 +182,38 @@ class BrandController extends BaseController {
               ? decoded['data'] as List
               : const [];
 
-      // Filter by query text if user searched
-      final q = queryText.value.trim().toLowerCase();
-      final filtered = q.isEmpty
-          ? allBrandsRaw
-          : allBrandsRaw.where((b) {
-              final name = (b is Map && b['name'] != null)
-                  ? b['name'].toString().toLowerCase()
-                  : '';
-              return name.contains(q);
-            }).toList();
+      // ✅ Build the full sorted cache from API response
+      final allBrandsMapped = allBrandsRaw
+          .whereType<Map>()
+          .map((b) => b.map((k, v) => MapEntry(k.toString(), v)))
+          .toList();
 
-      // ✅ Sort alphabetically by brand name
-      filtered.sort((a, b) {
+      allBrandsMapped.sort((a, b) {
         final aName = (a['name'] ?? '').toString().toLowerCase();
         final bName = (b['name'] ?? '').toString().toLowerCase();
         return aName.compareTo(bName);
       });
 
+      // ✅ Save full list to cache + pre-compute lowercase names
+      _allBrandsCache.clear();
+      _allBrandsCache.addAll(allBrandsMapped);
+      _brandNamesLower
+        ..clear()
+        ..addAll(_allBrandsCache.map((b) => (b['name'] ?? '').toString().toLowerCase()));
+      _lastFilterQuery = '\x00'; // reset so next filter always runs
+
+      // ✅ Apply any active search filter
+      final q = queryText.value.trim().toLowerCase();
+      final filtered = q.isEmpty
+          ? _allBrandsCache
+          : _allBrandsCache.where((b) {
+              final name = (b['name'] ?? '').toString().toLowerCase();
+              return name.contains(q);
+            }).toList();
+
       // ✅ CRITICAL: Clear old data first, then add new data
       brandList.clear();
-      brandList.addAll(
-        filtered
-            .whereType<Map<String, dynamic>>()
-            .map((b) => b.map((k, v) => MapEntry(k.toString(), v)))
-            .toList(),
-      );
+      brandList.addAll(filtered);
 
       // Update selection list length
       selected.clear();
@@ -200,12 +237,29 @@ class BrandController extends BaseController {
         print("   Logo is empty: ${firstBrand['logo']?.toString().isEmpty}");
       }
     } on TimeoutException {
-      getSnackBar("Brands request timed out. Please try again.");
+      if (_allBrandsCache.isNotEmpty) {
+        // Silently use cached data — don't disturb the user
+        print("⚠️ Brand fetch timed out, using cached data.");
+        brandList.assignAll(_allBrandsCache);
+      } else {
+        showAppSnackBar("Brands request timed out. Please try again.",
+            type: SnackBarType.error);
+      }
     } on SocketException {
-      getSnackBar("No internet connection. Please check your network.");
+      if (_allBrandsCache.isNotEmpty) {
+        // Silently use cached data — no internet but we have data
+        print("⚠️ No internet, using cached brand data.");
+        brandList.assignAll(_allBrandsCache);
+      } else {
+        showAppSnackBar("No internet connection. Please check your network.",
+            type: SnackBarType.error);
+      }
     } catch (e) {
       print("❌ Error fetching brand data: $e");
-      getSnackBar("Something went wrong while fetching brands.");
+      if (_allBrandsCache.isEmpty) {
+        showAppSnackBar("Something went wrong while fetching brands.",
+            type: SnackBarType.error);
+      }
     } finally {
       if (showLoader) {
         isBrand.value = false;
@@ -253,13 +307,13 @@ class BrandController extends BaseController {
       print("⬅️ Status Code: ${response.statusCode}");
 
       if (response.statusCode == 401) {
-        getSnackBar("Session expired. Please log in again.");
+        showAppSnackBar("Session expired. Please log in again.");
         Get.offAll(() => const LoginScreen(initialTab: 0));
         return;
       }
 
       if (response.statusCode != 200) {
-        getSnackBar("Failed to fetch brand details.");
+        showAppSnackBar("Failed to fetch brand details.");
         return;
       }
 
@@ -305,7 +359,7 @@ class BrandController extends BaseController {
       }
     } catch (e) {
       print("❌ Exception in getBrandDetails: $e");
-      getSnackBar("Something went wrong while fetching brand details.");
+      showAppSnackBar("Something went wrong while fetching brand details.");
     } finally {
       isDetails.value = false;
       isFetchingBrandDetails.value = false;
@@ -349,7 +403,7 @@ class BrandController extends BaseController {
       print("⬅️ Status Code: ${response.statusCode}");
 
       if (response.statusCode == 401) {
-        getSnackBar("Session expired. Please log in again.");
+        showAppSnackBar("Session expired. Please log in again.");
         Get.offAll(() => const LoginScreen(initialTab: 0));
         return;
       }
