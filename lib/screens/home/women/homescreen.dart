@@ -2101,8 +2101,7 @@ class _BannerProductTile extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(8.sp, 8.sp, 8.sp, 0),
           child: Text(
             brand.toUpperCase(),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            softWrap: true,
             style: const TextStyle(
               color: blackColor,
               fontSize: 15,
@@ -2836,8 +2835,7 @@ class _CollectionSectionState extends State<_CollectionSection> {
                         child: Text(
                           widget.title.toUpperCase(),
                           textAlign: TextAlign.left,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          softWrap: true,
                           style: TextStyle(
                             fontFamily: "Clash Display Semibold",
                             fontWeight: FontWeight.w600,

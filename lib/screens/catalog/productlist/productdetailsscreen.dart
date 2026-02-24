@@ -2962,34 +2962,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
-  Widget _tableHeader(String text) {
-    return Padding(
-      padding: EdgeInsets.all(8.sp),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: "Clash Display",
-          fontWeight: FontWeight.w600,
-          fontSize: 12.sp,
-        ),
-      ),
-    );
-  }
 
-  Widget _tableCell(String text) {
-    return Padding(
-      padding: EdgeInsets.all(8.sp),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: "Clash Display Regular",
-          fontSize: 12.sp,
-        ),
-      ),
-    );
-  }
 
 // Add this Widget method to your ProductDetailsScreenState class
 
