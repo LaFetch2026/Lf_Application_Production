@@ -25,6 +25,7 @@ import 'controllers/brand_controller.dart';
 import 'controllers/catalog_controller.dart';
 import 'firebase_options.dart';
 import 'core/constant/constants.dart';
+import 'core/services/meta_event_service.dart';
 import 'screens/splash/splashtwo.dart';
 import 'screens/home/women/homescreen.dart' show routeObserver;
 
@@ -141,6 +142,10 @@ Future<void> main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+
+  // Meta (Facebook) App Events
+  if (!kReleaseMode) MetaEventService.testEventCode = 'TEST81951';
+  await MetaEventService.instance.init();
 
   final prefs = await SharedPreferences.getInstance();
   await _initPushNotifications(prefs);

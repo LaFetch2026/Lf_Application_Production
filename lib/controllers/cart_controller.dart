@@ -12,6 +12,7 @@ import '../core/constant/constants.dart';
 import '../screens/loginscreen.dart';
 import '../screens/paymentcheckscreen.dart';
 import '../screens/paymentsuccessscreen.dart';
+import '../core/services/meta_event_service.dart';
 import '../services/cache_manager.dart';
 import 'auth_api_client.dart';
 import 'base_controller.dart';
@@ -393,8 +394,9 @@ class CartController extends BaseController {
     int expressValue,
     int type,
     Color backColor,
-    int oldInventoryId,
-  ) async {
+    int oldInventoryId, {
+    double price = 0.0,
+  }) async {
     if (page == "quantity" || page == "size") showLoading();
     isExpress.value = true;
 
@@ -483,6 +485,10 @@ class CartController extends BaseController {
       // Success handling
       print("🛒 Added to cart successfully!");
       getSnackBar("Added to cart");
+      MetaEventService.instance.logAddToCart(
+        contentId: productId.toString(),
+        price: price,
+      );
 
       // ✅ Invalidate cart cache to fetch fresh data
       await CacheManager.invalidateCartCache(userId: userId);
@@ -826,6 +832,7 @@ class CartController extends BaseController {
     required int type,
     required Color backColor,
     required int oldInventoryId,
+    double price = 0.0,
   }) async {
     // Check if user is guest
     final isGuest = await isGuestUser();
@@ -931,6 +938,7 @@ class CartController extends BaseController {
         type,
         backColor,
         oldInventoryId,
+        price: price,
       );
     }
   }

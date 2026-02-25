@@ -7,6 +7,17 @@ class MetaEventService {
 
   final FacebookAppEvents _facebookAppEvents = FacebookAppEvents();
 
+  /// Set this to a Meta test event code (e.g. 'TEST81951') to send events
+  /// in debug mode to Meta's Test Events tab. Set to null in production.
+  static String? testEventCode;
+
+  /// Returns true if we should send events (release mode OR test mode active).
+  bool get _shouldLog => kReleaseMode || testEventCode != null;
+
+  /// Extra parameters to attach when testEventCode is set.
+  Map<String, dynamic> get _testParams =>
+      testEventCode != null ? {'_appEventsTestEventCode': testEventCode!} : {};
+
   /// Call once at app startup (e.g. in main.dart or app init)
   Future<void> init() async {
     await _facebookAppEvents.setAdvertiserTracking(enabled: true);
@@ -19,27 +30,35 @@ class MetaEventService {
     double? price,
     String currency = 'INR',
   }) async {
-    if (!kReleaseMode) return;
-    await _facebookAppEvents.logViewContent(
-      id: contentId,
-      type: contentType ?? 'product',
-      currency: currency,
-      price: price,
+    if (!_shouldLog) return;
+    await _facebookAppEvents.logEvent(
+      name: FacebookAppEvents.eventNameViewedContent,
+      parameters: {
+        FacebookAppEvents.paramNameContentId: contentId,
+        FacebookAppEvents.paramNameContentType: contentType ?? 'product',
+        FacebookAppEvents.paramNameCurrency: currency,
+        ..._testParams,
+      },
+      valueToSum: price,
     );
   }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+
   // 2. AddToWishlist — Clicking add-to-wishlist
   Future<void> logAddToWishlist({
     String contentId = '',
     double price = 0.0,
     String currency = 'INR',
   }) async {
-    if (!kReleaseMode) return;
-    await _facebookAppEvents.logAddToWishlist(
-      id: contentId,
-      type: 'product',
-      currency: currency,
-      price: price,
+    if (!_shouldLog) return;
+    await _facebookAppEvents.logEvent(
+      name: FacebookAppEvents.eventNameAddedToWishlist,
+      parameters: {
+        FacebookAppEvents.paramNameContentId: contentId,
+        FacebookAppEvents.paramNameContentType: 'product',
+        FacebookAppEvents.paramNameCurrency: currency,
+        ..._testParams,
+      },
+      valueToSum: price,
     );
   }
 
@@ -49,12 +68,16 @@ class MetaEventService {
     double price = 0.0,
     String currency = 'INR',
   }) async {
-    if (!kReleaseMode) return;
-    await _facebookAppEvents.logAddToCart(
-      id: contentId,
-      type: 'product',
-      currency: currency,
-      price: price,
+    if (!_shouldLog) return;
+    await _facebookAppEvents.logEvent(
+      name: FacebookAppEvents.eventNameAddedToCart,
+      parameters: {
+        FacebookAppEvents.paramNameContentId: contentId,
+        FacebookAppEvents.paramNameContentType: 'product',
+        FacebookAppEvents.paramNameCurrency: currency,
+        ..._testParams,
+      },
+      valueToSum: price,
     );
   }
 
@@ -64,19 +87,26 @@ class MetaEventService {
     int? numItems,
     String currency = 'INR',
   }) async {
-    if (!kReleaseMode) return;
-    await _facebookAppEvents.logInitiatedCheckout(
-      totalPrice: totalPrice,
-      currency: currency,
-      numItems: numItems,
+    if (!_shouldLog) return;
+    await _facebookAppEvents.logEvent(
+      name: FacebookAppEvents.eventNameInitiatedCheckout,
+      parameters: {
+        FacebookAppEvents.paramNameNumItems: numItems,
+        FacebookAppEvents.paramNameCurrency: currency,
+        ..._testParams,
+      },
+      valueToSum: totalPrice,
     );
   }
 
   // 5. AddPaymentInfo — Clicking Proceed to Pay (Razorpay opens)
   Future<void> logAddPaymentInfo() async {
-    if (!kReleaseMode) return;
+    if (!_shouldLog) return;
     await _facebookAppEvents.logEvent(
-      name: 'fb_mobile_add_payment_info', 
+      name: 'fb_mobile_add_payment_info',
+      parameters: {
+        ..._testParams,
+      },
     );
   }
 
@@ -85,10 +115,13 @@ class MetaEventService {
     required double amount,
     String currency = 'INR',
   }) async {
-    if (!kReleaseMode) return;
+    if (!_shouldLog) return;
     await _facebookAppEvents.logPurchase(
       amount: amount,
       currency: currency,
+      parameters: testEventCode != null
+          ? {'_appEventsTestEventCode': testEventCode!}
+          : null,
     );
   }
 }

@@ -1405,13 +1405,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ));
                       },
                       onPressed: (boardId) async {
+                        final double wishlistPrice = ((productController.productDetails['lfMsp'] ?? 0) as num).toDouble();
                         await wishlistController.addProductToBoard(
-                            boardId, productId);
-
-                        // Meta: AddToWishlist
-                        MetaEventService.instance.logAddToWishlist(
-                          contentId: productId.toString(),
-                        );
+                            boardId, productId, price: wishlistPrice);
 
                         Get.back(); // Close bottom sheet
 
@@ -2590,6 +2586,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               }
 
                               final variantId = variant['id'] as int;
+                              final double variantPrice = ((variant['lfMsp'] ?? variant['price'] ?? 0) as num).toDouble();
 
                               await cartController.addToCartUniversal(
                                 quantity: _selectedQuantity,
@@ -2600,6 +2597,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 type: 1,
                                 backColor: widget.backgroundcolor,
                                 oldInventoryId: variantId,
+                                price: variantPrice,
                               );
 
                               // Reset quantity after adding to cart
@@ -2612,11 +2610,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 parameters: {
                                   'page_name': 'productDetails_btnaddtocart'
                                 },
-                              );
-
-                              // Meta: AddToCart
-                              MetaEventService.instance.logAddToCart(
-                                contentId: widget.productId.toString(),
                               );
 
                               // ✅ Navigate to cart screen immediately after adding

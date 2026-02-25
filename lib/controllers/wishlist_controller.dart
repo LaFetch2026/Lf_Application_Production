@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:lafetch/controllers/base_controller.dart';
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
+import '../core/services/meta_event_service.dart';
 import '../screens/loginscreen.dart';
 
 /// Endpoints used by the new wishlist API.
@@ -489,7 +490,7 @@ class WishlistController extends BaseController {
   }
 
   /// POST /board-product  {userId, productId, boardId}
-  Future<void> addProductToBoard(int boardId, int productId) async {
+  Future<void> addProductToBoard(int boardId, int productId, {double price = 0.0}) async {
     final auth = await _auth();
     if (auth == null) return;
 
@@ -514,6 +515,11 @@ class WishlistController extends BaseController {
         // Update wishlist status
         isWishlisted.value = true;
         wishListDetails["wishlisted"] = true;
+
+        MetaEventService.instance.logAddToWishlist(
+          contentId: productId.toString(),
+          price: price,
+        );
 
         // Refresh boards list
         await fetchBoards();
