@@ -2261,7 +2261,7 @@ class _ShopByCategorySection extends StatelessWidget {
                                   ? CachedNetworkImage(
                                       imageUrl:
                                           ImageHelper.toWebP(catalog["image"]),
-                                      fit: BoxFit.fill,
+                                      fit: BoxFit.cover,
                                       // ✅ Add memory limits for category images
                                       maxHeightDiskCache: 300,
                                       maxWidthDiskCache: 300,
@@ -2269,12 +2269,12 @@ class _ShopByCategorySection extends StatelessWidget {
                                       memCacheWidth: 300,
                                       errorWidget: (_, __, ___) => Image.asset(
                                         dummyWishlistImage,
-                                        fit: BoxFit.fill,
+                                        fit: BoxFit.cover,
                                       ),
                                     )
                                   : Image.asset(
                                       dummyWishlistImage,
-                                      fit: BoxFit.fill,
+                                      fit: BoxFit.cover,
                                     ),
                             ),
                           ),

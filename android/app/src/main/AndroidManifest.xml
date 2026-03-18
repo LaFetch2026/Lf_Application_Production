@@ -101,6 +101,14 @@
                 <data android:scheme="lafetch" />
             </intent-filter>
 
+            <!-- Google Sign-In -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="com.googleusercontent.apps.598072306679-orm3i1tit1upj3a1rrt984dkf6u7jgpq" />
+            </intent-filter>
+
             <!-- AppsFlyer OneLink App Links — separate filter so lafetch.com
                  verification failure does NOT break onelink.me links -->
             <intent-filter android:autoVerify="true">

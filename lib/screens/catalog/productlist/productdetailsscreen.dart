@@ -341,20 +341,20 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         imageUrl: firstImg,
                                         width: 80.sp,
                                         height: 80.sp,
-                                        fit: BoxFit.fill,
+                                        fit: BoxFit.cover,
                                         errorWidget: (context, url, error) =>
                                             Image.asset(
                                           dummyWishlistImage,
                                           width: 80.sp,
                                           height: 80.sp,
-                                          fit: BoxFit.fill,
+                                          fit: BoxFit.cover,
                                         ),
                                       )
                                     : Image.asset(
                                         dummyWishlistImage,
                                         width: 80.sp,
                                         height: 80.sp,
-                                        fit: BoxFit.fill,
+                                        fit: BoxFit.cover,
                                       ),
                               ),
                               SizedBox(width: 12.sp),
@@ -916,7 +916,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     maxNrOfCacheObjects: 100,
                   ),
                 ),
-                fit: BoxFit.fill, // ✅ Changed to cover
+                fit: BoxFit.cover, // ✅ Changed to cover
                 imageUrl: url,
                 width: double.infinity,
                 height: double.infinity,
@@ -925,7 +925,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   width: MediaQuery.of(context).size.width,
                 ),
                 errorWidget: (context, url, error) =>
-                    Image.asset(downloadImage, fit: BoxFit.fill),
+                    Image.asset(downloadImage, fit: BoxFit.cover),
               ),
             ),
           ),
@@ -1261,7 +1261,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         imageUrl: chart["sizeGuideImage"],
                         width: double.infinity,
                         height: 300.sp,
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                         errorWidget: (context, url, error) => Container(
                           width: double.infinity,
                           height: 300.sp,

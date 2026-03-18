@@ -226,7 +226,16 @@ class LoginController extends BaseController {
         body: jsonEncode({'phone': phoneNumber}),
       );
 
-      final data = jsonDecode(response.body);
+      dynamic data;
+      try {
+        data = jsonDecode(response.body);
+      } on FormatException {
+        getSnackBar("Server error - please try again later");
+        final peekLength = response.body.length > 200 ? 200 : response.body.length;
+        print("⚠️ Non-JSON response from $endpoint: ${response.body.substring(0, peekLength)}");
+        return;
+      }
+
       if (response.statusCode == 200) {
         number.value = phoneNumber;
 
@@ -328,7 +337,15 @@ class LoginController extends BaseController {
         body: jsonEncode(body),
       );
 
-      final data = jsonDecode(response.body);
+      dynamic data;
+      try {
+        data = jsonDecode(response.body);
+      } on FormatException {
+        getSnackBar("Server error - please try again later");
+        final peekLength = response.body.length > 200 ? 200 : response.body.length;
+        print("⚠️ Non-JSON response from verify-otp: ${response.body.substring(0, peekLength)}");
+        return false;
+      }
 
       if (response.statusCode == 200) {
         final userData = data['data'];
@@ -456,7 +473,16 @@ class LoginController extends BaseController {
         getSnackBar("OTP sent successfully!");
         return true;
       } else {
-        final data = jsonDecode(response.body);
+        dynamic data;
+        try {
+          data = jsonDecode(response.body);
+        } on FormatException {
+          getSnackBar("Server error - please try again later");
+          final peekLength = response.body.length > 200 ? 200 : response.body.length;
+          print("⚠️ Non-JSON response from resend-otp: ${response.body.substring(0, peekLength)}");
+          return false;
+        }
+
         final errorMessage = data['errors']?['phone']?.first ??
             data['message'] ??
             "Error sending OTP.";
@@ -624,7 +650,15 @@ class LoginController extends BaseController {
       print("📡 Social Sign-In Response: ${response.statusCode}");
       print("📡 Response Body: ${response.body}");
 
-      final data = jsonDecode(response.body);
+      dynamic data;
+      try {
+        data = jsonDecode(response.body);
+      } on FormatException {
+        getSnackBar("Server error - please try again later");
+        final peekLength = response.body.length > 200 ? 200 : response.body.length;
+        print("⚠️ Non-JSON response from social-sign-in: ${response.body.substring(0, peekLength)}");
+        return false;
+      }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final userData = data['data'];

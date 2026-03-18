@@ -254,7 +254,7 @@ class ProductCard extends StatelessWidget {
 
     return CachedNetworkImage(
       imageUrl: ImageHelper.toWebP(imageUrl),
-      fit: BoxFit.fill,
+      fit: BoxFit.cover,
       width: double.infinity,
       height: double.infinity,
       maxHeightDiskCache: 400,
@@ -478,7 +478,7 @@ class ProductGridCard extends StatelessWidget {
 
     return CachedNetworkImage(
       imageUrl: ImageHelper.toWebP(imageUrl),
-      fit: BoxFit.fill,
+      fit: BoxFit.cover,
       width: double.infinity,
       height: double.infinity,
       cacheManager: CacheManager(

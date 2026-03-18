@@ -118,7 +118,7 @@ class BrandProductList extends StatelessWidget {
                                                             200,
                                                       ),
                                                     ),
-                                                    fit: BoxFit.fill,
+                                                    fit: BoxFit.cover,
                                                     imageUrl: item["images"][0]
                                                             ["name"]
                                                         .toString(),
@@ -173,7 +173,7 @@ class BrandProductList extends StatelessWidget {
                                                   )
                                                 : Image.asset(
                                                     dummyWishlistImage,
-                                                    fit: BoxFit.fill,
+                                                    fit: BoxFit.cover,
                                                   ),
                                           ),
                                         )
@@ -181,7 +181,7 @@ class BrandProductList extends StatelessWidget {
                                           dummyWishlistImage,
                                           height: 170.sp,
                                           width: 136.sp,
-                                          fit: BoxFit.fill,
+                                          fit: BoxFit.cover,
                                         ),
 
                                   // ------- PRODUCT NAME -------

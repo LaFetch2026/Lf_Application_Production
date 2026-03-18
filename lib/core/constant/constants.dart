@@ -283,7 +283,7 @@ class ApiConstants {
   static const String razorPayKey = "rzp_live_Rby9HMBpupINLp"; //production
 
   // static const String baseUrl = "http://65.0.153.196:8080/api"; //staging
-  static const String baseUrl = "http://lfapi.la-fetch.com/api"; //staging
+  static const String baseUrl = "https://lfapi.la-fetch.com/api"; //staging
 
 //  static const String razorPayKey = "rzp_test_CA2ZhiypSpQQlk"; //staging
 }

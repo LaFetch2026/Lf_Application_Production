@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -758,6 +759,9 @@ class ProductController extends BaseController {
         // ✅ Mark as loaded after successful API call
         markHomeProductLoaded(gender);
         print("✅ UI updated for gender=$gender");
+      } else {
+        print("⚠️ getHomeProduct API error: Status ${response.statusCode}");
+        print("⚠️ Response: ${response.body.substring(0, min(response.body.length, 200))}");
       }
     } catch (e) {
       if (_activeGenderRequest == gender) {
