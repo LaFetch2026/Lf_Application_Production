@@ -271,7 +271,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
         imageUrl: _cachedLogoUrl!,
         height: 211.sp,
         width: double.infinity,
-        fit: BoxFit.fill,
+        fit: BoxFit.cover,
         memCacheHeight:
             (211.sp * MediaQuery.of(context).devicePixelRatio).round(),
         placeholder: (context, url) => Container(
@@ -564,7 +564,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                             imageUrl: _cachedLogoUrl!,
                             height: 211.sp,
                             width: double.infinity,
-                            fit: BoxFit.fill,
+                            fit: BoxFit.cover,
                             memCacheHeight: (211.sp *
                                     MediaQuery.of(context).devicePixelRatio)
                                 .round(),
@@ -613,7 +613,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           brandback,
                           height: 211.sp,
                           width: double.infinity,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                         );
                       }),
 
@@ -650,7 +650,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                           maxNrOfCacheObjects: 50,
                                         ),
                                       ),
-                                      fit: BoxFit.fill,
+                                      fit: BoxFit.cover,
                                       imageUrl: logoUrl,
                                       memCacheWidth: (80.sp *
                                               MediaQuery.of(context)

@@ -147,7 +147,7 @@ class _NewsletterCard extends StatelessWidget {
               // Background Image
               CachedNetworkImage(
                 imageUrl: newsletter.imageUrl,
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
                 placeholder: (context, url) => Container(
                   color: Colors.grey[300],
                   child: Center(

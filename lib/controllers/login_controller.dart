@@ -650,7 +650,15 @@ class LoginController extends BaseController {
       print("📡 Social Sign-In Response: ${response.statusCode}");
       print("📡 Response Body: ${response.body}");
 
-      final data = jsonDecode(response.body);
+      dynamic data;
+      try {
+        data = jsonDecode(response.body);
+      } on FormatException {
+        getSnackBar("Server error - please try again later");
+        final peekLength = response.body.length > 200 ? 200 : response.body.length;
+        print("⚠️ Non-JSON response from social-sign-in: ${response.body.substring(0, peekLength)}");
+        return false;
+      }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final userData = data['data'];
