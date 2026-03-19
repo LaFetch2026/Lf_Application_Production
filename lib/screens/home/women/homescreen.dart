@@ -946,239 +946,240 @@ class HomeScreenState extends State<HomeScreen>
                           }),
 
                           // Product Collections
-                          Obx(() {
-                            final currentGender =
-                                homeController.homeGenderValue.value;
+                          // removed due to no incoming data
+                          // Obx(() {
+                          //   final currentGender =
+                          //       homeController.homeGenderValue.value;
 
-                            // ✅ Show loader ONLY if actively loading AND list is empty
-                            // ✅ FIXED: Don't show skeleton if data already exists, even if loading flag is true
-                            if (productController.homeProductList.isEmpty &&
-                                (productController.isHomeProduct.value ||
-                                    !productController
-                                        .isHomeProductLoaded(currentGender))) {
-                              return DummyProductList(
-                                visibleSubtitle: true,
-                                text: (productController.tagname.value)
-                                    .toUpperCase(),
-                              );
-                            }
+                          //   // ✅ Show loader ONLY if actively loading AND list is empty
+                          //   // ✅ FIXED: Don't show skeleton if data already exists, even if loading flag is true
+                          //   if (productController.homeProductList.isEmpty &&
+                          //       (productController.isHomeProduct.value ||
+                          //           !productController
+                          //               .isHomeProductLoaded(currentGender))) {
+                          //     return DummyProductList(
+                          //       visibleSubtitle: true,
+                          //       text: (productController.tagname.value)
+                          //           .toUpperCase(),
+                          //     );
+                          //   }
 
-                            // ✅ Collections are already filtered by the API to only include those with products
-                            // ✅ Extra safety check: Filter out any collections with empty products
-                            final allCollections = productController
-                                .homeProductList
-                                .where((c) => c.hasProducts)
-                                .toList();
+                          //   // ✅ Collections are already filtered by the API to only include those with products
+                          //   // ✅ Extra safety check: Filter out any collections with empty products
+                          //   final allCollections = productController
+                          //       .homeProductList
+                          //       .where((c) => c.hasProducts)
+                          //       .toList();
 
-                            // ✅ PAGINATION: Only show a subset of collections
-                            final collectionsToShow =
-                                _currentCollectionPage * _collectionsPerPage;
-                            final collections =
-                                allCollections.take(collectionsToShow).toList();
+                          //   // ✅ PAGINATION: Only show a subset of collections
+                          //   final collectionsToShow =
+                          //       _currentCollectionPage * _collectionsPerPage;
+                          //   final collections =
+                          //       allCollections.take(collectionsToShow).toList();
 
-                            // Update hasMore flag
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              if (_hasMoreCollections !=
-                                  (collections.length <
-                                      allCollections.length)) {
-                                setState(() {
-                                  _hasMoreCollections = collections.length <
-                                      allCollections.length;
-                                });
-                              }
-                            });
+                          //   // Update hasMore flag
+                          //   WidgetsBinding.instance.addPostFrameCallback((_) {
+                          //     if (_hasMoreCollections !=
+                          //         (collections.length <
+                          //             allCollections.length)) {
+                          //       setState(() {
+                          //         _hasMoreCollections = collections.length <
+                          //             allCollections.length;
+                          //       });
+                          //     }
+                          //   });
 
-                            print(
-                                "📊 Showing ${collections.length}/${allCollections.length} collections (page $_currentCollectionPage)");
+                          //   print(
+                          //       "📊 Showing ${collections.length}/${allCollections.length} collections (page $_currentCollectionPage)");
 
-                            if (collections.isEmpty) {
-                              print(
-                                  "⚠️ No collections to display - showing empty space");
-                              return Column(
-                                children: [
-                                  SizedBox(
-                                      height: 24.sp), // ✅ Consistent spacing
-                                  const Center(
-                                    child: Text(
-                                      "No products available for this category",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey,
-                                        fontFamily: "Clash Display Regular",
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      height: 24.sp), // ✅ Consistent spacing
-                                ],
-                              );
-                            }
+                          //   if (collections.isEmpty) {
+                          //     print(
+                          //         "⚠️ No collections to display - showing empty space");
+                          //     return Column(
+                          //       children: [
+                          //         SizedBox(
+                          //             height: 24.sp), // ✅ Consistent spacing
+                          //         const Center(
+                          //           child: Text(
+                          //             "No products available for this category",
+                          //             style: TextStyle(
+                          //               fontSize: 14,
+                          //               color: Colors.grey,
+                          //               fontFamily: "Clash Display Regular",
+                          //             ),
+                          //           ),
+                          //         ),
+                          //         SizedBox(
+                          //             height: 24.sp), // ✅ Consistent spacing
+                          //       ],
+                          //     );
+                          //   }
 
-                            return Column(
-                              children: [
-                                ListView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets
-                                      .zero, // ✅ Remove default ListView padding
-                                  itemCount: collections.length,
-                                  // ✅ No separator needed - each _CollectionSection has consistent bottom padding
-                                  itemBuilder: (context, index) {
-                                    final collection = collections[index];
-                                    final int collectionId = collection.id;
-                                    final String title = collection.name;
-                                    final String subtitle =
-                                        collection.desc ?? '';
+                          //   return Column(
+                          //     children: [
+                          //       ListView.builder(
+                          //         physics: const NeverScrollableScrollPhysics(),
+                          //         shrinkWrap: true,
+                          //         padding: EdgeInsets
+                          //             .zero, // ✅ Remove default ListView padding
+                          //         itemCount: collections.length,
+                          //         // ✅ No separator needed - each _CollectionSection has consistent bottom padding
+                          //         itemBuilder: (context, index) {
+                          //           final collection = collections[index];
+                          //           final int collectionId = collection.id;
+                          //           final String title = collection.name;
+                          //           final String subtitle =
+                          //               collection.desc ?? '';
 
-                                    // ✅ Get banners for current gender from standalone banner API
-                                    final currentGender = homeController
-                                        .genderText.value
-                                        .toLowerCase();
-                                    final standaloneBanners = productController
-                                        .getBannersForCollection(
-                                      collectionId,
-                                      currentGender,
-                                    );
+                          //           // ✅ Get banners for current gender from standalone banner API
+                          //           final currentGender = homeController
+                          //               .genderText.value
+                          //               .toLowerCase();
+                          //           final standaloneBanners = productController
+                          //               .getBannersForCollection(
+                          //             collectionId,
+                          //             currentGender,
+                          //           );
 
-                                    // ✅ Convert products back to Map for existing widgets
-                                    final products = collection.products
-                                        .map((p) => p.toJson())
-                                        .toList();
+                          //           // ✅ Convert products back to Map for existing widgets
+                          //           final products = collection.products
+                          //               .map((p) => p.toJson())
+                          //               .toList();
 
-                                    // ✅ Safety check: Skip rendering if no products
-                                    if (products.isEmpty) {
-                                      return const SizedBox.shrink();
-                                    }
+                          //           // ✅ Safety check: Skip rendering if no products
+                          //           if (products.isEmpty) {
+                          //             return const SizedBox.shrink();
+                          //           }
 
-                                    final bool dark = index.isEven;
+                          //           final bool dark = index.isEven;
 
-                                    return _CollectionSection(
-                                      collectionId: collectionId,
-                                      title: title,
-                                      subtitle: subtitle,
-                                      dark: dark,
-                                      products: products,
-                                      banners: standaloneBanners,
-                                      onProductTap: (productId) async {
-                                        Get.to(
-                                          ProductDetailsScreen(
-                                            productId: productId,
-                                            type: "add",
-                                            brandName: "",
-                                          ),
-                                        )?.then((_) {
-                                          setState(() {
-                                            SystemChrome
-                                                .setSystemUIOverlayStyle(
-                                              const SystemUiOverlayStyle(
-                                                statusBarColor: whiteColor,
-                                                systemNavigationBarColor:
-                                                    whiteColor,
-                                              ),
-                                            );
-                                          });
-                                        });
+                          //           return _CollectionSection(
+                          //             collectionId: collectionId,
+                          //             title: title,
+                          //             subtitle: subtitle,
+                          //             dark: dark,
+                          //             products: products,
+                          //             banners: standaloneBanners,
+                          //             onProductTap: (productId) async {
+                          //               Get.to(
+                          //                 ProductDetailsScreen(
+                          //                   productId: productId,
+                          //                   type: "add",
+                          //                   brandName: "",
+                          //                 ),
+                          //               )?.then((_) {
+                          //                 setState(() {
+                          //                   SystemChrome
+                          //                       .setSystemUIOverlayStyle(
+                          //                     const SystemUiOverlayStyle(
+                          //                       statusBarColor: whiteColor,
+                          //                       systemNavigationBarColor:
+                          //                           whiteColor,
+                          //                     ),
+                          //                   );
+                          //                 });
+                          //               });
 
-                                        await analytics.logEvent(
-                                          name: 'product_details_home_page',
-                                          parameters: <String, Object>{
-                                            'page_name':
-                                                'product_details_home_page',
-                                            'collection_id': collectionId,
-                                            'collection_name': title,
-                                            'product_id': productId.toString(),
-                                          },
-                                        );
-                                      },
-                                      onTitleTap: () {
-                                        productController.collectionId.value =
-                                            collectionId;
-                                        productController.productSortBy.value =
-                                            "";
-                                        productController
-                                            .filterProductEnable.value = false;
-                                        productController.categoryFilter.value =
-                                            homeController
-                                                .homeGenderValue.value;
+                          //               await analytics.logEvent(
+                          //                 name: 'product_details_home_page',
+                          //                 parameters: <String, Object>{
+                          //                   'page_name':
+                          //                       'product_details_home_page',
+                          //                   'collection_id': collectionId,
+                          //                   'collection_name': title,
+                          //                   'product_id': productId.toString(),
+                          //                 },
+                          //               );
+                          //             },
+                          //             onTitleTap: () {
+                          //               productController.collectionId.value =
+                          //                   collectionId;
+                          //               productController.productSortBy.value =
+                          //                   "";
+                          //               productController
+                          //                   .filterProductEnable.value = false;
+                          //               productController.categoryFilter.value =
+                          //                   homeController
+                          //                       .homeGenderValue.value;
 
-                                        Get.to(
-                                          ProductViewScreen(
-                                            title: title,
-                                            genderName:
-                                                homeController.genderText.value,
-                                          ),
-                                        )?.then((_) {
-                                          SystemChrome.setSystemUIOverlayStyle(
-                                            const SystemUiOverlayStyle(
-                                              statusBarColor: whiteColor,
-                                              systemNavigationBarColor:
-                                                  whiteColor,
-                                            ),
-                                          );
-                                        });
-                                      },
-                                      onExploreAll: () async {
-                                        productController.collectionId.value =
-                                            collectionId;
-                                        productController.productSortBy.value =
-                                            "";
-                                        productController
-                                            .filterProductEnable.value = false;
-                                        productController.categoryFilter.value =
-                                            homeController
-                                                .homeGenderValue.value;
+                          //               Get.to(
+                          //                 ProductViewScreen(
+                          //                   title: title,
+                          //                   genderName:
+                          //                       homeController.genderText.value,
+                          //                 ),
+                          //               )?.then((_) {
+                          //                 SystemChrome.setSystemUIOverlayStyle(
+                          //                   const SystemUiOverlayStyle(
+                          //                     statusBarColor: whiteColor,
+                          //                     systemNavigationBarColor:
+                          //                         whiteColor,
+                          //                   ),
+                          //                 );
+                          //               });
+                          //             },
+                          //             onExploreAll: () async {
+                          //               productController.collectionId.value =
+                          //                   collectionId;
+                          //               productController.productSortBy.value =
+                          //                   "";
+                          //               productController
+                          //                   .filterProductEnable.value = false;
+                          //               productController.categoryFilter.value =
+                          //                   homeController
+                          //                       .homeGenderValue.value;
 
-                                        Get.to(
-                                          ProductViewScreen(
-                                            title: title,
-                                            genderName:
-                                                homeController.genderText.value,
-                                          ),
-                                        )?.then((_) {
-                                          SystemChrome.setSystemUIOverlayStyle(
-                                            const SystemUiOverlayStyle(
-                                              statusBarColor: whiteColor,
-                                              systemNavigationBarColor:
-                                                  whiteColor,
-                                            ),
-                                          );
-                                        });
+                          //               Get.to(
+                          //                 ProductViewScreen(
+                          //                   title: title,
+                          //                   genderName:
+                          //                       homeController.genderText.value,
+                          //                 ),
+                          //               )?.then((_) {
+                          //                 SystemChrome.setSystemUIOverlayStyle(
+                          //                   const SystemUiOverlayStyle(
+                          //                     statusBarColor: whiteColor,
+                          //                     systemNavigationBarColor:
+                          //                         whiteColor,
+                          //                   ),
+                          //                 );
+                          //               });
 
-                                        await analytics.logEvent(
-                                          name: 'homepage_productExploreAll',
-                                          parameters: <String, Object>{
-                                            'page_name':
-                                                'homepage_productExploreAll',
-                                            'collection_id': collectionId,
-                                            'collection_name': title,
-                                          },
-                                        );
-                                      },
-                                      seed: (productController
-                                                  .productsShuffleSeed ??
-                                              DateTime.now()
-                                                  .millisecondsSinceEpoch) +
-                                          collectionId,
-                                    );
-                                  },
-                                ),
+                          //               await analytics.logEvent(
+                          //                 name: 'homepage_productExploreAll',
+                          //                 parameters: <String, Object>{
+                          //                   'page_name':
+                          //                       'homepage_productExploreAll',
+                          //                   'collection_id': collectionId,
+                          //                   'collection_name': title,
+                          //                 },
+                          //               );
+                          //             },
+                          //             seed: (productController
+                          //                         .productsShuffleSeed ??
+                          //                     DateTime.now()
+                          //                         .millisecondsSinceEpoch) +
+                          //                 collectionId,
+                          //           );
+                          //         },
+                          //       ),
 
-                                // ✅ Loading indicator for pagination
-                                if (_isLoadingMoreCollections)
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical:
-                                            24.sp), // ✅ Consistent spacing
-                                    child: const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            );
-                          }),
+                          //       // ✅ Loading indicator for pagination
+                          //       if (_isLoadingMoreCollections)
+                          //         Padding(
+                          //           padding: EdgeInsets.symmetric(
+                          //               vertical:
+                          //                   24.sp), // ✅ Consistent spacing
+                          //           child: const Center(
+                          //             child: CircularProgressIndicator(
+                          //               strokeWidth: 2,
+                          //               color: Colors.black,
+                          //             ),
+                          //           ),
+                          //         ),
+                          //     ],
+                          //   );
+                          // }),
                           SizedBox(
                             height: 10.sp,
                           ),
