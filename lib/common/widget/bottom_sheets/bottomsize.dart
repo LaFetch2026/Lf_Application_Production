@@ -111,7 +111,12 @@ class BottomSizeState extends State<BottomSize> {
               padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
               child: widget.sizeList
                       .where((element) =>
-                          int.parse(element['stocks'].toString()) > 0)
+                          int.parse((element['inventories']?[0]
+                                      ?['availableStock'] ??
+                                  element['availableStock'] ??
+                                  element['stock'])
+                              .toString()) >
+                          0)
                       .toList()
                       .isNotEmpty
                   ? Wrap(
@@ -121,7 +126,10 @@ class BottomSizeState extends State<BottomSize> {
                       runAlignment: WrapAlignment.spaceEvenly,
                       children: [
                           for (var i in widget.sizeList.where((element) =>
-                              int.parse(element['stocks'].toString()) > 0))
+                              int.parse((element['availableStock'] ??
+                                      element['stock'])
+                                  .toString()) >
+                              0))
                             Column(
                               children: [
                                 GestureDetector(
@@ -167,13 +175,18 @@ class BottomSizeState extends State<BottomSize> {
                                         ),
                                       )),
                                 ),
-                                int.parse(i['stocks'].toString()) > 1
+                                int.parse((i['inventories']?[0]
+                                                    ?['availableStock'] ??
+                                                i['availableStock'] ??
+                                                i['stock'])
+                                            .toString()) >
+                                        1
                                     ? const SizedBox()
                                     : Padding(
                                         padding: EdgeInsets.only(top: 8.0.sp),
                                         child: AppText(
                                           text:
-                                              '${i['stocks'].toString()} left',
+                                              '${(i['inventories']?[0]?['availableStock'] ?? i['availableStock'] ?? i['stock']).toString()} left',
                                           fontFamily: "Clash Display Regular",
                                           fontWeight: FontWeight.w400,
                                           color: lightPurpleColor,

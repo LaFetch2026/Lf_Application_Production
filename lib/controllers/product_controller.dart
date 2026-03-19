@@ -464,7 +464,9 @@ class ProductController extends BaseController {
     final variant = getSelectedVariant();
     if (variant == null) return 0;
 
-    final stocks = variant['stocks'];
+    final stocks = variant['inventories']?[0]?['availableStock'] ??
+        variant['availableStock'] ??
+        variant['stock'];
     return int.tryParse(stocks?.toString() ?? '0') ?? 0;
   }
 
@@ -543,6 +545,10 @@ class ProductController extends BaseController {
       return false;
     }
 
+    if (!hasColors) {
+      errorColorMsg.value = "";
+    }
+
     // ✅ Get selected variant
     final variant = getSelectedVariant();
     if (variant == null) {
@@ -553,7 +559,13 @@ class ProductController extends BaseController {
     }
 
     // ✅ Check stock
-    final stock = int.tryParse(variant['stocks']?.toString() ?? '0') ?? 0;
+    final stock = int.tryParse((variant['inventories']?[0]?['availableStock'] ??
+                    variant['availableStock'] ??
+                    variant['stocks'] ??
+                    variant['stock'])
+                ?.toString() ??
+            '0') ??
+        0;
     if (stock <= 0) {
       errorMsg.value = "Selected variant is out of stock";
       return false;
@@ -717,10 +729,11 @@ class ProductController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
 
-    final uri = Uri.parse("${ApiConstants.baseUrl}/collection-with-products")
+    final uri = Uri.parse(
+            "${ApiConstants.baseUrl}/product-collection/collection-with-products")
         .replace(queryParameters: {
+      'displayFor': 'homepage',
       if (withLimit) 'limit': 'true',
-      'gender': gender.toString(),
     });
 
     try {
@@ -741,19 +754,17 @@ class ProductController extends BaseController {
       if (response.statusCode == 200) {
         final body = json.decode(response.body);
 
-        final collections = CollectionUtils.parseCollections(body['data']);
+        // final collections = CollectionUtils.parseCollections(body['data']);
+        final rawData = body['data'];
+        final collectionsList =
+            rawData is Map ? rawData['collections'] : rawData;
+        final collections = CollectionUtils.parseCollections(collectionsList);
 
-        final validCollections =
-            CollectionUtils.filterByGender(collections, displayFor);
-
-        homeProductList.assignAll(validCollections);
-
-        tagname.value =
-            validCollections.isNotEmpty ? validCollections.first.name : '';
-
+        homeProductList.assignAll(collections);
+        tagname.value = collections.isNotEmpty ? collections.first.name : '';
         await CacheManager.save(
           key: cacheKey,
-          data: validCollections.map((e) => e.toJson()).toList(),
+          data: collections.map((e) => e.toJson()).toList(),
         );
 
         // ✅ Mark as loaded after successful API call
@@ -761,7 +772,8 @@ class ProductController extends BaseController {
         print("✅ UI updated for gender=$gender");
       } else {
         print("⚠️ getHomeProduct API error: Status ${response.statusCode}");
-        print("⚠️ Response: ${response.body.substring(0, min(response.body.length, 200))}");
+        print(
+            "⚠️ Response: ${response.body.substring(0, min(response.body.length, 200))}");
       }
     } catch (e) {
       if (_activeGenderRequest == gender) {
@@ -1070,7 +1082,7 @@ class ProductController extends BaseController {
           }
         }
 
-        final inventory = v["inventory"];
+        final inventory = v["inventories"]?[0];
         final stock =
             inventory != null ? (inventory["availableStock"] ?? 0) : 0;
         final reservedStock =
@@ -2212,7 +2224,8 @@ class ProductController extends BaseController {
       'superCatId': superCatId.toString(),
       if (catId != null && catId > 0) 'catId': catId.toString(),
       if (subCatId != null && subCatId > 0) 'subCatId': subCatId.toString(),
-      if (collectionId != null && collectionId > 0) 'collectionId': collectionId.toString(),
+      if (collectionId != null && collectionId > 0)
+        'collectionId': collectionId.toString(),
       if (brandId != null && brandId > 0) 'brandId': brandId.toString(),
     };
 

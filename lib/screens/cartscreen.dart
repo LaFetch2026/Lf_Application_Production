@@ -56,7 +56,10 @@ class CartScreen extends StatefulWidget {
 }
 
 class CartScreenState extends State<CartScreen> {
-  final controller = Get.put(CartController());
+  // final controller = Get.put(CartController());
+  final controller = Get.isRegistered<CartController>()
+      ? Get.find<CartController>()
+      : Get.put(CartController());
   final profileController = Get.put(ProfileController());
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
@@ -268,8 +271,8 @@ class CartScreenState extends State<CartScreen> {
       print("   ✅ Cart total valid");
 
       // Meta: InitiateCheckout
-      MetaEventService.instance.logInitiateCheckout(totalPrice: totalAmount.toDouble());
-
+      MetaEventService.instance
+          .logInitiateCheckout(totalPrice: totalAmount.toDouble());
 
       // ✅ Step 4: Build items array with GST calculations
       print("\n📦 STEP 4: Building Items Array");
@@ -823,10 +826,12 @@ class CartScreenState extends State<CartScreen> {
       } else {
         // Logged in user - load cart from server
         debugPrint("👤 Logged in user, loading server cart");
-        if (widget.backgroundcolor == whiteColor) {
-          controller.getCartData();
+
+        if (controller.orderList.isEmpty) {
+          controller.getCartData(forceRefresh: true);
         } else {
-          // controller.getExpressCartData();
+          debugPrint(
+              "✅ Cart already has ${controller.orderList.length} items, skipping fetch");
         }
       }
 

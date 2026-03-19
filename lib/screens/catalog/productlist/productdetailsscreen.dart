@@ -697,7 +697,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       return;
     }
     final variantId = variant['id'] as int;
-    final stock = int.tryParse(variant['stocks']?.toString() ?? '0') ?? 0;
+    final stock = int.tryParse((variant['inventories']?[0]?['availableStock'] ??
+                    variant['availableStock'] ??
+                    variant['stocks'] ??
+                    variant['stock'])
+                ?.toString() ??
+            '0') ??
+        0;
     if (stock <= 0) {
       showAppSnackBar('Selected variant is out of stock',
           type: SnackBarType.error);
@@ -959,7 +965,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       0,
                       (sum, v) =>
                           sum +
-                          (int.tryParse(v['stocks']?.toString() ?? '0') ?? 0));
+                          (int.tryParse((v['inventories']?[0]
+                                              ?['availableStock'] ??
+                                          v['availableStock'] ??
+                                          v['stock'])
+                                      ?.toString() ??
+                                  '0') ??
+                              0));
 
               final isOutOfStock = sizeStock <= 0;
               final isFreeSize = size.toUpperCase() == 'FREE SIZE';
@@ -967,7 +979,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
               return Opacity(
                 opacity: isOutOfStock ? 0.4 : 1.0,
                 child: IgnorePointer(
-                  ignoring: isOutOfStock,
+                  ignoring: false,
                   child: Column(
                     children: [
                       GestureDetector(
@@ -1067,15 +1079,20 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         v["color"] == color);
               }
 
-              final stock =
-                  int.tryParse(variant?['stocks']?.toString() ?? '0') ?? 0;
+              final stock = int.tryParse((variant?['inventories']?[0]
+                                  ?['availableStock'] ??
+                              variant?['availableStock'] ??
+                              variant?['stock'])
+                          ?.toString() ??
+                      '0') ??
+                  0;
 
               final isOutOfStock = stock <= 0;
 
               return Opacity(
                 opacity: isOutOfStock ? 0.4 : 1.0,
                 child: IgnorePointer(
-                  ignoring: isOutOfStock,
+                  ignoring: false,
                   child: GestureDetector(
                     onTap: () {
                       productController.selectedColor.value = color;
@@ -1405,9 +1422,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             ));
                       },
                       onPressed: (boardId) async {
-                        final double wishlistPrice = ((productController.productDetails['lfMsp'] ?? 0) as num).toDouble();
+                        final double wishlistPrice =
+                            ((productController.productDetails['lfMsp'] ?? 0)
+                                    as num)
+                                .toDouble();
                         await wishlistController.addProductToBoard(
-                            boardId, productId, price: wishlistPrice);
+                            boardId, productId,
+                            price: wishlistPrice);
 
                         Get.back(); // Close bottom sheet
 
@@ -2230,196 +2251,201 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 child: SizedBox(
                                   height: 44.sp,
                                   child: TextField(
-                                      controller:
-                                          productController.pincodeController,
-                                      keyboardType: TextInputType.number,
-                                      maxLength: 6,
-                                      decoration: InputDecoration(
-                                        counterText: "",
-                                        filled: true,
-                                        fillColor: whiteColor,
-                                        contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 12.sp),
-                                        hintText: "Enter pincode",
-                                        hintStyle: TextStyle(
-                                          fontSize: 14.sp,
-                                          color: textHintColor,
-                                          fontFamily: "Clash Display",
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: borderColor),
-                                          borderRadius:
-                                              BorderRadius.circular(4.sp),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: borderColor),
-                                          borderRadius:
-                                              BorderRadius.circular(4.sp),
-                                        ),
-
-                                        // ✅ CHECK BUTTON
-
-                                        suffixIcon: Obx(
-                                          () => TextButton(
-                                            onPressed: () async {
-                                              final pin = productController
-                                                  .pincodeController.text
-                                                  .trim();
-
-                                              print("👉 CLICKED CHECK BUTTON");
-
-                                              // PIN VALIDATION
-                                              if (!productController
-                                                  .checkPinvalidation(pin)) {
-                                                productController
-                                                        .serviceabilityMessage
-                                                        .value =
-                                                    "Enter valid pincode";
-                                                return;
-                                              }
-
-                                              // VARIANT VALIDATION - use getSelectedVariant()
-                                              final variant = productController
-                                                  .getSelectedVariant();
-
-                                              if (variant == null) {
-                                                // Check what needs to be selected
-                                                final hasSizes = productController
-                                                    .sizeInventoryList.isNotEmpty;
-                                                final hasColors = productController
-                                                    .colorInventoryList.isNotEmpty;
-                                                final sizeSelected = productController
-                                                    .selectedSize.value.isNotEmpty;
-                                                final colorSelected = productController
-                                                    .selectedColor.value.isNotEmpty;
-
-                                                String errorMsg = "Please select ";
-                                                if (hasSizes && !sizeSelected) {
-                                                  errorMsg += "size";
-                                                  if (hasColors) errorMsg += " and color";
-                                                } else if (hasColors && !colorSelected) {
-                                                  errorMsg += "color";
-                                                } else {
-                                                  errorMsg = "Product variant not available";
-                                                }
-
-                                                productController
-                                                        .serviceabilityMessage
-                                                        .value = errorMsg;
-                                                return;
-                                              }
-
-                                              final variantId = variant['id'] as int? ?? 0;
-                                              if (variantId == 0) {
-                                                productController
-                                                        .serviceabilityMessage
-                                                        .value =
-                                                    "Invalid variant selected";
-                                                return;
-                                              }
-
-                                              // RESET VALUES
-                                              productController
-                                                  .serviceabilityMessage
-                                                  .value = "";
-                                              productController
-                                                  .isServiceable.value = false;
-                                              productController
-                                                  .courierName.value = "";
-                                              productController
-                                                  .estimatedDate.value = "";
-                                              productController
-                                                  .estimatedDays.value = "";
-
-                                              print(
-                                                  "📦 Variant ID = $variantId");
-
-                                              final result =
-                                                  await productController
-                                                      .checkServiceability(
-                                                variantId: variantId,
-                                                deliveryPostalCode: pin,
-                                              );
-
-                                              if (result != null &&
-                                                  result["data"] is Map) {
-                                                final data = result["data"];
-
-                                                productController.courierName
-                                                    .value = data["courier"]
-                                                        ?.toString() ??
-                                                    "";
-
-                                                productController
-                                                        .estimatedDate.value =
-                                                    data["estimatedDate"]
-                                                            ?.toString() ??
-                                                        "";
-
-                                                productController
-                                                        .estimatedDays.value =
-                                                    data["estimatedDays"]
-                                                            ?.toString() ??
-                                                        "";
-
-                                                productController
-                                                    .isServiceable.value = true;
-
-                                                productController
-                                                        .serviceabilityMessage
-                                                        .value =
-                                                    "Delivery by ${productController.estimatedDate.value} "
-                                                    "(${productController.estimatedDays.value} Days)";
-                                              } else {
-                                                productController
-                                                        .serviceabilityMessage
-                                                        .value =
-                                                    "Service not available for this pincode";
-                                              }
-
-                                              FocusScope.of(context).unfocus();
-                                            },
-                                            child: productController
-                                                    .isEstimateDate.value
-                                                ? const SizedBox(
-                                                    height: 16,
-                                                    width: 16,
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                            strokeWidth: 2),
-                                                  )
-                                                : Container(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 12.sp,
-                                                            vertical: 8.sp),
-                                                    decoration: BoxDecoration(
-                                                      color: blackColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              4.sp),
-                                                    ),
-                                                    child: const AppSpacingText(
-                                                      text: "CHECK",
-                                                      fontFamily:
-                                                          "Clash Display",
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: whiteColor,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                          ),
-                                        ),
-                                      ),
-                                      style: TextStyle(
-                                        color: blackColor,
-                                        fontSize: 16.sp,
+                                    controller:
+                                        productController.pincodeController,
+                                    keyboardType: TextInputType.number,
+                                    maxLength: 6,
+                                    decoration: InputDecoration(
+                                      counterText: "",
+                                      filled: true,
+                                      fillColor: whiteColor,
+                                      contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 12.sp),
+                                      hintText: "Enter pincode",
+                                      hintStyle: TextStyle(
+                                        fontSize: 14.sp,
+                                        color: textHintColor,
                                         fontFamily: "Clash Display",
                                       ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: borderColor),
+                                        borderRadius:
+                                            BorderRadius.circular(4.sp),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: borderColor),
+                                        borderRadius:
+                                            BorderRadius.circular(4.sp),
+                                      ),
+
+                                      // ✅ CHECK BUTTON
+
+                                      suffixIcon: Obx(
+                                        () => TextButton(
+                                          onPressed: () async {
+                                            final pin = productController
+                                                .pincodeController.text
+                                                .trim();
+
+                                            print("👉 CLICKED CHECK BUTTON");
+
+                                            // PIN VALIDATION
+                                            if (!productController
+                                                .checkPinvalidation(pin)) {
+                                              productController
+                                                      .serviceabilityMessage
+                                                      .value =
+                                                  "Enter valid pincode";
+                                              return;
+                                            }
+
+                                            // VARIANT VALIDATION - use getSelectedVariant()
+                                            final variant = productController
+                                                .getSelectedVariant();
+
+                                            if (variant == null) {
+                                              // Check what needs to be selected
+                                              final hasSizes = productController
+                                                  .sizeInventoryList.isNotEmpty;
+                                              final hasColors =
+                                                  productController
+                                                      .colorInventoryList
+                                                      .isNotEmpty;
+                                              final sizeSelected =
+                                                  productController.selectedSize
+                                                      .value.isNotEmpty;
+                                              final colorSelected =
+                                                  productController
+                                                      .selectedColor
+                                                      .value
+                                                      .isNotEmpty;
+
+                                              String errorMsg =
+                                                  "Please select ";
+                                              if (hasSizes && !sizeSelected) {
+                                                errorMsg += "size";
+                                                if (hasColors)
+                                                  errorMsg += " and color";
+                                              } else if (hasColors &&
+                                                  !colorSelected) {
+                                                errorMsg += "color";
+                                              } else {
+                                                errorMsg =
+                                                    "Product variant not available";
+                                              }
+
+                                              productController
+                                                  .serviceabilityMessage
+                                                  .value = errorMsg;
+                                              return;
+                                            }
+
+                                            final variantId =
+                                                variant['id'] as int? ?? 0;
+                                            if (variantId == 0) {
+                                              productController
+                                                      .serviceabilityMessage
+                                                      .value =
+                                                  "Invalid variant selected";
+                                              return;
+                                            }
+
+                                            // RESET VALUES
+                                            productController
+                                                .serviceabilityMessage
+                                                .value = "";
+                                            productController
+                                                .isServiceable.value = false;
+                                            productController
+                                                .courierName.value = "";
+                                            productController
+                                                .estimatedDate.value = "";
+                                            productController
+                                                .estimatedDays.value = "";
+
+                                            print("📦 Variant ID = $variantId");
+
+                                            final result =
+                                                await productController
+                                                    .checkServiceability(
+                                              variantId: variantId,
+                                              deliveryPostalCode: pin,
+                                            );
+
+                                            if (result != null &&
+                                                result["data"] is Map) {
+                                              final data = result["data"];
+
+                                              productController
+                                                      .courierName.value =
+                                                  data["courier"]?.toString() ??
+                                                      "";
+
+                                              productController.estimatedDate
+                                                  .value = data["estimatedDate"]
+                                                      ?.toString() ??
+                                                  "";
+
+                                              productController.estimatedDays
+                                                  .value = data["estimatedDays"]
+                                                      ?.toString() ??
+                                                  "";
+
+                                              productController
+                                                  .isServiceable.value = true;
+
+                                              productController
+                                                      .serviceabilityMessage
+                                                      .value =
+                                                  "Delivery by ${productController.estimatedDate.value} "
+                                                  "(${productController.estimatedDays.value} Days)";
+                                            } else {
+                                              productController
+                                                      .serviceabilityMessage
+                                                      .value =
+                                                  "Service not available for this pincode";
+                                            }
+
+                                            FocusScope.of(context).unfocus();
+                                          },
+                                          child: productController
+                                                  .isEstimateDate.value
+                                              ? const SizedBox(
+                                                  height: 16,
+                                                  width: 16,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                          strokeWidth: 2),
+                                                )
+                                              : Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 12.sp,
+                                                      vertical: 8.sp),
+                                                  decoration: BoxDecoration(
+                                                    color: blackColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            4.sp),
+                                                  ),
+                                                  child: const AppSpacingText(
+                                                    text: "CHECK",
+                                                    fontFamily: "Clash Display",
+                                                    fontWeight: FontWeight.w600,
+                                                    color: whiteColor,
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
                                     ),
+                                    style: TextStyle(
+                                      color: blackColor,
+                                      fontSize: 16.sp,
+                                      fontFamily: "Clash Display",
+                                    ),
+                                  ),
                                 ),
                               ),
 
@@ -2529,31 +2555,90 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         firstText: "Go to BAG".toUpperCase(),
                         secondText: "Buy Now".toUpperCase(),
                         onPressedFirst: () async {
-                          final pid = (productController.productDetails["id"] ??
-                                  widget.productId)
-                              .toString();
-                          final price = _displayPrice().toDouble();
+                          if (widget.type == "add") {
+                            if (productController.checkDetailsValidation()) {
+                              final variant =
+                                  productController.getSelectedVariant();
+                              if (variant == null) {
+                                showAppSnackBar('Please select size and color',
+                                    type: SnackBarType.error);
+                                return;
+                              }
+                              final variantId = variant['id'] as int;
+                              final double variantPrice = ((variant['lfMsp'] ??
+                                      variant['price'] ??
+                                      0) as num)
+                                  .toDouble();
 
-                          Get.to(CartScreen(
-                                  backgroundcolor: widget.backgroundcolor))
-                              ?.then((_) {
-                            productController.getProductById(widget.productId);
-                          });
+                              final success =
+                                  await cartController.addToCartUniversal(
+                                quantity: _selectedQuantity,
+                                page: "addproduct",
+                                variantId: variantId,
+                                productId: widget.productId,
+                                expressValue: (widget.expressValue ?? 0),
+                                type: 1,
+                                backColor: widget.backgroundcolor,
+                                oldInventoryId: variantId,
+                                price: variantPrice,
+                              );
 
-                          await analytics.logEvent(
-                            name: 'productDetails_btnGotocart',
-                            parameters: {
-                              'page_name': 'productDetails_btnGotocart'
-                            },
-                          );
+                              if (!success) return; // ✅ Stop if failed
 
-                          productController.addToCart.value = false;
+                              setState(() {
+                                _selectedQuantity = 1;
+                              });
 
-                          _scrollController.animateTo(
-                            MediaQuery.of(context).size.height / 2.sp + 150.sp,
-                            duration: const Duration(seconds: 1),
-                            curve: Curves.easeInOut,
-                          );
+                              await analytics.logEvent(
+                                name: 'productDetails_btnaddtocart',
+                                parameters: {
+                                  'page_name': 'productDetails_btnaddtocart'
+                                },
+                              );
+
+                              await Future.delayed(
+                                  const Duration(milliseconds: 300));
+                              Get.to(CartScreen(
+                                      backgroundcolor: widget.backgroundcolor))
+                                  ?.then((_) {
+                                productController
+                                    .getProductById(widget.productId);
+                              });
+                            }
+                          } else {
+                            // move to bag (wishlist flow) - unchanged
+                            if (productController.checkDetailsValidation()) {
+                              final variant =
+                                  productController.getSelectedVariant();
+                              if (variant == null) {
+                                showAppSnackBar('Please select size and color',
+                                    type: SnackBarType.error);
+                                return;
+                              }
+                              final variantId = variant['id'] as int;
+                              wishlistController.callMovetoCart(
+                                widget.boardId.toString(),
+                                widget.wishlistProductId.toString(),
+                                variantId.toString(),
+                                _selectedQuantity,
+                              );
+                              setState(() {
+                                _selectedQuantity = 1;
+                              });
+                              await analytics.logEvent(
+                                name: 'productDetails_btnaddtocart',
+                                parameters: {
+                                  'page_name': 'productDetails_btnaddtocart'
+                                },
+                              );
+                              Get.to(CartScreen(
+                                      backgroundcolor: widget.backgroundcolor))
+                                  ?.then((_) {
+                                productController
+                                    .getProductById(widget.productId);
+                              });
+                            }
+                          }
                         },
                         onPressedSecond: () async {
                           await _onBuyNowPressed(isCartFlow: true);
@@ -2586,7 +2671,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               }
 
                               final variantId = variant['id'] as int;
-                              final double variantPrice = ((variant['lfMsp'] ?? variant['price'] ?? 0) as num).toDouble();
+                              final double variantPrice = ((variant['lfMsp'] ??
+                                      variant['price'] ??
+                                      0) as num)
+                                  .toDouble();
 
                               await cartController.addToCartUniversal(
                                 quantity: _selectedQuantity,
@@ -2611,6 +2699,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   'page_name': 'productDetails_btnaddtocart'
                                 },
                               );
+
+                              await Future.delayed(
+                                  const Duration(milliseconds: 500));
 
                               // ✅ Navigate to cart screen immediately after adding
                               Get.to(CartScreen(
@@ -2954,8 +3045,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       ],
     );
   }
-
-
 
 // Add this Widget method to your ProductDetailsScreenState class
 

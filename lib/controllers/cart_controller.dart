@@ -75,6 +75,7 @@ class CartController extends BaseController {
     try {
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getInt('userId');
+      print("👤 userId in getCartData: $userId");
 
       if (userId == null) {
         _clearCartUi();
@@ -109,6 +110,7 @@ class CartController extends BaseController {
 
       Map<String, dynamic>? decoded;
       for (final uri in candidates) {
+        print("🌐 Trying cart URL: $uri");
         final resp = await client.get(uri);
         final body = resp.body.trim();
         final looksLikeHtml = body.startsWith('<') ||
@@ -126,23 +128,51 @@ class CartController extends BaseController {
         }
       }
 
+      print("🔍 decoded is null: ${decoded == null}");
       if (decoded == null) {
         _clearCartUi();
         return;
       }
 
-      final dynamic data =
+      // final dynamic data =
+      //     (decoded is Map ? decoded['data'] : decoded) ?? decoded;
+
+      // final List<Map<String, dynamic>> rows = () {
+      //   if (data is List)
+      //     return data
+      //         .whereType<Map>()
+      //         .map((e) => Map<String, dynamic>.from(e))
+      //         .toList();
+      //   if (data is Map) return [Map<String, dynamic>.from(data)];
+      //   return <Map<String, dynamic>>[];
+      // }();
+
+      final dynamic rawData =
           (decoded is Map ? decoded['data'] : decoded) ?? decoded;
 
+// ✅ Handle nested structure: data.items OR data as list OR data as flat list
       final List<Map<String, dynamic>> rows = () {
-        if (data is List)
-          return data
+        // New API: { data: { cart: {...}, items: [...] } }
+        if (rawData is Map && rawData['items'] is List) {
+          return (rawData['items'] as List)
               .whereType<Map>()
               .map((e) => Map<String, dynamic>.from(e))
               .toList();
-        if (data is Map) return [Map<String, dynamic>.from(data)];
+        }
+        // Old API: { data: [...] }
+        if (rawData is List) {
+          return rawData
+              .whereType<Map>()
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList();
+        }
+        // Single item: { data: {...} }
+        if (rawData is Map) return [Map<String, dynamic>.from(rawData)];
         return <Map<String, dynamic>>[];
       }();
+
+// ✅ Also extract cart-level totals if available
+      final cartMeta = (rawData is Map ? rawData['cart'] : null) as Map?;
 
       List<Map<String, dynamic>> normalized = rows.map((m) {
         final prod = (m['product'] ?? const {}) as Map;
@@ -240,6 +270,8 @@ class CartController extends BaseController {
           "status": m['status'],
         };
       }).toList();
+      print("🔍 rows count: ${rows.length}");
+      print("🔍 normalized after filter: ${normalized.length}");
 
       // ⭐ Filter invalid items
       normalized = normalized.where((row) {
@@ -385,8 +417,7 @@ class CartController extends BaseController {
   }
 
   // -------------------- ADD TO CART --------------------
-// -------------------- ADD TO CART (FIXED) --------------------
-  Future<void> callAddtoCart(
+  Future<bool> callAddtoCart(
     int quantity,
     String page,
     int variantId,
@@ -399,106 +430,81 @@ class CartController extends BaseController {
   }) async {
     if (page == "quantity" || page == "size") showLoading();
     isExpress.value = true;
-
     try {
       final client = _ensureClient();
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getInt('userId');
-
       if (userId == null) {
         getSnackBar("User not found. Please log in.");
-        return;
+        return false;
       }
 
-      // ======================================================
-      // 💥 FIX: Resolve final variant using ProductController
-      // ======================================================
       int finalVariantId = variantId;
-
       final productController = Get.isRegistered<ProductController>()
           ? Get.find<ProductController>()
           : Get.put(ProductController());
-
-      // Try resolving variant from selection
       final selectedVariant = productController.getSelectedVariant();
-
       if (finalVariantId == 0 && selectedVariant != null) {
         finalVariantId = selectedVariant["id"];
         print("⚠️ Auto-fix: Using selected variant → $finalVariantId");
       }
-
-      // If STILL ZERO → cannot proceed
       if (finalVariantId == 0) {
         print("❌ ERROR: variantId is still 0 → Add to cart blocked");
         getSnackBar("Please select size or color first.");
-        return;
+        return false;
       }
-
       print("🧩 FINAL VARIANT ID → $finalVariantId");
 
-      // ======================================================
-      // 🛰 Prepare Payload
-      // ======================================================
       final payload = {
         "userId": userId,
         "productId": productId,
         "variantId": finalVariantId,
         "quantity": quantity,
+        "cartType": "ECOM"
       };
-
       final url = Uri.parse("${ApiConstants.baseUrl}/add-to-cart");
-
       print("🛰️ POST $url");
       print("➡️ Payload: $payload");
 
-      // ======================================================
-      // 📡 SEND API REQUEST
-      // ======================================================
       final resp = await client.post(
         url,
         headers: {"Content-Type": "application/json"},
         body: json.encode(payload),
       );
-
       print("🛰️ POST status: ${resp.statusCode}");
       final bodyText = resp.body.trim();
 
-      // Handle failure
       if (resp.statusCode != 200 && resp.statusCode != 201) {
         print("❌ Add-to-cart failed: ${resp.statusCode}");
         print(bodyText);
-
-        if (resp.statusCode == 500 &&
-            bodyText.contains("carts_variantId_fkey")) {
-          getSnackBar("Invalid variant selected.");
-        } else {
+        try {
+          final errBody = json.decode(bodyText);
+          final msg = errBody['message']?.toString() ?? 'Add to cart failed';
+          getSnackBar(msg);
+        } catch (_) {
           getSnackBar("Add to cart failed");
         }
-        return;
+        return false;
       }
 
       if (bodyText.startsWith('<')) {
         getSnackBar("Unexpected response from server");
-        return;
+        return false;
       }
 
-      // Success handling
       print("🛒 Added to cart successfully!");
       getSnackBar("Added to cart");
       MetaEventService.instance.logAddToCart(
         contentId: productId.toString(),
         price: price,
       );
-
-      // ✅ Invalidate cart cache to fetch fresh data
       await CacheManager.invalidateCartCache(userId: userId);
-
-      if (backColor == whiteColor) {
-        await getCartData();
-      }
+      await getCartData(forceRefresh: true);
+      return true;
     } catch (e) {
       print("❌ Exception in callAddtoCart: $e");
       getSnackBar("Something went wrong.");
+      return false;
     } finally {
       if (page == "quantity" || page == "size") hideLoading();
       isExpress.value = false;
@@ -822,8 +828,9 @@ class CartController extends BaseController {
     }
   }
 
-  /// Wrapper for add to cart that handles both guest and logged-in users
-  Future<void> addToCartUniversal({
+  // Wrapper for add to cart that handles both guest and logged-in users
+
+  Future<bool> addToCartUniversal({
     required int quantity,
     required String page,
     required int variantId,
@@ -834,49 +841,37 @@ class CartController extends BaseController {
     required int oldInventoryId,
     double price = 0.0,
   }) async {
-    // Check if user is guest
     final isGuest = await isGuestUser();
 
     if (isGuest) {
-      // Add to guest cart (local storage)
       print("🎭 User is guest, adding to local cart");
-
       if (page == "quantity" || page == "size") showLoading();
-
       try {
-        // Validate variant - use a local variable
         int finalVariantId = variantId;
-
         if (finalVariantId == 0) {
           final productController = Get.isRegistered<ProductController>()
               ? Get.find<ProductController>()
               : Get.put(ProductController());
-
           final selectedVariant = productController.getSelectedVariant();
           if (selectedVariant != null) {
             finalVariantId = selectedVariant["id"];
           } else {
             getSnackBar("Please select size or color first.");
-            return;
+            return false;
           }
         }
 
-        // Get product details from ProductController to store in guest cart
         final productController = Get.isRegistered<ProductController>()
             ? Get.find<ProductController>()
             : null;
-
         Map<String, dynamic>? productDetails;
         Map<String, dynamic>? variantDetails;
 
         if (productController != null &&
             productController.productDetails.isNotEmpty) {
           try {
-            // Get current product data - convert through JSON to ensure mutable map
             final currentProduct = Map<String, dynamic>.from(
                 json.decode(json.encode(productController.productDetails)));
-
-            // Extract essential product info
             productDetails = {
               'id': currentProduct['id'],
               'title': currentProduct['title'] ?? '',
@@ -884,22 +879,16 @@ class CartController extends BaseController {
               'brandId': currentProduct['brandId'],
               'brand': currentProduct['brand'],
             };
-
-            // Find and extract variant info
             final variants = currentProduct['variants'] as List? ?? [];
             final variant = variants.firstWhere(
               (v) => v['id'] == finalVariantId,
               orElse: () => null,
             );
-
             if (variant != null) {
-              // Store variant with price fallbacks from product level
-              // This ensures prices are available even when variant doesn't have them
               variantDetails = {
                 'id': variant['id'],
                 'size': variant['size'],
                 'color': variant['color'],
-                // Price fields: try variant first, fallback to product level
                 'lfMsp': variant['lfMsp'] ?? currentProduct['lfMsp'],
                 'price': variant['price'] ?? currentProduct['lfMsp'],
                 'mrp': variant['mrp'] ?? currentProduct['mrp'],
@@ -907,7 +896,6 @@ class CartController extends BaseController {
                     variant['compareAtPrice'] ?? currentProduct['mrp'],
                 'inventory': variant['inventory'],
               };
-
               print(
                   "💾 Storing variant for guest cart: id=${variant['id']}, lfMsp=${variantDetails!['lfMsp']}, price=${variantDetails['price']}, mrp=${variantDetails['mrp']}");
             }
@@ -923,13 +911,16 @@ class CartController extends BaseController {
           productDetails: productDetails,
           variantDetails: variantDetails,
         );
+        return true;
+      } catch (e) {
+        print("❌ Error in guest add to cart: $e");
+        return false;
       } finally {
         if (page == "quantity" || page == "size") hideLoading();
       }
     } else {
-      // User is logged in, use existing function
       print("👤 User is logged in, adding to server cart");
-      await callAddtoCart(
+      return await callAddtoCart(
         quantity,
         page,
         variantId,
