@@ -63,27 +63,26 @@ class SearchScreenController extends BaseController {
   }
 
   // ---- API: POST /product-search?key=<query> --------------------------------
+
   Future<void> getSearchData() async {
     final key = searchController.text.trim();
-
     if (key.isEmpty) {
       searchList.clear();
       searchText.value = "Type to search";
       return;
     }
-
     isSearching.value = true;
-
     try {
       final headers = await _headers();
-      final uri =
-          _buildUri(ApiConstants.baseUrl, 'filter-products', {'key': key, 'status': 'true'});
+
+      final uri = _buildUri(ApiConstants.baseUrl, 'filter-products', {
+        'key': key,
+        'status': 'true',
+      });
 
       final response = await http
           .post(uri, headers: headers)
           .timeout(const Duration(seconds: 20));
-
-      print('[SEARCH] ${response.statusCode} $uri');
 
       if (response.statusCode != 200 || !_isJson(response)) {
         searchList.clear();
@@ -101,17 +100,30 @@ class SearchScreenController extends BaseController {
         return;
       }
 
-      final List<Map<String, dynamic>> items =
-          (decoded is Map &&
-           decoded['data'] is Map &&
-           decoded['data']['products'] is List)
-              ? (decoded['data']['products'] as List)
-                  .whereType<Map>()
-                  .map((e) => e.map((k, v) => MapEntry(k.toString(), v)))
-                  .toList()
-              : <Map<String, dynamic>>[];
+      List<Map<String, dynamic>> items = [];
 
-      // Transform products to add display prices
+      if (decoded is Map) {
+        final data = decoded['data'];
+        if (data is List) {
+          items = data
+              .whereType<Map>()
+              .map((e) => e.map((k, v) => MapEntry(k.toString(), v)))
+              .toList();
+        } else if (data is Map && data['products'] is List) {
+          items = (data['products'] as List)
+              .whereType<Map>()
+              .map((e) => e.map((k, v) => MapEntry(k.toString(), v)))
+              .toList();
+        } else if (decoded['products'] is List) {
+          items = (decoded['products'] as List)
+              .whereType<Map>()
+              .map((e) => e.map((k, v) => MapEntry(k.toString(), v)))
+              .toList();
+        }
+      }
+
+      print('[SEARCH] parsed ${items.length} items');
+
       final transformed = items.map((p) {
         return ProductController.calculateDisplayPrices(p);
       }).toList();
@@ -144,7 +156,7 @@ class SearchScreenController extends BaseController {
     try {
       final headers = await _headers();
       final uri =
-          _buildUri(ApiConstants.baseUrl, 'product-suggestion', {'key': key});
+          _buildUri(ApiConstants.baseUrl, '/product-suggestion', {'key': key});
 
       final response = await http
           .post(uri, headers: headers)
@@ -166,16 +178,17 @@ class SearchScreenController extends BaseController {
       }
 
       // Parse response - data is array of objects with 'keyword' and 'count'
-      final List<Map<String, dynamic>> items = (decoded is Map && decoded['data'] is List)
-          ? (decoded['data'] as List)
-              .whereType<Map>()
-              .map((item) => {
-                    'keyword': item['keyword']?.toString() ?? '',
-                    'count': item['count'] ?? 0,
-                  })
-              .where((item) => (item['keyword'] as String).isNotEmpty)
-              .toList()
-          : <Map<String, dynamic>>[];
+      final List<Map<String, dynamic>> items =
+          (decoded is Map && decoded['data'] is List)
+              ? (decoded['data'] as List)
+                  .whereType<Map>()
+                  .map((item) => {
+                        'keyword': item['keyword']?.toString() ?? '',
+                        'count': item['count'] ?? 0,
+                      })
+                  .where((item) => (item['keyword'] as String).isNotEmpty)
+                  .toList()
+              : <Map<String, dynamic>>[];
 
       suggestions.assignAll(items);
     } on TimeoutException {
