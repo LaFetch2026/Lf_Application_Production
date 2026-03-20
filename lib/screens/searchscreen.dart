@@ -124,7 +124,6 @@ class SearchScreenState extends State<SearchScreen> {
       return;
     }
 
-    // Navigate to SearchResultsScreen with search results
     Get.to(() => SearchResultsScreen(
           searchQuery: q,
           searchResults: items,
@@ -424,7 +423,7 @@ class SearchScreenState extends State<SearchScreen> {
                   category['image']!,
                   height: 80.sp,
                   width: double.infinity,
-                  fit: BoxFit.fill,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
