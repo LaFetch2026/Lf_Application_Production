@@ -602,7 +602,7 @@ class LoginController extends BaseController {
 
       print("✅ Google Sign-In successful: ${firebaseUser.email}");
 
-      final String? googleIdToken = googleAuth.idToken; // ✅ Google OAuth token
+      final String? googleIdToken = googleAuth.idToken;
 
       if (googleIdToken == null || googleIdToken.isEmpty) {
         getSnackBar("Failed to get ID token");
@@ -691,6 +691,12 @@ class LoginController extends BaseController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final userData = data['data'];
+
+        print("🔍 Full userData from Google Sign-In: $userData");
+        print("🔍 userId: ${userData?['id']}");
+        print("🔍 token: ${userData?['token']}");
+
+        final userInfo = userData?['user'];
         final accessToken = userData?['token'];
 
         if (accessToken == null) {
@@ -704,8 +710,10 @@ class LoginController extends BaseController {
         await prefs.setBool('isLoggedIn', true);
         await prefs.setString('loginProvider', 'google');
         await prefs.setInt('userId', userData?['id'] ?? 0);
+        await prefs.setInt('userId', userInfo?['id'] ?? 0);
 
-        final userName = userData?['name'] ?? userData?['fullName'] ?? name;
+        // final userName = userData?['name'] ?? userData?['fullName'] ?? name;
+        final userName = userInfo?['fullName'] ?? userInfo?['name'] ?? name;
         final userEmail = userData?['email'] ?? email;
         final gender = userData?['gender'];
         final phone = userData?['phone'];
