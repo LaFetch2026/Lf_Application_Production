@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -74,6 +75,12 @@ class OrderController extends BaseController {
     required num tax,
     required num total,
     required String paymentMethod,
+    String? mode,
+    int? productId,
+    int? variantId,
+    int? quantity,
+    num? shippingCost,
+    String? couponCode,
   }) async {
     isPlacingOrder.value = true;
     apiError.value = "";
@@ -82,19 +89,30 @@ class OrderController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
 
     try {
-      final uri = Uri.parse("${ApiConstants.baseUrl}/initiate-payment");
+      final uri = Uri.parse("${ApiConstants.baseUrl}/checkout/initiate");
 
       // ✅ Build payload matching the API structure
-      final body = {
-        "userId": userId,
-        "shippingAddressId": shippingAddressId,
-        "items": items,
-        "totalMRP": totalMRP,
-        "couponDiscount": couponDiscount,
-        "tax": tax,
-        "total": total,
-        "paymentMethod": paymentMethod,
-      };
+      final body = mode != null 
+          ? {
+              "mode": mode,
+              if (productId != null) "productId": productId,
+              if (variantId != null) "variantId": variantId,
+              if (quantity != null) "quantity": quantity,
+              "shippingCost": shippingCost ?? 0,
+              if (couponCode != null && couponCode.isNotEmpty) "couponCode": couponCode,
+              "shippingAddressId": shippingAddressId,
+              "paymentMethod": paymentMethod,
+            }
+          : {
+              "userId": userId,
+              "shippingAddressId": shippingAddressId,
+              "items": items,
+              "totalMRP": totalMRP,
+              "couponDiscount": couponDiscount,
+              "tax": tax,
+              "total": total,
+              "paymentMethod": paymentMethod,
+            };
 
       print("📤 Initiating payment with body:");
       print(jsonEncode(body));
@@ -128,17 +146,24 @@ class OrderController extends BaseController {
         }
 
         final orderId = data["orderId"];
+        final checkoutSessionId = data["checkoutSessionId"];
         final providerOrderId = data["providerOrderId"];
         final paymentId = data["paymentId"];
 
-        if (orderId == null || providerOrderId == null) {
-          print("⚠️ Missing orderId or providerOrderId in response.");
+        if ((orderId == null && checkoutSessionId == null) || providerOrderId == null) {
+          print("⚠️ Missing checkoutSessionId/orderId or providerOrderId in response.");
           getSnackBar("Invalid payment response. Please try again.");
           return null;
         }
 
-        await prefs.setInt("orderId", orderId);
-        print("💾 Saved local orderId: $orderId");
+        if (orderId != null) {
+          await prefs.setInt("orderId", orderId);
+          print("💾 Saved local orderId: $orderId");
+        }
+        if (checkoutSessionId != null) {
+          await prefs.setString("checkoutSessionId", checkoutSessionId);
+          print("💾 Saved local checkoutSessionId: $checkoutSessionId");
+        }
 
         print(
             "✅ Payment initiated successfully with providerOrderId: $providerOrderId");
@@ -196,11 +221,11 @@ class OrderController extends BaseController {
       "productId": productId,
       "variantId": variantId,
       "quantity": quantity,
-      "unitPrice": unitPrice,
-      "discount": discount,
-      "total": total,
-      "tax": tax,
-      "gstAmount": gstAmount,
+      "unitPrice": unitPrice.round(),
+      "discount": discount.round(),
+      "total": total.round(),
+      "tax": tax.round(),
+      "gstAmount": gstAmount.round(),
       "hsnCode": hsnCode,
       "gstRate": gstRate,
       "statutoryGSTRate": statutoryGSTRate,
@@ -220,18 +245,21 @@ class OrderController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
 
     try {
-      // ✅ Get locally saved backend orderId (from initiatePayment)
+      // ✅ Get locally saved backend orderId or checkoutSessionId
       final localOrderId = prefs.getInt("orderId");
-      if (localOrderId == null) {
-        print("❌ Missing local orderId. Cannot place order.");
-        getSnackBar("Order ID missing. Please try again.");
+      final localCheckoutSessionId = prefs.getString("checkoutSessionId");
+
+      if (localOrderId == null && localCheckoutSessionId == null) {
+        print("❌ Missing local orderId and checkoutSessionId. Cannot place order.");
+        getSnackBar("Order session missing. Please try again.");
         return false;
       }
 
       final uri = Uri.parse("${ApiConstants.baseUrl}/place-order");
 
       final body = {
-        "orderId": localOrderId, // ← your backend order ID
+        if (localOrderId != null) "orderId": localOrderId,
+        if (localCheckoutSessionId != null) "checkoutSessionId": localCheckoutSessionId,
         "paymentInfo": {
           "providerOrderId": providerOrderId, // Razorpay Order ID
           "providerPaymentId": providerPaymentId, // Razorpay Payment ID
