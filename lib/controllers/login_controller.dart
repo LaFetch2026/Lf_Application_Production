@@ -125,7 +125,8 @@ class LoginController extends BaseController {
         await prefs.remove('pending_fcm_token');
         print('✅ FCM token sent to server after login');
       } else {
-        print('⚠️ FCM token send failed after login — will retry on next app start');
+        print(
+            '⚠️ FCM token send failed after login — will retry on next app start');
       }
     } catch (e) {
       print('⚠️ Failed to send FCM token after login: $e');
@@ -231,8 +232,10 @@ class LoginController extends BaseController {
         data = jsonDecode(response.body);
       } on FormatException {
         getSnackBar("Server error - please try again later");
-        final peekLength = response.body.length > 200 ? 200 : response.body.length;
-        print("⚠️ Non-JSON response from $endpoint: ${response.body.substring(0, peekLength)}");
+        final peekLength =
+            response.body.length > 200 ? 200 : response.body.length;
+        print(
+            "⚠️ Non-JSON response from $endpoint: ${response.body.substring(0, peekLength)}");
         return;
       }
 
@@ -284,7 +287,8 @@ class LoginController extends BaseController {
 
         if (isLoginFlow) {
           // For test login, use a dummy token
-          await setToken("test_review_token_${DateTime.now().millisecondsSinceEpoch}");
+          await setToken(
+              "test_review_token_${DateTime.now().millisecondsSinceEpoch}");
           await prefs.setBool('isLoggedIn', true);
           await prefs.setString('phonenumber', phone);
           await prefs.setString('authType', currentAuthFlowType.value);
@@ -342,8 +346,10 @@ class LoginController extends BaseController {
         data = jsonDecode(response.body);
       } on FormatException {
         getSnackBar("Server error - please try again later");
-        final peekLength = response.body.length > 200 ? 200 : response.body.length;
-        print("⚠️ Non-JSON response from verify-otp: ${response.body.substring(0, peekLength)}");
+        final peekLength =
+            response.body.length > 200 ? 200 : response.body.length;
+        print(
+            "⚠️ Non-JSON response from verify-otp: ${response.body.substring(0, peekLength)}");
         return false;
       }
 
@@ -447,7 +453,8 @@ class LoginController extends BaseController {
       prefs.setInt('selectedGender', 1); // Default to Men tab
     }
 
-    print("✅ Login: Gender saved - $gender (ID: $genderId, HomeTab: ${prefs.getInt('selectedGender')})");
+    print(
+        "✅ Login: Gender saved - $gender (ID: $genderId, HomeTab: ${prefs.getInt('selectedGender')})");
   }
 
   Future<bool> callResendOtp(String phone, {String? type, int? userId}) async {
@@ -478,8 +485,10 @@ class LoginController extends BaseController {
           data = jsonDecode(response.body);
         } on FormatException {
           getSnackBar("Server error - please try again later");
-          final peekLength = response.body.length > 200 ? 200 : response.body.length;
-          print("⚠️ Non-JSON response from resend-otp: ${response.body.substring(0, peekLength)}");
+          final peekLength =
+              response.body.length > 200 ? 200 : response.body.length;
+          print(
+              "⚠️ Non-JSON response from resend-otp: ${response.body.substring(0, peekLength)}");
           return false;
         }
 
@@ -593,21 +602,37 @@ class LoginController extends BaseController {
 
       print("✅ Google Sign-In successful: ${firebaseUser.email}");
 
+      final String? googleIdToken = googleAuth.idToken; // ✅ Google OAuth token
+
+      if (googleIdToken == null || googleIdToken.isEmpty) {
+        getSnackBar("Failed to get ID token");
+        hideLoading();
+        return false;
+      }
+
       // Call backend API for social sign-in
       final success = await _socialSignIn(
         email: firebaseUser.email ?? '',
         name: firebaseUser.displayName ?? '',
-        provider: 'google.com',
+        provider: 'google',
         providerId: firebaseUser.uid,
+        idToken: googleIdToken,
       );
 
+      // if (success) {
+      //   // Sync guest cart after successful login
+      //   await _syncGuestCartAfterAuth();
+      //   Get.offAll(() => const BottomNavScreen());
+      // }
+
       if (success) {
-        // Sync guest cart after successful login
         await _syncGuestCartAfterAuth();
+        hideLoading(); // ✅ dismiss FIRST
         Get.offAll(() => const BottomNavScreen());
+        return true;
       }
 
-      return success;
+      return false;
     } on FirebaseAuthException catch (e, stack) {
       print("❌ Firebase Auth Error: ${e.code} - ${e.message}");
       print("❌ Stack: $stack");
@@ -634,6 +659,7 @@ class LoginController extends BaseController {
     required String name,
     required String provider,
     required String providerId,
+    required String idToken,
   }) async {
     try {
       final response = await http.post(
@@ -644,6 +670,7 @@ class LoginController extends BaseController {
           'name': name,
           'provider': provider,
           'providerId': providerId,
+          'token': idToken,
         }),
       );
 
@@ -655,8 +682,10 @@ class LoginController extends BaseController {
         data = jsonDecode(response.body);
       } on FormatException {
         getSnackBar("Server error - please try again later");
-        final peekLength = response.body.length > 200 ? 200 : response.body.length;
-        print("⚠️ Non-JSON response from social-sign-in: ${response.body.substring(0, peekLength)}");
+        final peekLength =
+            response.body.length > 200 ? 200 : response.body.length;
+        print(
+            "⚠️ Non-JSON response from social-sign-in: ${response.body.substring(0, peekLength)}");
         return false;
       }
 
