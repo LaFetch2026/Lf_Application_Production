@@ -85,8 +85,8 @@
 	<array>
 		<string>remote-notification</string>
 		<string>fetch</string>
-		<string>bluetooth-peripheral</string>
-		<string>audio</string>
+		<!-- <string>bluetooth-peripheral</string>
+		<string>audio</string> -->
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
