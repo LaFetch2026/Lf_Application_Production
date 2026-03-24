@@ -425,11 +425,17 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
       userId: userId,
       shippingAddressId: shippingAddressId,
       items: [orderItem],
-      totalMRP: widget.mrp,
+      totalMRP: widget.mrp.round(),
       couponDiscount: totalDiscount, // Total of promo + coupon
       tax: gstAmount,
       total: payable,
       paymentMethod: "prepaid",
+      mode: "direct",
+      productId: widget.productId,
+      variantId: widget.variantId,
+      quantity: _selectedQuantity,
+      shippingCost: 0,
+      couponCode: _hasCoupon ? _couponCode : (_hasPromo ? _promoCode : null),
     );
 
     print("\n   📥 Payment Init Response:");

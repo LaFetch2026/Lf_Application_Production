@@ -946,6 +946,7 @@ class HomeScreenState extends State<HomeScreen>
                           }),
 
                           // Product Collections
+                          // removed due to no incoming data
                           Obx(() {
                             final currentGender =
                                 homeController.homeGenderValue.value;
@@ -1532,7 +1533,7 @@ class _SectionStrip extends StatelessWidget {
                           ? CachedNetworkImage(
                               imageUrl: ImageHelper.toWebP(imageUrl),
                               width: double.infinity,
-                              fit: BoxFit.fill,
+                              fit: BoxFit.cover,
                               maxHeightDiskCache: 400,
                               maxWidthDiskCache: 400,
                               memCacheHeight: 400,

@@ -56,7 +56,10 @@ class CartScreen extends StatefulWidget {
 }
 
 class CartScreenState extends State<CartScreen> {
-  final controller = Get.put(CartController());
+  // final controller = Get.put(CartController());
+  final controller = Get.isRegistered<CartController>()
+      ? Get.find<CartController>()
+      : Get.put(CartController());
   final profileController = Get.put(ProfileController());
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
@@ -268,8 +271,8 @@ class CartScreenState extends State<CartScreen> {
       print("   ✅ Cart total valid");
 
       // Meta: InitiateCheckout
-      MetaEventService.instance.logInitiateCheckout(totalPrice: totalAmount.toDouble());
-
+      MetaEventService.instance
+          .logInitiateCheckout(totalPrice: totalAmount.toDouble());
 
       // ✅ Step 4: Build items array with GST calculations
       print("\n📦 STEP 4: Building Items Array");
@@ -290,7 +293,10 @@ class CartScreenState extends State<CartScreen> {
         final inventory = Map<String, dynamic>.from(item["inventory"] ?? {});
 
         final num unitPrice = _asNum(product["price"]); // Price WITH GST
-        final int quantity = item["quantity"] ?? 1;
+        // final int quantity = item["quantity"] ?? 1;
+        final int quantity = (item["quantity"] is num)
+            ? (item["quantity"] as num).toInt()
+            : int.tryParse("${item["quantity"]}") ?? 1;
         const num discount = 0;
 
         final int productId = product["id"];
@@ -511,6 +517,11 @@ class CartScreenState extends State<CartScreen> {
       print("\n   ✅ Built ${items.length} items for payment");
       print("   Total GST: ₹${totalGst.toStringAsFixed(2)}");
 
+      // Extract delivery charges
+      final num deliveryCharges =
+          _asNum(controller.cartDetails["shipping_cost"]) +
+              _asNum(controller.cartDetails["express_delivery_charges"]);
+
       // ✅ Step 5: Call initiate-payment API with named parameters
       print("\n💳 STEP 5: Initiating Payment");
       print("   Calling orderController.initiatePayment with:");
@@ -529,11 +540,14 @@ class CartScreenState extends State<CartScreen> {
         userId: userId,
         shippingAddressId: shippingAddressId,
         items: items,
-        totalMRP: _asNum(controller.cartDetails["total_mrp"]),
-        couponDiscount: totalDiscount, // Total of promo + coupon
-        tax: totalGst,
-        total: totalAmount,
+        totalMRP: _asNum(controller.cartDetails["total_mrp"]).round(),
+        couponDiscount: totalDiscount.round(), // Total of promo + coupon
+        tax: totalGst.round(),
+        total: totalAmount.round(),
         paymentMethod: "prepaid",
+        mode: "cart",
+        shippingCost: deliveryCharges,
+        couponCode: _hasCoupon ? _couponCode : (_hasPromo ? _promoCode : null),
       );
 
       if (paymentInitData == null) {
@@ -823,10 +837,12 @@ class CartScreenState extends State<CartScreen> {
       } else {
         // Logged in user - load cart from server
         debugPrint("👤 Logged in user, loading server cart");
-        if (widget.backgroundcolor == whiteColor) {
-          controller.getCartData();
+
+        if (controller.orderList.isEmpty) {
+          controller.getCartData(forceRefresh: true);
         } else {
-          // controller.getExpressCartData();
+          debugPrint(
+              "✅ Cart already has ${controller.orderList.length} items, skipping fetch");
         }
       }
 

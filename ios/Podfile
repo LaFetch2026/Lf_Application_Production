@@ -47,7 +47,7 @@ post_install do |installer|
       config.build_settings['SWIFT_VERSION'] = '5.0'
       
       # Fix for Xcode 15+ and arm64 simulator issues
-      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+      
       
       # Prevent warnings
       config.build_settings['WARNING_CFLAGS'] ||= ['$(inherited)', '-Wno-error=unused-function']
