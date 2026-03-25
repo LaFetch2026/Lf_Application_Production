@@ -1079,8 +1079,10 @@ class CartScreenState extends State<CartScreen> {
                         children: [
                           _buildProductImage(
                               product, imgUrl, outOfStock, index),
-                          _buildProductDetails(
-                              product, inventory, item, index, outOfStock),
+                          Expanded(
+                            child: _buildProductDetails(
+                                product, inventory, item, index, outOfStock),
+                          ),
                           _buildRemoveButton(item, index),
                         ],
                       ),
@@ -1384,71 +1386,76 @@ class CartScreenState extends State<CartScreen> {
             opacity: outOfStock ? 0.5 : 1,
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 4.sp),
-              child: Row(
-                children: [
-                  // MRP (Strikethrough)
-                  Visibility(
-                    visible: product["mrp"] != null &&
-                        product["price"] != null &&
-                        _asNum(product["mrp"]) > _asNum(product["price"]),
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 10.sp),
-                      child: Text(
-                        "₹${product["mrp"]}", // ✅ exact API value
-                        style: TextStyle(
-                          color: widget.backgroundcolor == whiteColor
-                              ? lightText
-                              : searchTextColor,
-                          fontSize: 12.sp,
-                          decoration: TextDecoration.lineThrough,
-                          fontFamily: "Clash Display",
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Selling Price
-                  Padding(
-                    padding: EdgeInsets.only(right: 6.sp),
-                    child: Text(
-                      "₹${product["price"]}", // ✅ exact API value
-                      style: TextStyle(
-                        color: widget.backgroundcolor == whiteColor
-                            ? nameText
-                            : whiteColor,
-                        fontSize: 12.sp,
-                        fontFamily: "Clash Display",
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-
-                  // Discount Chip
-                  if (product["mrp"] != null &&
-                      product["price"] != null &&
-                      _asNum(product["mrp"]) > _asNum(product["price"]))
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 181, 172, 248),
-                        borderRadius: BorderRadius.circular(20.sp),
-                      ),
+              child: SizedBox(
+                child: Wrap(
+                  spacing: 6.sp,
+                  runSpacing: 4.sp,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    // MRP (Strikethrough)
+                    Visibility(
+                      visible: product["mrp"] != null &&
+                          product["price"] != null &&
+                          _asNum(product["mrp"]) > _asNum(product["price"]),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 10.sp, vertical: 4.sp),
+                        padding: EdgeInsets.only(right: 10.sp),
                         child: Text(
-                          "${_calculateDiscountPercentage(product)}% OFF",
-                          // ✅ exact % (no rounding unless you want)
-                          style: const TextStyle(
-                            color: homeAppBarColor,
-                            fontSize: 12,
+                          "₹${product["mrp"]}", // ✅ exact API value
+                          style: TextStyle(
+                            color: widget.backgroundcolor == whiteColor
+                                ? lightText
+                                : searchTextColor,
+                            fontSize: 12.sp,
+                            decoration: TextDecoration.lineThrough,
                             fontFamily: "Clash Display",
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
                     ),
-                ],
+
+                    // Selling Price
+                    Padding(
+                      padding: EdgeInsets.only(right: 6.sp),
+                      child: Text(
+                        "₹${product["price"]}", // ✅ exact API value
+                        style: TextStyle(
+                          color: widget.backgroundcolor == whiteColor
+                              ? nameText
+                              : whiteColor,
+                          fontSize: 12.sp,
+                          fontFamily: "Clash Display",
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+
+                    // Discount Chip
+                    if (product["mrp"] != null &&
+                        product["price"] != null &&
+                        _asNum(product["mrp"]) > _asNum(product["price"]))
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 181, 172, 248),
+                          borderRadius: BorderRadius.circular(20.sp),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.sp, vertical: 4.sp),
+                          child: Text(
+                            "${_calculateDiscountPercentage(product)}% OFF",
+                            // ✅ exact % (no rounding unless you want)
+                            style: const TextStyle(
+                              color: homeAppBarColor,
+                              fontSize: 12,
+                              fontFamily: "Clash Display",
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
