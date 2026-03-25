@@ -14,6 +14,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import '../../common/widget/lists/dummy_grid_black.dart';
 import '../../common/widget/other/common_widget.dart';
+import '../../common/widget/other/pounce_wrapper.dart';
 import '../../common/widget/text/app_text.dart';
 import '../../controllers/brand_controller.dart';
 import '../../controllers/cart_controller.dart';
@@ -1120,7 +1121,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                         final img = _firstImageUrl(m);
                         final basePrice = m["basePrice"];
 
-                        return GestureDetector(
+                        return PounceWrapper(
                           onTap: () async {
                             // Fetch PDP data first
                             Get.dialog(

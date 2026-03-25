@@ -14,6 +14,7 @@ import '../../common/widget/other/common_widget.dart';
 import '../../common/widget/text/app_text.dart';
 import '../../controllers/wishlist_controller.dart';
 import '../../core/constant/constants.dart';
+import '../../common/widget/other/pounce_wrapper.dart';
 import '../catalog/productlist/productdetailsscreen.dart';
 
 class CreateBoardScreen extends StatefulWidget {
@@ -329,7 +330,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
 
                         return Column(
                           children: [
-                            GestureDetector(
+                            PounceWrapper(
                               onTap: () async {
                                 Get.to(() => ProductDetailsScreen(
                                       brandName: brand,

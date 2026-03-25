@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constant/constants.dart';
 import '../../../core/utils/image_helper.dart';
+import '../other/pounce_wrapper.dart';
 import '../other/product_price_display.dart';
 
 /// A reusable product card widget that displays product image, title, brand, and price
@@ -133,7 +134,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return PounceWrapper(
       onTap: () {
         HapticFeedback.lightImpact();
         onTap?.call();
@@ -369,7 +370,7 @@ class ProductGridCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final double imgHeight = imageHeight ?? 160.sp;
 
-    return GestureDetector(
+    return PounceWrapper(
       onTap: () {
         HapticFeedback.lightImpact();
         onTap?.call();

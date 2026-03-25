@@ -1891,20 +1891,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         ],
                                       ),
                                     ),
-                                    // if (productController
-                                    //     .errorSizeMsg.value.isNotEmpty)
-                                    //   Padding(
-                                    //     padding: EdgeInsets.only(
-                                    //         top: 8.sp, left: 12.sp),
-                                    //     child: AppSpacingText(
-                                    //       text: productController
-                                    //           .errorSizeMsg.value,
-                                    //       fontFamily: "Clash Display Regular",
-                                    //       fontWeight: FontWeight.w400,
-                                    //       color: lightPurpleColor,
-                                    //       fontSize: 14,
-                                    //     ),
-                                    //   ),
                                     if (productController
                                         .errorSizeMsg.value.isNotEmpty)
                                       Padding(
@@ -1918,7 +1904,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 .errorSizeMsg.value,
                                             fontFamily: "Clash Display Regular",
                                             fontWeight: FontWeight.w400,
-                                            color: lightPurpleColor,
+                                            color: redcolor,
                                             fontSize: 14,
                                           ),
                                         ),
@@ -1978,20 +1964,6 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                         fontSize: 16,
                                       ),
                                     ),
-                                    // if (productController
-                                    //     .errorColorMsg.value.isNotEmpty)
-                                    //   Padding(
-                                    //     padding: EdgeInsets.only(
-                                    //         top: 10.sp, left: 12.sp),
-                                    //     child: AppSpacingText(
-                                    //       text: productController
-                                    //           .errorColorMsg.value,
-                                    //       fontFamily: "Clash Display Regular",
-                                    //       fontWeight: FontWeight.w400,
-                                    //       color: lightPurpleColor,
-                                    //       fontSize: 14,
-                                    //     ),
-                                    //   ),
                                     if (productController
                                         .errorColorMsg.value.isNotEmpty)
                                       Padding(
@@ -2005,7 +1977,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                                 .errorColorMsg.value,
                                             fontFamily: "Clash Display Regular",
                                             fontWeight: FontWeight.w400,
-                                            color: lightPurpleColor,
+                                            color: deepRed,
                                             fontSize: 14,
                                           ),
                                         ),

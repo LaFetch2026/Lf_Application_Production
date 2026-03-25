@@ -17,6 +17,7 @@ import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart'
     hide SizedBox, Center, Column, Padding;
 import 'package:lafetch/screens/cartscreen.dart';
+import 'package:lafetch/common/widget/other/pounce_wrapper.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/home/women/productviewscreen.dart';
 import 'package:lafetch/screens/loginscreen.dart';
@@ -1510,7 +1511,7 @@ class _SectionStrip extends StatelessWidget {
       builder: (context, constraints) {
         final padding = 6.sp;
 
-        return GestureDetector(
+        return PounceWrapper(
           onTap: () => onProductTap(id),
           child: Container(
             decoration: BoxDecoration(
@@ -2019,7 +2020,7 @@ class BannerProductsScreen extends StatelessWidget {
                   return int.tryParse(v?.toString() ?? '') ?? 0;
                 }();
 
-                return GestureDetector(
+                return PounceWrapper(
                   onTap: () {
                     if (pid == 0) return;
                     Get.to(
