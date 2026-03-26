@@ -779,8 +779,6 @@ class HomeScreenState extends State<HomeScreen>
                                 width: double.infinity,
                                 decoration: BoxDecoration(
                                   color: Colors.black.withOpacity(0.04),
-                                  // borderRadius: BorderRadius.circular(
-                                  //     8.sp), // ✅ radius added
                                 ),
                                 child: const Center(
                                   child: Column(
@@ -820,9 +818,8 @@ class HomeScreenState extends State<HomeScreen>
                                 children: [
                                   ClipRRect(
                                     // ✅ BORDER RADIUS
-                                    child: SizedBox(
-                                      height: 220,
-                                      width: double.infinity,
+                                    child: AspectRatio(
+                                      aspectRatio: 3 / 1,
                                       child: PageView(
                                         key: ValueKey(
                                             'pageview_${homeController.homeGenderValue.value}'), // ✅ Rebuild PageView on gender change
