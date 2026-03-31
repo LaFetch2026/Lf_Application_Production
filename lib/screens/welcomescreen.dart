@@ -15,6 +15,9 @@ import '../core/constant/constants.dart';
 import 'bottomnavscreen.dart';
 import 'loginscreen.dart';
 
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'dart:io';
+
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
@@ -256,7 +259,8 @@ class WelcomeScreenState extends State<WelcomeScreen>
 
                 /// OR DIVIDER
                 Padding(
-                  padding: EdgeInsets.only(top: 24.sp, left: 16.sp, right: 16.sp),
+                  padding:
+                      EdgeInsets.only(top: 24.sp, left: 16.sp, right: 16.sp),
                   child: Row(
                     children: [
                       Expanded(
@@ -287,7 +291,8 @@ class WelcomeScreenState extends State<WelcomeScreen>
 
                 /// CONTINUE WITH GOOGLE
                 Padding(
-                  padding: EdgeInsets.only(top: 24.sp, left: 16.sp, right: 16.sp),
+                  padding:
+                      EdgeInsets.only(top: 24.sp, left: 16.sp, right: 16.sp),
                   child: SizedBox(
                     width: double.infinity,
                     height: 50.sp,
@@ -311,7 +316,8 @@ class WelcomeScreenState extends State<WelcomeScreen>
                           BorderSide(width: 1.sp, color: whiteColor),
                         ),
                         elevation: WidgetStateProperty.all(0.0),
-                        backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                        backgroundColor:
+                            WidgetStateProperty.all(Colors.transparent),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -334,6 +340,55 @@ class WelcomeScreenState extends State<WelcomeScreen>
                     ),
                   ),
                 ),
+
+                /// CONTINUE WITH APPLE (iOS only)
+                if (Platform.isIOS)
+                  Padding(
+                    padding:
+                        EdgeInsets.only(top: 16.sp, left: 16.sp, right: 16.sp),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 50.sp,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          await analytics.logEvent(
+                            name: 'welcome_page_btn_apple',
+                            parameters: {'page_name': 'welcome_page_btn_apple'},
+                          );
+                          _videoController.pause();
+                          await loginController.signInWithApple();
+                          if (mounted) _videoController.play();
+                        },
+                        style: ButtonStyle(
+                          shape: WidgetStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(1.sp),
+                            ),
+                          ),
+                          side: WidgetStateProperty.all(
+                            BorderSide(width: 1.sp, color: whiteColor),
+                          ),
+                          elevation: WidgetStateProperty.all(0.0),
+                          backgroundColor:
+                              WidgetStateProperty.all(Colors.transparent),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.apple, color: whiteColor, size: 22.sp),
+                            SizedBox(width: 10.sp),
+                            AppText(
+                              text: "CONTINUE WITH APPLE",
+                              fontFamily: "Clash Display",
+                              fontWeight: FontWeight.bold,
+                              color: whiteColor,
+                              fontSize: 13,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
 
                 SizedBox(height: 40.sp),
               ],

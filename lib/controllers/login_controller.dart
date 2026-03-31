@@ -20,6 +20,8 @@ import 'base_controller.dart';
 import 'cart_controller.dart';
 import 'home_controller.dart';
 
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
 class GuestResult {
   final bool ok;
   final String? error;
@@ -647,6 +649,86 @@ class LoginController extends BaseController {
       print("❌ Google Sign-In Error: $e");
       print("❌ Stack: $stack");
       getSnackBar("An error occurred during Google sign-in.");
+      return false;
+    } finally {
+      hideLoading();
+    }
+  }
+
+  /// Sign in with Apple and authenticate with backend
+  Future<bool> signInWithApple() async {
+    showLoading();
+    try {
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      final oAuthProvider = OAuthProvider('apple.com');
+      final credential = oAuthProvider.credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+      );
+
+      final UserCredential userCredential =
+          await _firebaseAuth.signInWithCredential(credential);
+
+      final User? firebaseUser = userCredential.user;
+
+      if (firebaseUser == null) {
+        getSnackBar("Apple sign-in failed. Please try again.");
+        hideLoading();
+        return false;
+      }
+
+      // Apple only gives name on first sign-in, so fall back to email prefix
+      final name = appleCredential.givenName != null
+          ? '${appleCredential.givenName} ${appleCredential.familyName ?? ''}'
+              .trim()
+          : firebaseUser.displayName ??
+              firebaseUser.email?.split('@').first ??
+              '';
+
+      final email = appleCredential.email ?? firebaseUser.email ?? '';
+      final idToken = appleCredential.identityToken ?? '';
+
+      if (idToken.isEmpty) {
+        getSnackBar("Failed to get Apple ID token");
+        hideLoading();
+        return false;
+      }
+
+      final success = await _socialSignIn(
+        email: email,
+        name: name,
+        provider: 'apple',
+        providerId: firebaseUser.uid,
+        idToken: idToken,
+      );
+
+      if (success) {
+        await _syncGuestCartAfterAuth();
+        hideLoading();
+        Get.offAll(() => const BottomNavScreen());
+        return true;
+      }
+
+      return false;
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) {
+        hideLoading();
+        return false;
+      }
+      getSnackBar("Apple sign-in failed: ${e.message}");
+      return false;
+    } on FirebaseAuthException catch (e) {
+      getSnackBar(e.message ?? "Apple sign-in failed.");
+      return false;
+    } catch (e) {
+      print("❌ Apple Sign-In Error: $e");
+      getSnackBar("An error occurred during Apple sign-in.");
       return false;
     } finally {
       hideLoading();
