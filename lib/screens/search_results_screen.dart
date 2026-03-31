@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/controllers/search_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
@@ -209,18 +210,27 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 
   // Helper methods
   String _firstImageUrl(Map<String, dynamic> item) {
+    final directImage =
+        item['product_image'] ?? item['image'] ?? item['thumbnail'];
+
+    if (directImage != null && directImage.toString().isNotEmpty) {
+      return directImage.toString();
+    }
+
     final imgs = item['images'];
     if (imgs is List && imgs.isNotEmpty) {
       final first = imgs.first;
       final name = (first is Map ? first['name'] : null)?.toString() ?? '';
       if (name.isNotEmpty) return name;
     }
+
     final urls = item['imageUrls'];
     if (urls is List && urls.isNotEmpty) {
       final first = urls.first;
       final s = (first == null) ? '' : first.toString();
       if (s.isNotEmpty) return s;
     }
+
     return '';
   }
 
@@ -300,7 +310,9 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
               // ✅ Watch categoryProductList for reactivity (triggers rebuild when filters applied)
               final _ = catalogController.categoryProductList.length;
 
-              final items = _getDisplayedProducts();
+              // final items = _getDisplayedProducts();
+              final searchController = Get.find<SearchScreenController>();
+              final items = searchController.searchList;
 
               if (items.isEmpty) {
                 return Column(
@@ -336,27 +348,19 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                 );
               }
 
-              // Client-side pagination
-              const int pageSize = 12;
-              final int page =
-                  (_currentPage.value <= 0) ? 1 : _currentPage.value;
-
-              final int maxToShow = page * pageSize;
-              final int visibleCount =
-                  maxToShow < items.length ? maxToShow : items.length;
-              final List<Map<String, dynamic>> displayItems =
-                  items.take(visibleCount).toList();
+              final displayItems = items;
 
               return NotificationListener<ScrollNotification>(
                 onNotification: (n) {
-                  if (n.metrics.pixels >= n.metrics.maxScrollExtent - 160) {
-                    final bool canLoadMore =
-                        displayItems.length < items.length &&
-                            !_isLoadingMore.value;
-                    if (canLoadMore) {
+                  final searchController = Get.find<SearchScreenController>();
+
+                  if (n.metrics.pixels >= n.metrics.maxScrollExtent - 200) {
+                    if (!searchController.isSearching.value &&
+                        searchController.hasMore.value &&
+                        !_isLoadingMore.value) {
                       _isLoadingMore.value = true;
-                      Future.delayed(const Duration(milliseconds: 200), () {
-                        _currentPage.value += 1;
+
+                      searchController.getSearchData(loadMore: true).then((_) {
                         _isLoadingMore.value = false;
                       });
                     }

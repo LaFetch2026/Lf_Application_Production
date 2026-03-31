@@ -24,6 +24,11 @@ class SearchScreenController extends BaseController {
   final RxBool isSuggesting = false.obs;
   final RxList<Map<String, dynamic>> suggestions = <Map<String, dynamic>>[].obs;
 
+  //pagination
+  final RxInt currentPage = 0.obs;
+  final RxBool hasMore = true.obs;
+  String _lastQuery = "";
+
   // ---- helpers --------------------------------------------------------------
 
   Uri _buildUri(String base, String path, Map<String, String> params) {
@@ -64,20 +69,36 @@ class SearchScreenController extends BaseController {
 
   // ---- API: POST /product-search?key=<query> --------------------------------
 
-  Future<void> getSearchData() async {
+  Future<void> getSearchData({bool loadMore = false}) async {
     final key = searchController.text.trim();
+
     if (key.isEmpty) {
       searchList.clear();
       searchText.value = "Type to search";
+      currentPage.value = 0;
+      hasMore.value = true;
+      _lastQuery = "";
       return;
     }
+
+    // new query -> reset pagination
+    if (!loadMore && key != _lastQuery) {
+      currentPage.value = 0;
+      hasMore.value = true;
+      searchList.clear();
+      _lastQuery = key;
+    }
+
+    if (!hasMore.value || isSearching.value) return;
+
     isSearching.value = true;
+
     try {
       final headers = await _headers();
       final uri = _buildUri(ApiConstants.baseUrl, 'search', {
         'q': key,
         'hitsPerPage': '20',
-        'page': '0',
+        'page': currentPage.value.toString(),
       });
 
       print('[SEARCH] uri: $uri');
@@ -90,8 +111,9 @@ class SearchScreenController extends BaseController {
       print('[SEARCH] body: ${response.body}');
 
       if (response.statusCode != 200 || !_isJson(response)) {
-        searchList.clear();
+        if (!loadMore) searchList.clear();
         searchText.value = "No product found";
+        hasMore.value = false;
         return;
       }
 
@@ -115,16 +137,30 @@ class SearchScreenController extends BaseController {
               })
           .toList();
 
-      searchList.assignAll(items);
+      if (loadMore) {
+        searchList.addAll(items);
+      } else {
+        searchList.assignAll(items);
+      }
+
       searchText.value =
-          items.isEmpty ? "No product found" : "Search for products";
+          searchList.isEmpty ? "No product found" : "Search for products";
+
+      // if API returned fewer than requested, assume no more pages
+      if (items.length < 20) {
+        hasMore.value = false;
+      } else {
+        currentPage.value += 1;
+      }
     } on TimeoutException {
-      searchList.clear();
+      if (!loadMore) searchList.clear();
       searchText.value = "No product found";
+      hasMore.value = false;
     } catch (e) {
       print('[SEARCH] error: $e');
-      searchList.clear();
+      if (!loadMore) searchList.clear();
       searchText.value = "No product found";
+      hasMore.value = false;
     } finally {
       isSearching.value = false;
     }
@@ -192,6 +228,9 @@ class SearchScreenController extends BaseController {
 
   void applySuggestion(String value) {
     searchController.text = value;
+    currentPage.value = 0;
+    hasMore.value = true;
+    _lastQuery = value;
     getSearchData();
   }
 
@@ -200,5 +239,8 @@ class SearchScreenController extends BaseController {
     searchList.clear();
     suggestions.clear();
     searchText.value = "Search for products";
+    currentPage.value = 0;
+    hasMore.value = true;
+    _lastQuery = "";
   }
 }
