@@ -74,15 +74,20 @@ class SearchScreenController extends BaseController {
     isSearching.value = true;
     try {
       final headers = await _headers();
-
-      final uri = _buildUri(ApiConstants.baseUrl, 'filter-products', {
-        'key': key,
-        'status': 'true',
+      final uri = _buildUri(ApiConstants.baseUrl, 'search', {
+        'q': key,
+        'hitsPerPage': '20',
+        'page': '0',
       });
 
+      print('[SEARCH] uri: $uri');
+
       final response = await http
-          .post(uri, headers: headers)
+          .get(uri, headers: headers)
           .timeout(const Duration(seconds: 20));
+
+      print('[SEARCH] status: ${response.statusCode}');
+      print('[SEARCH] body: ${response.body}');
 
       if (response.statusCode != 200 || !_isJson(response)) {
         searchList.clear();
@@ -90,49 +95,30 @@ class SearchScreenController extends BaseController {
         return;
       }
 
-      dynamic decoded;
-      try {
-        decoded = json.decode(response.body);
-      } catch (e) {
-        print('[SEARCH] JSON decode error: $e');
-        searchList.clear();
-        searchText.value = "No product found";
-        return;
-      }
+      final decoded = json.decode(response.body);
+      final hits = (decoded['data']?['hits'] as List?) ?? [];
 
-      List<Map<String, dynamic>> items = [];
+      final items = hits
+          .whereType<Map>()
+          .map((p) => <String, dynamic>{
+                'id': int.tryParse(p['objectID'].toString()) ?? 0,
+                'product_name': p['title'],
+                'product_image': p['image'],
+                'price': p['price'],
+                'mrp': p['mrp'] ?? p['price'],
+                'slug': p['slug'],
+                'brand_name': p['brand'],
+                'category_name': p['category'],
+                'available': p['available'] ?? true,
+                'rating': p['rating'] ?? 0,
+                ...Map<String, dynamic>.from(p),
+              })
+          .toList();
 
-      if (decoded is Map) {
-        final data = decoded['data'];
-        if (data is List) {
-          items = data
-              .whereType<Map>()
-              .map((e) => e.map((k, v) => MapEntry(k.toString(), v)))
-              .toList();
-        } else if (data is Map && data['products'] is List) {
-          items = (data['products'] as List)
-              .whereType<Map>()
-              .map((e) => e.map((k, v) => MapEntry(k.toString(), v)))
-              .toList();
-        } else if (decoded['products'] is List) {
-          items = (decoded['products'] as List)
-              .whereType<Map>()
-              .map((e) => e.map((k, v) => MapEntry(k.toString(), v)))
-              .toList();
-        }
-      }
-
-      print('[SEARCH] parsed ${items.length} items');
-
-      final transformed = items.map((p) {
-        return ProductController.calculateDisplayPrices(p);
-      }).toList();
-
-      searchList.assignAll(transformed);
+      searchList.assignAll(items);
       searchText.value =
           items.isEmpty ? "No product found" : "Search for products";
     } on TimeoutException {
-      print('[SEARCH] timeout');
       searchList.clear();
       searchText.value = "No product found";
     } catch (e) {
@@ -156,7 +142,7 @@ class SearchScreenController extends BaseController {
     try {
       final headers = await _headers();
       final uri =
-          _buildUri(ApiConstants.baseUrl, '/product-suggestion', {'key': key});
+          _buildUri(ApiConstants.baseUrl, 'product-suggestion', {'key': key});
 
       final response = await http
           .post(uri, headers: headers)
