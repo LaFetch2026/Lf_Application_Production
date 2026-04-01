@@ -3,7 +3,7 @@
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import '../common/widget/lists/dummy_grid_mostsearch.dart';
+import '../common/widget/lists/dummy_container.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -206,9 +206,32 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 
               final searchSc = Get.find<SearchScreenController>();
               final items = searchSc.searchList.toList();
-
               if (searchSc.isSearching.value) {
-                return const DummyGridMostSearch(text: "");
+                return GridView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                  itemCount: 6,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16.sp,
+                    childAspectRatio: 0.58,
+                  ),
+                  itemBuilder: (_, __) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DummyContainer(height: 160, width: double.infinity),
+                      SizedBox(height: 12.sp),
+                      DummyContainer(height: 14, width: double.infinity),
+                      SizedBox(height: 8.sp),
+                      DummyContainer(height: 12, width: 100),
+                      SizedBox(height: 8.sp),
+                      Row(children: [
+                        DummyContainer(height: 12, width: 50),
+                        SizedBox(width: 6.sp),
+                        DummyContainer(height: 10, width: 40),
+                      ]),
+                    ],
+                  ),
+                );
               }
 
               if (items.isEmpty) {
@@ -863,7 +886,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                         fontSize: 18,
                         color: blackColor)),
                 IconButton(
-                    icon: const Icon(Icons.close), onPressed: () => Navigator.of(sheetCtx).pop())
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(sheetCtx).pop())
               ]),
               const SizedBox(height: 8),
               Obx(() => Column(
