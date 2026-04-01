@@ -3,7 +3,7 @@
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:shimmer/shimmer.dart';
+import '../common/widget/lists/dummy_grid_mostsearch.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -208,27 +208,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
               final items = searchSc.searchList.toList();
 
               if (searchSc.isSearching.value) {
-                return CustomScrollView(
-                  slivers: [
-                    SliverPadding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.sp),
-                      sliver: SliverGrid(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            return _SkeletonProductTile();
-                          },
-                          childCount: 6,
-                        ),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16.sp,
-                          mainAxisSpacing: 16.sp,
-                          childAspectRatio: 0.58,
-                        ),
-                      ),
-                    )
-                  ],
-                );
+                return const DummyGridMostSearch(text: "");
               }
 
               if (items.isEmpty) {
@@ -748,7 +728,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                         children: [
                           Expanded(
                               child: OutlinedButton(
-                            onPressed: () => Get.back(),
+                            onPressed: () => Navigator.of(context).pop(),
                             style: OutlinedButton.styleFrom(
                                 side: const BorderSide(
                                     color: dividerColor, width: 1.2),
@@ -767,7 +747,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8))),
                             onPressed: () {
-                              Get.back();
+                              Navigator.of(context).pop();
 
                               print("✅ FILTERS CONFIGURED");
                               print(
@@ -869,7 +849,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (_) {
+      builder: (sheetCtx) {
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 20.sp),
           child: Column(
@@ -883,7 +863,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                         fontSize: 18,
                         color: blackColor)),
                 IconButton(
-                    icon: const Icon(Icons.close), onPressed: () => Get.back())
+                    icon: const Icon(Icons.close), onPressed: () => Navigator.of(sheetCtx).pop())
               ]),
               const SizedBox(height: 8),
               Obx(() => Column(
@@ -905,7 +885,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
               Row(children: [
                 Expanded(
                     child: OutlinedButton(
-                        onPressed: () => Get.back(),
+                        onPressed: () => Navigator.of(sheetCtx).pop(),
                         style: OutlinedButton.styleFrom(
                             side: const BorderSide(
                                 color: dividerColor, width: 1.2),
@@ -924,7 +904,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                 borderRadius: BorderRadius.circular(8))),
                         onPressed: () {
                           final selected = selectedOption.value;
-                          Get.back();
+                          Navigator.of(sheetCtx).pop();
 
                           print("✅ Sort option selected: $selected");
 
@@ -958,88 +938,6 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
           ),
         );
       },
-    );
-  }
-}
-
-/// ✅ Skeleton Product Tile with Shimmer Effect
-class _SkeletonProductTile extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
-      child: Container(
-        padding: EdgeInsets.all(8.sp),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF3F1F1),
-          borderRadius: BorderRadius.circular(6.sp),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Image skeleton - matches ProductGridCard image height
-            Container(
-              height: 160.sp,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(6.sp),
-              ),
-            ),
-
-            SizedBox(height: 6.sp),
-
-            // Title skeleton
-            Container(
-              width: double.infinity,
-              height: 14.sp,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-
-            SizedBox(height: 4.sp),
-
-            // Brand name skeleton
-            Container(
-              width: 100.sp,
-              height: 12.sp,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-
-            SizedBox(height: 4.sp),
-
-            // Price skeleton
-            Row(
-              children: [
-                Container(
-                  width: 50.sp,
-                  height: 12.sp,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-                SizedBox(width: 6.sp),
-                Container(
-                  width: 40.sp,
-                  height: 10.sp,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
