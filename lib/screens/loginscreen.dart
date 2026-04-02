@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print, deprecated_member_use
 
 import 'dart:async';
+import 'dart:io';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:lafetch/controllers/SplashController.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../common/widget/appbar/login_appbar.dart';
@@ -22,7 +24,6 @@ import '../common/widget/text/multiple_text.dart';
 import '../common/widget/text/number_widget.dart';
 import '../controllers/login_controller.dart';
 import '../core/constant/constants.dart';
-
 
 class LoginScreen extends StatefulWidget {
   final int initialTab;
@@ -82,7 +83,8 @@ class LoginScreenState extends State<LoginScreen>
   }
 
   void _onTabChanged() {
-    if (_tabController.indexIsChanging) return; // Wait for animation to complete
+    if (_tabController.indexIsChanging)
+      return; // Wait for animation to complete
     setState(() {
       appbarColor = (_tabController.index == 0) ? colorPrimary : btnTextColor;
       loginController.loginError.value = "";
@@ -324,6 +326,7 @@ class LoginScreenState extends State<LoginScreen>
           buildTermsWidget(),
           const ORWidget(),
           buildGoogleSignInButton(),
+          if (Platform.isIOS) buildAppleSignInButton(),
         ],
       ),
     );
@@ -418,7 +421,7 @@ class LoginScreenState extends State<LoginScreen>
 
   Widget buildGoogleSignInButton() {
     return Padding(
-      padding: EdgeInsets.only(left: 16.sp, right: 16.sp, bottom: 40.sp),
+      padding: EdgeInsets.only(left: 16.sp, right: 16.sp, bottom: Platform.isIOS ? 16.sp : 40.sp),
       child: SizedBox(
         width: double.infinity,
         height: 50.sp,
@@ -453,6 +456,51 @@ class LoginScreenState extends State<LoginScreen>
               SizedBox(width: 10.sp),
               AppText(
                 text: "CONTINUE WITH GOOGLE",
+                fontFamily: "Clash Display Semibold",
+                fontWeight: FontWeight.w600,
+                color: homeAppBarColor,
+                fontSize: 13,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildAppleSignInButton() {
+    return Padding(
+      padding: EdgeInsets.only(left: 16.sp, right: 16.sp, bottom: 40.sp),
+      child: SizedBox(
+        width: double.infinity,
+        height: 50.sp,
+        child: ElevatedButton(
+          onPressed: () async {
+            await analytics.logEvent(
+              name: 'login_apple_signin',
+              parameters: {'page_name': 'login_apple_signin'},
+            );
+            await loginController.signInWithApple();
+          },
+          style: ButtonStyle(
+            shape: WidgetStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(1.sp),
+              ),
+            ),
+            side: WidgetStateProperty.all(
+              BorderSide(width: 1.sp, color: homeAppBarColor),
+            ),
+            elevation: WidgetStateProperty.all(0.0),
+            backgroundColor: WidgetStateProperty.all(whiteColor),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.apple, color: homeAppBarColor, size: 22.sp),
+              SizedBox(width: 10.sp),
+              AppText(
+                text: "CONTINUE WITH APPLE",
                 fontFamily: "Clash Display Semibold",
                 fontWeight: FontWeight.w600,
                 color: homeAppBarColor,
