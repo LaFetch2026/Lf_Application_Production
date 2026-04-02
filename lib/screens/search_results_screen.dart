@@ -201,12 +201,11 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
           // Grid
           Expanded(
             child: Obx(() {
-              // ✅ Watch categoryProductList for reactivity (triggers rebuild when filters applied)
-              // final _ = catalogController.categoryProductList.length;
+              // Watch categoryProductList for reactivity (triggers rebuild when filters applied)
 
               final searchSc = Get.find<SearchScreenController>();
               final items = searchSc.searchList.toList();
-              if (searchSc.isSearching.value) {
+              if (searchSc.isSearching.value && items.isEmpty) {
                 return GridView.builder(
                   padding: EdgeInsets.symmetric(horizontal: 16.sp),
                   itemCount: 6,
@@ -218,16 +217,16 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                   itemBuilder: (_, __) => Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      DummyContainer(height: 160, width: double.infinity),
+                      const DummyContainer(height: 160, width: double.infinity),
                       SizedBox(height: 12.sp),
-                      DummyContainer(height: 14, width: double.infinity),
+                      const DummyContainer(height: 14, width: double.infinity),
                       SizedBox(height: 8.sp),
-                      DummyContainer(height: 12, width: 100),
+                      const DummyContainer(height: 12, width: 100),
                       SizedBox(height: 8.sp),
                       Row(children: [
-                        DummyContainer(height: 12, width: 50),
+                        const DummyContainer(height: 12, width: 50),
                         SizedBox(width: 6.sp),
-                        DummyContainer(height: 10, width: 40),
+                        const DummyContainer(height: 10, width: 40),
                       ]),
                     ],
                   ),

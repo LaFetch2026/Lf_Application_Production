@@ -195,7 +195,7 @@ class SearchScreenController extends BaseController {
         indexName: _indexName,
         query: key,
         filters: filters,
-        hitsPerPage: 60,
+        hitsPerPage: 20,
         page: currentPage.value,
         facets: ['brand', 'category', 'gender', 'sizes'],
       );
@@ -233,7 +233,7 @@ class SearchScreenController extends BaseController {
       searchText.value =
           searchList.isEmpty ? "No product found" : "Search for products";
 
-      if (items.length < 60) {
+      if (items.length < 20) {
         hasMore.value = false;
       } else {
         currentPage.value += 1;
