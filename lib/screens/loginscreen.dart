@@ -414,6 +414,7 @@ class LoginScreenState extends State<LoginScreen>
           buildTermsWidget(),
           const ORWidget(),
           buildGoogleSignInButton(),
+          if (Platform.isIOS) buildAppleSignInButton(),
         ],
       ),
     );
