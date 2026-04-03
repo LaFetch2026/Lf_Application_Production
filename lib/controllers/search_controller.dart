@@ -139,6 +139,18 @@ class SearchScreenController extends BaseController {
     getSearchData();
   }
 
+  /// filters reset(no api calls)
+  void resetFilters() {
+    filterBrands.clear();
+    filterColors.clear();
+    filterSizes.clear();
+    filterMinPrice.value = "300";
+    filterMaxPrice.value = "100000";
+    sortOption.value = "recommended";
+    currentPage.value = 0;
+    hasMore.value = true;
+  }
+
   // ---- API: POST /product-search?key=<query> --------------------------------
 
   Future<void> getSearchData({bool loadMore = false}) async {
