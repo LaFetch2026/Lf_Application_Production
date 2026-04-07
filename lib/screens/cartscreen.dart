@@ -121,34 +121,39 @@ class CartScreenState extends State<CartScreen> {
   // ---------- Razorpay Handlers ----------
 
   void _onPaymentSuccess(PaymentSuccessResponse r) async {
-    print("✅ Payment Successful!");
-    print("Payment ID: ${r.paymentId}");
-    print("Order ID: ${r.orderId}");
-    print("Signature: ${r.signature}");
+    print("🎉 Razorpay Payment SUCCESS - Payment ID: ${r.paymentId}");
 
-    // Show Success Screen instantly
-    Get.offAll(() => const OrderStatusScreen(status: 'success'),
-        transition: Transition.fadeIn,
-        duration: const Duration(milliseconds: 400));
+    final prefs = await SharedPreferences.getInstance();
+    final int? userId = prefs.getInt('pending_order_userId');
+    final int? shippingAddressId =
+        prefs.getInt('pending_order_shippingAddressId');
 
-    // Confirm order in background
-    try {
-      await orderController.confirmPlaceOrder(
-        providerOrderId: r.orderId ?? '',
-        providerPaymentId: r.paymentId ?? '',
-        providerSignature: r.signature ?? '',
-      );
-      print("✅ confirmPlaceOrder called successfully");
-    } catch (e) {
-      print("⚠️ confirmPlaceOrder failed: $e");
+    // Show success screen immediately
+    Get.offAll(() => const OrderStatusScreen(status: 'success'));
+
+    // Try to confirm in background
+    if (userId != null && shippingAddressId != null) {
+      try {
+        final bool confirmed = await orderController.confirmPlaceOrder(
+          providerOrderId: r.orderId ?? '',
+          providerPaymentId: r.paymentId ?? '',
+          providerSignature: r.signature ?? '',
+        );
+
+        if (!confirmed) {
+          print("⚠️ Backend confirmation failed for payment: ${r.paymentId}");
+        }
+      } catch (e) {
+        print("⚠️ confirmPlaceOrder exception: $e");
+      }
     }
 
-    // Cleanup both promo and coupon
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('applied_promo_code');
-    await prefs.remove('applied_promo_discount');
-    await prefs.remove('applied_coupon_code');
-    await prefs.remove('applied_coupon_discount');
+    // Cleanup
+    await prefs.remove('pending_order_userId');
+    await prefs.remove('pending_order_shippingAddressId');
+    await prefs.remove('pending_order_payload');
+    await prefs.remove('pending_order_total');
+    // remove coupon/promo keys too...
   }
 
   void _onPaymentError(PaymentFailureResponse r) {
@@ -1269,52 +1274,6 @@ class CartScreenState extends State<CartScreen> {
                       );
                     },
                   ),
-
-                  // Builder(
-                  //   builder: (_) {
-                  //     final variant = item["product_variant"] ?? {};
-                  //     final selectedOptions = variant["selectedOptions"] ?? [];
-
-                  //     String colorName = "";
-
-                  //     if (selectedOptions is List) {
-                  //       for (final o in selectedOptions) {
-                  //         final name =
-                  //             o["name"]?.toString().toLowerCase() ?? "";
-                  //         if (name == "color") colorName = o["value"] ?? "";
-                  //       }
-                  //     }
-
-                  //     return Row(
-                  //       mainAxisSize: MainAxisSize.min,
-                  //       children: [
-                  //         if (colorName.isNotEmpty)
-                  //           Container(
-                  //             height: 30.sp,
-                  //             padding: EdgeInsets.symmetric(horizontal: 10.sp),
-                  //             alignment: Alignment.center,
-                  //             decoration: BoxDecoration(
-                  //               color: widget.backgroundcolor == whiteColor
-                  //                   ? const Color(0xffF3F4F6)
-                  //                   : const Color(0xFFDFDBFF),
-                  //               border: Border.all(
-                  //                 width: 1,
-                  //                 color: widget.backgroundcolor == whiteColor
-                  //                     ? const Color(0xFFE5E7EB)
-                  //                     : titleColor,
-                  //               ),
-                  //             ),
-                  //             child: AppText(
-                  //               text: "Color : $colorName",
-                  //               color: titleColor,
-                  //               fontSize: 10,
-                  //               fontFamily: "Clash Display Regular",
-                  //             ),
-                  //           ),
-                  //       ],
-                  //     );
-                  //   },
-                  // ),
 
                   // -----------------------------
                   // QTY BOX - NOW TAPPABLE

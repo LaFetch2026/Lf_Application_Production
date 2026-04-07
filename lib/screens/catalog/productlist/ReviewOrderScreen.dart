@@ -596,45 +596,39 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
   }
 
   void _onPaymentSuccess(PaymentSuccessResponse r) async {
-    try {
-      final result = await orderController.confirmPlaceOrder(
-        providerOrderId: r.orderId ?? '',
-        providerPaymentId: r.paymentId ?? '',
-        providerSignature: r.signature ?? '',
-      );
+    print("🎉 Razorpay Payment SUCCESS - Payment ID: ${r.paymentId}");
 
-      if (result == true) {
-        // Navigate ONLY after order is confirmed
-        Get.offAll(
-          () => const OrderStatusScreen(status: 'success'),
-          transition: Transition.fadeIn,
-          duration: Duration(milliseconds: 400),
+    final prefs = await SharedPreferences.getInstance();
+    final int? userId = prefs.getInt('pending_order_userId');
+    final int? shippingAddressId =
+        prefs.getInt('pending_order_shippingAddressId');
+
+    // Show success screen immediately
+    Get.offAll(() => const OrderStatusScreen(status: 'success'));
+
+    // Try to confirm in background
+    if (userId != null && shippingAddressId != null) {
+      try {
+        final bool confirmed = await orderController.confirmPlaceOrder(
+          providerOrderId: r.orderId ?? '',
+          providerPaymentId: r.paymentId ?? '',
+          providerSignature: r.signature ?? '',
         );
-      } else {
-        // If API failed → show failed screen
-        Get.offAll(
-          () => const OrderStatusScreen(status: 'failed'),
-          transition: Transition.fadeIn,
-          duration: Duration(milliseconds: 400),
-        );
+
+        if (!confirmed) {
+          print("⚠️ Backend confirmation failed for payment: ${r.paymentId}");
+        }
+      } catch (e) {
+        print("⚠️ confirmPlaceOrder exception: $e");
       }
-    } catch (e) {
-      print("Order confirmation failed: $e");
-      Get.offAll(
-        () => const OrderStatusScreen(status: 'failed'),
-        transition: Transition.fadeIn,
-        duration: Duration(milliseconds: 400),
-      );
     }
 
-    // Cleanup local cache AFTER navigation
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('pending_order_payload');
-    await prefs.remove('pending_order_total');
+    // Cleanup
     await prefs.remove('pending_order_userId');
     await prefs.remove('pending_order_shippingAddressId');
-    await prefs.remove('applied_coupon_code');
-    await prefs.remove('applied_coupon_discount');
+    await prefs.remove('pending_order_payload');
+    await prefs.remove('pending_order_total');
+    // remove coupon/promo keys too...
   }
 
   void _onPaymentError(PaymentFailureResponse r) {

@@ -29,7 +29,9 @@ class OrderController extends BaseController {
   RxString estimatedDays = "".obs;
   RxString courierName = "".obs;
   // Lists & details
-  List orderHistory = [].obs; // from /order-history/{userId}
+  // List orderHistory = [].obs; // from /order-history/{userId}
+  RxList orderHistory = [].obs;
+
   List exchangeHistory = [].obs; // from /exchange-history/{userId}
   List returnHistory = [].obs; // from /return-history/{userId}
 
@@ -62,10 +64,6 @@ class OrderController extends BaseController {
 
 // Updated initiatePayment method with proper payload structure
 
-// ========================================
-// UPDATED initiatePayment Method
-// ========================================
-
   Future<Map<String, dynamic>?> initiatePayment({
     required int userId,
     required int shippingAddressId,
@@ -89,105 +87,105 @@ class OrderController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
 
     try {
-      final uri = Uri.parse("${ApiConstants.baseUrl}/checkout/initiate");
+      // ── STEP 1: Initiate Checkout Session ──────────────────────
+      final initiateUri =
+          Uri.parse("${ApiConstants.baseUrl}/checkout/initiate");
 
-      // ✅ Build payload matching the API structure
-      final body = mode != null 
-          ? {
-              "mode": mode,
-              if (productId != null) "productId": productId,
-              if (variantId != null) "variantId": variantId,
-              if (quantity != null) "quantity": quantity,
-              "shippingCost": shippingCost ?? 0,
-              if (couponCode != null && couponCode.isNotEmpty) "couponCode": couponCode,
-              "shippingAddressId": shippingAddressId,
-              "paymentMethod": paymentMethod,
-            }
-          : {
-              "userId": userId,
-              "shippingAddressId": shippingAddressId,
-              "items": items,
-              "totalMRP": totalMRP,
-              "couponDiscount": couponDiscount,
-              "tax": tax,
-              "total": total,
-              "paymentMethod": paymentMethod,
-            };
+      final initiateBody = {
+        "mode": mode ?? "cart",
+        if (productId != null) "productId": productId,
+        if (variantId != null) "variantId": variantId,
+        if (quantity != null) "quantity": quantity,
+        if (couponCode != null && couponCode.isNotEmpty)
+          "couponCode": couponCode,
+      };
 
-      print("📤 Initiating payment with body:");
-      print(jsonEncode(body));
+      print("📤 STEP 1 - Initiating checkout:");
+      print(jsonEncode(initiateBody));
 
-      final res = await http.post(
-        uri,
+      final initiateRes = await http.post(
+        initiateUri,
         headers: _headersWithToken(prefs.getString('token'), jsonBody: true),
-        body: jsonEncode(body),
+        body: jsonEncode(initiateBody),
       );
 
-      print("📥 Response status: ${res.statusCode}");
-      print("📥 Response body: ${res.body}");
+      print("📥 Initiate status: ${initiateRes.statusCode}");
+      print("📥 Initiate body: ${initiateRes.body}");
 
-      if (_handleAuthGuard(res.statusCode)) return null;
+      if (_handleAuthGuard(initiateRes.statusCode)) return null;
 
-      if (res.statusCode == 200 || res.statusCode == 201) {
-        final decoded = jsonDecode(res.body);
-
-        if (decoded is! Map || !decoded.containsKey("data")) {
-          print("⚠️ Unexpected API response format: $decoded");
-          getSnackBar("Unexpected response from server.");
-          return null;
+      if (initiateRes.statusCode != 200 && initiateRes.statusCode != 201) {
+        try {
+          final error = jsonDecode(initiateRes.body);
+          apiError.value = error["message"] ?? "Checkout initiation failed";
+        } catch (_) {
+          apiError.value =
+              "Checkout initiation failed (${initiateRes.statusCode})";
         }
-
-        final data = decoded["data"] as Map<String, dynamic>?;
-
-        if (data == null || data.isEmpty) {
-          print("⚠️ Data field missing in response: $decoded");
-          getSnackBar("Payment initiation failed. Please try again.");
-          return null;
-        }
-
-        final orderId = data["orderId"];
-        final checkoutSessionId = data["checkoutSessionId"];
-        final providerOrderId = data["providerOrderId"];
-        final paymentId = data["paymentId"];
-
-        if ((orderId == null && checkoutSessionId == null) || providerOrderId == null) {
-          print("⚠️ Missing checkoutSessionId/orderId or providerOrderId in response.");
-          getSnackBar("Invalid payment response. Please try again.");
-          return null;
-        }
-
-        if (orderId != null) {
-          await prefs.setInt("orderId", orderId);
-          print("💾 Saved local orderId: $orderId");
-        }
-        if (checkoutSessionId != null) {
-          await prefs.setString("checkoutSessionId", checkoutSessionId);
-          print("💾 Saved local checkoutSessionId: $checkoutSessionId");
-        }
-
-        print(
-            "✅ Payment initiated successfully with providerOrderId: $providerOrderId");
-
-        getSnackBar("Payment initiated successfully");
-        return {
-          "orderId": orderId,
-          "paymentId": paymentId,
-          "providerOrderId": providerOrderId,
-        };
+        getSnackBar(apiError.value);
+        return null;
       }
 
-      try {
-        final error = jsonDecode(res.body);
-        apiError.value = error["message"] ??
-            error["error"] ??
-            "Payment initiation failed (${res.statusCode})";
-      } catch (_) {
-        apiError.value = "Payment initiation failed (${res.statusCode})";
+      final initiateData = jsonDecode(initiateRes.body);
+      final checkoutSessionId = initiateData["data"]?["checkoutSessionId"];
+
+      if (checkoutSessionId == null) {
+        getSnackBar("Failed to create checkout session.");
+        return null;
       }
 
-      print("❌ Payment initiation failed: ${res.body}");
-      getSnackBar(apiError.value);
-      return null;
+      print("✅ Checkout session created: $checkoutSessionId");
+      await prefs.setString("checkoutSessionId", checkoutSessionId);
+
+      // ── STEP 2: Set Shipping Address → gets Razorpay Order ID ──
+      final setAddressUri =
+          Uri.parse("${ApiConstants.baseUrl}/checkout/address");
+
+      final setAddressBody = {
+        "checkoutSessionId": checkoutSessionId,
+        "addressId": shippingAddressId,
+      };
+
+      print("📤 STEP 2 - Setting shipping address:");
+      print(jsonEncode(setAddressBody));
+
+      final setAddressRes = await http.post(
+        setAddressUri,
+        headers: _headersWithToken(prefs.getString('token'), jsonBody: true),
+        body: jsonEncode(setAddressBody),
+      );
+
+      print("📥 SetAddress status: ${setAddressRes.statusCode}");
+      print("📥 SetAddress body: ${setAddressRes.body}");
+
+      if (_handleAuthGuard(setAddressRes.statusCode)) return null;
+
+      if (setAddressRes.statusCode != 200 && setAddressRes.statusCode != 201) {
+        try {
+          final error = jsonDecode(setAddressRes.body);
+          apiError.value = error["message"] ?? "Failed to set shipping address";
+        } catch (_) {
+          apiError.value =
+              "Failed to set shipping address (${setAddressRes.statusCode})";
+        }
+        getSnackBar(apiError.value);
+        return null;
+      }
+
+      final setAddressData = jsonDecode(setAddressRes.body);
+      final providerOrderId = setAddressData["data"]?["razorpayOrderId"];
+
+      if (providerOrderId == null) {
+        getSnackBar("Failed to create payment order. Please try again.");
+        return null;
+      }
+
+      print("✅ Razorpay order created: $providerOrderId");
+
+      return {
+        "providerOrderId": providerOrderId,
+        "checkoutSessionId": checkoutSessionId,
+      };
     } catch (e) {
       apiError.value = "Network error: ${e.toString()}";
       print("🔥 initiatePayment error: $e");
@@ -245,29 +243,32 @@ class OrderController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
 
     try {
-      // ✅ Get locally saved backend orderId or checkoutSessionId
-      final localOrderId = prefs.getInt("orderId");
       final localCheckoutSessionId = prefs.getString("checkoutSessionId");
 
-      if (localOrderId == null && localCheckoutSessionId == null) {
-        print("❌ Missing local orderId and checkoutSessionId. Cannot place order.");
+      print("🔍 confirmPlaceOrder DEBUG:");
+      print("   checkoutSessionId: $localCheckoutSessionId");
+      print("   token: ${prefs.getString('token')}");
+
+      if (localCheckoutSessionId == null) {
+        print("❌ Missing checkoutSessionId. Cannot confirm order.");
         getSnackBar("Order session missing. Please try again.");
         return false;
       }
 
-      final uri = Uri.parse("${ApiConstants.baseUrl}/place-order");
+      // ✅ Correct endpoint — matches checkoutService.confirmCheckout
+      final uri = Uri.parse("${ApiConstants.baseUrl}/checkout/confirm");
 
       final body = {
-        if (localOrderId != null) "orderId": localOrderId,
-        if (localCheckoutSessionId != null) "checkoutSessionId": localCheckoutSessionId,
+        "checkoutSessionId": localCheckoutSessionId,
         "paymentInfo": {
-          "providerOrderId": providerOrderId, // Razorpay Order ID
-          "providerPaymentId": providerPaymentId, // Razorpay Payment ID
-          "providerSignature": providerSignature, // Razorpay Signature
+          "providerOrderId": providerOrderId,
+          "providerPaymentId": providerPaymentId,
+          "providerSignature": providerSignature,
         },
       };
 
-      print("📤 Placing order with body: $body");
+      print("📤 place-order URL: $uri");
+      print("📤 place-order body: ${json.encode(body)}");
 
       final res = await http.post(
         uri,
@@ -275,25 +276,33 @@ class OrderController extends BaseController {
         body: json.encode(body),
       );
 
-      print("📥 Response status: ${res.statusCode}");
-      print("📥 Response body: ${res.body}");
+      print("📥 place-order status: ${res.statusCode}");
+      print("📥 place-order body: ${res.body}");
 
       if (_handleAuthGuard(res.statusCode)) return false;
 
       if (res.statusCode == 200 || res.statusCode == 201) {
+        await prefs.remove("orderId");
+        await prefs.remove("checkoutSessionId");
         getSnackBar("Order placed successfully");
         return true;
       } else {
-        final responseData = json.decode(res.body);
-        apiError.value = responseData["message"] ?? "Order placement failed";
-        print("❌ Failed to place order: ${apiError.value}");
+        try {
+          final data = json.decode(res.body);
+          apiError.value = data["message"] ??
+              data["error"] ??
+              "Order placement failed (${res.statusCode})";
+        } catch (_) {
+          apiError.value = "Order placement failed (${res.statusCode})";
+        }
+        print("❌ confirm failed: ${apiError.value}");
         getSnackBar(apiError.value);
         return false;
       }
     } catch (e) {
       print("🔥 confirmPlaceOrder error: $e");
-      apiError.value = e.toString();
-      getSnackBar("Something went wrong while placing order.");
+      apiError.value = "Network error while confirming order";
+      getSnackBar("Something went wrong. Please try again.");
       return false;
     } finally {
       hideLoading();
@@ -582,7 +591,7 @@ class OrderController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
 
     try {
-      final uri = Uri.parse("${ApiConstants.baseUrl}/order-history/$userId");
+      final uri = Uri.parse("${ApiConstants.baseUrl}/order-history/1");
       print("📦 Fetching order history for userId: $userId");
 
       final res = await http.get(
@@ -598,7 +607,9 @@ class OrderController extends BaseController {
       if (res.statusCode == 200) {
         final body = json.decode(res.body);
 
-        if (body["status"] == 200 && body["data"] != null) {
+        // if (body["status"] == 200 && body["data"] != null) {
+        if ((body["status"] == 200 || body["status"].toString() == "200") &&
+            body["data"] != null) {
           final List<dynamic> dataList = body["data"];
 
           // ✅ Sort by status-specific date
@@ -627,7 +638,8 @@ class OrderController extends BaseController {
             return parseDate(b).compareTo(parseDate(a)); // DESC
           });
 
-          orderHistory = dataList;
+          // orderHistory = dataList;
+          orderHistory.assignAll(dataList);
 
           print(
               "✅ Order history loaded & sorted (${orderHistory.length} items)");
