@@ -121,39 +121,33 @@ class CartScreenState extends State<CartScreen> {
   // ---------- Razorpay Handlers ----------
 
   void _onPaymentSuccess(PaymentSuccessResponse r) async {
-    print("🎉 Razorpay Payment SUCCESS - Payment ID: ${r.paymentId}");
+    Get.offAll(() => const OrderStatusScreen(status: 'success'),
+        transition: Transition.fadeIn,
+        duration: const Duration(milliseconds: 400));
 
-    final prefs = await SharedPreferences.getInstance();
-    final int? userId = prefs.getInt('pending_order_userId');
-    final int? shippingAddressId =
-        prefs.getInt('pending_order_shippingAddressId');
+    try {
+      print("🔥 Cart _onPaymentSuccess fired");
+      print("   orderId: ${r.orderId}");
+      print("   paymentId: ${r.paymentId}");
+      print("   signature: ${r.signature}");
 
-    // Show success screen immediately
-    Get.offAll(() => const OrderStatusScreen(status: 'success'));
+      final result = await orderController.confirmPlaceOrder(
+        providerOrderId: r.orderId ?? '',
+        providerPaymentId: r.paymentId ?? '',
+        providerSignature: r.signature ?? '',
+      );
 
-    // Try to confirm in background
-    if (userId != null && shippingAddressId != null) {
-      try {
-        final bool confirmed = await orderController.confirmPlaceOrder(
-          providerOrderId: r.orderId ?? '',
-          providerPaymentId: r.paymentId ?? '',
-          providerSignature: r.signature ?? '',
-        );
-
-        if (!confirmed) {
-          print("⚠️ Backend confirmation failed for payment: ${r.paymentId}");
-        }
-      } catch (e) {
-        print("⚠️ confirmPlaceOrder exception: $e");
-      }
+      print("🔥 Cart confirmPlaceOrder result: $result");
+    } catch (e) {
+      // ✅ AND THIS
+      print("🔥 Cart confirmPlaceOrder exception: $e");
     }
 
-    // Cleanup
-    await prefs.remove('pending_order_userId');
-    await prefs.remove('pending_order_shippingAddressId');
-    await prefs.remove('pending_order_payload');
-    await prefs.remove('pending_order_total');
-    // remove coupon/promo keys too...
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('applied_promo_code');
+    await prefs.remove('applied_promo_discount');
+    await prefs.remove('applied_coupon_code');
+    await prefs.remove('applied_coupon_discount');
   }
 
   void _onPaymentError(PaymentFailureResponse r) {
@@ -1523,7 +1517,7 @@ class CartScreenState extends State<CartScreen> {
             if (discountOnMrp > 0)
               _buildPriceRow(
                 "Discount on MRP",
-                "- ₹${formatAmount(discountOnMrp)}",
+                "- ₹${formatAmount(discountOnMrp.toInt())}",
                 false,
               ),
 

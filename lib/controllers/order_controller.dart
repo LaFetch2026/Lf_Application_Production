@@ -591,7 +591,7 @@ class OrderController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
 
     try {
-      final uri = Uri.parse("${ApiConstants.baseUrl}/order-history/1");
+      final uri = Uri.parse("${ApiConstants.baseUrl}/order-history/$userId");
       print("📦 Fetching order history for userId: $userId");
 
       final res = await http.get(
