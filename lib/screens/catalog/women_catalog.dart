@@ -52,21 +52,29 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
   void initState() {
     super.initState();
 
-    final int gender = homeController.homeGenderValue.value;
-
-    catalogController.selectCategoryGender.value = gender;
-    catalogController.categoryName.value = gender == 1
-        ? 'Men'
-        : gender == 2
-            ? 'Women'
-            : 'Accessories';
+    // ✅ On first init, seed catalog gender from the first available tab (default Men).
+    // We deliberately do NOT read homeController.homeGenderValue here so that
+    // the catalog tab and the home tab remain fully independent.
+    if (!_isInitialized) {
+      final int defaultGender = homeController.genderTabs.isNotEmpty
+          ? (homeController.genderTabs.first['id'] is int
+              ? homeController.genderTabs.first['id'] as int
+              : int.tryParse(
+                      homeController.genderTabs.first['id']?.toString() ?? '') ??
+                  1)
+          : 1;
+      catalogController.selectCategoryGender.value = defaultGender;
+      catalogController.categoryName.value = homeController.genderTabs.isNotEmpty
+          ? homeController.genderTabs.first['name']?.toString() ?? 'Men'
+          : 'Men';
+    }
 
     // Initialize TabController (always runs to prevent null errors)
     _initGenderTabController();
 
     // Only fetch data if not already loaded
     if (!_isInitialized || catalogController.catalogList.isEmpty) {
-      catalogController.getCatalogData(gender);
+      catalogController.getCatalogData(catalogController.selectCategoryGender.value);
       _isInitialized = true;
     } else {
       print("✅ WomenCatalogScreen already initialized, skipping API call");
@@ -75,14 +83,14 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
 
   void _initGenderTabController() {
     if (homeController.genderTabs.isNotEmpty) {
-      // Find initial index based on current gender value
+      // ✅ Find initial index based on catalog's OWN gender value, not home's
       int initialIndex = 0;
       for (int i = 0; i < homeController.genderTabs.length; i++) {
         final tab = homeController.genderTabs[i];
         final int tabGenderId = tab['id'] is int
             ? tab['id']
             : int.tryParse(tab['id']?.toString() ?? '0') ?? 0;
-        if (tabGenderId == homeController.homeGenderValue.value) {
+        if (tabGenderId == catalogController.selectCategoryGender.value) {
           initialIndex = i;
           break;
         }
@@ -124,8 +132,6 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
 
     catalogController.selectCategoryGender.value = genderId;
     catalogController.categoryName.value = genderName;
-    homeController.homeGenderValue.value = genderId;
-    homeController.genderText.value = genderName;
 
     catalogController.getCatalogData(genderId);
 
@@ -317,7 +323,7 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                       onRefresh: () async {
                         Haptic.light();
                         await catalogController.getCatalogData(
-                          homeController.homeGenderValue.value,
+                          catalogController.selectCategoryGender.value,
                         );
                       },
                       child: AnimationLimiter(
@@ -383,12 +389,10 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                                               CategoryProductScreen(
                                                 categoryName: categoryName,
                                                 screen: 'category',
-                                                genderName: homeController
-                                                    .genderText.value,
+                                                genderName: catalogController.categoryName.value,
                                                 categoryId: categoryId,
                                                 brandId: 0,
-                                                genderType: homeController
-                                                    .homeGenderValue.value,
+                                                genderType: catalogController.selectCategoryGender.value,
                                                 categoryList: const [],
                                                 collectionIds: const [],
                                                 title: '',

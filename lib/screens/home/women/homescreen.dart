@@ -220,7 +220,7 @@ class HomeScreenState extends State<HomeScreen>
         }
 
         // ✅ Fix hot reload visibility issue
-        if (catalogController.catalogList.isNotEmpty) {
+        if (catalogController.catalogByGender[currentGender]?.isNotEmpty == true) {
           catalogController.update();
         }
       } catch (e, stackTrace) {
@@ -902,17 +902,21 @@ class HomeScreenState extends State<HomeScreen>
 
                           // Shop by Category Section
                           Obx(
-                            () => catalogController.isCatalog.value
-                                ? const DummyGridMostSearch(text: "")
-                                : catalogController.catalogList.isNotEmpty
-                                    ? _ShopByCategorySection(
-                                        catalogController: catalogController,
-                                        analytics: analytics,
-                                        homeController: homeController,
-                                        onPressedViewAll: () =>
-                                            widget.onPressed?.call(2),
-                                      )
-                                    : const SizedBox.shrink(),
+                            () {
+                              final gender = homeController.homeGenderValue.value;
+                              final cats = catalogController.catalogByGender[gender] ?? [];
+                              return catalogController.isCatalog.value
+                                  ? const DummyGridMostSearch(text: "")
+                                  : cats.isNotEmpty
+                                      ? _ShopByCategorySection(
+                                          catalogController: catalogController,
+                                          analytics: analytics,
+                                          homeController: homeController,
+                                          onPressedViewAll: () =>
+                                              widget.onPressed?.call(2),
+                                        )
+                                      : const SizedBox.shrink();
+                            },
                           ),
 
                           Obx(() {
@@ -2209,9 +2213,9 @@ class _ShopByCategorySection extends StatelessWidget {
                 crossAxisSpacing: 12.sp,
                 mainAxisSpacing: 2.sp,
                 children: List.generate(
-                  min(6, catalogController.catalogList.length),
+                  min(6, (catalogController.catalogByGender[homeController.homeGenderValue.value] ?? []).length),
                   (index) {
-                    final catalog = catalogController.catalogList[index];
+                    final catalog = (catalogController.catalogByGender[homeController.homeGenderValue.value] ?? [])[index];
                     return GestureDetector(
                       onTap: () async {
                         final categoryId = catalog["id"];

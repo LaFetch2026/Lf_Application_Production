@@ -22,10 +22,19 @@ class CatalogController extends BaseController {
   RxBool isSorting = false.obs;
 
   RxString categoryName = "Men".obs;
-  RxInt selectCategoryGender = 2.obs;
+  RxInt selectCategoryGender = 0.obs;
 
   /// Lists
+  /// [catalogList] is used by the Category screen — holds the currently-selected
+  /// gender's categories and is replaced when the user switches tabs there.
   RxList<dynamic> catalogList = <dynamic>[].obs;
+
+  /// [catalogByGender] is used by the Home screen's "Shop by Category" section.
+  /// Keyed by gender ID so switching tabs in the Category screen never
+  /// overwrites another gender's data shown on the Home screen.
+  final RxMap<int, List<dynamic>> catalogByGender =
+      <int, List<dynamic>>{}.obs;
+
   RxList<dynamic> catagoryList = <dynamic>[].obs;
   RxList<dynamic> categoryProductList = <dynamic>[].obs;
   RxList<dynamic> sortedProductList = <dynamic>[].obs;
@@ -40,13 +49,18 @@ class CatalogController extends BaseController {
   void markCatalogLoaded(int gender) => _loadedCatalogGenders.add(gender);
 
   /// Clear loaded tracking
-  void clearLoadedTracking() => _loadedCatalogGenders.clear();
+  void clearLoadedTracking() {
+    _loadedCatalogGenders.clear();
+    catalogByGender.clear();
+  }
 
   /// Fetch catalog by gender
   Future<void> getCatalogData(int gender, {bool forceRefresh = false}) async {
-    // ✅ Skip if already loaded (unless force refresh)
-    if (!forceRefresh && isCatalogLoaded(gender) && catalogList.isNotEmpty) {
+    // ✅ Skip if already loaded for this specific gender (unless force refresh)
+    if (!forceRefresh && isCatalogLoaded(gender) && (catalogByGender[gender]?.isNotEmpty ?? false)) {
       print('✅ Catalog already loaded for gender: $gender, skipping API call');
+      // Sync catalogList so the Category screen tab also shows correct data
+      catalogList.assignAll(catalogByGender[gender]!);
       return;
     }
 
@@ -58,6 +72,7 @@ class CatalogController extends BaseController {
       if (cached != null && cached is List) {
         catalogList.clear();
         catalogList.assignAll(cached);
+        catalogByGender[gender] = List<dynamic>.from(cached);
         markCatalogLoaded(gender); // ✅ Mark as loaded
         update();
         print(
@@ -103,6 +118,9 @@ class CatalogController extends BaseController {
           // ✅ CRITICAL: Clear old data first, then assign new data
           catalogList.clear();
           catalogList.assignAll(data);
+
+          // ✅ Also store per-gender so Home screen is unaffected by tab switches
+          catalogByGender[gender] = List<dynamic>.from(data);
 
           // ✅ Mark as loaded after successful API call
           markCatalogLoaded(gender);
