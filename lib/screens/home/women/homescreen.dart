@@ -220,7 +220,8 @@ class HomeScreenState extends State<HomeScreen>
         }
 
         // ✅ Fix hot reload visibility issue
-        if (catalogController.catalogByGender[currentGender]?.isNotEmpty == true) {
+        if (catalogController.catalogByGender[currentGender]?.isNotEmpty ==
+            true) {
           catalogController.update();
         }
       } catch (e, stackTrace) {
@@ -822,7 +823,7 @@ class HomeScreenState extends State<HomeScreen>
                                       aspectRatio: 3 / 1,
                                       child: PageView(
                                         key: ValueKey(
-                                            'pageview_${homeController.homeGenderValue.value}'), // ✅ Rebuild PageView on gender change
+                                            'pageview_${homeController.homeGenderValue.value}'),
                                         controller: _pageController,
                                         onPageChanged: (index) {
                                           if (index >= 0 &&
@@ -903,8 +904,11 @@ class HomeScreenState extends State<HomeScreen>
                           // Shop by Category Section
                           Obx(
                             () {
-                              final gender = homeController.homeGenderValue.value;
-                              final cats = catalogController.catalogByGender[gender] ?? [];
+                              final gender =
+                                  homeController.homeGenderValue.value;
+                              final cats =
+                                  catalogController.catalogByGender[gender] ??
+                                      [];
                               return catalogController.isCatalog.value
                                   ? const DummyGridMostSearch(text: "")
                                   : cats.isNotEmpty
@@ -2213,9 +2217,16 @@ class _ShopByCategorySection extends StatelessWidget {
                 crossAxisSpacing: 12.sp,
                 mainAxisSpacing: 2.sp,
                 children: List.generate(
-                  min(6, (catalogController.catalogByGender[homeController.homeGenderValue.value] ?? []).length),
+                  min(
+                      6,
+                      (catalogController.catalogByGender[
+                                  homeController.homeGenderValue.value] ??
+                              [])
+                          .length),
                   (index) {
-                    final catalog = (catalogController.catalogByGender[homeController.homeGenderValue.value] ?? [])[index];
+                    final catalog = (catalogController.catalogByGender[
+                            homeController.homeGenderValue.value] ??
+                        [])[index];
                     return GestureDetector(
                       onTap: () async {
                         final categoryId = catalog["id"];

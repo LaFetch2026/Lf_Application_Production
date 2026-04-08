@@ -30,6 +30,15 @@ class SearchScreenController extends BaseController {
   final RxBool hasMore = true.obs;
   String _lastQuery = "";
 
+  // Race condition prevention: each search gets a unique ID;
+  // responses from older requests are discarded.
+  int _searchRequestId = 0;
+
+  // Inactive brands cache (5-minute TTL)
+  Set<String>? _inactiveBrandsCache;
+  DateTime? _inactiveBrandsFetchedAt;
+  static const _inactiveBrandsCacheDuration = Duration(minutes: 5);
+
   //filters
 
   final RxList<String> filterBrands = <String>[].obs;
@@ -123,6 +132,7 @@ class SearchScreenController extends BaseController {
     currentPage.value = 0;
     hasMore.value = true;
     searchList.clear();
+    ++_searchRequestId; // invalidate any in-flight request
     getSearchData();
   }
 
@@ -136,6 +146,7 @@ class SearchScreenController extends BaseController {
     currentPage.value = 0;
     hasMore.value = true;
     searchList.clear();
+    ++_searchRequestId; // invalidate any in-flight request
     getSearchData();
   }
 
@@ -149,6 +160,40 @@ class SearchScreenController extends BaseController {
     sortOption.value = "recommended";
     currentPage.value = 0;
     hasMore.value = true;
+  }
+
+  // ---- API: POST /product-search?key=<query> --------------------------------
+
+  /// Fetches inactive brand names (lowercase) with a 5-minute cache.
+  /// Returns empty set on failure so search still works.
+  Future<Set<String>> _getInactiveBrands() async {
+    final now = DateTime.now();
+    if (_inactiveBrandsCache != null &&
+        _inactiveBrandsFetchedAt != null &&
+        now.difference(_inactiveBrandsFetchedAt!) < _inactiveBrandsCacheDuration) {
+      return _inactiveBrandsCache!;
+    }
+    try {
+      final headers = await _headers();
+      final uri = Uri.parse('${ApiConstants.baseUrl}/brands/inactive');
+      final response = await http
+          .get(uri, headers: headers)
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode == 200 && _isJson(response)) {
+        final decoded = json.decode(response.body);
+        final List<dynamic> data = decoded['data'] ?? [];
+        _inactiveBrandsCache = data
+            .map((b) => (b['name'] as String?)?.toLowerCase().trim() ?? '')
+            .where((n) => n.isNotEmpty)
+            .toSet();
+        _inactiveBrandsFetchedAt = now;
+        print('[ALGOLIA] Inactive brands: ${_inactiveBrandsCache!.join(', ')}');
+        return _inactiveBrandsCache!;
+      }
+    } catch (e) {
+      print('[ALGOLIA] Failed to fetch inactive brands: $e');
+    }
+    return {};
   }
 
   // ---- API: POST /product-search?key=<query> --------------------------------
@@ -172,13 +217,22 @@ class SearchScreenController extends BaseController {
       _lastQuery = key;
     }
 
-    if (!hasMore.value || isSearching.value) return;
+    // For load-more, skip if already loading or nothing left
+    if (loadMore && (!hasMore.value || isSearching.value)) return;
+    if (!loadMore && !hasMore.value) return;
+
+    // Claim this request's ID. If a newer request starts before this one
+    // finishes, thisId will be stale and we discard the response.
+    final thisId = ++_searchRequestId;
 
     isSearching.value = true;
 
     try {
       await _initAlgolia();
       if (_client == null) throw Exception("Algolia not configured");
+
+      // Stale-check: a newer search was triggered while we were initialising
+      if (thisId != _searchRequestId) return;
 
       List<String> filterParts = ['available:true'];
 
@@ -212,9 +266,26 @@ class SearchScreenController extends BaseController {
         facets: ['brand', 'category', 'gender', 'sizes'],
       );
 
-      print('[ALGOLIA] Search request filters: $filters');
+      print('[ALGOLIA] Search page=${currentPage.value} filters=$filters');
       final response = await _client!.searchIndex(request: request);
+
+      // Stale-check: discard if a newer request has already completed/started
+      if (thisId != _searchRequestId) {
+        print('[ALGOLIA] Discarding stale response for "$key" (id=$thisId)');
+        return;
+      }
+
       final hits = response.hits.map((h) => h.toJson()).toList();
+      // Use raw hit count (before filtering) to determine if more pages exist
+      final rawHitCount = hits.length;
+
+      final inactiveBrands = await _getInactiveBrands();
+
+      // Stale-check again after the async inactive-brands fetch
+      if (thisId != _searchRequestId) {
+        print('[ALGOLIA] Discarding stale response for "$key" (id=$thisId)');
+        return;
+      }
 
       final items = hits
           .map((p) => <String, dynamic>{
@@ -232,6 +303,14 @@ class SearchScreenController extends BaseController {
                 'rating': p['rating'] ?? 0,
                 ...Map<String, dynamic>.from(p),
               })
+          .where((p) {
+            if (inactiveBrands.isEmpty) return true;
+            final brand = (p['brand_name'] ?? p['brand'] ?? '')
+                .toString()
+                .toLowerCase()
+                .trim();
+            return !inactiveBrands.contains(brand);
+          })
           .toList();
 
       if (loadMore) {
@@ -245,22 +324,27 @@ class SearchScreenController extends BaseController {
       searchText.value =
           searchList.isEmpty ? "No product found" : "Search for products";
 
-      if (items.length < 20) {
+      if (rawHitCount < 20) {
         hasMore.value = false;
       } else {
         currentPage.value += 1;
       }
     } on TimeoutException {
+      if (thisId != _searchRequestId) return;
       if (!loadMore) searchList.clear();
       searchText.value = "No product found";
       hasMore.value = false;
     } catch (e) {
+      if (thisId != _searchRequestId) return;
       print('[SEARCH] error: $e');
       if (!loadMore) searchList.clear();
       searchText.value = "No product found";
       hasMore.value = false;
     } finally {
-      isSearching.value = false;
+      // Only clear the loading flag if we're still the active request
+      if (thisId == _searchRequestId) {
+        isSearching.value = false;
+      }
     }
   }
 
@@ -375,5 +459,6 @@ class SearchScreenController extends BaseController {
     currentPage.value = 0;
     hasMore.value = true;
     _lastQuery = "";
+    ++_searchRequestId; // invalidate any in-flight request
   }
 }
