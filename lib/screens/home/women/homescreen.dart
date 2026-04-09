@@ -2373,70 +2373,166 @@ class _ShopByCategorySection extends StatelessWidget {
   }
 }
 
-// ✅ Widget to display standalone collection banners with horizontal scroll
-class _StandaloneCollectionBanners extends StatelessWidget {
+/// Displays collection banners in a carousel.
+///
+/// Banners are sorted by [position] and grouped into "slides" based on [tile]:
+///   tile == 1 → one full-width banner per slide
+///   tile == 2 → two banners side-by-side per slide
+///   tile == 3 → three banners side-by-side per slide
+///
+/// Consecutive banners with the same tile value fill one slide; when the slide
+/// is full (or the tile value changes) a new slide begins.
+/// Multiple slides are shown in a swipeable PageView with dot indicators.
+class _StandaloneCollectionBanners extends StatefulWidget {
   final List<StandaloneCollectionBanner> banners;
-  final VoidCallback? onBannerTap;
+  final void Function(String redirectUrl)? onBannerTap;
+  final VoidCallback? onFallbackTap;
 
   const _StandaloneCollectionBanners({
     required this.banners,
     this.onBannerTap,
+    this.onFallbackTap,
   });
 
   @override
-  Widget build(BuildContext context) {
-    if (banners.isEmpty) return const SizedBox.shrink();
+  State<_StandaloneCollectionBanners> createState() =>
+      _StandaloneCollectionBannersState();
+}
 
-    print("🖼️ Rendering ${banners.length} banners");
-    for (var b in banners) {
-      print(
-          "  - Banner ${b.id}: isVideo=${b.isVideo()}, url=${b.getImageUrl(isMobile: true)}");
+class _StandaloneCollectionBannersState
+    extends State<_StandaloneCollectionBanners> {
+  late final PageController _pageController;
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  /// Groups sorted banners into carousel slides.
+  List<List<StandaloneCollectionBanner>> _buildSlides() {
+    final slides = <List<StandaloneCollectionBanner>>[];
+    if (widget.banners.isEmpty) return slides;
+
+    List<StandaloneCollectionBanner> current = [widget.banners.first];
+    for (int i = 1; i < widget.banners.length; i++) {
+      final b = widget.banners[i];
+      if (b.tile == current.first.tile && current.length < b.tile) {
+        current.add(b);
+      } else {
+        slides.add(current);
+        current = [b];
+      }
     }
+    slides.add(current);
+    return slides;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.banners.isEmpty) return const SizedBox.shrink();
+
+    final slides = _buildSlides();
+    final screenWidth = MediaQuery.of(context).size.width;
+    // Use the tile count of the first slide to determine height
+    final firstTile = slides.first.first.tile.clamp(1, 3);
+    final bannerHeight = firstTile == 1 ? 220.sp : 160.sp;
+    final showDots = slides.length > 1;
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.sp),
-      child: SizedBox(
-        height: 200.sp,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: 16.sp),
-          itemCount: banners.length,
-          itemBuilder: (context, index) {
-            final banner = banners[index];
-            final isVideo = banner.isVideo(isMobile: true);
-            final mediaUrl = banner.getImageUrl(isMobile: true);
-            final itemWidth = banners.length == 1
-                ? MediaQuery.of(context).size.width - 32.sp
-                : MediaQuery.of(context).size.width * 0.85;
+      padding: EdgeInsets.only(top: 8.sp, bottom: showDots ? 4.sp : 8.sp),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: bannerHeight,
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: slides.length,
+              onPageChanged: (i) => setState(() => _currentPage = i),
+              itemBuilder: (context, slideIndex) {
+                final slideBanners = slides[slideIndex];
+                final tileCount = slideBanners.first.tile.clamp(1, 3);
+                final gap = 6.sp;
+                final totalGap = gap * (tileCount - 1);
+                final itemWidth = (screenWidth - 32.sp - totalGap) / tileCount;
 
-            print("📌 Building banner $index: isVideo=$isVideo, url=$mediaUrl");
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                  child: Row(
+                    children: List.generate(slideBanners.length, (i) {
+                      final banner = slideBanners[i];
+                      final isVideo = banner.isVideo(isMobile: true);
+                      final mediaUrl = banner.getImageUrl(isMobile: true);
 
-            return Padding(
-              padding: EdgeInsets.only(
-                  right: index < banners.length - 1 ? 12.sp : 0),
-              child: GestureDetector(
-                onTap: onBannerTap,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12.sp),
-                  child: SizedBox(
-                    width: itemWidth,
-                    height: 200.sp,
-                    child: isVideo
-                        ? _VideoBannerItem(
-                            videoUrl: mediaUrl,
-                            height: 200.sp,
-                          )
-                        : _BannerItem(
-                            imageUrl: mediaUrl,
-                            height: 200.sp,
+                      return Padding(
+                        padding: EdgeInsets.only(
+                            right: i < slideBanners.length - 1 ? gap : 0),
+                        child: GestureDetector(
+                          onTap: () {
+                            final url = banner.redirectUrl.trim();
+                            if (url.isNotEmpty) {
+                              widget.onBannerTap?.call(url);
+                            } else {
+                              widget.onFallbackTap?.call();
+                            }
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10.sp),
+                            child: SizedBox(
+                              width: itemWidth,
+                              height: bannerHeight,
+                              child: isVideo
+                                  ? _VideoBannerItem(
+                                      videoUrl: mediaUrl,
+                                      height: bannerHeight,
+                                    )
+                                  : _BannerItem(
+                                      imageUrl: mediaUrl,
+                                      height: bannerHeight,
+                                    ),
+                            ),
                           ),
+                        ),
+                      );
+                    }),
                   ),
-                ),
-              ),
-            );
-          },
-        ),
+                );
+              },
+            ),
+          ),
+
+          // Dot indicators — only shown when there are multiple slides
+          if (showDots) ...[
+            SizedBox(height: 8.sp),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(slides.length, (i) {
+                final isActive = i == _currentPage;
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  margin: EdgeInsets.symmetric(horizontal: 3.sp),
+                  width: isActive ? 16.sp : 6.sp,
+                  height: 6.sp,
+                  decoration: BoxDecoration(
+                    color: isActive
+                        ? Colors.black
+                        : Colors.black.withOpacity(0.25),
+                    borderRadius: BorderRadius.circular(3.sp),
+                  ),
+                );
+              }),
+            ),
+            SizedBox(height: 4.sp),
+          ],
+        ],
       ),
     );
   }
@@ -2925,7 +3021,12 @@ class _CollectionSectionState extends State<_CollectionSection> {
           if (widget.banners.isNotEmpty)
             _StandaloneCollectionBanners(
               banners: widget.banners,
-              onBannerTap: widget.onTitleTap,
+              onBannerTap: (redirectUrl) {
+                // redirectUrl is non-empty — navigate to it via the product view
+                // For now open the collection view as a sensible default
+                widget.onTitleTap();
+              },
+              onFallbackTap: widget.onTitleTap,
             ),
 
           // Products
