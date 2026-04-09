@@ -12,7 +12,7 @@ enum SnackBarType { success, error, info, warning }
 void showAppSnackBar(
   String message, {
   SnackBarType type = SnackBarType.info,
-  SnackPosition position = SnackPosition.BOTTOM,
+  SnackPosition position = SnackPosition.TOP,
   Duration duration = const Duration(seconds: 3),
 }) {
   Color backgroundColor;
@@ -45,6 +45,10 @@ void showAppSnackBar(
       break;
   }
 
+  if (Get.isSnackbarOpen) {
+    Get.closeCurrentSnackbar();
+  }
+
   Get.snackbar(
     '',
     message,
@@ -55,7 +59,12 @@ void showAppSnackBar(
     colorText: textColor,
     icon: Icon(icon, color: textColor, size: 24.sp),
     borderRadius: 8.sp,
-    margin: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 10.sp),
+    margin: EdgeInsets.only(
+      left: 16.sp,
+      right: 16.sp,
+      top: position == SnackPosition.TOP ? 52.sp : 0,
+      bottom: position == SnackPosition.BOTTOM ? 52.sp : 0,
+    ),
     padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 12.sp),
     isDismissible: true,
     dismissDirection: DismissDirection.horizontal,
@@ -77,7 +86,7 @@ void getSnackBar(String message, {SnackPosition? snackPosition}) {
   showAppSnackBar(
     message,
     type: SnackBarType.info,
-    position: snackPosition ?? SnackPosition.BOTTOM,
+    position: snackPosition ?? SnackPosition.TOP,
   );
 }
 

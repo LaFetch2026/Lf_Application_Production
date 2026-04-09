@@ -17,6 +17,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.4"
+  algolia_client_core:
+    dependency: transitive
+    description:
+      name: algolia_client_core
+      sha256: "88b23e33b771b81f2ffbaa94293e45c09625d4ede5b10b58dcb0c3c1d90c5e04"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.46.2"
+  algolia_client_insights:
+    dependency: transitive
+    description:
+      name: algolia_client_insights
+      sha256: "05a2669bdc8ee525b087a78ddb949b2927e344fa61dbfd36eb8fecfad0b29f32"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.46.2"
+  algolia_client_search:
+    dependency: transitive
+    description:
+      name: algolia_client_search
+      sha256: "9857500e807c43aef9768c1a769b30def84f75fc161065f659cc818e6e7cc516"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.46.2"
+  algoliasearch:
+    dependency: "direct main"
+    description:
+      name: algoliasearch
+      sha256: "63910f214f3402232279bff010eb9a132b4c103a35f2ce08329ad13e646d4241"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.46.2"
   animate_do:
     dependency: "direct main"
     description:

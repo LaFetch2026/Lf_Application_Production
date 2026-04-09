@@ -3,10 +3,12 @@
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import '../common/widget/lists/dummy_container.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/controllers/search_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
@@ -21,7 +23,6 @@ import '../controllers/cart_controller.dart';
 import '../controllers/product_controller.dart';
 import '../controllers/wishlist_controller.dart';
 import '../controllers/brand_controller.dart';
-import '../controllers/catalog_controller.dart';
 import '../core/constant/constants.dart';
 import 'dart:async';
 
@@ -45,14 +46,11 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   final controller = Get.put(CartController());
   final brandController = Get.put(BrandController());
 
-  // Use late initialization to avoid conflicts with other screens
-  late final CatalogController catalogController;
-
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   // Filter and Sort State
-  List<int> _appliedBrandIds = [];
+  List<String> _appliedBrands = [];
   List<String> _appliedColors = [];
   List<String> _appliedSizes = [];
   String _appliedMinPrice = "300";
@@ -61,33 +59,13 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   bool _hasActiveFilters = false;
   bool _isFilterMetadataLoaded = false;
 
-  // Store original search results
-  late List<Map<String, dynamic>> _originalSearchResults;
-
   // Pagination state
-  final RxInt _currentPage = 1.obs;
   final RxBool _isLoadingMore = false.obs;
-
-  // Debounce timer
-  Timer? _debounceTimer;
-
   @override
   void initState() {
     super.initState();
-    _originalSearchResults = List.from(widget.searchResults);
-
-    // Initialize catalogController safely - find existing or create new
-    if (Get.isRegistered<CatalogController>()) {
-      catalogController = Get.find<CatalogController>();
-    } else {
-      catalogController = Get.put(CatalogController(), tag: 'search_results');
-    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // Clear any previous filtered results to ensure fresh search results
-      // Must be done after frame is built to avoid setState during build
-      catalogController.categoryProductList.clear();
-
       wishlistController.getWishlistData();
 
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -132,95 +110,29 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
     print("✅ Filter metadata loaded successfully");
   }
 
-  // Get displayed products - either filtered or original
-  List<Map<String, dynamic>> _getDisplayedProducts() {
-    // If we have filtered results from API, use those
-    if (catalogController.categoryProductList.isNotEmpty) {
-      return catalogController.categoryProductList
-          .whereType<Map<String, dynamic>>()
-          .toList();
-    }
-
-    // Otherwise, use original search results
-    return _originalSearchResults;
-  }
-
-  // Apply filters and sort
-  Future<void> _applyFiltersAndSort() async {
-    try {
-      print("═══════════════════════════════════════════════════════════");
-      print("🔹 APPLYING FILTERS/SORT TO SEARCH RESULTS");
-      print("═══════════════════════════════════════════════════════════");
-      print("   • Search Query → '${widget.searchQuery}'");
-      print(
-          "   • Brand IDs    → ${_appliedBrandIds.isNotEmpty ? _appliedBrandIds : 'all'}");
-      print(
-          "   • Colors       → ${_appliedColors.isNotEmpty ? _appliedColors : 'all'}");
-      print(
-          "   • Sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all'}");
-      print("   • Price Range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-      print("   • Sort Option  → $_appliedSortOption");
-      print("   • Has Filters  → $_hasActiveFilters");
-      print("═══════════════════════════════════════════════════════════");
-
-      if (_hasActiveFilters || _appliedSortOption != "recommended") {
-        // ✅ FIX: Pass search query (key) to filter API so it filters within search context
-        await catalogController.getFilterAndSortProducts(
-          key: widget
-              .searchQuery, // Pass search query to filter within search results
-          brandIds: _appliedBrandIds.isNotEmpty ? _appliedBrandIds : null,
-          colors: _appliedColors.isNotEmpty ? _appliedColors : null,
-          sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
-          minPrice: _appliedMinPrice,
-          maxPrice: _appliedMaxPrice,
-          sortOption:
-              _appliedSortOption != "recommended" ? _appliedSortOption : null,
-          superCatId: productController.categoryFilter.value,
-        );
-
-        print("═══════════════════════════════════════════════════════════");
-        print("✅ FILTER API RESPONSE");
-        print("═══════════════════════════════════════════════════════════");
-        print(
-            "   Products returned: ${catalogController.categoryProductList.length}");
-        print("═══════════════════════════════════════════════════════════");
-      } else {
-        // No filters, no sort - clear filtered results to show original
-        catalogController.categoryProductList.clear();
-        print(
-            "✅ Cleared filters - showing original search results (${_originalSearchResults.length} items)");
-      }
-
-      // Reset pagination when filters change
-      _currentPage.value = 1;
-    } catch (e) {
-      print("❌ Error applying filters/sort: $e");
-      getSnackBar("Something went wrong, please try again");
-    }
-  }
-
-  // Debounced update
-  void _applyFiltersAndSortDebounced() {
-    _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-      _applyFiltersAndSort();
-    });
-  }
-
   // Helper methods
   String _firstImageUrl(Map<String, dynamic> item) {
+    final directImage =
+        item['product_image'] ?? item['image'] ?? item['thumbnail'];
+
+    if (directImage != null && directImage.toString().isNotEmpty) {
+      return directImage.toString();
+    }
+
     final imgs = item['images'];
     if (imgs is List && imgs.isNotEmpty) {
       final first = imgs.first;
       final name = (first is Map ? first['name'] : null)?.toString() ?? '';
       if (name.isNotEmpty) return name;
     }
+
     final urls = item['imageUrls'];
     if (urls is List && urls.isNotEmpty) {
       final first = urls.first;
       final s = (first == null) ? '' : first.toString();
       if (s.isNotEmpty) return s;
     }
+
     return '';
   }
 
@@ -246,14 +158,6 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 
   @override
   void dispose() {
-    _debounceTimer?.cancel();
-
-    // Only delete the controller if we created it with a tag
-    // The controller deletion will handle cleanup of observables
-    if (Get.isRegistered<CatalogController>(tag: 'search_results')) {
-      Get.delete<CatalogController>(tag: 'search_results');
-    }
-
     super.dispose();
   }
 
@@ -297,66 +201,88 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
           // Grid
           Expanded(
             child: Obx(() {
-              // ✅ Watch categoryProductList for reactivity (triggers rebuild when filters applied)
-              final _ = catalogController.categoryProductList.length;
+              // Watch categoryProductList for reactivity (triggers rebuild when filters applied)
 
-              final items = _getDisplayedProducts();
-
-              if (items.isEmpty) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(errorImage,
-                        height: 200.sp, width: 220.sp, fit: BoxFit.fill),
-                    SizedBox(height: 20.sp),
-                    const AppText(
-                      text: "No products found",
-                      fontSize: 16,
-                      fontFamily: "Clash Display Semibold",
-                      color: blackColor,
-                    ),
-                    SizedBox(height: 10.sp),
-                    const AppText(
-                      text: "Try adjusting your filters",
-                      fontSize: 14,
-                      fontFamily: "Clash Display Regular",
-                      color: subtitleColor,
-                    ),
-                    SizedBox(height: 20.sp),
-                    getSingleButton(
-                      width: 200.sp,
-                      label: "BACK TO HOME",
-                      textColor: whiteColor,
-                      fontSize: 13,
-                      backgroundColor: homeAppBarColor,
-                      onPressed: () => Get.off(const BottomNavScreen()),
-                      borderColor: colorPrimary,
-                    ),
-                  ],
+              final searchSc = Get.find<SearchScreenController>();
+              final items = searchSc.searchList.toList();
+              if (searchSc.isSearching.value && items.isEmpty) {
+                return GridView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                  itemCount: 6,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16.sp,
+                    childAspectRatio: 0.58,
+                  ),
+                  itemBuilder: (_, __) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const DummyContainer(height: 160, width: double.infinity),
+                      SizedBox(height: 12.sp),
+                      const DummyContainer(height: 14, width: double.infinity),
+                      SizedBox(height: 8.sp),
+                      const DummyContainer(height: 12, width: 100),
+                      SizedBox(height: 8.sp),
+                      Row(children: [
+                        const DummyContainer(height: 12, width: 50),
+                        SizedBox(width: 6.sp),
+                        const DummyContainer(height: 10, width: 40),
+                      ]),
+                    ],
+                  ),
                 );
               }
 
-              // Client-side pagination
-              const int pageSize = 12;
-              final int page =
-                  (_currentPage.value <= 0) ? 1 : _currentPage.value;
+              if (items.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset(errorImage,
+                          height: 200.sp, width: 220.sp, fit: BoxFit.fill),
+                      SizedBox(height: 20.sp),
+                      const AppText(
+                        text: "No products found",
+                        fontSize: 16,
+                        fontFamily: "Clash Display Semibold",
+                        color: blackColor,
+                      ),
+                      SizedBox(height: 10.sp),
+                      const AppText(
+                        text: "Try adjusting your filters",
+                        fontSize: 14,
+                        fontFamily: "Clash Display Regular",
+                        color: subtitleColor,
+                      ),
+                      SizedBox(height: 20.sp),
+                      getSingleButton(
+                        width: 200.sp,
+                        label: "BACK TO HOME",
+                        textColor: whiteColor,
+                        fontSize: 13,
+                        backgroundColor: homeAppBarColor,
+                        onPressed: () => Get.off(const BottomNavScreen()),
+                        borderColor: colorPrimary,
+                      ),
+                    ],
+                  ),
+                );
+              }
 
-              final int maxToShow = page * pageSize;
-              final int visibleCount =
-                  maxToShow < items.length ? maxToShow : items.length;
-              final List<Map<String, dynamic>> displayItems =
-                  items.take(visibleCount).toList();
+              final displayItems = items;
 
               return NotificationListener<ScrollNotification>(
                 onNotification: (n) {
-                  if (n.metrics.pixels >= n.metrics.maxScrollExtent - 160) {
-                    final bool canLoadMore =
-                        displayItems.length < items.length &&
-                            !_isLoadingMore.value;
-                    if (canLoadMore) {
+                  final searchController = Get.find<SearchScreenController>();
+
+                  if (n.metrics.pixels >= n.metrics.maxScrollExtent - 200) {
+                    if (!searchController.isSearching.value &&
+                        searchController.hasMore.value &&
+                        !_isLoadingMore.value) {
                       _isLoadingMore.value = true;
-                      Future.delayed(const Duration(milliseconds: 200), () {
-                        _currentPage.value += 1;
+
+                      searchController.getSearchData(loadMore: true).then((_) {
                         _isLoadingMore.value = false;
                       });
                     }
@@ -394,7 +320,6 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                     type: "add",
                                   ),
                                 )?.then((_) {
-                                  _currentPage.value = 1;
                                   controller.getCartData();
                                 });
 
@@ -546,16 +471,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
     }
 
     // Restore previously applied brands
-    for (final id in _appliedBrandIds) {
-      final brandData = productController.filterBrands.firstWhereOrNull(
-          (item) => int.tryParse(item['id']?.toString() ?? '') == id);
-      if (brandData != null) {
-        final name = brandData['name']?.toString().trim();
-        if (name != null && name.isNotEmpty) {
-          selectedBrands.add(name);
-        }
-      }
-    }
+    selectedBrands.addAll(_appliedBrands);
 
     final brands = ["Select All", ...allBrands];
     final colors = productController.filterColors.toList();
@@ -834,7 +750,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                         children: [
                           Expanded(
                               child: OutlinedButton(
-                            onPressed: () => Get.back(),
+                            onPressed: () => Navigator.of(context).pop(),
                             style: OutlinedButton.styleFrom(
                                 side: const BorderSide(
                                     color: dividerColor, width: 1.2),
@@ -853,56 +769,44 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8))),
                             onPressed: () {
-                              Get.back();
+                              Navigator.of(context).pop();
 
-                              // ✅ FIX: Use productController.filterBrands (same source as displayed brands)
-                              final selectedBrandIds = <int>[];
-                              for (final brandName in selectedBrands) {
-                                final brandData = productController.filterBrands
-                                    .firstWhereOrNull((item) =>
-                                        item['name']?.toString().trim() ==
-                                        brandName);
-                                if (brandData != null) {
-                                  final id = int.tryParse(
-                                      brandData['id']?.toString() ?? '');
-                                  if (id != null) selectedBrandIds.add(id);
-                                }
-                              }
-
-                              print(
-                                  "═══════════════════════════════════════════════════════════");
                               print("✅ FILTERS CONFIGURED");
                               print(
                                   "═══════════════════════════════════════════════════════════");
                               print("  Brands: ${selectedBrands.join(', ')}");
-                              print("  Brand IDs: $selectedBrandIds");
                               print(
                                   "  Price: ₹${priceRange.start.toInt()} - ₹${priceRange.end.toInt()}");
                               print("  Colors: ${selectedColors.join(', ')}");
                               print("  Sizes: ${selectedSizes.join(', ')}");
 
                               setState(() {
-                                _appliedBrandIds = selectedBrandIds;
+                                _appliedBrands = List.from(selectedBrands);
                                 _appliedMinPrice =
                                     priceRange.start.toInt().toString();
                                 _appliedMaxPrice =
                                     priceRange.end.toInt().toString();
                                 _appliedColors = List.from(selectedColors);
                                 _appliedSizes = List.from(selectedSizes);
-                                _hasActiveFilters =
-                                    selectedBrandIds.isNotEmpty ||
-                                        priceRange.start > 300 ||
-                                        priceRange.end < 100000 ||
-                                        selectedColors.isNotEmpty ||
-                                        selectedSizes.isNotEmpty;
-
-                                // Reset pagination
-                                _currentPage.value = 1;
+                                _hasActiveFilters = selectedBrands.isNotEmpty ||
+                                    priceRange.start > 300 ||
+                                    priceRange.end < 100000 ||
+                                    selectedColors.isNotEmpty ||
+                                    selectedSizes.isNotEmpty;
                               });
 
                               // Schedule filter application after current frame
                               WidgetsBinding.instance.addPostFrameCallback((_) {
-                                _applyFiltersAndSortDebounced();
+                                // _applyFiltersAndSortDebounced();
+                                final sc = Get.find<SearchScreenController>();
+                                sc.applyFilters(
+                                  brands: selectedBrands,
+                                  colors: selectedColors,
+                                  sizes: selectedSizes,
+                                  minPrice: priceRange.start.toInt().toString(),
+                                  maxPrice: priceRange.end.toInt().toString(),
+                                  sort: _appliedSortOption,
+                                );
                               });
 
                               if (_hasActiveFilters) {
@@ -967,7 +871,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (_) {
+      builder: (sheetCtx) {
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 20.sp),
           child: Column(
@@ -981,7 +885,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                         fontSize: 18,
                         color: blackColor)),
                 IconButton(
-                    icon: const Icon(Icons.close), onPressed: () => Get.back())
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(sheetCtx).pop())
               ]),
               const SizedBox(height: 8),
               Obx(() => Column(
@@ -1003,7 +908,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
               Row(children: [
                 Expanded(
                     child: OutlinedButton(
-                        onPressed: () => Get.back(),
+                        onPressed: () => Navigator.of(sheetCtx).pop(),
                         style: OutlinedButton.styleFrom(
                             side: const BorderSide(
                                 color: dividerColor, width: 1.2),
@@ -1022,19 +927,25 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                 borderRadius: BorderRadius.circular(8))),
                         onPressed: () {
                           final selected = selectedOption.value;
-                          Get.back();
+                          Navigator.of(sheetCtx).pop();
 
                           print("✅ Sort option selected: $selected");
 
                           setState(() {
                             _appliedSortOption = selected;
-                            // Reset pagination
-                            _currentPage.value = 1;
                           });
 
                           // Schedule sort application after current frame
                           WidgetsBinding.instance.addPostFrameCallback((_) {
-                            _applyFiltersAndSortDebounced();
+                            final sc = Get.find<SearchScreenController>();
+                            sc.applyFilters(
+                              brands: _appliedBrands,
+                              colors: _appliedColors,
+                              sizes: _appliedSizes,
+                              minPrice: _appliedMinPrice,
+                              maxPrice: _appliedMaxPrice,
+                              sort: selected,
+                            );
                           });
 
                           getSnackBar(

@@ -134,19 +134,6 @@ class CartController extends BaseController {
         return;
       }
 
-      // final dynamic data =
-      //     (decoded is Map ? decoded['data'] : decoded) ?? decoded;
-
-      // final List<Map<String, dynamic>> rows = () {
-      //   if (data is List)
-      //     return data
-      //         .whereType<Map>()
-      //         .map((e) => Map<String, dynamic>.from(e))
-      //         .toList();
-      //   if (data is Map) return [Map<String, dynamic>.from(data)];
-      //   return <Map<String, dynamic>>[];
-      // }();
-
       final dynamic rawData =
           (decoded is Map ? decoded['data'] : decoded) ?? decoded;
 

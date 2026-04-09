@@ -15,6 +15,7 @@ import '../../../common/widget/bottom_sheets/bottomwishlist.dart';
 import '../../../common/widget/button/doublebtn.dart';
 import '../../../common/widget/lists/dummy_vertical_list.dart';
 import '../../../common/widget/other/productvedio.dart';
+import '../../../common/widget/other/pounce_wrapper.dart';
 import '../../../common/widget/other/product_price_display.dart';
 import '../../../common/widget/text/app_text.dart';
 import '../../../controllers/product_controller.dart';
@@ -229,7 +230,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                               .productCategoryList.length,
                                           scrollDirection: Axis.vertical,
                                           itemBuilder: (ctx, index) {
-                                            return GestureDetector(
+                                            return PounceWrapper(
                                               onTap: () async {
                                                 Navigator.of(context)
                                                     .push(MaterialPageRoute(

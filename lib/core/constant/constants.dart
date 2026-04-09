@@ -274,18 +274,12 @@ const somethingwentwrong = 'assets/images/somewrong.png';
 
 class ApiConstants {
   ApiConstants._();
+//
+  // static const String baseUrl = "http://192.168.2.206:8080/api"; //staging
+  static const String baseUrl = "https://lfapi.la-fetch.com/api"; //production
 
-  // static const String baseUrl =
-  // "https://api.la-fetch.com/customer/api"; //production
-
-  // static const String baseUrl = "http://192.168.1.69:8080/api"; //local nordjs
-
+  // static const String razorPayKey = "rzp_test_SPzJ3lvmyKU47B"; //staging
   static const String razorPayKey = "rzp_live_SQi03pJxPr9952"; //production
-
-  // static const String baseUrl = "http://65.0.153.196:8080/api"; //staging
-  static const String baseUrl = "https://lfapi.la-fetch.com/api"; //staging
-
-//  static const String razorPayKey = "rzp_test_CA2ZhiypSpQQlk"; //staging
 }
 
 // for meta dashborad

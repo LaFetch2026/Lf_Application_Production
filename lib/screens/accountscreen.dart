@@ -198,372 +198,391 @@ class AccountScreenState extends State<AccountScreen> {
                             onNotification: _handleScrollNotification,
                             child: SingleChildScrollView(
                               child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Obx(() {
-                                      final profileData =
-                                          controller.profileDetails.value ?? {};
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 16.sp,
-                                            bottom: 20.sp,
-                                            right: 16.sp),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                AppText(
-                                                  text:
-                                                      profileData["fullName"] ??
-                                                          "",
-                                                  fontFamily:
-                                                      "Clash Display Regular",
-                                                  fontWeight: FontWeight.w400,
-                                                  color: blackColor,
-                                                  fontSize: 28,
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      top: 5.sp),
-                                                  child: Row(
-                                                    children: [
-                                                      ImageIcon(
-                                                        AssetImage(phoneImage),
-                                                        color: greyTextColor,
-                                                        size: 18.sp,
-                                                      ),
-                                                      Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal:
-                                                                    5.sp),
-                                                        child: AppText(
-                                                          text: profileData[
-                                                                  "phone"] ??
-                                                              "",
-                                                          fontFamily:
-                                                              "Clash Display Regular",
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color: greyTextColor,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                            const Expanded(child: SizedBox()),
-                                            GestureDetector(
-                                              onTap: () async {
-                                                final profileData = controller
-                                                        .profileDetails.value ??
-                                                    {};
-
-                                                Get.to(EditProfileScreen(
-                                                  name:
-                                                      profileData['fullName'] ??
-                                                          '',
-                                                  email: profileData['email'] ??
-                                                      '',
-                                                  number:
-                                                      profileData['phone'] ??
-                                                          '',
-                                                  genderId:
-                                                      controller.genderId.value,
-                                                ))?.then((value) {
-                                                  SystemChrome
-                                                      .setSystemUIOverlayStyle(
-                                                    const SystemUiOverlayStyle(
-                                                        statusBarColor:
-                                                            whiteColor),
-                                                  );
-                                                  if (value == 'phone_changed') {
-                                                    // Phone was updated via verify-otp — profileDetails is
-                                                    // already updated in memory. Just show success message.
-                                                    // Do NOT call getProfileData() — the token may have been
-                                                    // invalidated by the backend after a phone change.
-                                                    showAppSnackBar(
-                                                      "Phone number updated successfully!",
-                                                      type: SnackBarType.success,
-                                                    );
-                                                  } else {
-                                                    controller.getProfileData();
-                                                  }
-                                                });
-                                                await analytics.logEvent(
-                                                  name: 'edit_profile',
-                                                  parameters: {
-                                                    'page_name': 'edit_profile'
-                                                  },
-                                                );
-                                              },
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    bottom: 16.sp),
-                                                child: AppText(
-                                                  text: "Edit",
-                                                  fontFamily: "Clash Display",
-                                                  fontWeight: FontWeight.w500,
-                                                  color: colorPrimary,
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 10.sp, left: 16.sp, right: 16.sp),
-                                  child: AppText(
-                                    text: "My Account",
-                                    fontFamily: "Clash Display SemiBold",
-                                    fontWeight: FontWeight.w700,
-                                    color: nameText,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () async {
-                                    Get.to(MyOrdersScreen());
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 20.sp, left: 16.sp, right: 16.sp),
-                                    child: AppText(
-                                      text: "My Orders",
-                                      fontFamily: "Clash Display Regular",
-                                      fontWeight: FontWeight.w400,
-                                      color: nameText,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () async {
-                                        Get.to(CustomerCareScreen());
-                                        await analytics.logEvent(
-                                          name: 'customer_care',
-                                          parameters: {
-                                            'page_name': 'customer_care'
-                                          },
-                                        );
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 20.sp,
-                                            left: 16.sp,
-                                            right: 16.sp),
-                                        child: AppText(
-                                          text: "Customer Care",
-                                          fontFamily: "Clash Display Regular",
-                                          fontWeight: FontWeight.w400,
-                                          color: nameText,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () async {
-                                        Get.to(const SavedAddressScreen(
-                                                type: "address"))
-                                            ?.then(
-                                          (value) {
-                                            SystemChrome
-                                                .setSystemUIOverlayStyle(
-                                              const SystemUiOverlayStyle(
-                                                  statusBarColor: whiteColor),
-                                            );
-                                          },
-                                        );
-                                        await analytics.logEvent(
-                                          name: 'saveaddress_page',
-                                          parameters: {
-                                            'page_name': 'saveaddress_page'
-                                          },
-                                        );
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 20.sp,
-                                            left: 16.sp,
-                                            right: 16.sp),
-                                        child: AppText(
-                                          text: "Saved Addresses",
-                                          fontFamily: "Clash Display Regular",
-                                          fontWeight: FontWeight.w400,
-                                          color: nameText,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                    SettingWidgets(
-                                      onPressedDelete: () async {
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Obx(() {
                                         final profileData =
                                             controller.profileDetails.value ??
                                                 {};
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 16.sp,
+                                              bottom: 20.sp,
+                                              right: 16.sp),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    AppText(
+                                                      text: profileData[
+                                                              "fullName"] ??
+                                                          "",
+                                                      fontFamily:
+                                                          "Clash Display Regular",
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: blackColor,
+                                                      fontSize: 28,
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 5.sp),
+                                                      child: Row(
+                                                        children: [
+                                                          ImageIcon(
+                                                            AssetImage(
+                                                                phoneImage),
+                                                            color:
+                                                                greyTextColor,
+                                                            size: 18.sp,
+                                                          ),
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        5.sp),
+                                                            child: AppText(
+                                                              text: profileData[
+                                                                      "phone"] ??
+                                                                  "",
+                                                              fontFamily:
+                                                                  "Clash Display Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              color:
+                                                                  greyTextColor,
+                                                              fontSize: 14,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              const Expanded(child: SizedBox()),
+                                              GestureDetector(
+                                                onTap: () async {
+                                                  final profileData = controller
+                                                          .profileDetails
+                                                          .value ??
+                                                      {};
 
-                                        final result =
-                                            await Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                DeleteAccountScreen(
-                                              date: profileData[
-                                                      "account_deletion_requested_at"] ??
-                                                  "",
-                                              account_requested: profileData[
-                                                          "account_deletion_requested_at"] !=
-                                                      null &&
-                                                  profileData[
-                                                          "account_deletion_requested_at"]
-                                                      .isNotEmpty,
-                                            ),
+                                                  Get.to(EditProfileScreen(
+                                                    name: profileData[
+                                                            'fullName'] ??
+                                                        '',
+                                                    email:
+                                                        profileData['email'] ??
+                                                            '',
+                                                    number:
+                                                        profileData['phone'] ??
+                                                            '',
+                                                    genderId: controller
+                                                        .genderId.value,
+                                                  ))?.then((value) {
+                                                    SystemChrome
+                                                        .setSystemUIOverlayStyle(
+                                                      const SystemUiOverlayStyle(
+                                                          statusBarColor:
+                                                              whiteColor),
+                                                    );
+                                                    if (value ==
+                                                        'phone_changed') {
+                                                      // Phone was updated via verify-otp — profileDetails is
+                                                      // already updated in memory. Just show success message.
+                                                      // Do NOT call getProfileData() — the token may have been
+                                                      // invalidated by the backend after a phone change.
+                                                      showAppSnackBar(
+                                                        "Phone number updated successfully!",
+                                                        type: SnackBarType
+                                                            .success,
+                                                      );
+                                                    } else {
+                                                      controller
+                                                          .getProfileData();
+                                                    }
+                                                  });
+                                                  await analytics.logEvent(
+                                                    name: 'edit_profile',
+                                                    parameters: {
+                                                      'page_name':
+                                                          'edit_profile'
+                                                    },
+                                                  );
+                                                },
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 16.sp),
+                                                  child: AppText(
+                                                    text: "Edit",
+                                                    fontFamily: "Clash Display",
+                                                    fontWeight: FontWeight.w500,
+                                                    color: colorPrimary,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         );
-
-                                        await controller.getProfileData();
-                                        SystemChrome.setSystemUIOverlayStyle(
-                                          const SystemUiOverlayStyle(
-                                              statusBarColor: whiteColor),
-                                        );
-
-                                        if (mounted) {
-                                          setState(() {});
-                                        }
-
-                                        await analytics.logEvent(
-                                          name: 'delete_account_screen',
-                                          parameters: {
-                                            'page_name': 'delete_account_screen'
-                                          },
-                                        );
-                                      },
-
+                                      }),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 10.sp, left: 16.sp, right: 16.sp),
+                                    child: AppText(
+                                      text: "My Account",
+                                      fontFamily: "Clash Display SemiBold",
+                                      fontWeight: FontWeight.w700,
+                                      color: nameText,
+                                      fontSize: 18,
                                     ),
-                                  ],
-                                ),
-                                SupportWidgets(
-                                  visibilty: false,
-                                  onPressedAboutUs: () async {
-                                    launchUrl(
-                                      Uri.parse(
-                                          "https://www.la-fetch.com/about"),
-                                      mode: LaunchMode.externalApplication,
-                                    );
-                                    await analytics.logEvent(
-                                      name: 'about_us',
-                                      parameters: {'page_name': 'about_us'},
-                                    );
-                                  },
-                                  onPressedTC: () async {
-                                    launchUrl(
-                                      Uri.parse(
-                                          "https://www.la-fetch.com/terms-and-conditions"),
-                                      mode: LaunchMode.externalApplication,
-                                    );
-                                    await analytics.logEvent(
-                                      name: 'teams_condition',
-                                      parameters: {
-                                        'page_name': 'teams_condition'
-                                      },
-                                    );
-                                  },
-                                  onPressedPrivacy: () async {
-                                    launchUrl(
-                                      Uri.parse(
-                                          "https://la-fetch.com/privacy-policy"),
-                                      mode: LaunchMode.externalApplication,
-                                    );
-                                    await analytics.logEvent(
-                                      name: 'privacy_policy',
-                                      parameters: {
-                                        'page_name': 'privacy_policy'
-                                      },
-                                    );
-                                  },
-                                  onPressedCancelation: () async {
-                                    launchUrl(
-                                      Uri.parse(
-                                          "https://www.la-fetch.com/cancellation-policy"),
-                                      mode: LaunchMode.externalApplication,
-                                    );
-                                    await analytics.logEvent(
-                                      name: 'cancellation_policy',
-                                      parameters: {
-                                        'page_name': 'cancellation_policy'
-                                      },
-                                    );
-                                  },
-                                  onPressedShiping: () async {
-                                    launchUrl(
-                                      Uri.parse(
-                                          "https://www.la-fetch.com/shipping-policy"),
-                                      mode: LaunchMode.externalApplication,
-                                    );
-                                    await analytics.logEvent(
-                                      name: 'shiping_policy',
-                                      parameters: {
-                                        'page_name': 'shiping_policy'
-                                      },
-                                    );
-                                  },
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 60.sp, bottom: 20.sp),
-                                  child: SingleButton(
-                                    label: "Logout",
-                                    textColor: lightPurpleColor,
-                                    backgroundColor: whiteColor,
-                                    borderColor: lightPurpleColor,
-                                    onPressed: () {
-                                      showDialog(
-                                        barrierColor: Colors.black26,
-                                        context: context,
-                                        builder: (context) {
-                                          return showDoubleBtnDailog(
-                                            text:
-                                                "Are you sure you want to logout?",
-                                            btn1Text: "No",
-                                            btn2Text: "Yes",
-                                            btncolor: colorPrimary,
-                                            click1: () => Get.back(),
-                                            click2: () async {
-                                              await controller.callLogout();
-                                              await analytics.logEvent(
-                                                name: 'logout_btnclick',
-                                                parameters: {
-                                                  'page_name': 'logout_btnclick'
-                                                },
-                                              );
-                                              Get.back();
+                                  ),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      Get.to(MyOrdersScreen());
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 20.sp,
+                                          left: 16.sp,
+                                          right: 16.sp),
+                                      child: AppText(
+                                        text: "My Orders",
+                                        fontFamily: "Clash Display Regular",
+                                        fontWeight: FontWeight.w400,
+                                        color: nameText,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () async {
+                                          Get.to(CustomerCareScreen());
+                                          await analytics.logEvent(
+                                            name: 'customer_care',
+                                            parameters: {
+                                              'page_name': 'customer_care'
                                             },
                                           );
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 20.sp,
+                                              left: 16.sp,
+                                              right: 16.sp),
+                                          child: AppText(
+                                            text: "Customer Care",
+                                            fontFamily: "Clash Display Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: nameText,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          Get.to(const SavedAddressScreen(
+                                                  type: "address"))
+                                              ?.then(
+                                            (value) {
+                                              SystemChrome
+                                                  .setSystemUIOverlayStyle(
+                                                const SystemUiOverlayStyle(
+                                                    statusBarColor: whiteColor),
+                                              );
+                                            },
+                                          );
+                                          await analytics.logEvent(
+                                            name: 'saveaddress_page',
+                                            parameters: {
+                                              'page_name': 'saveaddress_page'
+                                            },
+                                          );
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 20.sp,
+                                              left: 16.sp,
+                                              right: 16.sp),
+                                          child: AppText(
+                                            text: "Saved Addresses",
+                                            fontFamily: "Clash Display Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: nameText,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                      SettingWidgets(
+                                        onPressedDelete: () async {
+                                          final profileData =
+                                              controller.profileDetails.value ??
+                                                  {};
+
+                                          final result =
+                                              await Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DeleteAccountScreen(
+                                                date: profileData[
+                                                        "account_deletion_requested_at"] ??
+                                                    "",
+                                                account_requested: profileData[
+                                                            "account_deletion_requested_at"] !=
+                                                        null &&
+                                                    profileData[
+                                                            "account_deletion_requested_at"]
+                                                        .isNotEmpty,
+                                              ),
+                                            ),
+                                          );
+
+                                          await controller.getProfileData();
+                                          SystemChrome.setSystemUIOverlayStyle(
+                                            const SystemUiOverlayStyle(
+                                                statusBarColor: whiteColor),
+                                          );
+
+                                          if (mounted) {
+                                            setState(() {});
+                                          }
+
+                                          await analytics.logEvent(
+                                            name: 'delete_account_screen',
+                                            parameters: {
+                                              'page_name':
+                                                  'delete_account_screen'
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  SupportWidgets(
+                                    visibilty: false,
+                                    onPressedAboutUs: () async {
+                                      launchUrl(
+                                        Uri.parse(
+                                            "https://www.la-fetch.com/about"),
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                      await analytics.logEvent(
+                                        name: 'about_us',
+                                        parameters: {'page_name': 'about_us'},
+                                      );
+                                    },
+                                    onPressedTC: () async {
+                                      launchUrl(
+                                        Uri.parse(
+                                            "https://www.la-fetch.com/terms-and-conditions"),
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                      await analytics.logEvent(
+                                        name: 'teams_condition',
+                                        parameters: {
+                                          'page_name': 'teams_condition'
+                                        },
+                                      );
+                                    },
+                                    onPressedPrivacy: () async {
+                                      launchUrl(
+                                        Uri.parse(
+                                            "https://la-fetch.com/privacy-policy"),
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                      await analytics.logEvent(
+                                        name: 'privacy_policy',
+                                        parameters: {
+                                          'page_name': 'privacy_policy'
+                                        },
+                                      );
+                                    },
+                                    onPressedCancelation: () async {
+                                      launchUrl(
+                                        Uri.parse(
+                                            "https://www.la-fetch.com/cancellation-policy"),
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                      await analytics.logEvent(
+                                        name: 'cancellation_policy',
+                                        parameters: {
+                                          'page_name': 'cancellation_policy'
+                                        },
+                                      );
+                                    },
+                                    onPressedShiping: () async {
+                                      launchUrl(
+                                        Uri.parse(
+                                            "https://www.la-fetch.com/shipping-policy"),
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                      await analytics.logEvent(
+                                        name: 'shiping_policy',
+                                        parameters: {
+                                          'page_name': 'shiping_policy'
                                         },
                                       );
                                     },
                                   ),
-                                ),
-                                const ProfileBottom(version: "1.0.7"),
-                              ],
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 60.sp, bottom: 20.sp),
+                                    child: SingleButton(
+                                      label: "Logout",
+                                      textColor: lightPurpleColor,
+                                      backgroundColor: whiteColor,
+                                      borderColor: lightPurpleColor,
+                                      onPressed: () {
+                                        showDialog(
+                                          barrierColor: Colors.black26,
+                                          context: context,
+                                          builder: (context) {
+                                            return showDoubleBtnDailog(
+                                              text:
+                                                  "Are you sure you want to logout?",
+                                              btn1Text: "No",
+                                              btn2Text: "Yes",
+                                              btncolor: colorPrimary,
+                                              click1: () => Get.back(),
+                                              click2: () async {
+                                                await controller.callLogout();
+                                                await analytics.logEvent(
+                                                  name: 'logout_btnclick',
+                                                  parameters: {
+                                                    'page_name':
+                                                        'logout_btnclick'
+                                                  },
+                                                );
+                                                Get.back();
+                                              },
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  const ProfileBottom(version: "1.0.7"),
+                                ],
+                              ),
                             ),
-                          ),
                           ),
                         )
                       : DummyAccount();

@@ -266,6 +266,10 @@ class ProductController extends BaseController {
   RxList<String> filterColors = <String>[].obs;
   RxList<String> filterSizes = <String>[].obs;
 
+  // shake animation trigger
+  RxInt sizeShakeTrigger = 0.obs;
+  RxInt colorShakeTrigger = 0.obs;
+
 // Method to update images based on selected color
   void updateImagesForSelectedColor() {
     final pd = productDetails;
@@ -466,6 +470,7 @@ class ProductController extends BaseController {
 
     final stocks = variant['inventories']?[0]?['availableStock'] ??
         variant['availableStock'] ??
+        variant['stocks'] ??
         variant['stock'];
     return int.tryParse(stocks?.toString() ?? '0') ?? 0;
   }
@@ -536,12 +541,14 @@ class ProductController extends BaseController {
     // ✅ If product has sizes, validate size selection
     if (hasSizes && selectedSize.value.isEmpty) {
       errorSizeMsg.value = "Please select a size";
+      sizeShakeTrigger.value++;
       return false;
     }
 
     // ✅ If product has colors, validate color selection
     if (hasColors && selectedColor.value.isEmpty) {
       errorColorMsg.value = "Please select a color";
+      colorShakeTrigger.value++;
       return false;
     }
 

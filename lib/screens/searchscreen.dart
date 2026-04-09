@@ -108,6 +108,7 @@ class SearchScreenState extends State<SearchScreen> {
     FocusScope.of(context).unfocus();
 
     controller.searchController.text = q;
+    controller.resetFilters();
 
     showDialog(
       context: context,
@@ -152,11 +153,7 @@ class SearchScreenState extends State<SearchScreen> {
   @override
   void dispose() {
     _debounceSuggest?.cancel();
-    if (Get.isRegistered<SearchScreenController>()) {
-      final ctrl = Get.find<SearchScreenController>();
-      ctrl.searchController.dispose(); // ensure disposed once
-      Get.delete<SearchScreenController>();
-    }
+    controller.resetFilters();
     super.dispose();
   }
 

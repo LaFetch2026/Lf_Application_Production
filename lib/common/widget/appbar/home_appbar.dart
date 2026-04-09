@@ -85,7 +85,10 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
       color: whiteColor,
       child: Padding(
         padding: EdgeInsets.only(
-            left: 16.sp, top: statusBarHeight + 8.sp, right: 10.sp, bottom: 8.sp),
+            left: 16.sp,
+            top: statusBarHeight + 8.sp,
+            right: 10.sp,
+            bottom: 8.sp),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -167,8 +170,8 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                     }
                   },
                   child: Padding(
-                    padding: EdgeInsets.only(
-                        right: 10.sp, left: 5.sp, top: 8.sp, bottom: 5.sp),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [

@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/constants.dart';
 import '../../../core/utils/image_helper.dart';
 import '../other/common_widget.dart';
+import '../other/pounce_wrapper.dart';
 import '../text/app_text.dart';
 
 class HorizontalCategoryList extends StatelessWidget {
@@ -35,7 +36,7 @@ class HorizontalCategoryList extends StatelessWidget {
               itemBuilder: (ctx, index) {
                 return Column(
                   children: [
-                    GestureDetector(
+                    PounceWrapper(
                       onTap: () {
                         onPressed?.call(
                             list[index]["id"], list[index]["brand_name"]);

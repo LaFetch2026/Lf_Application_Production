@@ -10,6 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/other/common_widget.dart';
+import 'package:lafetch/common/widget/other/error_shake.dart';
 import 'package:lafetch/common/widget/other/product_price_display.dart';
 import 'package:lafetch/controllers/cart_controller.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
@@ -693,6 +694,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
     // Get selected variant
     final variant = productController.getSelectedVariant();
     if (variant == null) {
+      HapticFeedback.heavyImpact();
       showAppSnackBar('Please select size and color', type: SnackBarType.error);
       return;
     }
@@ -945,9 +947,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Widget getListForProductSize() {
     return Obx(() {
       final sizes = productController.sizeInventoryList;
-
       if (sizes.isEmpty) return const SizedBox.shrink();
-
       return SizedBox(
         width: MediaQuery.of(context).size.width,
         child: Padding(
@@ -958,28 +958,23 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
             children: sizes.map((size) {
               final isSelected = productController.selectedSize.value == size;
 
-              // Get stock count for this size across all colors
-              final sizeStock = productController.selectedVariants
-                  .where((v) => v["size"] == size)
-                  .fold<int>(
-                      0,
-                      (sum, v) =>
-                          sum +
-                          (int.tryParse((v['inventories']?[0]
-                                              ?['availableStock'] ??
-                                          v['availableStock'] ??
-                                          v['stock'])
-                                      ?.toString() ??
-                                  '0') ??
-                              0));
+              // Controller stores parsed variants with "size" key and stock as "stocks" (int)
+              final matchingVariant = productController.selectedVariants
+                  .firstWhereOrNull((v) => v["size"] == size);
 
-              final isOutOfStock = sizeStock <= 0;
+              // "stocks" is already a parsed int in the controller
+              final sizeStock = matchingVariant != null
+                  ? (matchingVariant["stocks"] as int? ?? 0)
+                  : 0;
+
+              // Only block if we found the variant AND confirmed stock = 0
+              final isOutOfStock = matchingVariant != null && sizeStock <= 0;
               final isFreeSize = size.toUpperCase() == 'FREE SIZE';
 
-              return Opacity(
-                opacity: isOutOfStock ? 0.4 : 1.0,
-                child: IgnorePointer(
-                  ignoring: false,
+              return IgnorePointer(
+                ignoring: isOutOfStock,
+                child: Opacity(
+                  opacity: isOutOfStock ? 0.5 : 1.0,
                   child: Column(
                     children: [
                       GestureDetector(
@@ -990,25 +985,22 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             _pageController.jumpToPage(0);
                           }
                           setState(() {
-                            _selectedQuantity =
-                                1; // ✅ Reset quantity when size changes
+                            _selectedQuantity = 1;
                           });
                         },
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: widget.backgroundcolor == whiteColor
-                                  ? btnTextColor
-                                  : searchTextColor,
+                              color: isOutOfStock
+                                  ? Colors.grey.shade400
+                                  : isSelected
+                                      ? lightPurpleColor
+                                      : Colors.black87,
                               width: 1.sp,
                             ),
                             color: isSelected
-                                ? (widget.backgroundcolor == whiteColor
-                                    ? colorPrimary
-                                    : lightPurpleColor)
-                                : (widget.backgroundcolor == whiteColor
-                                    ? whiteColor
-                                    : homeAppBarColor),
+                                ? lightPurpleColor
+                                : Colors.transparent,
                           ),
                           child: SizedBox(
                             width: isFreeSize ? 70.sp : 44.sp,
@@ -1018,18 +1010,20 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 text: size.toUpperCase(),
                                 fontFamily: "Clash Display Regular",
                                 fontWeight: FontWeight.w400,
-                                color: isSelected
-                                    ? whiteColor
-                                    : (widget.backgroundcolor == whiteColor
-                                        ? btnTextColor
-                                        : searchTextColor),
+                                color: isOutOfStock
+                                    ? Colors.grey.shade400
+                                    : isSelected
+                                        ? whiteColor
+                                        : Colors.black87,
                                 fontSize: 12,
                               ),
                             ),
                           ),
                         ),
                       ),
-                      if (sizeStock <= 2 && sizeStock > 0)
+                      if (matchingVariant != null &&
+                          sizeStock <= 2 &&
+                          sizeStock > 0)
                         Padding(
                           padding: EdgeInsets.only(top: 4.sp),
                           child: AppSpacingText(
@@ -1902,13 +1896,17 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       Padding(
                                         padding: EdgeInsets.only(
                                             top: 8.sp, left: 12.sp),
-                                        child: AppSpacingText(
-                                          text: productController
-                                              .errorSizeMsg.value,
-                                          fontFamily: "Clash Display Regular",
-                                          fontWeight: FontWeight.w400,
-                                          color: lightPurpleColor,
-                                          fontSize: 14,
+                                        child: ShakeWidget(
+                                          trigger: productController
+                                              .sizeShakeTrigger.value,
+                                          child: AppSpacingText(
+                                            text: productController
+                                                .errorSizeMsg.value,
+                                            fontFamily: "Clash Display Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: redcolor,
+                                            fontSize: 14,
+                                          ),
                                         ),
                                       ),
                                     getListForProductSize(),
@@ -1971,13 +1969,17 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       Padding(
                                         padding: EdgeInsets.only(
                                             top: 10.sp, left: 12.sp),
-                                        child: AppSpacingText(
-                                          text: productController
-                                              .errorColorMsg.value,
-                                          fontFamily: "Clash Display Regular",
-                                          fontWeight: FontWeight.w400,
-                                          color: lightPurpleColor,
-                                          fontSize: 14,
+                                        child: ShakeWidget(
+                                          trigger: productController
+                                              .colorShakeTrigger.value,
+                                          child: AppSpacingText(
+                                            text: productController
+                                                .errorColorMsg.value,
+                                            fontFamily: "Clash Display Regular",
+                                            fontWeight: FontWeight.w400,
+                                            color: deepRed,
+                                            fontSize: 14,
+                                          ),
                                         ),
                                       ),
                                     getListForProductColor(),

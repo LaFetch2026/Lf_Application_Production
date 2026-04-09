@@ -17,6 +17,7 @@ import 'package:lafetch/screens/wishlistscreen.dart';
 import '../common/widget/appbar/home_appbar.dart';
 import '../common/widget/lists/dummy_brand_list.dart';
 import '../common/widget/other/common_widget.dart';
+import '../common/widget/other/pounce_wrapper.dart';
 import '../common/widget/text/app_text.dart';
 import '../controllers/brand_controller.dart';
 import '../controllers/home_controller.dart';
@@ -723,7 +724,7 @@ class BrandsScreenState extends State<BrandsScreen>
                                                                                     imageUrl = product["imageUrls"][0].toString();
                                                                                   }
 
-                                                                                  return GestureDetector(
+                                                                                  return PounceWrapper(
                                                                                     onTap: () async {
                                                                                       try {
                                                                                         // ✅ Get product ID from the product

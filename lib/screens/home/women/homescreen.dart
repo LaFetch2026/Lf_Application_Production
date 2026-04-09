@@ -17,6 +17,7 @@ import 'package:lafetch/screens/Brands/allbrandscreen.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart'
     hide SizedBox, Center, Column, Padding;
 import 'package:lafetch/screens/cartscreen.dart';
+import 'package:lafetch/common/widget/other/pounce_wrapper.dart';
 import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/home/women/productviewscreen.dart';
 import 'package:lafetch/screens/loginscreen.dart';
@@ -219,7 +220,8 @@ class HomeScreenState extends State<HomeScreen>
         }
 
         // ✅ Fix hot reload visibility issue
-        if (catalogController.catalogList.isNotEmpty) {
+        if (catalogController.catalogByGender[currentGender]?.isNotEmpty ==
+            true) {
           catalogController.update();
         }
       } catch (e, stackTrace) {
@@ -778,8 +780,6 @@ class HomeScreenState extends State<HomeScreen>
                                 width: double.infinity,
                                 decoration: BoxDecoration(
                                   color: Colors.black.withOpacity(0.04),
-                                  // borderRadius: BorderRadius.circular(
-                                  //     8.sp), // ✅ radius added
                                 ),
                                 child: const Center(
                                   child: Column(
@@ -819,12 +819,11 @@ class HomeScreenState extends State<HomeScreen>
                                 children: [
                                   ClipRRect(
                                     // ✅ BORDER RADIUS
-                                    child: SizedBox(
-                                      height: 220,
-                                      width: double.infinity,
+                                    child: AspectRatio(
+                                      aspectRatio: 3 / 1,
                                       child: PageView(
                                         key: ValueKey(
-                                            'pageview_${homeController.homeGenderValue.value}'), // ✅ Rebuild PageView on gender change
+                                            'pageview_${homeController.homeGenderValue.value}'),
                                         controller: _pageController,
                                         onPageChanged: (index) {
                                           if (index >= 0 &&
@@ -904,17 +903,24 @@ class HomeScreenState extends State<HomeScreen>
 
                           // Shop by Category Section
                           Obx(
-                            () => catalogController.isCatalog.value
-                                ? const DummyGridMostSearch(text: "")
-                                : catalogController.catalogList.isNotEmpty
-                                    ? _ShopByCategorySection(
-                                        catalogController: catalogController,
-                                        analytics: analytics,
-                                        homeController: homeController,
-                                        onPressedViewAll: () =>
-                                            widget.onPressed?.call(2),
-                                      )
-                                    : const SizedBox.shrink(),
+                            () {
+                              final gender =
+                                  homeController.homeGenderValue.value;
+                              final cats =
+                                  catalogController.catalogByGender[gender] ??
+                                      [];
+                              return catalogController.isCatalog.value
+                                  ? const DummyGridMostSearch(text: "")
+                                  : cats.isNotEmpty
+                                      ? _ShopByCategorySection(
+                                          catalogController: catalogController,
+                                          analytics: analytics,
+                                          homeController: homeController,
+                                          onPressedViewAll: () =>
+                                              widget.onPressed?.call(2),
+                                        )
+                                      : const SizedBox.shrink();
+                            },
                           ),
 
                           Obx(() {
@@ -1510,7 +1516,7 @@ class _SectionStrip extends StatelessWidget {
       builder: (context, constraints) {
         final padding = 6.sp;
 
-        return GestureDetector(
+        return PounceWrapper(
           onTap: () => onProductTap(id),
           child: Container(
             decoration: BoxDecoration(
@@ -2019,7 +2025,7 @@ class BannerProductsScreen extends StatelessWidget {
                   return int.tryParse(v?.toString() ?? '') ?? 0;
                 }();
 
-                return GestureDetector(
+                return PounceWrapper(
                   onTap: () {
                     if (pid == 0) return;
                     Get.to(
@@ -2211,9 +2217,16 @@ class _ShopByCategorySection extends StatelessWidget {
                 crossAxisSpacing: 12.sp,
                 mainAxisSpacing: 2.sp,
                 children: List.generate(
-                  min(6, catalogController.catalogList.length),
+                  min(
+                      6,
+                      (catalogController.catalogByGender[
+                                  homeController.homeGenderValue.value] ??
+                              [])
+                          .length),
                   (index) {
-                    final catalog = catalogController.catalogList[index];
+                    final catalog = (catalogController.catalogByGender[
+                            homeController.homeGenderValue.value] ??
+                        [])[index];
                     return GestureDetector(
                       onTap: () async {
                         final categoryId = catalog["id"];

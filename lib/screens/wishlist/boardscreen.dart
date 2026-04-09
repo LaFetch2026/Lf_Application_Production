@@ -16,6 +16,7 @@ import '../../common/widget/other/common_widget.dart';
 import '../../common/widget/text/app_text.dart';
 import '../../controllers/wishlist_controller.dart';
 import '../../core/constant/constants.dart';
+import '../../common/widget/other/pounce_wrapper.dart';
 import '../catalog/productlist/productdetailsscreen.dart';
 import 'createboardscreen.dart';
 import 'newboardscreen.dart';
@@ -405,7 +406,7 @@ class BoardScreenState extends State<BoardScreen> {
                                               final cover =
                                                   _firstImage(product);
 
-                                              return GestureDetector(
+                                              return PounceWrapper(
                                                 onTap: () async {
                                                   Get.to(() =>
                                                       ProductDetailsScreen(

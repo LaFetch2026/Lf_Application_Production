@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/common/widget/other/product_price_display.dart';
+import 'package:lafetch/common/widget/other/pounce_wrapper.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
 import 'package:lafetch/controllers/product_controller.dart';
 import 'package:lafetch/core/constant/constants.dart';
@@ -57,8 +58,7 @@ class BrandProductList extends StatelessWidget {
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      GestureDetector(
-                        behavior: HitTestBehavior.opaque,
+                      PounceWrapper(
                         onTap: () {
                           print(
                               "🔵 [BrandProductList] Product tapped: ID=$id, Name=$name");

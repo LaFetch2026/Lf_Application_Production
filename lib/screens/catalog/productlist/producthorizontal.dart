@@ -15,6 +15,7 @@ import '../../../common/widget/bottom_sheets/bottomwishlist.dart';
 import '../../../common/widget/button/doublebtn.dart';
 import '../../../common/widget/lists/dummy_grid_list.dart';
 import '../../../common/widget/other/common_widget.dart';
+import '../../../common/widget/other/pounce_wrapper.dart';
 import '../../../common/widget/text/app_text.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
@@ -117,7 +118,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                         productController
                                             .productCategoryList.length,
                                         (index) {
-                                          return GestureDetector(
+                                          return PounceWrapper(
                                             onTap: () async {
                                               Navigator.of(context)
                                                   .push(MaterialPageRoute(

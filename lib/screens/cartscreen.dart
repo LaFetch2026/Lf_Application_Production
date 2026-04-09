@@ -121,29 +121,28 @@ class CartScreenState extends State<CartScreen> {
   // ---------- Razorpay Handlers ----------
 
   void _onPaymentSuccess(PaymentSuccessResponse r) async {
-    print("✅ Payment Successful!");
-    print("Payment ID: ${r.paymentId}");
-    print("Order ID: ${r.orderId}");
-    print("Signature: ${r.signature}");
-
-    // Show Success Screen instantly
     Get.offAll(() => const OrderStatusScreen(status: 'success'),
         transition: Transition.fadeIn,
         duration: const Duration(milliseconds: 400));
 
-    // Confirm order in background
     try {
-      await orderController.confirmPlaceOrder(
+      print("🔥 Cart _onPaymentSuccess fired");
+      print("   orderId: ${r.orderId}");
+      print("   paymentId: ${r.paymentId}");
+      print("   signature: ${r.signature}");
+
+      final result = await orderController.confirmPlaceOrder(
         providerOrderId: r.orderId ?? '',
         providerPaymentId: r.paymentId ?? '',
         providerSignature: r.signature ?? '',
       );
-      print("✅ confirmPlaceOrder called successfully");
+
+      print("🔥 Cart confirmPlaceOrder result: $result");
     } catch (e) {
-      print("⚠️ confirmPlaceOrder failed: $e");
+      // ✅ AND THIS
+      print("🔥 Cart confirmPlaceOrder exception: $e");
     }
 
-    // Cleanup both promo and coupon
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('applied_promo_code');
     await prefs.remove('applied_promo_discount');
@@ -1079,8 +1078,10 @@ class CartScreenState extends State<CartScreen> {
                         children: [
                           _buildProductImage(
                               product, imgUrl, outOfStock, index),
-                          _buildProductDetails(
-                              product, inventory, item, index, outOfStock),
+                          Expanded(
+                            child: _buildProductDetails(
+                                product, inventory, item, index, outOfStock),
+                          ),
                           _buildRemoveButton(item, index),
                         ],
                       ),
@@ -1268,52 +1269,6 @@ class CartScreenState extends State<CartScreen> {
                     },
                   ),
 
-                  // Builder(
-                  //   builder: (_) {
-                  //     final variant = item["product_variant"] ?? {};
-                  //     final selectedOptions = variant["selectedOptions"] ?? [];
-
-                  //     String colorName = "";
-
-                  //     if (selectedOptions is List) {
-                  //       for (final o in selectedOptions) {
-                  //         final name =
-                  //             o["name"]?.toString().toLowerCase() ?? "";
-                  //         if (name == "color") colorName = o["value"] ?? "";
-                  //       }
-                  //     }
-
-                  //     return Row(
-                  //       mainAxisSize: MainAxisSize.min,
-                  //       children: [
-                  //         if (colorName.isNotEmpty)
-                  //           Container(
-                  //             height: 30.sp,
-                  //             padding: EdgeInsets.symmetric(horizontal: 10.sp),
-                  //             alignment: Alignment.center,
-                  //             decoration: BoxDecoration(
-                  //               color: widget.backgroundcolor == whiteColor
-                  //                   ? const Color(0xffF3F4F6)
-                  //                   : const Color(0xFFDFDBFF),
-                  //               border: Border.all(
-                  //                 width: 1,
-                  //                 color: widget.backgroundcolor == whiteColor
-                  //                     ? const Color(0xFFE5E7EB)
-                  //                     : titleColor,
-                  //               ),
-                  //             ),
-                  //             child: AppText(
-                  //               text: "Color : $colorName",
-                  //               color: titleColor,
-                  //               fontSize: 10,
-                  //               fontFamily: "Clash Display Regular",
-                  //             ),
-                  //           ),
-                  //       ],
-                  //     );
-                  //   },
-                  // ),
-
                   // -----------------------------
                   // QTY BOX - NOW TAPPABLE
                   // -----------------------------
@@ -1384,71 +1339,76 @@ class CartScreenState extends State<CartScreen> {
             opacity: outOfStock ? 0.5 : 1,
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 4.sp),
-              child: Row(
-                children: [
-                  // MRP (Strikethrough)
-                  Visibility(
-                    visible: product["mrp"] != null &&
-                        product["price"] != null &&
-                        _asNum(product["mrp"]) > _asNum(product["price"]),
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 10.sp),
-                      child: Text(
-                        "₹${product["mrp"]}", // ✅ exact API value
-                        style: TextStyle(
-                          color: widget.backgroundcolor == whiteColor
-                              ? lightText
-                              : searchTextColor,
-                          fontSize: 12.sp,
-                          decoration: TextDecoration.lineThrough,
-                          fontFamily: "Clash Display",
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Selling Price
-                  Padding(
-                    padding: EdgeInsets.only(right: 6.sp),
-                    child: Text(
-                      "₹${product["price"]}", // ✅ exact API value
-                      style: TextStyle(
-                        color: widget.backgroundcolor == whiteColor
-                            ? nameText
-                            : whiteColor,
-                        fontSize: 12.sp,
-                        fontFamily: "Clash Display",
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-
-                  // Discount Chip
-                  if (product["mrp"] != null &&
-                      product["price"] != null &&
-                      _asNum(product["mrp"]) > _asNum(product["price"]))
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 181, 172, 248),
-                        borderRadius: BorderRadius.circular(20.sp),
-                      ),
+              child: SizedBox(
+                child: Wrap(
+                  spacing: 6.sp,
+                  runSpacing: 4.sp,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    // MRP (Strikethrough)
+                    Visibility(
+                      visible: product["mrp"] != null &&
+                          product["price"] != null &&
+                          _asNum(product["mrp"]) > _asNum(product["price"]),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 10.sp, vertical: 4.sp),
+                        padding: EdgeInsets.only(right: 10.sp),
                         child: Text(
-                          "${_calculateDiscountPercentage(product)}% OFF",
-                          // ✅ exact % (no rounding unless you want)
-                          style: const TextStyle(
-                            color: homeAppBarColor,
-                            fontSize: 12,
+                          "₹${product["mrp"]}", // ✅ exact API value
+                          style: TextStyle(
+                            color: widget.backgroundcolor == whiteColor
+                                ? lightText
+                                : searchTextColor,
+                            fontSize: 12.sp,
+                            decoration: TextDecoration.lineThrough,
                             fontFamily: "Clash Display",
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
                     ),
-                ],
+
+                    // Selling Price
+                    Padding(
+                      padding: EdgeInsets.only(right: 6.sp),
+                      child: Text(
+                        "₹${product["price"]}", // ✅ exact API value
+                        style: TextStyle(
+                          color: widget.backgroundcolor == whiteColor
+                              ? nameText
+                              : whiteColor,
+                          fontSize: 12.sp,
+                          fontFamily: "Clash Display",
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+
+                    // Discount Chip
+                    if (product["mrp"] != null &&
+                        product["price"] != null &&
+                        _asNum(product["mrp"]) > _asNum(product["price"]))
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 181, 172, 248),
+                          borderRadius: BorderRadius.circular(20.sp),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.sp, vertical: 4.sp),
+                          child: Text(
+                            "${_calculateDiscountPercentage(product)}% OFF",
+                            // ✅ exact % (no rounding unless you want)
+                            style: const TextStyle(
+                              color: homeAppBarColor,
+                              fontSize: 12,
+                              fontFamily: "Clash Display",
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -1557,7 +1517,7 @@ class CartScreenState extends State<CartScreen> {
             if (discountOnMrp > 0)
               _buildPriceRow(
                 "Discount on MRP",
-                "- ₹${formatAmount(discountOnMrp)}",
+                "- ₹${formatAmount(discountOnMrp.toInt())}",
                 false,
               ),
 

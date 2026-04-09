@@ -2,13 +2,14 @@ name: lafetch
 description: A new Flutter project.
 publish_to: "none"
 
-version: 2.0.0+64
+version: 2.0.0+65
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   add_to_cart_animation: ^2.0.3
+  algoliasearch: ^1.46.2
   animate_do: ^2.1.0
   app_links: ^3.5.0
   app_tracking_transparency: ^2.0.6+1
