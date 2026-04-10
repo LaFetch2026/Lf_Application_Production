@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:lafetch/common/widget/bottom_sheets/bottomCoupon.dart';
+import 'package:lafetch/common/widget/bottom_sheets/missing_contact_bottom_sheet.dart';
 import 'package:lafetch/controllers/order_controller.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
@@ -255,6 +256,38 @@ class CartScreenState extends State<CartScreen> {
         return;
       }
       print("   ✅ User authenticated: userId=$userId");
+
+      // ✅ Step 2.5: Contact gate — ensure email and phone are present
+      final String _gateEmail = (prefs.getString('email') ?? '').trim();
+      final String _gatePhone = (prefs.getString('phonenumber') ??
+              prefs.getString('phone_number') ??
+              '')
+          .trim();
+      final bool _emailMissing = _gateEmail.isEmpty;
+      final bool _phoneMissing = _gatePhone.isEmpty;
+
+      if (_emailMissing || _phoneMissing) {
+        print(
+            "   ⚠️ Missing contact info — emailMissing=$_emailMissing, phoneMissing=$_phoneMissing");
+        if (!mounted) return;
+        final result = await showModalBottomSheet<Map<String, dynamic>?>(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (_) => MissingContactBottomSheet(
+            needsEmail: _emailMissing,
+            needsPhone: _phoneMissing,
+          ),
+        );
+        if (result == null) {
+          print("   ❌ User dismissed contact bottom sheet");
+          showAppSnackBar(
+              "Please provide your contact details to continue",
+              type: SnackBarType.error);
+          return;
+        }
+        print("   ✅ Contact details collected: $result");
+      }
 
       // ✅ Step 3: Validate cart total
       print("\n💰 STEP 3: Validating Cart Total");

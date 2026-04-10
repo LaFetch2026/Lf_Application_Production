@@ -91,6 +91,8 @@ class OrderController extends BaseController {
       final initiateUri =
           Uri.parse("${ApiConstants.baseUrl}/checkout/initiate");
 
+      final email = prefs.getString('email');
+
       final initiateBody = {
         "mode": mode ?? "cart",
         if (productId != null) "productId": productId,
@@ -98,6 +100,7 @@ class OrderController extends BaseController {
         if (quantity != null) "quantity": quantity,
         if (couponCode != null && couponCode.isNotEmpty)
           "couponCode": couponCode,
+        if (email != null && email.isNotEmpty) "email": email,
       };
 
       print("📤 STEP 1 - Initiating checkout:");
@@ -258,6 +261,8 @@ class OrderController extends BaseController {
       // ✅ Correct endpoint — matches checkoutService.confirmCheckout
       final uri = Uri.parse("${ApiConstants.baseUrl}/checkout/confirm");
 
+      final email = prefs.getString('email');
+
       final body = {
         "checkoutSessionId": localCheckoutSessionId,
         "paymentInfo": {
@@ -265,6 +270,7 @@ class OrderController extends BaseController {
           "providerPaymentId": providerPaymentId,
           "providerSignature": providerSignature,
         },
+        if (email != null && email.isNotEmpty) "email": email,
       };
 
       print("📤 place-order URL: $uri");
