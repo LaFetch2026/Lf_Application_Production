@@ -1349,7 +1349,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
           if (discountOnMrp > 0)
             _buildPriceRow(
               "Discount on MRP",
-              "- ₹${formatAmount(discountOnMrp)}",
+              "- ₹${formatAmount(discountOnMrp.toInt())}",
               false,
             ),
 
@@ -1378,7 +1378,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                 ),
                 const Spacer(),
                 AppText(
-                  text: "₹${formatAmount(sellingTotal)}",
+                  text: "₹${formatAmount(sellingTotal.toInt())}",
                   fontFamily: "Clash Display",
                   fontWeight: FontWeight.w500,
                   color: homeAppBarColor,
@@ -1485,7 +1485,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
               ),
               const Spacer(),
               AppText(
-                text: "₹${formatAmount(finalPayable)}",
+                text: "₹${formatAmount(finalPayable.toInt())}",
                 fontFamily: "Clash Display",
                 fontWeight: FontWeight.w500,
                 color: colorPrimary,

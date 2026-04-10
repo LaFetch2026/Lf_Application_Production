@@ -303,57 +303,86 @@ class _BottomCouponState extends State<BottomCoupon> {
           ),
 
           // Bottom Bar
+          // if (selectedIndex != null)
+          //   Container(
+          //     color: const Color(0xffF9FAFB),
+          //     padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 16.sp),
+          //     child: Row(
+          //       children: [
+          //         Expanded(
+          //           child: Column(
+          //             crossAxisAlignment: CrossAxisAlignment.start,
+          //             children: [
+          //               AppText(
+          //                 text: "Maximum savings:",
+          //                 color: Colors.grey.shade800,
+          //                 fontSize: 13,
+          //                 fontFamily: "Clash Display Regular",
+          //               ),
+          //               AppText(
+          //                 text:
+          //                     "₹${widget.list[selectedIndex!]["maxDiscountCap"] ?? "0"}",
+          //                 color: Colors.black,
+          //                 fontSize: 18,
+          //                 fontFamily: "Clash Display Semibold",
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //         SizedBox(
+          //           width: 120.sp,
+          //           height: 45.sp,
+          //           child: ElevatedButton(
+          //             style: ElevatedButton.styleFrom(
+          //               backgroundColor: Colors.black,
+          //               shape: RoundedRectangleBorder(
+          //                   borderRadius: BorderRadius.circular(2.sp)),
+          //             ),
+          //             onPressed: () {
+          //               widget.onPressed
+          //                   .call(widget.list[selectedIndex!]["code"]);
+          //             },
+          //             child: const Text(
+          //               "APPLY",
+          //               style: TextStyle(
+          //                 fontFamily: "Clash Display",
+          //                 fontWeight: FontWeight.w600,
+          //                 fontSize: 14,
+          //                 color: whiteColor,
+          //               ),
+          //             ),
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // Bottom Bar
           if (selectedIndex != null)
             Container(
               color: const Color(0xffF9FAFB),
               padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 16.sp),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AppText(
-                          text: "Maximum savings:",
-                          color: Colors.grey.shade800,
-                          fontSize: 13,
-                          fontFamily: "Clash Display Regular",
-                        ),
-                        AppText(
-                          text:
-                              "₹${widget.list[selectedIndex!]["maxDiscountCap"] ?? "0"}",
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontFamily: "Clash Display Semibold",
-                        ),
-                      ],
+              child: SizedBox(
+                width: double.infinity,
+                height: 45.sp,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(2.sp)),
+                  ),
+                  onPressed: () {
+                    widget.onPressed.call(widget.list[selectedIndex!]["code"]);
+                  },
+                  child: const Text(
+                    "APPLY",
+                    style: TextStyle(
+                      fontFamily: "Clash Display",
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: whiteColor,
                     ),
                   ),
-                  SizedBox(
-                    width: 120.sp,
-                    height: 45.sp,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(2.sp)),
-                      ),
-                      onPressed: () {
-                        widget.onPressed
-                            .call(widget.list[selectedIndex!]["code"]);
-                      },
-                      child: const Text(
-                        "APPLY",
-                        style: TextStyle(
-                          fontFamily: "Clash Display",
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: whiteColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
         ],

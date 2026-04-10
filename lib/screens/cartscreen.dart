@@ -281,8 +281,7 @@ class CartScreenState extends State<CartScreen> {
         );
         if (result == null) {
           print("   ❌ User dismissed contact bottom sheet");
-          showAppSnackBar(
-              "Please provide your contact details to continue",
+          showAppSnackBar("Please provide your contact details to continue",
               type: SnackBarType.error);
           return;
         }
@@ -1550,7 +1549,7 @@ class CartScreenState extends State<CartScreen> {
             if (discountOnMrp > 0)
               _buildPriceRow(
                 "Discount on MRP",
-                "- ₹${formatAmount(discountOnMrp.toInt())}",
+                "- ₹${formatAmount(discountOnMrp)}",
                 false,
               ),
 
@@ -1580,7 +1579,7 @@ class CartScreenState extends State<CartScreen> {
                   ),
                   const Spacer(),
                   AppText(
-                    text: "₹${formatAmount(sellingTotal)}",
+                    text: "₹${formatAmount(sellingTotal.toInt())}",
                     fontFamily: "Clash Display",
                     fontWeight: FontWeight.w500,
                     color: widget.backgroundcolor == whiteColor
