@@ -28,6 +28,9 @@ import 'core/constant/constants.dart';
 import 'core/services/meta_event_service.dart';
 import 'screens/splash/splashtwo.dart';
 import 'screens/home/women/homescreen.dart' show routeObserver;
+import 'services/session_manager.dart';
+import 'services/recommendation_service.dart';
+import 'services/event_tracking_service.dart';
 
 /// Background FCM handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -115,6 +118,26 @@ Future<void> main() async {
 
   if (!Get.isRegistered<CatalogController>()) {
     Get.put(CatalogController(), permanent: true);
+  }
+
+  // ---------------- Recommendation Services -----------------------
+  if (!Get.isRegistered<SessionManager>()) {
+    await Get.putAsync<SessionManager>(
+      () async {
+        final sm = SessionManager();
+        await sm.init();
+        return sm;
+      },
+      permanent: true,
+    );
+  }
+
+  if (!Get.isRegistered<RecommendationService>()) {
+    Get.put(RecommendationService(), permanent: true);
+  }
+
+  if (!Get.isRegistered<EventTrackingService>()) {
+    Get.put(EventTrackingService(), permanent: true);
   }
 
   // ---------------- Firebase Init -----------------------

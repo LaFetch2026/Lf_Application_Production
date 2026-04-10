@@ -37,6 +37,8 @@ import '../../../core/services/meta_event_service.dart';
 import '../../cartscreen.dart';
 import '../../wishlist/boardscreen.dart';
 import '../../wishlist/newboardscreen.dart';
+import '../../../services/event_tracking_service.dart';
+import '../../../widgets/similar_products_carousel.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final int productId;
@@ -1199,7 +1201,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
       print("🚀 Loading product ID: ${widget.productId}");
 
-      productController.getProductById(widget.productId).then((_) {
+      productController.getProductById(widget.productId, slug: widget.Slug.isNotEmpty ? widget.Slug : null).then((_) {
         print("✅ Product loaded successfully");
         print(
             "📦 Product Details: ${productController.productDetails.keys.toList()}");
@@ -1219,6 +1221,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
         MetaEventService.instance.logViewContent(
           contentId: productId.toString(),
         );
+
+        // Algolia: track product view
+        EventTrackingService.instance.trackView(productId);
       });
     });
 
@@ -2511,6 +2516,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   : titleColor),
                         ),
 
+                        // Similar Products Carousel
+                        Obx(
+                          () => productController.isDetails.value
+                              ? const SizedBox.shrink()
+                              : SimilarProductsCarousel(
+                                  productId: widget.productId),
+                        ),
+
                         Obx(
                           () => productController.errorMsg.value.isNotEmpty
                               ? Padding(
@@ -2586,6 +2599,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               );
 
                               if (!success) return; // ✅ Stop if failed
+
+                              // Algolia: track add to cart
+                              EventTrackingService.instance
+                                  .trackAddToCart(widget.productId, variantId);
 
                               setState(() {
                                 _selectedQuantity = 1;
@@ -2689,6 +2706,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 oldInventoryId: variantId,
                                 price: variantPrice,
                               );
+
+                              // Algolia: track add to cart
+                              EventTrackingService.instance
+                                  .trackAddToCart(widget.productId, variantId);
 
                               // Reset quantity after adding to cart
                               setState(() {

@@ -5,7 +5,6 @@ import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/wishlist/boardscreen.dart';
 
-
 class DeepLinkHandler {
   static AppsflyerSdk? _appsflyerSdk;
   static bool _initialized = false;
@@ -32,7 +31,8 @@ class DeepLinkHandler {
     await _appsflyerSdk!.initSdk(
       registerConversionDataCallback: true,
       registerOnAppOpenAttributionCallback: true,
-      registerOnDeepLinkingCallback: true, // required for onDeepLinking (Unified Deep Link API)
+      registerOnDeepLinkingCallback:
+          true, // required for onDeepLinking (Unified Deep Link API)
     );
 
     if (!_listenersRegistered) {
@@ -60,11 +60,13 @@ class DeepLinkHandler {
         final slug = deepLink.getStringValue("slug");
         final brandName = deepLink.getStringValue("brand_name");
         final type = deepLink.getStringValue("type");
-        final deepLinkValue = deepLink.deepLinkValue ?? deepLink.getStringValue("deep_link_value");
+        final deepLinkValue = deepLink.deepLinkValue ??
+            deepLink.getStringValue("deep_link_value");
         final boardId = deepLink.getStringValue("board_id");
         final boardName = deepLink.getStringValue("board_name");
 
-        print("🔗 Extracted: productId=$productId, slug=$slug, boardId=$boardId, deepLinkValue=$deepLinkValue");
+        print(
+            "🔗 Extracted: productId=$productId, slug=$slug, boardId=$boardId, deepLinkValue=$deepLinkValue");
 
         _handleDeepLinkDataFromOneLink(
           productId: productId,
@@ -106,7 +108,8 @@ class DeepLinkHandler {
       final parsedProductId = int.tryParse(productId ?? "0");
       final parsedBoardId = int.tryParse(boardId ?? "0");
 
-      print("🎯 Parsed productId: $parsedProductId, boardId: $parsedBoardId, deepLinkValue: $deepLinkValue");
+      print(
+          "🎯 Parsed productId: $parsedProductId, boardId: $parsedBoardId, deepLinkValue: $deepLinkValue");
 
       // Board deep link
       if (deepLinkValue == "board_details" ||
@@ -123,7 +126,8 @@ class DeepLinkHandler {
       }
 
       if (parsedProductId != null && parsedProductId > 0) {
-        print("✅ Navigating to ProductDetailsScreen with productId: $parsedProductId");
+        print(
+            "✅ Navigating to ProductDetailsScreen with productId: $parsedProductId");
         // Check if already on ProductDetailsScreen - replace it
         if (Get.currentRoute == '/ProductDetailsScreen') {
           Get.off(() => ProductDetailsScreen(
@@ -168,7 +172,8 @@ class DeepLinkHandler {
 
       print("🔥 Deep Link Data: $data");
       print("📦 Payload: $payload");
-      print("🎯 Target: $target, DeepLinkValue: $deepLinkValue, ProductId: $productId, BoardId: $boardId");
+      print(
+          "🎯 Target: $target, DeepLinkValue: $deepLinkValue, ProductId: $productId, BoardId: $boardId");
 
       // Navigate to board if board_id is valid
       final isBoardLink = target == "board_details" ||
@@ -193,7 +198,8 @@ class DeepLinkHandler {
 
       if (isProductLink && productId != null && productId > 0) {
         // Navigate directly to product screen first
-        print("✅ Navigating to ProductDetailsScreen with productId: $productId");
+        print(
+            "✅ Navigating to ProductDetailsScreen with productId: $productId");
         Get.to(() => ProductDetailsScreen(
               productId: productId,
               type: type,

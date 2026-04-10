@@ -979,7 +979,8 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                     ),
                   ),
                   // Safe area padding for devices with navigation bar
-                  SizedBox(height: 20.sp + MediaQuery.of(context).padding.bottom),
+                  SizedBox(
+                      height: 20.sp + MediaQuery.of(context).padding.bottom),
                 ],
               ),
             ),

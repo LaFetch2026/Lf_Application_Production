@@ -51,4 +51,4 @@ app.*.map.json
 
 test_algolia.dart
 
-.kiro/specs/email-sms-not-triggering
+.kiro/

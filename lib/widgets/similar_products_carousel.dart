@@ -1,0 +1,245 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
+
+import '../common/widget/other/pounce_wrapper.dart';
+import '../core/constant/constants.dart';
+import '../controllers/product_controller.dart';
+import '../models/recommendation_event.dart';
+import '../screens/catalog/productlist/productdetailsscreen.dart';
+import '../services/event_tracking_service.dart';
+import '../services/recommendation_service.dart';
+
+class SimilarProductsCarousel extends StatefulWidget {
+  final int productId;
+  const SimilarProductsCarousel({super.key, required this.productId});
+
+  @override
+  State<SimilarProductsCarousel> createState() =>
+      _SimilarProductsCarouselState();
+}
+
+class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
+  List<RecommendationProduct> _products = [];
+  bool _loading = true;
+  bool _error = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final products =
+          await RecommendationService.instance.fetchSimilar(widget.productId);
+      if (mounted) {
+        setState(() {
+          _products = products;
+          _loading = false;
+        });
+        for (var i = 0; i < products.length; i++) {
+          EventTrackingService.instance.trackImpression(products[i].id, i);
+        }
+      }
+    } catch (_) {
+      if (mounted)
+        setState(() {
+          _error = true;
+          _loading = false;
+        });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loading) return _buildShimmer();
+    if (_error || _products.isEmpty) return const SizedBox.shrink();
+    return _buildCarousel();
+  }
+
+  Widget _buildShimmer() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 140.sp,
+              height: 18.sp,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4.sp),
+              ),
+            ),
+            SizedBox(height: 12.sp),
+            SizedBox(
+              height: 240.sp,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 3,
+                itemBuilder: (_, i) => Padding(
+                  padding: EdgeInsets.only(right: 12.sp),
+                  child: Container(
+                    width: 160.sp,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.sp),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCarousel() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(
+              left: 16.sp, right: 16.sp, top: 16.sp, bottom: 12.sp),
+          child: Text(
+            'YOU MAY ALSO LIKE',
+            style: TextStyle(
+              fontFamily: 'Clash Display Semibold',
+              fontWeight: FontWeight.w600,
+              fontSize: 16.sp,
+              color: blackColor,
+            ),
+          ),
+        ),
+        // Use SingleChildScrollView + Row so taps are never swallowed
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.symmetric(horizontal: 16.sp),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: _products.asMap().entries.map((entry) {
+              return Padding(
+                padding: EdgeInsets.only(right: 12.sp),
+                child: _buildCard(entry.value, entry.key),
+              );
+            }).toList(),
+          ),
+        ),
+        SizedBox(height: 16.sp),
+      ],
+    );
+  }
+
+  Widget _buildCard(RecommendationProduct product, int index) {
+    void navigate() {
+      EventTrackingService.instance.trackClick(product.id, index);
+      final ctrl = Get.find<ProductController>();
+      final savedDetails = Map<String, dynamic>.from(ctrl.productDetails);
+      final savedImages = List.from(ctrl.imageList);
+      final savedDisplayImages = List<String>.from(ctrl.currentDisplayImages);
+
+      Navigator.push(
+        Get.context!,
+        CupertinoPageRoute(
+          builder: (_) => ProductDetailsScreen(
+            productId: product.id,
+            brandName: product.brandName,
+            type: 'add',
+          ),
+        ),
+      ).then((_) {
+        ctrl.productDetails = savedDetails;
+        ctrl.imageList.assignAll(savedImages);
+        ctrl.currentDisplayImages.assignAll(savedDisplayImages);
+        ctrl.isDetails.value = false;
+        ctrl.update();
+      });
+    }
+
+    return PounceWrapper(
+      onTap: navigate,
+      child: SizedBox(
+        width: 160.sp,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8.sp),
+                topRight: Radius.circular(8.sp),
+              ),
+              child: CachedNetworkImage(
+                imageUrl: product.imageUrl,
+                width: 160.sp,
+                height: 180.sp,
+                fit: BoxFit.cover,
+                placeholder: (_, __) => Container(
+                    width: 160.sp, height: 180.sp, color: colorSecondary),
+                errorWidget: (_, __, ___) => Container(
+                    width: 160.sp,
+                    height: 180.sp,
+                    color: colorSecondary,
+                    child: Icon(Icons.image_not_supported,
+                        color: Colors.grey, size: 32.sp)),
+              ),
+            ),
+            SizedBox(height: 6.sp),
+            if (product.brandName.isNotEmpty)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.sp),
+                child: Text(
+                  product.brandName.toUpperCase(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Clash Display Semibold',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 11.sp,
+                    color: subtitleColor,
+                  ),
+                ),
+              ),
+            SizedBox(height: 2.sp),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.sp),
+              child: Text(
+                product.productName,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: 'Clash Display',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12.sp,
+                  color: blackColor,
+                ),
+              ),
+            ),
+            SizedBox(height: 4.sp),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.sp),
+              child: Text(
+                '₹${product.sellingPrice.toStringAsFixed(0)}',
+                style: TextStyle(
+                  fontFamily: 'Clash Display Semibold',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13.sp,
+                  color: colorPrimary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

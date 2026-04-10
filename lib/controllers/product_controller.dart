@@ -943,7 +943,7 @@ class ProductController extends BaseController {
     };
   }
 
-  Future<void> getProductById(int id) async {
+  Future<void> getProductById(int id, {String? slug}) async {
     isDetails.value = true;
 
     try {
@@ -960,13 +960,17 @@ class ProductController extends BaseController {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';
 
-      final uri = Uri.parse('${ApiConstants.baseUrl}/product/$id');
+      // Use slug if provided, otherwise use numeric ID
+      final pathSegment = (slug != null && slug.isNotEmpty) ? slug : id.toString();
+      final uri = Uri.parse('${ApiConstants.baseUrl}/product/$pathSegment');
+      print("🔗 Fetching product: $uri");
       final resp = await http.get(uri, headers: {
         'Accept': 'application/json',
         if (token.isNotEmpty) 'Authorization': 'Bearer $token'
       });
 
       if (resp.statusCode != 200) {
+        print("❌ Product fetch failed: ${resp.statusCode} for $uri");
         errorMsg.value = "Failed to load product";
         return;
       }
@@ -1285,6 +1289,11 @@ class ProductController extends BaseController {
       isDetails.value = false;
       update();
     }
+  }
+
+  /// Fetch product by slug — delegates to getProductById after resolving the slug
+  Future<void> getProductBySlug(String slug) async {
+    return getProductById(0, slug: slug);
   }
 
   Future<Map<String, dynamic>?> fetchProductDetails(int productId) async {
