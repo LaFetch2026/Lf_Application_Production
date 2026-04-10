@@ -302,8 +302,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
       );
       if (result == null) {
         print("   ❌ User dismissed contact bottom sheet");
-        showAppSnackBar(
-            "Please provide your contact details to continue",
+        showAppSnackBar("Please provide your contact details to continue",
             type: SnackBarType.error);
         return;
       }
