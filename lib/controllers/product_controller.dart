@@ -695,7 +695,7 @@ class ProductController extends BaseController {
             : 'accessories';
 
     final cacheKey =
-        'home_products_v6_${displayFor}_${withLimit ? "limited" : "all"}';
+        'home_products_v7_${displayFor}_${withLimit ? "limited" : "all"}';
 
     /// ---------------- CACHE ----------------
     if (!forceRefresh) {
@@ -740,6 +740,7 @@ class ProductController extends BaseController {
             "${ApiConstants.baseUrl}/product-collection/collection-with-products")
         .replace(queryParameters: {
       'displayFor': 'homepage',
+      'gender': gender.toString(),
       if (withLimit) 'limit': 'true',
     });
 
