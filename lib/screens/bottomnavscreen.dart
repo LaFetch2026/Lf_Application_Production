@@ -313,6 +313,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                   label: "Home",
                   selected: _currentIndex == 0,
                   onTap: () {
+                    HapticFeedback.lightImpact();
                     _changeTab(0);
                     analytics.logEvent(name: 'home_page');
                   },
@@ -324,6 +325,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                   label: "Brands",
                   selected: _currentIndex == 1,
                   onTap: () {
+                    HapticFeedback.lightImpact();
                     _changeTab(1);
                     analytics.logEvent(name: 'brands_page');
                   },
@@ -337,6 +339,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                   iconSize: 24.sp,
                   fixedColor: lightPurpleColor,
                   onTap: () {
+                    HapticFeedback.lightImpact();
                     // Show location choice dialog immediately
                     _showLocationChoiceDialog(context);
                   },
@@ -348,6 +351,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                   label: "Category",
                   selected: _currentIndex == 2,
                   onTap: () {
+                    HapticFeedback.lightImpact();
                     _changeTab(2);
                     analytics.logEvent(name: 'category_page');
                   },
@@ -359,6 +363,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                   label: "Profile",
                   selected: _currentIndex == 3,
                   onTap: () => _handleProtectedNavigation(() {
+                    HapticFeedback.lightImpact();
                     _changeTab(3);
                     analytics.logEvent(name: 'profile_page');
                   }),
