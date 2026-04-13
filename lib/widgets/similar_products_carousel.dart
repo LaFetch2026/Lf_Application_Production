@@ -56,13 +56,19 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
   Future<void> _loadTrending() async {
     try {
       final products = await RecommendationService.instance.fetchTrending();
-      if (mounted) setState(() { _trending = products; _loadingTrending = false; });
+      if (mounted)
+        setState(() {
+          _trending = products;
+          _loadingTrending = false;
+        });
     } catch (_) {
       if (mounted) setState(() => _loadingTrending = false);
     }
   }
 
-  void _navigate(RecommendationProduct product, int index,
+  void _navigate(
+      RecommendationProduct product,
+      int index,
       Map<String, dynamic> savedDetails,
       List savedImages,
       List<String> savedDisplay,
@@ -126,10 +132,11 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
 
   Widget _buildSectionHeader(String title) {
     return Padding(
-      padding: EdgeInsets.only(
-          left: 16.sp, right: 16.sp, top: 16.sp, bottom: 12.sp),
+      padding:
+          EdgeInsets.only(left: 16.sp, right: 16.sp, top: 16.sp, bottom: 12.sp),
       child: Text(
         title,
+        maxLines: 1,
         style: TextStyle(
           fontFamily: 'Clash Display Semibold',
           fontWeight: FontWeight.w600,
@@ -209,8 +216,8 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
     final savedColor = ctrl.selectedColor.value;
 
     return PounceWrapper(
-      onTap: () => _navigate(product, index,
-          savedDetails, savedImages, savedDisplay, savedSize, savedColor),
+      onTap: () => _navigate(product, index, savedDetails, savedImages,
+          savedDisplay, savedSize, savedColor),
       child: SizedBox(
         width: 160.sp,
         child: Column(
@@ -238,26 +245,26 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
                             color: Colors.grey, size: 32.sp)),
                   ),
                 ),
-                if (showTrendingBadge)
-                  Positioned(
-                    top: 8.sp,
-                    left: 8.sp,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 6.sp, vertical: 3.sp),
-                      decoration: BoxDecoration(
-                        color: Colors.orange,
-                        borderRadius: BorderRadius.circular(4.sp),
-                      ),
-                      child: Text(
-                        '🔥 Trending',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 9.sp,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
+                // if (showTrendingBadge)
+                //   Positioned(
+                //     top: 8.sp,
+                //     left: 8.sp,
+                //     child: Container(
+                //       padding: EdgeInsets.symmetric(
+                //           horizontal: 6.sp, vertical: 3.sp),
+                //       decoration: BoxDecoration(
+                //         color: Colors.orange,
+                //         borderRadius: BorderRadius.circular(4.sp),
+                //       ),
+                //       child: Text(
+                //         '🔥 Trending',
+                //         style: TextStyle(
+                //             color: Colors.white,
+                //             fontSize: 9.sp,
+                //             fontWeight: FontWeight.bold),
+                //       ),
+                //     ),
+                //   ),
               ],
             ),
             SizedBox(height: 6.sp),
@@ -281,7 +288,7 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
               padding: EdgeInsets.symmetric(horizontal: 4.sp),
               child: Text(
                 product.productName,
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: 'Clash Display',
