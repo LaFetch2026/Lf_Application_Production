@@ -22,6 +22,52 @@ class RecommendationService extends GetxService {
   static const _maxEntries = 50;
   static const _ttl = Duration(minutes: 5);
 
+  /// Fetch trending products. Returns [] on any error.
+  Future<List<RecommendationProduct>> fetchTrending({int limit = 12}) async {
+    final cacheKey = -1; // fixed key for trending
+    final cached = _getCached(cacheKey);
+    if (cached != null) return cached;
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+      final userId = prefs.getInt('userId');
+      final sessionId = SessionManager.instance.getSessionId();
+
+      final uri = Uri.parse('${ApiConstants.baseUrl}/recommendations')
+          .replace(queryParameters: {
+        'type': 'trending',
+        'limit': limit.toString(),
+        'sessionId': sessionId,
+        if (userId != null) 'userId': userId.toString(),
+      });
+
+      final response = await http.get(uri, headers: {
+        'Accept': 'application/json; charset=UTF-8',
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+      }).timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        if (body is Map && body['success'] == false) return [];
+        final rawList = body is Map
+            ? (body['data'] is Map ? body['data']['products'] : body['data'])
+            : body;
+        if (rawList is! List) return [];
+        final products = rawList
+            .whereType<Map<String, dynamic>>()
+            .map(RecommendationProduct.fromJson)
+            .toList();
+        _putCache(cacheKey, products);
+        return products;
+      }
+      return [];
+    } catch (e) {
+      debugPrint('[RecommendationService] Error fetching trending: $e');
+      return [];
+    }
+  }
+
   /// Fetch similar products for [productId]. Returns [] on any error.
   Future<List<RecommendationProduct>> fetchSimilar(int productId) async {
     final cached = _getCached(productId);

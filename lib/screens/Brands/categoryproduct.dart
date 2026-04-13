@@ -203,7 +203,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       superCatId: widget.genderType,
       catId: widget.categoryId > 0 ? widget.categoryId : null,
       subCatId: null,
-      collectionId: collectionId != null && collectionId > 0 ? collectionId : null,
+      collectionId:
+          collectionId != null && collectionId > 0 ? collectionId : null,
       brandId: widget.brandId > 0 ? widget.brandId : null,
     );
     _isFilterMetadataLoaded = true;
@@ -219,7 +220,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
     // ✅ NEW: Check if categoryProductList already has data (loaded via getSubCategoryProducts)
     if (catalogController.categoryProductList.isNotEmpty) {
-      print("✅ Products already loaded via sub-category API (${catalogController.categoryProductList.length} items) - skipping reload");
+      print(
+          "✅ Products already loaded via sub-category API (${catalogController.categoryProductList.length} items) - skipping reload");
 
       // ✅ Store original product IDs for client-side filtering
       _originalCategoryProductIds = catalogController.categoryProductList
@@ -232,7 +234,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       _lastSortHash = _generateSortHash();
 
       _isCategoryProductsLoaded = true;
-      print("✅ Stored ${_originalCategoryProductIds.length} product IDs for filtering");
+      print(
+          "✅ Stored ${_originalCategoryProductIds.length} product IDs for filtering");
       return;
     }
 
@@ -755,7 +758,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
 
                           return ProductGridCard(
                             imageUrl: img ?? '',
-                            title: shortDesc.isEmpty ? title : shortDesc,
+                            title: title.isNotEmpty ? title : shortDesc,
                             brandName: brand.isEmpty ? title : brand,
                             price: price,
                             mrp: mrp,
@@ -798,7 +801,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           /// ✅ Bottom bar
           Container(
             color: statusBarColor,
-            padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+            padding:
+                EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
             child: Column(
               children: [
                 Container(height: 1.sp, color: dividerColor),
