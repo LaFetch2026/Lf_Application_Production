@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,7 +14,8 @@ import '../services/recommendation_service.dart';
 
 class SimilarProductsCarousel extends StatefulWidget {
   final int productId;
-  const SimilarProductsCarousel({super.key, required this.productId});
+  final VoidCallback? onNavigating;
+  const SimilarProductsCarousel({super.key, required this.productId, this.onNavigating});
 
   @override
   State<SimilarProductsCarousel> createState() =>
@@ -76,17 +76,47 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
       String savedColor) {
     EventTrackingService.instance.trackClick(product.id, index);
 
+    final ctrl = Get.find<ProductController>();
+
+    // Save scroll position of the parent PDP
+    double savedScroll = 0;
+    try {
+      final scrollable = Scrollable.maybeOf(context);
+      savedScroll = scrollable?.position.pixels ?? 0;
+    } catch (_) {}
+
+    // Freeze isDetails so the current PDP doesn't rebuild during transition
+    ctrl.isDetails.value = false;
+
+    // Tell parent PDP it's going to background — prevents isDetails rebuild
+    widget.onNavigating?.call();
+
     Navigator.push(
-      Get.context!,
-      CupertinoPageRoute(
-        builder: (_) => ProductDetailsScreen(
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 250),
+        reverseTransitionDuration: const Duration(milliseconds: 200),
+        pageBuilder: (_, __, ___) => ProductDetailsScreen(
           productId: product.id,
           brandName: product.brandName,
           type: 'add',
         ),
+        transitionsBuilder: (_, animation, __, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutCubic,
+              reverseCurve: Curves.easeInCubic,
+            )),
+            child: child,
+          );
+        },
       ),
     ).then((_) {
-      final ctrl = Get.find<ProductController>();
+      // Restore snapshot so current PDP shows correct data
       ctrl.productDetails = savedDetails;
       ctrl.imageList.assignAll(savedImages);
       ctrl.currentDisplayImages.assignAll(savedDisplay);
@@ -94,6 +124,14 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
       ctrl.selectedColor.value = savedColor;
       ctrl.isDetails.value = false;
       ctrl.update();
+
+      // Restore scroll position after rebuild
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        try {
+          final scrollable = Scrollable.maybeOf(context);
+          scrollable?.position.jumpTo(savedScroll);
+        } catch (_) {}
+      });
     });
   }
 
@@ -215,105 +253,114 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
     final savedSize = ctrl.selectedSize.value;
     final savedColor = ctrl.selectedColor.value;
 
-    return PounceWrapper(
-      onTap: () => _navigate(product, index, savedDetails, savedImages,
-          savedDisplay, savedSize, savedColor),
-      child: SizedBox(
-        width: 160.sp,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
+    return Listener(
+        // On pointer DOWN (before PounceWrapper's 60ms delay), freeze the controller
+        onPointerDown: (_) {
+          ctrl.isDetails.value = false;
+        },
+        child: PounceWrapper(
+          scaleFactor: 0.97,
+          duration: const Duration(milliseconds: 80),
+          onTap: () => _navigate(product, index, savedDetails, savedImages,
+              savedDisplay, savedSize, savedColor),
+          child: SizedBox(
+            width: 160.sp,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(8.sp),
-                    topRight: Radius.circular(8.sp),
-                  ),
-                  child: CachedNetworkImage(
-                    imageUrl: product.imageUrl,
-                    width: 160.sp,
-                    height: 180.sp,
-                    fit: BoxFit.cover,
-                    placeholder: (_, __) => Container(
-                        width: 160.sp, height: 180.sp, color: colorSecondary),
-                    errorWidget: (_, __, ___) => Container(
+                Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(8.sp),
+                        topRight: Radius.circular(8.sp),
+                      ),
+                      child: CachedNetworkImage(
+                        imageUrl: product.imageUrl,
                         width: 160.sp,
                         height: 180.sp,
-                        color: colorSecondary,
-                        child: Icon(Icons.image_not_supported,
-                            color: Colors.grey, size: 32.sp)),
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => Container(
+                            width: 160.sp,
+                            height: 180.sp,
+                            color: colorSecondary),
+                        errorWidget: (_, __, ___) => Container(
+                            width: 160.sp,
+                            height: 180.sp,
+                            color: colorSecondary,
+                            child: Icon(Icons.image_not_supported,
+                                color: Colors.grey, size: 32.sp)),
+                      ),
+                    ),
+                    // if (showTrendingBadge)
+                    //   Positioned(
+                    //     top: 8.sp,
+                    //     left: 8.sp,
+                    //     child: Container(
+                    //       padding: EdgeInsets.symmetric(
+                    //           horizontal: 6.sp, vertical: 3.sp),
+                    //       decoration: BoxDecoration(
+                    //         color: Colors.orange,
+                    //         borderRadius: BorderRadius.circular(4.sp),
+                    //       ),
+                    //       child: Text(
+                    //         '🔥 Trending',
+                    //         style: TextStyle(
+                    //             color: Colors.white,
+                    //             fontSize: 9.sp,
+                    //             fontWeight: FontWeight.bold),
+                    //       ),
+                    //     ),
+                    //   ),
+                  ],
+                ),
+                SizedBox(height: 6.sp),
+                if (product.brandName.isNotEmpty)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.sp),
+                    child: Text(
+                      product.brandName.toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: 'Clash Display Semibold',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11.sp,
+                        color: subtitleColor,
+                      ),
+                    ),
+                  ),
+                SizedBox(height: 2.sp),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.sp),
+                  child: Text(
+                    product.productName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Clash Display',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12.sp,
+                      color: blackColor,
+                    ),
                   ),
                 ),
-                // if (showTrendingBadge)
-                //   Positioned(
-                //     top: 8.sp,
-                //     left: 8.sp,
-                //     child: Container(
-                //       padding: EdgeInsets.symmetric(
-                //           horizontal: 6.sp, vertical: 3.sp),
-                //       decoration: BoxDecoration(
-                //         color: Colors.orange,
-                //         borderRadius: BorderRadius.circular(4.sp),
-                //       ),
-                //       child: Text(
-                //         '🔥 Trending',
-                //         style: TextStyle(
-                //             color: Colors.white,
-                //             fontSize: 9.sp,
-                //             fontWeight: FontWeight.bold),
-                //       ),
-                //     ),
-                //   ),
+                SizedBox(height: 4.sp),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.sp),
+                  child: Text(
+                    '₹${product.sellingPrice.toStringAsFixed(0)}',
+                    style: TextStyle(
+                      fontFamily: 'Clash Display Semibold',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13.sp,
+                      color: colorPrimary,
+                    ),
+                  ),
+                ),
               ],
             ),
-            SizedBox(height: 6.sp),
-            if (product.brandName.isNotEmpty)
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.sp),
-                child: Text(
-                  product.brandName.toUpperCase(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: 'Clash Display Semibold',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 11.sp,
-                    color: subtitleColor,
-                  ),
-                ),
-              ),
-            SizedBox(height: 2.sp),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.sp),
-              child: Text(
-                product.productName,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontFamily: 'Clash Display',
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12.sp,
-                  color: blackColor,
-                ),
-              ),
-            ),
-            SizedBox(height: 4.sp),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.sp),
-              child: Text(
-                '₹${product.sellingPrice.toStringAsFixed(0)}',
-                style: TextStyle(
-                  fontFamily: 'Clash Display Semibold',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13.sp,
-                  color: colorPrimary,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }

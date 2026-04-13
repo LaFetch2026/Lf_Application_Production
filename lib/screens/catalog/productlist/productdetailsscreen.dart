@@ -75,6 +75,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final brandController = Get.put(BrandController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   bool _didEnsureSize = false;
+  bool _isForeground = true; // prevents Obx rebuilds when screen is in background
 
   int _curr = 0;
   int commentId = 0;
@@ -1561,9 +1562,13 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
                         // ---------- IMAGES ----------
                         Obx(
-                          () => productController.isDetails.value
-                              ? const DummyProductImage()
-                              : Column(
+                          () {
+                            // Don't show loading skeleton when screen is in background
+                            // (prevents scroll-to-top when navigating to a new PDP)
+                            if (_isForeground && productController.isDetails.value) {
+                              return const DummyProductImage();
+                            }
+                            return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     // Image Container with Rating Badge - FULL WIDTH
@@ -1678,11 +1683,12 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                             ),
                                           ),
                                   ],
-                                ),
+                                );
+                          },
                         ),
                         // ---------- DETAILS ----------
                         Obx(() {
-                          final loading = productController.isDetails.value;
+                          final loading = _isForeground && productController.isDetails.value;
 
                           if (loading) return const DummyProductDetails();
 
@@ -2521,7 +2527,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           () => productController.isDetails.value
                               ? const SizedBox.shrink()
                               : SimilarProductsCarousel(
-                                  productId: widget.productId),
+                                  productId: widget.productId,
+                                  onNavigating: () {
+                                    setState(() => _isForeground = false);
+                                  },
+                                ),
                         ),
 
                         Obx(
