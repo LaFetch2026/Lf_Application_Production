@@ -221,17 +221,20 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
               ),
             ),
             SizedBox(height: 12.sp),
-            Row(
-              children: List.generate(
-                3,
-                (i) => Padding(
-                  padding: EdgeInsets.only(right: 12.sp),
-                  child: Container(
-                    width: 160.sp,
-                    height: 240.sp,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.sp),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: List.generate(
+                  3,
+                  (i) => Padding(
+                    padding: EdgeInsets.only(right: 12.sp),
+                    child: Container(
+                      width: 160.sp,
+                      height: 240.sp,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8.sp),
+                      ),
                     ),
                   ),
                 ),

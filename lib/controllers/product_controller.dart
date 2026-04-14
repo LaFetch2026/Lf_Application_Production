@@ -675,17 +675,6 @@ class ProductController extends BaseController {
     bool withLimit = true,
     bool forceRefresh = false,
   }) async {
-    // ✅ Skip API call if data already loaded for this gender (unless force refresh)
-    if (!forceRefresh &&
-        isHomeProductLoaded(gender) &&
-        homeProductList.isNotEmpty) {
-      print(
-          '✅ Home products already loaded for gender: $gender, skipping API call');
-      // ✅ Ensure loading state is false when skipping
-      isHomeProduct.value = false;
-      return;
-    }
-
     _activeGenderRequest = gender; // ✅ mark latest request
 
     final displayFor = gender == 1
@@ -696,6 +685,25 @@ class ProductController extends BaseController {
 
     final cacheKey =
         'home_products_v7_${displayFor}_${withLimit ? "limited" : "all"}';
+
+    // ✅ Skip API call if data already loaded for this gender (unless force refresh)
+    if (!forceRefresh && isHomeProductLoaded(gender)) {
+      print(
+          '✅ Home products already loaded for gender: $gender, skipping API call');
+      isHomeProduct.value = false;
+      // Load from cache for this specific gender rather than filtering the
+      // shared homeProductList (which may hold a different gender's data).
+      final cached = await CacheManager.get(key: cacheKey);
+      if (cached != null && cached is List) {
+        final collections = cached
+            .whereType<Map<String, dynamic>>()
+            .map((e) => CollectionModel.fromJson(e))
+            .toList();
+        homeProductList.assignAll(collections);
+        tagname.value = collections.isNotEmpty ? collections.first.name : '';
+      }
+      return;
+    }
 
     /// ---------------- CACHE ----------------
     if (!forceRefresh) {

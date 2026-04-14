@@ -76,6 +76,13 @@ class HomeScreenState extends State<HomeScreen>
   static bool _isInitialLoad = true;
   static bool _dataLoaded = false; // Static to persist across rebuilds
 
+  static const Map<int, String> _sectionVideoUrls = {
+    1: "https://la-fetch.s3.ap-south-1.amazonaws.com/Application_Banners/Lafetch-Men's.mp4",
+    2: "https://la-fetch.s3.ap-south-1.amazonaws.com/Application_Banners/Lafetch-Women.mp4",
+    3: "https://la-fetch.s3.ap-south-1.amazonaws.com/Application_Banners/accessories-banner.mp4",
+  };
+  final Map<int, VideoPlayerController> _sectionVideoControllers = {};
+
   // Keep screen alive when switching tabs
   @override
   bool get wantKeepAlive => true;
@@ -176,6 +183,15 @@ class HomeScreenState extends State<HomeScreen>
         final bool hasExistingData = homeController.banner1List.isNotEmpty ||
             homeController.banner2List.isNotEmpty ||
             productController.homeProductList.isNotEmpty;
+
+        // Initialize section video controllers early — must happen before any
+        // early return so all 3 controllers are always initialized regardless
+        // of whether API data is cached.
+        for (final entry in _sectionVideoUrls.entries) {
+          if (!_sectionVideoControllers.containsKey(entry.key)) {
+            _initSectionVideoController(entry.key, entry.value);
+          }
+        }
 
         if (_dataLoaded && hasExistingData && !_isInitialLoad) {
           print("✅ Data already loaded, skipping API calls");
@@ -360,6 +376,10 @@ class HomeScreenState extends State<HomeScreen>
     _pageController.dispose(); // ✅ Dispose banner PageController
     _genderTabController?.dispose();
     homeController.discountScreenController.removeListener(_onScroll);
+    for (final c in _sectionVideoControllers.values) {
+      c.dispose();
+    }
+    _sectionVideoControllers.clear();
     super.dispose();
   }
 
@@ -744,6 +764,16 @@ class HomeScreenState extends State<HomeScreen>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Section video banner (cached controllers, no extra S3 requests on tab switch)
+                          Obx(() {
+                            final genderId = homeController.homeGenderValue.value;
+                            final controller = _sectionVideoControllers[genderId];
+                            return _SectionVideoBanner(
+                              controller: controller,
+                              height: 229.sp,
+                              width: double.infinity,
+                            );
+                          }),
                           // Banner Section - ✅ WITH LOADING STATE
                           Obx(() {
                             homeController.homeGenderValue.value;
@@ -1190,6 +1220,25 @@ class HomeScreenState extends State<HomeScreen>
         ),
       ),
     );
+  }
+
+  Future<void> _initSectionVideoController(int genderId, String url) async {
+    try {
+      final controller = VideoPlayerController.networkUrl(Uri.parse(url));
+      await controller.initialize();
+      if (!mounted) {
+        controller.dispose();
+        return;
+      }
+      controller
+        ..setLooping(true)
+        ..setVolume(0.0)
+        ..play();
+      _sectionVideoControllers[genderId] = controller;
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('❌ Section video init error for gender $genderId: $e');
+    }
   }
 
   Future<void> _changeGenderTab(int tabIndex) async {
@@ -1640,6 +1689,126 @@ class _SectionStrip extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+// ─── Section Video Banner ────────────────────────────────────────────────────
+
+class _SectionVideoBanner extends StatefulWidget {
+  final VideoPlayerController? controller;
+  final double height;
+  final double width;
+
+  const _SectionVideoBanner({
+    required this.controller,
+    required this.height,
+    required this.width,
+  });
+
+  @override
+  State<_SectionVideoBanner> createState() => _SectionVideoBannerState();
+}
+
+class _SectionVideoBannerState extends State<_SectionVideoBanner>
+    with WidgetsBindingObserver, RouteAware {
+  bool _isRouteActive = true;
+  Worker? _tabListener;
+  late final HomeController _homeController;
+
+  @override
+  void initState() {
+    super.initState();
+    _homeController = Get.find<HomeController>();
+    WidgetsBinding.instance.addObserver(this);
+    _tabListener = ever(_homeController.isHomeTabActive, (bool isActive) {
+      if (widget.controller == null || !widget.controller!.value.isInitialized) return;
+      if (isActive && _isRouteActive) {
+        widget.controller!.play();
+      } else {
+        widget.controller!.pause();
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant _SectionVideoBanner oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // When a new initialized controller arrives (e.g. after async init completes
+    // or after a gender tab switch), ensure it plays if conditions are right.
+    final ctrl = widget.controller;
+    if (ctrl != null &&
+        ctrl.value.isInitialized &&
+        _isRouteActive &&
+        _homeController.isHomeTabActive.value &&
+        !ctrl.value.isPlaying) {
+      ctrl.play();
+    }
+    // If the controller changed, pause the old one to avoid ghost playback.
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller?.pause();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void didPushNext() {
+    _isRouteActive = false;
+    widget.controller?.pause();
+  }
+
+  @override
+  void didPopNext() {
+    _isRouteActive = true;
+    if (_homeController.isHomeTabActive.value) {
+      widget.controller?.play();
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (widget.controller == null || !widget.controller!.value.isInitialized) return;
+    if (state == AppLifecycleState.paused) {
+      // Only pause when fully backgrounded, not on brief inactive states
+      // (inactive fires for system overlays, notifications, etc.)
+      widget.controller!.pause();
+    } else if (state == AppLifecycleState.resumed) {
+      if (_isRouteActive && _homeController.isHomeTabActive.value) {
+        widget.controller!.play();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabListener?.dispose();
+    routeObserver.unsubscribe(this);
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ctrl = widget.controller;
+    if (ctrl == null || !ctrl.value.isInitialized) {
+      return Container(
+        height: widget.height,
+        width: widget.width,
+        color: Colors.grey[200],
+      );
+    }
+    return SizedBox(
+      height: widget.height,
+      width: widget.width,
+      child: VideoPlayer(ctrl),
     );
   }
 }
