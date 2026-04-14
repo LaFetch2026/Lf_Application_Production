@@ -1239,6 +1239,10 @@ class HomeScreenState extends State<HomeScreen>
         : int.tryParse(tab['id']?.toString() ?? '') ?? 0;
     final String genderName = tab['name']?.toString() ?? '';
 
+    // Clear stale products BEFORE updating homeGenderValue so the Obx
+    // doesn't briefly render old gender's data under the new gender label.
+    productController.homeProductList.clear();
+
     homeController.genderText.value = genderName;
     homeController.homeGenderValue.value = genderId;
 
@@ -1253,12 +1257,14 @@ class HomeScreenState extends State<HomeScreen>
       homeController.discountScreenController.jumpTo(0);
     }
 
-    // Only fetch if data for this gender isn't already cached
+    // Always reload products for the new gender — uses cache when available.
+    // forceRefresh: false so cached data loads instantly without a network hit.
+    await productController.getHomeProduct(genderId, forceRefresh: false);
+
     if (!homeController.isGenderDataLoaded(genderId)) {
       await homeController.initializeHomeData(genderId, forceRefresh: false);
       await Future.wait([
         catalogController.getCatalogData(genderId, forceRefresh: false),
-        productController.getHomeProduct(genderId, forceRefresh: false),
         brandController.getBrandData("featured", genderId),
       ]);
     }
@@ -1721,12 +1727,16 @@ class _SectionVideoBannerState extends State<_SectionVideoBanner>
   void didUpdateWidget(covariant _SectionVideoBanner oldWidget) {
     super.didUpdateWidget(oldWidget);
     final ctrl = widget.controller;
-    if (ctrl != null &&
-        ctrl.value.isInitialized &&
-        _isRouteActive &&
-        _homeController.isHomeTabActive.value &&
-        !ctrl.value.isPlaying) {
-      ctrl.play();
+    if (ctrl != null && ctrl.value.isInitialized && _homeController.isHomeTabActive.value) {
+      if (oldWidget.controller == null) {
+        // First assignment: reset route state and play unconditionally.
+        // didPushNext may have fired during initial splash→home navigation
+        // before this widget existed, leaving _isRouteActive = false incorrectly.
+        _isRouteActive = true;
+        ctrl.play();
+      } else if (_isRouteActive && !ctrl.value.isPlaying) {
+        ctrl.play();
+      }
     }
     if (oldWidget.controller != widget.controller) {
       oldWidget.controller?.pause();

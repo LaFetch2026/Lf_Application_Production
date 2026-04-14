@@ -684,15 +684,13 @@ class ProductController extends BaseController {
             : 'accessories';
 
     final cacheKey =
-        'home_products_v7_${displayFor}_${withLimit ? "limited" : "all"}';
+        'home_products_v8_${displayFor}_${withLimit ? "limited" : "all"}';
 
     // ✅ Skip API call if data already loaded for this gender (unless force refresh)
     if (!forceRefresh && isHomeProductLoaded(gender)) {
       print(
           '✅ Home products already loaded for gender: $gender, skipping API call');
       isHomeProduct.value = false;
-      // Load from cache for this specific gender rather than filtering the
-      // shared homeProductList (which may hold a different gender's data).
       final cached = await CacheManager.get(key: cacheKey);
       if (cached != null && cached is List) {
         final collections = cached
@@ -709,17 +707,14 @@ class ProductController extends BaseController {
     if (!forceRefresh) {
       final cached = await CacheManager.get(key: cacheKey);
       if (cached != null && cached is List) {
-        // ✅ VERY IMPORTANT CHECK
         if (_activeGenderRequest != gender) return;
 
         final collections = cached
             .whereType<Map<String, dynamic>>()
             .map((e) => CollectionModel.fromJson(e))
             .toList();
-
         homeProductList.assignAll(collections);
         tagname.value = collections.isNotEmpty ? collections.first.name : '';
-        // ✅ Mark as loaded from cache
         markHomeProductLoaded(gender);
         return;
       }
