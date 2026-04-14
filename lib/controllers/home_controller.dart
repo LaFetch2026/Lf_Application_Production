@@ -96,6 +96,10 @@ class HomeController extends BaseController {
   bool _isCategoryRequestInProgress = false;
   bool _isAnnouncementsRequestInProgress = false;
 
+  // ✅ When true, getGenderTabs() skips the /category-hierarchy API call
+  // because tabs have already been injected from the dynamic menu (/menu-v2).
+  bool menuTabsInjected = false;
+
   @override
   void onInit() {
     super.onInit();
@@ -296,6 +300,12 @@ class HomeController extends BaseController {
   }
 
   Future<void> getGenderTabs() async {
+    // ✅ If tabs were already injected from /menu-v2, skip the old API call
+    if (menuTabsInjected && genderTabs.isNotEmpty) {
+      print('✅ getGenderTabs: skipping /category-hierarchy — menu tabs already injected');
+      return;
+    }
+
     isLoadingTabs.value = true;
 
     try {

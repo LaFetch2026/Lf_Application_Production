@@ -21,6 +21,7 @@ import '../screens/brandsscreen.dart';
 import '../screens/cartscreen.dart';
 import '../screens/catalog/women_catalog.dart';
 import '../screens/home/women/homescreen.dart';
+import '../screens/home/women/dynamic_homescreen.dart';
 import '../screens/quickscreen.dart';
 import '../screens/loginscreen.dart';
 import 'package:geolocator/geolocator.dart';
@@ -217,7 +218,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     Widget screen;
     switch (index) {
       case 0:
-        screen = HomeScreen(onPressed: (i) => _changeTab(i));
+        screen = DynamicHomeScreen(onPressed: (i) => _changeTab(i));
         break;
       case 1:
         screen = const BrandsScreen(screen: "home");

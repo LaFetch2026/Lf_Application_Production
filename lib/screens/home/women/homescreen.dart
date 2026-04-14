@@ -720,7 +720,10 @@ class HomeScreenState extends State<HomeScreen>
                           height: 40.sp,
                           child: TabBar(
                             controller: _genderTabController,
-                            isScrollable: false,
+                            isScrollable: homeController.genderTabs.length > 3,
+                            tabAlignment: homeController.genderTabs.length > 3
+                                ? TabAlignment.start
+                                : TabAlignment.fill,
                             indicatorColor: homeAppBarColor,
                             indicatorWeight: 2.sp,
                             indicatorSize: TabBarIndicatorSize.tab,
