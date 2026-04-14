@@ -774,105 +774,6 @@ class HomeScreenState extends State<HomeScreen>
                               width: double.infinity,
                             );
                           }),
-                          // Banner Section - ✅ WITH LOADING STATE
-                          Obx(() {
-                            homeController.homeGenderValue.value;
-
-                            final banners = _currentBannerList();
-                            final isLoading = homeController.isBanner1.value;
-                            final currentValue =
-                                productController.current.value;
-                            final showBanners =
-                                banners.isNotEmpty && currentValue == 50;
-
-                            print(
-                                "🎬 Banner Obx: isLoading=$isLoading, bannersCount=${banners.length}, currentValue=$currentValue, showBanners=$showBanners");
-
-                            // ✅ FIXED: Only show loading if actually no banners exist
-                            if (isLoading && banners.isEmpty) {
-                              print("🎬 Showing loading indicator");
-                              return Container(
-                                height: 210.sp,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.04),
-                                ),
-                                child: const Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.black,
-                                      ),
-                                      SizedBox(height: 12),
-                                      Text(
-                                        'Loading banners...',
-                                        style: TextStyle(
-                                          color: Colors.black54,
-                                          fontSize: 12,
-                                          fontFamily: "Clash Display Regular",
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }
-
-                            if (showBanners) {
-                              print(
-                                  "🎬 Showing banners: ${banners.length} banners");
-
-                              // ✅ Safety: Build banner widgets and check if empty
-                              final bannerWidgets = widgitBannerList();
-                              if (bannerWidgets.isEmpty) {
-                                print("⚠️ No banner widgets to display");
-                                return const SizedBox.shrink();
-                              }
-
-                              return Column(
-                                children: [
-                                  ClipRRect(
-                                    // ✅ BORDER RADIUS
-                                    child: AspectRatio(
-                                      aspectRatio: 3 / 1,
-                                      child: PageView(
-                                        key: ValueKey(
-                                            'pageview_${homeController.homeGenderValue.value}'),
-                                        controller: _pageController,
-                                        onPageChanged: (index) {
-                                          if (index >= 0 &&
-                                              index < bannerWidgets.length) {
-                                            homeController.currentPage.value =
-                                                index;
-                                          }
-                                        },
-                                        children: bannerWidgets,
-                                      ),
-                                    ),
-                                  ),
-                                  banners.length == 1
-                                      ? const SizedBox.shrink()
-                                      : Center(
-                                          child: PageIndicator(
-                                            controller: _pageController,
-                                            count: banners.length,
-                                            size: 6.0.sp,
-                                            activeColor: Colors.black,
-                                            color: const Color(0xffE5E7EB),
-                                            layout: PageIndicatorLayout.WARM,
-                                            scale: 0.65,
-                                            space: 8.sp,
-                                          ),
-                                        ),
-                                ],
-                              );
-                            }
-
-                            print("🎬 Not showing anything (SizedBox.shrink)");
-                            return const SizedBox.shrink();
-                          }),
                           // ✅ Consistent spacing
                           // Marquee Banner - Dynamic from API with icons
                           Obx(() {
@@ -965,6 +866,94 @@ class HomeScreenState extends State<HomeScreen>
                               onPressedViewAll: () => widget.onPressed?.call(1),
                               brands: brands,
                             );
+                          }),
+
+                          // Banner Section - moved below Featured Brands
+                          Obx(() {
+                            homeController.homeGenderValue.value;
+
+                            final banners = _currentBannerList();
+                            final isLoading = homeController.isBanner1.value;
+                            final currentValue =
+                                productController.current.value;
+                            final showBanners =
+                                banners.isNotEmpty && currentValue == 50;
+
+                            if (isLoading && banners.isEmpty) {
+                              return Container(
+                                height: 210.sp,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.04),
+                                ),
+                                child: const Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.black,
+                                      ),
+                                      SizedBox(height: 12),
+                                      Text(
+                                        'Loading banners...',
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                          fontSize: 12,
+                                          fontFamily: "Clash Display Regular",
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+
+                            if (showBanners) {
+                              final bannerWidgets = widgitBannerList();
+                              if (bannerWidgets.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+
+                              return Column(
+                                children: [
+                                  ClipRRect(
+                                    child: AspectRatio(
+                                      aspectRatio: 3 / 1,
+                                      child: PageView(
+                                        key: ValueKey(
+                                            'pageview_${homeController.homeGenderValue.value}'),
+                                        controller: _pageController,
+                                        onPageChanged: (index) {
+                                          if (index >= 0 &&
+                                              index < bannerWidgets.length) {
+                                            homeController.currentPage.value =
+                                                index;
+                                          }
+                                        },
+                                        children: bannerWidgets,
+                                      ),
+                                    ),
+                                  ),
+                                  banners.length == 1
+                                      ? const SizedBox.shrink()
+                                      : Center(
+                                          child: PageIndicator(
+                                            controller: _pageController,
+                                            count: banners.length,
+                                            size: 6.0.sp,
+                                            activeColor: Colors.black,
+                                            color: const Color(0xffE5E7EB),
+                                            layout: PageIndicatorLayout.WARM,
+                                            scale: 0.65,
+                                            space: 8.sp,
+                                          ),
+                                        ),
+                                ],
+                              );
+                            }
+
+                            return const SizedBox.shrink();
                           }),
 
                           // Product Collections
