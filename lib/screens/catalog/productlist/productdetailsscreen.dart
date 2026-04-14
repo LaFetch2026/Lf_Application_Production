@@ -75,7 +75,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final brandController = Get.put(BrandController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   bool _didEnsureSize = false;
-  bool _isForeground = true; // prevents Obx rebuilds when screen is in background
+  bool _isForeground =
+      true; // prevents Obx rebuilds when screen is in background
 
   int _curr = 0;
   int commentId = 0;
@@ -1120,7 +1121,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   : Colors.black.withOpacity(0.15),
                               border: Border.all(
                                 color:
-                                    isSelected ? colorPrimary : searchTextColor,
+                                    isSelected ? purpleColor : searchTextColor,
                                 width: isSelected ? 2.sp : 1.sp,
                               ),
                             ),
@@ -1132,9 +1133,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   fontFamily: "Clash Display",
                                   fontWeight: FontWeight.w600,
                                   fontSize: 9.sp,
-                                  color: widget.backgroundcolor == whiteColor
-                                      ? Colors.black
-                                      : Colors.white,
+                                  color: isSelected
+                                      ? purpleColor
+                                      : widget.backgroundcolor == whiteColor
+                                          ? Colors.black
+                                          : Colors.white,
                                 ),
                               ),
                             ),
@@ -1202,7 +1205,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
       print("🚀 Loading product ID: ${widget.productId}");
 
-      productController.getProductById(widget.productId, slug: widget.Slug.isNotEmpty ? widget.Slug : null).then((_) {
+      productController
+          .getProductById(widget.productId,
+              slug: widget.Slug.isNotEmpty ? widget.Slug : null)
+          .then((_) {
         print("✅ Product loaded successfully");
         print(
             "📦 Product Details: ${productController.productDetails.keys.toList()}");
@@ -1565,130 +1571,123 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           () {
                             // Don't show loading skeleton when screen is in background
                             // (prevents scroll-to-top when navigating to a new PDP)
-                            if (_isForeground && productController.isDetails.value) {
+                            if (_isForeground &&
+                                productController.isDetails.value) {
                               return const DummyProductImage();
                             }
                             return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Image Container with Rating Badge - FULL WIDTH
+                                Stack(
                                   children: [
-                                    // Image Container with Rating Badge - FULL WIDTH
-                                    Stack(
-                                      children: [
-                                        // PageView for Images - NO PADDING
-                                        SizedBox(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
+                                    // PageView for Images - NO PADDING
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.height *
                                               0.54,
-                                          child: PageView(
-                                            controller: _pageController,
-                                            allowImplicitScrolling: true,
-                                            scrollDirection: Axis.horizontal,
-                                            onPageChanged: (number) {
-                                              _curr = number;
-                                              setState(() {});
-                                            },
-                                            children: getListForPageView(),
-                                          ),
-                                        ),
-                                        // Rating Badge - Bottom Right (positioned over image)
-                                        Positioned(
-                                          bottom: 12.sp,
-                                          right: 12.sp,
-                                          child: Obx(() {
-                                            final avgRating = productController
-                                                .averageRating.value;
-
-                                            if (avgRating <= 0)
-                                              return const SizedBox
-                                                  .shrink(); // hide if no rating
-
-                                            return Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 8.sp,
-                                                  vertical: 5.sp),
-                                              decoration: BoxDecoration(
-                                                color: whiteColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        16.sp),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black
-                                                        .withOpacity(0.15),
-                                                    blurRadius: 6,
-                                                    offset: Offset(0, 2),
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Icon(
-                                                    Icons.star,
-                                                    color:
-                                                        const Color(0xFFFFA500),
-                                                    size: 14.sp,
-                                                  ),
-                                                  SizedBox(width: 3.sp),
-                                                  Text(
-                                                    avgRating
-                                                        .toStringAsFixed(1),
-                                                    style: TextStyle(
-                                                      fontFamily:
-                                                          "Clash Display",
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color: blackColor,
-                                                      fontSize: 13.sp,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          }),
-                                        ),
-                                      ],
+                                      child: PageView(
+                                        controller: _pageController,
+                                        allowImplicitScrolling: true,
+                                        scrollDirection: Axis.horizontal,
+                                        onPageChanged: (number) {
+                                          _curr = number;
+                                          setState(() {});
+                                        },
+                                        children: getListForPageView(),
+                                      ),
                                     ),
-                                    // Page Indicator Dots
-                                    _imageCount() <= 1
-                                        ? const SizedBox.shrink()
-                                        : Padding(
-                                            padding: EdgeInsets.only(
-                                              left: gL,
-                                              right: gL,
-                                              top: gS,
-                                            ),
-                                            child: Center(
-                                              child: PageIndicator(
-                                                controller: _pageController,
-                                                count: _imageCount(),
-                                                size: 5.0.sp,
-                                                activeColor:
-                                                    widget.backgroundcolor ==
-                                                            whiteColor
-                                                        ? Colors.black
-                                                        : whiteColor,
-                                                color: widget.backgroundcolor ==
-                                                        whiteColor
-                                                    ? const Color(0xffE5E7EB)
-                                                    : subtitleColor,
-                                                layout:
-                                                    PageIndicatorLayout.WARM,
-                                                scale: 0.6,
-                                                space: gS,
+                                    // Rating Badge - Bottom Right (positioned over image)
+                                    Positioned(
+                                      bottom: 12.sp,
+                                      right: 12.sp,
+                                      child: Obx(() {
+                                        final avgRating = productController
+                                            .averageRating.value;
+
+                                        if (avgRating <= 0)
+                                          return const SizedBox
+                                              .shrink(); // hide if no rating
+
+                                        return Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8.sp, vertical: 5.sp),
+                                          decoration: BoxDecoration(
+                                            color: whiteColor,
+                                            borderRadius:
+                                                BorderRadius.circular(16.sp),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.15),
+                                                blurRadius: 6,
+                                                offset: Offset(0, 2),
                                               ),
-                                            ),
+                                            ],
                                           ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.star,
+                                                color: const Color(0xFFFFA500),
+                                                size: 14.sp,
+                                              ),
+                                              SizedBox(width: 3.sp),
+                                              Text(
+                                                avgRating.toStringAsFixed(1),
+                                                style: TextStyle(
+                                                  fontFamily: "Clash Display",
+                                                  fontWeight: FontWeight.w700,
+                                                  color: blackColor,
+                                                  fontSize: 13.sp,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }),
+                                    ),
                                   ],
-                                );
+                                ),
+                                // Page Indicator Dots
+                                _imageCount() <= 1
+                                    ? const SizedBox.shrink()
+                                    : Padding(
+                                        padding: EdgeInsets.only(
+                                          left: gL,
+                                          right: gL,
+                                          top: gS,
+                                        ),
+                                        child: Center(
+                                          child: PageIndicator(
+                                            controller: _pageController,
+                                            count: _imageCount(),
+                                            size: 5.0.sp,
+                                            activeColor:
+                                                widget.backgroundcolor ==
+                                                        whiteColor
+                                                    ? Colors.black
+                                                    : whiteColor,
+                                            color: widget.backgroundcolor ==
+                                                    whiteColor
+                                                ? const Color(0xffE5E7EB)
+                                                : subtitleColor,
+                                            layout: PageIndicatorLayout.WARM,
+                                            scale: 0.6,
+                                            space: gS,
+                                          ),
+                                        ),
+                                      ),
+                              ],
+                            );
                           },
                         ),
                         // ---------- DETAILS ----------
                         Obx(() {
-                          final loading = _isForeground && productController.isDetails.value;
+                          final loading = _isForeground &&
+                              productController.isDetails.value;
 
                           if (loading) return const DummyProductDetails();
 
