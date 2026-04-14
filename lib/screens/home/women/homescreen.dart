@@ -766,12 +766,12 @@ class HomeScreenState extends State<HomeScreen>
                         children: [
                           // Section video banner (cached controllers, no extra S3 requests on tab switch)
                           Obx(() {
-                            final genderId = homeController.homeGenderValue.value;
-                            final controller = _sectionVideoControllers[genderId];
+                            final genderId =
+                                homeController.homeGenderValue.value;
+                            final controller =
+                                _sectionVideoControllers[genderId];
                             return _SectionVideoBanner(
                               controller: controller,
-                              height: 229.sp,
-                              width: double.infinity,
                             );
                           }),
                           // ✅ Consistent spacing
@@ -1686,13 +1686,9 @@ class _SectionStrip extends StatelessWidget {
 
 class _SectionVideoBanner extends StatefulWidget {
   final VideoPlayerController? controller;
-  final double height;
-  final double width;
 
   const _SectionVideoBanner({
     required this.controller,
-    required this.height,
-    required this.width,
   });
 
   @override
@@ -1711,7 +1707,8 @@ class _SectionVideoBannerState extends State<_SectionVideoBanner>
     _homeController = Get.find<HomeController>();
     WidgetsBinding.instance.addObserver(this);
     _tabListener = ever(_homeController.isHomeTabActive, (bool isActive) {
-      if (widget.controller == null || !widget.controller!.value.isInitialized) return;
+      if (widget.controller == null || !widget.controller!.value.isInitialized)
+        return;
       if (isActive && _isRouteActive) {
         widget.controller!.play();
       } else {
@@ -1723,8 +1720,6 @@ class _SectionVideoBannerState extends State<_SectionVideoBanner>
   @override
   void didUpdateWidget(covariant _SectionVideoBanner oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // When a new initialized controller arrives (e.g. after async init completes
-    // or after a gender tab switch), ensure it plays if conditions are right.
     final ctrl = widget.controller;
     if (ctrl != null &&
         ctrl.value.isInitialized &&
@@ -1733,7 +1728,6 @@ class _SectionVideoBannerState extends State<_SectionVideoBanner>
         !ctrl.value.isPlaying) {
       ctrl.play();
     }
-    // If the controller changed, pause the old one to avoid ghost playback.
     if (oldWidget.controller != widget.controller) {
       oldWidget.controller?.pause();
     }
@@ -1764,7 +1758,8 @@ class _SectionVideoBannerState extends State<_SectionVideoBanner>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (widget.controller == null || !widget.controller!.value.isInitialized) return;
+    if (widget.controller == null || !widget.controller!.value.isInitialized)
+      return;
     if (state == AppLifecycleState.paused) {
       // Only pause when fully backgrounded, not on brief inactive states
       // (inactive fires for system overlays, notifications, etc.)
@@ -1787,16 +1782,16 @@ class _SectionVideoBannerState extends State<_SectionVideoBanner>
   @override
   Widget build(BuildContext context) {
     final ctrl = widget.controller;
+    // Use AspectRatio 3:1 to match the image banner carousel sizing —
+    // consistent across all screen sizes, no fixed height pushing layout.
     if (ctrl == null || !ctrl.value.isInitialized) {
-      return Container(
-        height: widget.height,
-        width: widget.width,
-        color: Colors.grey[200],
+      return const AspectRatio(
+        aspectRatio: 16 / 9,
+        child: ColoredBox(color: Color(0xFFEEEEEE)),
       );
     }
-    return SizedBox(
-      height: widget.height,
-      width: widget.width,
+    return AspectRatio(
+      aspectRatio: 16 / 9,
       child: VideoPlayer(ctrl),
     );
   }
