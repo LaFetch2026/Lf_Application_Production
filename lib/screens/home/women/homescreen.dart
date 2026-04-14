@@ -610,20 +610,6 @@ class HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
 
-    // ✅ CRITICAL FIX: Reset loading states if data already exists
-    // This prevents skeleton loaders from showing when navigating back to home
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (productController.homeProductList.isNotEmpty) {
-        productController.isHomeProduct.value = false;
-      }
-      if (homeController.banner1List.isNotEmpty) {
-        homeController.isBanner1.value = false;
-      }
-      if (homeController.banner2List.isNotEmpty) {
-        homeController.isBanner2.value = false;
-      }
-    });
-
     return Scaffold(
       backgroundColor: whiteColor,
       body: RefreshIndicator(
@@ -1229,8 +1215,15 @@ class HomeScreenState extends State<HomeScreen>
       homeController.discountScreenController.jumpTo(0);
     }
 
-    // Force refresh data when switching tabs
-    await forceRefreshData();
+    // Only fetch if data for this gender isn't already cached
+    if (!homeController.isGenderDataLoaded(genderId)) {
+      await homeController.initializeHomeData(genderId, forceRefresh: false);
+      await Future.wait([
+        catalogController.getCatalogData(genderId, forceRefresh: false),
+        productController.getHomeProduct(genderId, forceRefresh: false),
+        brandController.getBrandData("featured", genderId),
+      ]);
+    }
   }
 }
 
