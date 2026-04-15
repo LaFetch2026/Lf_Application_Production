@@ -45,6 +45,8 @@ import '../../../models/collection_extensions.dart';
 import '../../../models/collection_banner_model.dart';
 import '../../../common/widget/newsletter/newsletter_section.dart';
 import '../../../core/utils/image_helper.dart';
+import '../../../controllers/new_in_controller.dart';
+import '../../../common/widget/cards/product_card.dart';
 
 // ✅ Global RouteObserver for video auto-pause on navigation
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -68,6 +70,7 @@ class HomeScreenState extends State<HomeScreen>
   final brandController = Get.put(BrandController());
   final catalogController = Get.put(CatalogController());
   final profileController = Get.put(ProfileController());
+  final newInController = Get.put(NewInController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   final PageController _pageController = PageController(initialPage: 0);
@@ -223,6 +226,9 @@ class HomeScreenState extends State<HomeScreen>
 
         if (!mounted) return; // ✅ Check after async call
 
+        // ✅ Fire NEW IN fetch after critical data — non-blocking
+        newInController.fetchProducts(currentGender, forceRefresh: isFirstLoad);
+
         // ✅ Mark data as loaded
         _dataLoaded = true;
 
@@ -262,6 +268,7 @@ class HomeScreenState extends State<HomeScreen>
     productController.clearLoadedTracking();
     catalogController.clearLoadedTracking();
     brandController.clearLoadedTracking();
+    newInController.clearCache();
 
     // ✅ UPDATED: Include brands, collection banners, and announcements in refresh
     await Future.wait([
@@ -271,6 +278,7 @@ class HomeScreenState extends State<HomeScreen>
       productController.getCollectionBanners(forceRefresh: true),
       brandController.getBrandData("featured", currentGender),
       homeController.getAnnouncements(forceRefresh: true),
+      newInController.fetchProducts(currentGender, forceRefresh: true),
     ]);
   }
 
@@ -290,6 +298,7 @@ class HomeScreenState extends State<HomeScreen>
       productController.clearLoadedTracking();
       catalogController.clearLoadedTracking();
       brandController.clearLoadedTracking();
+      try { Get.find<NewInController>().clearCache(); } catch (_) {}
     } catch (e) {
       print("⚠️ Could not clear controller tracking: $e");
     }
@@ -821,6 +830,9 @@ class HomeScreenState extends State<HomeScreen>
 
                           SizedBox(height: 12.sp), // ✅ Consistent spacing
 
+                          // ── NEW IN Section ──────────────────────────────
+                          _NewInSection(newInController: newInController),
+
                           // Shop by Category Section
                           Obx(
                             () {
@@ -1264,6 +1276,9 @@ class HomeScreenState extends State<HomeScreen>
     // forceRefresh: false so cached data loads instantly without a network hit.
     await productController.getHomeProduct(genderId, forceRefresh: false);
 
+    // ✅ Reload NEW IN products for the new gender (cache-friendly)
+    newInController.fetchProducts(genderId, forceRefresh: false);
+
     if (!homeController.isGenderDataLoaded(genderId)) {
       await homeController.initializeHomeData(genderId, forceRefresh: false);
       await Future.wait([
@@ -1313,6 +1328,195 @@ String? firstImageUrlFromProduct(Map<String, dynamic> m) {
     if (v is String && v.trim().isNotEmpty) return v.trim();
   }
   return null;
+}
+
+class _NewInSection extends StatelessWidget {
+  final NewInController newInController;
+
+  const _NewInSection({required this.newInController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (newInController.isLoading.value) {
+        return DummyProductList(text: "NEW IN", visibleSubtitle: false);
+      }
+      if (newInController.products.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      final paged = newInController.pagedProducts;
+      final totalPages = newInController.totalPages;
+      final currentPage = newInController.currentPage.value;
+
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.sp),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header row
+            Row(
+              children: [
+                AppText(
+                  text: "NEW IN",
+                  fontFamily: "Clash Display Semibold",
+                  color: blackColor,
+                  fontSize: 18,
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: Icon(Icons.tune, size: 20.sp, color: blackColor),
+                  onPressed: () => _showSortSheet(context),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
+            ),
+            SizedBox(height: 8.sp),
+            // Product grid — 2 columns, 8 items max
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.zero,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 8.sp,
+                mainAxisSpacing: 8.sp,
+                childAspectRatio: 0.62,
+              ),
+              itemCount: paged.length,
+              itemBuilder: (context, index) {
+                final product = paged[index];
+                final imageUrl =
+                    (product['imageUrls'] as List?)?.firstOrNull?.toString() ??
+                        '';
+                final title = product['title'] as String? ?? '';
+                final brand =
+                    (product['brand'] as Map?)?['name'] as String? ?? '';
+                final mrp = product['mrp'] as num? ?? 0;
+                final price = (product['basePrice'] ?? product['mrp']) as num? ?? mrp;
+                final productId = product['id'];
+
+                return ProductGridCard(
+                  imageUrl: imageUrl,
+                  title: title,
+                  brandName: brand,
+                  price: price,
+                  mrp: mrp,
+                  onTap: () {
+                    if (productId == null) return;
+                    Get.to(() => ProductDetailsScreen(
+                          productId: productId is int
+                              ? productId
+                              : int.tryParse(productId.toString()) ?? 0,
+                          type: "add",
+                          brandName: brand,
+                        ));
+                  },
+                );
+              },
+            ),
+            SizedBox(height: 12.sp),
+            // Pagination row
+            if (totalPages > 1)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.chevron_left,
+                        size: 24.sp,
+                        color: currentPage > 0 ? blackColor : Colors.grey),
+                    onPressed:
+                        currentPage > 0 ? newInController.prevPage : null,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                  SizedBox(width: 12.sp),
+                  AppText(
+                    text: "Page ${currentPage + 1} of $totalPages",
+                    fontFamily: "Clash Display Regular",
+                    color: blackColor,
+                    fontSize: 13,
+                  ),
+                  SizedBox(width: 12.sp),
+                  IconButton(
+                    icon: Icon(Icons.chevron_right,
+                        size: 24.sp,
+                        color: currentPage < totalPages - 1
+                            ? blackColor
+                            : Colors.grey),
+                    onPressed: currentPage < totalPages - 1
+                        ? newInController.nextPage
+                        : null,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ],
+              ),
+            SizedBox(height: 16.sp),
+          ],
+        ),
+      );
+    });
+  }
+
+  void _showSortSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => Obx(() {
+        final current = newInController.sortMode.value;
+        final options = [
+          ('default', 'Default'),
+          ('low_to_high', 'Price: Low to High'),
+          ('high_to_low', 'Price: High to Low'),
+          ('discount', 'Discount'),
+        ];
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 12.sp),
+                child: AppText(
+                  text: "Sort By",
+                  fontFamily: "Clash Display Semibold",
+                  color: blackColor,
+                  fontSize: 16,
+                ),
+              ),
+              const Divider(height: 1),
+              ...options.map((opt) {
+                final isActive = current == opt.$1;
+                return ListTile(
+                  title: Text(
+                    opt.$2,
+                    style: TextStyle(
+                      fontFamily: isActive
+                          ? "Clash Display Semibold"
+                          : "Clash Display Regular",
+                      fontSize: 14.sp,
+                      color: blackColor,
+                    ),
+                  ),
+                  trailing: isActive
+                      ? Icon(Icons.check, size: 18.sp, color: blackColor)
+                      : null,
+                  onTap: () {
+                    newInController.applySort(opt.$1);
+                    Navigator.pop(context);
+                  },
+                );
+              }),
+              SizedBox(height: 8.sp),
+            ],
+          ),
+        );
+      }),
+    );
+  }
 }
 
 class _SectionStrip extends StatelessWidget {
