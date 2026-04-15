@@ -1253,7 +1253,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       builder: (context) {
         return Dialog(
           insetPadding: EdgeInsets.all(16.sp),
-          backgroundColor: Colors.white, // ⭐ light purple color
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.sp),
           ),
@@ -1278,37 +1278,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   /// ---------- Prefer Image ----------
                   if (chart["sizeGuideImage"] != null &&
                       chart["sizeGuideImage"].toString().isNotEmpty)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8.sp),
-                      child: CachedNetworkImage(
-                        imageUrl: chart["sizeGuideImage"],
-                        width: double.infinity,
-                        height: 300.sp,
-                        fit: BoxFit.cover,
-                        errorWidget: (context, url, error) => Container(
-                          width: double.infinity,
-                          height: 300.sp,
-                          color: Colors.black.withOpacity(0.06),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.broken_image_outlined,
-                                color: Colors.grey.withOpacity(0.5),
-                                size: 48.sp,
-                              ),
-                              SizedBox(height: 8.sp),
-                              Text(
-                                "Size guide image unavailable",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 12.sp,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    _SizeChartZoomableImage(
+                      imageUrl: chart["sizeGuideImage"],
                     )
                   else
                     _buildSizeTable(chartData),
@@ -3405,5 +3376,67 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       print('Error formatting date: $e');
       return '';
     }
+  }
+}
+
+/// size chart pinch to zoom widget
+class _SizeChartZoomableImage extends StatefulWidget {
+  final String imageUrl;
+  const _SizeChartZoomableImage({required this.imageUrl});
+
+  @override
+  State<_SizeChartZoomableImage> createState() =>
+      _SizeChartZoomableImageState();
+}
+
+class _SizeChartZoomableImageState extends State<_SizeChartZoomableImage> {
+  final TransformationController _transformationController =
+      TransformationController();
+
+  void _resetZoom() {
+    _transformationController.value = Matrix4.identity();
+  }
+
+  @override
+  void dispose() {
+    _transformationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: GestureDetector(
+        onScaleEnd: (_) => _resetZoom(),
+        child: InteractiveViewer(
+          transformationController: _transformationController,
+          minScale: 1.0,
+          maxScale: 4.0,
+          child: CachedNetworkImage(
+            imageUrl: widget.imageUrl,
+            width: double.infinity,
+            fit: BoxFit.contain,
+            errorWidget: (context, url, error) => Container(
+              width: double.infinity,
+              height: 300,
+              color: Colors.black.withOpacity(0.06),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.broken_image_outlined,
+                      color: Colors.grey.withOpacity(0.5), size: 48),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Size guide image unavailable",
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

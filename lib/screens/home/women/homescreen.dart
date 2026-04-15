@@ -199,6 +199,12 @@ class HomeScreenState extends State<HomeScreen>
 
         if (_dataLoaded && hasExistingData && !_isInitialLoad) {
           print("✅ Data already loaded, skipping API calls");
+          // Still fire NEW IN fetch in case it was skipped (e.g. hot restart)
+          if (newInController.products.isEmpty) {
+            newInController.fetchProducts(currentGender);
+          } else {
+            newInController.isLoading.value = false;
+          }
           return;
         }
 
@@ -299,7 +305,9 @@ class HomeScreenState extends State<HomeScreen>
       productController.clearLoadedTracking();
       catalogController.clearLoadedTracking();
       brandController.clearLoadedTracking();
-      try { Get.find<NewInController>().clearCache(); } catch (_) {}
+      try {
+        Get.find<NewInController>().clearCache();
+      } catch (_) {}
     } catch (e) {
       print("⚠️ Could not clear controller tracking: $e");
     }
@@ -1229,6 +1237,15 @@ class HomeScreenState extends State<HomeScreen>
 
   Future<void> _initSectionVideoController(int genderId, String url) async {
     try {
+      // Dispose any existing controller for this gender before re-initializing
+      // (prevents stale controllers lingering on hot restart)
+      final existing = _sectionVideoControllers[genderId];
+      if (existing != null) {
+        existing.pause();
+        existing.dispose();
+        _sectionVideoControllers.remove(genderId);
+      }
+
       final controller = VideoPlayerController.networkUrl(Uri.parse(url));
       await controller.initialize();
       if (!mounted) {
@@ -1258,6 +1275,10 @@ class HomeScreenState extends State<HomeScreen>
     // Clear stale products BEFORE updating homeGenderValue so the Obx
     // doesn't briefly render old gender's data under the new gender label.
     productController.homeProductList.clear();
+
+    // Clear NEW IN immediately so shimmer shows instead of stale products
+    newInController.products.clear();
+    newInController.isLoading.value = true;
 
     homeController.genderText.value = genderName;
     homeController.homeGenderValue.value = genderId;
@@ -1372,8 +1393,7 @@ class _NewInSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (newInController.isLoading.value) {
-        // Reuse existing 2-column grid shimmer — matches the NEW IN grid layout
-        // and reserves the correct height so nothing jumps when products load
+        //NEW IN Shimmer
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.sp),
           child: Column(
@@ -1422,7 +1442,6 @@ class _NewInSection extends StatelessWidget {
                   ],
                 ),
               ),
-              // Reuse DummyGridList — 2-col grid skeleton, 4 items
               const DummyGridList(size: 4),
             ],
           ),
@@ -1458,8 +1477,8 @@ class _NewInSection extends StatelessWidget {
                 GestureDetector(
                   onTap: () => _showSortSheet(context),
                   child: Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 10.sp, vertical: 6.sp),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.sp, vertical: 6.sp),
                     decoration: BoxDecoration(
                       border: Border.all(color: const Color(0xFFD1D5DB)),
                       borderRadius: BorderRadius.circular(20.sp),
@@ -2023,7 +2042,9 @@ class _SectionVideoBannerState extends State<_SectionVideoBanner>
   void didUpdateWidget(covariant _SectionVideoBanner oldWidget) {
     super.didUpdateWidget(oldWidget);
     final ctrl = widget.controller;
-    if (ctrl != null && ctrl.value.isInitialized && _homeController.isHomeTabActive.value) {
+    if (ctrl != null &&
+        ctrl.value.isInitialized &&
+        _homeController.isHomeTabActive.value) {
       if (oldWidget.controller == null) {
         // First assignment: reset route state and play unconditionally.
         // didPushNext may have fired during initial splash→home navigation
@@ -2071,7 +2092,10 @@ class _SectionVideoBannerState extends State<_SectionVideoBanner>
       // (inactive fires for system overlays, notifications, etc.)
       widget.controller!.pause();
     } else if (state == AppLifecycleState.resumed) {
-      if (_isRouteActive && _homeController.isHomeTabActive.value) {
+      // Always resume if home tab is active — _isRouteActive may be stale
+      // after hot restart so we don't gate on it here.
+      if (_homeController.isHomeTabActive.value) {
+        _isRouteActive = true;
         widget.controller!.play();
       }
     }
