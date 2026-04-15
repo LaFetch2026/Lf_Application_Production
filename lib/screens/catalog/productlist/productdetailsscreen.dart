@@ -1116,12 +1116,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               shape: BoxShape.rectangle,
-                              color: widget.backgroundcolor == whiteColor
-                                  ? Colors.white
-                                  : Colors.black.withOpacity(0.15),
+                              color: isSelected
+                                  ? lightPurpleColor
+                                  : widget.backgroundcolor == whiteColor
+                                      ? Colors.white
+                                      : Colors.black.withOpacity(0.15),
                               border: Border.all(
                                 color:
-                                    isSelected ? purpleColor : searchTextColor,
+                                    isSelected ? lightPurpleColor : blackColor,
                                 width: isSelected ? 2.sp : 1.sp,
                               ),
                             ),
@@ -1134,7 +1136,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   fontWeight: FontWeight.w600,
                                   fontSize: 9.sp,
                                   color: isSelected
-                                      ? purpleColor
+                                      ? whiteColor
                                       : widget.backgroundcolor == whiteColor
                                           ? Colors.black
                                           : Colors.white,
