@@ -23,6 +23,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:lafetch/core/constant/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:lafetch/models/collection_model.dart';
@@ -112,7 +113,7 @@ class _TestableProductController extends ProductController {
 
     // Build URI with gender param (fixed)
     final uri = Uri.parse(
-            'https://lfapi.la-fetch.com/api/product-collection/collection-with-products')
+            '${ApiConstants.baseUrl}/product-collection/collection-with-products')
         .replace(queryParameters: {
       'displayFor': 'homepage',
       'gender': displayFor,
@@ -210,13 +211,18 @@ http.Client _mockClientReturning(List<Map<String, dynamic>> collections) {
 // ---------------------------------------------------------------------------
 
 // Men-only collections (already correct for gender=1)
-final _menA = _makeCollection(id: 10, name: 'Men Collection A', displayFor: ['men']);
-final _menB = _makeCollection(id: 11, name: 'Men Collection B', displayFor: ['men']);
-final _menC = _makeCollection(id: 12, name: 'Men Collection C', displayFor: ['men']);
+final _menA =
+    _makeCollection(id: 10, name: 'Men Collection A', displayFor: ['men']);
+final _menB =
+    _makeCollection(id: 11, name: 'Men Collection B', displayFor: ['men']);
+final _menC =
+    _makeCollection(id: 12, name: 'Men Collection C', displayFor: ['men']);
 
 // Women-only collections (already correct for gender=2)
-final _womenA = _makeCollection(id: 20, name: 'Women Collection A', displayFor: ['women']);
-final _womenB = _makeCollection(id: 21, name: 'Women Collection B', displayFor: ['women']);
+final _womenA =
+    _makeCollection(id: 20, name: 'Women Collection A', displayFor: ['women']);
+final _womenB =
+    _makeCollection(id: 21, name: 'Women Collection B', displayFor: ['women']);
 
 // Multi-gender collection (correct for both gender=1 and gender=2)
 final _multiGender = _makeCollection(
@@ -226,8 +232,10 @@ final _multiGender = _makeCollection(
 );
 
 // Accessories collection (already correct for gender=3)
-final _accessoriesA = _makeCollection(id: 40, name: 'Accessories A', displayFor: ['accessories']);
-final _accessoriesB = _makeCollection(id: 41, name: 'Accessories B', displayFor: ['accessories']);
+final _accessoriesA =
+    _makeCollection(id: 40, name: 'Accessories A', displayFor: ['accessories']);
+final _accessoriesB =
+    _makeCollection(id: 41, name: 'Accessories B', displayFor: ['accessories']);
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -291,7 +299,8 @@ void main() {
           'expectedCount': 3,
         },
         {
-          'description': 'women + multi-gender for gender=2 (all contain "women")',
+          'description':
+              'women + multi-gender for gender=2 (all contain "women")',
           'gender': 2,
           'collections': [_womenA, _multiGender],
           'expectedCount': 2,
@@ -304,8 +313,7 @@ void main() {
           '— EXPECTED TO PASS on unfixed code',
           () async {
             final gender = tc['gender'] as int;
-            final collections =
-                tc['collections'] as List<Map<String, dynamic>>;
+            final collections = tc['collections'] as List<Map<String, dynamic>>;
             final expectedCount = tc['expectedCount'] as int;
 
             final mockClient = _mockClientReturning(collections);
@@ -327,8 +335,7 @@ void main() {
             expect(
               loaded.length,
               equals(expectedCount),
-              reason:
-                  'PRESERVATION VIOLATED: ${tc['description']}. '
+              reason: 'PRESERVATION VIOLATED: ${tc['description']}. '
                   'Expected $expectedCount collections but got ${loaded.length}. '
                   'The fix must not drop collections that already match the '
                   'requested gender.',
@@ -356,25 +363,29 @@ void main() {
       // Property-based: test multiple multi-gender combinations
       final multiGenderCases = [
         {
-          'description': 'displayFor:["men","women"] appears under men (gender=1)',
+          'description':
+              'displayFor:["men","women"] appears under men (gender=1)',
           'gender': 1,
           'genderStr': 'men',
           'collections': [_multiGender],
         },
         {
-          'description': 'displayFor:["men","women"] appears under women (gender=2)',
+          'description':
+              'displayFor:["men","women"] appears under women (gender=2)',
           'gender': 2,
           'genderStr': 'women',
           'collections': [_multiGender],
         },
         {
-          'description': 'multi-gender + men-only both appear under men (gender=1)',
+          'description':
+              'multi-gender + men-only both appear under men (gender=1)',
           'gender': 1,
           'genderStr': 'men',
           'collections': [_menA, _multiGender],
         },
         {
-          'description': 'multi-gender + women-only both appear under women (gender=2)',
+          'description':
+              'multi-gender + women-only both appear under women (gender=2)',
           'gender': 2,
           'genderStr': 'women',
           'collections': [_womenA, _multiGender],
@@ -387,8 +398,7 @@ void main() {
           () async {
             final gender = tc['gender'] as int;
             final genderStr = tc['genderStr'] as String;
-            final collections =
-                tc['collections'] as List<Map<String, dynamic>>;
+            final collections = tc['collections'] as List<Map<String, dynamic>>;
 
             final mockClient = _mockClientReturning(collections);
             final controller =
@@ -405,15 +415,18 @@ void main() {
             }
 
             // Find the multi-gender collection in the result
-            final multiGenderInResult = loaded.where(
-              (c) => c.displayFor.contains('men') && c.displayFor.contains('women'),
-            ).toList();
+            final multiGenderInResult = loaded
+                .where(
+                  (c) =>
+                      c.displayFor.contains('men') &&
+                      c.displayFor.contains('women'),
+                )
+                .toList();
 
             expect(
               multiGenderInResult,
               isNotEmpty,
-              reason:
-                  'PRESERVATION VIOLATED: ${tc['description']}. '
+              reason: 'PRESERVATION VIOLATED: ${tc['description']}. '
                   'Multi-gender collection (displayFor contains both "men" and '
                   '"women") must appear in homeProductList for gender=$gender '
                   '(genderStr="$genderStr"). '
@@ -425,8 +438,7 @@ void main() {
               expect(
                 c.displayFor.contains(genderStr),
                 isTrue,
-                reason:
-                    'Multi-gender collection "${c.name}" must have '
+                reason: 'Multi-gender collection "${c.name}" must have '
                     '"$genderStr" in its displayFor. '
                     'displayFor=${c.displayFor}',
               );
@@ -466,8 +478,7 @@ void main() {
         expect(
           loaded,
           isEmpty,
-          reason:
-              'PRESERVATION VIOLATED: homeProductList must be empty when '
+          reason: 'PRESERVATION VIOLATED: homeProductList must be empty when '
               'the API returns an empty collection list for gender=1. '
               'Got ${loaded.length} collections: '
               '${loaded.map((c) => c.name).join(', ')}',
@@ -492,8 +503,7 @@ void main() {
         expect(
           loaded,
           isEmpty,
-          reason:
-              'PRESERVATION VIOLATED: homeProductList must be empty when '
+          reason: 'PRESERVATION VIOLATED: homeProductList must be empty when '
               'the API returns an empty collection list for gender=2.',
         );
       },
@@ -516,8 +526,7 @@ void main() {
         expect(
           loaded,
           isEmpty,
-          reason:
-              'PRESERVATION VIOLATED: homeProductList must be empty when '
+          reason: 'PRESERVATION VIOLATED: homeProductList must be empty when '
               'the API returns an empty collection list for gender=3.',
         );
       },
@@ -667,14 +676,13 @@ void main() {
         // Simulate: men → women → men (back-navigation)
         final responses = [
           [_menA, _menB, _menC], // gender=1 first load
-          [_womenA, _womenB],    // gender=2
+          [_womenA, _womenB], // gender=2
           [_menA, _menB, _menC], // gender=1 again (forceRefresh)
         ];
         int callCount = 0;
         final mockClient = MockClient((request) async {
-          final collections = responses[callCount < responses.length
-              ? callCount
-              : responses.length - 1];
+          final collections = responses[
+              callCount < responses.length ? callCount : responses.length - 1];
           callCount++;
           return http.Response(
             json.encode({'data': collections}),
@@ -693,7 +701,8 @@ void main() {
 
         print('');
         print('=== Tab Switch Back Test (gender=1 → 2 → 1) ===');
-        print('After returning to gender=1 (${afterReturn.length} collections):');
+        print(
+            'After returning to gender=1 (${afterReturn.length} collections):');
         for (final c in afterReturn) {
           print('  - "${c.name}" displayFor=${c.displayFor}');
         }

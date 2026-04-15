@@ -20,6 +20,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:lafetch/core/constant/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:lafetch/models/collection_model.dart';
@@ -114,7 +115,7 @@ class TestableProductController extends ProductController {
 
     // Build URI mirroring the fixed production code (includes gender param)
     final uri = Uri.parse(
-            'https://lfapi.la-fetch.com/api/product-collection/collection-with-products')
+            '${ApiConstants.baseUrl}/product-collection/collection-with-products')
         .replace(queryParameters: {
       'displayFor': 'homepage',
       'gender': displayFor,
@@ -284,13 +285,13 @@ void main() {
         }
 
         // Find any collection that should NOT be in the men's list
-        final wrongCollections = loaded
-            .where((c) => !c.displayFor.contains('men'))
-            .toList();
+        final wrongCollections =
+            loaded.where((c) => !c.displayFor.contains('men')).toList();
 
         if (wrongCollections.isNotEmpty) {
           print('');
-          print('❌ BUG CONFIRMED: homeProductList contains cross-gender collections:');
+          print(
+              '❌ BUG CONFIRMED: homeProductList contains cross-gender collections:');
           for (final c in wrongCollections) {
             print('  COUNTEREXAMPLE: "${c.name}" displayFor=${c.displayFor} '
                 'should NOT appear in men\'s homeProductList');
@@ -303,8 +304,7 @@ void main() {
         expect(
           wrongCollections,
           isEmpty,
-          reason:
-              'BUG CONFIRMED: homeProductList contains collections whose '
+          reason: 'BUG CONFIRMED: homeProductList contains collections whose '
               'displayFor does not include "men". '
               'Counterexamples: ${wrongCollections.map((c) => '${c.name} displayFor=${c.displayFor}').join(', ')}. '
               'Root cause: getHomeProduct(1) assigns all API collections to '
@@ -350,13 +350,13 @@ void main() {
           print('  - "${c.name}" displayFor=${c.displayFor}');
         }
 
-        final wrongCollections = loaded
-            .where((c) => !c.displayFor.contains('women'))
-            .toList();
+        final wrongCollections =
+            loaded.where((c) => !c.displayFor.contains('women')).toList();
 
         if (wrongCollections.isNotEmpty) {
           print('');
-          print('❌ BUG CONFIRMED: homeProductList contains cross-gender collections:');
+          print(
+              '❌ BUG CONFIRMED: homeProductList contains cross-gender collections:');
           for (final c in wrongCollections) {
             print('  COUNTEREXAMPLE: "${c.name}" displayFor=${c.displayFor} '
                 'should NOT appear in women\'s homeProductList');
@@ -367,8 +367,7 @@ void main() {
         expect(
           wrongCollections,
           isEmpty,
-          reason:
-              'BUG CONFIRMED: homeProductList contains collections whose '
+          reason: 'BUG CONFIRMED: homeProductList contains collections whose '
               'displayFor does not include "women". '
               'Counterexamples: ${wrongCollections.map((c) => '${c.name} displayFor=${c.displayFor}').join(', ')}. '
               'Root cause: getHomeProduct(2) assigns all API collections to '
@@ -413,13 +412,13 @@ void main() {
           print('  - "${c.name}" displayFor=${c.displayFor}');
         }
 
-        final wrongCollections = loaded
-            .where((c) => !c.displayFor.contains('accessories'))
-            .toList();
+        final wrongCollections =
+            loaded.where((c) => !c.displayFor.contains('accessories')).toList();
 
         if (wrongCollections.isNotEmpty) {
           print('');
-          print('❌ BUG CONFIRMED: homeProductList contains non-accessories collections:');
+          print(
+              '❌ BUG CONFIRMED: homeProductList contains non-accessories collections:');
           for (final c in wrongCollections) {
             print('  COUNTEREXAMPLE: "${c.name}" displayFor=${c.displayFor} '
                 'should NOT appear in accessories homeProductList');
@@ -430,8 +429,7 @@ void main() {
         expect(
           wrongCollections,
           isEmpty,
-          reason:
-              'BUG CONFIRMED: homeProductList contains collections whose '
+          reason: 'BUG CONFIRMED: homeProductList contains collections whose '
               'displayFor does not include "accessories". '
               'Counterexamples: ${wrongCollections.map((c) => '${c.name} displayFor=${c.displayFor}').join(', ')}. '
               'Root cause: getHomeProduct(3) assigns all API collections to '
@@ -490,9 +488,8 @@ void main() {
           print('  - "${c.name}" displayFor=${c.displayFor}');
         }
 
-        final wrongCollections = loaded
-            .where((c) => !c.displayFor.contains('men'))
-            .toList();
+        final wrongCollections =
+            loaded.where((c) => !c.displayFor.contains('men')).toList();
 
         if (wrongCollections.isNotEmpty) {
           print('');
@@ -507,8 +504,7 @@ void main() {
         expect(
           wrongCollections,
           isEmpty,
-          reason:
-              'BUG CONFIRMED: Cache path assigns unfiltered collections to '
+          reason: 'BUG CONFIRMED: Cache path assigns unfiltered collections to '
               'homeProductList without calling CollectionUtils.filterByGender. '
               'Counterexamples: ${wrongCollections.map((c) => '${c.name} displayFor=${c.displayFor}').join(', ')}. '
               'Root cause: cache restore path in getHomeProduct does not call '

@@ -12,7 +12,9 @@ import 'base_controller.dart';
 
 class NewInController extends BaseController {
   // ─── State ───────────────────────────────────────────────────────────────
-  RxBool isLoading = false.obs;
+  // Start as true so the shimmer shows immediately on first render —
+  // prevents the section from appearing empty before fetchProducts is called.
+  RxBool isLoading = true.obs;
 
   /// Full fetched list (private — never mutated by sort)
   final RxList<Map<String, dynamic>> _allProducts =
@@ -43,6 +45,7 @@ class NewInController extends BaseController {
       _allProducts.assignAll(_genderCache[gender]!);
       _applySort();
       currentPage.value = 0;
+      isLoading.value = false; // ensure shimmer clears on cache hit
       return;
     }
 

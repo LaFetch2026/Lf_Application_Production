@@ -30,6 +30,7 @@ import 'package:video_player/video_player.dart';
 import '../../../common/widget/appbar/home_appbar.dart';
 import '../../../common/widget/lists/dummy_grid_mostsearch.dart';
 import '../../../common/widget/lists/dummy_home_brand.dart';
+import '../../../common/widget/lists/dummy_grid_list.dart';
 import '../../../common/widget/other/common_widget.dart';
 import '../../../common/widget/text/app_text.dart';
 import '../../../controllers/brand_controller.dart';
@@ -1330,6 +1331,38 @@ String? firstImageUrlFromProduct(Map<String, dynamic> m) {
   return null;
 }
 
+class _NavCircleButton extends StatelessWidget {
+  final IconData icon;
+  final bool enabled;
+  final VoidCallback? onTap;
+
+  const _NavCircleButton({
+    required this.icon,
+    required this.enabled,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 28.sp,
+        height: 28.sp,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: enabled ? blackColor : const Color(0xFFE5E7EB),
+        ),
+        child: Icon(
+          icon,
+          size: 18.sp,
+          color: enabled ? Colors.white : const Color(0xFF9CA3AF),
+        ),
+      ),
+    );
+  }
+}
+
 class _NewInSection extends StatelessWidget {
   final NewInController newInController;
 
@@ -1339,7 +1372,61 @@ class _NewInSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (newInController.isLoading.value) {
-        return DummyProductList(text: "NEW IN", visibleSubtitle: false);
+        // Reuse existing 2-column grid shimmer — matches the NEW IN grid layout
+        // and reserves the correct height so nothing jumps when products load
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.sp),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Skeleton header row
+              Padding(
+                padding: EdgeInsets.only(top: 10.sp, bottom: 8.sp),
+                child: Row(
+                  children: [
+                    Container(
+                      height: 20.sp,
+                      width: 70.sp,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.04),
+                        borderRadius: BorderRadius.circular(4.sp),
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      height: 28.sp,
+                      width: 90.sp,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.04),
+                        borderRadius: BorderRadius.circular(20.sp),
+                      ),
+                    ),
+                    SizedBox(width: 8.sp),
+                    Container(
+                      width: 28.sp,
+                      height: 28.sp,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.black.withOpacity(0.04),
+                      ),
+                    ),
+                    SizedBox(width: 6.sp),
+                    Container(
+                      width: 28.sp,
+                      height: 28.sp,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.black.withOpacity(0.04),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Reuse DummyGridList — 2-col grid skeleton, 4 items
+              const DummyGridList(size: 4),
+            ],
+          ),
+        );
       }
       if (newInController.products.isEmpty) {
         return const SizedBox.shrink();
@@ -1349,12 +1436,15 @@ class _NewInSection extends StatelessWidget {
       final totalPages = newInController.totalPages;
       final currentPage = newInController.currentPage.value;
 
+      final canGoPrev = currentPage > 0;
+      final canGoNext = currentPage < totalPages - 1;
+
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header row
+            // Header row: NEW IN | Sort By button | prev/next arrows
             Row(
               children: [
                 AppText(
@@ -1364,11 +1454,46 @@ class _NewInSection extends StatelessWidget {
                   fontSize: 18,
                 ),
                 const Spacer(),
-                IconButton(
-                  icon: Icon(Icons.tune, size: 20.sp, color: blackColor),
-                  onPressed: () => _showSortSheet(context),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
+                // Sort By pill button
+                GestureDetector(
+                  onTap: () => _showSortSheet(context),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 10.sp, vertical: 6.sp),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: const Color(0xFFD1D5DB)),
+                      borderRadius: BorderRadius.circular(20.sp),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Sort By",
+                          style: TextStyle(
+                            fontFamily: "Clash Display Regular",
+                            fontSize: 12.sp,
+                            color: blackColor,
+                          ),
+                        ),
+                        SizedBox(width: 4.sp),
+                        Icon(Icons.tune, size: 14.sp, color: blackColor),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8.sp),
+                // Prev arrow in circle
+                _NavCircleButton(
+                  icon: Icons.chevron_left,
+                  enabled: canGoPrev,
+                  onTap: canGoPrev ? newInController.prevPage : null,
+                ),
+                SizedBox(width: 6.sp),
+                // Next arrow in circle
+                _NavCircleButton(
+                  icon: Icons.chevron_right,
+                  enabled: canGoNext,
+                  onTap: canGoNext ? newInController.nextPage : null,
                 ),
               ],
             ),
@@ -1394,7 +1519,8 @@ class _NewInSection extends StatelessWidget {
                 final brand =
                     (product['brand'] as Map?)?['name'] as String? ?? '';
                 final mrp = product['mrp'] as num? ?? 0;
-                final price = (product['basePrice'] ?? product['mrp']) as num? ?? mrp;
+                final price =
+                    (product['basePrice'] ?? product['mrp']) as num? ?? mrp;
                 final productId = product['id'];
 
                 return ProductGridCard(
@@ -1416,43 +1542,6 @@ class _NewInSection extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: 12.sp),
-            // Pagination row
-            if (totalPages > 1)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.chevron_left,
-                        size: 24.sp,
-                        color: currentPage > 0 ? blackColor : Colors.grey),
-                    onPressed:
-                        currentPage > 0 ? newInController.prevPage : null,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                  SizedBox(width: 12.sp),
-                  AppText(
-                    text: "Page ${currentPage + 1} of $totalPages",
-                    fontFamily: "Clash Display Regular",
-                    color: blackColor,
-                    fontSize: 13,
-                  ),
-                  SizedBox(width: 12.sp),
-                  IconButton(
-                    icon: Icon(Icons.chevron_right,
-                        size: 24.sp,
-                        color: currentPage < totalPages - 1
-                            ? blackColor
-                            : Colors.grey),
-                    onPressed: currentPage < totalPages - 1
-                        ? newInController.nextPage
-                        : null,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                ],
-              ),
             SizedBox(height: 16.sp),
           ],
         ),
