@@ -152,7 +152,7 @@ class AccountScreenState extends State<AccountScreen> {
                             height: 120.sp,
                           ),
                           SizedBox(height: 20.sp),
-                          AppText(
+                          const AppText(
                             text: "You're exploring as a guest!",
                             fontFamily: "Clash Display",
                             fontWeight: FontWeight.w500,
@@ -161,7 +161,7 @@ class AccountScreenState extends State<AccountScreen> {
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 10.sp),
-                          AppText(
+                          const AppText(
                             text:
                                 "Sign in or create an account to access your orders, addresses, and more.",
                             fontFamily: "Clash Display Regular",
@@ -191,7 +191,7 @@ class AccountScreenState extends State<AccountScreen> {
 
               // 🔒 Logged-in user UI (your existing code)
               return controller.isProfile.value
-                  ? DummyAccount()
+                  ? const DummyAccount()
                   : controller.profileDetails.value != null
                       ? Expanded(
                           child: NotificationListener<ScrollNotification>(
@@ -240,7 +240,7 @@ class AccountScreenState extends State<AccountScreen> {
                                                       child: Row(
                                                         children: [
                                                           ImageIcon(
-                                                            AssetImage(
+                                                            const AssetImage(
                                                                 phoneImage),
                                                             color:
                                                                 greyTextColor,
@@ -325,7 +325,7 @@ class AccountScreenState extends State<AccountScreen> {
                                                 child: Padding(
                                                   padding: EdgeInsets.only(
                                                       bottom: 16.sp),
-                                                  child: AppText(
+                                                  child: const AppText(
                                                     text: "Edit",
                                                     fontFamily: "Clash Display",
                                                     fontWeight: FontWeight.w500,
@@ -343,7 +343,7 @@ class AccountScreenState extends State<AccountScreen> {
                                   Padding(
                                     padding: EdgeInsets.only(
                                         top: 10.sp, left: 16.sp, right: 16.sp),
-                                    child: AppText(
+                                    child: const AppText(
                                       text: "My Account",
                                       fontFamily: "Clash Display SemiBold",
                                       fontWeight: FontWeight.w700,
@@ -353,14 +353,14 @@ class AccountScreenState extends State<AccountScreen> {
                                   ),
                                   GestureDetector(
                                     onTap: () async {
-                                      Get.to(MyOrdersScreen());
+                                      Get.to(const MyOrdersScreen());
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(
                                           top: 20.sp,
                                           left: 16.sp,
                                           right: 16.sp),
-                                      child: AppText(
+                                      child: const AppText(
                                         text: "My Orders",
                                         fontFamily: "Clash Display Regular",
                                         fontWeight: FontWeight.w400,
@@ -375,7 +375,7 @@ class AccountScreenState extends State<AccountScreen> {
                                     children: [
                                       GestureDetector(
                                         onTap: () async {
-                                          Get.to(CustomerCareScreen());
+                                          Get.to(const CustomerCareScreen());
                                           await analytics.logEvent(
                                             name: 'customer_care',
                                             parameters: {
@@ -388,7 +388,7 @@ class AccountScreenState extends State<AccountScreen> {
                                               top: 20.sp,
                                               left: 16.sp,
                                               right: 16.sp),
-                                          child: AppText(
+                                          child: const AppText(
                                             text: "Customer Care",
                                             fontFamily: "Clash Display Regular",
                                             fontWeight: FontWeight.w400,
@@ -422,7 +422,7 @@ class AccountScreenState extends State<AccountScreen> {
                                               top: 20.sp,
                                               left: 16.sp,
                                               right: 16.sp),
-                                          child: AppText(
+                                          child: const AppText(
                                             text: "Saved Addresses",
                                             fontFamily: "Clash Display Regular",
                                             fontWeight: FontWeight.w400,

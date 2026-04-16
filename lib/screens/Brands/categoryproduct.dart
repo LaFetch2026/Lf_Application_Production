@@ -9,7 +9,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/catalog/productlist/productdetailsscreen_v2.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
@@ -770,7 +770,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                               }
 
                               Get.to(
-                                ProductDetailsScreen(
+                                ProductDetailsScreenV2(
                                   brandName: brand.isEmpty ? title : brand,
                                   expressValue:
                                       widget.type == "express" ? 1 : 0,

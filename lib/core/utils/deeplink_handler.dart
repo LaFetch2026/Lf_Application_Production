@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/catalog/productlist/productdetailsscreen_v2.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/wishlist/boardscreen.dart';
 
@@ -130,14 +130,14 @@ class DeepLinkHandler {
             "✅ Navigating to ProductDetailsScreen with productId: $parsedProductId");
         // Check if already on ProductDetailsScreen - replace it
         if (Get.currentRoute == '/ProductDetailsScreen') {
-          Get.off(() => ProductDetailsScreen(
+          Get.off(() => ProductDetailsScreenV2(
                 productId: parsedProductId,
                 type: type ?? "",
                 brandName: brandName ?? "",
                 Slug: slug ?? "",
               ));
         } else {
-          Get.to(() => ProductDetailsScreen(
+          Get.to(() => ProductDetailsScreenV2(
                 productId: parsedProductId,
                 type: type ?? "",
                 brandName: brandName ?? "",
@@ -200,7 +200,7 @@ class DeepLinkHandler {
         // Navigate directly to product screen first
         print(
             "✅ Navigating to ProductDetailsScreen with productId: $productId");
-        Get.to(() => ProductDetailsScreen(
+        Get.to(() => ProductDetailsScreenV2(
               productId: productId,
               type: type,
               brandName: brandName,

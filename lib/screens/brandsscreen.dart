@@ -11,7 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/catalog/productlist/productdetailsscreen_v2.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 
 import '../common/widget/appbar/home_appbar.dart';
@@ -754,7 +754,7 @@ class BrandsScreenState extends State<BrandsScreen>
                                                                                         }
 
                                                                                         // ✅ Navigate to ProductDetailsScreen
-                                                                                        await Get.to(() => ProductDetailsScreen(
+                                                                                        await Get.to(() => ProductDetailsScreenV2(
                                                                                               expresshour: homeController.expressHour.value,
                                                                                               backgroundcolor: whiteColor,
                                                                                               brandName: brand["name"] ?? "",

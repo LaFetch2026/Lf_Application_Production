@@ -17,7 +17,7 @@ import '../../common/widget/text/app_text.dart';
 import '../../controllers/wishlist_controller.dart';
 import '../../core/constant/constants.dart';
 import '../../common/widget/other/pounce_wrapper.dart';
-import '../catalog/productlist/productdetailsscreen.dart';
+import '../catalog/productlist/productdetailsscreen_v2.dart';
 import 'createboardscreen.dart';
 import 'newboardscreen.dart';
 
@@ -409,7 +409,7 @@ class BoardScreenState extends State<BoardScreen> {
                                               return PounceWrapper(
                                                 onTap: () async {
                                                   Get.to(() =>
-                                                      ProductDetailsScreen(
+                                                      ProductDetailsScreenV2(
                                                         brandName: brand,
                                                         productId: pid,
                                                         type: "add",

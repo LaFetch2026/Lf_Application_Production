@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/Brands/categoryproduct.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/catalog/productlist/productdetailsscreen_v2.dart';
 import 'package:lafetch/screens/wishlist/newboardscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 
@@ -363,7 +363,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                             vertical: 16.sp),
                                         child: HorizontalCategoryList(
                                           onPressed: (p0, p1) async {
-                                            Get.to(ProductDetailsScreen(
+                                            Get.to(ProductDetailsScreenV2(
                                                     expresshour: "",
                                                     brandName: p1,
                                                     productId: p0,

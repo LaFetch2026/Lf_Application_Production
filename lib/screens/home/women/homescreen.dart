@@ -18,7 +18,7 @@ import 'package:lafetch/screens/Brands/categoryproduct.dart'
     hide SizedBox, Center, Column, Padding;
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/common/widget/other/pounce_wrapper.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/catalog/productlist/productdetailsscreen_v2.dart';
 import 'package:lafetch/screens/home/women/productviewscreen.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
@@ -1097,7 +1097,7 @@ class HomeScreenState extends State<HomeScreen>
                                       banners: standaloneBanners,
                                       onProductTap: (productId) async {
                                         Get.to(
-                                          ProductDetailsScreen(
+                                          ProductDetailsScreenV2(
                                             productId: productId,
                                             type: "add",
                                             brandName: "",
@@ -1550,7 +1550,7 @@ class _NewInSection extends StatelessWidget {
                   mrp: mrp,
                   onTap: () {
                     if (productId == null) return;
-                    Get.to(() => ProductDetailsScreen(
+                    Get.to(() => ProductDetailsScreenV2(
                           productId: productId is int
                               ? productId
                               : int.tryParse(productId.toString()) ?? 0,
@@ -2505,7 +2505,7 @@ class BannerProductsScreen extends StatelessWidget {
                   onTap: () {
                     if (pid == 0) return;
                     Get.to(
-                      ProductDetailsScreen(
+                      ProductDetailsScreenV2(
                         brandName: brand.isEmpty ? title : brand,
                         expressValue: 0,
                         backgroundcolor: whiteColor,

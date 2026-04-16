@@ -45,7 +45,7 @@ import '../controllers/profile_controller.dart';
 import '../controllers/wishlist_controller.dart';
 import '../core/constant/constants.dart';
 import '../common/widget/newsletter/newsletter_section.dart';
-import 'catalog/productlist/productdetailsscreen.dart';
+import 'catalog/productlist/productdetailsscreen_v2.dart';
 
 class CartScreen extends StatefulWidget {
   final Color backgroundcolor;
@@ -2977,7 +2977,7 @@ class CartScreenState extends State<CartScreen> {
 
     Navigator.of(context)
         .push(MaterialPageRoute(
-          builder: (BuildContext context) => ProductDetailsScreen(
+          builder: (BuildContext context) => ProductDetailsScreenV2(
             productId: product["id"],
             brandName: product["brand_name"] ?? "",
             backgroundcolor: widget.backgroundcolor,

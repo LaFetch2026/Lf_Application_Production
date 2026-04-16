@@ -8,7 +8,7 @@ import '../common/widget/other/pounce_wrapper.dart';
 import '../controllers/product_controller.dart';
 import '../core/constant/constants.dart';
 import '../models/recommendation_event.dart';
-import '../screens/catalog/productlist/productdetailsscreen.dart';
+import '../screens/catalog/productlist/productdetailsscreen_v2.dart';
 import '../services/event_tracking_service.dart';
 import '../services/recommendation_service.dart';
 
@@ -96,7 +96,7 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 250),
         reverseTransitionDuration: const Duration(milliseconds: 200),
-        pageBuilder: (_, __, ___) => ProductDetailsScreen(
+        pageBuilder: (_, __, ___) => ProductDetailsScreenV2(
           productId: product.id,
           brandName: product.brandName,
           type: 'add',

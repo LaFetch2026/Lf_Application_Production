@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/catalog/productlist/productdetailsscreen_v2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../common/widget/bottom_sheets/bottomfiltters.dart';
@@ -124,7 +124,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                   .push(MaterialPageRoute(
                                                       builder: (BuildContext
                                                               context) =>
-                                                          ProductDetailsScreen(
+                                                          ProductDetailsScreenV2(
                                                               brandName: productController
                                                                           .productCategoryList[
                                                                       index]

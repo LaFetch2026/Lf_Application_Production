@@ -23,7 +23,7 @@ import '../../controllers/product_controller.dart';
 import '../../controllers/wishlist_controller.dart';
 import '../../core/constant/constants.dart';
 import '../cartscreen.dart';
-import '../catalog/productlist/productdetailsscreen.dart';
+import '../catalog/productlist/productdetailsscreen_v2.dart';
 import '../searchscreen.dart';
 import '../wishlistscreen.dart';
 
@@ -1138,7 +1138,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                             }
 
                             Get.to(
-                              ProductDetailsScreen(
+                              ProductDetailsScreenV2(
                                 expresshour: widget.expresshour,
                                 backgroundcolor: whiteColor,
                                 expressValue: widget.screen == "quick" ? 1 : 0,

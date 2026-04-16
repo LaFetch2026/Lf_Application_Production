@@ -9,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/Brands/brand_product_list.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/catalog/productlist/productdetailsscreen_v2.dart';
 import 'package:lafetch/screens/quick/brandproductscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:share_plus/share_plus.dart';
@@ -827,7 +827,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                       onPressed: (productId, bName) async {
                         _pauseVideo();
                         Get.to(
-                          ProductDetailsScreen(
+                          ProductDetailsScreenV2(
                             brandName: bName,
                             productId: productId,
                             type: "add",
@@ -874,7 +874,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                           scrollDirection: Axis.vertical,
                           onPressed: (productId, bName) async {
                             Get.to(
-                              ProductDetailsScreen(
+                              ProductDetailsScreenV2(
                                 brandName: bName,
                                 productId: productId,
                                 type: "add",
