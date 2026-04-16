@@ -33,6 +33,7 @@ import '../../cartscreen.dart';
 import '../../wishlist/boardscreen.dart';
 import '../../wishlist/newboardscreen.dart';
 import '../../../services/event_tracking_service.dart';
+import '../../../common/widget/other/error_shake.dart';
 import '../../../widgets/similar_products_carousel.dart';
 import '../../../common/widget/newsletter/newsletter_section.dart';
 
@@ -996,97 +997,147 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
         if (!hasSizes && !hasColors) return const SizedBox();
         return Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.sp),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               if (hasSizes) ...[
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('SELECT SIZE',
-                          style: TextStyle(
-                              fontFamily: "Clash Display",
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14.sp)),
-                      GestureDetector(
-                          onTap: _openSizeChart,
-                          child: Text('SIZE CHART >',
-                              style: TextStyle(
-                                color: lightPurpleColor,
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w500,
-                              ))),
-                    ]),
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Text('SELECT SIZE', style: TextStyle(fontFamily: "Clash Display", fontWeight: FontWeight.w600, fontSize: 14.sp)),
+                ]),
                 SizedBox(height: 8.sp),
-                _styledDropdown<String>(
-                  value: productController.selectedSize.value.isEmpty
-                      ? null
-                      : productController.selectedSize.value,
-                  hint: 'Choose size',
-                  items: productController.sizeInventoryList
-                      .map((s) => DropdownMenuItem(
-                          value: s,
-                          child: Text(s,
-                              style: TextStyle(
-                                  fontFamily: "Clash Display Regular",
-                                  fontSize: 14.sp))))
-                      .toList(),
-                  onChanged: (v) {
-                    if (v != null) {
-                      productController.selectedSize.value = v;
-                      productController.loadColorsForSize(v);
-                      if (_pageController.hasClients)
-                        _pageController.jumpToPage(0);
-                      setState(() => _selectedQuantity = 1);
-                    }
-                  },
+                GestureDetector(
+                  onTap: _showSizeBottomSheet,
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 14.sp),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: productController.errorSizeMsg.value.isNotEmpty ? deepRed : borderColor),
+                      borderRadius: BorderRadius.circular(12.sp),
+                    ),
+                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Text(
+                        productController.selectedSize.value.isEmpty ? 'Choose size' : productController.selectedSize.value,
+                        style: TextStyle(fontFamily: "Clash Display Regular", fontSize: 14.sp, color: productController.selectedSize.value.isEmpty ? textHintColor : blackColor),
+                      ),
+                      Icon(Icons.keyboard_arrow_down_rounded, color: blackColor, size: 22.sp),
+                    ]),
+                  ),
                 ),
+                if (productController.errorSizeMsg.value.isNotEmpty)
+                  Padding(
+                    padding: EdgeInsets.only(top: 6.sp),
+                    child: ShakeWidget(
+                      trigger: productController.sizeShakeTrigger.value,
+                      child: Text(productController.errorSizeMsg.value,
+                          style: TextStyle(fontFamily: "Clash Display Regular", fontSize: 12.sp, color: deepRed)),
+                    ),
+                  ),
                 SizedBox(height: 12.sp),
               ],
-              if (hasColors &&
-                  (!hasSizes ||
-                      productController.selectedSize.value.isNotEmpty)) ...[
-                Text('SELECT COLOR',
-                    style: TextStyle(
-                        fontFamily: "Clash Display",
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14.sp)),
+              if (hasColors && (!hasSizes || productController.selectedSize.value.isNotEmpty)) ...[
+                Text('SELECT COLOR', style: TextStyle(fontFamily: "Clash Display", fontWeight: FontWeight.w600, fontSize: 14.sp)),
                 SizedBox(height: 8.sp),
                 _styledDropdown<String>(
-                  value: productController.selectedColor.value.isEmpty
-                      ? null
-                      : productController.selectedColor.value,
+                  value: productController.selectedColor.value.isEmpty ? null : productController.selectedColor.value,
                   hint: 'Choose color',
-                  items: productController.colorInventoryList
-                      .map((c) => DropdownMenuItem(
-                          value: c,
-                          child: Text(c,
-                              style: TextStyle(
-                                  fontFamily: "Clash Display Regular",
-                                  fontSize: 14.sp))))
-                      .toList(),
+                  hasError: productController.errorColorMsg.value.isNotEmpty,
+                  items: productController.colorInventoryList.map((c) => DropdownMenuItem(value: c, child: Text(c, style: TextStyle(fontFamily: "Clash Display Regular", fontSize: 14.sp)))).toList(),
                   onChanged: (v) {
                     if (v != null) {
                       productController.selectedColor.value = v;
+                      productController.errorColorMsg.value = "";
                       productController.updateImagesForSelectedColor();
-                      if (_pageController.hasClients)
-                        _pageController.jumpToPage(0);
+                      if (_pageController.hasClients) _pageController.jumpToPage(0);
                       setState(() => _selectedQuantity = 1);
                     }
                   },
                 ),
+                if (productController.errorColorMsg.value.isNotEmpty)
+                  Padding(
+                    padding: EdgeInsets.only(top: 6.sp),
+                    child: ShakeWidget(
+                      trigger: productController.colorShakeTrigger.value,
+                      child: Text(productController.errorColorMsg.value,
+                          style: TextStyle(fontFamily: "Clash Display Regular", fontSize: 12.sp, color: deepRed)),
+                    ),
+                  ),
               ],
             ]));
       });
+
+  void _showSizeBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => Container(
+        decoration: BoxDecoration(color: whiteColor, borderRadius: BorderRadius.vertical(top: Radius.circular(16.sp))),
+        padding: EdgeInsets.fromLTRB(16.sp, 12.sp, 16.sp, 32.sp),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Center(child: Container(width: 36.sp, height: 4.sp, decoration: BoxDecoration(color: colorSecondary, borderRadius: BorderRadius.circular(2.sp)))),
+          SizedBox(height: 16.sp),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text('SELECT SIZE', style: TextStyle(fontFamily: "Clash Display", fontWeight: FontWeight.w600, fontSize: 16.sp)),
+            GestureDetector(
+              onTap: () { Get.back(); _openSizeChart(); },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 6.sp),
+                decoration: BoxDecoration(border: Border.all(color: lightPurpleColor), borderRadius: BorderRadius.circular(20.sp)),
+                child: Text('Size Chart', style: TextStyle(fontFamily: "Clash Display Regular", color: lightPurpleColor, fontSize: 12.sp)),
+              ),
+            ),
+          ]),
+          SizedBox(height: 16.sp),
+          Obx(() => Wrap(
+            spacing: 8.sp,
+            runSpacing: 8.sp,
+            children: productController.sizeInventoryList.map((size) {
+              final isSelected = productController.selectedSize.value == size;
+              final matchingVariant = productController.selectedVariants.firstWhereOrNull((v) => v["size"] == size);
+              final sizeStock = matchingVariant != null ? (matchingVariant["stocks"] as int? ?? 0) : 0;
+              final isOutOfStock = matchingVariant != null && sizeStock <= 0;
+              return GestureDetector(
+                onTap: isOutOfStock ? null : () {
+                  productController.selectedSize.value = size;
+                  productController.errorSizeMsg.value = "";
+                  productController.loadColorsForSize(size);
+                  if (_pageController.hasClients) _pageController.jumpToPage(0);
+                  setState(() => _selectedQuantity = 1);
+                  Get.back();
+                },
+                child: Opacity(
+                  opacity: isOutOfStock ? 0.4 : 1.0,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 12.sp),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: isSelected ? lightPurpleColor : Colors.black87, width: isSelected ? 2 : 1),
+                      borderRadius: BorderRadius.circular(8.sp),
+                      color: isSelected ? lightPurpleColor : Colors.transparent,
+                    ),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      Text(size.toUpperCase(), style: TextStyle(fontFamily: "Clash Display Regular", fontSize: 13.sp, color: isSelected ? whiteColor : Colors.black87)),
+                      if (matchingVariant != null && sizeStock <= 2 && sizeStock > 0)
+                        Text('Only $sizeStock left', style: TextStyle(fontSize: 9.sp, color: isSelected ? whiteColor.withOpacity(0.8) : lightPurpleColor)),
+                    ]),
+                  ),
+                ),
+              );
+            }).toList(),
+          )),
+          SizedBox(height: 8.sp),
+        ]),
+      ),
+    );
+  }
 
   Widget _styledDropdown<T>({
     required T? value,
     required String hint,
     required List<DropdownMenuItem<T>> items,
     required ValueChanged<T?> onChanged,
+    bool hasError = false,
   }) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: borderColor),
+        border: Border.all(color: hasError ? deepRed : borderColor),
         borderRadius: BorderRadius.circular(12.sp),
         color: whiteColor,
       ),
@@ -1095,26 +1146,17 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
         child: DropdownButton<T>(
           value: value,
           isExpanded: true,
-          icon: Icon(Icons.keyboard_arrow_down_rounded,
-              color: blackColor, size: 22.sp),
-          hint: Text(hint,
-              style: TextStyle(
-                  fontFamily: "Clash Display Regular",
-                  fontSize: 14.sp,
-                  color: textHintColor)),
+          icon: Icon(Icons.keyboard_arrow_down_rounded, color: blackColor, size: 22.sp),
+          hint: Text(hint, style: TextStyle(fontFamily: "Clash Display Regular", fontSize: 14.sp, color: textHintColor)),
           items: items,
           onChanged: onChanged,
           dropdownColor: whiteColor,
           borderRadius: BorderRadius.circular(12.sp),
-          style: TextStyle(
-              fontFamily: "Clash Display Regular",
-              fontSize: 14.sp,
-              color: blackColor),
+          style: TextStyle(fontFamily: "Clash Display Regular", fontSize: 14.sp, color: blackColor),
         ),
       ),
     );
   }
-
   Widget _buildOfferSection() => const SizedBox();
 
   Widget _buildPriceAndDelivery() {

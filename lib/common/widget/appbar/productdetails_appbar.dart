@@ -156,14 +156,11 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
                 child: Padding(
                   padding:
                       EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 3.sp),
-                    child: SvgPicture.asset(
-                      shareSvgImage,
-                      height: 18.sp,
-                      width: 18.sp,
-                      colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-                    ),
+                  child: SvgPicture.asset(
+                    shareSvgImage,
+                    height: 18.sp,
+                    width: 18.sp,
+                    colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
                   ),
                 ),
               ),
