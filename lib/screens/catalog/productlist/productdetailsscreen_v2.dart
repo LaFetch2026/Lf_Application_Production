@@ -34,6 +34,7 @@ import '../../wishlist/boardscreen.dart';
 import '../../wishlist/newboardscreen.dart';
 import '../../../services/event_tracking_service.dart';
 import '../../../widgets/similar_products_carousel.dart';
+import '../../../common/widget/newsletter/newsletter_section.dart';
 
 class ProductDetailsScreenV2 extends StatefulWidget {
   final int productId;
@@ -896,15 +897,49 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
         if (_isForeground && productController.isDetails.value)
           return const DummyProductDetails();
         return Padding(
-            padding: EdgeInsets.all(16.sp),
+            padding: EdgeInsets.only(
+                left: 16.sp, right: 12.sp, top: 8.sp, bottom: 4.sp),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              if (_titleText().isNotEmpty)
-                Text(_titleText(),
-                    style: TextStyle(
-                        fontFamily: "Clash Display",
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16.sp)),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Expanded(
+                  child: Text(_titleText(),
+                      style: TextStyle(
+                          fontFamily: "Clash Display",
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.sp)),
+                ),
+                if (productController.brandDetails != null &&
+                    productController.brandDetails != "")
+                  GestureDetector(
+                    onTap: () async {
+                      final brandId = productController.productDetails["brand"]
+                              ?["id"] as int? ??
+                          0;
+                      if (brandId > 0)
+                        Get.to(() => AllBrandScreen(
+                            id: brandId,
+                            screen: 'brand',
+                            slug:
+                                '${productController.productDetails["brand"]?["slug"] ?? ''}'));
+                    },
+                    child: Container(
+                      color: const Color(0xFFDFDBFF),
+                      padding: EdgeInsets.only(
+                          left: 10.sp, right: 8.sp, top: 6.sp, bottom: 6.sp),
+                      child: Row(children: [
+                        Text('View Brand'.toUpperCase(),
+                            style: TextStyle(
+                                fontFamily: "Clash Display",
+                                fontWeight: FontWeight.w500,
+                                color: homeAppBarColor,
+                                fontSize: 10.sp)),
+                        SizedBox(width: 4.sp),
+                        ImageIcon(AssetImage(linkArrowImage), size: 16.sp),
+                      ]),
+                    ),
+                  ),
+              ]),
               SizedBox(height: 4.sp),
               if (_brandText().isNotEmpty)
                 Text(_brandText().toUpperCase(),
@@ -916,26 +951,44 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
       });
 
   Widget _buildTrustBadges() => Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 12.sp),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-        _badge(Icons.verified_outlined, 'Buyer\nProtection',
-            () => _showBadgeSheet('buyer')),
-        _badge(Icons.security_outlined, 'Authenticity',
-            () => _showBadgeSheet('auth')),
-        _badge(Icons.local_shipping_outlined, 'Easy\nReturns',
-            () => _showBadgeSheet('returns')),
-        _badge(Icons.swap_horiz_outlined, 'Exchange',
-            () => _showBadgeSheet('exchange')),
-      ]));
+      padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
+      child: Wrap(
+        spacing: 8.sp,
+        runSpacing: 8.sp,
+        children: [
+          _trustChip(Icons.verified_outlined, 'Buyer Protection',
+              () => _showBadgeSheet('buyer')),
+          _trustChip(Icons.security_outlined, 'Authenticity Guaranteed',
+              () => _showBadgeSheet('auth')),
+          _trustChip(Icons.local_shipping_outlined, 'Easy Returns',
+              () => _showBadgeSheet('returns')),
+          _trustChip(Icons.swap_horiz_outlined, 'Exchange Policy',
+              () => _showBadgeSheet('exchange')),
+        ],
+      ));
 
-  Widget _badge(IconData ic, String lbl, VoidCallback tap) => GestureDetector(
-      onTap: tap,
-      child: Column(children: [
-        Icon(ic, size: 24.sp),
-        SizedBox(height: 4.sp),
-        Text(lbl,
-            textAlign: TextAlign.center, style: TextStyle(fontSize: 10.sp)),
-      ]));
+  Widget _trustChip(IconData ic, String lbl, VoidCallback tap) =>
+      GestureDetector(
+          onTap: tap,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 7.sp),
+            decoration: BoxDecoration(
+              border: Border.all(color: borderColor),
+              borderRadius: BorderRadius.circular(20.sp),
+            ),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Icon(ic, size: 14.sp, color: blackColor),
+              SizedBox(width: 5.sp),
+              Text(lbl,
+                  style: TextStyle(
+                      fontFamily: "Clash Display Regular",
+                      fontSize: 11.sp,
+                      color: blackColor)),
+              SizedBox(width: 5.sp),
+              Icon(Icons.arrow_forward_ios_rounded,
+                  size: 8.sp, color: blackColor),
+            ]),
+          ));
 
   Widget _buildSizeColorSection() => Obx(() {
         final hasSizes = productController.sizeInventoryList.isNotEmpty;
@@ -956,11 +1009,12 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                               fontSize: 14.sp)),
                       GestureDetector(
                           onTap: _openSizeChart,
-                          child: Text('Size Chart',
+                          child: Text('SIZE CHART >',
                               style: TextStyle(
-                                  color: lightPurpleColor,
-                                  fontSize: 12.sp,
-                                  decoration: TextDecoration.underline))),
+                                color: lightPurpleColor,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
+                              ))),
                     ]),
                 SizedBox(height: 8.sp),
                 _styledDropdown<String>(
@@ -1063,7 +1117,44 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
 
   Widget _buildOfferSection() => const SizedBox();
 
-  Widget _buildPriceAndDelivery() => Padding(
+  Widget _buildPriceAndDelivery() {
+    final pd = productController.brandDetails;
+    final minDays = int.tryParse(
+            (pd['minShippingDays'] ?? pd['min_shipping_days'] ?? 3)
+                .toString()) ??
+        3;
+    final maxDays = int.tryParse(
+            (pd['maxShippingDays'] ?? pd['max_shipping_days'] ?? 7)
+                .toString()) ??
+        7;
+
+    final deliveryDate = DateTime.now().add(Duration(days: maxDays));
+    final dayName = const [
+      'Mon',
+      'Tue',
+      'Wed',
+      'Thu',
+      'Fri',
+      'Sat',
+      'Sun'
+    ][deliveryDate.weekday - 1];
+    final monthName = const [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ][deliveryDate.month - 1];
+    final dateLabel = '$dayName, ${deliveryDate.day} $monthName';
+
+    return Padding(
       padding: EdgeInsets.all(16.sp),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Obx(() => ProductPriceDisplay(
@@ -1080,124 +1171,53 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
               mrpColor: searchTextColor,
               spacing: 10,
             )),
-        SizedBox(height: 8.sp),
         Text('Price inclusive of all taxes',
             style: TextStyle(color: lightPurpleColor, fontSize: 12.sp)),
         SizedBox(height: 16.sp),
-        Text('DELIVERY OPTIONS',
-            style: TextStyle(
-                fontFamily: "Clash Display",
-                fontWeight: FontWeight.w600,
-                fontSize: 12.sp)),
-        SizedBox(height: 8.sp),
-        TextField(
-          controller: productController.pincodeController,
-          keyboardType: TextInputType.number,
-          maxLength: 6,
-          decoration: InputDecoration(
-            counterText: "",
-            hintText: "Enter pincode",
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(8.sp)),
-            enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.sp),
-                borderSide: BorderSide(color: borderColor)),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.sp),
-                borderSide: BorderSide(color: blackColor)),
-            suffixIcon: Padding(
-              padding: EdgeInsets.all(6.sp),
-              child: Obx(
-                () => productController.isEstimateDate.value
-                    ? const SizedBox(
-                        height: 16,
-                        width: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2))
-                    : ElevatedButton(
-                        onPressed: () async {
-                          final pin =
-                              productController.pincodeController.text.trim();
-                          if (!productController.checkPinvalidation(pin)) {
-                            productController.serviceabilityMessage.value =
-                                "Enter valid pincode";
-                            return;
-                          }
-                          final variant =
-                              productController.getSelectedVariant();
-                          if (variant == null) {
-                            productController.serviceabilityMessage.value =
-                                "Please select size and color";
-                            return;
-                          }
-                          final variantId = variant['id'] as int? ?? 0;
-                          if (variantId == 0) {
-                            productController.serviceabilityMessage.value =
-                                "Invalid variant";
-                            return;
-                          }
-                          productController.serviceabilityMessage.value = "";
-                          productController.isServiceable.value = false;
-                          final result =
-                              await productController.checkServiceability(
-                                  variantId: variantId,
-                                  deliveryPostalCode: pin);
-                          if (result != null && result["data"] is Map) {
-                            final data = result["data"];
-                            productController.courierName.value =
-                                data["courier"]?.toString() ?? "";
-                            productController.estimatedDate.value =
-                                data["estimatedDate"]?.toString() ?? "";
-                            productController.estimatedDays.value =
-                                data["estimatedDays"]?.toString() ?? "";
-                            productController.isServiceable.value = true;
-                            productController.serviceabilityMessage.value =
-                                "Delivery by ${productController.estimatedDate.value} (${productController.estimatedDays.value} Days)";
-                          } else {
-                            productController.serviceabilityMessage.value =
-                                "Service not available for this pincode";
-                          }
-                          FocusScope.of(context).unfocus();
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: blackColor,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6.sp)),
-                            elevation: 0,
-                            padding: EdgeInsets.symmetric(horizontal: 14.sp)),
-                        child: const Text("CHECK",
-                            style: TextStyle(
-                                color: whiteColor,
-                                fontFamily: "Clash Display",
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13)),
-                      ),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 12.sp),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF5F5F5),
+            borderRadius: BorderRadius.circular(10.sp),
+          ),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            RichText(
+              text: TextSpan(
+                style: TextStyle(
+                    fontFamily: "Clash Display",
+                    fontSize: 13.sp,
+                    color: Colors.black),
+                children: [
+                  const TextSpan(
+                    text: "Delivery: ",
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  const TextSpan(
+                    text: "Get it by ",
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  TextSpan(
+                    text: "$dateLabel",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
             ),
-          ),
+            SizedBox(height: 4.sp),
+            Text(
+              "Ships in $minDays days - $maxDays days",
+              style: TextStyle(
+                  fontFamily: "Clash Display",
+                  fontSize: 12.sp,
+                  color: Colors.black54),
+            ),
+          ]),
         ),
-        Obx(() {
-          final msg = productController.serviceabilityMessage.value;
-          if (msg.isEmpty) return const SizedBox();
-          return Padding(
-              padding: EdgeInsets.only(top: 10.sp),
-              child: Row(children: [
-                Icon(
-                    productController.isServiceable.value
-                        ? Icons.check_circle_outline
-                        : Icons.error_outline,
-                    color: purpleColor,
-                    size: 18.sp),
-                SizedBox(width: 8.sp),
-                Expanded(
-                    child: Text(msg,
-                        style: TextStyle(
-                            fontFamily: "Clash Display Regular",
-                            fontWeight: FontWeight.w500,
-                            color: purpleColor,
-                            fontSize: 13.sp))),
-              ]));
-        }),
-      ]));
+      ]),
+    );
+  }
 
   Widget _buildActionButtons() => const SizedBox();
 
@@ -1206,7 +1226,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
       child: Container(
           height: 150.sp,
           color: colorSecondary,
-          child: Center(
+          child: const Center(
               child: Text('Delivery & Exchange Image Placeholder',
                   style: TextStyle(color: subtitleColor)))));
 
@@ -1238,7 +1258,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
       });
 
   Widget _buildFAQs() => Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.sp),
+      padding: EdgeInsets.symmetric(horizontal: 0.sp),
       child: Column(children: [
         Padding(
             padding: EdgeInsets.symmetric(vertical: 12.sp),
@@ -1247,34 +1267,53 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                     fontFamily: "Clash Display",
                     fontWeight: FontWeight.w600,
                     fontSize: 16.sp))),
-        ExpansionTile(
-            title: const Text('What is your return policy?'),
-            children: const [
-              Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: Text('7-day return policy from delivery date'))
+        const ExpansionTile(
+            shape: Border(),
+            title: Text(
+              'What is your return policy?',
+              style: TextStyle(fontFamily: "Clash Display"),
+            ),
+            children: [
+              Text(
+                '7-day return policy from delivery date',
+                style: TextStyle(fontFamily: "Clash Display"),
+              )
             ]),
-        ExpansionTile(
-            title: const Text('How long does shipping take?'),
-            children: const [
-              Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: Text('3-5 business days for standard delivery'))
+        const ExpansionTile(
+            shape: Border(),
+            title: Text(
+              'How long does shipping take?',
+              style: TextStyle(fontFamily: "Clash Display"),
+            ),
+            children: [
+              Text(
+                '3-5 business days for standard delivery',
+                style: TextStyle(fontFamily: "Clash Display"),
+              )
             ]),
-        ExpansionTile(
-            title: const Text('Do you ship internationally?'),
-            children: const [
-              Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: Text('Currently we ship within India only'))
+        const ExpansionTile(
+            shape: Border(),
+            title: Text(
+              'Do you ship internationally?',
+              style: TextStyle(fontFamily: "Clash Display"),
+            ),
+            children: [
+              Text(
+                'Currently we ship within India only',
+                style: TextStyle(fontFamily: "Clash Display"),
+              )
             ]),
-        ExpansionTile(
-            title: const Text('Are products authentic?'),
-            children: const [
-              Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child:
-                      Text('Yes, all products are 100% authentic and verified'))
+        const ExpansionTile(
+            shape: Border(),
+            title: Text(
+              'Are products authentic?',
+              style: TextStyle(fontFamily: "Clash Display"),
+            ),
+            children: [
+              Text(
+                'Yes, all products are 100% authentic and verified',
+                style: TextStyle(fontFamily: "Clash Display"),
+              )
             ]),
       ]));
 
@@ -1297,33 +1336,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
       productId: widget.productId,
       onNavigating: () => setState(() => _isForeground = false));
 
-  Widget _buildNewsletter() => Container(
-      padding: EdgeInsets.all(16.sp),
-      child: Column(children: [
-        Text('Subscribe to Newsletter',
-            style: TextStyle(
-                fontFamily: "Clash Display",
-                fontWeight: FontWeight.w600,
-                fontSize: 16.sp)),
-        SizedBox(height: 12.sp),
-        TextField(
-            controller: _emailController,
-            decoration: InputDecoration(
-                hintText: 'Enter your email',
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4.sp)))),
-        SizedBox(height: 12.sp),
-        ElevatedButton(
-            onPressed: () {
-              if (_emailController.text.trim().isNotEmpty)
-                showAppSnackBar('Thank you for subscribing!');
-            },
-            style: ElevatedButton.styleFrom(
-                backgroundColor: blackColor,
-                minimumSize: Size(double.infinity, 48.sp)),
-            child:
-                const Text('SUBSCRIBE', style: TextStyle(color: whiteColor))),
-      ]));
+  Widget _buildNewsletter() => const NewsletterSection(title: "NEWS LETTERS");
 
   Widget _buildBottomBar() => Obx(() {
         if (productController.isDetails.value) return const SizedBox();

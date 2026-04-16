@@ -71,7 +71,10 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
       color: statusBarColor,
       child: Padding(
         padding: EdgeInsets.only(
-            left: 16.sp, top: statusBarHeight + 8.sp, right: 10.sp, bottom: 8.sp),
+            left: 16.sp,
+            top: statusBarHeight + 8.sp,
+            right: 10.sp,
+            bottom: 8.sp),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -109,8 +112,8 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
               onTap: () => widget.onPressedHeart?.call(),
               child: Obx(
                 () => Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 8.sp, vertical: 8.sp),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
                   child: wishlistController.isWishlisted.value
                       ? SvgPicture.asset(
                           redHeartSvgImage,
@@ -124,64 +127,6 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
                           colorFilter:
                               ColorFilter.mode(iconColor, BlendMode.srcIn),
                         ),
-                ),
-              ),
-            ),
-
-            // CART ICON
-            InkWell(
-              onTap: () async {
-                await widget.onPressedCart?.call();
-                if (!isGuest) {
-                  await cartController.getCartData();
-                }
-              },
-              child: Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    SvgPicture.asset(
-                      cartSvgImage,
-                      height: 18.sp,
-                      width: 18.sp,
-                      colorFilter:
-                          ColorFilter.mode(iconColor, BlendMode.srcIn),
-                    ),
-
-                    // Only show badge for logged-in users
-                    if (!isGuest)
-                      Positioned(
-                        right: -5.sp,
-                        top: 6.sp,
-                        child: Obx(() {
-                          final count = cartController.cartTotalValue.value;
-                          if (count == 0) return const SizedBox.shrink();
-                          return Container(
-                            padding: EdgeInsets.all(2.sp),
-                            constraints: BoxConstraints(
-                              minWidth: 14.sp,
-                              minHeight: 14.sp,
-                            ),
-                            decoration: const BoxDecoration(
-                              color: homeAppBarColor,
-                              shape: BoxShape.circle,
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              count.toString(),
-                              style: TextStyle(
-                                fontSize: 8.sp,
-                                color: whiteColor,
-                                fontFamily: "Clash Display Regular",
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          );
-                        }),
-                      ),
-                  ],
                 ),
               ),
             ),
@@ -217,10 +162,65 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
                       shareSvgImage,
                       height: 18.sp,
                       width: 18.sp,
-                      colorFilter:
-                          ColorFilter.mode(iconColor, BlendMode.srcIn),
+                      colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
                     ),
                   ),
+                ),
+              ),
+            ),
+
+            // CART ICON
+            InkWell(
+              onTap: () async {
+                await widget.onPressedCart?.call();
+                if (!isGuest) {
+                  await cartController.getCartData();
+                }
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    SvgPicture.asset(
+                      cartSvgImage,
+                      height: 18.sp,
+                      width: 18.sp,
+                      colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+                    ),
+
+                    // Only show badge for logged-in users
+                    if (!isGuest)
+                      Positioned(
+                        right: -5.sp,
+                        top: 6.sp,
+                        child: Obx(() {
+                          final count = cartController.cartTotalValue.value;
+                          if (count == 0) return const SizedBox.shrink();
+                          return Container(
+                            padding: EdgeInsets.all(2.sp),
+                            constraints: BoxConstraints(
+                              minWidth: 14.sp,
+                              minHeight: 14.sp,
+                            ),
+                            decoration: const BoxDecoration(
+                              color: homeAppBarColor,
+                              shape: BoxShape.circle,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              count.toString(),
+                              style: TextStyle(
+                                fontSize: 8.sp,
+                                color: whiteColor,
+                                fontFamily: "Clash Display Regular",
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                  ],
                 ),
               ),
             ),
