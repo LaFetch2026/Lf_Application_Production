@@ -1288,7 +1288,6 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
         Text('Price inclusive of all taxes',
             style: TextStyle(color: lightPurpleColor, fontSize: 12.sp)),
         SizedBox(height: 16.sp),
-        
         AppSpacingText(
           text: 'Delivery Options'.toUpperCase(),
           fontFamily: "Clash Display Regular",
@@ -1322,73 +1321,81 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                 borderSide: const BorderSide(color: borderColor),
                 borderRadius: BorderRadius.circular(4.sp),
               ),
-              suffixIcon: Obx(
-                () => TextButton(
-                  onPressed: () async {
-                    final pin = productController.pincodeController.text.trim();
-                    if (!productController.checkPinvalidation(pin)) {
-                      productController.serviceabilityMessage.value = "Enter valid pincode";
-                      return;
-                    }
+              suffixIcon: TextButton(
+                onPressed: () async {
+                  final pin = productController.pincodeController.text.trim();
+                  if (!productController.checkPinvalidation(pin)) {
+                    productController.serviceabilityMessage.value =
+                        "Enter valid pincode";
+                    return;
+                  }
 
-                    final variant = productController.getSelectedVariant();
-                    if (variant == null) {
-                      final hasSizes = productController.sizeInventoryList.isNotEmpty;
-                      final hasColors = productController.colorInventoryList.isNotEmpty;
-                      final sizeSelected = productController.selectedSize.value.isNotEmpty;
-                      final colorSelected = productController.selectedColor.value.isNotEmpty;
+                  final variant = productController.getSelectedVariant();
+                  if (variant == null) {
+                    final hasSizes =
+                        productController.sizeInventoryList.isNotEmpty;
+                    final hasColors =
+                        productController.colorInventoryList.isNotEmpty;
+                    final sizeSelected =
+                        productController.selectedSize.value.isNotEmpty;
+                    final colorSelected =
+                        productController.selectedColor.value.isNotEmpty;
 
-                      String errorMsg = "Please select ";
-                      if (hasSizes && !sizeSelected) {
-                        errorMsg += "size";
-                        if (hasColors) errorMsg += " and color";
-                      } else if (hasColors && !colorSelected) {
-                        errorMsg += "color";
-                      } else {
-                        errorMsg = "Product variant not available";
-                      }
-
-                      productController.serviceabilityMessage.value = errorMsg;
-                      return;
-                    }
-
-                    final variantId = variant['id'] as int? ?? 0;
-                    if (variantId == 0) {
-                      productController.serviceabilityMessage.value = "Invalid variant selected";
-                      return;
-                    }
-
-                    productController.serviceabilityMessage.value = "";
-                    productController.isServiceable.value = false;
-                    productController.courierName.value = "";
-                    productController.estimatedDate.value = "";
-                    productController.estimatedDays.value = "";
-
-                    final result = await productController.checkServiceability(
-                      variantId: variantId,
-                      deliveryPostalCode: pin,
-                    );
-
-                    if (result != null && result["data"] is Map) {
-                      final data = result["data"];
-                      productController.courierName.value = data["courier"]?.toString() ?? "";
-                      productController.estimatedDate.value = data["estimatedDate"]?.toString() ?? "";
-                      productController.estimatedDays.value = data["estimatedDays"]?.toString() ?? "";
-                      productController.isServiceable.value = true;
-                      productController.serviceabilityMessage.value = 
-                          "Delivery by ${productController.estimatedDate.value} (${productController.estimatedDays.value} Days)";
+                    String errorMsg = "Please select ";
+                    if (hasSizes && !sizeSelected) {
+                      errorMsg += "size";
+                      if (hasColors) errorMsg += " and color";
+                    } else if (hasColors && !colorSelected) {
+                      errorMsg += "color";
                     } else {
-                      productController.serviceabilityMessage.value = "Service not available for this pincode";
+                      errorMsg = "Product variant not available";
                     }
-                  },
-                  child: Text(
-                    "Check",
-                    style: TextStyle(
-                      fontFamily: "Clash Display",
-                      fontWeight: FontWeight.w600,
-                      color: lightPurpleColor,
-                      fontSize: 14.sp,
-                    ),
+
+                    productController.serviceabilityMessage.value = errorMsg;
+                    return;
+                  }
+
+                  final variantId = variant['id'] as int? ?? 0;
+                  if (variantId == 0) {
+                    productController.serviceabilityMessage.value =
+                        "Invalid variant selected";
+                    return;
+                  }
+
+                  productController.serviceabilityMessage.value = "";
+                  productController.isServiceable.value = false;
+                  productController.courierName.value = "";
+                  productController.estimatedDate.value = "";
+                  productController.estimatedDays.value = "";
+
+                  final result = await productController.checkServiceability(
+                    variantId: variantId,
+                    deliveryPostalCode: pin,
+                  );
+
+                  if (result != null && result["data"] is Map) {
+                    final data = result["data"];
+                    productController.courierName.value =
+                        data["courier"]?.toString() ?? "";
+                    productController.estimatedDate.value =
+                        data["estimatedDate"]?.toString() ?? "";
+                    productController.estimatedDays.value =
+                        data["estimatedDays"]?.toString() ?? "";
+                    productController.isServiceable.value = true;
+                    productController.serviceabilityMessage.value =
+                        "Delivery by ${productController.estimatedDate.value} (${productController.estimatedDays.value} Days)";
+                  } else {
+                    productController.serviceabilityMessage.value =
+                        "Service not available for this pincode";
+                  }
+                },
+                child: Text(
+                  "Check",
+                  style: TextStyle(
+                    fontFamily: "Clash Display",
+                    fontWeight: FontWeight.w600,
+                    color: lightPurpleColor,
+                    fontSize: 14.sp,
                   ),
                 ),
               ),
@@ -1405,9 +1412,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(
-                isSuccess
-                    ? Icons.check_circle_outline
-                    : Icons.error_outline,
+                isSuccess ? Icons.check_circle_outline : Icons.error_outline,
                 color: isSuccess ? Colors.green : const Color(0xFFD63333),
                 size: 16.sp,
               ),
