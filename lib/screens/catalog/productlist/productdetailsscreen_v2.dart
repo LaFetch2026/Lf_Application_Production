@@ -32,6 +32,7 @@ import '../../../core/services/meta_event_service.dart';
 import '../../cartscreen.dart';
 import '../../wishlist/boardscreen.dart';
 import '../../wishlist/newboardscreen.dart';
+import '../../wishlistscreen.dart';
 import '../../../services/event_tracking_service.dart';
 import '../../../common/widget/other/error_shake.dart';
 import '../../../widgets/similar_products_carousel.dart';
@@ -85,6 +86,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
   bool _addressSelected = false;
   dynamic _addressResult;
   int _selectedRating = 0;
+  final FocusNode _pincodeFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -126,6 +128,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
       _razorpay?.clear();
     } catch (_) {}
     _emailController.dispose();
+    _pincodeFocusNode.dispose();
     super.dispose();
   }
 
@@ -729,53 +732,17 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
             onPressedHeart: () async {
               final prefs = await SharedPreferences.getInstance();
               if (prefs.getBool('skip') ?? false) {
-                showAppSnackBar("Please login to add to wishlist",
+                showAppSnackBar("Please login to view wishlist",
                     type: SnackBarType.error);
                 Get.toNamed('/login');
                 return;
               }
-              final firstImg = productController.imageList.isNotEmpty
-                  ? (productController.imageList.first['name']?.toString() ??
-                      '')
-                  : '';
-              final productId =
-                  (productController.productDetails["id"] as int?) ??
-                      widget.productId;
-              scaffoldKey.currentState?.showBottomSheet((ctx) => BottomWishlist(
-                    controller: wishlistController,
-                    wishlistList: wishlistController.wishlistList,
-                    productImage: firstImg,
-                    onPressedBoard: () {
-                      Get.back();
-                      Get.to(() => NewBoardScreen(
-                          title: "New Board",
-                          boardName: "",
-                          hintName: "Enter board name",
-                          boardId: 0,
-                          btnText: "Next",
-                          productId: productId,
-                          categoryId: 0,
-                          screen: ""));
-                    },
-                    onPressed: (boardId) async {
-                      final price =
-                          ((productController.productDetails['lfMsp'] ?? 0)
-                                  as num)
-                              .toDouble();
-                      await wishlistController
-                          .addProductToBoard(boardId, productId, price: price);
-                      Get.back();
-                      final boardName = wishlistController.wishlistList
-                              .firstWhere((b) => b['id'] == boardId,
-                                  orElse: () => {'name': 'Board'})['name']
-                              ?.toString() ??
-                          'Board';
-                      Get.to(() => BoardScreen(
-                          boardName: boardName,
-                          boardId: boardId,
-                          productId: productId));
-                    },
-                  ));
+              Get.to(const WishlistScreen())?.then((_) {
+                SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+                  statusBarColor: statusBarColor,
+                  statusBarIconBrightness: Brightness.dark,
+                ));
+              });
             },
             onPressedShare: () async {
               final box = context.findRenderObject() as RenderBox?;
@@ -822,6 +789,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                     _buildProductInfoAndPrice(),
                     _buildTrustBadges(),
                     _buildSizeColorSection(),
+                    _buildQuantitySelector(),
                     _buildOfferSection(),
                     _buildDelivery(),
                     _buildActionButtons(),
@@ -910,54 +878,33 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                 left: 16.sp, right: 12.sp, top: 8.sp, bottom: 4.sp),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Expanded(
-                  child: Text(_titleText(),
-                      style: TextStyle(
-                          fontFamily: "Clash Display",
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16.sp)),
-                ),
-                if (productController.brandDetails != null &&
-                    productController.brandDetails != "")
-                  GestureDetector(
-                    onTap: () async {
-                      final brandId = productController.productDetails["brand"]
-                              ?["id"] as int? ??
-                          0;
-                      if (brandId > 0) {
-                        Get.to(() => AllBrandScreen(
-                            id: brandId,
-                            screen: 'brand',
-                            slug:
-                                '${productController.productDetails["brand"]?["slug"] ?? ''}'));
-                      }
-                    },
-                    child: Container(
-                      color: const Color(0xFFDFDBFF),
-                      padding: EdgeInsets.only(
-                          left: 10.sp, right: 8.sp, top: 6.sp, bottom: 6.sp),
-                      child: Row(children: [
-                        Text('View Brand'.toUpperCase(),
-                            style: TextStyle(
-                                fontFamily: "Clash Display",
-                                fontWeight: FontWeight.w500,
-                                color: homeAppBarColor,
-                                fontSize: 10.sp)),
-                        SizedBox(width: 4.sp),
-                        ImageIcon(const AssetImage(linkArrowImage),
-                            size: 16.sp),
-                      ]),
-                    ),
-                  ),
-              ]),
+              Text(_titleText(),
+                  style: TextStyle(
+                      fontFamily: "Clash Display",
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16.sp)),
               SizedBox(height: 4.sp),
               if (_brandText().isNotEmpty)
-                Text(_brandText().toUpperCase(),
-                    style: TextStyle(
-                        fontFamily: "Clash Display Regular",
-                        fontSize: 14.sp,
-                        color: subtitleColor)),
+                GestureDetector(
+                  onTap: () async {
+                    final brandId = productController.productDetails["brand"]
+                            ?["id"] as int? ??
+                        0;
+                    if (brandId > 0) {
+                      Get.to(() => AllBrandScreen(
+                          id: brandId,
+                          screen: 'brand',
+                          slug:
+                              '${productController.productDetails["brand"]?["slug"] ?? ''}'));
+                    }
+                  },
+                  child: Text(_brandText().toUpperCase(),
+                      style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          fontFamily: "Clash Display Regular",
+                          fontSize: 14.sp,
+                          color: subtitleColor)),
+                ),
               SizedBox(height: 4.sp),
               Obx(() => ProductPriceDisplay(
                     price: productController.getDisplayPrice(),
@@ -999,7 +946,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
       GestureDetector(
           onTap: tap,
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.sp, vertical: 7.sp),
+            padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 5.sp),
             decoration: BoxDecoration(
               border: Border.all(color: borderColor),
               borderRadius: BorderRadius.circular(20.sp),
@@ -1292,6 +1239,137 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
     );
   }
 
+  Widget _buildQuantitySelector() => Obx(() {
+        final hasSizes = productController.sizeInventoryList.isNotEmpty;
+        final hasColors = productController.colorInventoryList.isNotEmpty;
+        final sizeSelected = productController.selectedSize.value.isNotEmpty;
+        final colorSelected = productController.selectedColor.value.isNotEmpty;
+
+        bool shouldShow = false;
+        if (hasSizes && hasColors) {
+          shouldShow = sizeSelected && colorSelected;
+        } else if (hasSizes) {
+          shouldShow = sizeSelected;
+        } else if (hasColors) {
+          shouldShow = colorSelected;
+        } else {
+          shouldShow = !productController.isDetails.value;
+        }
+
+        if (!shouldShow) return const SizedBox.shrink();
+
+        final variant = productController.getSelectedVariant();
+        final maxStock =
+            int.tryParse(variant?['stocks']?.toString() ?? '0') ?? 0;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 14.sp, horizontal: 16.sp),
+              child: Divider(color: colorSecondary),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.sp),
+              child: Text(
+                'SELECT QUANTITY',
+                style: TextStyle(
+                    fontFamily: "Clash Display",
+                    fontWeight: FontWeight.w500,
+                    color: blackColor,
+                    fontSize: 14.sp),
+              ),
+            ),
+            SizedBox(height: 12.sp),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.sp),
+              child: Row(
+                children: [
+                  // Decrease button
+                  GestureDetector(
+                    onTap: () {
+                      if (_selectedQuantity > 1) {
+                        setState(() => _selectedQuantity--);
+                      }
+                    },
+                    child: Container(
+                      width: 36.sp,
+                      height: 36.sp,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: blackColor, width: 1.sp),
+                        color: whiteColor,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.remove,
+                          color: _selectedQuantity <= 1
+                              ? searchTextColor
+                              : blackColor,
+                          size: 18.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Quantity display
+                  Container(
+                    width: 60.sp,
+                    height: 36.sp,
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: blackColor, width: 1.sp),
+                        bottom: BorderSide(color: blackColor, width: 1.sp),
+                      ),
+                      color: whiteColor,
+                    ),
+                    child: Center(
+                      child: Text(
+                        _selectedQuantity.toString(),
+                        style: TextStyle(
+                            fontFamily: "Clash Display",
+                            fontWeight: FontWeight.w600,
+                            color: blackColor,
+                            fontSize: 14.sp),
+                      ),
+                    ),
+                  ),
+                  // Increase button
+                  GestureDetector(
+                    onTap: () {
+                      if (maxStock > 0 && _selectedQuantity < maxStock) {
+                        setState(() => _selectedQuantity++);
+                      } else if (maxStock > 0) {
+                        showAppSnackBar(
+                          'Maximum available quantity is $maxStock',
+                          type: SnackBarType.warning,
+                        );
+                      }
+                    },
+                    child: Container(
+                      width: 36.sp,
+                      height: 36.sp,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: blackColor, width: 1.sp),
+                        color: whiteColor,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.add,
+                          color: (maxStock > 0 && _selectedQuantity >= maxStock)
+                              ? searchTextColor
+                              : blackColor,
+                          size: 18.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 8.sp),
+          ],
+        );
+      });
+
   Widget _buildOfferSection() => const SizedBox();
 
   Widget _buildDelivery() {
@@ -1327,6 +1405,8 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
           height: 44.sp,
           child: TextField(
             controller: productController.pincodeController,
+            focusNode: _pincodeFocusNode,
+            autofocus: false,
             keyboardType: TextInputType.number,
             maxLength: 6,
             decoration: InputDecoration(
@@ -1555,53 +1635,85 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                         Get.toNamed('/login');
                         return;
                       }
-                      final firstImg = productController.imageList.isNotEmpty
-                          ? (productController.imageList.first['name']
-                                  ?.toString() ??
-                              '')
-                          : '';
                       final productId =
                           (productController.productDetails["id"] as int?) ??
                               widget.productId;
-                      scaffoldKey.currentState
-                          ?.showBottomSheet((ctx) => BottomWishlist(
-                                controller: wishlistController,
-                                wishlistList: wishlistController.wishlistList,
-                                productImage: firstImg,
-                                onPressedBoard: () {
-                                  Get.back();
-                                  Get.to(() => NewBoardScreen(
-                                      title: "New Board",
-                                      boardName: "",
-                                      hintName: "Enter board name",
-                                      boardId: 0,
-                                      btnText: "Next",
-                                      productId: productId,
-                                      categoryId: 0,
-                                      screen: ""));
-                                },
-                                onPressed: (boardId) async {
-                                  final price = ((productController
-                                              .productDetails['lfMsp'] ??
-                                          0) as num)
-                                      .toDouble();
-                                  await wishlistController.addProductToBoard(
-                                      boardId, productId,
-                                      price: price);
-                                  Get.back();
-                                  final boardName = wishlistController
-                                          .wishlistList
-                                          .firstWhere((b) => b['id'] == boardId,
-                                              orElse: () =>
-                                                  {'name': 'Board'})['name']
-                                          ?.toString() ??
-                                      'Board';
-                                  Get.to(() => BoardScreen(
-                                      boardName: boardName,
-                                      boardId: boardId,
-                                      productId: productId));
-                                },
-                              ));
+
+                      if (wishlistController.isWishlisted.value) {
+                        // --- REMOVE from wishlist ---
+                        int boardId = 0;
+                        for (final board in wishlistController.wishlistList) {
+                          final bId = board['id'] as int? ?? 0;
+                          if (bId == 0) continue;
+                          final products = await wishlistController
+                              .fetchBoardProducts(bId, silent: true);
+                          final found = products.any((p) {
+                            final prod = p['product'] as Map<String, dynamic>?;
+                            return prod?['id']?.toString() ==
+                                productId.toString();
+                          });
+                          if (found) {
+                            boardId = bId;
+                            break;
+                          }
+                        }
+                        if (boardId != 0) {
+                          await wishlistController.removeProductFromBoard(
+                              boardId, productId);
+                        } else {
+                          // Fallback: flip the flag if board lookup fails
+                          wishlistController.isWishlisted.value = false;
+                          wishlistController.wishListDetails["wishlisted"] =
+                              false;
+                        }
+                      } else {
+                        // --- ADD to wishlist (existing behavior) ---
+                        final firstImg = productController.imageList.isNotEmpty
+                            ? (productController.imageList.first['name']
+                                    ?.toString() ??
+                                '')
+                            : '';
+                        scaffoldKey.currentState
+                            ?.showBottomSheet((ctx) => BottomWishlist(
+                                  controller: wishlistController,
+                                  wishlistList: wishlistController.wishlistList,
+                                  productImage: firstImg,
+                                  onPressedBoard: () {
+                                    Get.back();
+                                    Get.to(() => NewBoardScreen(
+                                        title: "New Board",
+                                        boardName: "",
+                                        hintName: "Enter board name",
+                                        boardId: 0,
+                                        btnText: "Next",
+                                        productId: productId,
+                                        categoryId: 0,
+                                        screen: ""));
+                                  },
+                                  onPressed: (boardId) async {
+                                    final price = ((productController
+                                                .productDetails['lfMsp'] ??
+                                            0) as num)
+                                        .toDouble();
+                                    await wishlistController.addProductToBoard(
+                                        boardId, productId,
+                                        price: price);
+                                    Get.back();
+                                    final boardName = wishlistController
+                                            .wishlistList
+                                            .firstWhere(
+                                                (b) => b['id'] == boardId,
+                                                orElse: () =>
+                                                    {'name': 'Board'})['name']
+                                            ?.toString() ??
+                                        'Board';
+                                    Get.to(() => BoardScreen(
+                                        boardName: boardName,
+                                        boardId: boardId,
+                                        productId: productId));
+                                  },
+                                ));
+                      }
                     },
                     child: Container(
                       height: 48.sp,

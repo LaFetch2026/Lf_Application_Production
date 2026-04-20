@@ -240,7 +240,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                 borderRadius: BorderRadius.circular(6.sp),
                 child: CachedNetworkImage(
                   imageUrl: imageUrls[index],
-                  fit: BoxFit.fill,
+                  fit: BoxFit.cover,
                   placeholder: (_, __) => Container(
                     color: const Color(0xFFEFF1F3),
                   ),
@@ -324,16 +324,14 @@ class WishlistScreenState extends State<WishlistScreen> {
                               borderRadius: BorderRadius.circular(8.0.sp),
                               child: (coverUrl != null && coverUrl.isNotEmpty)
                                   ? SizedBox(
-                                      height: (MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2) -
-                                          24.sp,
-                                      width: (MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2) -
-                                          24.sp,
+                                      height:
+                                          (MediaQuery.of(context).size.width /
+                                                  2) -
+                                              24.sp,
+                                      width:
+                                          (MediaQuery.of(context).size.width /
+                                                  2) -
+                                              24.sp,
                                       child: CachedNetworkImage(
                                         cacheManager: CacheManager(
                                           Config(
@@ -343,7 +341,7 @@ class WishlistScreenState extends State<WishlistScreen> {
                                             maxNrOfCacheObjects: 120,
                                           ),
                                         ),
-                                        fit: BoxFit.fill,
+                                        fit: BoxFit.cover,
                                         imageUrl: coverUrl,
                                         placeholder: (_, __) => Container(
                                           color: const Color(0xFFEFF1F3),
@@ -357,16 +355,14 @@ class WishlistScreenState extends State<WishlistScreen> {
                                     )
                                   : Image.asset(
                                       dummyWishlistImage,
-                                      height: (MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2) -
-                                          24.sp,
-                                      width: (MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2) -
-                                          24.sp,
+                                      height:
+                                          (MediaQuery.of(context).size.width /
+                                                  2) -
+                                              24.sp,
+                                      width:
+                                          (MediaQuery.of(context).size.width /
+                                                  2) -
+                                              24.sp,
                                       fit: BoxFit.fill,
                                     ),
                             ),
@@ -375,8 +371,8 @@ class WishlistScreenState extends State<WishlistScreen> {
                               right: 8.sp,
                               child: GestureDetector(
                                 onTap: () async {
-                                  final box = context.findRenderObject()
-                                      as RenderBox?;
+                                  final box =
+                                      context.findRenderObject() as RenderBox?;
                                   final shareOrigin = box != null
                                       ? box.localToGlobal(Offset.zero) &
                                           box.size

@@ -92,6 +92,8 @@ class ProductPriceDisplay extends StatelessWidget {
             const SizedBox(height: 2),
             Row(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
               children: [
                 Text(
                   _formatPrice(mrp!),
@@ -127,7 +129,9 @@ class ProductPriceDisplay extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: alignment,
-        crossAxisAlignment: crossAlignment,
+        // Baseline alignment keeps price, MRP and OFF text on the same visual line
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
         children: [
           Text(
             _formatPrice(price),
