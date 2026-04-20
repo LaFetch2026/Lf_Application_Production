@@ -819,11 +819,11 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildImages(),
-                    _buildProductInfo(),
+                    _buildProductInfoAndPrice(),
                     _buildTrustBadges(),
                     _buildSizeColorSection(),
                     _buildOfferSection(),
-                    _buildPriceAndDelivery(),
+                    _buildDelivery(),
                     _buildActionButtons(),
                     _buildSimilarProducts(),
                     _buildDeliveryPolicies(),
@@ -901,9 +901,10 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
         ]);
       });
 
-  Widget _buildProductInfo() => Obx(() {
-        if (_isForeground && productController.isDetails.value)
+  Widget _buildProductInfoAndPrice() => Obx(() {
+        if (_isForeground && productController.isDetails.value) {
           return const DummyProductDetails();
+        }
         return Padding(
             padding: EdgeInsets.only(
                 left: 16.sp, right: 12.sp, top: 8.sp, bottom: 4.sp),
@@ -924,12 +925,13 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                       final brandId = productController.productDetails["brand"]
                               ?["id"] as int? ??
                           0;
-                      if (brandId > 0)
+                      if (brandId > 0) {
                         Get.to(() => AllBrandScreen(
                             id: brandId,
                             screen: 'brand',
                             slug:
                                 '${productController.productDetails["brand"]?["slug"] ?? ''}'));
+                      }
                     },
                     child: Container(
                       color: const Color(0xFFDFDBFF),
@@ -943,7 +945,8 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                                 color: homeAppBarColor,
                                 fontSize: 10.sp)),
                         SizedBox(width: 4.sp),
-                        ImageIcon(AssetImage(linkArrowImage), size: 16.sp),
+                        ImageIcon(const AssetImage(linkArrowImage),
+                            size: 16.sp),
                       ]),
                     ),
                   ),
@@ -955,6 +958,23 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                         fontFamily: "Clash Display Regular",
                         fontSize: 14.sp,
                         color: subtitleColor)),
+              SizedBox(height: 4.sp),
+              Obx(() => ProductPriceDisplay(
+                    price: productController.getDisplayPrice(),
+                    mrp: productController.getDisplayMrp() >
+                            productController.getDisplayPrice()
+                        ? productController.getDisplayMrp()
+                        : null,
+                    fontSize: 18,
+                    mrpFontSize: 16,
+                    discountFontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    priceColor: blackColor,
+                    mrpColor: searchTextColor,
+                    spacing: 10,
+                  )),
+              Text('Price inclusive of all taxes',
+                  style: TextStyle(color: lightPurpleColor, fontSize: 10.sp)),
             ]));
       });
 
@@ -1274,27 +1294,27 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
 
   Widget _buildOfferSection() => const SizedBox();
 
-  Widget _buildPriceAndDelivery() {
+  Widget _buildDelivery() {
     return Padding(
       padding: EdgeInsets.all(16.sp),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Obx(() => ProductPriceDisplay(
-              price: productController.getDisplayPrice(),
-              mrp: productController.getDisplayMrp() >
-                      productController.getDisplayPrice()
-                  ? productController.getDisplayMrp()
-                  : null,
-              fontSize: 18,
-              mrpFontSize: 16,
-              discountFontSize: 12,
-              fontWeight: FontWeight.w600,
-              priceColor: blackColor,
-              mrpColor: searchTextColor,
-              spacing: 10,
-            )),
-        Text('Price inclusive of all taxes',
-            style: TextStyle(color: lightPurpleColor, fontSize: 12.sp)),
-        SizedBox(height: 16.sp),
+        // Obx(() => ProductPriceDisplay(
+        //       price: productController.getDisplayPrice(),
+        //       mrp: productController.getDisplayMrp() >
+        //               productController.getDisplayPrice()
+        //           ? productController.getDisplayMrp()
+        //           : null,
+        //       fontSize: 18,
+        //       mrpFontSize: 16,
+        //       discountFontSize: 12,
+        //       fontWeight: FontWeight.w600,
+        //       priceColor: blackColor,
+        //       mrpColor: searchTextColor,
+        //       spacing: 10,
+        //     )),
+        // Text('Price inclusive of all taxes',
+        //     style: TextStyle(color: lightPurpleColor, fontSize: 10.sp)),
+        // SizedBox(height: 16.sp),
         AppSpacingText(
           text: 'Delivery Options'.toUpperCase(),
           fontFamily: "Clash Display Regular",

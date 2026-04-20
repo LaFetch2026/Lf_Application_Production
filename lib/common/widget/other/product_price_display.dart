@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:lafetch/core/constant/constants.dart';
 
-/// Reusable price display widget for consistent pricing across the app
-/// Shows: MRP (strikethrough), Base Price, Discount % (lavender)
 class ProductPriceDisplay extends StatelessWidget {
   final num price; // Base/Selling price
   final num? mrp; // Original price (MRP)
@@ -19,7 +18,7 @@ class ProductPriceDisplay extends StatelessWidget {
   final CrossAxisAlignment crossAlignment;
   final double spacing;
   final bool showCurrency;
-  final bool isVertical; // Stack vertically instead of horizontally
+  final bool isVertical;
 
   const ProductPriceDisplay({
     Key? key,
@@ -41,7 +40,15 @@ class ProductPriceDisplay extends StatelessWidget {
     this.isVertical = false,
   }) : super(key: key);
 
-  /// Calculate discount percentage
+  String _formatPrice(num value) {
+    final formatter = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: showCurrency ? '₹' : '',
+      decimalDigits: 0,
+    );
+    return formatter.format(value);
+  }
+
   int? _getDiscountPercentage() {
     if (mrp != null && mrp! > price && price > 0) {
       return (((mrp! - price) / mrp!) * 100).round();
@@ -52,12 +59,10 @@ class ProductPriceDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final discount = _getDiscountPercentage();
-    final currencySymbol = showCurrency ? '\u{20B9}' : '';
 
-    // ✅ Handle case where price is 0 but MRP exists - show only MRP
     if (price == 0 && mrp != null && mrp! > 0) {
       return Text(
-        '$currencySymbol${mrp!.toStringAsFixed(0)}',
+        _formatPrice(mrp!),
         style: TextStyle(
           fontSize: fontSize,
           fontWeight: fontWeight,
@@ -66,19 +71,16 @@ class ProductPriceDisplay extends StatelessWidget {
       );
     }
 
-    // ✅ If price is 0 and no MRP, show nothing
     if (price == 0) {
       return const SizedBox.shrink();
     }
 
     if (isVertical) {
-      // Vertical layout
       return Column(
         crossAxisAlignment: crossAlignment,
         children: [
-          // Base Price
           Text(
-            '$currencySymbol${price.toStringAsFixed(0)}',
+            _formatPrice(price),
             style: TextStyle(
               fontSize: fontSize,
               fontFamily: "Clash Display Regular",
@@ -86,15 +88,13 @@ class ProductPriceDisplay extends StatelessWidget {
               color: priceColor ?? deepGreytextColor,
             ),
           ),
-          // MRP and Discount row
           if (mrp != null && discount != null && discount > 0) ...[
             const SizedBox(height: 2),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // MRP with strikethrough
                 Text(
-                  '$currencySymbol${mrp!.toStringAsFixed(0)}',
+                  _formatPrice(mrp!),
                   style: TextStyle(
                     fontSize: mrpFontSize ?? (fontSize - 2),
                     fontWeight: mrpFontWeight ?? FontWeight.w400,
@@ -105,7 +105,6 @@ class ProductPriceDisplay extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: spacing),
-                // Discount %
                 Text(
                   '$discount% OFF',
                   style: TextStyle(
@@ -122,7 +121,6 @@ class ProductPriceDisplay extends StatelessWidget {
       );
     }
 
-    // Horizontal layout (default)
     return FittedBox(
       fit: BoxFit.scaleDown,
       alignment: Alignment.centerLeft,
@@ -131,9 +129,8 @@ class ProductPriceDisplay extends StatelessWidget {
         mainAxisAlignment: alignment,
         crossAxisAlignment: crossAlignment,
         children: [
-          // Base Price
           Text(
-            '$currencySymbol${price.toStringAsFixed(0)}',
+            _formatPrice(price),
             style: TextStyle(
               fontFamily: "Clash Display Regular",
               fontSize: fontSize,
@@ -141,11 +138,10 @@ class ProductPriceDisplay extends StatelessWidget {
               color: priceColor ?? deepGreytextColor,
             ),
           ),
-          // MRP with strikethrough
           if (mrp != null && discount != null && discount > 0) ...[
             SizedBox(width: spacing),
             Text(
-              '$currencySymbol${mrp!.toStringAsFixed(0)}',
+              _formatPrice(mrp!),
               style: TextStyle(
                 fontSize: mrpFontSize ?? (fontSize - 2),
                 fontWeight: mrpFontWeight ?? FontWeight.w400,
@@ -156,7 +152,6 @@ class ProductPriceDisplay extends StatelessWidget {
               ),
             ),
             SizedBox(width: spacing),
-            // Discount %
             Text(
               '$discount% OFF',
               style: TextStyle(
