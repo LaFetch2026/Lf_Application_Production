@@ -997,28 +997,50 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
         if (!hasSizes && !hasColors) return const SizedBox();
         return Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.sp),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               if (hasSizes) ...[
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Text('SELECT SIZE', style: TextStyle(fontFamily: "Clash Display", fontWeight: FontWeight.w600, fontSize: 14.sp)),
-                ]),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('SELECT SIZE',
+                          style: TextStyle(
+                              fontFamily: "Clash Display",
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14.sp)),
+                    ]),
                 SizedBox(height: 8.sp),
                 GestureDetector(
                   onTap: _showSizeBottomSheet,
                   child: Container(
                     width: double.infinity,
-                    padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 14.sp),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 14.sp, vertical: 14.sp),
                     decoration: BoxDecoration(
-                      border: Border.all(color: productController.errorSizeMsg.value.isNotEmpty ? deepRed : borderColor),
+                      border: Border.all(
+                          color: productController.errorSizeMsg.value.isNotEmpty
+                              ? deepRed
+                              : borderColor),
                       borderRadius: BorderRadius.circular(12.sp),
                     ),
-                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Text(
-                        productController.selectedSize.value.isEmpty ? 'Choose size' : productController.selectedSize.value,
-                        style: TextStyle(fontFamily: "Clash Display Regular", fontSize: 14.sp, color: productController.selectedSize.value.isEmpty ? textHintColor : blackColor),
-                      ),
-                      Icon(Icons.keyboard_arrow_down_rounded, color: blackColor, size: 22.sp),
-                    ]),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            productController.selectedSize.value.isEmpty
+                                ? 'Choose size'
+                                : productController.selectedSize.value,
+                            style: TextStyle(
+                                fontFamily: "Clash Display Regular",
+                                fontSize: 14.sp,
+                                color:
+                                    productController.selectedSize.value.isEmpty
+                                        ? textHintColor
+                                        : blackColor),
+                          ),
+                          Icon(Icons.keyboard_arrow_down_rounded,
+                              color: blackColor, size: 22.sp),
+                        ]),
                   ),
                 ),
                 if (productController.errorSizeMsg.value.isNotEmpty)
@@ -1027,25 +1049,44 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                     child: ShakeWidget(
                       trigger: productController.sizeShakeTrigger.value,
                       child: Text(productController.errorSizeMsg.value,
-                          style: TextStyle(fontFamily: "Clash Display Regular", fontSize: 12.sp, color: deepRed)),
+                          style: TextStyle(
+                              fontFamily: "Clash Display Regular",
+                              fontSize: 12.sp,
+                              color: deepRed)),
                     ),
                   ),
                 SizedBox(height: 12.sp),
               ],
-              if (hasColors && (!hasSizes || productController.selectedSize.value.isNotEmpty)) ...[
-                Text('SELECT COLOR', style: TextStyle(fontFamily: "Clash Display", fontWeight: FontWeight.w600, fontSize: 14.sp)),
+              if (hasColors &&
+                  (!hasSizes ||
+                      productController.selectedSize.value.isNotEmpty)) ...[
+                Text('SELECT COLOR',
+                    style: TextStyle(
+                        fontFamily: "Clash Display",
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14.sp)),
                 SizedBox(height: 8.sp),
                 _styledDropdown<String>(
-                  value: productController.selectedColor.value.isEmpty ? null : productController.selectedColor.value,
+                  value: productController.selectedColor.value.isEmpty
+                      ? null
+                      : productController.selectedColor.value,
                   hint: 'Choose color',
                   hasError: productController.errorColorMsg.value.isNotEmpty,
-                  items: productController.colorInventoryList.map((c) => DropdownMenuItem(value: c, child: Text(c, style: TextStyle(fontFamily: "Clash Display Regular", fontSize: 14.sp)))).toList(),
+                  items: productController.colorInventoryList
+                      .map((c) => DropdownMenuItem(
+                          value: c,
+                          child: Text(c,
+                              style: TextStyle(
+                                  fontFamily: "Clash Display Regular",
+                                  fontSize: 14.sp))))
+                      .toList(),
                   onChanged: (v) {
                     if (v != null) {
                       productController.selectedColor.value = v;
                       productController.errorColorMsg.value = "";
                       productController.updateImagesForSelectedColor();
-                      if (_pageController.hasClients) _pageController.jumpToPage(0);
+                      if (_pageController.hasClients)
+                        _pageController.jumpToPage(0);
                       setState(() => _selectedQuantity = 1);
                     }
                   },
@@ -1056,7 +1097,10 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                     child: ShakeWidget(
                       trigger: productController.colorShakeTrigger.value,
                       child: Text(productController.errorColorMsg.value,
-                          style: TextStyle(fontFamily: "Clash Display Regular", fontSize: 12.sp, color: deepRed)),
+                          style: TextStyle(
+                              fontFamily: "Clash Display Regular",
+                              fontSize: 12.sp,
+                              color: deepRed)),
                     ),
                   ),
               ],
@@ -1069,61 +1113,116 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (_) => Container(
-        decoration: BoxDecoration(color: whiteColor, borderRadius: BorderRadius.vertical(top: Radius.circular(16.sp))),
+        decoration: BoxDecoration(
+            color: whiteColor,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16.sp))),
         padding: EdgeInsets.fromLTRB(16.sp, 12.sp, 16.sp, 32.sp),
-        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Center(child: Container(width: 36.sp, height: 4.sp, decoration: BoxDecoration(color: colorSecondary, borderRadius: BorderRadius.circular(2.sp)))),
-          SizedBox(height: 16.sp),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text('SELECT SIZE', style: TextStyle(fontFamily: "Clash Display", fontWeight: FontWeight.w600, fontSize: 16.sp)),
-            GestureDetector(
-              onTap: () { Get.back(); _openSizeChart(); },
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 6.sp),
-                decoration: BoxDecoration(border: Border.all(color: lightPurpleColor), borderRadius: BorderRadius.circular(20.sp)),
-                child: Text('Size Chart', style: TextStyle(fontFamily: "Clash Display Regular", color: lightPurpleColor, fontSize: 12.sp)),
-              ),
-            ),
-          ]),
-          SizedBox(height: 16.sp),
-          Obx(() => Wrap(
-            spacing: 8.sp,
-            runSpacing: 8.sp,
-            children: productController.sizeInventoryList.map((size) {
-              final isSelected = productController.selectedSize.value == size;
-              final matchingVariant = productController.selectedVariants.firstWhereOrNull((v) => v["size"] == size);
-              final sizeStock = matchingVariant != null ? (matchingVariant["stocks"] as int? ?? 0) : 0;
-              final isOutOfStock = matchingVariant != null && sizeStock <= 0;
-              return GestureDetector(
-                onTap: isOutOfStock ? null : () {
-                  productController.selectedSize.value = size;
-                  productController.errorSizeMsg.value = "";
-                  productController.loadColorsForSize(size);
-                  if (_pageController.hasClients) _pageController.jumpToPage(0);
-                  setState(() => _selectedQuantity = 1);
-                  Get.back();
-                },
-                child: Opacity(
-                  opacity: isOutOfStock ? 0.4 : 1.0,
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 12.sp),
+                      width: 36.sp,
+                      height: 4.sp,
+                      decoration: BoxDecoration(
+                          color: colorSecondary,
+                          borderRadius: BorderRadius.circular(2.sp)))),
+              SizedBox(height: 16.sp),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text('SELECT SIZE',
+                    style: TextStyle(
+                        fontFamily: "Clash Display",
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16.sp)),
+                GestureDetector(
+                  onTap: () {
+                    Get.back();
+                    _openSizeChart();
+                  },
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 12.sp, vertical: 6.sp),
                     decoration: BoxDecoration(
-                      border: Border.all(color: isSelected ? lightPurpleColor : Colors.black87, width: isSelected ? 2 : 1),
-                      borderRadius: BorderRadius.circular(8.sp),
-                      color: isSelected ? lightPurpleColor : Colors.transparent,
-                    ),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      Text(size.toUpperCase(), style: TextStyle(fontFamily: "Clash Display Regular", fontSize: 13.sp, color: isSelected ? whiteColor : Colors.black87)),
-                      if (matchingVariant != null && sizeStock <= 2 && sizeStock > 0)
-                        Text('Only $sizeStock left', style: TextStyle(fontSize: 9.sp, color: isSelected ? whiteColor.withOpacity(0.8) : lightPurpleColor)),
-                    ]),
+                        border: Border.all(color: lightPurpleColor),
+                        borderRadius: BorderRadius.circular(20.sp)),
+                    child: Text('Size Chart',
+                        style: TextStyle(
+                            fontFamily: "Clash Display Regular",
+                            color: lightPurpleColor,
+                            fontSize: 12.sp)),
                   ),
                 ),
-              );
-            }).toList(),
-          )),
-          SizedBox(height: 8.sp),
-        ]),
+              ]),
+              SizedBox(height: 16.sp),
+              Obx(() => Wrap(
+                    spacing: 8.sp,
+                    runSpacing: 8.sp,
+                    children: productController.sizeInventoryList.map((size) {
+                      final isSelected =
+                          productController.selectedSize.value == size;
+                      final matchingVariant = productController.selectedVariants
+                          .firstWhereOrNull((v) => v["size"] == size);
+                      final sizeStock = matchingVariant != null
+                          ? (matchingVariant["stocks"] as int? ?? 0)
+                          : 0;
+                      final isOutOfStock =
+                          matchingVariant != null && sizeStock <= 0;
+                      return GestureDetector(
+                        onTap: isOutOfStock
+                            ? null
+                            : () {
+                                productController.selectedSize.value = size;
+                                productController.errorSizeMsg.value = "";
+                                productController.loadColorsForSize(size);
+                                if (_pageController.hasClients)
+                                  _pageController.jumpToPage(0);
+                                setState(() => _selectedQuantity = 1);
+                                Get.back();
+                              },
+                        child: Opacity(
+                          opacity: isOutOfStock ? 0.4 : 1.0,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16.sp, vertical: 12.sp),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: isSelected
+                                      ? lightPurpleColor
+                                      : Colors.black87,
+                                  width: isSelected ? 2 : 1),
+                              borderRadius: BorderRadius.circular(8.sp),
+                              color: isSelected
+                                  ? lightPurpleColor
+                                  : Colors.transparent,
+                            ),
+                            child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(size.toUpperCase(),
+                                      style: TextStyle(
+                                          fontFamily: "Clash Display Regular",
+                                          fontSize: 13.sp,
+                                          color: isSelected
+                                              ? whiteColor
+                                              : Colors.black87)),
+                                  if (matchingVariant != null &&
+                                      sizeStock <= 2 &&
+                                      sizeStock > 0)
+                                    Text('Only $sizeStock left',
+                                        style: TextStyle(
+                                            fontSize: 9.sp,
+                                            color: isSelected
+                                                ? whiteColor.withOpacity(0.8)
+                                                : lightPurpleColor)),
+                                ]),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  )),
+              SizedBox(height: 8.sp),
+            ]),
       ),
     );
   }
@@ -1146,56 +1245,29 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
         child: DropdownButton<T>(
           value: value,
           isExpanded: true,
-          icon: Icon(Icons.keyboard_arrow_down_rounded, color: blackColor, size: 22.sp),
-          hint: Text(hint, style: TextStyle(fontFamily: "Clash Display Regular", fontSize: 14.sp, color: textHintColor)),
+          icon: Icon(Icons.keyboard_arrow_down_rounded,
+              color: blackColor, size: 22.sp),
+          hint: Text(hint,
+              style: TextStyle(
+                  fontFamily: "Clash Display Regular",
+                  fontSize: 14.sp,
+                  color: textHintColor)),
           items: items,
           onChanged: onChanged,
           dropdownColor: whiteColor,
           borderRadius: BorderRadius.circular(12.sp),
-          style: TextStyle(fontFamily: "Clash Display Regular", fontSize: 14.sp, color: blackColor),
+          style: TextStyle(
+              fontFamily: "Clash Display Regular",
+              fontSize: 14.sp,
+              color: blackColor),
         ),
       ),
     );
   }
+
   Widget _buildOfferSection() => const SizedBox();
 
   Widget _buildPriceAndDelivery() {
-    final pd = productController.brandDetails;
-    final minDays = int.tryParse(
-            (pd['minShippingDays'] ?? pd['min_shipping_days'] ?? 3)
-                .toString()) ??
-        3;
-    final maxDays = int.tryParse(
-            (pd['maxShippingDays'] ?? pd['max_shipping_days'] ?? 7)
-                .toString()) ??
-        7;
-
-    final deliveryDate = DateTime.now().add(Duration(days: maxDays));
-    final dayName = const [
-      'Mon',
-      'Tue',
-      'Wed',
-      'Thu',
-      'Fri',
-      'Sat',
-      'Sun'
-    ][deliveryDate.weekday - 1];
-    final monthName = const [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ][deliveryDate.month - 1];
-    final dateLabel = '$dayName, ${deliveryDate.day} $monthName';
-
     return Padding(
       padding: EdgeInsets.all(16.sp),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -1216,47 +1288,143 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
         Text('Price inclusive of all taxes',
             style: TextStyle(color: lightPurpleColor, fontSize: 12.sp)),
         SizedBox(height: 16.sp),
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 12.sp),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF5F5F5),
-            borderRadius: BorderRadius.circular(10.sp),
-          ),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            RichText(
-              text: TextSpan(
-                style: TextStyle(
-                    fontFamily: "Clash Display",
-                    fontSize: 13.sp,
-                    color: Colors.black),
-                children: [
-                  const TextSpan(
-                    text: "Delivery: ",
-                    style: TextStyle(fontWeight: FontWeight.w500),
+        
+        AppSpacingText(
+          text: 'Delivery Options'.toUpperCase(),
+          fontFamily: "Clash Display Regular",
+          fontWeight: FontWeight.w600,
+          color: Colors.black,
+          fontSize: 12,
+        ),
+        SizedBox(height: 12.sp),
+        SizedBox(
+          height: 44.sp,
+          child: TextField(
+            controller: productController.pincodeController,
+            keyboardType: TextInputType.number,
+            maxLength: 6,
+            decoration: InputDecoration(
+              counterText: "",
+              filled: true,
+              fillColor: whiteColor,
+              contentPadding: EdgeInsets.symmetric(horizontal: 12.sp),
+              hintText: "Enter pincode",
+              hintStyle: TextStyle(
+                fontSize: 14.sp,
+                color: textHintColor,
+                fontFamily: "Clash Display",
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: borderColor),
+                borderRadius: BorderRadius.circular(4.sp),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: borderColor),
+                borderRadius: BorderRadius.circular(4.sp),
+              ),
+              suffixIcon: Obx(
+                () => TextButton(
+                  onPressed: () async {
+                    final pin = productController.pincodeController.text.trim();
+                    if (!productController.checkPinvalidation(pin)) {
+                      productController.serviceabilityMessage.value = "Enter valid pincode";
+                      return;
+                    }
+
+                    final variant = productController.getSelectedVariant();
+                    if (variant == null) {
+                      final hasSizes = productController.sizeInventoryList.isNotEmpty;
+                      final hasColors = productController.colorInventoryList.isNotEmpty;
+                      final sizeSelected = productController.selectedSize.value.isNotEmpty;
+                      final colorSelected = productController.selectedColor.value.isNotEmpty;
+
+                      String errorMsg = "Please select ";
+                      if (hasSizes && !sizeSelected) {
+                        errorMsg += "size";
+                        if (hasColors) errorMsg += " and color";
+                      } else if (hasColors && !colorSelected) {
+                        errorMsg += "color";
+                      } else {
+                        errorMsg = "Product variant not available";
+                      }
+
+                      productController.serviceabilityMessage.value = errorMsg;
+                      return;
+                    }
+
+                    final variantId = variant['id'] as int? ?? 0;
+                    if (variantId == 0) {
+                      productController.serviceabilityMessage.value = "Invalid variant selected";
+                      return;
+                    }
+
+                    productController.serviceabilityMessage.value = "";
+                    productController.isServiceable.value = false;
+                    productController.courierName.value = "";
+                    productController.estimatedDate.value = "";
+                    productController.estimatedDays.value = "";
+
+                    final result = await productController.checkServiceability(
+                      variantId: variantId,
+                      deliveryPostalCode: pin,
+                    );
+
+                    if (result != null && result["data"] is Map) {
+                      final data = result["data"];
+                      productController.courierName.value = data["courier"]?.toString() ?? "";
+                      productController.estimatedDate.value = data["estimatedDate"]?.toString() ?? "";
+                      productController.estimatedDays.value = data["estimatedDays"]?.toString() ?? "";
+                      productController.isServiceable.value = true;
+                      productController.serviceabilityMessage.value = 
+                          "Delivery by ${productController.estimatedDate.value} (${productController.estimatedDays.value} Days)";
+                    } else {
+                      productController.serviceabilityMessage.value = "Service not available for this pincode";
+                    }
+                  },
+                  child: Text(
+                    "Check",
+                    style: TextStyle(
+                      fontFamily: "Clash Display",
+                      fontWeight: FontWeight.w600,
+                      color: lightPurpleColor,
+                      fontSize: 14.sp,
+                    ),
                   ),
-                  const TextSpan(
-                    text: "Get it by ",
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                  TextSpan(
-                    text: "$dateLabel",
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
+                ),
               ),
             ),
-            SizedBox(height: 4.sp),
-            Text(
-              "Ships in $minDays days - $maxDays days",
-              style: TextStyle(
-                  fontFamily: "Clash Display",
-                  fontSize: 12.sp,
-                  color: Colors.black54),
-            ),
-          ]),
+          ),
         ),
+        SizedBox(height: 8.sp),
+        Obx(() {
+          if (productController.serviceabilityMessage.value.isEmpty) {
+            return const SizedBox();
+          }
+          final isSuccess = productController.isServiceable.value;
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                isSuccess
+                    ? Icons.check_circle_outline
+                    : Icons.error_outline,
+                color: isSuccess ? Colors.green : const Color(0xFFD63333),
+                size: 16.sp,
+              ),
+              SizedBox(width: 8.sp),
+              Expanded(
+                child: Text(
+                  productController.serviceabilityMessage.value,
+                  style: TextStyle(
+                    fontFamily: "Clash Display Regular",
+                    fontSize: 12.sp,
+                    color: isSuccess ? Colors.green : const Color(0xFFD63333),
+                  ),
+                ),
+              ),
+            ],
+          );
+        }),
       ]),
     );
   }

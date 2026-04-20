@@ -264,11 +264,10 @@ class HomeController extends BaseController {
         getSnackBar("Authentication failed");
         _redirectToLoginIfNotGuest();
       } else {
-        getSnackBar("Failed to load banners");
+        print("Failed to load banners: ${response.statusCode}");
       }
     } catch (e, st) {
       print("❌ Banner fetch exception: $e\n$st");
-      getSnackBar("An error occurred while loading banners.");
     } finally {
       isBanner1.value = false;
       _isBannerRequestInProgress = false; // ✅ Reset request flag
