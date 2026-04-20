@@ -1441,7 +1441,179 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
     );
   }
 
-  Widget _buildActionButtons() => const SizedBox();
+  Widget _buildActionButtons() => Obx(() {
+        if (productController.isDetails.value) return const SizedBox();
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
+          child: Column(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                height: 48.sp,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (!productController.checkDetailsValidation()) return;
+                    final variant = productController.getSelectedVariant();
+                    if (variant == null) {
+                      showAppSnackBar('Please select size and color',
+                          type: SnackBarType.error);
+                      return;
+                    }
+                    final variantId = variant['id'] as int;
+                    final variantPrice =
+                        ((variant['lfMsp'] ?? variant['price'] ?? 0) as num)
+                            .toDouble();
+                    await cartController.addToCartUniversal(
+                        quantity: _selectedQuantity,
+                        page: "addproduct",
+                        variantId: variantId,
+                        productId: widget.productId,
+                        expressValue: widget.expressValue,
+                        type: 1,
+                        backColor: whiteColor,
+                        oldInventoryId: variantId,
+                        price: variantPrice);
+                    EventTrackingService.instance
+                        .trackAddToCart(widget.productId, variantId);
+                    setState(() => _selectedQuantity = 1);
+                    await analytics.logEvent(
+                        name: 'productDetails_btnaddtocart',
+                        parameters: {
+                          'page_name': 'productDetails_btnaddtocart'
+                        });
+                    await Future.delayed(const Duration(milliseconds: 300));
+                    Get.to(const CartScreen())?.then((_) =>
+                        productController.getProductById(widget.productId));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: blackColor,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40.sp)),
+                    elevation: 0,
+                  ),
+                  child: Text('ADD TO BAG',
+                      style: TextStyle(
+                          fontFamily: "Clash Display",
+                          fontWeight: FontWeight.w600,
+                          color: whiteColor,
+                          fontSize: 13.sp)),
+                ),
+              ),
+              SizedBox(height: 12.sp),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 48.sp,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          await _onBuyNow(isCartFlow: false);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: whiteColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40.sp),
+                              side: BorderSide(color: blackColor, width: 2.sp)),
+                          elevation: 0,
+                        ),
+                        child: Text('BUY NOW',
+                            style: TextStyle(
+                                fontFamily: "Clash Display",
+                                fontWeight: FontWeight.w600,
+                                color: blackColor,
+                                fontSize: 13.sp)),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.sp),
+                  GestureDetector(
+                    onTap: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      if (prefs.getBool('skip') ?? false) {
+                        showAppSnackBar("Please login to add to wishlist",
+                            type: SnackBarType.error);
+                        Get.toNamed('/login');
+                        return;
+                      }
+                      final firstImg = productController.imageList.isNotEmpty
+                          ? (productController.imageList.first['name']
+                                  ?.toString() ??
+                              '')
+                          : '';
+                      final productId =
+                          (productController.productDetails["id"] as int?) ??
+                              widget.productId;
+                      scaffoldKey.currentState
+                          ?.showBottomSheet((ctx) => BottomWishlist(
+                                controller: wishlistController,
+                                wishlistList: wishlistController.wishlistList,
+                                productImage: firstImg,
+                                onPressedBoard: () {
+                                  Get.back();
+                                  Get.to(() => NewBoardScreen(
+                                      title: "New Board",
+                                      boardName: "",
+                                      hintName: "Enter board name",
+                                      boardId: 0,
+                                      btnText: "Next",
+                                      productId: productId,
+                                      categoryId: 0,
+                                      screen: ""));
+                                },
+                                onPressed: (boardId) async {
+                                  final price = ((productController
+                                              .productDetails['lfMsp'] ??
+                                          0) as num)
+                                      .toDouble();
+                                  await wishlistController.addProductToBoard(
+                                      boardId, productId,
+                                      price: price);
+                                  Get.back();
+                                  final boardName = wishlistController
+                                          .wishlistList
+                                          .firstWhere((b) => b['id'] == boardId,
+                                              orElse: () =>
+                                                  {'name': 'Board'})['name']
+                                          ?.toString() ??
+                                      'Board';
+                                  Get.to(() => BoardScreen(
+                                      boardName: boardName,
+                                      boardId: boardId,
+                                      productId: productId));
+                                },
+                              ));
+                    },
+                    child: Container(
+                      height: 48.sp,
+                      width: 48.sp,
+                      decoration: BoxDecoration(
+                        color: whiteColor,
+                        borderRadius: BorderRadius.circular(40.sp),
+                        border: Border.all(color: blackColor, width: 1.sp),
+                      ),
+                      child: Center(
+                        child: Obx(() {
+                          final isWishlisted =
+                              wishlistController.isWishlisted.value;
+                          return Icon(
+                            isWishlisted
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: isWishlisted
+                                ? const Color(0xFFD63333)
+                                : blackColor,
+                            size: 20.sp,
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      });
 
   Widget _buildDeliveryExchangePlaceholder() => Padding(
       padding: EdgeInsets.all(16.sp),
@@ -1454,6 +1626,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
 
   Widget _buildSimilarProducts() => SimilarProductsCarousel(
       productId: widget.productId,
+      showTrending: false,
       onNavigating: () => setState(() => _isForeground = false));
 
   Widget _buildDeliveryPolicies() => Padding(
@@ -1556,57 +1729,10 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
 
   Widget _buildTrendingProducts() => SimilarProductsCarousel(
       productId: widget.productId,
+      showSimilar: false,
       onNavigating: () => setState(() => _isForeground = false));
 
   Widget _buildNewsletter() => const NewsletterSection(title: "NEWS LETTERS");
-
-  Widget _buildBottomBar() => Obx(() {
-        if (productController.isDetails.value) return const SizedBox();
-        return DoubleButtonIconNew(
-          lineColor: dividerColor,
-          firstText: "ADD TO BAG",
-          secondText: "BUY NOW",
-          onPressedFirst: () async {
-            if (!productController.checkDetailsValidation()) return;
-            final variant = productController.getSelectedVariant();
-            if (variant == null) {
-              showAppSnackBar('Please select size and color',
-                  type: SnackBarType.error);
-              return;
-            }
-            final variantId = variant['id'] as int;
-            final variantPrice =
-                ((variant['lfMsp'] ?? variant['price'] ?? 0) as num).toDouble();
-            await cartController.addToCartUniversal(
-                quantity: _selectedQuantity,
-                page: "addproduct",
-                variantId: variantId,
-                productId: widget.productId,
-                expressValue: widget.expressValue,
-                type: 1,
-                backColor: whiteColor,
-                oldInventoryId: variantId,
-                price: variantPrice);
-            EventTrackingService.instance
-                .trackAddToCart(widget.productId, variantId);
-            setState(() => _selectedQuantity = 1);
-            await analytics.logEvent(
-                name: 'productDetails_btnaddtocart',
-                parameters: {'page_name': 'productDetails_btnaddtocart'});
-            await Future.delayed(const Duration(milliseconds: 300));
-            Get.to(const CartScreen())?.then(
-                (_) => productController.getProductById(widget.productId));
-          },
-          onPressedSecond: () async {
-            await _onBuyNow(isCartFlow: false);
-            _scrollController.animateTo(
-                MediaQuery.of(context).size.height / 2.sp + 150.sp,
-                duration: const Duration(seconds: 1),
-                curve: Curves.easeInOut);
-          },
-          controller: productController,
-        );
-      });
 }
 
 // ── zoomable image widget ─────────────────────────────────────────────────────

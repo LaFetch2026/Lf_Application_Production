@@ -15,7 +15,15 @@ import '../services/recommendation_service.dart';
 class SimilarProductsCarousel extends StatefulWidget {
   final int productId;
   final VoidCallback? onNavigating;
-  const SimilarProductsCarousel({super.key, required this.productId, this.onNavigating});
+  final bool showSimilar;
+  final bool showTrending;
+  const SimilarProductsCarousel({
+    super.key,
+    required this.productId,
+    this.onNavigating,
+    this.showSimilar = true,
+    this.showTrending = true,
+  });
 
   @override
   State<SimilarProductsCarousel> createState() =>
@@ -31,8 +39,16 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
   @override
   void initState() {
     super.initState();
-    _loadSimilar();
-    _loadTrending();
+    if (widget.showSimilar) {
+      _loadSimilar();
+    } else {
+      _loadingSimilar = false;
+    }
+    if (widget.showTrending) {
+      _loadTrending();
+    } else {
+      _loadingTrending = false;
+    }
   }
 
   Future<void> _loadSimilar() async {
@@ -148,21 +164,25 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // ── Similar Products ──────────────────────────────────────
-        if (_loadingSimilar)
-          _buildShimmerRow('YOU MAY ALSO LIKE')
-        else if (_similar.isNotEmpty) ...[
-          _buildSectionHeader('YOU MAY ALSO LIKE'),
-          _buildRow(_similar, isTrending: false),
-          SizedBox(height: 8.sp),
+        if (widget.showSimilar) ...[
+          if (_loadingSimilar)
+            _buildShimmerRow('YOU MAY ALSO LIKE')
+          else if (_similar.isNotEmpty) ...[
+            _buildSectionHeader('YOU MAY ALSO LIKE'),
+            _buildRow(_similar, isTrending: false),
+            SizedBox(height: 8.sp),
+          ],
         ],
 
         // ── Trending Products ─────────────────────────────────────
-        if (_loadingTrending)
-          _buildShimmerRow('TRENDING NOW')
-        else if (_trending.isNotEmpty) ...[
-          _buildSectionHeader('TRENDING NOW'),
-          _buildRow(_trending, isTrending: true),
-          SizedBox(height: 16.sp),
+        if (widget.showTrending) ...[
+          if (_loadingTrending)
+            _buildShimmerRow('TRENDING NOW')
+          else if (_trending.isNotEmpty) ...[
+            _buildSectionHeader('TRENDING NOW'),
+            _buildRow(_trending, isTrending: true),
+            SizedBox(height: 16.sp),
+          ],
         ],
       ],
     );
