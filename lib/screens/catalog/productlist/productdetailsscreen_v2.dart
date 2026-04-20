@@ -808,29 +808,36 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
             },
           ),
           Expanded(
+            child: GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              behavior: HitTestBehavior.opaque,
               child: SingleChildScrollView(
-            controller: _scrollController,
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _buildImages(),
-              _buildProductInfo(),
-              _buildTrustBadges(),
-              _buildSizeColorSection(),
-              _buildOfferSection(),
-              _buildPriceAndDelivery(),
-              _buildActionButtons(),
-              _buildDeliveryExchangePlaceholder(),
-              _buildSimilarProducts(),
-              _buildDeliveryPolicies(),
-              _buildLFNote(),
-              _buildFAQs(),
-              _buildLFPromises(),
-              _buildTrendingProducts(),
-              _buildNewsletter(),
-              SizedBox(height: 20.sp),
-            ]),
-          )),
-          _buildBottomBar(),
+                controller: _scrollController,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildImages(),
+                    _buildProductInfo(),
+                    _buildTrustBadges(),
+                    _buildSizeColorSection(),
+                    _buildOfferSection(),
+                    _buildPriceAndDelivery(),
+                    _buildActionButtons(),
+                    _buildSimilarProducts(),
+                    _buildDeliveryPolicies(),
+                    _buildLFNote(),
+                    _buildFAQs(),
+                    _buildLFPromises(),
+                    _buildTrendingProducts(),
+                    _buildNewsletter(),
+                    SizedBox(height: 20.sp),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ]),
       ),
     );
