@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:lafetch/screens/bottomnavscreen.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,7 +10,6 @@ import '../../../controllers/cart_controller.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
-import '../../../core/utils/share_link_generator.dart';
 
 class ProductdetailsAppbar extends StatefulWidget {
   final int productId; // NEW
@@ -96,12 +95,15 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
 
             // CENTER LOGO
             Padding(
-              padding: EdgeInsets.only(left: 40.sp, right: 10.sp),
-              child: Image.asset(
-                lafetchLogoImage,
-                color: homeAppBarColor,
-                height: 25.sp,
-                width: 20.sp,
+              padding: EdgeInsets.only(left: 55.sp),
+              child: GestureDetector(
+                onTap: () => Get.offAll(() => const BottomNavScreen(index: 0)),
+                child: Image.asset(
+                  lafetchLogoImage,
+                  color: homeAppBarColor,
+                  height: 25.sp,
+                  width: 20.sp,
+                ),
               ),
             ),
 
@@ -127,41 +129,6 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
                           colorFilter:
                               ColorFilter.mode(iconColor, BlendMode.srcIn),
                         ),
-                ),
-              ),
-            ),
-
-            // SHARE BUTTON
-            Builder(
-              builder: (shareContext) => InkWell(
-                onTap: () async {
-                  final box = shareContext.findRenderObject() as RenderBox?;
-                  final shareOrigin = box != null
-                      ? box.localToGlobal(Offset.zero) & box.size
-                      : null;
-
-                  final link =
-                      await ShareLinkGenerator.generateProductShareLink(
-                    productId: widget.productId,
-                    slug: widget.slug,
-                    brandName: widget.brandName,
-                    type: widget.type,
-                  );
-
-                  Share.share(
-                    "Lafetch:\n$link",
-                    sharePositionOrigin: shareOrigin,
-                  );
-                },
-                child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
-                  child: SvgPicture.asset(
-                    shareSvgImage,
-                    height: 18.sp,
-                    width: 18.sp,
-                    colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-                  ),
                 ),
               ),
             ),

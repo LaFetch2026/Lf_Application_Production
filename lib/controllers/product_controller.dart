@@ -251,6 +251,9 @@ class ProductController extends BaseController {
   RxList<String> sizeInventoryList = <String>[].obs;
   RxString selectedColor = "".obs;
   RxString selectedSize = "".obs;
+  // ---- BREADCRUMB ----
+  RxBool isBreadcrumbLoading = false.obs;
+  RxList<Map<String, dynamic>> breadcrumbList = <Map<String, dynamic>>[].obs;
 // Add this observable for tracking current display images
   RxList<String> currentDisplayImages = <String>[].obs;
 
@@ -666,6 +669,48 @@ class ProductController extends BaseController {
     } finally {
       isSizeChartLoading.value = false;
     }
+  }
+
+  /// ----------------------------------------------------------
+  /// FETCH BREADCRUMB (productId + optional fallback name/slug)
+  /// ----------------------------------------------------------
+  Future<void> fetchBreadcrumb(int productId, {
+    String fallbackName = '',
+    String fallbackSlug = '',
+  }) async {
+    isBreadcrumbLoading.value = true;
+    breadcrumbList.clear();
+    final url = '${ApiConstants.baseUrl}/product/$productId/breadcrumb';
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {'Accept': 'application/json; charset=UTF-8'},
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body);
+        if (body['success'] == true) {
+          final data = body['data'];
+          final crumbs = (data['breadcrumbs'] as List?)
+              ?.whereType<Map<String, dynamic>>()
+              .toList() ?? [];
+          if (crumbs.isNotEmpty) {
+            breadcrumbList.assignAll(crumbs);
+            return;
+          }
+        }
+      }
+    } catch (_) {
+      // fall through to fallback
+    } finally {
+      isBreadcrumbLoading.value = false;
+    }
+    // Fallback
+    breadcrumbList.assignAll([
+      {'name': 'Home'},
+      if (fallbackName.isNotEmpty) {'name': fallbackName},
+      if (fallbackSlug.isNotEmpty) {'name': fallbackSlug},
+    ]);
   }
 
   int _activeGenderRequest = -1;

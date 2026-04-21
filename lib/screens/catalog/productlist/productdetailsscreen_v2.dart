@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/common/widget/other/product_price_display.dart';
@@ -37,6 +38,10 @@ import '../../../services/event_tracking_service.dart';
 import '../../../common/widget/other/error_shake.dart';
 import '../../../widgets/similar_products_carousel.dart';
 import '../../../common/widget/newsletter/newsletter_section.dart';
+import '../../searchscreen.dart';
+import '../../search_results_screen.dart';
+import '../../bottomnavscreen.dart';
+import '../../../controllers/search_controller.dart';
 
 class ProductDetailsScreenV2 extends StatefulWidget {
   final int productId;
@@ -73,6 +78,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
   final brandController = Get.put(BrandController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<CartIconKey> cartKey = GlobalKey<CartIconKey>();
+  final GlobalKey _similarSectionKey = GlobalKey();
   late Function(GlobalKey) runAddToCartAnimation;
   final PageController _pageController = PageController();
   final ScrollController _scrollController = ScrollController();
@@ -114,6 +120,11 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
         final productId =
             productController.productDetails["id"] as int? ?? widget.productId;
         wishlistController.checkIfWishlisted(productId);
+        final name = productController.productDetails["name"]?.toString() ?? '';
+        final slug =
+            productController.productDetails["slug"]?.toString() ?? widget.Slug;
+        productController.fetchBreadcrumb(productId,
+            fallbackName: name, fallbackSlug: slug);
         productController.getProductReviews(productId);
         MetaEventService.instance
             .logViewContent(contentId: productId.toString());
@@ -205,6 +216,16 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
       "af_channel": "product_share",
       "c": "product_share",
     }).toString();
+  }
+
+  void _scrollToSimilar() {
+    final ctx = _similarSectionKey.currentContext;
+    if (ctx == null) return;
+    Scrollable.ensureVisible(
+      ctx,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
   }
 
   void _showLoading() =>
@@ -802,7 +823,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                                 icon: Icon(Icons.close, size: 24.sp),
                                 onPressed: () => Get.back()),
                           ])),
-                  Divider(color: colorSecondary, height: 1),
+                  const Divider(color: colorSecondary, height: 1),
                   Expanded(
                       child: SingleChildScrollView(
                           padding: EdgeInsets.all(16.sp),
@@ -1043,25 +1064,6 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                 ));
               });
             },
-            onPressedShare: () async {
-              final box = context.findRenderObject() as RenderBox?;
-              final origin = box != null
-                  ? box.localToGlobal(Offset.zero) & box.size
-                  : null;
-              try {
-                final link = await _shareLink();
-                final title = _titleText();
-                Share.share(
-                    title.isNotEmpty
-                        ? "Check out $title on LaFetch!\n$link"
-                        : "Check this product on LaFetch!\n$link",
-                    sharePositionOrigin: origin);
-              } catch (_) {
-                Share.share(_titleText().isNotEmpty
-                    ? _titleText()
-                    : "Check this product");
-              }
-            },
             onPressedCart: () async {
               final prefs = await SharedPreferences.getInstance();
               if (prefs.getBool('skip') ?? false) {
@@ -1084,6 +1086,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _buildBreadcrumb(),
                     _buildImages(),
                     _buildProductInfoAndPrice(),
                     _buildTrustBadges(),
@@ -1112,44 +1115,298 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
 
   // ── section builders ──────────────────────────────────────────────────────
 
+  void _navigateToCrumb(String name) {
+    final controller = Get.put(SearchScreenController());
+    controller.searchController.text = name;
+    Get.to(() => const SearchScreen());
+  }
+
+  Widget _buildBreadcrumb() => Obx(() {
+        if (productController.isBreadcrumbLoading.value) {
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 6.sp),
+            child: DummyContainer(height: 20, width: 200),
+          );
+        }
+        final crumbs = productController.breadcrumbList;
+        final List<Widget> children = [];
+        for (int i = 0; i < crumbs.length; i++) {
+          if (i > 0) {
+            children.add(Text(
+              ' › ',
+              style: TextStyle(
+                fontFamily: "Clash Display Regular",
+                fontSize: 12.sp,
+                color: subtitleColor,
+              ),
+            ));
+          }
+          final crumb = crumbs[i];
+          children.add(GestureDetector(
+            onTap: () => _navigateToCrumb(crumb['name']?.toString() ?? ''),
+            child: Text(
+              crumb['name']?.toString() ?? '',
+              style: TextStyle(
+                fontFamily: "Clash Display Regular",
+                fontSize: 12.sp,
+                color: subtitleColor,
+              ),
+            ),
+          ));
+        }
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 6.sp),
+          child: Row(children: children),
+        );
+      });
+
   Widget _buildImages() => Obx(() {
         if (_isForeground && productController.isDetails.value)
           return const DummyProductImage();
         final imgs = _imagesOnly();
         return Column(children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.54,
-            child: PageView.builder(
-              controller: _pageController,
-              onPageChanged: (i) {
-                _curr = i;
-              },
-              itemCount: imgs.length,
-              itemBuilder: (_, i) => GestureDetector(
-                onTap: () {
-                  final gallery =
-                      imgs.map((u) => {'name': u, 'isVideo': false}).toList();
-                  Get.to(() => ProductImage_Screen(curr: i, list: gallery));
-                },
-                child: Hero(
-                    tag: imgs[i],
-                    child: CachedNetworkImage(
-                      cacheManager: CacheManager(Config("customCacheKey",
-                          stalePeriod: const Duration(days: 15),
-                          maxNrOfCacheObjects: 100)),
-                      fit: BoxFit.cover,
-                      imageUrl: imgs[i],
-                      width: double.infinity,
-                      height: double.infinity,
-                      progressIndicatorBuilder: (_, __, ___) => DummyContainer(
-                          height: MediaQuery.of(context).size.height * 0.54,
-                          width: MediaQuery.of(context).size.width),
-                      errorWidget: (_, __, ___) =>
-                          Image.asset(downloadImage, fit: BoxFit.cover),
-                    )),
+          Stack(
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.54,
+                child: PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: (i) {
+                    _curr = i;
+                  },
+                  itemCount: imgs.length,
+                  itemBuilder: (_, i) => GestureDetector(
+                    onTap: () {
+                      final gallery = imgs
+                          .map((u) => {'name': u, 'isVideo': false})
+                          .toList();
+                      Get.to(() => ProductImage_Screen(curr: i, list: gallery));
+                    },
+                    child: Hero(
+                        tag: imgs[i],
+                        child: CachedNetworkImage(
+                          cacheManager: CacheManager(Config("customCacheKey",
+                              stalePeriod: const Duration(days: 15),
+                              maxNrOfCacheObjects: 100)),
+                          fit: BoxFit.cover,
+                          imageUrl: imgs[i],
+                          width: double.infinity,
+                          height: double.infinity,
+                          progressIndicatorBuilder: (_, __, ___) =>
+                              DummyContainer(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.54,
+                                  width: MediaQuery.of(context).size.width),
+                          errorWidget: (_, __, ___) =>
+                              Image.asset(downloadImage, fit: BoxFit.cover),
+                        )),
+                  ),
+                ),
               ),
-            ),
+              // Wishlist overlay — bottom right
+              Positioned(
+                bottom: 12,
+                right: 12,
+                child: GestureDetector(
+                  onTap: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    if (prefs.getBool('skip') ?? false) {
+                      showAppSnackBar("Please login to add to wishlist",
+                          type: SnackBarType.error);
+                      Get.toNamed('/login');
+                      return;
+                    }
+                    final productId =
+                        (productController.productDetails["id"] as int?) ??
+                            widget.productId;
+
+                    if (wishlistController.isWishlisted.value) {
+                      // --- REMOVE from wishlist ---
+                      int boardId = 0;
+                      for (final board in wishlistController.wishlistList) {
+                        final bId = board['id'] as int? ?? 0;
+                        if (bId == 0) continue;
+                        final products = await wishlistController
+                            .fetchBoardProducts(bId, silent: true);
+                        final found = products.any((p) {
+                          final prod = p['product'] as Map<String, dynamic>?;
+                          return prod?['id']?.toString() ==
+                              productId.toString();
+                        });
+                        if (found) {
+                          boardId = bId;
+                          break;
+                        }
+                      }
+                      if (boardId != 0) {
+                        await wishlistController.removeProductFromBoard(
+                            boardId, productId);
+                      } else {
+                        wishlistController.isWishlisted.value = false;
+                        wishlistController.wishListDetails["wishlisted"] =
+                            false;
+                      }
+                    } else {
+                      // --- ADD to wishlist ---
+                      final firstImg = productController.imageList.isNotEmpty
+                          ? (productController.imageList.first['name']
+                                  ?.toString() ??
+                              '')
+                          : '';
+                      scaffoldKey.currentState
+                          ?.showBottomSheet((ctx) => BottomWishlist(
+                                controller: wishlistController,
+                                wishlistList: wishlistController.wishlistList,
+                                productImage: firstImg,
+                                onPressedBoard: () {
+                                  Get.back();
+                                  Get.to(() => NewBoardScreen(
+                                      title: "New Board",
+                                      boardName: "",
+                                      hintName: "Enter board name",
+                                      boardId: 0,
+                                      btnText: "Next",
+                                      productId: productId,
+                                      categoryId: 0,
+                                      screen: ""));
+                                },
+                                onPressed: (boardId) async {
+                                  final price = ((productController
+                                              .productDetails['lfMsp'] ??
+                                          0) as num)
+                                      .toDouble();
+                                  await wishlistController.addProductToBoard(
+                                      boardId, productId,
+                                      price: price);
+                                  Get.back();
+                                  final boardName = wishlistController
+                                          .wishlistList
+                                          .firstWhere((b) => b['id'] == boardId,
+                                              orElse: () =>
+                                                  {'name': 'Board'})['name']
+                                          ?.toString() ??
+                                      'Board';
+                                  Get.to(() => BoardScreen(
+                                      boardName: boardName,
+                                      boardId: boardId,
+                                      productId: productId));
+                                },
+                              ));
+                    }
+                  },
+                  child: Container(
+                    height: 40.sp,
+                    width: 40.sp,
+                    decoration: BoxDecoration(
+                      color: whiteColor,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 6,
+                          color: Colors.black.withOpacity(0.12),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Obx(() => Icon(
+                            wishlistController.isWishlisted.value
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: wishlistController.isWishlisted.value
+                                ? const Color(0xFFD63333)
+                                : blackColor,
+                            size: 20.sp,
+                          )),
+                    ),
+                  ),
+                ),
+              ),
+              // See Similar pill — top right, left of share button
+              Positioned(
+                top: 12,
+                right: 12,
+                child: GestureDetector(
+                  onTap: _scrollToSimilar,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 10.sp, vertical: 10.sp),
+                    decoration: BoxDecoration(
+                      color: whiteColor,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 6,
+                          color: Colors.black.withOpacity(0.12),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.auto_awesome,
+                            size: 18.sp, color: blackColor),
+                        // SizedBox(width: 4.sp),
+                        // Text(
+                        //   "See Similar",
+                        //   style: TextStyle(
+                        //     fontFamily: "Clash Display Regular",
+                        //     fontSize: 11.sp,
+                        //     color: blackColor,
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              // Share overlay — top right
+              Positioned(
+                top: 10,
+                right: 60,
+                child: GestureDetector(
+                  onTap: () async {
+                    try {
+                      final link = await _shareLink();
+                      final title = _titleText();
+                      Share.share(
+                        title.isNotEmpty
+                            ? "Check out $title on LaFetch!\n$link"
+                            : "Check this product on LaFetch!\n$link",
+                      );
+                    } catch (_) {
+                      Share.share(_titleText().isNotEmpty
+                          ? _titleText()
+                          : "Check this product");
+                    }
+                  },
+                  child: Container(
+                    height: 40.sp,
+                    width: 40.sp,
+                    decoration: BoxDecoration(
+                      color: whiteColor,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 6,
+                          color: Colors.black.withOpacity(0.12),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        shareSvgImage,
+                        height: 18.sp,
+                        width: 18.sp,
+                        colorFilter: const ColorFilter.mode(
+                            Colors.black, BlendMode.srcIn),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
           if (imgs.length > 1)
             Padding(
@@ -1885,7 +2142,8 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                         productController.getProductById(widget.productId));
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: blackColor,
+                    backgroundColor: whiteColor,
+                    side: BorderSide(color: blackColor, width: 2.sp),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(40.sp)),
                     elevation: 0,
@@ -1894,7 +2152,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                       style: TextStyle(
                           fontFamily: "Clash Display",
                           fontWeight: FontWeight.w600,
-                          color: whiteColor,
+                          color: blackColor,
                           fontSize: 13.sp)),
                 ),
               ),
@@ -1909,7 +2167,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                           await _onBuyNow(isCartFlow: false);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: whiteColor,
+                          backgroundColor: blackColor,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(40.sp),
                               side: BorderSide(color: blackColor, width: 2.sp)),
@@ -1919,123 +2177,8 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                             style: TextStyle(
                                 fontFamily: "Clash Display",
                                 fontWeight: FontWeight.w600,
-                                color: blackColor,
+                                color: whiteColor,
                                 fontSize: 13.sp)),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 12.sp),
-                  GestureDetector(
-                    onTap: () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      if (prefs.getBool('skip') ?? false) {
-                        showAppSnackBar("Please login to add to wishlist",
-                            type: SnackBarType.error);
-                        Get.toNamed('/login');
-                        return;
-                      }
-                      final productId =
-                          (productController.productDetails["id"] as int?) ??
-                              widget.productId;
-
-                      if (wishlistController.isWishlisted.value) {
-                        // --- REMOVE from wishlist ---
-                        int boardId = 0;
-                        for (final board in wishlistController.wishlistList) {
-                          final bId = board['id'] as int? ?? 0;
-                          if (bId == 0) continue;
-                          final products = await wishlistController
-                              .fetchBoardProducts(bId, silent: true);
-                          final found = products.any((p) {
-                            final prod = p['product'] as Map<String, dynamic>?;
-                            return prod?['id']?.toString() ==
-                                productId.toString();
-                          });
-                          if (found) {
-                            boardId = bId;
-                            break;
-                          }
-                        }
-                        if (boardId != 0) {
-                          await wishlistController.removeProductFromBoard(
-                              boardId, productId);
-                        } else {
-                          // Fallback: flip the flag if board lookup fails
-                          wishlistController.isWishlisted.value = false;
-                          wishlistController.wishListDetails["wishlisted"] =
-                              false;
-                        }
-                      } else {
-                        // --- ADD to wishlist (existing behavior) ---
-                        final firstImg = productController.imageList.isNotEmpty
-                            ? (productController.imageList.first['name']
-                                    ?.toString() ??
-                                '')
-                            : '';
-                        scaffoldKey.currentState
-                            ?.showBottomSheet((ctx) => BottomWishlist(
-                                  controller: wishlistController,
-                                  wishlistList: wishlistController.wishlistList,
-                                  productImage: firstImg,
-                                  onPressedBoard: () {
-                                    Get.back();
-                                    Get.to(() => NewBoardScreen(
-                                        title: "New Board",
-                                        boardName: "",
-                                        hintName: "Enter board name",
-                                        boardId: 0,
-                                        btnText: "Next",
-                                        productId: productId,
-                                        categoryId: 0,
-                                        screen: ""));
-                                  },
-                                  onPressed: (boardId) async {
-                                    final price = ((productController
-                                                .productDetails['lfMsp'] ??
-                                            0) as num)
-                                        .toDouble();
-                                    await wishlistController.addProductToBoard(
-                                        boardId, productId,
-                                        price: price);
-                                    Get.back();
-                                    final boardName = wishlistController
-                                            .wishlistList
-                                            .firstWhere(
-                                                (b) => b['id'] == boardId,
-                                                orElse: () =>
-                                                    {'name': 'Board'})['name']
-                                            ?.toString() ??
-                                        'Board';
-                                    Get.to(() => BoardScreen(
-                                        boardName: boardName,
-                                        boardId: boardId,
-                                        productId: productId));
-                                  },
-                                ));
-                      }
-                    },
-                    child: Container(
-                      height: 48.sp,
-                      width: 48.sp,
-                      decoration: BoxDecoration(
-                        color: whiteColor,
-                        borderRadius: BorderRadius.circular(40.sp),
-                        border: Border.all(color: blackColor, width: 1.sp),
-                      ),
-                      child: Center(
-                        child: Obx(() {
-                          final isWishlisted =
-                              wishlistController.isWishlisted.value;
-                          return Icon(
-                            isWishlisted
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: isWishlisted
-                                ? const Color(0xFFD63333)
-                                : blackColor,
-                            size: 20.sp,
-                          );
-                        }),
                       ),
                     ),
                   ),
@@ -2056,6 +2199,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                   style: TextStyle(color: subtitleColor)))));
 
   Widget _buildSimilarProducts() => SimilarProductsCarousel(
+      key: _similarSectionKey,
       productId: widget.productId,
       showTrending: false,
       onNavigating: () => setState(() => _isForeground = false));
