@@ -8,7 +8,7 @@ import '../common/widget/other/pounce_wrapper.dart';
 import '../controllers/product_controller.dart';
 import '../core/constant/constants.dart';
 import '../models/recommendation_event.dart';
-import '../screens/catalog/productlist/productdetailsscreen_v2.dart';
+import '../screens/catalog/productlist/pdp/product_details_screen_v2.dart';
 import '../services/event_tracking_service.dart';
 import '../services/recommendation_service.dart';
 

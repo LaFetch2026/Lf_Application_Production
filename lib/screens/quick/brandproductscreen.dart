@@ -23,7 +23,7 @@ import '../../controllers/product_controller.dart';
 import '../../controllers/wishlist_controller.dart';
 import '../../core/constant/constants.dart';
 import '../cartscreen.dart';
-import '../catalog/productlist/productdetailsscreen_v2.dart';
+import '../catalog/productlist/pdp/product_details_screen_v2.dart';
 import '../searchscreen.dart';
 import '../wishlistscreen.dart';
 

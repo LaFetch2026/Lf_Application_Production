@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/controllers/search_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen_v2.dart';
+import 'package:lafetch/screens/catalog/productlist/pdp/product_details_screen_v2.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../common/widget/appbar/productlist_appbar.dart';

@@ -18,7 +18,7 @@ import 'package:lafetch/screens/Brands/categoryproduct.dart'
     hide SizedBox, Center, Column, Padding;
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/common/widget/other/pounce_wrapper.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen_v2.dart';
+import 'package:lafetch/screens/catalog/productlist/pdp/product_details_screen_v2.dart';
 import 'package:lafetch/screens/home/women/productviewscreen.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
@@ -842,6 +842,14 @@ class HomeScreenState extends State<HomeScreen>
                           // ── NEW IN Section ──────────────────────────────
                           _NewInSection(newInController: newInController),
 
+                          // const SizedBox(height: 12),
+                          // Divider(
+                          //   color: Colors.grey[200],
+                          //   height: 1,
+                          //   thickness: 4.sp,
+                          // ),
+                          // const SizedBox(height: 12),
+
                           // Shop by Category Section
                           Obx(
                             () {
@@ -863,6 +871,14 @@ class HomeScreenState extends State<HomeScreen>
                                       : const SizedBox.shrink();
                             },
                           ),
+
+                          const SizedBox(height: 12),
+                          Divider(
+                            color: Colors.grey[200],
+                            height: 1,
+                            thickness: 4.sp,
+                          ),
+                          const SizedBox(height: 12),
 
                           Obx(() {
                             // ✅ Watch brandController instead of homeController
@@ -2672,7 +2688,7 @@ class _ShopByCategorySection extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(
                 left: 16.sp, top: 12.sp, bottom: 12.sp), // ✅ Consistent spacing
-            child: AppText(
+            child: const AppText(
               text: "SHOP BY CATEGORY",
               fontFamily: "Clash Display Semibold",
               fontWeight: FontWeight.w400,
@@ -2777,7 +2793,7 @@ class _ShopByCategorySection extends StatelessWidget {
                                 .toString()
                                 .toUpperCase(),
                             color: blackColor,
-                            fontSize: 13,
+                            fontSize: 12.sp,
                             maxLines: 2,
                             textAlign: TextAlign.center,
                             fontFamily: "Clash Display",
@@ -3525,26 +3541,239 @@ class _CollectionSectionState extends State<_CollectionSection> {
   }
 }
 
-class _FeaturedBrandsRow extends StatelessWidget {
+// class _FeaturedBrandsRow extends StatelessWidget {
+//   final HomeController homeController;
+//   final BrandController brandController;
+//   final FirebaseAnalytics analytics;
+//   final VoidCallback onPressedViewAll;
+//   final List<dynamic> brands; // ✅ ADD: Accept brands list
+
+//   const _FeaturedBrandsRow({
+//     required this.homeController,
+//     required this.brandController,
+//     required this.analytics,
+//     required this.onPressedViewAll,
+//     required this.brands, // ✅ ADD: Required parameter
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding:
+//           EdgeInsets.only(top: 4.sp, bottom: 12.sp), // ✅ Minimal bottom padding
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Padding(
+//             padding: EdgeInsets.symmetric(horizontal: 16.sp),
+//             child: Row(
+//               children: [
+//                 const AppText(
+//                   text: "FEATURED BRANDS",
+//                   fontFamily: "Clash Display Semibold",
+//                   color: blackColor,
+//                   fontSize: 18,
+//                 ),
+//                 const Spacer(),
+//                 InkWell(
+//                   onTap: () async {
+//                     onPressedViewAll();
+//                     await analytics.logEvent(
+//                       name: 'homepage_featurebrandviewAll',
+//                       parameters: {'page_name': 'homepage_featurebrandviewAll'},
+//                     );
+//                   },
+//                   child: Padding(
+//                     padding:
+//                         EdgeInsets.only(top: 2.sp, right: 16.sp, left: 20.sp),
+//                     child: SvgPicture.asset(
+//                       arrowViewAllImage,
+//                       height: 12.sp,
+//                       width: 8.sp,
+//                       fit: BoxFit.fill,
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//           SizedBox(height: 12.sp), // ✅ Consistent spacing
+//           SizedBox(
+//             height: 86.sp, // ✅ Reduced from 90.sp to remove excess whitespace
+//             child: ListView.builder(
+//               scrollDirection: Axis.horizontal,
+//               itemCount: brands.length,
+//               physics: const BouncingScrollPhysics(),
+//               itemBuilder: (ctx, index) {
+//                 final brand = brands[index];
+//                 final logo = (brand["logo"] ?? "").toString().trim();
+//                 final name = (brand["name"] ?? "").toString().trim();
+//                 final bgImage =
+//                     (brand["background_image"] ?? "").toString().trim();
+
+//                 return GestureDetector(
+//                   onTap: () async {
+//                     brandController.brandbackground.value = bgImage;
+//                     final id = brand["id"];
+//                     final safeId = (id is int)
+//                         ? id
+//                         : int.tryParse(id?.toString() ?? '0') ?? 0;
+
+//                     Get.to(
+//                       () => AllBrandScreen(
+//                         id: safeId,
+//                         screen: "home",
+//                         slug: "",
+//                       ),
+//                     )?.then((_) {
+//                       SystemChrome.setSystemUIOverlayStyle(
+//                         const SystemUiOverlayStyle(
+//                           statusBarColor: whiteColor,
+//                           statusBarIconBrightness: Brightness.dark,
+//                           systemNavigationBarColor: whiteColor,
+//                         ),
+//                       );
+//                     });
+//                   },
+//                   child: Padding(
+//                     padding: EdgeInsets.only(left: 16.sp),
+//                     child: Column(
+//                       mainAxisSize: MainAxisSize.min,
+//                       children: [
+//                         Container(
+//                           height: 64.sp,
+//                           width: 64.sp,
+//                           decoration: BoxDecoration(
+//                             shape: BoxShape.circle,
+//                             border: Border.all(
+//                               color: const Color.fromARGB(255, 165, 165, 166),
+//                               width: 1.sp,
+//                             ),
+//                           ),
+//                           child: ClipOval(
+//                             child: logo.isNotEmpty
+//                                 ? CachedNetworkImage(
+//                                     imageUrl: ImageHelper.toWebP(logo),
+//                                     height: 64.sp,
+//                                     width: 64.sp,
+//                                     fit: BoxFit.fill,
+//                                     // ✅ Add memory limits for brand logos
+//                                     maxHeightDiskCache: 150,
+//                                     maxWidthDiskCache: 150,
+//                                     memCacheHeight: 150,
+//                                     memCacheWidth: 150,
+//                                     fadeInDuration:
+//                                         const Duration(milliseconds: 300),
+//                                     placeholder: (_, __) => Container(
+//                                       color: Colors.black.withOpacity(0.05),
+//                                     ),
+//                                     errorWidget: (_, __, ___) => Image.asset(
+//                                       downloadImage,
+//                                       fit: BoxFit.fill,
+//                                     ),
+//                                   )
+//                                 : Image.asset(
+//                                     dummyWishlistImage,
+//                                     fit: BoxFit.fill,
+//                                   ),
+//                           ),
+//                         ),
+//                         SizedBox(height: 6.sp),
+//                         SizedBox(
+//                           width: 64.sp,
+//                           child: Text(
+//                             name.isNotEmpty ? name : 'Unnamed',
+//                             maxLines: 1,
+//                             overflow: TextOverflow.ellipsis,
+//                             textAlign: TextAlign.center,
+//                             style: TextStyle(
+//                               fontFamily: "Clash Display Regular",
+//                               fontSize: 10.sp,
+//                               fontWeight: FontWeight.w500,
+//                               color: Colors.black,
+//                             ),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+class _FeaturedBrandsRow extends StatefulWidget {
   final HomeController homeController;
   final BrandController brandController;
   final FirebaseAnalytics analytics;
   final VoidCallback onPressedViewAll;
-  final List<dynamic> brands; // ✅ ADD: Accept brands list
+  final List<dynamic> brands;
 
   const _FeaturedBrandsRow({
     required this.homeController,
     required this.brandController,
     required this.analytics,
     required this.onPressedViewAll,
-    required this.brands, // ✅ ADD: Required parameter
+    required this.brands,
   });
+
+  @override
+  State<_FeaturedBrandsRow> createState() => _FeaturedBrandsRowState();
+}
+
+class _FeaturedBrandsRowState extends State<_FeaturedBrandsRow> {
+  late final ScrollController _scrollController;
+  Timer? _autoScrollTimer;
+  bool _isForward = true;
+  bool _userScrolling = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _startAutoScroll();
+  }
+
+  void _startAutoScroll() {
+    _autoScrollTimer = Timer.periodic(const Duration(milliseconds: 30), (_) {
+      // if (!_scrollController.hasClients) return;
+      if (!_scrollController.hasClients || _userScrolling) return;
+
+      final max = _scrollController.position.maxScrollExtent;
+      final current = _scrollController.offset;
+
+      if (_isForward) {
+        if (current >= max) {
+          _isForward = false;
+        } else {
+          _scrollController.jumpTo(current + 1.5);
+        }
+      } else {
+        if (current <= 0) {
+          _isForward = true;
+        } else {
+          _scrollController.jumpTo(current - 1.5);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _autoScrollTimer?.cancel();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          EdgeInsets.only(top: 4.sp, bottom: 12.sp), // ✅ Minimal bottom padding
+      padding: EdgeInsets.only(top: 4.sp, bottom: 12.sp),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -3561,8 +3790,8 @@ class _FeaturedBrandsRow extends StatelessWidget {
                 const Spacer(),
                 InkWell(
                   onTap: () async {
-                    onPressedViewAll();
-                    await analytics.logEvent(
+                    widget.onPressedViewAll();
+                    await widget.analytics.logEvent(
                       name: 'homepage_featurebrandviewAll',
                       parameters: {'page_name': 'homepage_featurebrandviewAll'},
                     );
@@ -3581,108 +3810,123 @@ class _FeaturedBrandsRow extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 12.sp), // ✅ Consistent spacing
+          SizedBox(height: 12.sp),
           SizedBox(
-            height: 86.sp, // ✅ Reduced from 90.sp to remove excess whitespace
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: brands.length,
-              physics: const BouncingScrollPhysics(),
-              itemBuilder: (ctx, index) {
-                final brand = brands[index];
-                final logo = (brand["logo"] ?? "").toString().trim();
-                final name = (brand["name"] ?? "").toString().trim();
-                final bgImage =
-                    (brand["background_image"] ?? "").toString().trim();
+            height: 86.sp,
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (notification is ScrollStartNotification &&
+                    notification.dragDetails != null) {
+                  _userScrolling = true;
+                } else if (notification is ScrollEndNotification) {
+                  Future.delayed(const Duration(seconds: 2), () {
+                    if (mounted) {
+                      _userScrolling = false;
+                    }
+                  });
+                }
+                return false;
+              },
+              child: ListView.builder(
+                controller: _scrollController,
+                scrollDirection: Axis.horizontal,
+                itemCount: widget.brands.length,
+                physics: const BouncingScrollPhysics(),
+                itemBuilder: (ctx, index) {
+                  final brand = widget.brands[index];
+                  final logo = (brand["logo"] ?? "").toString().trim();
+                  final name = (brand["name"] ?? "").toString().trim();
+                  final bgImage =
+                      (brand["background_image"] ?? "").toString().trim();
 
-                return GestureDetector(
-                  onTap: () async {
-                    brandController.brandbackground.value = bgImage;
-                    final id = brand["id"];
-                    final safeId = (id is int)
-                        ? id
-                        : int.tryParse(id?.toString() ?? '0') ?? 0;
+                  return GestureDetector(
+                    onTap: () async {
+                      widget.brandController.brandbackground.value = bgImage;
+                      final id = brand["id"];
+                      final safeId = (id is int)
+                          ? id
+                          : int.tryParse(id?.toString() ?? '0') ?? 0;
 
-                    Get.to(
-                      () => AllBrandScreen(
-                        id: safeId,
-                        screen: "home",
-                        slug: "",
-                      ),
-                    )?.then((_) {
-                      SystemChrome.setSystemUIOverlayStyle(
-                        const SystemUiOverlayStyle(
-                          statusBarColor: whiteColor,
-                          statusBarIconBrightness: Brightness.dark,
-                          systemNavigationBarColor: whiteColor,
+                      Get.to(
+                        () => AllBrandScreen(
+                          id: safeId,
+                          screen: "home",
+                          slug: "",
                         ),
-                      );
-                    });
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 16.sp),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          height: 64.sp,
-                          width: 64.sp,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color.fromARGB(255, 165, 165, 166),
-                              width: 1.sp,
-                            ),
+                      )?.then((_) {
+                        SystemChrome.setSystemUIOverlayStyle(
+                          const SystemUiOverlayStyle(
+                            statusBarColor: whiteColor,
+                            statusBarIconBrightness: Brightness.dark,
+                            systemNavigationBarColor: whiteColor,
                           ),
-                          child: ClipOval(
-                            child: logo.isNotEmpty
-                                ? CachedNetworkImage(
-                                    imageUrl: ImageHelper.toWebP(logo),
-                                    height: 64.sp,
-                                    width: 64.sp,
-                                    fit: BoxFit.fill,
-                                    // ✅ Add memory limits for brand logos
-                                    maxHeightDiskCache: 150,
-                                    maxWidthDiskCache: 150,
-                                    memCacheHeight: 150,
-                                    memCacheWidth: 150,
-                                    fadeInDuration:
-                                        const Duration(milliseconds: 300),
-                                    placeholder: (_, __) => Container(
-                                      color: Colors.black.withOpacity(0.05),
-                                    ),
-                                    errorWidget: (_, __, ___) => Image.asset(
-                                      downloadImage,
+                        );
+                      });
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 16.sp),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            height: 64.sp,
+                            width: 64.sp,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color.fromARGB(255, 165, 165, 166),
+                                width: 1.sp,
+                              ),
+                            ),
+                            child: ClipOval(
+                              child: logo.isNotEmpty
+                                  ? CachedNetworkImage(
+                                      imageUrl: ImageHelper.toWebP(logo),
+                                      height: 64.sp,
+                                      width: 64.sp,
+                                      fit: BoxFit.fill,
+                                      maxHeightDiskCache: 150,
+                                      maxWidthDiskCache: 150,
+                                      memCacheHeight: 150,
+                                      memCacheWidth: 150,
+                                      fadeInDuration:
+                                          const Duration(milliseconds: 300),
+                                      placeholder: (_, __) => Container(
+                                        color: Colors.black.withOpacity(0.05),
+                                      ),
+                                      errorWidget: (_, __, ___) => Image.asset(
+                                        downloadImage,
+                                        fit: BoxFit.fill,
+                                      ),
+                                    )
+                                  : Image.asset(
+                                      dummyWishlistImage,
                                       fit: BoxFit.fill,
                                     ),
-                                  )
-                                : Image.asset(
-                                    dummyWishlistImage,
-                                    fit: BoxFit.fill,
-                                  ),
-                          ),
-                        ),
-                        SizedBox(height: 6.sp),
-                        SizedBox(
-                          width: 64.sp,
-                          child: Text(
-                            name.isNotEmpty ? name : 'Unnamed',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: "Clash Display Regular",
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
                             ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 6.sp),
+                          SizedBox(
+                            width: 64.sp,
+                            child: Text(
+                              name.isNotEmpty ? name : 'Unnamed',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: "Clash Display Regular",
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ],

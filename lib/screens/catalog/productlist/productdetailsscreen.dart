@@ -304,7 +304,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      AppSpacingText(
+                      const AppSpacingText(
                         text: 'WRITE A REVIEW',
                         fontFamily: "Clash Display",
                         fontWeight: FontWeight.w600,

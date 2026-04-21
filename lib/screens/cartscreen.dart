@@ -45,7 +45,7 @@ import '../controllers/profile_controller.dart';
 import '../controllers/wishlist_controller.dart';
 import '../core/constant/constants.dart';
 import '../common/widget/newsletter/newsletter_section.dart';
-import 'catalog/productlist/productdetailsscreen_v2.dart';
+import 'catalog/productlist/pdp/product_details_screen_v2.dart';
 
 class CartScreen extends StatefulWidget {
   final Color backgroundcolor;

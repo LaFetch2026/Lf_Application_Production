@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen_v2.dart';
+import 'package:lafetch/screens/catalog/productlist/pdp/product_details_screen_v2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 

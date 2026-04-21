@@ -102,7 +102,7 @@ class ReviewProductScreenState extends State<ReviewProductScreen> {
                         padding: EdgeInsets.symmetric(
                           horizontal: 16.sp,
                         ),
-                        child: AppText(
+                        child: const AppText(
                           text: "Write a Review",
                           maxLines: 2,
                           fontFamily: "Clash Display",
