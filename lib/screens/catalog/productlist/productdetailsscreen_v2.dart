@@ -298,6 +298,117 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
 
   // ── trust badge sheet ─────────────────────────────────────────────────────
 
+  // void _showBadgeSheet(String key) {
+  //   final Map<String, Map<String, dynamic>> info = {
+  //     'buyer': {
+  //       'title': 'Buyer Protection',
+  //       'icon': Icons.verified_outlined,
+  //       'body':
+  //           'Your purchase is fully protected. If your order does not arrive or is not as described, we will make it right with a full refund or replacement.'
+  //     },
+  //     'auth': {
+  //       'title': 'Authenticity Guaranteed',
+  //       'icon': Icons.security_outlined,
+  //       'body':
+  //           'Every product on LaFetch is verified for authenticity by our expert team. We source only from trusted sellers and brands.'
+  //     },
+  //     'returns': {
+  //       'title': 'Easy Returns',
+  //       'icon': Icons.local_shipping_outlined,
+  //       'body':
+  //           'Not happy with your purchase? Return it within 7 days of delivery. We will pick it up from your doorstep at no extra cost.'
+  //     },
+  //     'exchange': {
+  //       'title': 'Exchange Policy',
+  //       'icon': Icons.swap_horiz_outlined,
+  //       'isImage': true,
+  //       'image': 'assets/images/exchange_policy.png'
+  //     },
+  //   };
+  //   final data = info[key]!;
+  //   // showModalBottomSheet(
+  //   //   context: context,
+  //   //   backgroundColor: Colors.transparent,
+  //   //   builder: (_) => Container(
+  //   //     decoration: BoxDecoration(
+  //   //         color: whiteColor,
+  //   //         borderRadius: BorderRadius.vertical(top: Radius.circular(16.sp))),
+  //   //     padding: EdgeInsets.fromLTRB(20.sp, 12.sp, 20.sp, 32.sp),
+  //   //     child: Column(
+  //   //         mainAxisSize: MainAxisSize.min,
+  //   //         crossAxisAlignment: CrossAxisAlignment.start,
+  //   //         children: [
+  //   //           Center(
+  //   //               child: Container(
+  //   //                   width: 36.sp,
+  //   //                   height: 4.sp,
+  //   //                   decoration: BoxDecoration(
+  //   //                       color: colorSecondary,
+  //   //                       borderRadius: BorderRadius.circular(2.sp)))),
+  //   //           SizedBox(height: 16.sp),
+  //   //           Row(children: [
+  //   //             Icon(data['icon'] as IconData, size: 22.sp),
+  //   //             SizedBox(width: 10.sp),
+  //   //             Text(data['title'] as String,
+  //   //                 style: TextStyle(
+  //   //                     fontFamily: "Clash Display",
+  //   //                     fontWeight: FontWeight.w600,
+  //   //                     fontSize: 16.sp)),
+  //   //           ]),
+  //   //           SizedBox(height: 16.sp),
+  //   //           if (data['isImage'] == true)
+  //   //             ClipRRect(
+  //   //               borderRadius: BorderRadius.circular(12.sp),
+  //   //               child: Image.asset(
+  //   //                 data['image'] as String,
+  //   //                 width: double.infinity,
+  //   //                 height: 200.sp,
+  //   //                 fit: BoxFit.contain,
+  //   //               ),
+  //   //             )
+  //   //           else
+  //   //             Text(data['body'] as String,
+  //   //                 style: TextStyle(
+  //   //                     fontFamily: "Clash Display Regular",
+  //   //                     fontSize: 13.sp,
+  //   //                     color: subtitleColor,
+  //   //                     height: 1.6)),
+  //   //           SizedBox(height: 8.sp),
+  //   //         ]),
+  //   //   ),
+  //   // );
+  //   showModalBottomSheet(
+  //     context: context,
+  //     backgroundColor: Colors.transparent,
+  //     isScrollControlled: true,
+  //     builder: (_) => Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         const SizedBox(height: 8),
+  //         Container(
+  //           width: 36,
+  //           height: 4,
+  //           decoration: BoxDecoration(
+  //             color: Colors.white54,
+  //             borderRadius: BorderRadius.circular(2),
+  //           ),
+  //         ),
+  //         const SizedBox(height: 8),
+  //         ClipRRect(
+  //           borderRadius: const BorderRadius.vertical(
+  //             top: Radius.circular(20),
+  //           ),
+  //           child: Image.asset(
+  //             data['image'],
+  //             width: double.infinity,
+  //             fit: BoxFit.cover,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   void _showBadgeSheet(String key) {
     final Map<String, Map<String, dynamic>> info = {
       'buyer': {
@@ -321,57 +432,105 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
       'exchange': {
         'title': 'Exchange Policy',
         'icon': Icons.swap_horiz_outlined,
-        'isImage': true
+        'isImage': true,
+        'image': 'assets/images/exchange_policy.png',
       },
     };
+
     final data = info[key]!;
+    final bool isImage = data['isImage'] == true;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (_) => Container(
-        decoration: BoxDecoration(
-            color: whiteColor,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16.sp))),
-        padding: EdgeInsets.fromLTRB(20.sp, 12.sp, 20.sp, 32.sp),
-        child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+      isScrollControlled: true,
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(
+              bottom: MediaQuery.of(sheetContext).viewInsets.bottom),
+          child: Stack(
+            clipBehavior: Clip.none,
             children: [
-              Center(
-                  child: Container(
-                      width: 36.sp,
-                      height: 4.sp,
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: whiteColor,
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(20.sp)),
+                ),
+                padding: EdgeInsets.fromLTRB(20.sp, 28.sp, 20.sp, 24.sp),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(data['icon'] as IconData, size: 22.sp),
+                        SizedBox(width: 10.sp),
+                        Expanded(
+                          child: Text(
+                            data['title'] as String,
+                            style: TextStyle(
+                              fontFamily: "Clash Display",
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16.sp),
+                    if (isImage)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12.sp),
+                        child: Image.asset(
+                          data['image'] as String,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    else
+                      Text(
+                        data['body'] as String,
+                        style: TextStyle(
+                          fontFamily: "Clash Display Regular",
+                          fontSize: 13.sp,
+                          color: subtitleColor,
+                          height: 1.6,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: -40.sp,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(sheetContext),
+                    child: Container(
+                      width: 36,
+                      height: 36,
                       decoration: BoxDecoration(
-                          color: colorSecondary,
-                          borderRadius: BorderRadius.circular(2.sp)))),
-              SizedBox(height: 16.sp),
-              Row(children: [
-                Icon(data['icon'] as IconData, size: 22.sp),
-                SizedBox(width: 10.sp),
-                Text(data['title'] as String,
-                    style: TextStyle(
-                        fontFamily: "Clash Display",
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16.sp)),
-              ]),
-              SizedBox(height: 16.sp),
-              if (data['isImage'] == true)
-                Container(
-                    width: double.infinity,
-                    height: 200.sp,
-                    color: colorSecondary,
-                    child: Center(
-                        child: Text('Exchange Policy Image Placeholder',
-                            style: TextStyle(color: subtitleColor))))
-              else
-                Text(data['body'] as String,
-                    style: TextStyle(
-                        fontFamily: "Clash Display Regular",
-                        fontSize: 13.sp,
-                        color: subtitleColor,
-                        height: 1.6)),
-              SizedBox(height: 8.sp),
-            ]),
+                        color: whiteColor,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 12,
+                            spreadRadius: 1,
+                            color: Colors.black.withOpacity(0.08),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(Icons.close, size: 20),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -794,8 +953,8 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                     _buildDelivery(),
                     _buildActionButtons(),
                     _buildSimilarProducts(),
-                    _buildDeliveryPolicies(),
                     _buildLFNote(),
+                    _buildDeliveryPolicies(),
                     _buildFAQs(),
                     _buildLFPromises(),
                     _buildTrendingProducts(),
@@ -1395,10 +1554,10 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
         // SizedBox(height: 16.sp),
         AppSpacingText(
           text: 'Delivery Options'.toUpperCase(),
-          fontFamily: "Clash Display Regular",
+          fontFamily: "Clash Display",
           fontWeight: FontWeight.w600,
           color: Colors.black,
-          fontSize: 12,
+          fontSize: 14,
         ),
         SizedBox(height: 12.sp),
         SizedBox(
@@ -1761,27 +1920,41 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
       showTrending: false,
       onNavigating: () => setState(() => _isForeground = false));
 
-  Widget _buildDeliveryPolicies() => Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.sp),
-      child: ExpansionTile(
-          title: const Text('Delivery & Services Policies'),
+  Widget _buildDeliveryPolicies() => ExpansionTile(
+          shape: const Border(),
+          title: const Text('Delivery & Services Policies',
+              style: TextStyle(fontFamily: "Clash Display")),
           children: [
             Padding(
-                padding: EdgeInsets.all(12.sp),
-                child: const Text(
-                    'Free delivery on orders above ₹999\n7-day return policy\nCash on delivery available\nSecure payments'))
-          ]));
+              padding: EdgeInsets.all(8.sp),
+              child: const Text(
+                  'Free delivery on orders above ₹999\n7-day return policy\nCash on delivery available\nSecure payments',
+                  style: TextStyle(fontFamily: "Clash Display")),
+            )
+          ]);
 
   Widget _buildLFNote() => Obx(() {
         if (productController.isDetails.value) return const SizedBox();
         final desc =
             productController.productDetails['description']?.toString() ?? '';
         if (desc.isEmpty) return const SizedBox();
-        return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.sp),
-            child: ExpansionTile(title: const Text('LF Note'), children: [
-              Padding(padding: EdgeInsets.all(12.sp), child: Text(desc))
-            ]));
+        return ExpansionTile(
+            shape: const Border(),
+            initiallyExpanded: true,
+            title: const Text('Product details',
+                style: TextStyle(fontFamily: "Clash Display")),
+            children: [
+              Padding(
+                  padding: EdgeInsets.all(12.sp),
+                  child: Text(
+                    desc,
+                    style: const TextStyle(
+                        height: 1,
+                        fontFamily: "Clash Display",
+                        fontWeight: FontWeight.w400,
+                        color: Colors.grey),
+                  ))
+            ]);
       });
 
   Widget _buildFAQs() => Padding(
@@ -1803,7 +1976,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
             children: [
               Text(
                 '7-day return policy from delivery date',
-                style: TextStyle(fontFamily: "Clash Display"),
+                style: TextStyle(fontFamily: "Clash Display Regular"),
               )
             ]),
         const ExpansionTile(
@@ -1845,26 +2018,31 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
       ]));
 
   Widget _buildLFPromises() => Container(
-      margin: EdgeInsets.all(16.sp),
-      padding: EdgeInsets.all(16.sp),
-      color: colorSecondary,
-      child: Column(children: [
-        Text('LF Promises',
-            style: TextStyle(
-                fontFamily: "Clash Display",
-                fontWeight: FontWeight.w600,
-                fontSize: 16.sp)),
-        SizedBox(height: 12.sp),
-        const Text(
-            '✓ 100% Authentic Products\n✓ Secure Payments\n✓ Fast Delivery\n✓ Easy Returns\n✓ 24/7 Customer Support'),
-      ]));
+        width: double.infinity,
+        child: Image.asset("assets/images/lf_promises.png"),
+      );
+  // Container(
+  //     margin: EdgeInsets.all(16.sp),
+  //     padding: EdgeInsets.all(16.sp),
+  //     color: colorSecondary,
+  //     child: Column(children: [
+  //       Text('LF Promises',
+  //           style: TextStyle(
+  //               fontFamily: "Clash Display",
+  //               fontWeight: FontWeight.w600,
+  //               fontSize: 16.sp)),
+  //       SizedBox(height: 12.sp),
+  //       const Text(
+  //           '✓ 100% Authentic Products\n✓ Secure Payments\n✓ Fast Delivery\n✓ Easy Returns\n✓ 24/7 Customer Support'),
+  //     ]));
 
   Widget _buildTrendingProducts() => SimilarProductsCarousel(
       productId: widget.productId,
       showSimilar: false,
       onNavigating: () => setState(() => _isForeground = false));
 
-  Widget _buildNewsletter() => const NewsletterSection(title: "NEWS LETTERS");
+  Widget _buildNewsletter() =>
+      const NewsletterSection(title: "LF NEWS LETTERS");
 }
 
 // ── zoomable image widget ─────────────────────────────────────────────────────

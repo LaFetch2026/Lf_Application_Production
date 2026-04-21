@@ -1210,7 +1210,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                 _buildCouponSection(),
                 _buildOrderDetails(),
                 const NewsletterSection(
-                  title: "NEWS LETTERS",
+                  title: "LF NEWS LETTERS",
                 ),
               ],
             ),

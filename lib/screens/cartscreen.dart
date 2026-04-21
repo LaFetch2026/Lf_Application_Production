@@ -1049,7 +1049,7 @@ class CartScreenState extends State<CartScreen> {
 
                                     // Newsletter Section
                                     const NewsletterSection(
-                                      title: "NEWS LETTERS",
+                                      title: "LF NEWS LETTERS",
                                     ),
                                   ],
                                 ),

@@ -1220,7 +1220,7 @@ class HomeScreenState extends State<HomeScreen>
                           ),
                           // Newsletter Section
                           const NewsletterSection(
-                            title: "NEWS LETTERS",
+                            title: "LF NEWS LETTERS",
                           ),
                         ],
                       ),
