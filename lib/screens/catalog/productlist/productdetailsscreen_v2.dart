@@ -1114,9 +1114,38 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
         );
       });
 
+  Widget _buildThumb(List<String> imgs, int i, bool isActive,
+      {double? size, EdgeInsets margin = EdgeInsets.zero}) {
+    return GestureDetector(
+      onTap: () => _pageController.animateToPage(i,
+          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        height: size ?? 56.sp,
+        width: size,
+        margin: margin,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(6.sp),
+          border: Border.all(
+            color: isActive ? blackColor : Colors.grey.shade300,
+            width: isActive ? 2 : 1,
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(5.sp),
+          child: Opacity(
+            opacity: isActive ? 1.0 : 0.55,
+            child: CachedNetworkImage(imageUrl: imgs[i], fit: BoxFit.cover),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildImages() => Obx(() {
-        if (_isForeground && productController.isDetails.value)
+        if (_isForeground && productController.isDetails.value) {
           return const DummyProductImage();
+        }
         final imgs = _imagesOnly();
         return Column(children: [
           Stack(
@@ -1127,7 +1156,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                 child: PageView.builder(
                   controller: _pageController,
                   onPageChanged: (i) {
-                    _curr = i;
+                    setState(() => _curr = i);
                   },
                   itemCount: imgs.length,
                   itemBuilder: (_, i) => GestureDetector(
@@ -1363,17 +1392,33 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
           ),
           if (imgs.length > 1)
             Padding(
-              padding: EdgeInsets.only(top: 8.sp),
-              child: PageIndicator(
-                controller: _pageController,
-                count: imgs.length,
-                size: 5.0.sp,
-                activeColor: Colors.black,
-                color: const Color(0xffE5E7EB),
-                layout: PageIndicatorLayout.WARM,
-                scale: 0.6,
-                space: 6.sp,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 12.sp, vertical: 8.sp),
+              child: imgs.length <= 3
+                  // 2-3 images: spread evenly across the width
+                  ? Row(
+                      children: List.generate(imgs.length, (i) {
+                        final isActive = i == _curr;
+                        return Expanded(
+                          child: _buildThumb(imgs, i, isActive,
+                              margin: i < imgs.length - 1
+                                  ? EdgeInsets.only(right: 4.sp)
+                                  : EdgeInsets.zero),
+                        );
+                      }),
+                    )
+                  // 4+ images: fixed 56sp squares, scrollable
+                  : SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: List.generate(imgs.length, (i) {
+                          final isActive = i == _curr;
+                          return _buildThumb(imgs, i, isActive,
+                              size: 56.sp,
+                              margin: EdgeInsets.only(
+                                  right: i < imgs.length - 1 ? 4.sp : 0));
+                        }),
+                      ),
+                    ),
             ),
         ]);
       });
