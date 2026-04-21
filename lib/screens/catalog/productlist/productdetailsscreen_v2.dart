@@ -325,19 +325,25 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
   //       'title': 'Buyer Protection',
   //       'icon': Icons.verified_outlined,
   //       'body':
-  //           'Your purchase is fully protected. If your order does not arrive or is not as described, we will make it right with a full refund or replacement.'
+  //           'Your purchase is fully protected. If your order does not arrive or is not as described, we will make it right with a full refund or replacement.',
   //     },
   //     'auth': {
   //       'title': 'Authenticity Guaranteed',
   //       'icon': Icons.security_outlined,
   //       'body':
-  //           'Every product on LaFetch is verified for authenticity by our expert team. We source only from trusted sellers and brands.'
+  //           'Every product on LaFetch is verified for authenticity by our expert team. We source only from trusted sellers and brands.',
+  //     },
+  //     'delivery': {
+  //       'title': 'Quick Delivery',
+  //       'icon': Icons.local_shipping_outlined,
+  //       'body':
+  //           'Get your products delivered quickly and safely to your doorstep.',
   //     },
   //     'returns': {
   //       'title': 'Easy Returns',
-  //       'icon': Icons.local_shipping_outlined,
+  //       'icon': Icons.keyboard_return_outlined,
   //       'body':
-  //           'Not happy with your purchase? Return it within 7 days of delivery. We will pick it up from your doorstep at no extra cost.'
+  //           'Not happy with your purchase? Return it within 7 days of delivery. We will pick it up from your doorstep at no extra cost.',
   //     },
   //     'exchange': {
   //       'title': 'Exchange Policy',
@@ -347,101 +353,226 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
   //     },
   //   };
 
-  //   final data = info[key]!;
-  //   final bool isImage = data['isImage'] == true;
+  //   final bool isImage = info[key]?['isImage'] == true;
 
   //   showModalBottomSheet(
   //     context: context,
   //     backgroundColor: Colors.transparent,
   //     isScrollControlled: true,
-  //     builder: (sheetContext) => SafeArea(
-  //       child: Padding(
-  //         padding: EdgeInsets.only(
-  //             bottom: MediaQuery.of(sheetContext).viewInsets.bottom),
-  //         child: Stack(
-  //           clipBehavior: Clip.none,
-  //           children: [
-  //             Container(
-  //               width: double.infinity,
-  //               decoration: BoxDecoration(
-  //                 color: whiteColor,
+  //     useSafeArea: true,
+  //     builder: (sheetContext) {
+  //       if (isImage) {
+  //         final data = info[key]!;
+
+  //         return AnnotatedRegion<SystemUiOverlayStyle>(
+  //           value: const SystemUiOverlayStyle(
+  //             systemNavigationBarColor: Colors.transparent,
+  //             systemNavigationBarDividerColor: Colors.transparent,
+  //             systemNavigationBarIconBrightness: Brightness.dark,
+  //           ),
+  //           child: Stack(
+  //             clipBehavior: Clip.none,
+  //             children: [
+  //               ClipRRect(
   //                 borderRadius:
   //                     BorderRadius.vertical(top: Radius.circular(20.sp)),
+  //                 child: Image.asset(
+  //                   data['image'] as String,
+  //                   width: double.infinity,
+  //                   fit: BoxFit.cover,
+  //                 ),
   //               ),
-  //               padding: EdgeInsets.fromLTRB(20.sp, 28.sp, 20.sp, 24.sp),
-  //               child: Column(
-  //                 mainAxisSize: MainAxisSize.min,
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   Row(
-  //                     children: [
-  //                       Icon(data['icon'] as IconData, size: 22.sp),
-  //                       SizedBox(width: 10.sp),
-  //                       Expanded(
-  //                         child: Text(
-  //                           data['title'] as String,
-  //                           style: TextStyle(
-  //                             fontFamily: "Clash Display",
-  //                             fontWeight: FontWeight.w600,
-  //                             fontSize: 16.sp,
+  //               Positioned(
+  //                 top: -40.sp,
+  //                 left: 0,
+  //                 right: 0,
+  //                 child: Center(
+  //                   child: GestureDetector(
+  //                     onTap: () => Navigator.pop(sheetContext),
+  //                     child: Container(
+  //                       width: 36,
+  //                       height: 36,
+  //                       decoration: BoxDecoration(
+  //                         color: whiteColor,
+  //                         shape: BoxShape.circle,
+  //                         boxShadow: [
+  //                           BoxShadow(
+  //                             blurRadius: 12,
+  //                             spreadRadius: 1,
+  //                             color: Colors.black.withOpacity(0.08),
   //                           ),
+  //                         ],
+  //                       ),
+  //                       child: const Icon(Icons.close, size: 20),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       }
+
+  //       String selectedKey = key;
+
+  //       return StatefulBuilder(
+  //         builder: (context, setState) {
+  //           final data = info[selectedKey]!;
+
+  //           return AnnotatedRegion<SystemUiOverlayStyle>(
+  //             value: const SystemUiOverlayStyle(
+  //               systemNavigationBarColor: Colors.transparent,
+  //               systemNavigationBarDividerColor: Colors.transparent,
+  //               systemNavigationBarIconBrightness: Brightness.dark,
+  //             ),
+  //             child: Stack(
+  //               clipBehavior: Clip.none,
+  //               children: [
+  //                 Container(
+  //                   width: double.infinity,
+  //                   decoration: BoxDecoration(
+  //                     color: whiteColor,
+  //                     borderRadius:
+  //                         BorderRadius.vertical(top: Radius.circular(20.sp)),
+  //                   ),
+  //                   padding: EdgeInsets.fromLTRB(16.sp, 28.sp, 16.sp, 24.sp),
+  //                   child: Column(
+  //                     mainAxisSize: MainAxisSize.min,
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       Row(
+  //                         children:
+  //                             ['buyer', 'auth', 'returns'].map((badgeKey) {
+  //                           final badge = info[badgeKey]!;
+  //                           final bool isSelected = badgeKey == selectedKey;
+
+  //                           return Expanded(
+  //                             child: GestureDetector(
+  //                               behavior: HitTestBehavior.opaque,
+  //                               onTap: () {
+  //                                 setState(() {
+  //                                   selectedKey = badgeKey;
+  //                                 });
+  //                               },
+  //                               child: Padding(
+  //                                 padding:
+  //                                     EdgeInsets.symmetric(horizontal: 4.sp),
+  //                                 child: Column(
+  //                                   children: [
+  //                                     Container(
+  //                                       width: 52.sp,
+  //                                       height: 52.sp,
+  //                                       decoration: BoxDecoration(
+  //                                         shape: BoxShape.circle,
+  //                                         color: isSelected
+  //                                             ? Colors.black
+  //                                             : Colors.transparent,
+  //                                         border: Border.all(
+  //                                           color: isSelected
+  //                                               ? Colors.black
+  //                                               : Colors.grey.shade400,
+  //                                           width: 1.2,
+  //                                         ),
+  //                                         boxShadow: isSelected
+  //                                             ? [
+  //                                                 BoxShadow(
+  //                                                   blurRadius: 10,
+  //                                                   color: Colors.black
+  //                                                       .withOpacity(0.12),
+  //                                                 ),
+  //                                               ]
+  //                                             : [],
+  //                                       ),
+  //                                       child: Icon(
+  //                                         badge['icon'] as IconData,
+  //                                         size: 22.sp,
+  //                                         color: isSelected
+  //                                             ? Colors.white
+  //                                             : Colors.black,
+  //                                       ),
+  //                                     ),
+  //                                     SizedBox(height: 6.sp),
+  //                                     Text(
+  //                                       badge['title'] as String,
+  //                                       textAlign: TextAlign.center,
+  //                                       maxLines: 2,
+  //                                       overflow: TextOverflow.ellipsis,
+  //                                       style: TextStyle(
+  //                                         fontFamily: "Clash Display Regular",
+  //                                         fontSize: 10.sp,
+  //                                         color: Colors.black,
+  //                                         height: 1.2,
+  //                                       ),
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           );
+  //                         }).toList(),
+  //                       ),
+  //                       SizedBox(height: 20.sp),
+  //                       Row(
+  //                         children: [
+  //                           Icon(data['icon'] as IconData, size: 22.sp),
+  //                           SizedBox(width: 10.sp),
+  //                           Expanded(
+  //                             child: Text(
+  //                               data['title'] as String,
+  //                               style: TextStyle(
+  //                                 fontFamily: "Clash Display",
+  //                                 fontWeight: FontWeight.w600,
+  //                                 fontSize: 16.sp,
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                       SizedBox(height: 16.sp),
+  //                       Text(
+  //                         data['body'] as String,
+  //                         style: TextStyle(
+  //                           fontFamily: "Clash Display Regular",
+  //                           fontSize: 13.sp,
+  //                           color: subtitleColor,
+  //                           height: 1.6,
   //                         ),
   //                       ),
   //                     ],
   //                   ),
-  //                   SizedBox(height: 16.sp),
-  //                   if (isImage)
-  //                     ClipRRect(
-  //                       borderRadius: BorderRadius.circular(12.sp),
-  //                       child: Image.asset(
-  //                         data['image'] as String,
-  //                         width: double.infinity,
-  //                         fit: BoxFit.cover,
-  //                       ),
-  //                     )
-  //                   else
-  //                     Text(
-  //                       data['body'] as String,
-  //                       style: TextStyle(
-  //                         fontFamily: "Clash Display Regular",
-  //                         fontSize: 13.sp,
-  //                         color: subtitleColor,
-  //                         height: 1.6,
-  //                       ),
-  //                     ),
-  //                 ],
-  //               ),
-  //             ),
-  //             Positioned(
-  //               top: -40.sp,
-  //               left: 0,
-  //               right: 0,
-  //               child: Center(
-  //                 child: GestureDetector(
-  //                   onTap: () => Navigator.pop(sheetContext),
-  //                   child: Container(
-  //                     width: 36,
-  //                     height: 36,
-  //                     decoration: BoxDecoration(
-  //                       color: whiteColor,
-  //                       shape: BoxShape.circle,
-  //                       boxShadow: [
-  //                         BoxShadow(
-  //                           blurRadius: 12,
-  //                           spreadRadius: 1,
-  //                           color: Colors.black.withOpacity(0.08),
+  //                 ),
+  //                 Positioned(
+  //                   top: -40.sp,
+  //                   left: 0,
+  //                   right: 0,
+  //                   child: Center(
+  //                     child: GestureDetector(
+  //                       onTap: () => Navigator.pop(sheetContext),
+  //                       child: Container(
+  //                         width: 36,
+  //                         height: 36,
+  //                         decoration: BoxDecoration(
+  //                           color: whiteColor,
+  //                           shape: BoxShape.circle,
+  //                           boxShadow: [
+  //                             BoxShadow(
+  //                               blurRadius: 12,
+  //                               spreadRadius: 1,
+  //                               color: Colors.black.withOpacity(0.08),
+  //                             ),
+  //                           ],
   //                         ),
-  //                       ],
+  //                         child: const Icon(Icons.close, size: 20),
+  //                       ),
   //                     ),
-  //                     child: const Icon(Icons.close, size: 20),
   //                   ),
   //                 ),
-  //               ),
+  //               ],
   //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
+  //           );
+  //         },
+  //       );
+  //     },
   //   );
   // }
 
@@ -454,14 +585,20 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
             'Your purchase is fully protected. If your order does not arrive or is not as described, we will make it right with a full refund or replacement.',
       },
       'auth': {
-        'title': 'Authenticity Guaranteed',
+        'title': 'LaFetch Verified',
         'icon': Icons.security_outlined,
         'body':
             'Every product on LaFetch is verified for authenticity by our expert team. We source only from trusted sellers and brands.',
       },
+      'delivery': {
+        'title': 'Quick Delivery',
+        'icon': Icons.local_shipping_outlined,
+        'body':
+            'Get your products delivered quickly and safely to your doorstep.',
+      },
       'returns': {
         'title': 'Easy Returns',
-        'icon': Icons.local_shipping_outlined,
+        'icon': Icons.assignment_return_outlined,
         'body':
             'Not happy with your purchase? Return it within 7 days of delivery. We will pick it up from your doorstep at no extra cost.',
       },
@@ -481,6 +618,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
       isScrollControlled: true,
       useSafeArea: true,
       builder: (sheetContext) {
+        /// 🔥 IMAGE SHEET (unchanged)
         if (isImage) {
           final data = info[key]!;
 
@@ -533,11 +671,18 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
           );
         }
 
+        /// 🔥 TEXT SHEET (fixed)
         String selectedKey = key;
 
         return StatefulBuilder(
           builder: (context, setState) {
             final data = info[selectedKey]!;
+
+            /// 👇 dynamic badge list (excludes exchange automatically)
+            final textBadges = info.entries
+                .where((e) => e.value['isImage'] != true)
+                .map((e) => e.key)
+                .toList();
 
             return AnnotatedRegion<SystemUiOverlayStyle>(
               value: const SystemUiOverlayStyle(
@@ -560,9 +705,9 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        /// 🔥 DYNAMIC CHIPS
                         Row(
-                          children:
-                              ['buyer', 'auth', 'returns'].map((badgeKey) {
+                          children: textBadges.map((badgeKey) {
                             final badge = info[badgeKey]!;
                             final bool isSelected = badgeKey == selectedKey;
 
@@ -631,7 +776,10 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                             );
                           }).toList(),
                         ),
+
                         SizedBox(height: 20.sp),
+
+                        /// 🔥 TITLE
                         Row(
                           children: [
                             Icon(data['icon'] as IconData, size: 22.sp),
@@ -648,7 +796,10 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                             ),
                           ],
                         ),
+
                         SizedBox(height: 16.sp),
+
+                        /// 🔥 BODY
                         Text(
                           data['body'] as String,
                           style: TextStyle(
@@ -661,6 +812,8 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                       ],
                     ),
                   ),
+
+                  /// ❌ CLOSE BUTTON
                   Positioned(
                     top: -40.sp,
                     left: 0,
@@ -1115,17 +1268,46 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
 
   // ── section builders ──────────────────────────────────────────────────────
 
-  void _navigateToCrumb(String name) {
-    final controller = Get.put(SearchScreenController());
-    controller.searchController.text = name;
-    Get.to(() => const SearchScreen());
+  Future<void> _navigateToCrumb(String name) async {
+    if (name.isEmpty) return;
+
+    // "Home" goes straight to the homepage — no search
+    if (name.toLowerCase() == 'home') {
+      Get.offAll(() => const BottomNavScreen(index: 0));
+      return;
+    }
+
+    // All other crumbs: run the search, then land on results
+    final searchCtrl = Get.put(SearchScreenController());
+    searchCtrl.searchController.text = name;
+    searchCtrl.resetFilters();
+
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+
+    await searchCtrl.getSearchData();
+
+    if (Get.isDialogOpen ?? false) Get.back();
+
+    final items = searchCtrl.searchList;
+    if (items.isEmpty) {
+      showAppSnackBar("No products found for '$name'", type: SnackBarType.info);
+      return;
+    }
+
+    Get.to(() => SearchResultsScreen(
+          searchQuery: name,
+          searchResults: items,
+        ));
   }
 
   Widget _buildBreadcrumb() => Obx(() {
         if (productController.isBreadcrumbLoading.value) {
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 6.sp),
-            child: DummyContainer(height: 20, width: 200),
+            child: const DummyContainer(height: 20, width: 200),
           );
         }
         final crumbs = productController.breadcrumbList;
@@ -1142,10 +1324,14 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
             ));
           }
           final crumb = crumbs[i];
+          final crumbName = crumb['name']?.toString() ?? '';
+          final displayName = crumbName.length > 12
+              ? '${crumbName.substring(0, 12)}…'
+              : crumbName;
           children.add(GestureDetector(
-            onTap: () => _navigateToCrumb(crumb['name']?.toString() ?? ''),
+            onTap: () => _navigateToCrumb(crumbName),
             child: Text(
-              crumb['name']?.toString() ?? '',
+              displayName,
               style: TextStyle(
                 fontFamily: "Clash Display Regular",
                 fontSize: 12.sp,
@@ -1489,9 +1675,11 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
         children: [
           _trustChip(Icons.verified_outlined, 'Buyer Protection',
               () => _showBadgeSheet('buyer')),
-          _trustChip(Icons.security_outlined, 'Authenticity Guaranteed',
+          _trustChip(Icons.security_outlined, 'LaFetch Verified',
               () => _showBadgeSheet('auth')),
-          _trustChip(Icons.local_shipping_outlined, 'Easy Returns',
+          _trustChip(Icons.local_shipping_outlined, 'Quick Delivery',
+              () => _showBadgeSheet('returns')),
+          _trustChip(Icons.assignment_return_outlined, 'Easy Returns',
               () => _showBadgeSheet('returns')),
           _trustChip(Icons.swap_horiz_outlined, 'Exchange Policy',
               () => _showBadgeSheet('exchange')),
