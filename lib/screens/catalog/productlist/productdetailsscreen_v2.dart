@@ -319,263 +319,6 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
 
   // ── trust badge sheet ─────────────────────────────────────────────────────
 
-  // void _showBadgeSheet(String key) {
-  //   final Map<String, Map<String, dynamic>> info = {
-  //     'buyer': {
-  //       'title': 'Buyer Protection',
-  //       'icon': Icons.verified_outlined,
-  //       'body':
-  //           'Your purchase is fully protected. If your order does not arrive or is not as described, we will make it right with a full refund or replacement.',
-  //     },
-  //     'auth': {
-  //       'title': 'Authenticity Guaranteed',
-  //       'icon': Icons.security_outlined,
-  //       'body':
-  //           'Every product on LaFetch is verified for authenticity by our expert team. We source only from trusted sellers and brands.',
-  //     },
-  //     'delivery': {
-  //       'title': 'Quick Delivery',
-  //       'icon': Icons.local_shipping_outlined,
-  //       'body':
-  //           'Get your products delivered quickly and safely to your doorstep.',
-  //     },
-  //     'returns': {
-  //       'title': 'Easy Returns',
-  //       'icon': Icons.keyboard_return_outlined,
-  //       'body':
-  //           'Not happy with your purchase? Return it within 7 days of delivery. We will pick it up from your doorstep at no extra cost.',
-  //     },
-  //     'exchange': {
-  //       'title': 'Exchange Policy',
-  //       'icon': Icons.swap_horiz_outlined,
-  //       'isImage': true,
-  //       'image': 'assets/images/exchange_policy.png',
-  //     },
-  //   };
-
-  //   final bool isImage = info[key]?['isImage'] == true;
-
-  //   showModalBottomSheet(
-  //     context: context,
-  //     backgroundColor: Colors.transparent,
-  //     isScrollControlled: true,
-  //     useSafeArea: true,
-  //     builder: (sheetContext) {
-  //       if (isImage) {
-  //         final data = info[key]!;
-
-  //         return AnnotatedRegion<SystemUiOverlayStyle>(
-  //           value: const SystemUiOverlayStyle(
-  //             systemNavigationBarColor: Colors.transparent,
-  //             systemNavigationBarDividerColor: Colors.transparent,
-  //             systemNavigationBarIconBrightness: Brightness.dark,
-  //           ),
-  //           child: Stack(
-  //             clipBehavior: Clip.none,
-  //             children: [
-  //               ClipRRect(
-  //                 borderRadius:
-  //                     BorderRadius.vertical(top: Radius.circular(20.sp)),
-  //                 child: Image.asset(
-  //                   data['image'] as String,
-  //                   width: double.infinity,
-  //                   fit: BoxFit.cover,
-  //                 ),
-  //               ),
-  //               Positioned(
-  //                 top: -40.sp,
-  //                 left: 0,
-  //                 right: 0,
-  //                 child: Center(
-  //                   child: GestureDetector(
-  //                     onTap: () => Navigator.pop(sheetContext),
-  //                     child: Container(
-  //                       width: 36,
-  //                       height: 36,
-  //                       decoration: BoxDecoration(
-  //                         color: whiteColor,
-  //                         shape: BoxShape.circle,
-  //                         boxShadow: [
-  //                           BoxShadow(
-  //                             blurRadius: 12,
-  //                             spreadRadius: 1,
-  //                             color: Colors.black.withOpacity(0.08),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                       child: const Icon(Icons.close, size: 20),
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       }
-
-  //       String selectedKey = key;
-
-  //       return StatefulBuilder(
-  //         builder: (context, setState) {
-  //           final data = info[selectedKey]!;
-
-  //           return AnnotatedRegion<SystemUiOverlayStyle>(
-  //             value: const SystemUiOverlayStyle(
-  //               systemNavigationBarColor: Colors.transparent,
-  //               systemNavigationBarDividerColor: Colors.transparent,
-  //               systemNavigationBarIconBrightness: Brightness.dark,
-  //             ),
-  //             child: Stack(
-  //               clipBehavior: Clip.none,
-  //               children: [
-  //                 Container(
-  //                   width: double.infinity,
-  //                   decoration: BoxDecoration(
-  //                     color: whiteColor,
-  //                     borderRadius:
-  //                         BorderRadius.vertical(top: Radius.circular(20.sp)),
-  //                   ),
-  //                   padding: EdgeInsets.fromLTRB(16.sp, 28.sp, 16.sp, 24.sp),
-  //                   child: Column(
-  //                     mainAxisSize: MainAxisSize.min,
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       Row(
-  //                         children:
-  //                             ['buyer', 'auth', 'returns'].map((badgeKey) {
-  //                           final badge = info[badgeKey]!;
-  //                           final bool isSelected = badgeKey == selectedKey;
-
-  //                           return Expanded(
-  //                             child: GestureDetector(
-  //                               behavior: HitTestBehavior.opaque,
-  //                               onTap: () {
-  //                                 setState(() {
-  //                                   selectedKey = badgeKey;
-  //                                 });
-  //                               },
-  //                               child: Padding(
-  //                                 padding:
-  //                                     EdgeInsets.symmetric(horizontal: 4.sp),
-  //                                 child: Column(
-  //                                   children: [
-  //                                     Container(
-  //                                       width: 52.sp,
-  //                                       height: 52.sp,
-  //                                       decoration: BoxDecoration(
-  //                                         shape: BoxShape.circle,
-  //                                         color: isSelected
-  //                                             ? Colors.black
-  //                                             : Colors.transparent,
-  //                                         border: Border.all(
-  //                                           color: isSelected
-  //                                               ? Colors.black
-  //                                               : Colors.grey.shade400,
-  //                                           width: 1.2,
-  //                                         ),
-  //                                         boxShadow: isSelected
-  //                                             ? [
-  //                                                 BoxShadow(
-  //                                                   blurRadius: 10,
-  //                                                   color: Colors.black
-  //                                                       .withOpacity(0.12),
-  //                                                 ),
-  //                                               ]
-  //                                             : [],
-  //                                       ),
-  //                                       child: Icon(
-  //                                         badge['icon'] as IconData,
-  //                                         size: 22.sp,
-  //                                         color: isSelected
-  //                                             ? Colors.white
-  //                                             : Colors.black,
-  //                                       ),
-  //                                     ),
-  //                                     SizedBox(height: 6.sp),
-  //                                     Text(
-  //                                       badge['title'] as String,
-  //                                       textAlign: TextAlign.center,
-  //                                       maxLines: 2,
-  //                                       overflow: TextOverflow.ellipsis,
-  //                                       style: TextStyle(
-  //                                         fontFamily: "Clash Display Regular",
-  //                                         fontSize: 10.sp,
-  //                                         color: Colors.black,
-  //                                         height: 1.2,
-  //                                       ),
-  //                                     ),
-  //                                   ],
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                           );
-  //                         }).toList(),
-  //                       ),
-  //                       SizedBox(height: 20.sp),
-  //                       Row(
-  //                         children: [
-  //                           Icon(data['icon'] as IconData, size: 22.sp),
-  //                           SizedBox(width: 10.sp),
-  //                           Expanded(
-  //                             child: Text(
-  //                               data['title'] as String,
-  //                               style: TextStyle(
-  //                                 fontFamily: "Clash Display",
-  //                                 fontWeight: FontWeight.w600,
-  //                                 fontSize: 16.sp,
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                       SizedBox(height: 16.sp),
-  //                       Text(
-  //                         data['body'] as String,
-  //                         style: TextStyle(
-  //                           fontFamily: "Clash Display Regular",
-  //                           fontSize: 13.sp,
-  //                           color: subtitleColor,
-  //                           height: 1.6,
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //                 Positioned(
-  //                   top: -40.sp,
-  //                   left: 0,
-  //                   right: 0,
-  //                   child: Center(
-  //                     child: GestureDetector(
-  //                       onTap: () => Navigator.pop(sheetContext),
-  //                       child: Container(
-  //                         width: 36,
-  //                         height: 36,
-  //                         decoration: BoxDecoration(
-  //                           color: whiteColor,
-  //                           shape: BoxShape.circle,
-  //                           boxShadow: [
-  //                             BoxShadow(
-  //                               blurRadius: 12,
-  //                               spreadRadius: 1,
-  //                               color: Colors.black.withOpacity(0.08),
-  //                             ),
-  //                           ],
-  //                         ),
-  //                         child: const Icon(Icons.close, size: 20),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
   void _showBadgeSheet(String key) {
     final Map<String, Map<String, dynamic>> info = {
       'buyer': {
@@ -1178,6 +921,20 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
     ).then((_) => localCtrl.dispose());
   }
 
+  Widget _buildDivider() {
+    return Column(
+      children: [
+        SizedBox(height: 10.sp),
+        Divider(
+          color: Colors.grey[200],
+          height: 1,
+          thickness: 4.0,
+        ),
+        SizedBox(height: 20.sp),
+      ],
+    );
+  }
+
   // ── build ─────────────────────────────────────────────────────────────────
 
   @override
@@ -1243,14 +1000,24 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                     _buildImages(),
                     _buildProductInfoAndPrice(),
                     _buildTrustBadges(),
+                    // SizedBox(height: 10.sp),
+                    // const Divider(
+                    //   color: colorSecondary,
+                    //   height: 2,
+                    //   thickness: 2.0,
+                    // ),
+                    // SizedBox(height: 20.sp),
+                    _buildDivider(),
                     _buildSizeColorSection(),
                     _buildQuantitySelector(),
                     _buildOfferSection(),
                     _buildDelivery(),
                     _buildActionButtons(),
+                    _buildDivider(),
                     _buildSimilarProducts(),
                     _buildProductDetails(),
                     _buildDeliveryPolicies(),
+                    _buildDivider(),
                     _buildFAQs(),
                     _buildLFPromises(),
                     _buildTrendingProducts(),
@@ -2407,6 +2174,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
   //         ]);
 
   Widget _buildDeliveryPolicies() => ExpansionTile(
+        splashColor: Colors.transparent,
         shape: const Border(),
         title: const Text(
           'Delivery & Services Policies',
@@ -2465,6 +2233,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
             desc.split('\n').where((e) => e.trim().isNotEmpty).toList();
 
         return ExpansionTile(
+          splashColor: Colors.transparent,
           shape: const Border(),
           initiallyExpanded: true,
           title: const Text(
@@ -2503,88 +2272,225 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
         );
       });
 
-  Widget _buildFAQs() => Column(children: [
-        Padding(
-            padding: EdgeInsets.symmetric(vertical: 12.sp),
-            child: Text('FAQs',
-                style: TextStyle(
-                    fontFamily: "Clash Display",
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16.sp))),
-        const ExpansionTile(
-            shape: Border(),
-            title: Text(
-              'What is your return policy?',
-              style: TextStyle(fontFamily: "Clash Display"),
+  // Widget _buildFAQs() => Column(children: [
+  //       Text('FAQs',
+  //           style: TextStyle(
+  //               fontFamily: "Clash Display",
+  //               fontWeight: FontWeight.w600,
+  //               fontSize: 16.sp)),
+  //       const ExpansionTile(
+  //           shape: Border(),
+  //           title: Text(
+  //             'What is LaFetch’s return and exchange policy?',
+  //             style: TextStyle(fontFamily: "Clash Display"),
+  //           ),
+  //           children: [
+  //             Text(
+  //               'Return or exchange requests must be initiated within 7 calendar days of delivery. To be eligible, products must be unused, unworn, unwashed, and returned with all original tags, packaging, and accessories intact.',
+  //               textAlign: TextAlign.left,
+  //               style: TextStyle(fontFamily: "Clash Display Regular"),
+  //             )
+  //           ]),
+  //       const ExpansionTile(
+  //           shape: Border(),
+  //           title: Text(
+  //             'What if the product does not fit me properly?',
+  //             style: TextStyle(fontFamily: "Clash Display"),
+  //           ),
+  //           children: [
+  //             Text(
+  //               'Customers may request an exchange for size or fit concerns within 7 calendar days of delivery.',
+  //               textAlign: TextAlign.left,
+  //               style: TextStyle(fontFamily: "Clash Display Regular"),
+  //             )
+  //           ]),
+  //       const ExpansionTile(
+  //           shape: Border(),
+  //           title: Text(
+  //             'How long does standard delivery take?',
+  //             style: TextStyle(fontFamily: "Clash Display"),
+  //           ),
+  //           children: [
+  //             Text(
+  //               'Standard delivery typically takes 3–7 business days.',
+  //               textAlign: TextAlign.left,
+  //               style: TextStyle(fontFamily: "Clash Display Regular"),
+  //             )
+  //           ]),
+  //       const ExpansionTile(
+  //           shape: Border(),
+  //           title: Text(
+  //             'What if I receive a damaged or incorrect product?',
+  //             style: TextStyle(fontFamily: "Clash Display"),
+  //           ),
+  //           children: [
+  //             Text(
+  //               'If you receive a damaged, defective, or incorrect product, you are eligible to request a return or exchange. Please contact customer support and share relevant proof, such as images or videos, so the team can review and assist you promptly.',
+  //               textAlign: TextAlign.left,
+  //               style: TextStyle(fontFamily: "Clash Display Regular"),
+  //             )
+  //           ]),
+  //       const ExpansionTile(
+  //           shape: Border(),
+  //           title: Text(
+  //             'Is Cash on Delivery (COD) available?',
+  //             style: TextStyle(fontFamily: "Clash Display"),
+  //           ),
+  //           children: [
+  //             Text(
+  //               'According to the platform’s Terms of Use, COD mode of payment is not available as of now.',
+  //               textAlign: TextAlign.left,
+  //               style: TextStyle(fontFamily: "Clash Display Regular"),
+  //             )
+  //           ]),
+  //       const ExpansionTile(
+  //           shape: Border(),
+  //           title: Text(
+  //             'Can I cancel or modify my order after placing it?',
+  //             style: TextStyle(fontFamily: "Clash Display"),
+  //           ),
+  //           children: [
+  //             Text(
+  //               'Standard orders can be cancelled prior to dispatch, but once shipped, they cannot be cancelled and must follow the return process. Made-to-Order (MTO) products may only be cancelled within 2 hours of order placement and before production begins. The sources do not provide information regarding the modification of orders.',
+  //               textAlign: TextAlign.left,
+  //               style: TextStyle(
+  //                 fontFamily: "Clash Display Regular",
+  //               ),
+  //             )
+  //           ]),
+  //       const ExpansionTile(
+  //           shape: Border(),
+  //           title: Text(
+  //             'Are there any shipping charges?',
+  //             style: TextStyle(fontFamily: "Clash Display"),
+  //           ),
+  //           children: [
+  //             Text(
+  //               'Shipping charges, if applicable, are disclosed at checkout. Some promotional campaigns may offer free shipping subject to specific terms.',
+  //               textAlign: TextAlign.left,
+  //               style: TextStyle(
+  //                 fontFamily: "Clash Display Regular",
+  //               ),
+  //             )
+  //           ]),
+  //     ]);
+
+  Widget _buildFAQs() => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'FAQs',
+              style: TextStyle(
+                fontFamily: "Clash Display",
+                fontWeight: FontWeight.w600,
+                fontSize: 16.sp,
+              ),
             ),
-            children: [
-              Text(
-                '7-day return policy from delivery date',
-                textAlign: TextAlign.left,
-                style: TextStyle(fontFamily: "Clash Display Regular"),
-              )
-            ]),
-        const ExpansionTile(
-            shape: Border(),
-            title: Text(
-              'How long does shipping take?',
-              style: TextStyle(fontFamily: "Clash Display"),
+            SizedBox(height: 4.sp),
+            _faqItem(
+              'What is LaFetch’s return and exchange policy?',
+              'Return or exchange requests must be initiated within 7 calendar days of delivery. To be eligible, products must be unused, unworn, unwashed, and returned with all original tags, packaging, and accessories intact.',
             ),
-            children: [
-              Text(
-                '3-5 business days for standard delivery',
-                textAlign: TextAlign.left,
-                style: TextStyle(fontFamily: "Clash Display Regular"),
-              )
-            ]),
-        const ExpansionTile(
-            shape: Border(),
-            title: Text(
-              'Do you ship internationally?',
-              style: TextStyle(fontFamily: "Clash Display"),
+            Divider(
+              color: Colors.grey[200],
+              height: 1,
+              thickness: 2,
             ),
-            children: [
-              Text(
-                'Currently we ship within India only',
-                textAlign: TextAlign.left,
-                style: TextStyle(fontFamily: "Clash Display Regular"),
-              )
-            ]),
-        const ExpansionTile(
-            shape: Border(),
-            title: Text(
-              'Are products authentic?',
-              style: TextStyle(fontFamily: "Clash Display"),
+            _faqItem(
+              'What if the product does not fit me properly?',
+              'Customers may request an exchange for size or fit concerns within 7 calendar days of delivery.',
             ),
-            children: [
-              Text(
-                'Yes, all products are 100% authentic and verified',
-                textAlign: TextAlign.left,
+            Divider(
+              color: Colors.grey[200],
+              height: 1,
+              thickness: 2,
+            ),
+            _faqItem(
+              'How long does standard delivery take?',
+              'Standard delivery typically takes 3–7 business days.',
+            ),
+            Divider(
+              color: Colors.grey[200],
+              height: 1,
+              thickness: 2,
+            ),
+            _faqItem(
+              'What if I receive a damaged or incorrect product?',
+              'If you receive a damaged, defective, or incorrect product, you are eligible to request a return or exchange. Please contact customer support and share relevant proof such as images or videos.',
+            ),
+            Divider(
+              color: Colors.grey[200],
+              height: 1,
+              thickness: 2,
+            ),
+            _faqItem(
+              'Is Cash on Delivery (COD) available?',
+              'According to the platform’s Terms of Use, COD is not available as of now.',
+            ),
+            Divider(
+              color: Colors.grey[200],
+              height: 1,
+              thickness: 2,
+            ),
+            _faqItem(
+              'Can I cancel or modify my order after placing it?',
+              'Standard orders can be cancelled prior to dispatch. Once shipped, they must follow the return process. MTO products can only be cancelled within 2 hours of placement.',
+            ),
+            Divider(
+              color: Colors.grey[200],
+              height: 1,
+              thickness: 2,
+            ),
+            _faqItem(
+              'Are there any shipping charges?',
+              'Shipping charges, if applicable, are shown at checkout. Some promotions may offer free shipping.',
+            ),
+          ],
+        ),
+      );
+
+  Widget _faqItem(String title, String body) {
+    return SizedBox(
+      child: Theme(
+        data: ThemeData().copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          splashColor: Colors.transparent,
+          tilePadding: EdgeInsets.symmetric(vertical: 4.sp),
+          childrenPadding: EdgeInsets.only(bottom: 8.sp),
+          title: Text(
+            title,
+            style: TextStyle(
+              fontFamily: "Clash Display",
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w600,
+              height: 1.3,
+            ),
+          ),
+          children: [
+            Padding(
+              padding: EdgeInsets.only(right: 8.sp),
+              child: Text(
+                body,
                 style: TextStyle(
                   fontFamily: "Clash Display Regular",
+                  fontSize: 12.5.sp,
+                  height: 1.5,
+                  color: Colors.grey.shade700,
                 ),
-              )
-            ]),
-      ]);
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildLFPromises() => Container(
         width: double.infinity,
         child: Image.asset("assets/images/lf_promises.png"),
       );
-  // Container(
-  //     margin: EdgeInsets.all(16.sp),
-  //     padding: EdgeInsets.all(16.sp),
-  //     color: colorSecondary,
-  //     child: Column(children: [
-  //       Text('LF Promises',
-  //           style: TextStyle(
-  //               fontFamily: "Clash Display",
-  //               fontWeight: FontWeight.w600,
-  //               fontSize: 16.sp)),
-  //       SizedBox(height: 12.sp),
-  //       const Text(
-  //           '✓ 100% Authentic Products\n✓ Secure Payments\n✓ Fast Delivery\n✓ Easy Returns\n✓ 24/7 Customer Support'),
-  //     ]));
 
   Widget _buildTrendingProducts() => SimilarProductsCarousel(
       productId: widget.productId,
