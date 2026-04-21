@@ -1093,7 +1093,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                     _buildDelivery(),
                     _buildActionButtons(),
                     _buildSimilarProducts(),
-                    _buildLFNote(),
+                    _buildProductDetails(),
                     _buildDeliveryPolicies(),
                     _buildFAQs(),
                     _buildLFPromises(),
@@ -2060,46 +2060,118 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
       showTrending: false,
       onNavigating: () => setState(() => _isForeground = false));
 
-  Widget _buildDeliveryPolicies() => ExpansionTile(
-          shape: const Border(),
-          title: const Text('Delivery & Services Policies',
-              style: TextStyle(fontFamily: "Clash Display")),
-          children: [
-            Padding(
-              padding: EdgeInsets.all(8.sp),
-              child: const Text(
-                  'Free delivery on orders above ₹999\n7-day return policy\nCash on delivery available\nSecure payments',
-                  style: TextStyle(fontFamily: "Clash Display")),
-            )
-          ]);
+  // Widget _buildDeliveryPolicies() => ExpansionTile(
+  //         shape: const Border(),
+  //         title: const Text('Delivery & Services Policies',
+  //             style: TextStyle(fontFamily: "Clash Display")),
+  //         children: [
+  //           Padding(
+  //             padding: EdgeInsets.all(0.sp),
+  //             child: const Text(
+  //                 '• Free delivery on orders above ₹2000\n• 7-day return policy\n• Secure payments',
+  //                 textAlign: TextAlign.left,
+  //                 style: TextStyle(fontFamily: "Clash Display Regular")),
+  //           )
+  //         ]);
 
-  Widget _buildLFNote() => Obx(() {
+  Widget _buildDeliveryPolicies() => ExpansionTile(
+        shape: const Border(),
+        title: const Text(
+          'Delivery & Services Policies',
+          style: TextStyle(fontFamily: "Clash Display"),
+        ),
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.sp),
+            child: const SizedBox(
+              width: double.infinity,
+              child: Text(
+                '•  Free delivery on orders above ₹2000\n•  7-day return policy\n•  Secure payments',
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                    fontFamily: "Clash Display",
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey),
+              ),
+            ),
+          ),
+        ],
+      );
+
+  // Widget _buildProductDetails() => Obx(() {
+  //       if (productController.isDetails.value) return const SizedBox();
+  //       final desc =
+  //           productController.productDetails['description']?.toString() ?? '';
+  //       if (desc.isEmpty) return const SizedBox();
+  //       return ExpansionTile(
+  //           shape: const Border(),
+  //           initiallyExpanded: true,
+  //           title: const Text('Product details',
+  //               style: TextStyle(fontFamily: "Clash Display")),
+  //           children: [
+  //             Padding(
+  //                 padding: EdgeInsets.symmetric(horizontal: 12.sp),
+  //                 child: Text(
+  //                   desc,
+  //                   style: const TextStyle(
+  //                       height: 1,
+  //                       fontFamily: "Clash Display",
+  //                       fontWeight: FontWeight.w400,
+  //                       color: Colors.grey),
+  //                 ))
+  //           ]);
+  //     });
+
+  Widget _buildProductDetails() => Obx(() {
         if (productController.isDetails.value) return const SizedBox();
+
         final desc =
             productController.productDetails['description']?.toString() ?? '';
         if (desc.isEmpty) return const SizedBox();
+
+        final lines =
+            desc.split('\n').where((e) => e.trim().isNotEmpty).toList();
+
         return ExpansionTile(
-            shape: const Border(),
-            initiallyExpanded: true,
-            title: const Text('Product details',
-                style: TextStyle(fontFamily: "Clash Display")),
-            children: [
-              Padding(
-                  padding: EdgeInsets.all(12.sp),
-                  child: Text(
-                    desc,
-                    style: const TextStyle(
-                        height: 1,
-                        fontFamily: "Clash Display",
-                        fontWeight: FontWeight.w400,
-                        color: Colors.grey),
-                  ))
-            ]);
+          shape: const Border(),
+          initiallyExpanded: true,
+          title: const Text(
+            'Product details',
+            style: TextStyle(fontFamily: "Clash Display"),
+          ),
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.sp),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: lines.map((line) {
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 6.sp),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            line.trim(),
+                            style: const TextStyle(
+                              height: 1.4,
+                              fontFamily: "Clash Display",
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        );
       });
 
-  Widget _buildFAQs() => Padding(
-      padding: EdgeInsets.symmetric(horizontal: 0.sp),
-      child: Column(children: [
+  Widget _buildFAQs() => Column(children: [
         Padding(
             padding: EdgeInsets.symmetric(vertical: 12.sp),
             child: Text('FAQs',
@@ -2116,6 +2188,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
             children: [
               Text(
                 '7-day return policy from delivery date',
+                textAlign: TextAlign.left,
                 style: TextStyle(fontFamily: "Clash Display Regular"),
               )
             ]),
@@ -2128,7 +2201,8 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
             children: [
               Text(
                 '3-5 business days for standard delivery',
-                style: TextStyle(fontFamily: "Clash Display"),
+                textAlign: TextAlign.left,
+                style: TextStyle(fontFamily: "Clash Display Regular"),
               )
             ]),
         const ExpansionTile(
@@ -2140,7 +2214,8 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
             children: [
               Text(
                 'Currently we ship within India only',
-                style: TextStyle(fontFamily: "Clash Display"),
+                textAlign: TextAlign.left,
+                style: TextStyle(fontFamily: "Clash Display Regular"),
               )
             ]),
         const ExpansionTile(
@@ -2152,10 +2227,13 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
             children: [
               Text(
                 'Yes, all products are 100% authentic and verified',
-                style: TextStyle(fontFamily: "Clash Display"),
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontFamily: "Clash Display Regular",
+                ),
               )
             ]),
-      ]));
+      ]);
 
   Widget _buildLFPromises() => Container(
         width: double.infinity,
