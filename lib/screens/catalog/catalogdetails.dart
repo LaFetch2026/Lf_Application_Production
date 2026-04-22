@@ -87,7 +87,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
               backColor: statusBarColor,
               text: widget.title.toUpperCase(),
               onPressedSearch: () async {
-                Get.to(SearchScreen())?.then((value) => setState(
+                Get.off(() => SearchScreen())?.then((value) => setState(
                       () {},
                     ));
                 analytics

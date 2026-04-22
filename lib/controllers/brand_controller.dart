@@ -448,4 +448,14 @@ class BrandController extends BaseController {
       }
     }
   }
+
+  /// ================================================================
+  /// ✅ Dispose controllers when BrandController is closed
+  /// ================================================================
+  @override
+  void onClose() {
+    searchController.dispose();
+    brandListController.dispose();
+    super.onClose();
+  }
 }

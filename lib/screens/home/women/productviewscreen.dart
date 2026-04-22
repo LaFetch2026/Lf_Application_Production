@@ -659,7 +659,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           ProductAppbar(
             text: widget.title,
             onPressedSearch: () async {
-              Get.to(SearchScreen())?.then((_) {
+              Get.off(() => SearchScreen())?.then((_) {
                 setState(() {});
               });
               analytics.logEvent(

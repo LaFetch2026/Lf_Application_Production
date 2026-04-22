@@ -807,4 +807,11 @@ class HomeController extends BaseController {
       return false;
     }
   }
+
+  @override
+  void onClose() {
+    tagsController.dispose();
+    discountScreenController.dispose();
+    super.onClose();
+  }
 }

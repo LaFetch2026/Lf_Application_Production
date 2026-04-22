@@ -654,7 +654,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
             isCart: widget.type != "coupon" && widget.type != "express",
             isHandPicked: widget.screen.isNotEmpty,
             onPressedSearch: () async {
-              Get.to(const SearchScreen());
+              Get.off(() => const SearchScreen());
               await analytics.logEvent(
                 name: "search_page",
                 parameters: {"page_name": "search_page"},

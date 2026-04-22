@@ -30,7 +30,7 @@ extension PdpImageSection on _ProductDetailsScreenV2State {
       return;
     }
 
-    Get.to(() => SearchResultsScreen(
+    Get.off(() => SearchResultsScreen(
           searchQuery: name,
           searchResults: items,
         ));

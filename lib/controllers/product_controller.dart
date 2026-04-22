@@ -2342,4 +2342,31 @@ class ProductController extends BaseController {
       isFilterMetadata.value = false;
     }
   }
+
+  @override
+  void onClose() {
+    // Dispose all ScrollController instances
+    listController.dispose();
+    handpickedController.dispose();
+    brandProductController.dispose();
+    recentListController.dispose();
+    expressListController.dispose();
+    categoryProductController.dispose();
+    brandDetailsController.dispose();
+    brandExpressProductController.dispose();
+    tagsProductController.dispose();
+    mostViewController.dispose();
+    bannerTagController.dispose();
+    frequentlyBoughtController.dispose();
+    recommendedController.dispose();
+    bestSellerController.dispose();
+    tagsController.dispose();
+    quickProductListController.dispose();
+    
+    // Dispose all TextEditingController instances
+    brandController.dispose();
+    branddetailsSearchController.dispose();
+    
+    super.onClose();
+  }
 }

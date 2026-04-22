@@ -148,6 +148,8 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
     } catch (_) {}
     _emailController.dispose();
     _pincodeFocusNode.dispose();
+    _pageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 

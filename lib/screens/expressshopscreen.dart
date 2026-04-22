@@ -167,6 +167,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
 
   @override
   void dispose() {
+    pageController.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }

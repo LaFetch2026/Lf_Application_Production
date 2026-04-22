@@ -420,6 +420,45 @@ Future<void> _initPushNotifications(prefs) async {
   }
 }
 
+class RouteStackObserver extends NavigatorObserver {
+  int _stackDepth = 0;
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPush(route, previousRoute);
+    _stackDepth++;
+    if (kDebugMode) {
+      print('📍 Route PUSHED: ${route.settings.name ?? route.runtimeType} | Stack depth: $_stackDepth');
+    }
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPop(route, previousRoute);
+    _stackDepth--;
+    if (kDebugMode) {
+      print('📍 Route POPPED: ${route.settings.name ?? route.runtimeType} | Stack depth: $_stackDepth');
+    }
+  }
+
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didRemove(route, previousRoute);
+    _stackDepth--;
+    if (kDebugMode) {
+      print('📍 Route REMOVED: ${route.settings.name ?? route.runtimeType} | Stack depth: $_stackDepth');
+    }
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    if (kDebugMode) {
+      print('📍 Route REPLACED: ${oldRoute?.settings.name ?? oldRoute?.runtimeType} → ${newRoute?.settings.name ?? newRoute?.runtimeType} | Stack depth: $_stackDepth');
+    }
+  }
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -434,7 +473,11 @@ class MyApp extends StatelessWidget {
           // Always start from SplashTwoScreen
           home: const SplashTwoScreen(),
           // Add this to ensure clean navigation on hot restart
-          navigatorObservers: [GetObserver(), routeObserver],
+          navigatorObservers: [
+            GetObserver(),
+            routeObserver,
+            if (kDebugMode) RouteStackObserver(),
+          ],
           // Enable iOS-style swipe-to-go-back on both platforms
           defaultTransition: Transition.cupertino,
           // Configure page transitions for swipe gesture

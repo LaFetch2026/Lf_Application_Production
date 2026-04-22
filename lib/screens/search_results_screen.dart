@@ -172,7 +172,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
           ProductAppbar(
             text: 'Search Results for "${widget.searchQuery}"',
             onPressedSearch: () async {
-              Get.to(SearchScreen())?.then((_) {
+              Get.off(() => SearchScreen())?.then((_) {
                 setState(() {});
               });
               analytics.logEvent(
