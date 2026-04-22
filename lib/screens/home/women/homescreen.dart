@@ -2894,18 +2894,36 @@ class _StandaloneCollectionBanners extends StatefulWidget {
 class _StandaloneCollectionBannersState
     extends State<_StandaloneCollectionBanners> {
   late final PageController _pageController;
+  Timer? _timer;
   int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startTimer());
   }
 
   @override
   void dispose() {
+    _timer?.cancel();
     _pageController.dispose();
     super.dispose();
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    final slides = _buildSlides();
+    if (slides.length <= 1) return;
+    _timer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!mounted) return;
+      final next = (_currentPage + 1) % slides.length;
+      _pageController.animateToPage(
+        next,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    });
   }
 
   /// Groups sorted banners into carousel slides.
