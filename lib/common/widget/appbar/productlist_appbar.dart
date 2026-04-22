@@ -45,19 +45,22 @@ class _ProductAppbarState extends State<ProductAppbar> {
       color: widget.backColor,
       child: Padding(
         padding: EdgeInsets.only(
-            left: 16.sp, top: statusBarHeight + 8.sp, right: 10.sp, bottom: 8.sp),
+            left: 16.sp,
+            top: statusBarHeight + 8.sp,
+            right: 10.sp,
+            bottom: 8.sp),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            InkWell(
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTap: () {
                 Get.back();
               },
               child: Container(
                 alignment: Alignment.bottomCenter,
-                padding:
-                    EdgeInsets.only(right: 12.sp, top: 4.sp),
+                padding: EdgeInsets.only(right: 12.sp, top: 4.sp),
                 child: SvgPicture.asset(
                   arrowBack,
                   height: 15.sp,
@@ -112,8 +115,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                 widget.onPressedSearch?.call();
               },
               child: Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
+                padding: EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
                 child: SvgPicture.asset(searchSvgImage,
                     height: 18.sp, width: 18.sp, fit: BoxFit.fill),
               ),

@@ -14,10 +14,12 @@ import '../../../common/widget/bottom_sheets/bottomsortby.dart';
 import '../../../common/widget/bottom_sheets/bottomwishlist.dart';
 import '../../../common/widget/button/doublebtn.dart';
 import '../../../common/widget/lists/dummy_vertical_list.dart';
+import '../../../common/widget/other/filter_chips_row.dart';
 import '../../../common/widget/other/productvedio.dart';
 import '../../../common/widget/other/pounce_wrapper.dart';
 import '../../../common/widget/other/product_price_display.dart';
 import '../../../common/widget/text/app_text.dart';
+import '../../../controllers/catalog_controller.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
@@ -40,6 +42,7 @@ class ProductVerticalScreen extends StatefulWidget {
 class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
+  final catalogController = Get.find<CatalogController>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late VideoPlayerController videoController;
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
@@ -213,6 +216,14 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                     SizedBox(
                                       height: 10.sp,
                                     ),
+                                    Obx(() => FilterChipsRow(
+                                          chips: catalogController.chips
+                                              .toList(),
+                                          activeChipId:
+                                              catalogController.activeChipId,
+                                          onChipTap:
+                                              catalogController.onChipTap,
+                                        )),
                                     Padding(
                                       padding: EdgeInsets.only(
                                           left: 16.sp,

@@ -20,6 +20,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../common/widget/appbar/productlist_appbar.dart';
 import '../../common/widget/cards/product_card.dart';
 import '../../common/widget/other/common_widget.dart';
+import '../../common/widget/other/filter_chips_row.dart';
 import '../../controllers/catalog_controller.dart';
 import '../../controllers/cart_controller.dart';
 import '../../controllers/product_controller.dart';
@@ -699,6 +700,13 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           ),
 
           SizedBox(height: 8.sp),
+
+          // Filter Chips Row
+          Obx(() => FilterChipsRow(
+                chips: catalogController.chips.toList(),
+                activeChipId: catalogController.activeChipId,
+                onChipTap: catalogController.onChipTap,
+              )),
 
           /// ✅ Product Grid with skeleton loading
           Expanded(

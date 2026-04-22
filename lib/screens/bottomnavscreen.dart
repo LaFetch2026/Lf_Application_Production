@@ -194,6 +194,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   void _changeTab(int index) {
     // Reset scroll state when switching tabs
     homeController.isScrolling.value = false;
+    homeController.isBottomNavVisible.value = true;
 
     // ✅ Build screen before changing tab to ensure it's cached
     if (!_loadedTabs.contains(index)) {
@@ -266,7 +267,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
       children: [
         Scaffold(
           backgroundColor: whiteColor,
-          extendBody: false,
+          extendBody: true,
           // ✅ Lazy loading: Only build screens when visited, then keep them cached
           body: _currentIndex == 5
               ? CartScreen(key: UniqueKey(), backgroundcolor: homeAppBarColor)
@@ -290,88 +291,183 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                         : const SizedBox.shrink(),
                   ],
                 ),
-          bottomNavigationBar: Container(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).padding.bottom,
-            ),
-            decoration: BoxDecoration(
-              color: whiteColor,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, -2),
+          // bottomNavigationBar: Container(
+          //   padding: EdgeInsets.only(
+          //     bottom: MediaQuery.of(context).padding.bottom,
+          //   ),
+          //   decoration: BoxDecoration(
+          //     color: whiteColor,
+          //     boxShadow: [
+          //       BoxShadow(
+          //         color: Colors.black.withOpacity(0.1),
+          //         blurRadius: 8,
+          //         offset: const Offset(0, -2),
+          //       ),
+          //     ],
+          //   ),
+          //   height: 55.sp + MediaQuery.of(context).padding.bottom,
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //     children: [
+          // _navItem(
+          //   icon:
+          //       _currentIndex == 0 ? homeSelectedSvgImage : homeSvgImage,
+          //   label: "Home",
+          //   selected: _currentIndex == 0,
+          //   onTap: () {
+          //     HapticFeedback.lightImpact();
+          //     _changeTab(0);
+          //     analytics.logEvent(name: 'home_page');
+          //   },
+          // ),
+          // _navItem(
+          //   icon: _currentIndex == 1
+          //       ? brandSelectedSvgImage
+          //       : brandSvgImage,
+          //   label: "Brands",
+          //   selected: _currentIndex == 1,
+          //   onTap: () {
+          //     HapticFeedback.lightImpact();
+          //     _changeTab(1);
+          //     analytics.logEvent(name: 'brands_page');
+          //   },
+          // ),
+          // _navItem(
+          //   icon: _currentIndex == 4
+          //       ? quickSelectedSvgImage
+          //       : quickSvgImage,
+          //   label: "Quick",
+          //   selected: _currentIndex == 4,
+          //   iconSize: 24.sp,
+          //   fixedColor: lightPurpleColor,
+          //   onTap: () {
+          //     HapticFeedback.lightImpact();
+          //     // Show location choice dialog immediately
+          //     _showLocationChoiceDialog(context);
+          //   },
+          // ),
+          // _navItem(
+          //   icon: _currentIndex == 2
+          //       ? categorySelectedSvgImage
+          //       : categorySvgImage,
+          //   label: "Category",
+          //   selected: _currentIndex == 2,
+          //   onTap: () {
+          //     HapticFeedback.lightImpact();
+          //     _changeTab(2);
+          //     analytics.logEvent(name: 'category_page');
+          //   },
+          // ),
+          // _navItem(
+          //   icon: _currentIndex == 3
+          //       ? profileSelectedSvgImage
+          //       : profileSvgImage,
+          //   label: "Profile",
+          //   selected: _currentIndex == 3,
+          //   onTap: () => _handleProtectedNavigation(() {
+          //     HapticFeedback.lightImpact();
+          //     _changeTab(3);
+          //     analytics.logEvent(name: 'profile_page');
+          //   }),
+          // ),
+          //   ],
+          // ),
+          // ),
+          bottomNavigationBar: Obx(() {
+            final isVisible = homeController.isBottomNavVisible.value;
+
+            return AnimatedSlide(
+              duration: const Duration(milliseconds: 250),
+              offset: isVisible ? const Offset(0, 0) : const Offset(0, 1),
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: isVisible ? 1 : 0,
+                child: Container(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).padding.bottom,
+                  ),
+                  decoration: BoxDecoration(
+                    color: whiteColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, -2),
+                      ),
+                    ],
+                  ),
+                  height: 55.sp + MediaQuery.of(context).padding.bottom,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _navItem(
+                        icon: _currentIndex == 0
+                            ? homeSelectedSvgImage
+                            : homeSvgImage,
+                        label: "Home",
+                        selected: _currentIndex == 0,
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _changeTab(0);
+                          analytics.logEvent(name: 'home_page');
+                        },
+                      ),
+                      _navItem(
+                        icon: _currentIndex == 1
+                            ? brandSelectedSvgImage
+                            : brandSvgImage,
+                        label: "Brands",
+                        selected: _currentIndex == 1,
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _changeTab(1);
+                          analytics.logEvent(name: 'brands_page');
+                        },
+                      ),
+                      _navItem(
+                        icon: _currentIndex == 4
+                            ? quickSelectedSvgImage
+                            : quickSvgImage,
+                        label: "Quick",
+                        selected: _currentIndex == 4,
+                        iconSize: 24.sp,
+                        fixedColor: lightPurpleColor,
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          // Show location choice dialog immediately
+                          _showLocationChoiceDialog(context);
+                        },
+                      ),
+                      _navItem(
+                        icon: _currentIndex == 2
+                            ? categorySelectedSvgImage
+                            : categorySvgImage,
+                        label: "Category",
+                        selected: _currentIndex == 2,
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          _changeTab(2);
+                          analytics.logEvent(name: 'category_page');
+                        },
+                      ),
+                      _navItem(
+                        icon: _currentIndex == 3
+                            ? profileSelectedSvgImage
+                            : profileSvgImage,
+                        label: "Profile",
+                        selected: _currentIndex == 3,
+                        onTap: () => _handleProtectedNavigation(() {
+                          HapticFeedback.lightImpact();
+                          _changeTab(3);
+                          analytics.logEvent(name: 'profile_page');
+                        }),
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-            height: 55.sp + MediaQuery.of(context).padding.bottom,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _navItem(
-                  icon:
-                      _currentIndex == 0 ? homeSelectedSvgImage : homeSvgImage,
-                  label: "Home",
-                  selected: _currentIndex == 0,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    _changeTab(0);
-                    analytics.logEvent(name: 'home_page');
-                  },
-                ),
-                _navItem(
-                  icon: _currentIndex == 1
-                      ? brandSelectedSvgImage
-                      : brandSvgImage,
-                  label: "Brands",
-                  selected: _currentIndex == 1,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    _changeTab(1);
-                    analytics.logEvent(name: 'brands_page');
-                  },
-                ),
-                _navItem(
-                  icon: _currentIndex == 4
-                      ? quickSelectedSvgImage
-                      : quickSvgImage,
-                  label: "Quick",
-                  selected: _currentIndex == 4,
-                  iconSize: 24.sp,
-                  fixedColor: lightPurpleColor,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    // Show location choice dialog immediately
-                    _showLocationChoiceDialog(context);
-                  },
-                ),
-                _navItem(
-                  icon: _currentIndex == 2
-                      ? categorySelectedSvgImage
-                      : categorySvgImage,
-                  label: "Category",
-                  selected: _currentIndex == 2,
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    _changeTab(2);
-                    analytics.logEvent(name: 'category_page');
-                  },
-                ),
-                _navItem(
-                  icon: _currentIndex == 3
-                      ? profileSelectedSvgImage
-                      : profileSvgImage,
-                  label: "Profile",
-                  selected: _currentIndex == 3,
-                  onTap: () => _handleProtectedNavigation(() {
-                    HapticFeedback.lightImpact();
-                    _changeTab(3);
-                    analytics.logEvent(name: 'profile_page');
-                  }),
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          }),
         ),
 
         // ✅ Video Ad Widget - Bottom Left (overlays on top of everything)

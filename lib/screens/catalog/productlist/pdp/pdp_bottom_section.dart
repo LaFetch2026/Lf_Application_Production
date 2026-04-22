@@ -7,80 +7,177 @@ extension PdpBottomSection on _ProductDetailsScreenV2State {
       showTrending: false,
       onNavigating: () => setState(() => _isForeground = false));
 
-  Widget _buildProductDetails() => Obx(() {
-        if (productController.isDetails.value) return const SizedBox();
+  // Widget _buildProductDetails() => Obx(() {
+  //       if (productController.isDetails.value) return const SizedBox();
 
-        final desc =
-            productController.productDetails['description']?.toString() ?? '';
-        if (desc.isEmpty) return const SizedBox();
+  //       final desc =
+  //           productController.productDetails['description']?.toString() ?? '';
+  //       if (desc.isEmpty) return const SizedBox();
 
-        final lines =
-            desc.split('\n').where((e) => e.trim().isNotEmpty).toList();
+  //       final lines =
+  //           desc.split('\n').where((e) => e.trim().isNotEmpty).toList();
 
-        return ExpansionTile(
-          splashColor: Colors.transparent,
-          shape: const Border(),
-          initiallyExpanded: true,
-          title: const Text(
-            'Product details',
-            style: TextStyle(fontFamily: "Clash Display"),
-          ),
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.sp),
-              child: Column(
+  //       return ExpansionTile(
+  //         splashColor: Colors.transparent,
+  //         shape: const Border(),
+  //         initiallyExpanded: true,
+  //         title: const Text(
+  //           'Product details',
+  //           style: TextStyle(fontFamily: "Clash Display"),
+  //         ),
+  //         children: [
+  //           Padding(
+  //             padding: EdgeInsets.symmetric(horizontal: 12.sp),
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: lines.map((line) {
+  //                 return Padding(
+  //                   padding: EdgeInsets.only(bottom: 6.sp),
+  //                   child: Row(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       Expanded(
+  //                         child: Text(
+  //                           line.trim(),
+  //                           style: const TextStyle(
+  //                             height: 1.4,
+  //                             fontFamily: "Clash Display",
+  //                             fontWeight: FontWeight.w400,
+  //                             color: Colors.grey,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 );
+  //               }).toList(),
+  //             ),
+  //           ),
+  //         ],
+  //       );
+  //     });
+
+  Widget _buildProductDetails() {
+    return Obx(() {
+      if (productController.isDetails.value) return const SizedBox();
+
+      final desc =
+          productController.productDetails['description']?.toString() ?? '';
+      if (desc.isEmpty) return const SizedBox();
+
+      final lines = desc.split('\n').where((e) => e.trim().isNotEmpty).toList();
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ExpansionTile(
+            splashColor: Colors.transparent,
+            shape: const Border(),
+            collapsedShape: const Border(),
+            tilePadding: EdgeInsets.symmetric(horizontal: 12.sp),
+            childrenPadding: EdgeInsets.only(
+              left: 12.sp,
+              right: 12.sp,
+              bottom: 12.sp,
+            ),
+            initiallyExpanded: true,
+            title: const Text(
+              'Product details',
+              style: TextStyle(fontFamily: "Clash Display"),
+            ),
+            children: [
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: lines.map((line) {
                   return Padding(
                     padding: EdgeInsets.only(bottom: 6.sp),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            line.trim(),
-                            style: const TextStyle(
-                              height: 1.4,
-                              fontFamily: "Clash Display",
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      line.trim(),
+                      style: const TextStyle(
+                        height: 1.4,
+                        fontFamily: "Clash Display",
+                        fontWeight: FontWeight.w400,
+                        color: Colors.grey,
+                      ),
                     ),
                   );
                 }).toList(),
               ),
-            ),
-          ],
-        );
-      });
-
-  Widget _buildDeliveryPolicies() => ExpansionTile(
-        splashColor: Colors.transparent,
-        shape: const Border(),
-        title: const Text(
-          'Delivery & Services Policies',
-          style: TextStyle(fontFamily: "Clash Display"),
-        ),
-        children: [
+            ],
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.sp),
-            child: const SizedBox(
-              width: double.infinity,
-              child: Text(
-                '•  Free delivery on orders above ₹2000\n•  7-day return policy\n•  Secure payments',
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontFamily: "Clash Display",
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey),
-              ),
+            child: Divider(
+              color: Colors.grey[200],
+              height: 1,
+              thickness: 1.2,
             ),
           ),
+          _buildDeliveryPolicies(),
         ],
       );
+    });
+  }
+
+  Widget _buildDeliveryPolicies() {
+    return ExpansionTile(
+      splashColor: Colors.transparent,
+      shape: const Border(),
+      collapsedShape: const Border(),
+      tilePadding: EdgeInsets.symmetric(horizontal: 12.sp),
+      childrenPadding: EdgeInsets.only(
+        left: 12.sp,
+        right: 12.sp,
+        bottom: 12.sp,
+      ),
+      title: const Text(
+        'Delivery & Services Policies',
+        style: TextStyle(fontFamily: "Clash Display"),
+      ),
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: Text(
+            '•  Free delivery on orders above ₹2000\n'
+            '•  7-day return policy\n'
+            '•  Secure payments',
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontFamily: "Clash Display",
+              fontWeight: FontWeight.w400,
+              color: Colors.grey.shade700,
+              height: 1.5,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Widget _buildDeliveryPolicies() => ExpansionTile(
+  //       splashColor: Colors.transparent,
+  //       shape: const Border(),
+  //       title: const Text(
+  //         'Delivery & Services Policies',
+  //         style: TextStyle(fontFamily: "Clash Display"),
+  //       ),
+  //       children: [
+  //         Padding(
+  //           padding: EdgeInsets.symmetric(horizontal: 12.sp),
+  //           child: const SizedBox(
+  //             width: double.infinity,
+  //             child: Text(
+  //               '•  Free delivery on orders above ₹2000\n•  7-day return policy\n•  Secure payments',
+  //               textAlign: TextAlign.left,
+  //               style: TextStyle(
+  //                   fontFamily: "Clash Display",
+  //                   fontWeight: FontWeight.w400,
+  //                   color: Colors.grey),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     );
 
   Widget _buildFAQs() => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0),

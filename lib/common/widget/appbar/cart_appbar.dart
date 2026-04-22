@@ -30,12 +30,15 @@ class _CartAppbarState extends State<CartAppbar> {
       decoration: BoxDecoration(color: statusBarColor),
       child: Padding(
         padding: EdgeInsets.only(
-            left: 16.sp, top: statusBarHeight + 8.sp, right: 10.sp, bottom: 8.sp),
+            left: 16.sp,
+            top: statusBarHeight + 8.sp,
+            right: 10.sp,
+            bottom: 8.sp),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            InkWell(
-              onTap: () => Get.back(),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
               child: Padding(
                 padding: EdgeInsets.only(right: 12.sp),
                 child: SvgPicture.asset(

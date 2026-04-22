@@ -78,7 +78,8 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // BACK BUTTON
-            InkWell(
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTap: () => Get.back(),
               child: Padding(
                 padding: EdgeInsets.only(right: 12.sp, bottom: 4.sp),

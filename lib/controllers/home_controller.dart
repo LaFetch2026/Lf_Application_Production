@@ -99,6 +99,8 @@ class HomeController extends BaseController {
   // ✅ When true, getGenderTabs() skips the /category-hierarchy API call
   // because tabs have already been injected from the dynamic menu (/menu-v2).
   bool menuTabsInjected = false;
+  final isBottomNavVisible = true.obs;
+  double lastScrollOffset = 0;
 
   @override
   void onInit() {
@@ -301,7 +303,8 @@ class HomeController extends BaseController {
   Future<void> getGenderTabs() async {
     // ✅ If tabs were already injected from /menu-v2, skip the old API call
     if (menuTabsInjected && genderTabs.isNotEmpty) {
-      print('✅ getGenderTabs: skipping /category-hierarchy — menu tabs already injected');
+      print(
+          '✅ getGenderTabs: skipping /category-hierarchy — menu tabs already injected');
       return;
     }
 
@@ -369,7 +372,8 @@ class HomeController extends BaseController {
       final prefs = await SharedPreferences.getInstance();
       final rawToken = (prefs.getString('token') ?? '').trim();
 
-      final uri = Uri.parse("${ApiConstants.baseUrl}/banner/$bannerId?status=true");
+      final uri =
+          Uri.parse("${ApiConstants.baseUrl}/banner/$bannerId?status=true");
       print("📤 Hitting banner detail API: $uri");
 
       final headers = <String, String>{
@@ -579,7 +583,8 @@ class HomeController extends BaseController {
         }
       } else if (response.statusCode == 429) {
         // Rate limited — silently skip, data will load on next refresh
-        print("⚠️ Category request rate limited (429) — will retry on next load");
+        print(
+            "⚠️ Category request rate limited (429) — will retry on next load");
       } else if (response.statusCode == 500) {
       } else if (response.statusCode == 401) {
         Get.offAll(
@@ -792,14 +797,16 @@ class HomeController extends BaseController {
         return true;
       } else if (response.statusCode == 409) {
         await prefs.setString('fcm_token', token);
-        print("⚠️ Token already exists on server — stored locally to avoid repeat");
+        print(
+            "⚠️ Token already exists on server — stored locally to avoid repeat");
         return true;
       } else if (response.statusCode == 401) {
         print("❌ Authentication failed - auth token may be invalid");
         _redirectToLoginIfNotGuest();
         return false;
       } else {
-        print("❌ FCM token registration failed: ${response.statusCode} ${response.body}");
+        print(
+            "❌ FCM token registration failed: ${response.statusCode} ${response.body}");
         return false;
       }
     } catch (e, st) {

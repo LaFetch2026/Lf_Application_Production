@@ -18,6 +18,7 @@ import '../common/widget/appbar/productlist_appbar.dart';
 import '../common/widget/cards/product_card.dart';
 import '../common/widget/lists/dummy_grid_list.dart';
 import '../common/widget/other/common_widget.dart';
+import '../common/widget/other/filter_chips_row.dart';
 import '../common/widget/text/app_text.dart';
 import '../controllers/cart_controller.dart';
 import '../controllers/product_controller.dart';
@@ -197,6 +198,16 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
             },
           ),
           SizedBox(height: 10.sp),
+
+          // Filter Chips Row
+          Obx(() {
+            final searchSc = Get.find<SearchScreenController>();
+            return FilterChipsRow(
+              chips: searchSc.chips.toList(),
+              activeChipId: searchSc.activeChipId,
+              onChipTap: searchSc.onSearchChipTap,
+            );
+          }),
 
           // Grid
           Expanded(
@@ -428,7 +439,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

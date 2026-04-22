@@ -26,13 +26,17 @@ class SaveAddressAppbar extends StatelessWidget {
       decoration: BoxDecoration(color: statusBarColor),
       child: Padding(
         padding: EdgeInsets.only(
-            left: 16.sp, top: statusBarHeight + 8.sp, right: 10.sp, bottom: 8.sp),
+            left: 16.sp,
+            top: statusBarHeight + 8.sp,
+            right: 10.sp,
+            bottom: 8.sp),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTap: () {
                 Get.back();
               },
@@ -65,9 +69,7 @@ class SaveAddressAppbar extends StatelessWidget {
                       onPressedWishlist?.call();
                     },
                     child: Padding(
-                      padding: EdgeInsets.only(
-                          left: 16.sp,
-                          right: 6.sp),
+                      padding: EdgeInsets.only(left: 16.sp, right: 6.sp),
                       child: SvgPicture.asset(heartSvgImage,
                           height: 18.sp, width: 18.sp, fit: BoxFit.fill),
                     ),

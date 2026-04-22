@@ -72,11 +72,12 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
   Future<void> _loadTrending() async {
     try {
       final products = await RecommendationService.instance.fetchTrending();
-      if (mounted)
+      if (mounted) {
         setState(() {
           _trending = products;
           _loadingTrending = false;
         });
+      }
     } catch (_) {
       if (mounted) setState(() => _loadingTrending = false);
     }
@@ -191,7 +192,7 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding:
-          EdgeInsets.only(left: 16.sp, right: 16.sp, top: 16.sp, bottom: 12.sp),
+          EdgeInsets.only(left: 16.sp, right: 16.sp, top: 0.sp, bottom: 12.sp),
       child: Text(
         title,
         maxLines: 1,

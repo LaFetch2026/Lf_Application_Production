@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constant/constants.dart';
+import '../models/filter_chip_item.dart';
 import 'base_controller.dart';
 
 class SearchScreenController extends BaseController {
@@ -33,6 +34,16 @@ class SearchScreenController extends BaseController {
   // Race condition prevention: each search gets a unique ID;
   // responses from older requests are discarded.
   int _searchRequestId = 0;
+
+  // ── Filter Chips ──────────────────────────────────────────────────────────
+  /// Chips returned by the last fresh /filter-products call for this search.
+  RxList<FilterChipItem> chips = <FilterChipItem>[].obs;
+
+  /// The id of the currently active chip (set by [onSearchChipTap]).
+  int? _activeChipId;
+
+  /// Returns the active chip id for use by FilterChipsRow.
+  int? get activeChipId => _activeChipId;
 
   // Inactive brands cache (5-minute TTL)
   Set<String>? _inactiveBrandsCache;
@@ -321,6 +332,11 @@ class SearchScreenController extends BaseController {
 
       _applyLocalSort();
 
+      // Refresh chips on fresh queries only
+      if (!loadMore) {
+        fetchChipsForSearch();
+      }
+
       searchText.value =
           searchList.isEmpty ? "No product found" : "Search for products";
 
@@ -348,8 +364,74 @@ class SearchScreenController extends BaseController {
     }
   }
 
-  void _applyLocalSort() {
-    if (sortOption.value == 'recommended' || searchList.isEmpty) return;
+  // ── Chip methods ────────────────────────────────────────────────────────
+
+  /// Fetches chips from /filter-products using the current search query.
+  /// Called after a fresh Algolia search completes (not on load-more).
+  Future<void> fetchChipsForSearch() async {
+    final key = searchController.text.trim();
+    if (key.isEmpty) {
+      chips.clear();
+      return;
+    }
+
+    try {
+      final headers = await _headers();
+      final params = <String, String>{
+        'key': key,
+        'status': 'true',
+        'page': '1',
+        'limit': '1',
+      };
+
+      if (filterBrands.isNotEmpty) {
+        params['brandIds'] = filterBrands.join(',');
+      }
+      if (filterColors.isNotEmpty) {
+        params['colors'] = filterColors.join(',');
+      }
+      if (filterSizes.isNotEmpty) {
+        params['sizes'] = filterSizes.join(',');
+      }
+
+      final uri = Uri.parse('${ApiConstants.baseUrl}/filter-products')
+          .replace(queryParameters: params);
+
+      final response = await http
+          .get(uri, headers: headers)
+          .timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200 && _isJson(response)) {
+        final decoded = json.decode(response.body);
+        final data = decoded['data'];
+        final rawChips =
+            data is Map ? (data['chips'] as List?) ?? [] : <dynamic>[];
+        final parsed = rawChips
+            .whereType<Map<String, dynamic>>()
+            .map((c) => FilterChipItem.fromJson(c))
+            .toList();
+        chips.assignAll(parsed);
+      } else {
+        chips.clear();
+      }
+    } catch (e) {
+      print('[CHIPS] fetchChipsForSearch error: $e');
+      chips.clear();
+    }
+  }
+
+  /// Called when the user taps a chip on the search results page.
+  /// Resets pagination and re-runs the search with the chip's category context.
+  void onSearchChipTap(FilterChipItem chip) {
+    _activeChipId = chip.id;
+    currentPage.value = 0;
+    hasMore.value = true;
+    searchList.clear();
+    ++_searchRequestId;
+    getSearchData();
+  }
+
+  void _applyLocalSort() {    if (sortOption.value == 'recommended' || searchList.isEmpty) return;
 
     final list = searchList.toList();
     list.sort((a, b) {

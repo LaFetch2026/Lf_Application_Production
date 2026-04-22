@@ -32,21 +32,24 @@ class BackButtonAppbar extends StatelessWidget {
       decoration: BoxDecoration(color: backgroundColor),
       child: Padding(
         padding: EdgeInsets.only(
-            left: 2.sp, top: statusBarHeight + 8.sp, right: 16.sp, bottom: 8.sp),
+            left: 2.sp,
+            top: statusBarHeight + 8.sp,
+            right: 16.sp,
+            bottom: 8.sp),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            InkWell(
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTap: () {
                 Get.back();
               },
               child: Container(
                 color: backgroundColor,
                 child: Padding(
-                  padding: EdgeInsets.only(
-                      left: 14.sp, right: 16.sp),
+                  padding: EdgeInsets.only(left: 14.sp, right: 16.sp),
                   child: SvgPicture.asset(arrowBack,
                       height: 15.sp, width: 15.sp, fit: BoxFit.fill),
                 ),

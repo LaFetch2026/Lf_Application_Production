@@ -25,12 +25,16 @@ class CatalogAppbar extends StatelessWidget {
       color: whiteColor,
       child: Padding(
         padding: EdgeInsets.only(
-            left: 6.sp, top: statusBarHeight + 8.sp, right: 16.sp, bottom: 8.sp),
+            left: 6.sp,
+            top: statusBarHeight + 8.sp,
+            right: 16.sp,
+            bottom: 8.sp),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            InkWell(
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTap: () {
                 Get.back();
               },

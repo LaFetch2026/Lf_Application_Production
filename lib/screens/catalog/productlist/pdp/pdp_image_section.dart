@@ -93,7 +93,7 @@ extension PdpImageSection on _ProductDetailsScreenV2State {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(6.sp),
           border: Border.all(
-            color: isActive ? blackColor : Colors.grey.shade300,
+            color: isActive ? blackColor.withAlpha(128) : Colors.grey.shade300,
             width: isActive ? 2 : 1,
           ),
         ),
