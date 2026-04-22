@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/catalog/productlist/pdp/product_details_screen_v2.dart';
+import 'package:lafetch/screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
@@ -217,8 +217,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                       height: 10.sp,
                                     ),
                                     Obx(() => FilterChipsRow(
-                                          chips: catalogController.chips
-                                              .toList(),
+                                          chips:
+                                              catalogController.chips.toList(),
                                           activeChipId:
                                               catalogController.activeChipId,
                                           onChipTap:
@@ -490,7 +490,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                           height: 26.sp,
                                                           width: 80.sp,
                                                           child: Row(
-                                                            mainAxisSize: MainAxisSize.min,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
                                                             children: [
                                                               Padding(
                                                                 padding: EdgeInsets
@@ -546,7 +548,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                 child: AppText(
                                                                   text: productController
                                                                       .productCategoryList[
-                                                                          index][
+                                                                          index]
+                                                                          [
                                                                           "reviews_count"]
                                                                       .toString(),
                                                                   color:
@@ -706,7 +709,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                       fontSize: 14,
                                                       mrpFontSize: 11,
                                                       discountFontSize: 11,
-                                                      fontWeight: FontWeight.w400,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                       spacing: 5,
                                                     ),
                                                   ),

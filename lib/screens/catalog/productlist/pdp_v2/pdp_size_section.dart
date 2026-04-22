@@ -18,6 +18,23 @@ extension PdpSizeSection on _ProductDetailsScreenV2State {
                               fontFamily: "Clash Display",
                               fontWeight: FontWeight.w600,
                               fontSize: 14.sp)),
+                      GestureDetector(
+                        onTap: () {
+                          _openSizeChart();
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 12.sp, vertical: 6.sp),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: lightPurpleColor),
+                              borderRadius: BorderRadius.circular(20.sp)),
+                          child: Text('Size Chart',
+                              style: TextStyle(
+                                  fontFamily: "Clash Display Regular",
+                                  color: lightPurpleColor,
+                                  fontSize: 12.sp)),
+                        ),
+                      ),
                     ]),
                 SizedBox(height: 8.sp),
                 GestureDetector(

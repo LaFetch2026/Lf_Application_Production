@@ -19,7 +19,7 @@ import 'package:lafetch/screens/Brands/categoryproduct.dart'
     hide SizedBox, Center, Column, Padding;
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/common/widget/other/pounce_wrapper.dart';
-import 'package:lafetch/screens/catalog/productlist/pdp/product_details_screen_v2.dart';
+import 'package:lafetch/screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 import 'package:lafetch/screens/home/women/productviewscreen.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';

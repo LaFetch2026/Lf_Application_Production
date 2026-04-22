@@ -1002,7 +1002,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/Brands/brand_product_list.dart';
-import 'package:lafetch/screens/catalog/productlist/pdp/product_details_screen_v2.dart';
+import 'package:lafetch/screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 import 'package:lafetch/screens/quick/brandproductscreen.dart';
 import 'package:lafetch/screens/wishlistscreen.dart';
 import 'package:share_plus/share_plus.dart';

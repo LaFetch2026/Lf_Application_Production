@@ -8,7 +8,7 @@ import '../common/widget/other/pounce_wrapper.dart';
 import '../controllers/product_controller.dart';
 import '../core/constant/constants.dart';
 import '../models/recommendation_event.dart';
-import '../screens/catalog/productlist/pdp/product_details_screen_v2.dart';
+import '../screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 import '../services/event_tracking_service.dart';
 import '../services/recommendation_service.dart';
 
@@ -169,7 +169,8 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
           if (_loadingSimilar)
             _buildShimmerRow('YOU MAY ALSO LIKE')
           else if (_similar.isNotEmpty) ...[
-            _buildSectionHeader('YOU MAY ALSO LIKE'),
+            _buildSectionHeader('LAFETCH RECOMMENDATIONS',
+                subtitle: 'CURATED FOR YOU'),
             _buildRow(_similar, isTrending: false),
             SizedBox(height: 8.sp),
           ],
@@ -189,21 +190,35 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(String title, {String? subtitle}) {
     return Padding(
-      padding:
-          EdgeInsets.only(left: 16.sp, right: 16.sp, top: 0.sp, bottom: 12.sp),
-      child: Text(
-        title,
-        maxLines: 1,
-        style: TextStyle(
-          fontFamily: 'Clash Display Semibold',
-          fontWeight: FontWeight.w600,
-          fontSize: 16.sp,
-          color: blackColor,
-        ),
-      ),
-    );
+        padding: EdgeInsets.only(
+            left: 12.sp, right: 12.sp, top: 0.sp, bottom: 12.sp),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (subtitle != null && subtitle.isNotEmpty)
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontFamily: 'Clash Display Regular',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12.sp,
+                  color: blackColor,
+                ),
+              ),
+            Text(
+              title,
+              maxLines: 1,
+              style: TextStyle(
+                fontFamily: 'Clash Display Semibold',
+                fontWeight: FontWeight.w600,
+                fontSize: 16.sp,
+                color: blackColor,
+              ),
+            ),
+          ],
+        ));
   }
 
   Widget _buildRow(List<RecommendationProduct> products,
@@ -288,7 +303,7 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
           onTap: () => _navigate(product, index, savedDetails, savedImages,
               savedDisplay, savedSize, savedColor),
           child: SizedBox(
-            width: 160.sp,
+            width: 150.sp,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -7,56 +7,6 @@ extension PdpBottomSection on _ProductDetailsScreenV2State {
       showTrending: false,
       onNavigating: () => setState(() => _isForeground = false));
 
-  // Widget _buildProductDetails() => Obx(() {
-  //       if (productController.isDetails.value) return const SizedBox();
-
-  //       final desc =
-  //           productController.productDetails['description']?.toString() ?? '';
-  //       if (desc.isEmpty) return const SizedBox();
-
-  //       final lines =
-  //           desc.split('\n').where((e) => e.trim().isNotEmpty).toList();
-
-  //       return ExpansionTile(
-  //         splashColor: Colors.transparent,
-  //         shape: const Border(),
-  //         initiallyExpanded: true,
-  //         title: const Text(
-  //           'Product details',
-  //           style: TextStyle(fontFamily: "Clash Display"),
-  //         ),
-  //         children: [
-  //           Padding(
-  //             padding: EdgeInsets.symmetric(horizontal: 12.sp),
-  //             child: Column(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: lines.map((line) {
-  //                 return Padding(
-  //                   padding: EdgeInsets.only(bottom: 6.sp),
-  //                   child: Row(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       Expanded(
-  //                         child: Text(
-  //                           line.trim(),
-  //                           style: const TextStyle(
-  //                             height: 1.4,
-  //                             fontFamily: "Clash Display",
-  //                             fontWeight: FontWeight.w400,
-  //                             color: Colors.grey,
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 );
-  //               }).toList(),
-  //             ),
-  //           ),
-  //         ],
-  //       );
-  //     });
-
   Widget _buildProductDetails() {
     return Obx(() {
       if (productController.isDetails.value) return const SizedBox();
@@ -291,9 +241,12 @@ extension PdpBottomSection on _ProductDetailsScreenV2State {
     );
   }
 
-  Widget _buildLFPromises() => Container(
-        width: double.infinity,
-        child: Image.asset("assets/images/lf_promises.png"),
+  Widget _buildLFPromises() => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        child: SizedBox(
+          width: double.infinity,
+          child: Image.asset("assets/images/lf_promises.png"),
+        ),
       );
 
   Widget _buildReviewSection() => Obx(() {
@@ -525,16 +478,16 @@ extension PdpBottomSection on _ProductDetailsScreenV2State {
   Widget _buildNewsletter() =>
       const NewsletterSection(title: "LF NEWS LETTERS");
 
-  Widget _buildDivider() {
+  Widget _buildDivider({double? height}) {
     return Column(
       children: [
-        SizedBox(height: 10.sp),
+        SizedBox(height: height ?? 10.sp),
         Divider(
           color: Colors.grey[200],
           height: 1,
           thickness: 4.0,
         ),
-        SizedBox(height: 20.sp),
+        SizedBox(height: height ?? 20.sp),
       ],
     );
   }

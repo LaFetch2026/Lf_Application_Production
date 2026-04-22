@@ -322,7 +322,7 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
                     _buildSimilarProducts(),
                     _buildDivider(),
                     _buildFAQs(),
-                    _buildDivider(),
+                    _buildDivider(height: 10),
                     _buildLFPromises(),
                     _buildDivider(),
                     _buildTrendingProducts(),

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/catalog/productlist/pdp/product_details_screen_v2.dart';
+import 'package:lafetch/screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/wishlist/boardscreen.dart';
 
