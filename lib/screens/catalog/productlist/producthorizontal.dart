@@ -62,6 +62,11 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
       productController.categoryProductController.addListener(() {
         productController.update();
       });
+      // Fetch chips for this category page
+      catalogController.fetchChipsForCategory(
+        catId: widget.categoryId,
+        superCatId: widget.genderType,
+      );
     });
     super.initState();
   }
@@ -103,7 +108,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                   Obx(() => FilterChipsRow(
                                         chips: catalogController.chips.toList(),
                                         activeChipId:
-                                            catalogController.activeChipId,
+                                            catalogController.activeChipId.value,
                                         onChipTap: catalogController.onChipTap,
                                       )),
                                   Padding(

@@ -52,7 +52,6 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   @override
   void initState() {
     productController.curr.value = 0;
-    //  productController.sortBy.value = "";
     productController.productCategoryList.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.categoryProductHasnextpage.value = true;
@@ -67,6 +66,11 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
       productController.categoryProductController.addListener(() {
         productController.update();
       });
+      // Fetch chips for this category page
+      catalogController.fetchChipsForCategory(
+        catId: widget.categoryId,
+        superCatId: widget.genderType,
+      );
     });
     super.initState();
   }
@@ -220,7 +224,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                           chips:
                                               catalogController.chips.toList(),
                                           activeChipId:
-                                              catalogController.activeChipId,
+                                              catalogController.activeChipId.value,
                                           onChipTap:
                                               catalogController.onChipTap,
                                         )),

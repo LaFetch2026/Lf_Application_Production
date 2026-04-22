@@ -7,13 +7,13 @@ extension PdpDialogs on _ProductDetailsScreenV2State {
         'title': 'Buyer Protection',
         'icon': Icons.verified_outlined,
         'body':
-            'Your purchase is fully protected. If your order does not arrive or is not as described, we will make it right with a full refund or replacement.',
+            'Your purchase is fully protected. If your order does not arrive or is not as described, we will make it right with a replacement or refund if applicable.',
       },
       'auth': {
         'title': 'LaFetch Verified',
         'icon': Icons.security_outlined,
         'body':
-            'Every product on LaFetch is verified for authenticity by our expert team. We source only from trusted sellers and brands.',
+            'Every product on LaFetch is sourced directly from trusted brands and verified sellers.',
       },
       'delivery': {
         'title': 'Quick Delivery',

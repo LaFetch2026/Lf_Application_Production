@@ -237,6 +237,19 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
       _isCategoryProductsLoaded = true;
       print(
           "✅ Stored ${_originalCategoryProductIds.length} product IDs for filtering");
+
+      // Fetch chips separately since products were loaded via a different endpoint
+      final collectionId = widget.collectionIds.isNotEmpty
+          ? (widget.collectionIds.first is int
+              ? widget.collectionIds.first as int
+              : int.tryParse(widget.collectionIds.first?.toString() ?? ''))
+          : null;
+      catalogController.fetchChipsForCategory(
+        catId: widget.categoryId > 0 ? widget.categoryId : null,
+        superCatId: widget.genderType > 0 ? widget.genderType : null,
+        collectionId:
+            collectionId != null && collectionId > 0 ? collectionId : null,
+      );
       return;
     }
 
@@ -256,12 +269,23 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         collectionId: collectionId,
         superCatId: widget.genderType,
       );
+
+      // getFilterAndSortProducts parses chips, but also call explicitly
+      // in case the response format differs for collection queries
+      if (catalogController.chips.isEmpty) {
+        catalogController.fetchChipsForCategory(
+          collectionId: collectionId > 0 ? collectionId : null,
+          superCatId: widget.genderType > 0 ? widget.genderType : null,
+        );
+      }
     } else if (hasCategoryId) {
-      // Load products by category ID (existing behavior)
+      // Load products by category ID using filter-products so chips are returned
       print("🔹 Loading products by category ID: ${widget.categoryId}");
-      await catalogController.getCategoryProductData(
-        widget.categoryId,
-        widget.genderType,
+      await catalogController.getFilterAndSortProducts(
+        catId: widget.categoryId,
+        superCatId: widget.genderType,
+        page: 1,
+        limit: 20,
       );
     } else {
       // No valid ID provided
@@ -474,9 +498,11 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               superCatId: widget.genderType,
             );
           } else if (hasCategoryId) {
-            await catalogController.getCategoryProductData(
-              widget.categoryId,
-              widget.genderType,
+            await catalogController.getFilterAndSortProducts(
+              catId: widget.categoryId,
+              superCatId: widget.genderType,
+              page: 1,
+              limit: 20,
             );
           }
           _isCategoryProductsLoaded = true;
@@ -569,9 +595,11 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
             superCatId: widget.genderType,
           );
         } else if (hasCategoryId) {
-          await catalogController.getCategoryProductData(
-            widget.categoryId,
-            widget.genderType,
+          await catalogController.getFilterAndSortProducts(
+            catId: widget.categoryId,
+            superCatId: widget.genderType,
+            page: 1,
+            limit: 20,
           );
         }
         _lastFilterHash = currentFilterHash;
@@ -594,9 +622,11 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
               superCatId: widget.genderType,
             );
           } else if (hasCategoryId) {
-            await catalogController.getCategoryProductData(
-              widget.categoryId,
-              widget.genderType,
+            await catalogController.getFilterAndSortProducts(
+              catId: widget.categoryId,
+              superCatId: widget.genderType,
+              page: 1,
+              limit: 20,
             );
           }
         }
@@ -702,11 +732,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           SizedBox(height: 8.sp),
 
           // Filter Chips Row
-          Obx(() => FilterChipsRow(
-                chips: catalogController.chips.toList(),
-                activeChipId: catalogController.activeChipId,
-                onChipTap: catalogController.onChipTap,
-              )),
+          // Uses a StatefulBuilder so both setState (filter pills) and
+          // GetX reactive (chips/activeChipId) changes trigger a rebuild.
+          _FilterChipsSection(
+            catalogController: catalogController,
+            buildPills: _buildActiveFilterPills,
+          ),
 
           /// ✅ Product Grid with skeleton loading
           Expanded(
@@ -855,6 +886,92 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         ],
       ),
     );
+  }
+
+  /// Builds the list of active filter pills from current filter state.
+  List<ActiveFilterPill> _buildActiveFilterPills() {
+    final pills = <ActiveFilterPill>[];
+
+    // Brand pills — show brand names (look up from filterBrands metadata)
+    for (final id in _appliedBrandIds) {
+      final brandData = productController.filterBrands.firstWhereOrNull(
+          (item) => int.tryParse(item['id']?.toString() ?? '') == id);
+      final name = brandData?['name']?.toString().trim() ?? 'Brand';
+      pills.add(ActiveFilterPill(
+        label: name,
+        onRemove: () => _removeFilter(brandId: id),
+      ));
+    }
+
+    // Color pills
+    for (final color in _appliedColors) {
+      pills.add(ActiveFilterPill(
+        label: color,
+        onRemove: () => _removeFilter(color: color),
+      ));
+    }
+
+    // Size pills
+    for (final size in _appliedSizes) {
+      pills.add(ActiveFilterPill(
+        label: size,
+        onRemove: () => _removeFilter(size: size),
+      ));
+    }
+
+    // Price pill — only show if non-default
+    final minP = int.tryParse(_appliedMinPrice) ?? 300;
+    final maxP = int.tryParse(_appliedMaxPrice) ?? 100000;
+    if (minP > 300 || maxP < 100000) {
+      pills.add(ActiveFilterPill(
+        label: '₹$minP–₹$maxP',
+        onRemove: () => _removeFilter(resetPrice: true),
+      ));
+    }
+
+    // Sort pill — only show if non-default
+    if (_appliedSortOption != 'recommended') {
+      final sortLabels = {
+        'price_asc': 'Price ↑',
+        'price_desc': 'Price ↓',
+        'whats_new': "What's New",
+        'rating': 'Top Rated',
+        'discount': 'Discount',
+      };
+      pills.add(ActiveFilterPill(
+        label: sortLabels[_appliedSortOption] ?? _appliedSortOption,
+        onRemove: () => _removeFilter(resetSort: true),
+      ));
+    }
+
+    return pills;
+  }
+
+  /// Removes a single filter and re-applies.
+  void _removeFilter({
+    int? brandId,
+    String? color,
+    String? size,
+    bool resetPrice = false,
+    bool resetSort = false,
+  }) {
+    setState(() {
+      if (brandId != null) _appliedBrandIds.remove(brandId);
+      if (color != null) _appliedColors.remove(color);
+      if (size != null) _appliedSizes.remove(size);
+      if (resetPrice) {
+        _appliedMinPrice = '300';
+        _appliedMaxPrice = '100000';
+      }
+      if (resetSort) _appliedSortOption = 'recommended';
+
+      _hasActiveFilters = _appliedBrandIds.isNotEmpty ||
+          _appliedColors.isNotEmpty ||
+          _appliedSizes.isNotEmpty ||
+          (int.tryParse(_appliedMinPrice) ?? 300) > 300 ||
+          (int.tryParse(_appliedMaxPrice) ?? 100000) < 100000;
+    });
+    _applyFiltersAndSortDebounced();
   }
 
   /// ✅ Skeleton Grid with shimmer effect
@@ -1615,5 +1732,68 @@ class _SkeletonProductTile extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// A dedicated StatefulWidget for the filter chips row in CategoryProductScreen.
+///
+/// This widget subscribes to GetX observables (chips, activeChipId) via [Obx]
+/// AND re-reads the active filter pills via [buildPills] on every rebuild.
+/// Because it is a separate StatefulWidget, calling setState on the parent
+/// does NOT cause this widget to rebuild — only GetX changes do.
+/// Conversely, when the parent calls setState (e.g. after removing a filter),
+/// the parent rebuilds and passes a fresh [buildPills] closure, which this
+/// widget picks up on its next GetX-triggered rebuild.
+///
+/// The key insight: we store the pills in local state and update them whenever
+/// the parent rebuilds (via [didUpdateWidget]) OR when GetX triggers a rebuild.
+class _FilterChipsSection extends StatefulWidget {
+  final CatalogController catalogController;
+  final List<ActiveFilterPill> Function() buildPills;
+
+  const _FilterChipsSection({
+    required this.catalogController,
+    required this.buildPills,
+  });
+
+  @override
+  State<_FilterChipsSection> createState() => _FilterChipsSectionState();
+}
+
+class _FilterChipsSectionState extends State<_FilterChipsSection> {
+  late List<ActiveFilterPill> _pills;
+
+  @override
+  void initState() {
+    super.initState();
+    _pills = widget.buildPills();
+  }
+
+  @override
+  void didUpdateWidget(_FilterChipsSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Parent called setState — refresh pills immediately
+    _pills = widget.buildPills();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      // Reading these observables registers them with Obx so it rebuilds
+      // when chips or activeChipId change.
+      final chips = widget.catalogController.chips.toList();
+      final activeId = widget.catalogController.activeChipId.value;
+
+      // Also refresh pills here so a GetX-triggered rebuild picks up the
+      // latest filter state (e.g. after onChipTap clears a filter).
+      final pills = widget.buildPills();
+
+      return FilterChipsRow(
+        chips: chips,
+        activeChipId: activeId,
+        onChipTap: widget.catalogController.onChipTap,
+        activeFilters: pills,
+      );
+    });
   }
 }

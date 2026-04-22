@@ -68,7 +68,7 @@ extension PdpInfoSection on _ProductDetailsScreenV2State {
           _trustChip(Icons.security_outlined, 'LaFetch Verified',
               () => _showBadgeSheet('auth')),
           _trustChip(Icons.local_shipping_outlined, 'Quick Delivery',
-              () => _showBadgeSheet('returns')),
+              () => _showBadgeSheet('delivery')),
           _trustChip(Icons.assignment_return_outlined, 'Easy Returns',
               () => _showBadgeSheet('returns')),
           _trustChip(Icons.swap_horiz_outlined, 'Exchange Policy',

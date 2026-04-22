@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,7 +47,11 @@ class CatalogController extends BaseController {
   RxList<FilterChipItem> chips = <FilterChipItem>[].obs;
 
   /// The id of the currently active chip (set by [onChipTap]).
-  int? activeChipId;
+  final Rx<int?> activeChipId = Rx<int?>(null);
+
+  /// The last chip list returned by the server (page = 1).
+  /// Used to restore server order when the active chip is deselected.
+  List<FilterChipItem> _lastServerChips = [];
 
   // Stored filter state so [onChipTap] can re-issue the query while
   // preserving all active filters the user has selected.
@@ -628,7 +633,21 @@ class CatalogController extends BaseController {
               .whereType<Map<String, dynamic>>()
               .map((c) => FilterChipItem.fromJson(c))
               .toList();
-          chips.assignAll(parsedChips);
+          // Always store the server-returned order so deselect can restore it.
+          _lastServerChips = parsedChips;
+          final activeId = activeChipId.value;
+          if (activeId != null) {
+            final active =
+                parsedChips.firstWhereOrNull((c) => c.id == activeId);
+            if (active != null) {
+              chips.assignAll(
+                  [active, ...parsedChips.where((c) => c.id != activeId)]);
+            } else {
+              chips.assignAll(parsedChips); // active chip no longer in response
+            }
+          } else {
+            chips.assignAll(parsedChips);
+          }
         }
 
         print("✅ Products loaded: ${transformed.length}");
@@ -656,13 +675,116 @@ class CatalogController extends BaseController {
     }
   }
 
+  /// Fetches chips for a category/subcategory page without replacing the
+  /// existing product list. Call this after the initial product load so chips
+  /// appear even when products were loaded via a non-filter-products endpoint.
+  Future<void> fetchChipsForCategory({
+    int? catId,
+    int? subCatId,
+    int? superCatId,
+    int? collectionId,
+    int? brandId,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final Map<String, String> params = {
+        'status': 'true',
+        'page': '1',
+        'limit': '1', // we only need chips, not products
+      };
+
+      if (superCatId != null && superCatId > 0) {
+        params['superCatId'] = superCatId.toString();
+      }
+      if (catId != null && catId > 0) {
+        params['catId'] = catId.toString();
+      }
+      if (subCatId != null && subCatId > 0) {
+        params['subCatId'] = subCatId.toString();
+      }
+      if (collectionId != null && collectionId > 0) {
+        params['collectionId'] = collectionId.toString();
+      }
+      if (brandId != null && brandId > 0) {
+        params['brandId'] = brandId.toString();
+      }
+
+      final uri = Uri.parse('${ApiConstants.baseUrl}/filter-products')
+          .replace(queryParameters: params);
+
+      print('🔹 Chips fetch → $uri');
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${prefs.getString('token')}',
+        },
+      ).timeout(const Duration(seconds: 15));
+
+      print('🔹 Chips response: ${response.statusCode}');
+      print('🔹 Chips body (first 500): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}');
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body);
+        final data = decoded['data'];
+        if (data is Map) {
+          final rawChips = (data['chips'] as List?) ?? [];
+          print('🔹 Raw chips: ${rawChips.length}');
+          final parsed = rawChips
+              .whereType<Map<String, dynamic>>()
+              .map((c) => FilterChipItem.fromJson(c))
+              .toList();
+          chips.assignAll(parsed);
+          print('✅ Chips loaded: ${parsed.length}');
+        } else {
+          print('⚠️ data is not a Map: ${data.runtimeType}');
+        }
+      } else {
+        print('⚠️ Chips fetch ${response.statusCode} — skipping');
+      }
+    } catch (e) {
+      print('⚠️ fetchChipsForCategory error: $e');
+      // Non-fatal — chips row just stays empty
+    }
+  }
+
   /// Called when the user taps a chip on a category/subcategory listing page.
   ///
   /// Sets the relevant category ID (subCatId or contextualCategoryId) and
   /// clears the other, then re-issues the product query while preserving all
   /// other active filter parameters.
   void onChipTap(FilterChipItem chip) {
-    activeChipId = chip.id;
+    // Deselect guard: tapping the already-active chip clears the selection,
+    // restores server order, and re-fetches without the chip filter.
+    if (activeChipId.value == chip.id) {
+      activeChipId.value = null;
+      chips.assignAll(_lastServerChips);
+      getFilterAndSortProducts(
+        brandIds: _lastBrandIds,
+        colors: _lastColors,
+        sizes: _lastSizes,
+        minPrice: _lastMinPrice,
+        maxPrice: _lastMaxPrice,
+        sortOption: _lastSortOption,
+        superCatId: _lastSuperCatId,
+        catId: _lastCatId,
+        subCatId: null,
+        brandId: _lastBrandId,
+        collectionId: _lastCollectionId,
+        contextualCategoryId: null,
+        key: _lastKey,
+        page: 1,
+        limit: _lastLimit,
+        appendResults: false,
+      );
+      return;
+    }
+
+    activeChipId.value = chip.id;
+
+    // Pin the tapped chip at index 0 immediately (client-side reorder).
+    chips.assignAll([chip, ...chips.where((c) => c.id != chip.id)]);
 
     int? newSubCatId;
     int? newContextualCategoryId;
@@ -693,5 +815,42 @@ class CatalogController extends BaseController {
       limit: _lastLimit,
       appendResults: false,
     );
+  }
+
+  /// Sets the stored filter parameters directly.
+  ///
+  /// This method exists solely to support unit tests that need to pre-populate
+  /// the `_last*` fields without making a real HTTP call.
+  @visibleForTesting
+  void setLastParamsForTest({
+    List<int>? brandIds,
+    List<String>? colors,
+    List<String>? sizes,
+    String? minPrice,
+    String? maxPrice,
+    String? sortOption,
+    int? superCatId,
+    int? catId,
+    int? subCatId,
+    int? brandId,
+    int? collectionId,
+    int? contextualCategoryId,
+    String? key,
+    int limit = 20,
+  }) {
+    _lastBrandIds = brandIds;
+    _lastColors = colors;
+    _lastSizes = sizes;
+    _lastMinPrice = minPrice;
+    _lastMaxPrice = maxPrice;
+    _lastSortOption = sortOption;
+    _lastSuperCatId = superCatId;
+    _lastCatId = catId;
+    _lastSubCatId = subCatId;
+    _lastBrandId = brandId;
+    _lastCollectionId = collectionId;
+    _lastContextualCategoryId = contextualCategoryId;
+    _lastKey = key;
+    _lastLimit = limit;
   }
 }

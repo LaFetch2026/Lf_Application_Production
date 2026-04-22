@@ -96,7 +96,7 @@ class _ProductdetailsAppbarState extends State<ProductdetailsAppbar> {
 
             // CENTER LOGO
             Padding(
-              padding: EdgeInsets.only(left: 55.sp),
+              padding: EdgeInsets.only(left: 30.sp),
               child: GestureDetector(
                 onTap: () => Get.offAll(() => const BottomNavScreen(index: 0)),
                 child: Image.asset(
