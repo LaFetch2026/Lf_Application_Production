@@ -1400,22 +1400,262 @@ class _NavCircleButton extends StatelessWidget {
   }
 }
 
+// class _NewInSection extends StatelessWidget {
+//   final NewInController newInController;
+
+//   const _NewInSection({required this.newInController});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Obx(() {
+//       if (newInController.isLoading.value) {
+//         //NEW IN Shimmer
+//         return Padding(
+//           padding: EdgeInsets.symmetric(horizontal: 16.sp),
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               // Skeleton header row
+//               Padding(
+//                 padding: EdgeInsets.only(top: 10.sp, bottom: 8.sp),
+//                 child: Row(
+//                   children: [
+//                     Container(
+//                       height: 20.sp,
+//                       width: 70.sp,
+//                       decoration: BoxDecoration(
+//                         color: Colors.black.withOpacity(0.04),
+//                         borderRadius: BorderRadius.circular(4.sp),
+//                       ),
+//                     ),
+//                     const Spacer(),
+//                     Container(
+//                       height: 28.sp,
+//                       width: 90.sp,
+//                       decoration: BoxDecoration(
+//                         color: Colors.black.withOpacity(0.04),
+//                         borderRadius: BorderRadius.circular(20.sp),
+//                       ),
+//                     ),
+//                     SizedBox(width: 8.sp),
+//                     Container(
+//                       width: 28.sp,
+//                       height: 28.sp,
+//                       decoration: BoxDecoration(
+//                         shape: BoxShape.circle,
+//                         color: Colors.black.withOpacity(0.04),
+//                       ),
+//                     ),
+//                     SizedBox(width: 6.sp),
+//                     Container(
+//                       width: 28.sp,
+//                       height: 28.sp,
+//                       decoration: BoxDecoration(
+//                         shape: BoxShape.circle,
+//                         color: Colors.black.withOpacity(0.04),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               const DummyGridList(size: 4),
+//             ],
+//           ),
+//         );
+//       }
+//       if (newInController.products.isEmpty) {
+//         return const SizedBox.shrink();
+//       }
+
+//       final paged = newInController.pagedProducts;
+//       final totalPages = newInController.totalPages;
+//       final currentPage = newInController.currentPage.value;
+
+//       final canGoPrev = currentPage > 0;
+//       final canGoNext = currentPage < totalPages - 1;
+
+//       return Padding(
+//         padding: EdgeInsets.symmetric(horizontal: 16.sp),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             // Header row: NEW IN | Sort By button | prev/next arrows
+//             Row(
+//               children: [
+//                 AppText(
+//                   text: "NEW IN",
+//                   fontFamily: "Clash Display Semibold",
+//                   color: blackColor,
+//                   fontSize: 18,
+//                 ),
+//                 const Spacer(),
+//                 // Sort By pill button
+//                 GestureDetector(
+//                   onTap: () => _showSortSheet(context),
+//                   child: Container(
+//                     padding:
+//                         EdgeInsets.symmetric(horizontal: 10.sp, vertical: 6.sp),
+//                     decoration: BoxDecoration(
+//                       border: Border.all(color: const Color(0xFFD1D5DB)),
+//                       borderRadius: BorderRadius.circular(20.sp),
+//                     ),
+//                     child: Row(
+//                       mainAxisSize: MainAxisSize.min,
+//                       children: [
+//                         Text(
+//                           "Sort By",
+//                           style: TextStyle(
+//                             fontFamily: "Clash Display Regular",
+//                             fontSize: 12.sp,
+//                             color: blackColor,
+//                           ),
+//                         ),
+//                         SizedBox(width: 4.sp),
+//                         Icon(Icons.tune, size: 14.sp, color: blackColor),
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//                 SizedBox(width: 8.sp),
+//                 // Prev arrow in circle
+//                 _NavCircleButton(
+//                   icon: Icons.chevron_left,
+//                   enabled: canGoPrev,
+//                   onTap: canGoPrev ? newInController.prevPage : null,
+//                 ),
+//                 SizedBox(width: 6.sp),
+//                 // Next arrow in circle
+//                 _NavCircleButton(
+//                   icon: Icons.chevron_right,
+//                   enabled: canGoNext,
+//                   onTap: canGoNext ? newInController.nextPage : null,
+//                 ),
+//               ],
+//             ),
+//             SizedBox(height: 8.sp),
+//             // Product grid — 2 columns, 8 items max
+//             GridView.builder(
+//               shrinkWrap: true,
+//               physics: const NeverScrollableScrollPhysics(),
+//               padding: EdgeInsets.zero,
+//               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+//                 crossAxisCount: 2,
+//                 crossAxisSpacing: 8.sp,
+//                 mainAxisSpacing: 8.sp,
+//                 childAspectRatio: 0.62,
+//               ),
+//               itemCount: paged.length,
+//               itemBuilder: (context, index) {
+//                 final product = paged[index];
+//                 final imageUrl =
+//                     (product['imageUrls'] as List?)?.firstOrNull?.toString() ??
+//                         '';
+//                 final title = product['title'] as String? ?? '';
+//                 final brand =
+//                     (product['brand'] as Map?)?['name'] as String? ?? '';
+//                 final mrp = product['mrp'] as num? ?? 0;
+//                 final price =
+//                     (product['basePrice'] ?? product['mrp']) as num? ?? mrp;
+//                 final productId = product['id'];
+
+//                 return ProductGridCard(
+//                   imageUrl: imageUrl,
+//                   title: title,
+//                   brandName: brand,
+//                   price: price,
+//                   mrp: mrp,
+//                   onTap: () {
+//                     if (productId == null) return;
+//                     Get.to(() => ProductDetailsScreenV2(
+//                           productId: productId is int
+//                               ? productId
+//                               : int.tryParse(productId.toString()) ?? 0,
+//                           type: "add",
+//                           brandName: brand,
+//                         ));
+//                   },
+//                 );
+//               },
+//             ),
+//             SizedBox(height: 16.sp),
+//           ],
+//         ),
+//       );
+//     });
+//   }
+
+//   void _showSortSheet(BuildContext context) {
+//     showModalBottomSheet(
+//       context: context,
+//       shape: const RoundedRectangleBorder(
+//         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+//       ),
+//       builder: (_) => Obx(() {
+//         final current = newInController.sortMode.value;
+//         final options = [
+//           ('default', 'Default'),
+//           ('low_to_high', 'Price: Low to High'),
+//           ('high_to_low', 'Price: High to Low'),
+//           ('discount', 'Discount'),
+//         ];
+//         return SafeArea(
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               Padding(
+//                 padding: EdgeInsets.symmetric(vertical: 12.sp),
+//                 child: AppText(
+//                   text: "Sort By",
+//                   fontFamily: "Clash Display Semibold",
+//                   color: blackColor,
+//                   fontSize: 16,
+//                 ),
+//               ),
+//               const Divider(height: 1),
+//               ...options.map((opt) {
+//                 final isActive = current == opt.$1;
+//                 return ListTile(
+//                   title: Text(
+//                     opt.$2,
+//                     style: TextStyle(
+//                       fontFamily: isActive
+//                           ? "Clash Display Semibold"
+//                           : "Clash Display Regular",
+//                       fontSize: 14.sp,
+//                       color: blackColor,
+//                     ),
+//                   ),
+//                   trailing: isActive
+//                       ? Icon(Icons.check, size: 18.sp, color: blackColor)
+//                       : null,
+//                   onTap: () {
+//                     newInController.applySort(opt.$1);
+//                     Navigator.pop(context);
+//                   },
+//                 );
+//               }),
+//               SizedBox(height: 8.sp),
+//             ],
+//           ),
+//         );
+//       }),
+//     );
+//   }
+// }
+
 class _NewInSection extends StatelessWidget {
   final NewInController newInController;
-
   const _NewInSection({required this.newInController});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (newInController.isLoading.value) {
-        //NEW IN Shimmer
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.sp),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Skeleton header row
               Padding(
                 padding: EdgeInsets.only(top: 10.sp, bottom: 8.sp),
                 child: Row(
@@ -1463,6 +1703,7 @@ class _NewInSection extends StatelessWidget {
           ),
         );
       }
+
       if (newInController.products.isEmpty) {
         return const SizedBox.shrink();
       }
@@ -1470,7 +1711,6 @@ class _NewInSection extends StatelessWidget {
       final paged = newInController.pagedProducts;
       final totalPages = newInController.totalPages;
       final currentPage = newInController.currentPage.value;
-
       final canGoPrev = currentPage > 0;
       final canGoNext = currentPage < totalPages - 1;
 
@@ -1489,7 +1729,6 @@ class _NewInSection extends StatelessWidget {
                   fontSize: 18,
                 ),
                 const Spacer(),
-                // Sort By pill button
                 GestureDetector(
                   onTap: () => _showSortSheet(context),
                   child: Container(
@@ -1517,14 +1756,12 @@ class _NewInSection extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 8.sp),
-                // Prev arrow in circle
                 _NavCircleButton(
                   icon: Icons.chevron_left,
                   enabled: canGoPrev,
                   onTap: canGoPrev ? newInController.prevPage : null,
                 ),
                 SizedBox(width: 6.sp),
-                // Next arrow in circle
                 _NavCircleButton(
                   icon: Icons.chevron_right,
                   enabled: canGoNext,
@@ -1533,49 +1770,73 @@ class _NewInSection extends StatelessWidget {
               ],
             ),
             SizedBox(height: 8.sp),
-            // Product grid — 2 columns, 8 items max
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.zero,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8.sp,
-                mainAxisSpacing: 8.sp,
-                childAspectRatio: 0.62,
-              ),
-              itemCount: paged.length,
-              itemBuilder: (context, index) {
-                final product = paged[index];
-                final imageUrl =
-                    (product['imageUrls'] as List?)?.firstOrNull?.toString() ??
-                        '';
-                final title = product['title'] as String? ?? '';
-                final brand =
-                    (product['brand'] as Map?)?['name'] as String? ?? '';
-                final mrp = product['mrp'] as num? ?? 0;
-                final price =
-                    (product['basePrice'] ?? product['mrp']) as num? ?? mrp;
-                final productId = product['id'];
 
-                return ProductGridCard(
-                  imageUrl: imageUrl,
-                  title: title,
-                  brandName: brand,
-                  price: price,
-                  mrp: mrp,
-                  onTap: () {
-                    if (productId == null) return;
-                    Get.to(() => ProductDetailsScreenV2(
-                          productId: productId is int
-                              ? productId
-                              : int.tryParse(productId.toString()) ?? 0,
-                          type: "add",
-                          brandName: brand,
-                        ));
-                  },
-                );
+            // Swipeable product grid
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onHorizontalDragEnd: (details) {
+                const swipeThreshold = 100.0;
+                final velocity = details.primaryVelocity ?? 0;
+
+                if (velocity < -swipeThreshold) {
+                  // Swiped LEFT → go forward (wrap to page 0 at the end)
+                  if (canGoNext) {
+                    newInController.nextPage();
+                  } else {
+                    newInController.goToPage(0);
+                  }
+                } else if (velocity > swipeThreshold) {
+                  // Swiped RIGHT → go back (wrap to last page at the start)
+                  if (canGoPrev) {
+                    newInController.prevPage();
+                  } else {
+                    newInController.goToPage(totalPages - 1);
+                  }
+                }
               },
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8.sp,
+                  mainAxisSpacing: 8.sp,
+                  childAspectRatio: 0.62,
+                ),
+                itemCount: paged.length,
+                itemBuilder: (context, index) {
+                  final product = paged[index];
+                  final imageUrl = (product['imageUrls'] as List?)
+                          ?.firstOrNull
+                          ?.toString() ??
+                      '';
+                  final title = product['title'] as String? ?? '';
+                  final brand =
+                      (product['brand'] as Map?)?['name'] as String? ?? '';
+                  final mrp = product['mrp'] as num? ?? 0;
+                  final price =
+                      (product['basePrice'] ?? product['mrp']) as num? ?? mrp;
+                  final productId = product['id'];
+                  return ProductGridCard(
+                    imageUrl: imageUrl,
+                    title: title,
+                    brandName: brand,
+                    price: price,
+                    mrp: mrp,
+                    onTap: () {
+                      if (productId == null) return;
+                      Get.to(() => ProductDetailsScreenV2(
+                            productId: productId is int
+                                ? productId
+                                : int.tryParse(productId.toString()) ?? 0,
+                            type: "add",
+                            brandName: brand,
+                          ));
+                    },
+                  );
+                },
+              ),
             ),
             SizedBox(height: 16.sp),
           ],
@@ -3558,172 +3819,6 @@ class _CollectionSectionState extends State<_CollectionSection> {
     );
   }
 }
-
-// class _FeaturedBrandsRow extends StatelessWidget {
-//   final HomeController homeController;
-//   final BrandController brandController;
-//   final FirebaseAnalytics analytics;
-//   final VoidCallback onPressedViewAll;
-//   final List<dynamic> brands; // ✅ ADD: Accept brands list
-
-//   const _FeaturedBrandsRow({
-//     required this.homeController,
-//     required this.brandController,
-//     required this.analytics,
-//     required this.onPressedViewAll,
-//     required this.brands, // ✅ ADD: Required parameter
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding:
-//           EdgeInsets.only(top: 4.sp, bottom: 12.sp), // ✅ Minimal bottom padding
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Padding(
-//             padding: EdgeInsets.symmetric(horizontal: 16.sp),
-//             child: Row(
-//               children: [
-//                 const AppText(
-//                   text: "FEATURED BRANDS",
-//                   fontFamily: "Clash Display Semibold",
-//                   color: blackColor,
-//                   fontSize: 18,
-//                 ),
-//                 const Spacer(),
-//                 InkWell(
-//                   onTap: () async {
-//                     onPressedViewAll();
-//                     await analytics.logEvent(
-//                       name: 'homepage_featurebrandviewAll',
-//                       parameters: {'page_name': 'homepage_featurebrandviewAll'},
-//                     );
-//                   },
-//                   child: Padding(
-//                     padding:
-//                         EdgeInsets.only(top: 2.sp, right: 16.sp, left: 20.sp),
-//                     child: SvgPicture.asset(
-//                       arrowViewAllImage,
-//                       height: 12.sp,
-//                       width: 8.sp,
-//                       fit: BoxFit.fill,
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//           SizedBox(height: 12.sp), // ✅ Consistent spacing
-//           SizedBox(
-//             height: 86.sp, // ✅ Reduced from 90.sp to remove excess whitespace
-//             child: ListView.builder(
-//               scrollDirection: Axis.horizontal,
-//               itemCount: brands.length,
-//               physics: const BouncingScrollPhysics(),
-//               itemBuilder: (ctx, index) {
-//                 final brand = brands[index];
-//                 final logo = (brand["logo"] ?? "").toString().trim();
-//                 final name = (brand["name"] ?? "").toString().trim();
-//                 final bgImage =
-//                     (brand["background_image"] ?? "").toString().trim();
-
-//                 return GestureDetector(
-//                   onTap: () async {
-//                     brandController.brandbackground.value = bgImage;
-//                     final id = brand["id"];
-//                     final safeId = (id is int)
-//                         ? id
-//                         : int.tryParse(id?.toString() ?? '0') ?? 0;
-
-//                     Get.to(
-//                       () => AllBrandScreen(
-//                         id: safeId,
-//                         screen: "home",
-//                         slug: "",
-//                       ),
-//                     )?.then((_) {
-//                       SystemChrome.setSystemUIOverlayStyle(
-//                         const SystemUiOverlayStyle(
-//                           statusBarColor: whiteColor,
-//                           statusBarIconBrightness: Brightness.dark,
-//                           systemNavigationBarColor: whiteColor,
-//                         ),
-//                       );
-//                     });
-//                   },
-//                   child: Padding(
-//                     padding: EdgeInsets.only(left: 16.sp),
-//                     child: Column(
-//                       mainAxisSize: MainAxisSize.min,
-//                       children: [
-//                         Container(
-//                           height: 64.sp,
-//                           width: 64.sp,
-//                           decoration: BoxDecoration(
-//                             shape: BoxShape.circle,
-//                             border: Border.all(
-//                               color: const Color.fromARGB(255, 165, 165, 166),
-//                               width: 1.sp,
-//                             ),
-//                           ),
-//                           child: ClipOval(
-//                             child: logo.isNotEmpty
-//                                 ? CachedNetworkImage(
-//                                     imageUrl: ImageHelper.toWebP(logo),
-//                                     height: 64.sp,
-//                                     width: 64.sp,
-//                                     fit: BoxFit.fill,
-//                                     // ✅ Add memory limits for brand logos
-//                                     maxHeightDiskCache: 150,
-//                                     maxWidthDiskCache: 150,
-//                                     memCacheHeight: 150,
-//                                     memCacheWidth: 150,
-//                                     fadeInDuration:
-//                                         const Duration(milliseconds: 300),
-//                                     placeholder: (_, __) => Container(
-//                                       color: Colors.black.withOpacity(0.05),
-//                                     ),
-//                                     errorWidget: (_, __, ___) => Image.asset(
-//                                       downloadImage,
-//                                       fit: BoxFit.fill,
-//                                     ),
-//                                   )
-//                                 : Image.asset(
-//                                     dummyWishlistImage,
-//                                     fit: BoxFit.fill,
-//                                   ),
-//                           ),
-//                         ),
-//                         SizedBox(height: 6.sp),
-//                         SizedBox(
-//                           width: 64.sp,
-//                           child: Text(
-//                             name.isNotEmpty ? name : 'Unnamed',
-//                             maxLines: 1,
-//                             overflow: TextOverflow.ellipsis,
-//                             textAlign: TextAlign.center,
-//                             style: TextStyle(
-//                               fontFamily: "Clash Display Regular",
-//                               fontSize: 10.sp,
-//                               fontWeight: FontWeight.w500,
-//                               color: Colors.black,
-//                             ),
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 );
-//               },
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 class _FeaturedBrandsRow extends StatefulWidget {
   final HomeController homeController;

@@ -36,6 +36,10 @@ class NewInController extends BaseController {
 
   // ─── API ─────────────────────────────────────────────────────────────────
 
+  void goToPage(int page) {
+    currentPage.value = page;
+  }
+
   Future<void> fetchProducts(int gender, {bool forceRefresh = false}) async {
     // Deduplication guard
     if (_isFetchInProgress) return;
