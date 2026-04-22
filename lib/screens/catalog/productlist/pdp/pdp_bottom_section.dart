@@ -199,6 +199,196 @@ extension PdpBottomSection on _ProductDetailsScreenV2State {
         child: Image.asset("assets/images/lf_promises.png"),
       );
 
+  Widget _buildReviewSection() => Obx(() {
+        final reviews = productController.reviewList;
+        final isLoading = productController.isFetchingReviews.value;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // ── Header ──────────────────────────────────────────────
+            Padding(
+              padding: EdgeInsets.fromLTRB(16.sp, 8.sp, 16.sp, 4.sp),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Reviews',
+                    style: TextStyle(
+                      fontFamily: "Clash Display",
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16.sp,
+                    ),
+                  ),
+                  if (reviews.isNotEmpty)
+                    Row(
+                      children: [
+                        Icon(Icons.star_rounded,
+                            color: Colors.amber, size: 16.sp),
+                        SizedBox(width: 4.sp),
+                        Text(
+                          productController.averageRating.value
+                              .toStringAsFixed(1),
+                          style: TextStyle(
+                            fontFamily: "Clash Display",
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13.sp,
+                          ),
+                        ),
+                        Text(
+                          '  (${productController.totalReview.value})',
+                          style: TextStyle(
+                            fontFamily: "Clash Display",
+                            fontWeight: FontWeight.w400,
+                            fontSize: 12.sp,
+                            color: Colors.grey.shade500,
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+
+            // ── Body ────────────────────────────────────────────────
+            if (isLoading)
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.sp),
+                child: const Center(child: CircularProgressIndicator()),
+              )
+            else if (reviews.isEmpty)
+              Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.star_outline_rounded,
+                        size: 40.sp, color: Colors.grey.shade300),
+                    Text(
+                      'No reviews yet. Be the first to share your thoughts!',
+                      style: TextStyle(
+                        fontFamily: "Clash Display",
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12.sp,
+                        color: Colors.grey.shade500,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16.sp, vertical: 4.sp),
+                itemCount: reviews.length,
+                separatorBuilder: (_, __) => Divider(
+                  color: Colors.grey[200],
+                  height: 1,
+                  thickness: 1.5,
+                ),
+                itemBuilder: (_, i) => _buildReviewItem(reviews[i]),
+              ),
+
+            // ── Always-visible button ────────────────────────────────
+            _buildAddReviewButton(),
+          ],
+        );
+      });
+
+  Widget _buildReviewItem(dynamic review) {
+    final rating = (review['rating'] as num?)?.toInt() ?? 0;
+    final comment = review['comment']?.toString() ?? '';
+    final userName = review['user']?['name']?.toString() ??
+        review['userName']?.toString() ??
+        'Anonymous';
+    final createdAt = review['createdAt']?.toString() ?? '';
+    String dateLabel = '';
+    if (createdAt.isNotEmpty) {
+      try {
+        final dt = DateTime.parse(createdAt);
+        dateLabel = '${dt.day} ${_monthName(dt.month)} ${dt.year}';
+      } catch (_) {}
+    }
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 12.sp),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              // Star rating
+              Row(
+                children: List.generate(
+                    5,
+                    (i) => Icon(
+                          i < rating
+                              ? Icons.star_rounded
+                              : Icons.star_outline_rounded,
+                          size: 14.sp,
+                          color: Colors.amber,
+                        )),
+              ),
+              const Spacer(),
+              if (dateLabel.isNotEmpty)
+                Text(
+                  dateLabel,
+                  style: TextStyle(
+                    fontFamily: "Clash Display",
+                    fontSize: 11.sp,
+                    color: Colors.grey.shade400,
+                  ),
+                ),
+            ],
+          ),
+          if (comment.isNotEmpty) ...[
+            SizedBox(height: 6.sp),
+            Text(
+              comment,
+              style: TextStyle(
+                fontFamily: "Clash Display",
+                fontWeight: FontWeight.w400,
+                fontSize: 13.sp,
+                height: 1.45,
+                color: Colors.grey.shade700,
+              ),
+            ),
+          ],
+          SizedBox(height: 4.sp),
+          Text(
+            '— $userName',
+            style: TextStyle(
+              fontFamily: "Clash Display",
+              fontWeight: FontWeight.w600,
+              fontSize: 11.5.sp,
+              color: Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _monthName(int m) => const [
+        '',
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ][m];
+
   Widget _buildAddReviewButton() => Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 12.sp),
         child: GestureDetector(

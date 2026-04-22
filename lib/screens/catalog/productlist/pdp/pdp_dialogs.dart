@@ -276,242 +276,260 @@ extension PdpDialogs on _ProductDetailsScreenV2State {
 
   void _showAddReviewModal() {
     _selectedRating = 0;
-    final localCtrl = TextEditingController();
-    final firstImg = _imagesOnly().isNotEmpty ? _imagesOnly().first : '';
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => StatefulBuilder(
-          builder: (ctx, ss) => Container(
-                height: MediaQuery.of(ctx).size.height * 0.85,
-                decoration: BoxDecoration(
-                    color: whiteColor,
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(20.sp))),
-                child: Column(children: [
-                  Container(
-                      margin: EdgeInsets.only(top: 12.sp),
-                      width: 40.sp,
-                      height: 4.sp,
-                      decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(2.sp))),
-                  Padding(
-                      padding: EdgeInsets.all(16.sp),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('WRITE A REVIEW',
-                                style: TextStyle(
-                                    fontFamily: "Clash Display",
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 18.sp)),
-                            IconButton(
-                                icon: Icon(Icons.close, size: 24.sp),
-                                onPressed: () => Get.back()),
-                          ])),
-                  const Divider(color: colorSecondary, height: 1),
-                  Expanded(
-                      child: SingleChildScrollView(
-                          padding: EdgeInsets.all(16.sp),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                    padding: EdgeInsets.all(12.sp),
-                                    color: colorSecondary,
-                                    child: Row(children: [
-                                      ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8.sp),
-                                          child: firstImg.isNotEmpty
-                                              ? CachedNetworkImage(
-                                                  imageUrl: firstImg,
-                                                  width: 80.sp,
-                                                  height: 80.sp,
-                                                  fit: BoxFit.cover,
-                                                  errorWidget: (_, __, ___) =>
-                                                      Image.asset(
-                                                          dummyWishlistImage,
-                                                          width: 80.sp,
-                                                          height: 80.sp,
-                                                          fit: BoxFit.cover))
-                                              : Image.asset(dummyWishlistImage,
-                                                  width: 80.sp,
-                                                  height: 80.sp,
-                                                  fit: BoxFit.cover)),
-                                      SizedBox(width: 12.sp),
-                                      Expanded(
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                            Text(_brandText().toUpperCase(),
-                                                style: TextStyle(
-                                                    fontFamily: "Clash Display",
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 12.sp,
-                                                    color: blackColor)),
-                                            SizedBox(height: 4.sp),
-                                            Text(_titleText(),
-                                                style: TextStyle(
-                                                    fontFamily:
-                                                        "Clash Display Regular",
-                                                    fontSize: 12.sp,
-                                                    color: subtitleColor),
-                                                maxLines: 3,
-                                                overflow:
-                                                    TextOverflow.ellipsis),
-                                          ])),
-                                    ])),
-                                SizedBox(height: 24.sp),
-                                Text('Rate this product',
-                                    style: TextStyle(
-                                        fontFamily: "Clash Display",
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14.sp)),
-                                SizedBox(height: 12.sp),
-                                Row(
-                                    children: List.generate(
-                                        5,
-                                        (i) => GestureDetector(
-                                              onTap: () => ss(() =>
-                                                  _selectedRating = i + 1),
-                                              child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      right: 8.sp),
-                                                  child: Icon(
-                                                      i < _selectedRating
-                                                          ? Icons.star
-                                                          : Icons.star_border,
-                                                      size: 36.sp,
-                                                      color: const Color(
-                                                          0xFFFFB800))),
-                                            ))),
-                                SizedBox(height: 24.sp),
-                                Text('Write your review',
-                                    style: TextStyle(
-                                        fontFamily: "Clash Display",
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14.sp)),
-                                SizedBox(height: 12.sp),
-                                TextField(
-                                    controller: localCtrl,
-                                    maxLines: 6,
-                                    maxLength: 500,
-                                    decoration: InputDecoration(
-                                      hintText: 'Share your thoughts...',
-                                      counterText: "",
-                                      filled: true,
-                                      fillColor: colorSecondary,
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8.sp),
-                                          borderSide: BorderSide.none),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8.sp),
-                                          borderSide: BorderSide.none),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8.sp),
-                                          borderSide: BorderSide(
-                                              color: lightPurpleColor,
-                                              width: 1.sp)),
-                                      contentPadding: EdgeInsets.all(12.sp),
-                                    ),
-                                    style: TextStyle(
-                                        fontFamily: "Clash Display Regular",
-                                        fontSize: 13.sp,
-                                        color: blackColor)),
-                                SizedBox(height: 24.sp),
-                              ]))),
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(16.sp),
-                    decoration: BoxDecoration(color: whiteColor, boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, -2))
-                    ]),
-                    child: Obx(() {
-                      final submitting =
-                          productController.isSubmittingReview.value;
-                      return ElevatedButton(
-                        onPressed: submitting
-                            ? null
-                            : () async {
-                                if (_selectedRating == 0) {
-                                  showAppSnackBar('Please select a rating',
-                                      type: SnackBarType.error);
-                                  return;
-                                }
-                                if (localCtrl.text.trim().isEmpty) {
-                                  showAppSnackBar('Please write a review',
-                                      type: SnackBarType.error);
-                                  return;
-                                }
-                                final nav = Navigator.of(ctx);
-                                final prefs =
-                                    await SharedPreferences.getInstance();
-                                final userId = prefs.getInt('userId') ?? 0;
-                                if (userId == 0) {
-                                  showAppSnackBar(
-                                      'Please login to submit a review',
-                                      type: SnackBarType.error);
-                                  return;
-                                }
-                                var variant =
-                                    productController.getSelectedVariant();
-                                if (variant == null &&
-                                    productController
-                                        .selectedVariants.isNotEmpty)
-                                  variant =
-                                      productController.selectedVariants.first;
-                                final variantId = variant?['id'] ?? 0;
-                                if (variantId == 0) {
-                                  showAppSnackBar('Please select a size first',
-                                      type: SnackBarType.error);
-                                  return;
-                                }
-                                final success =
-                                    await productController.submitProductReview(
-                                        userId: userId,
-                                        productId: widget.productId,
-                                        orderItemId: 0,
-                                        variantId: variantId,
-                                        rating: _selectedRating,
-                                        comment: localCtrl.text.trim());
-                                if (success) {
-                                  nav.pop();
-                                  await productController
-                                      .getProductReviews(widget.productId);
-                                }
-                              },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                submitting ? Colors.grey : blackColor,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4.sp)),
-                            minimumSize: Size(double.infinity, 48.sp),
-                            elevation: 0),
-                        child: Text(
-                            submitting ? 'SUBMITTING...' : 'SUBMIT REVIEW',
-                            style: TextStyle(
-                                fontFamily: "Clash Display",
-                                fontWeight: FontWeight.w600,
-                                color: whiteColor,
-                                fontSize: 14.sp,
-                                letterSpacing: 0.5)),
-                      );
-                    }),
-                  ),
-                ]),
-              )),
-    ).then((_) => localCtrl.dispose());
+      builder: (_) => _ReviewBottomSheet(
+        firstImg: _imagesOnly().isNotEmpty ? _imagesOnly().first : '',
+        brandText: _brandText(),
+        titleText: _titleText(),
+        selectedRating: _selectedRating,
+        onRatingChanged: (r) => _selectedRating = r,
+        productController: productController,
+        productId: widget.productId,
+      ),
+    );
   }
+
+  // void _showAddReviewModal() {
+  //   _selectedRating = 0;
+  //   final localCtrl = TextEditingController();
+  //   final firstImg = _imagesOnly().isNotEmpty ? _imagesOnly().first : '';
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     backgroundColor: Colors.transparent,
+  //     builder: (_) => StatefulBuilder(
+  //         builder: (ctx, ss) => Container(
+  //               height: MediaQuery.of(ctx).size.height * 0.85,
+  //               decoration: BoxDecoration(
+  //                   color: whiteColor,
+  //                   borderRadius:
+  //                       BorderRadius.vertical(top: Radius.circular(20.sp))),
+  //               child: Column(children: [
+  //                 Container(
+  //                     margin: EdgeInsets.only(top: 12.sp),
+  //                     width: 40.sp,
+  //                     height: 4.sp,
+  //                     decoration: BoxDecoration(
+  //                         color: Colors.grey.shade300,
+  //                         borderRadius: BorderRadius.circular(2.sp))),
+  //                 Padding(
+  //                     padding: EdgeInsets.all(16.sp),
+  //                     child: Row(
+  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                         children: [
+  //                           Text('WRITE A REVIEW',
+  //                               style: TextStyle(
+  //                                   fontFamily: "Clash Display",
+  //                                   fontWeight: FontWeight.w600,
+  //                                   fontSize: 18.sp)),
+  //                           IconButton(
+  //                               icon: Icon(Icons.close, size: 24.sp),
+  //                               onPressed: () => Get.back()),
+  //                         ])),
+  //                 const Divider(color: colorSecondary, height: 1),
+  //                 Expanded(
+  //                     child: SingleChildScrollView(
+  //                         padding: EdgeInsets.all(16.sp),
+  //                         child: Column(
+  //                             crossAxisAlignment: CrossAxisAlignment.start,
+  //                             children: [
+  //                               Container(
+  //                                   padding: EdgeInsets.all(12.sp),
+  //                                   color: colorSecondary,
+  //                                   child: Row(children: [
+  //                                     ClipRRect(
+  //                                         borderRadius:
+  //                                             BorderRadius.circular(8.sp),
+  //                                         child: firstImg.isNotEmpty
+  //                                             ? CachedNetworkImage(
+  //                                                 imageUrl: firstImg,
+  //                                                 width: 80.sp,
+  //                                                 height: 80.sp,
+  //                                                 fit: BoxFit.cover,
+  //                                                 errorWidget: (_, __, ___) =>
+  //                                                     Image.asset(
+  //                                                         dummyWishlistImage,
+  //                                                         width: 80.sp,
+  //                                                         height: 80.sp,
+  //                                                         fit: BoxFit.cover))
+  //                                             : Image.asset(dummyWishlistImage,
+  //                                                 width: 80.sp,
+  //                                                 height: 80.sp,
+  //                                                 fit: BoxFit.cover)),
+  //                                     SizedBox(width: 12.sp),
+  //                                     Expanded(
+  //                                         child: Column(
+  //                                             crossAxisAlignment:
+  //                                                 CrossAxisAlignment.start,
+  //                                             children: [
+  //                                           Text(_brandText().toUpperCase(),
+  //                                               style: TextStyle(
+  //                                                   fontFamily: "Clash Display",
+  //                                                   fontWeight: FontWeight.w600,
+  //                                                   fontSize: 12.sp,
+  //                                                   color: blackColor)),
+  //                                           SizedBox(height: 4.sp),
+  //                                           Text(_titleText(),
+  //                                               style: TextStyle(
+  //                                                   fontFamily:
+  //                                                       "Clash Display Regular",
+  //                                                   fontSize: 12.sp,
+  //                                                   color: subtitleColor),
+  //                                               maxLines: 3,
+  //                                               overflow:
+  //                                                   TextOverflow.ellipsis),
+  //                                         ])),
+  //                                   ])),
+  //                               SizedBox(height: 24.sp),
+  //                               Text('Rate this product',
+  //                                   style: TextStyle(
+  //                                       fontFamily: "Clash Display",
+  //                                       fontWeight: FontWeight.w600,
+  //                                       fontSize: 14.sp)),
+  //                               SizedBox(height: 12.sp),
+  //                               Row(
+  //                                   children: List.generate(
+  //                                       5,
+  //                                       (i) => GestureDetector(
+  //                                             onTap: () => ss(() =>
+  //                                                 _selectedRating = i + 1),
+  //                                             child: Padding(
+  //                                                 padding: EdgeInsets.only(
+  //                                                     right: 8.sp),
+  //                                                 child: Icon(
+  //                                                     i < _selectedRating
+  //                                                         ? Icons.star
+  //                                                         : Icons.star_border,
+  //                                                     size: 36.sp,
+  //                                                     color: const Color(
+  //                                                         0xFFFFB800))),
+  //                                           ))),
+  //                               SizedBox(height: 24.sp),
+  //                               Text('Write your review',
+  //                                   style: TextStyle(
+  //                                       fontFamily: "Clash Display",
+  //                                       fontWeight: FontWeight.w600,
+  //                                       fontSize: 14.sp)),
+  //                               SizedBox(height: 12.sp),
+  //                               TextField(
+  //                                   controller: localCtrl,
+  //                                   maxLines: 6,
+  //                                   maxLength: 500,
+  //                                   decoration: InputDecoration(
+  //                                     hintText: 'Share your thoughts...',
+  //                                     counterText: "",
+  //                                     filled: true,
+  //                                     fillColor: colorSecondary,
+  //                                     border: OutlineInputBorder(
+  //                                         borderRadius:
+  //                                             BorderRadius.circular(8.sp),
+  //                                         borderSide: BorderSide.none),
+  //                                     enabledBorder: OutlineInputBorder(
+  //                                         borderRadius:
+  //                                             BorderRadius.circular(8.sp),
+  //                                         borderSide: BorderSide.none),
+  //                                     focusedBorder: OutlineInputBorder(
+  //                                         borderRadius:
+  //                                             BorderRadius.circular(8.sp),
+  //                                         borderSide: BorderSide(
+  //                                             color: lightPurpleColor,
+  //                                             width: 1.sp)),
+  //                                     contentPadding: EdgeInsets.all(12.sp),
+  //                                   ),
+  //                                   style: TextStyle(
+  //                                       fontFamily: "Clash Display Regular",
+  //                                       fontSize: 13.sp,
+  //                                       color: blackColor)),
+  //                               SizedBox(height: 24.sp),
+  //                             ]))),
+  //                 Container(
+  //                   width: double.infinity,
+  //                   padding: EdgeInsets.all(16.sp),
+  //                   decoration: BoxDecoration(color: whiteColor, boxShadow: [
+  //                     BoxShadow(
+  //                         color: Colors.black.withOpacity(0.05),
+  //                         blurRadius: 10,
+  //                         offset: const Offset(0, -2))
+  //                   ]),
+  //                   child: Obx(() {
+  //                     final submitting =
+  //                         productController.isSubmittingReview.value;
+  //                     return ElevatedButton(
+  //                       onPressed: submitting
+  //                           ? null
+  //                           : () async {
+  //                               if (_selectedRating == 0) {
+  //                                 showAppSnackBar('Please select a rating',
+  //                                     type: SnackBarType.error);
+  //                                 return;
+  //                               }
+  //                               if (localCtrl.text.trim().isEmpty) {
+  //                                 showAppSnackBar('Please write a review',
+  //                                     type: SnackBarType.error);
+  //                                 return;
+  //                               }
+  //                               final nav = Navigator.of(ctx);
+  //                               final prefs =
+  //                                   await SharedPreferences.getInstance();
+  //                               final userId = prefs.getInt('userId') ?? 0;
+  //                               if (userId == 0) {
+  //                                 showAppSnackBar(
+  //                                     'Please login to submit a review',
+  //                                     type: SnackBarType.error);
+  //                                 return;
+  //                               }
+  //                               var variant =
+  //                                   productController.getSelectedVariant();
+  //                               if (variant == null &&
+  //                                   productController
+  //                                       .selectedVariants.isNotEmpty)
+  //                                 variant =
+  //                                     productController.selectedVariants.first;
+  //                               final variantId = variant?['id'] ?? 0;
+  //                               if (variantId == 0) {
+  //                                 showAppSnackBar('Please select a size first',
+  //                                     type: SnackBarType.error);
+  //                                 return;
+  //                               }
+  //                               final success =
+  //                                   await productController.submitProductReview(
+  //                                       userId: userId,
+  //                                       productId: widget.productId,
+  //                                       orderItemId: 0,
+  //                                       variantId: variantId,
+  //                                       rating: _selectedRating,
+  //                                       comment: localCtrl.text.trim());
+  //                               if (success) {
+  //                                 nav.pop();
+  //                                 await productController
+  //                                     .getProductReviews(widget.productId);
+  //                               }
+  //                             },
+  //                       style: ElevatedButton.styleFrom(
+  //                           backgroundColor:
+  //                               submitting ? Colors.grey : blackColor,
+  //                           shape: RoundedRectangleBorder(
+  //                               borderRadius: BorderRadius.circular(4.sp)),
+  //                           minimumSize: Size(double.infinity, 48.sp),
+  //                           elevation: 0),
+  //                       child: Text(
+  //                           submitting ? 'SUBMITTING...' : 'SUBMIT REVIEW',
+  //                           style: TextStyle(
+  //                               fontFamily: "Clash Display",
+  //                               fontWeight: FontWeight.w600,
+  //                               color: whiteColor,
+  //                               fontSize: 14.sp,
+  //                               letterSpacing: 0.5)),
+  //                     );
+  //                   }),
+  //                 ),
+  //               ]),
+  //             )),
+  //   ).then((_) => localCtrl.dispose());
+  // }
 
   Future<void> _onBuyNow({required bool isCartFlow}) async {
     if (!productController.checkDetailsValidation()) return;
@@ -591,5 +609,265 @@ extension PdpDialogs on _ProductDetailsScreenV2State {
           statutoryGSTRate: statutoryGSTRate,
           gstRuleApplied: gstRuleApplied,
         ));
+  }
+}
+
+class _ReviewBottomSheet extends StatefulWidget {
+  final String firstImg;
+  final String brandText;
+  final String titleText;
+  final int selectedRating;
+  final ValueChanged<int> onRatingChanged;
+  final ProductController productController;
+  final int productId;
+
+  const _ReviewBottomSheet({
+    required this.firstImg,
+    required this.brandText,
+    required this.titleText,
+    required this.selectedRating,
+    required this.onRatingChanged,
+    required this.productController,
+    required this.productId,
+  });
+
+  @override
+  State<_ReviewBottomSheet> createState() => _ReviewBottomSheetState();
+}
+
+class _ReviewBottomSheetState extends State<_ReviewBottomSheet> {
+  late int _rating;
+  bool _submitting = false;
+  final TextEditingController _ctrl = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _rating = widget.selectedRating;
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  void _setRating(int r) {
+    if (!mounted) return;
+    setState(() => _rating = r);
+    widget.onRatingChanged(r);
+  }
+
+  Future<void> _submit() async {
+    if (_rating == 0) {
+      showAppSnackBar('Please select a rating', type: SnackBarType.error);
+      return;
+    }
+    if (_ctrl.text.trim().isEmpty) {
+      showAppSnackBar('Please write a review', type: SnackBarType.error);
+      return;
+    }
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('userId') ?? 0;
+    if (userId == 0) {
+      showAppSnackBar('Please login to submit a review',
+          type: SnackBarType.error);
+      return;
+    }
+    var variant = widget.productController.getSelectedVariant();
+    if (variant == null &&
+        widget.productController.selectedVariants.isNotEmpty) {
+      variant = widget.productController.selectedVariants.first;
+    }
+    final variantId = variant?['id'] ?? 0;
+    if (variantId == 0) {
+      showAppSnackBar('Please select a size first', type: SnackBarType.error);
+      return;
+    }
+
+    if (!mounted) return;
+    setState(() => _submitting = true);
+
+    final success = await widget.productController.submitProductReview(
+      userId: userId,
+      productId: widget.productId,
+      orderItemId: 0,
+      variantId: variantId,
+      rating: _rating,
+      comment: _ctrl.text.trim(),
+    );
+
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.of(context).pop();
+      await widget.productController.getProductReviews(widget.productId);
+    } else {
+      setState(() => _submitting = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.85,
+      decoration: BoxDecoration(
+          color: whiteColor,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.sp))),
+      child: Column(children: [
+        Container(
+            margin: EdgeInsets.only(top: 12.sp),
+            width: 40.sp,
+            height: 4.sp,
+            decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2.sp))),
+        Padding(
+            padding: EdgeInsets.all(16.sp),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('WRITE A REVIEW',
+                      style: TextStyle(
+                          fontFamily: "Clash Display",
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18.sp)),
+                  IconButton(
+                      icon: Icon(Icons.close, size: 24.sp),
+                      onPressed: () => Get.back()),
+                ])),
+        const Divider(color: colorSecondary, height: 1),
+        Expanded(
+            child: SingleChildScrollView(
+                padding: EdgeInsets.all(16.sp),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                          padding: EdgeInsets.all(12.sp),
+                          color: colorSecondary,
+                          child: Row(children: [
+                            ClipRRect(
+                                borderRadius: BorderRadius.circular(8.sp),
+                                child: widget.firstImg.isNotEmpty
+                                    ? CachedNetworkImage(
+                                        imageUrl: widget.firstImg,
+                                        width: 80.sp,
+                                        height: 80.sp,
+                                        fit: BoxFit.cover,
+                                        errorWidget: (_, __, ___) =>
+                                            Image.asset(dummyWishlistImage,
+                                                width: 80.sp,
+                                                height: 80.sp,
+                                                fit: BoxFit.cover))
+                                    : Image.asset(dummyWishlistImage,
+                                        width: 80.sp,
+                                        height: 80.sp,
+                                        fit: BoxFit.cover)),
+                            SizedBox(width: 12.sp),
+                            Expanded(
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                  Text(widget.brandText.toUpperCase(),
+                                      style: TextStyle(
+                                          fontFamily: "Clash Display",
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12.sp,
+                                          color: blackColor)),
+                                  SizedBox(height: 4.sp),
+                                  Text(widget.titleText,
+                                      style: TextStyle(
+                                          fontFamily: "Clash Display Regular",
+                                          fontSize: 12.sp,
+                                          color: subtitleColor),
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis),
+                                ])),
+                          ])),
+                      SizedBox(height: 24.sp),
+                      Text('Rate this product',
+                          style: TextStyle(
+                              fontFamily: "Clash Display",
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14.sp)),
+                      SizedBox(height: 12.sp),
+                      Row(
+                          children: List.generate(
+                              5,
+                              (i) => GestureDetector(
+                                    onTap: () => _setRating(i + 1),
+                                    child: Padding(
+                                        padding: EdgeInsets.only(right: 8.sp),
+                                        child: Icon(
+                                            i < _rating
+                                                ? Icons.star
+                                                : Icons.star_border,
+                                            size: 36.sp,
+                                            color: const Color(0xFFFFB800))),
+                                  ))),
+                      SizedBox(height: 24.sp),
+                      Text('Write your review',
+                          style: TextStyle(
+                              fontFamily: "Clash Display",
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14.sp)),
+                      SizedBox(height: 12.sp),
+                      TextField(
+                          controller: _ctrl,
+                          maxLines: 6,
+                          maxLength: 500,
+                          decoration: InputDecoration(
+                            hintText: 'Share your thoughts...',
+                            counterText: "",
+                            filled: true,
+                            fillColor: colorSecondary,
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.sp),
+                                borderSide: BorderSide.none),
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.sp),
+                                borderSide: BorderSide.none),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.sp),
+                                borderSide: BorderSide(
+                                    color: lightPurpleColor, width: 1.sp)),
+                            contentPadding: EdgeInsets.all(12.sp),
+                          ),
+                          style: TextStyle(
+                              fontFamily: "Clash Display Regular",
+                              fontSize: 13.sp,
+                              color: blackColor)),
+                      SizedBox(height: 24.sp),
+                    ]))),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(16.sp),
+          decoration: BoxDecoration(color: whiteColor, boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -2))
+          ]),
+          child: ElevatedButton(
+            onPressed: _submitting ? null : _submit,
+            style: ElevatedButton.styleFrom(
+                backgroundColor: _submitting ? Colors.grey : blackColor,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.sp)),
+                minimumSize: Size(double.infinity, 48.sp),
+                elevation: 0),
+            child: Text(_submitting ? 'SUBMITTING...' : 'SUBMIT REVIEW',
+                style: TextStyle(
+                    fontFamily: "Clash Display",
+                    fontWeight: FontWeight.w600,
+                    color: whiteColor,
+                    fontSize: 14.sp,
+                    letterSpacing: 0.5)),
+          ),
+        ),
+      ]),
+    );
   }
 }
