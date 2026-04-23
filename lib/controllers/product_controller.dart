@@ -251,6 +251,9 @@ class ProductController extends BaseController {
   RxList<String> sizeInventoryList = <String>[].obs;
   RxString selectedColor = "".obs;
   RxString selectedSize = "".obs;
+  // ---- BREADCRUMB ----
+  RxBool isBreadcrumbLoading = false.obs;
+  RxList<Map<String, dynamic>> breadcrumbList = <Map<String, dynamic>>[].obs;
 // Add this observable for tracking current display images
   RxList<String> currentDisplayImages = <String>[].obs;
 
@@ -668,6 +671,48 @@ class ProductController extends BaseController {
     }
   }
 
+  /// ----------------------------------------------------------
+  /// FETCH BREADCRUMB (productId + optional fallback name/slug)
+  /// ----------------------------------------------------------
+  Future<void> fetchBreadcrumb(int productId, {
+    String fallbackName = '',
+    String fallbackSlug = '',
+  }) async {
+    isBreadcrumbLoading.value = true;
+    breadcrumbList.clear();
+    final url = '${ApiConstants.baseUrl}/product/$productId/breadcrumb';
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {'Accept': 'application/json; charset=UTF-8'},
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body);
+        if (body['success'] == true) {
+          final data = body['data'];
+          final crumbs = (data['breadcrumbs'] as List?)
+              ?.whereType<Map<String, dynamic>>()
+              .toList() ?? [];
+          if (crumbs.isNotEmpty) {
+            breadcrumbList.assignAll(crumbs);
+            return;
+          }
+        }
+      }
+    } catch (_) {
+      // fall through to fallback
+    } finally {
+      isBreadcrumbLoading.value = false;
+    }
+    // Fallback
+    breadcrumbList.assignAll([
+      {'name': 'Home'},
+      if (fallbackName.isNotEmpty) {'name': fallbackName},
+      if (fallbackSlug.isNotEmpty) {'name': fallbackSlug},
+    ]);
+  }
+
   int _activeGenderRequest = -1;
 
   Future<void> getHomeProduct(
@@ -675,17 +720,6 @@ class ProductController extends BaseController {
     bool withLimit = true,
     bool forceRefresh = false,
   }) async {
-    // ✅ Skip API call if data already loaded for this gender (unless force refresh)
-    if (!forceRefresh &&
-        isHomeProductLoaded(gender) &&
-        homeProductList.isNotEmpty) {
-      print(
-          '✅ Home products already loaded for gender: $gender, skipping API call');
-      // ✅ Ensure loading state is false when skipping
-      isHomeProduct.value = false;
-      return;
-    }
-
     _activeGenderRequest = gender; // ✅ mark latest request
 
     final displayFor = gender == 1
@@ -695,23 +729,37 @@ class ProductController extends BaseController {
             : 'accessories';
 
     final cacheKey =
-        'home_products_v6_${displayFor}_${withLimit ? "limited" : "all"}';
+        'home_products_v8_${displayFor}_${withLimit ? "limited" : "all"}';
+
+    // ✅ Skip API call if data already loaded for this gender (unless force refresh)
+    if (!forceRefresh && isHomeProductLoaded(gender)) {
+      print(
+          '✅ Home products already loaded for gender: $gender, skipping API call');
+      isHomeProduct.value = false;
+      final cached = await CacheManager.get(key: cacheKey);
+      if (cached != null && cached is List) {
+        final collections = cached
+            .whereType<Map<String, dynamic>>()
+            .map((e) => CollectionModel.fromJson(e))
+            .toList();
+        homeProductList.assignAll(collections);
+        tagname.value = collections.isNotEmpty ? collections.first.name : '';
+      }
+      return;
+    }
 
     /// ---------------- CACHE ----------------
     if (!forceRefresh) {
       final cached = await CacheManager.get(key: cacheKey);
       if (cached != null && cached is List) {
-        // ✅ VERY IMPORTANT CHECK
         if (_activeGenderRequest != gender) return;
 
         final collections = cached
             .whereType<Map<String, dynamic>>()
             .map((e) => CollectionModel.fromJson(e))
             .toList();
-
         homeProductList.assignAll(collections);
         tagname.value = collections.isNotEmpty ? collections.first.name : '';
-        // ✅ Mark as loaded from cache
         markHomeProductLoaded(gender);
         return;
       }
@@ -740,6 +788,7 @@ class ProductController extends BaseController {
             "${ApiConstants.baseUrl}/product-collection/collection-with-products")
         .replace(queryParameters: {
       'displayFor': 'homepage',
+      'gender': gender.toString(),
       if (withLimit) 'limit': 'true',
     });
 
@@ -943,7 +992,7 @@ class ProductController extends BaseController {
     };
   }
 
-  Future<void> getProductById(int id) async {
+  Future<void> getProductById(int id, {String? slug}) async {
     isDetails.value = true;
 
     try {
@@ -960,13 +1009,17 @@ class ProductController extends BaseController {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';
 
-      final uri = Uri.parse('${ApiConstants.baseUrl}/product/$id');
+      // Use slug if provided, otherwise use numeric ID
+      final pathSegment = (slug != null && slug.isNotEmpty) ? slug : id.toString();
+      final uri = Uri.parse('${ApiConstants.baseUrl}/product/$pathSegment');
+      print("🔗 Fetching product: $uri");
       final resp = await http.get(uri, headers: {
         'Accept': 'application/json',
         if (token.isNotEmpty) 'Authorization': 'Bearer $token'
       });
 
       if (resp.statusCode != 200) {
+        print("❌ Product fetch failed: ${resp.statusCode} for $uri");
         errorMsg.value = "Failed to load product";
         return;
       }
@@ -1285,6 +1338,11 @@ class ProductController extends BaseController {
       isDetails.value = false;
       update();
     }
+  }
+
+  /// Fetch product by slug — delegates to getProductById after resolving the slug
+  Future<void> getProductBySlug(String slug) async {
+    return getProductById(0, slug: slug);
   }
 
   Future<Map<String, dynamic>?> fetchProductDetails(int productId) async {
@@ -2283,5 +2341,32 @@ class ProductController extends BaseController {
     } finally {
       isFilterMetadata.value = false;
     }
+  }
+
+  @override
+  void onClose() {
+    // Dispose all ScrollController instances
+    listController.dispose();
+    handpickedController.dispose();
+    brandProductController.dispose();
+    recentListController.dispose();
+    expressListController.dispose();
+    categoryProductController.dispose();
+    brandDetailsController.dispose();
+    brandExpressProductController.dispose();
+    tagsProductController.dispose();
+    mostViewController.dispose();
+    bannerTagController.dispose();
+    frequentlyBoughtController.dispose();
+    recommendedController.dispose();
+    bestSellerController.dispose();
+    tagsController.dispose();
+    quickProductListController.dispose();
+    
+    // Dispose all TextEditingController instances
+    brandController.dispose();
+    branddetailsSearchController.dispose();
+    
+    super.onClose();
   }
 }

@@ -28,6 +28,9 @@ import 'core/constant/constants.dart';
 import 'core/services/meta_event_service.dart';
 import 'screens/splash/splashtwo.dart';
 import 'screens/home/women/homescreen.dart' show routeObserver;
+import 'services/session_manager.dart';
+import 'services/recommendation_service.dart';
+import 'services/event_tracking_service.dart';
 
 /// Background FCM handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -47,8 +50,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await plugin.initialize(initSettings);
 
     final title = message.data['title'] ?? 'LaFetch';
-    final body =
-        message.data['body'] ?? message.data['message'] ?? '';
+    final body = message.data['body'] ?? message.data['message'] ?? '';
 
     if (body.toString().isNotEmpty) {
       await plugin.show(
@@ -115,6 +117,26 @@ Future<void> main() async {
 
   if (!Get.isRegistered<CatalogController>()) {
     Get.put(CatalogController(), permanent: true);
+  }
+
+  // ---------------- Recommendation Services -----------------------
+  if (!Get.isRegistered<SessionManager>()) {
+    await Get.putAsync<SessionManager>(
+      () async {
+        final sm = SessionManager();
+        await sm.init();
+        return sm;
+      },
+      permanent: true,
+    );
+  }
+
+  if (!Get.isRegistered<RecommendationService>()) {
+    Get.put(RecommendationService(), permanent: true);
+  }
+
+  if (!Get.isRegistered<EventTrackingService>()) {
+    Get.put(EventTrackingService(), permanent: true);
   }
 
   // ---------------- Firebase Init -----------------------
@@ -273,7 +295,8 @@ Future<void> _initPushNotifications(prefs) async {
     // Foreground message listener
     FirebaseMessaging.onMessage.listen((message) {
       print("🔔 Foreground message received!");
-      print("   notification: ${message.notification?.title} - ${message.notification?.body}");
+      print(
+          "   notification: ${message.notification?.title} - ${message.notification?.body}");
       print("   data: ${message.data}");
 
       RemoteNotification? notification = message.notification;
@@ -358,16 +381,20 @@ Future<void> _initPushNotifications(prefs) async {
     }
 
     if (token == null) {
-      print('⚠️ Failed to obtain FCM token after retries. Push notifications may not work.');
-      print('   This is normal in simulators/emulators. On real devices, check:');
+      print(
+          '⚠️ Failed to obtain FCM token after retries. Push notifications may not work.');
+      print(
+          '   This is normal in simulators/emulators. On real devices, check:');
       print('   - Firebase project configuration');
-      print('   - google-services.json (Android) or GoogleService-Info.plist (iOS)');
+      print(
+          '   - google-services.json (Android) or GoogleService-Info.plist (iOS)');
       print('   - APNS certificates (iOS)');
     }
 
     // Handle notification tap when app is in background (but not terminated)
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print("🔔 Notification tapped (background): ${message.notification?.title}");
+      print(
+          "🔔 Notification tapped (background): ${message.notification?.title}");
       print("   data: ${message.data}");
       _handleNotificationTap(message);
     });
@@ -375,7 +402,8 @@ Future<void> _initPushNotifications(prefs) async {
     // Handle notification tap when app was terminated
     RemoteMessage? initialMessage = await messaging.getInitialMessage();
     if (initialMessage != null) {
-      print("🔔 App opened from terminated via notification: ${initialMessage.notification?.title}");
+      print(
+          "🔔 App opened from terminated via notification: ${initialMessage.notification?.title}");
       print("   data: ${initialMessage.data}");
       _handleNotificationTap(initialMessage);
     }
@@ -389,6 +417,45 @@ Future<void> _initPushNotifications(prefs) async {
   } catch (e, stackTrace) {
     print('❌ Error initializing push notifications: $e');
     await FirebaseCrashlytics.instance.recordError(e, stackTrace);
+  }
+}
+
+class RouteStackObserver extends NavigatorObserver {
+  int _stackDepth = 0;
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPush(route, previousRoute);
+    _stackDepth++;
+    if (kDebugMode) {
+      print('📍 Route PUSHED: ${route.settings.name ?? route.runtimeType} | Stack depth: $_stackDepth');
+    }
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPop(route, previousRoute);
+    _stackDepth--;
+    if (kDebugMode) {
+      print('📍 Route POPPED: ${route.settings.name ?? route.runtimeType} | Stack depth: $_stackDepth');
+    }
+  }
+
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didRemove(route, previousRoute);
+    _stackDepth--;
+    if (kDebugMode) {
+      print('📍 Route REMOVED: ${route.settings.name ?? route.runtimeType} | Stack depth: $_stackDepth');
+    }
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    if (kDebugMode) {
+      print('📍 Route REPLACED: ${oldRoute?.settings.name ?? oldRoute?.runtimeType} → ${newRoute?.settings.name ?? newRoute?.runtimeType} | Stack depth: $_stackDepth');
+    }
   }
 }
 
@@ -406,7 +473,11 @@ class MyApp extends StatelessWidget {
           // Always start from SplashTwoScreen
           home: const SplashTwoScreen(),
           // Add this to ensure clean navigation on hot restart
-          navigatorObservers: [GetObserver(), routeObserver],
+          navigatorObservers: [
+            GetObserver(),
+            routeObserver,
+            if (kDebugMode) RouteStackObserver(),
+          ],
           // Enable iOS-style swipe-to-go-back on both platforms
           defaultTransition: Transition.cupertino,
           // Configure page transitions for swipe gesture

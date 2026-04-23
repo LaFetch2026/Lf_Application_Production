@@ -172,7 +172,7 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
                 imageUrl: imageUrl,
                 height: 200.sp,
                 width: double.infinity,
-                fit: BoxFit.fill,
+                fit: BoxFit.contain,
                 errorWidget: (_, __, ___) =>
                     Image.asset(dummyWishlistImage, fit: BoxFit.fill),
               ),
@@ -216,6 +216,10 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
                 ),
               ],
             ),
+            SizedBox(height: 16.sp),
+
+            // ✅ Order Status Tracker
+            _buildStatusTracker(status),
             SizedBox(height: 20.sp),
 
             // ✅ Cancel Button (only for pending/confirmed)
@@ -378,6 +382,114 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildStatusTracker(String status) {
+    // Cancelled — show banner instead of stepper
+    if (status == 'cancelled') {
+      return Container(
+        padding: EdgeInsets.all(12.sp),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFEF2F2),
+          borderRadius: BorderRadius.circular(8.sp),
+          border: Border.all(color: const Color(0xFFFECACA)),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.cancel_outlined, color: Color(0xFFEF4444)),
+            SizedBox(width: 10.sp),
+            Expanded(
+              child: AppText(
+                text: "Order Cancelled — a cancellation email has been sent.",
+                fontFamily: "Clash Display Regular",
+                fontWeight: FontWeight.w400,
+                color: const Color(0xFFEF4444),
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Steps in order
+    final steps = [
+      {'key': 'confirmed', 'label': 'Confirmed'},
+      {'key': 'shipped', 'label': 'Shipped'},
+      {'key': 'out_for_delivery', 'label': 'Out for Delivery'},
+      {'key': 'delivered', 'label': 'Delivered'},
+    ];
+
+    // Map status string to step index
+    int currentStep = -1;
+    switch (status) {
+      case 'confirmed':
+      case 'processing':
+        currentStep = 0;
+        break;
+      case 'pickup_scheduled':
+      case 'shipped':
+        currentStep = 1;
+        break;
+      case 'out_for_delivery':
+        currentStep = 2;
+        break;
+      case 'delivered':
+        currentStep = 3;
+        break;
+    }
+
+    return Column(
+      children: List.generate(steps.length, (i) {
+        final isDone = i <= currentStep;
+        final isCurrent = i == currentStep;
+        final isLast = i == steps.length - 1;
+        final color = isDone ? homeAppBarColor : const Color(0xFFD1D5DB);
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              children: [
+                Container(
+                  width: 28.sp,
+                  height: 28.sp,
+                  decoration: BoxDecoration(
+                    color: isDone ? homeAppBarColor : Colors.transparent,
+                    border: Border.all(color: color, width: 2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isDone ? Icons.check : Icons.circle_outlined,
+                    size: 14.sp,
+                    color: isDone ? whiteColor : color,
+                  ),
+                ),
+                if (!isLast)
+                  Container(
+                    width: 2,
+                    height: 32.sp,
+                    color: isDone ? homeAppBarColor : const Color(0xFFD1D5DB),
+                  ),
+              ],
+            ),
+            SizedBox(width: 10.sp),
+            Padding(
+              padding: EdgeInsets.only(top: 4.sp),
+              child: AppText(
+                text: steps[i]['label']!,
+                fontFamily: isCurrent
+                    ? "Clash Display Semibold"
+                    : "Clash Display Regular",
+                fontWeight: isCurrent ? FontWeight.w600 : FontWeight.w400,
+                color: isDone ? blackColor : const Color(0xFF9CA3AF),
+                fontSize: 13,
+              ),
+            ),
+          ],
+        );
+      }),
     );
   }
 

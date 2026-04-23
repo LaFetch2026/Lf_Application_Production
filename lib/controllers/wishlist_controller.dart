@@ -464,7 +464,8 @@ class WishlistController extends BaseController {
 
         if (resp.statusCode == 404) {
           // 404: Board doesn't have products yet or doesn't exist
-          print("⚠️ fetchBoardProducts 404: Board $boardId has no products or doesn't exist");
+          print(
+              "⚠️ fetchBoardProducts 404: Board $boardId has no products or doesn't exist");
           // Don't show error snackbar for empty board - it's a valid state
         } else {
           print("❌ fetchBoardProducts ${resp.statusCode} ${resp.reasonPhrase}");
@@ -490,7 +491,8 @@ class WishlistController extends BaseController {
   }
 
   /// POST /board-product  {userId, productId, boardId}
-  Future<void> addProductToBoard(int boardId, int productId, {double price = 0.0}) async {
+  Future<void> addProductToBoard(int boardId, int productId,
+      {double price = 0.0}) async {
     final auth = await _auth();
     if (auth == null) return;
 
@@ -574,11 +576,11 @@ class WishlistController extends BaseController {
         isWishlisted.value = false;
         wishListDetails["wishlisted"] = false;
 
-        getSnackBar("✅ Product removed.");
+        // getSnackBar("✅ Product removed.");
       } else {
         final msg = _serverMessage(res, fallback: "Failed to delete product.");
         print("❌ removeProductFromBoard ${res.statusCode} ${res.body}");
-        getSnackBar("❌ $msg");
+        getSnackBar("$msg");
       }
     } catch (e) {
       print("removeProductFromBoard error: $e");

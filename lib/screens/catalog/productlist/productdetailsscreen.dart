@@ -37,6 +37,8 @@ import '../../../core/services/meta_event_service.dart';
 import '../../cartscreen.dart';
 import '../../wishlist/boardscreen.dart';
 import '../../wishlist/newboardscreen.dart';
+import '../../../services/event_tracking_service.dart';
+import '../../../widgets/similar_products_carousel.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final int productId;
@@ -73,6 +75,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
   final brandController = Get.put(BrandController());
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   bool _didEnsureSize = false;
+  bool _isForeground =
+      true; // prevents Obx rebuilds when screen is in background
 
   int _curr = 0;
   int commentId = 0;
@@ -300,7 +304,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      AppSpacingText(
+                      const AppSpacingText(
                         text: 'WRITE A REVIEW',
                         fontFamily: "Clash Display",
                         fontWeight: FontWeight.w600,
@@ -1112,12 +1116,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               shape: BoxShape.rectangle,
-                              color: widget.backgroundcolor == whiteColor
-                                  ? Colors.white
-                                  : Colors.black.withOpacity(0.15),
+                              color: isSelected
+                                  ? lightPurpleColor
+                                  : widget.backgroundcolor == whiteColor
+                                      ? Colors.white
+                                      : Colors.black.withOpacity(0.15),
                               border: Border.all(
                                 color:
-                                    isSelected ? colorPrimary : searchTextColor,
+                                    isSelected ? lightPurpleColor : blackColor,
                                 width: isSelected ? 2.sp : 1.sp,
                               ),
                             ),
@@ -1129,9 +1135,11 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   fontFamily: "Clash Display",
                                   fontWeight: FontWeight.w600,
                                   fontSize: 9.sp,
-                                  color: widget.backgroundcolor == whiteColor
-                                      ? Colors.black
-                                      : Colors.white,
+                                  color: isSelected
+                                      ? whiteColor
+                                      : widget.backgroundcolor == whiteColor
+                                          ? Colors.black
+                                          : Colors.white,
                                 ),
                               ),
                             ),
@@ -1199,7 +1207,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
       print("🚀 Loading product ID: ${widget.productId}");
 
-      productController.getProductById(widget.productId).then((_) {
+      productController
+          .getProductById(widget.productId,
+              slug: widget.Slug.isNotEmpty ? widget.Slug : null)
+          .then((_) {
         print("✅ Product loaded successfully");
         print(
             "📦 Product Details: ${productController.productDetails.keys.toList()}");
@@ -1219,6 +1230,9 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
         MetaEventService.instance.logViewContent(
           contentId: productId.toString(),
         );
+
+        // Algolia: track product view
+        EventTrackingService.instance.trackView(productId);
       });
     });
 
@@ -1241,7 +1255,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       builder: (context) {
         return Dialog(
           insetPadding: EdgeInsets.all(16.sp),
-          backgroundColor: Colors.white, // ⭐ light purple color
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.sp),
           ),
@@ -1266,37 +1280,8 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   /// ---------- Prefer Image ----------
                   if (chart["sizeGuideImage"] != null &&
                       chart["sizeGuideImage"].toString().isNotEmpty)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8.sp),
-                      child: CachedNetworkImage(
-                        imageUrl: chart["sizeGuideImage"],
-                        width: double.infinity,
-                        height: 300.sp,
-                        fit: BoxFit.cover,
-                        errorWidget: (context, url, error) => Container(
-                          width: double.infinity,
-                          height: 300.sp,
-                          color: Colors.black.withOpacity(0.06),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.broken_image_outlined,
-                                color: Colors.grey.withOpacity(0.5),
-                                size: 48.sp,
-                              ),
-                              SizedBox(height: 8.sp),
-                              Text(
-                                "Size guide image unavailable",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 12.sp,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    _SizeChartZoomableImage(
+                      imageUrl: chart["sizeGuideImage"],
                     )
                   else
                     _buildSizeTable(chartData),
@@ -1556,128 +1541,126 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
                         // ---------- IMAGES ----------
                         Obx(
-                          () => productController.isDetails.value
-                              ? const DummyProductImage()
-                              : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                          () {
+                            // Don't show loading skeleton when screen is in background
+                            // (prevents scroll-to-top when navigating to a new PDP)
+                            if (_isForeground &&
+                                productController.isDetails.value) {
+                              return const DummyProductImage();
+                            }
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Image Container with Rating Badge - FULL WIDTH
+                                Stack(
                                   children: [
-                                    // Image Container with Rating Badge - FULL WIDTH
-                                    Stack(
-                                      children: [
-                                        // PageView for Images - NO PADDING
-                                        SizedBox(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
+                                    // PageView for Images - NO PADDING
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.height *
                                               0.54,
-                                          child: PageView(
-                                            controller: _pageController,
-                                            allowImplicitScrolling: true,
-                                            scrollDirection: Axis.horizontal,
-                                            onPageChanged: (number) {
-                                              _curr = number;
-                                              setState(() {});
-                                            },
-                                            children: getListForPageView(),
-                                          ),
-                                        ),
-                                        // Rating Badge - Bottom Right (positioned over image)
-                                        Positioned(
-                                          bottom: 12.sp,
-                                          right: 12.sp,
-                                          child: Obx(() {
-                                            final avgRating = productController
-                                                .averageRating.value;
-
-                                            if (avgRating <= 0)
-                                              return const SizedBox
-                                                  .shrink(); // hide if no rating
-
-                                            return Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 8.sp,
-                                                  vertical: 5.sp),
-                                              decoration: BoxDecoration(
-                                                color: whiteColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        16.sp),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black
-                                                        .withOpacity(0.15),
-                                                    blurRadius: 6,
-                                                    offset: Offset(0, 2),
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Icon(
-                                                    Icons.star,
-                                                    color:
-                                                        const Color(0xFFFFA500),
-                                                    size: 14.sp,
-                                                  ),
-                                                  SizedBox(width: 3.sp),
-                                                  Text(
-                                                    avgRating
-                                                        .toStringAsFixed(1),
-                                                    style: TextStyle(
-                                                      fontFamily:
-                                                          "Clash Display",
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color: blackColor,
-                                                      fontSize: 13.sp,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          }),
-                                        ),
-                                      ],
+                                      child: PageView(
+                                        controller: _pageController,
+                                        allowImplicitScrolling: true,
+                                        scrollDirection: Axis.horizontal,
+                                        onPageChanged: (number) {
+                                          _curr = number;
+                                          setState(() {});
+                                        },
+                                        children: getListForPageView(),
+                                      ),
                                     ),
-                                    // Page Indicator Dots
-                                    _imageCount() <= 1
-                                        ? const SizedBox.shrink()
-                                        : Padding(
-                                            padding: EdgeInsets.only(
-                                              left: gL,
-                                              right: gL,
-                                              top: gS,
-                                            ),
-                                            child: Center(
-                                              child: PageIndicator(
-                                                controller: _pageController,
-                                                count: _imageCount(),
-                                                size: 5.0.sp,
-                                                activeColor:
-                                                    widget.backgroundcolor ==
-                                                            whiteColor
-                                                        ? Colors.black
-                                                        : whiteColor,
-                                                color: widget.backgroundcolor ==
-                                                        whiteColor
-                                                    ? const Color(0xffE5E7EB)
-                                                    : subtitleColor,
-                                                layout:
-                                                    PageIndicatorLayout.WARM,
-                                                scale: 0.6,
-                                                space: gS,
+                                    // Rating Badge - Bottom Right (positioned over image)
+                                    Positioned(
+                                      bottom: 12.sp,
+                                      right: 12.sp,
+                                      child: Obx(() {
+                                        final avgRating = productController
+                                            .averageRating.value;
+
+                                        if (avgRating <= 0)
+                                          return const SizedBox
+                                              .shrink(); // hide if no rating
+
+                                        return Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8.sp, vertical: 5.sp),
+                                          decoration: BoxDecoration(
+                                            color: whiteColor,
+                                            borderRadius:
+                                                BorderRadius.circular(16.sp),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.15),
+                                                blurRadius: 6,
+                                                offset: Offset(0, 2),
                                               ),
-                                            ),
+                                            ],
                                           ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.star,
+                                                color: const Color(0xFFFFA500),
+                                                size: 14.sp,
+                                              ),
+                                              SizedBox(width: 3.sp),
+                                              Text(
+                                                avgRating.toStringAsFixed(1),
+                                                style: TextStyle(
+                                                  fontFamily: "Clash Display",
+                                                  fontWeight: FontWeight.w700,
+                                                  color: blackColor,
+                                                  fontSize: 13.sp,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }),
+                                    ),
                                   ],
                                 ),
+                                // Page Indicator Dots
+                                _imageCount() <= 1
+                                    ? const SizedBox.shrink()
+                                    : Padding(
+                                        padding: EdgeInsets.only(
+                                          left: gL,
+                                          right: gL,
+                                          top: gS,
+                                        ),
+                                        child: Center(
+                                          child: PageIndicator(
+                                            controller: _pageController,
+                                            count: _imageCount(),
+                                            size: 5.0.sp,
+                                            activeColor:
+                                                widget.backgroundcolor ==
+                                                        whiteColor
+                                                    ? Colors.black
+                                                    : whiteColor,
+                                            color: widget.backgroundcolor ==
+                                                    whiteColor
+                                                ? const Color(0xffE5E7EB)
+                                                : subtitleColor,
+                                            layout: PageIndicatorLayout.WARM,
+                                            scale: 0.6,
+                                            space: gS,
+                                          ),
+                                        ),
+                                      ),
+                              ],
+                            );
+                          },
                         ),
                         // ---------- DETAILS ----------
                         Obx(() {
-                          final loading = productController.isDetails.value;
+                          final loading = _isForeground &&
+                              productController.isDetails.value;
 
                           if (loading) return const DummyProductDetails();
 
@@ -2511,6 +2494,18 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   : titleColor),
                         ),
 
+                        // Similar Products Carousel
+                        Obx(
+                          () => productController.isDetails.value
+                              ? const SizedBox.shrink()
+                              : SimilarProductsCarousel(
+                                  productId: widget.productId,
+                                  onNavigating: () {
+                                    setState(() => _isForeground = false);
+                                  },
+                                ),
+                        ),
+
                         Obx(
                           () => productController.errorMsg.value.isNotEmpty
                               ? Padding(
@@ -2586,6 +2581,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               );
 
                               if (!success) return; // ✅ Stop if failed
+
+                              // Algolia: track add to cart
+                              EventTrackingService.instance
+                                  .trackAddToCart(widget.productId, variantId);
 
                               setState(() {
                                 _selectedQuantity = 1;
@@ -2689,6 +2688,10 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 oldInventoryId: variantId,
                                 price: variantPrice,
                               );
+
+                              // Algolia: track add to cart
+                              EventTrackingService.instance
+                                  .trackAddToCart(widget.productId, variantId);
 
                               // Reset quantity after adding to cart
                               setState(() {
@@ -3375,5 +3378,67 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       print('Error formatting date: $e');
       return '';
     }
+  }
+}
+
+/// size chart pinch to zoom widget
+class _SizeChartZoomableImage extends StatefulWidget {
+  final String imageUrl;
+  const _SizeChartZoomableImage({required this.imageUrl});
+
+  @override
+  State<_SizeChartZoomableImage> createState() =>
+      _SizeChartZoomableImageState();
+}
+
+class _SizeChartZoomableImageState extends State<_SizeChartZoomableImage> {
+  final TransformationController _transformationController =
+      TransformationController();
+
+  void _resetZoom() {
+    _transformationController.value = Matrix4.identity();
+  }
+
+  @override
+  void dispose() {
+    _transformationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: GestureDetector(
+        onScaleEnd: (_) => _resetZoom(),
+        child: InteractiveViewer(
+          transformationController: _transformationController,
+          minScale: 1.0,
+          maxScale: 4.0,
+          child: CachedNetworkImage(
+            imageUrl: widget.imageUrl,
+            width: double.infinity,
+            fit: BoxFit.contain,
+            errorWidget: (context, url, error) => Container(
+              width: double.infinity,
+              height: 300,
+              color: Colors.black.withOpacity(0.06),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.broken_image_outlined,
+                      color: Colors.grey.withOpacity(0.5), size: 48),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Size guide image unavailable",
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

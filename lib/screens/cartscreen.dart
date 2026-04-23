@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:lafetch/common/widget/bottom_sheets/bottomCoupon.dart';
+import 'package:lafetch/common/widget/bottom_sheets/missing_contact_bottom_sheet.dart';
 import 'package:lafetch/controllers/order_controller.dart';
 import 'package:lafetch/screens/account/saved_address.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
@@ -44,7 +45,7 @@ import '../controllers/profile_controller.dart';
 import '../controllers/wishlist_controller.dart';
 import '../core/constant/constants.dart';
 import '../common/widget/newsletter/newsletter_section.dart';
-import 'catalog/productlist/productdetailsscreen.dart';
+import 'catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 
 class CartScreen extends StatefulWidget {
   final Color backgroundcolor;
@@ -255,6 +256,37 @@ class CartScreenState extends State<CartScreen> {
         return;
       }
       print("   ✅ User authenticated: userId=$userId");
+
+      // ✅ Step 2.5: Contact gate — ensure email and phone are present
+      final String _gateEmail = (prefs.getString('email') ?? '').trim();
+      final String _gatePhone = (prefs.getString('phonenumber') ??
+              prefs.getString('phone_number') ??
+              '')
+          .trim();
+      final bool _emailMissing = _gateEmail.isEmpty;
+      final bool _phoneMissing = _gatePhone.isEmpty;
+
+      if (_emailMissing || _phoneMissing) {
+        print(
+            "   ⚠️ Missing contact info — emailMissing=$_emailMissing, phoneMissing=$_phoneMissing");
+        if (!mounted) return;
+        final result = await showModalBottomSheet<Map<String, dynamic>?>(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (_) => MissingContactBottomSheet(
+            needsEmail: _emailMissing,
+            needsPhone: _phoneMissing,
+          ),
+        );
+        if (result == null) {
+          print("   ❌ User dismissed contact bottom sheet");
+          showAppSnackBar("Please provide your contact details to continue",
+              type: SnackBarType.error);
+          return;
+        }
+        print("   ✅ Contact details collected: $result");
+      }
 
       // ✅ Step 3: Validate cart total
       print("\n💰 STEP 3: Validating Cart Total");
@@ -1017,7 +1049,7 @@ class CartScreenState extends State<CartScreen> {
 
                                     // Newsletter Section
                                     const NewsletterSection(
-                                      title: "NEWS LETTERS",
+                                      title: "LF NEWS LETTERS",
                                     ),
                                   ],
                                 ),
@@ -1517,7 +1549,7 @@ class CartScreenState extends State<CartScreen> {
             if (discountOnMrp > 0)
               _buildPriceRow(
                 "Discount on MRP",
-                "- ₹${formatAmount(discountOnMrp.toInt())}",
+                "- ₹${formatAmount(discountOnMrp)}",
                 false,
               ),
 
@@ -1547,7 +1579,7 @@ class CartScreenState extends State<CartScreen> {
                   ),
                   const Spacer(),
                   AppText(
-                    text: "₹${formatAmount(sellingTotal)}",
+                    text: "₹${formatAmount(sellingTotal.toInt())}",
                     fontFamily: "Clash Display",
                     fontWeight: FontWeight.w500,
                     color: widget.backgroundcolor == whiteColor
@@ -2945,7 +2977,7 @@ class CartScreenState extends State<CartScreen> {
 
     Navigator.of(context)
         .push(MaterialPageRoute(
-          builder: (BuildContext context) => ProductDetailsScreen(
+          builder: (BuildContext context) => ProductDetailsScreenV2(
             productId: product["id"],
             brandName: product["brand_name"] ?? "",
             backgroundcolor: widget.backgroundcolor,

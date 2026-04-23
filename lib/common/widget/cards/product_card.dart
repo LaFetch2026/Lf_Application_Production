@@ -212,7 +212,7 @@ class ProductCard extends StatelessWidget {
                         child: Row(
                           children: [
                             ImageIcon(
-                              AssetImage(truckImage),
+                              const AssetImage(truckImage),
                               color: expressText,
                               size: 12.sp,
                             ),

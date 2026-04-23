@@ -8,7 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
@@ -659,7 +659,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           ProductAppbar(
             text: widget.title,
             onPressedSearch: () async {
-              Get.to(SearchScreen())?.then((_) {
+              Get.off(() => SearchScreen())?.then((_) {
                 setState(() {});
               });
               analytics.logEvent(
@@ -787,7 +787,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                       showExpress: express,
                       onTap: () async {
                         Get.to(
-                          ProductDetailsScreen(
+                          ProductDetailsScreenV2(
                             brandName: brand,
                             productId: item["id"],
                             type: "add",

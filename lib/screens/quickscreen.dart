@@ -20,7 +20,7 @@ import 'package:lafetch/screens/Brands/brand_product_list.dart';
 
 //import 'package:lafetch/screens/Brands/categoryproduct.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/quick/brandproductscreen.dart';
 import 'package:lottie/lottie.dart';
@@ -1716,7 +1716,7 @@ class QuickScreenState extends State<QuickScreen> {
                                                       // BrandProductList(
                                                       //     onPressed:
                                                       //         (p0, p1) async {
-                                                      //       Get.to(ProductDetailsScreen(
+                                                      //       Get.to(ProductDetailsScreenV2(
                                                       //               expresshour:
                                                       //                   homeController
                                                       //                       .expressHour

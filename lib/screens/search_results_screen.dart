@@ -11,13 +11,14 @@ import 'package:get/get.dart';
 import 'package:lafetch/controllers/search_controller.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/cartscreen.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 import 'package:lafetch/screens/searchscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../common/widget/appbar/productlist_appbar.dart';
 import '../common/widget/cards/product_card.dart';
 import '../common/widget/lists/dummy_grid_list.dart';
 import '../common/widget/other/common_widget.dart';
+import '../common/widget/other/filter_chips_row.dart';
 import '../common/widget/text/app_text.dart';
 import '../controllers/cart_controller.dart';
 import '../controllers/product_controller.dart';
@@ -74,6 +75,14 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       ));
 
       controller.getCartData();
+
+      // Trigger chip fetch directly using the search query this screen was opened with
+      final searchSc = Get.find<SearchScreenController>();
+      // Ensure the text is set in case the controller was re-created
+      if (searchSc.searchController.text.trim().isEmpty) {
+        searchSc.searchController.text = widget.searchQuery;
+      }
+      searchSc.fetchChipsForSearch();
     });
 
     _clearPreferenceValue();
@@ -161,6 +170,92 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
     super.dispose();
   }
 
+  /// Builds active filter pills from current filter state.
+  List<ActiveFilterPill> _buildActiveFilterPills() {
+    final pills = <ActiveFilterPill>[];
+
+    for (final brand in _appliedBrands) {
+      pills.add(ActiveFilterPill(
+        label: brand,
+        onRemove: () => _removeSearchFilter(brand: brand),
+      ));
+    }
+
+    for (final color in _appliedColors) {
+      pills.add(ActiveFilterPill(
+        label: color,
+        onRemove: () => _removeSearchFilter(color: color),
+      ));
+    }
+
+    for (final size in _appliedSizes) {
+      pills.add(ActiveFilterPill(
+        label: size,
+        onRemove: () => _removeSearchFilter(size: size),
+      ));
+    }
+
+    final minP = int.tryParse(_appliedMinPrice) ?? 300;
+    final maxP = int.tryParse(_appliedMaxPrice) ?? 100000;
+    if (minP > 300 || maxP < 100000) {
+      pills.add(ActiveFilterPill(
+        label: '₹$minP–₹$maxP',
+        onRemove: () => _removeSearchFilter(resetPrice: true),
+      ));
+    }
+
+    if (_appliedSortOption != 'recommended') {
+      final sortLabels = {
+        'price_asc': 'Price ↑',
+        'price_desc': 'Price ↓',
+        'whats_new': "What's New",
+        'rating': 'Top Rated',
+        'discount': 'Discount',
+      };
+      pills.add(ActiveFilterPill(
+        label: sortLabels[_appliedSortOption] ?? _appliedSortOption,
+        onRemove: () => _removeSearchFilter(resetSort: true),
+      ));
+    }
+
+    return pills;
+  }
+
+  void _removeSearchFilter({
+    String? brand,
+    String? color,
+    String? size,
+    bool resetPrice = false,
+    bool resetSort = false,
+  }) {
+    setState(() {
+      if (brand != null) _appliedBrands.remove(brand);
+      if (color != null) _appliedColors.remove(color);
+      if (size != null) _appliedSizes.remove(size);
+      if (resetPrice) {
+        _appliedMinPrice = '300';
+        _appliedMaxPrice = '100000';
+      }
+      if (resetSort) _appliedSortOption = 'recommended';
+
+      _hasActiveFilters = _appliedBrands.isNotEmpty ||
+          _appliedColors.isNotEmpty ||
+          _appliedSizes.isNotEmpty ||
+          (int.tryParse(_appliedMinPrice) ?? 300) > 300 ||
+          (int.tryParse(_appliedMaxPrice) ?? 100000) < 100000;
+    });
+
+    final sc = Get.find<SearchScreenController>();
+    sc.applyFilters(
+      brands: _appliedBrands,
+      colors: _appliedColors,
+      sizes: _appliedSizes,
+      minPrice: _appliedMinPrice,
+      maxPrice: _appliedMaxPrice,
+      sort: _appliedSortOption,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,7 +267,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
           ProductAppbar(
             text: 'Search Results for "${widget.searchQuery}"',
             onPressedSearch: () async {
-              Get.to(SearchScreen())?.then((_) {
+              Get.off(() => SearchScreen())?.then((_) {
                 setState(() {});
               });
               analytics.logEvent(
@@ -197,6 +292,11 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
             },
           ),
           SizedBox(height: 10.sp),
+
+          // Filter Chips Row — pills from setState, chips from Obx
+          _SearchFilterChipsSection(
+            buildPills: _buildActiveFilterPills,
+          ),
 
           // Grid
           Expanded(
@@ -314,7 +414,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                               showExpress: express,
                               onTap: () async {
                                 Get.to(
-                                  ProductDetailsScreen(
+                                  ProductDetailsScreenV2(
                                     brandName: brand,
                                     productId: item["id"],
                                     type: "add",
@@ -428,7 +528,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -962,5 +1062,51 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
         );
       },
     );
+  }
+}
+
+/// Dedicated StatefulWidget for the filter chips row in SearchResultsScreen.
+/// Same pattern as _FilterChipsSection — see that class for the explanation.
+class _SearchFilterChipsSection extends StatefulWidget {
+  final List<ActiveFilterPill> Function() buildPills;
+
+  const _SearchFilterChipsSection({required this.buildPills});
+
+  @override
+  State<_SearchFilterChipsSection> createState() =>
+      _SearchFilterChipsSectionState();
+}
+
+class _SearchFilterChipsSectionState
+    extends State<_SearchFilterChipsSection> {
+  late List<ActiveFilterPill> _pills;
+
+  @override
+  void initState() {
+    super.initState();
+    _pills = widget.buildPills();
+  }
+
+  @override
+  void didUpdateWidget(_SearchFilterChipsSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _pills = widget.buildPills();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final searchSc = Get.find<SearchScreenController>();
+    return Obx(() {
+      final chips = searchSc.chips.toList();
+      final activeId = searchSc.activeChipIdObs.value;
+      final pills = widget.buildPills();
+
+      return FilterChipsRow(
+        chips: chips,
+        activeChipId: activeId,
+        onChipTap: searchSc.onSearchChipTap,
+        activeFilters: pills,
+      );
+    });
   }
 }

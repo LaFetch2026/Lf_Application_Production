@@ -15,7 +15,7 @@ import '../../common/widget/text/app_text.dart';
 import '../../controllers/wishlist_controller.dart';
 import '../../core/constant/constants.dart';
 import '../../common/widget/other/pounce_wrapper.dart';
-import '../catalog/productlist/productdetailsscreen.dart';
+import '../catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 
 class CreateBoardScreen extends StatefulWidget {
   final String btnText; // "" => Edit mode, otherwise Add mode (button text)
@@ -332,7 +332,7 @@ class CreateBoardScreenState extends State<CreateBoardScreen> {
                           children: [
                             PounceWrapper(
                               onTap: () async {
-                                Get.to(() => ProductDetailsScreen(
+                                Get.to(() => ProductDetailsScreenV2(
                                       brandName: brand,
                                       productId: pid,
                                       type: "add",

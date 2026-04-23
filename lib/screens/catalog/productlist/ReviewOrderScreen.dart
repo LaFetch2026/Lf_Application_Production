@@ -23,6 +23,7 @@ import 'package:lafetch/screens/orders/order_status_screen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lafetch/common/widget/bottom_sheets/bottomquantity.dart';
+import 'package:lafetch/common/widget/bottom_sheets/missing_contact_bottom_sheet.dart';
 
 class ReviewOrderScreen extends StatefulWidget {
   final int productId;
@@ -276,6 +277,37 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
       return;
     }
     print("   ✅ User authenticated");
+
+    // 2.5) contact gate — ensure email and phone are present
+    final String _gateEmail = (prefs.getString('email') ?? '').trim();
+    final String _gatePhone = (prefs.getString('phonenumber') ??
+            prefs.getString('phone_number') ??
+            '')
+        .trim();
+    final bool _emailMissing = _gateEmail.isEmpty;
+    final bool _phoneMissing = _gatePhone.isEmpty;
+
+    if (_emailMissing || _phoneMissing) {
+      print(
+          "   ⚠️ Missing contact info — emailMissing=$_emailMissing, phoneMissing=$_phoneMissing");
+      if (!mounted) return;
+      final result = await showModalBottomSheet<Map<String, dynamic>?>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (_) => MissingContactBottomSheet(
+          needsEmail: _emailMissing,
+          needsPhone: _phoneMissing,
+        ),
+      );
+      if (result == null) {
+        print("   ❌ User dismissed contact bottom sheet");
+        showAppSnackBar("Please provide your contact details to continue",
+            type: SnackBarType.error);
+        return;
+      }
+      print("   ✅ Contact details collected: $result");
+    }
 
     // 3) product sanity
     print("\n📦 STEP 3: Validating Product Data");
@@ -1178,7 +1210,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                 _buildCouponSection(),
                 _buildOrderDetails(),
                 const NewsletterSection(
-                  title: "NEWS LETTERS",
+                  title: "LF NEWS LETTERS",
                 ),
               ],
             ),
@@ -1317,7 +1349,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
           if (discountOnMrp > 0)
             _buildPriceRow(
               "Discount on MRP",
-              "- ₹${formatAmount(discountOnMrp)}",
+              "- ₹${formatAmount(discountOnMrp.toInt())}",
               false,
             ),
 
@@ -1346,7 +1378,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
                 ),
                 const Spacer(),
                 AppText(
-                  text: "₹${formatAmount(sellingTotal)}",
+                  text: "₹${formatAmount(sellingTotal.toInt())}",
                   fontFamily: "Clash Display",
                   fontWeight: FontWeight.w500,
                   color: homeAppBarColor,
@@ -1453,7 +1485,7 @@ class _ReviewOrderScreenState extends State<ReviewOrderScreen> {
               ),
               const Spacer(),
               AppText(
-                text: "₹${formatAmount(finalPayable)}",
+                text: "₹${formatAmount(finalPayable.toInt())}",
                 fontFamily: "Clash Display",
                 fontWeight: FontWeight.w500,
                 color: colorPrimary,

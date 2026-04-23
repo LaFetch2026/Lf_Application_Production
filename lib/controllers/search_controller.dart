@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constant/constants.dart';
+import '../models/filter_chip_item.dart';
 import 'base_controller.dart';
 
 class SearchScreenController extends BaseController {
@@ -33,6 +34,23 @@ class SearchScreenController extends BaseController {
   // Race condition prevention: each search gets a unique ID;
   // responses from older requests are discarded.
   int _searchRequestId = 0;
+
+  // ── Filter Chips ──────────────────────────────────────────────────────────
+  /// Chips returned by the last fresh /filter-products call for this search.
+  RxList<FilterChipItem> chips = <FilterChipItem>[].obs;
+
+  /// The id of the currently active chip (set by [onSearchChipTap]).
+  final Rx<int?> _activeChipId = Rx<int?>(null);
+
+  /// The last chip list returned by the server (fetchChipsForSearch).
+  /// Used to restore server order when the active chip is deselected.
+  List<FilterChipItem> _lastServerChips = [];
+
+  /// Returns the active chip id for use by FilterChipsRow.
+  int? get activeChipId => _activeChipId.value;
+
+  /// Reactive observable for use in Obx builders.
+  Rx<int?> get activeChipIdObs => _activeChipId;
 
   // Inactive brands cache (5-minute TTL)
   Set<String>? _inactiveBrandsCache;
@@ -321,6 +339,11 @@ class SearchScreenController extends BaseController {
 
       _applyLocalSort();
 
+      // Refresh chips on fresh queries only
+      if (!loadMore) {
+        fetchChipsForSearch();
+      }
+
       searchText.value =
           searchList.isEmpty ? "No product found" : "Search for products";
 
@@ -348,8 +371,141 @@ class SearchScreenController extends BaseController {
     }
   }
 
-  void _applyLocalSort() {
-    if (sortOption.value == 'recommended' || searchList.isEmpty) return;
+  // ── Chip methods ────────────────────────────────────────────────────────
+
+  /// Fetches chips from /filter-products using the current search query.
+  /// Extracts the most common subCatId from search results to give the
+  /// backend enough context to return relevant chips.
+  Future<void> fetchChipsForSearch() async {
+    final key = searchController.text.trim();
+    print('[CHIPS] fetchChipsForSearch called, key="$key"');
+    if (key.isEmpty) {
+      chips.clear();
+      return;
+    }
+
+    try {
+      final headers = await _headers();
+      final params = <String, String>{
+        'key': key,
+        'status': 'true',
+        'page': '1',
+        'limit': '1',
+      };
+
+      // Extract the most common subCatId / categoryId from current results
+      // so the backend has category context to return relevant chips
+      final currentItems = searchList.toList();
+      if (currentItems.isNotEmpty) {
+        final catIdCounts = <int, int>{};
+        for (final item in currentItems) {
+          // Try various field names Algolia might use
+          final rawId = item['subCatId'] ??
+              item['sub_cat_id'] ??
+              item['categoryId'] ??
+              item['category_id'] ??
+              item['subcat_id'];
+          final id = rawId is int
+              ? rawId
+              : int.tryParse(rawId?.toString() ?? '');
+          if (id != null && id > 0) {
+            catIdCounts[id] = (catIdCounts[id] ?? 0) + 1;
+          }
+        }
+        if (catIdCounts.isNotEmpty) {
+          final topCatId = catIdCounts.entries
+              .reduce((a, b) => a.value >= b.value ? a : b)
+              .key;
+          params['subCatId'] = topCatId.toString();
+          print('[CHIPS] Using subCatId=$topCatId from search results');
+        }
+      }
+
+      if (filterBrands.isNotEmpty) {
+        params['brandIds'] = filterBrands.join(',');
+      }
+      if (filterColors.isNotEmpty) {
+        params['colors'] = filterColors.join(',');
+      }
+      if (filterSizes.isNotEmpty) {
+        params['sizes'] = filterSizes.join(',');
+      }
+
+      final uri = Uri.parse('${ApiConstants.baseUrl}/filter-products')
+          .replace(queryParameters: params);
+
+      print('[CHIPS] Fetching: $uri');
+
+      final response = await http
+          .get(uri, headers: headers)
+          .timeout(const Duration(seconds: 15));
+
+      print('[CHIPS] Response status: ${response.statusCode}');
+      print('[CHIPS] Response body (first 500): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}');
+
+      if (response.statusCode == 200 && _isJson(response)) {
+        final decoded = json.decode(response.body);
+        final data = decoded['data'];
+        final rawChips =
+            data is Map ? (data['chips'] as List?) ?? [] : <dynamic>[];
+        print('[CHIPS] Raw chips count: ${rawChips.length}');
+        final parsed = rawChips
+            .whereType<Map<String, dynamic>>()
+            .map((c) => FilterChipItem.fromJson(c))
+            .toList();
+        // Always store the server-returned order so deselect can restore it.
+        _lastServerChips = parsed;
+        final activeId = _activeChipId.value;
+        if (activeId != null) {
+          final active = parsed.firstWhereOrNull((c) => c.id == activeId);
+          if (active != null) {
+            chips.assignAll([active, ...parsed.where((c) => c.id != activeId)]);
+          } else {
+            chips.assignAll(parsed);
+          }
+        } else {
+          chips.assignAll(parsed);
+        }
+        print('[CHIPS] Assigned ${parsed.length} chips');
+      } else {
+        print('[CHIPS] Non-200 or non-JSON response, clearing chips');
+        chips.clear();
+      }
+    } catch (e) {
+      print('[CHIPS] fetchChipsForSearch error: $e');
+      chips.clear();
+    }
+  }
+
+  /// Called when the user taps a chip on the search results page.
+  /// Resets pagination and re-runs the search with the chip's category context.
+  void onSearchChipTap(FilterChipItem chip) {
+    // Deselect guard: tapping the already-active chip clears the selection,
+    // restores server order, and re-fetches without the chip filter.
+    if (_activeChipId.value == chip.id) {
+      _activeChipId.value = null;
+      chips.assignAll(_lastServerChips);
+      currentPage.value = 0;
+      hasMore.value = true;
+      searchList.clear();
+      ++_searchRequestId;
+      getSearchData();
+      return;
+    }
+
+    _activeChipId.value = chip.id;
+
+    // Pin the tapped chip at index 0 immediately (client-side reorder).
+    chips.assignAll([chip, ...chips.where((c) => c.id != chip.id)]);
+
+    currentPage.value = 0;
+    hasMore.value = true;
+    searchList.clear();
+    ++_searchRequestId;
+    getSearchData();
+  }
+
+  void _applyLocalSort() {    if (sortOption.value == 'recommended' || searchList.isEmpty) return;
 
     final list = searchList.toList();
     list.sort((a, b) {

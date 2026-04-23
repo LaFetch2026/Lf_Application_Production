@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,7 +19,7 @@ import 'package:lafetch/screens/Brands/categoryproduct.dart'
     hide SizedBox, Center, Column, Padding;
 import 'package:lafetch/screens/cartscreen.dart';
 import 'package:lafetch/common/widget/other/pounce_wrapper.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 import 'package:lafetch/screens/home/women/productviewscreen.dart';
 import 'package:lafetch/screens/loginscreen.dart';
 import 'package:lafetch/screens/searchscreen.dart';
@@ -30,6 +31,7 @@ import 'package:video_player/video_player.dart';
 import '../../../common/widget/appbar/home_appbar.dart';
 import '../../../common/widget/lists/dummy_grid_mostsearch.dart';
 import '../../../common/widget/lists/dummy_home_brand.dart';
+import '../../../common/widget/lists/dummy_grid_list.dart';
 import '../../../common/widget/other/common_widget.dart';
 import '../../../common/widget/text/app_text.dart';
 import '../../../controllers/brand_controller.dart';
@@ -45,6 +47,8 @@ import '../../../models/collection_extensions.dart';
 import '../../../models/collection_banner_model.dart';
 import '../../../common/widget/newsletter/newsletter_section.dart';
 import '../../../core/utils/image_helper.dart';
+import '../../../controllers/new_in_controller.dart';
+import '../../../common/widget/cards/product_card.dart';
 
 // ✅ Global RouteObserver for video auto-pause on navigation
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -68,6 +72,7 @@ class HomeScreenState extends State<HomeScreen>
   final brandController = Get.put(BrandController());
   final catalogController = Get.put(CatalogController());
   final profileController = Get.put(ProfileController());
+  final newInController = Get.put(NewInController());
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   final PageController _pageController = PageController(initialPage: 0);
@@ -75,6 +80,13 @@ class HomeScreenState extends State<HomeScreen>
   bool isGuest = false;
   static bool _isInitialLoad = true;
   static bool _dataLoaded = false; // Static to persist across rebuilds
+
+  static const Map<int, String> _sectionVideoUrls = {
+    1: "https://la-fetch.s3.ap-south-1.amazonaws.com/Application_Banners/Lafetch-Men's.mp4",
+    2: "https://la-fetch.s3.ap-south-1.amazonaws.com/Application_Banners/Lafetch-Women.mp4",
+    3: "https://la-fetch.s3.ap-south-1.amazonaws.com/Application_Banners/accessories-banner.mp4",
+  };
+  final Map<int, VideoPlayerController> _sectionVideoControllers = {};
 
   // Keep screen alive when switching tabs
   @override
@@ -177,8 +189,23 @@ class HomeScreenState extends State<HomeScreen>
             homeController.banner2List.isNotEmpty ||
             productController.homeProductList.isNotEmpty;
 
+        // Initialize section video controllers early — must happen before any
+        // early return so all 3 controllers are always initialized regardless
+        // of whether API data is cached.
+        for (final entry in _sectionVideoUrls.entries) {
+          if (!_sectionVideoControllers.containsKey(entry.key)) {
+            _initSectionVideoController(entry.key, entry.value);
+          }
+        }
+
         if (_dataLoaded && hasExistingData && !_isInitialLoad) {
           print("✅ Data already loaded, skipping API calls");
+          // Still fire NEW IN fetch in case it was skipped (e.g. hot restart)
+          if (newInController.products.isEmpty) {
+            newInController.fetchProducts(currentGender);
+          } else {
+            newInController.isLoading.value = false;
+          }
           return;
         }
 
@@ -206,6 +233,9 @@ class HomeScreenState extends State<HomeScreen>
         ]);
 
         if (!mounted) return; // ✅ Check after async call
+
+        // ✅ Fire NEW IN fetch after critical data — non-blocking
+        newInController.fetchProducts(currentGender, forceRefresh: isFirstLoad);
 
         // ✅ Mark data as loaded
         _dataLoaded = true;
@@ -246,6 +276,7 @@ class HomeScreenState extends State<HomeScreen>
     productController.clearLoadedTracking();
     catalogController.clearLoadedTracking();
     brandController.clearLoadedTracking();
+    newInController.clearCache();
 
     // ✅ UPDATED: Include brands, collection banners, and announcements in refresh
     await Future.wait([
@@ -255,6 +286,7 @@ class HomeScreenState extends State<HomeScreen>
       productController.getCollectionBanners(forceRefresh: true),
       brandController.getBrandData("featured", currentGender),
       homeController.getAnnouncements(forceRefresh: true),
+      newInController.fetchProducts(currentGender, forceRefresh: true),
     ]);
   }
 
@@ -274,6 +306,9 @@ class HomeScreenState extends State<HomeScreen>
       productController.clearLoadedTracking();
       catalogController.clearLoadedTracking();
       brandController.clearLoadedTracking();
+      try {
+        Get.find<NewInController>().clearCache();
+      } catch (_) {}
     } catch (e) {
       print("⚠️ Could not clear controller tracking: $e");
     }
@@ -360,6 +395,10 @@ class HomeScreenState extends State<HomeScreen>
     _pageController.dispose(); // ✅ Dispose banner PageController
     _genderTabController?.dispose();
     homeController.discountScreenController.removeListener(_onScroll);
+    for (final c in _sectionVideoControllers.values) {
+      c.dispose();
+    }
+    _sectionVideoControllers.clear();
     super.dispose();
   }
 
@@ -610,471 +649,546 @@ class HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
 
-    // ✅ CRITICAL FIX: Reset loading states if data already exists
-    // This prevents skeleton loaders from showing when navigating back to home
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (productController.homeProductList.isNotEmpty) {
-        productController.isHomeProduct.value = false;
-      }
-      if (homeController.banner1List.isNotEmpty) {
-        homeController.isBanner1.value = false;
-      }
-      if (homeController.banner2List.isNotEmpty) {
-        homeController.isBanner2.value = false;
-      }
-    });
-
     return Scaffold(
       backgroundColor: whiteColor,
-      body: RefreshIndicator(
-        // ✅ ADDED: Pull-to-refresh functionality
-        onRefresh: forceRefreshData,
-        child: Column(
-          children: [
-            HomeAppbar(
-              onPressedSearch: () async {
-                final searchQuery = searchController.searchController.text;
-                await analytics.logEvent(
-                  name: 'search_page',
-                  parameters: {'search_string': searchQuery},
-                );
-                Get.to(const SearchScreen())?.then((value) {
-                  setState(() {
-                    productController.categoryFilter.value =
-                        homeController.homeGenderValue.value;
-                    SystemChrome.setSystemUIOverlayStyle(
-                        const SystemUiOverlayStyle(
-                      statusBarColor: whiteColor,
-                      systemNavigationBarColor: whiteColor,
-                    ));
+      body: NotificationListener<UserScrollNotification>(
+        onNotification: (notification) {
+          final home = Get.find<HomeController>();
+
+          if (!home.isHomeTabActive.value) return false;
+
+          if (notification.direction == ScrollDirection.reverse &&
+              notification.metrics.pixels > 120) {
+            home.isBottomNavVisible.value = false;
+          } else if (notification.direction == ScrollDirection.forward) {
+            home.isBottomNavVisible.value = true;
+          }
+
+          return false;
+        },
+        child: RefreshIndicator(
+          // ✅ ADDED: Pull-to-refresh functionality
+          onRefresh: forceRefreshData,
+          child: Column(
+            children: [
+              HomeAppbar(
+                onPressedSearch: () async {
+                  final searchQuery = searchController.searchController.text;
+                  await analytics.logEvent(
+                    name: 'search_page',
+                    parameters: {'search_string': searchQuery},
+                  );
+                  Get.to(const SearchScreen())?.then((value) {
+                    setState(() {
+                      productController.categoryFilter.value =
+                          homeController.homeGenderValue.value;
+                      SystemChrome.setSystemUIOverlayStyle(
+                          const SystemUiOverlayStyle(
+                        statusBarColor: whiteColor,
+                        systemNavigationBarColor: whiteColor,
+                      ));
+                    });
                   });
-                });
-              },
-              onPressedHeart: () async {
-                final prefs = await SharedPreferences.getInstance();
-                final isGuest = prefs.getBool('skip') ?? false;
+                },
+                onPressedHeart: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  final isGuest = prefs.getBool('skip') ?? false;
 
-                if (isGuest) {
-                  getSnackBar("Please login to view your wishlist");
-                  Get.offAll(() => LoginScreen(
-                        initialTab: 0,
-                      ));
-                  return;
-                }
+                  if (isGuest) {
+                    getSnackBar("Please login to view your wishlist");
+                    Get.offAll(() => LoginScreen(
+                          initialTab: 0,
+                        ));
+                    return;
+                  }
 
-                Get.to(const WishlistScreen())
-                    ?.then((_) => cartController.getCartData());
-                await analytics.logEvent(
-                  name: "wishlist_page",
-                  parameters: {"page_name": "wishlist_page"},
-                );
-              },
-              onPressedCart: () async {
-                final prefs = await SharedPreferences.getInstance();
-                final isGuest = prefs.getBool('skip') ?? false;
+                  Get.to(const WishlistScreen())
+                      ?.then((_) => cartController.getCartData());
+                  await analytics.logEvent(
+                    name: "wishlist_page",
+                    parameters: {"page_name": "wishlist_page"},
+                  );
+                },
+                onPressedCart: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  final isGuest = prefs.getBool('skip') ?? false;
 
-                if (isGuest) {
-                  getSnackBar("Please login to view your cart");
-                  Get.offAll(() => LoginScreen(
-                        initialTab: 0,
-                      ));
-                  return;
-                }
+                  if (isGuest) {
+                    getSnackBar("Please login to view your cart");
+                    Get.offAll(() => LoginScreen(
+                          initialTab: 0,
+                        ));
+                    return;
+                  }
 
-                Get.to(CartScreen())?.then((_) => cartController.getCartData());
-                await analytics.logEvent(
-                  name: "cart_page",
-                  parameters: {"page_name": "cart_page"},
-                );
-              },
-              onPressedDropDown: () {
-                homeController.showGenderList.value =
-                    !homeController.showGenderList.value;
-                setState(() {});
-              },
-            ),
+                  Get.to(CartScreen())
+                      ?.then((_) => cartController.getCartData());
+                  await analytics.logEvent(
+                    name: "cart_page",
+                    parameters: {"page_name": "cart_page"},
+                  );
+                },
+                onPressedDropDown: () {
+                  homeController.showGenderList.value =
+                      !homeController.showGenderList.value;
+                  setState(() {});
+                },
+              ),
 
-// Gender tabs with animated indicator
-            Obx(
-              () => homeController.isLoadingTabs.value
-                  ? SizedBox(
-                      height: 40.sp,
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.black,
+              // Gender tabs with animated indicator
+              Obx(
+                () => homeController.isLoadingTabs.value
+                    ? SizedBox(
+                        height: 40.sp,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                    )
-                  : homeController.genderTabs.isEmpty ||
-                          _genderTabController == null
-                      ? const SizedBox.shrink()
-                      : SizedBox(
-                          width: double.infinity,
-                          height: 40.sp,
-                          child: TabBar(
-                            controller: _genderTabController,
-                            isScrollable: false,
-                            indicatorColor: homeAppBarColor,
-                            indicatorWeight: 2.sp,
-                            indicatorSize: TabBarIndicatorSize.tab,
-                            labelColor: homeAppBarColor,
-                            unselectedLabelColor: searchTextColor,
-                            dividerColor: Colors.transparent,
-                            labelStyle: TextStyle(
-                              fontSize: 13.sp,
-                              fontFamily: "Clash Display Semibold",
-                              fontWeight: FontWeight.w500,
-                            ),
-                            unselectedLabelStyle: TextStyle(
-                              fontSize: 13.sp,
-                              fontFamily: "Clash Display",
-                              fontWeight: FontWeight.w500,
-                            ),
+                      )
+                    : homeController.genderTabs.isEmpty ||
+                            _genderTabController == null
+                        ? const SizedBox.shrink()
+                        : SizedBox(
+                            width: double.infinity,
+                            height: 40.sp,
+                            child: TabBar(
+                              controller: _genderTabController,
+                              isScrollable:
+                                  homeController.genderTabs.length > 3,
+                              tabAlignment: homeController.genderTabs.length > 3
+                                  ? TabAlignment.start
+                                  : TabAlignment.fill,
+                              indicatorColor: homeAppBarColor,
+                              indicatorWeight: 2.sp,
+                              indicatorSize: TabBarIndicatorSize.tab,
+                              labelColor: homeAppBarColor,
+                              unselectedLabelColor: searchTextColor,
+                              dividerColor: Colors.transparent,
+                              labelStyle: TextStyle(
+                                fontSize: 13.sp,
+                                fontFamily: "Clash Display Semibold",
+                                fontWeight: FontWeight.w500,
+                              ),
+                              unselectedLabelStyle: TextStyle(
+                                fontSize: 13.sp,
+                                fontFamily: "Clash Display",
+                                fontWeight: FontWeight.w500,
+                              ),
 
-                            /// 🔥 THIS IS THE KEY LINE - call _changeGenderTab to load ALL data
-                            onTap: (index) {
-                              // Let the TabController listener handle the change
-                              // to avoid race condition with onGenderChanged
-                            },
+                              /// 🔥 THIS IS THE KEY LINE - call _changeGenderTab to load ALL data
+                              onTap: (index) {
+                                // Let the TabController listener handle the change
+                                // to avoid race condition with onGenderChanged
+                              },
 
-                            tabs: homeController.genderTabs.map((tab) {
-                              final String genderName =
-                                  tab['name']?.toString() ?? '';
-                              return Tab(
-                                text: genderName.toUpperCase(),
+                              tabs: homeController.genderTabs.map((tab) {
+                                final String genderName =
+                                    tab['name']?.toString() ?? '';
+                                return Tab(
+                                  text: genderName.toUpperCase(),
+                                );
+                              }).toList(),
+                            )),
+              ),
+
+              Expanded(
+                child: Stack(
+                  children: [
+                    NotificationListener<ScrollNotification>(
+                      onNotification: _handleScrollNotification,
+                      child: SingleChildScrollView(
+                        controller: homeController.discountScreenController,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Section video banner (cached controllers, no extra S3 requests on tab switch)
+                            Obx(() {
+                              final genderId =
+                                  homeController.homeGenderValue.value;
+                              final controller =
+                                  _sectionVideoControllers[genderId];
+                              return _SectionVideoBanner(
+                                controller: controller,
                               );
-                            }).toList(),
-                          )),
-            ),
+                            }),
+                            // ✅ Consistent spacing
+                            // Marquee Banner - Dynamic from API with icons
+                            Obx(() {
+                              final announcements =
+                                  homeController.announcements;
 
-            Expanded(
-              child: Stack(
-                children: [
-                  NotificationListener<ScrollNotification>(
-                    onNotification: _handleScrollNotification,
-                    child: SingleChildScrollView(
-                      controller: homeController.discountScreenController,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Banner Section - ✅ WITH LOADING STATE
-                          Obx(() {
-                            homeController.homeGenderValue.value;
-
-                            final banners = _currentBannerList();
-                            final isLoading = homeController.isBanner1.value;
-                            final currentValue =
-                                productController.current.value;
-                            final showBanners =
-                                banners.isNotEmpty && currentValue == 50;
-
-                            print(
-                                "🎬 Banner Obx: isLoading=$isLoading, bannersCount=${banners.length}, currentValue=$currentValue, showBanners=$showBanners");
-
-                            // ✅ FIXED: Only show loading if actually no banners exist
-                            if (isLoading && banners.isEmpty) {
-                              print("🎬 Showing loading indicator");
-                              return Container(
-                                height: 210.sp,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.04),
-                                ),
-                                child: const Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.black,
-                                      ),
-                                      SizedBox(height: 12),
-                                      Text(
-                                        'Loading banners...',
+                              if (announcements.isEmpty) {
+                                // Fallback to static text if no announcements
+                                return Container(
+                                  height: 30.sp,
+                                  color: const Color(0xff2D2D2E),
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 5.sp),
+                                    child: Center(
+                                      child: Marquee(
+                                        text:
+                                            '|    More than 50+ Homegrown Brands   |    Fast and Reliable   |    Fashion for all occassions  |    Easy Returns & Exchanges   |    Secure Payments   ',
                                         style: TextStyle(
-                                          color: Colors.black54,
-                                          fontSize: 12,
+                                          color: Colors.white,
+                                          fontSize: 12.sp,
                                           fontFamily: "Clash Display Regular",
+                                          fontWeight: FontWeight.w400,
                                         ),
+                                        scrollAxis: Axis.horizontal,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        velocity: 100.0,
+                                        pauseAfterRound: Duration.zero,
+                                        accelerationCurve: Curves.linear,
+                                        decelerationCurve: Curves.easeOut,
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                ),
+                                );
+                              }
+
+                              // Show icons with text using custom marquee
+                              return _AnnouncementMarquee(
+                                announcements: announcements,
                               );
-                            }
+                            }),
 
-                            if (showBanners) {
-                              print(
-                                  "🎬 Showing banners: ${banners.length} banners");
+                            SizedBox(height: 12.sp), // ✅ Consistent spacing
 
-                              // ✅ Safety: Build banner widgets and check if empty
-                              final bannerWidgets = widgitBannerList();
-                              if (bannerWidgets.isEmpty) {
-                                print("⚠️ No banner widgets to display");
+                            // ── NEW IN Section ──────────────────────────────
+                            _NewInSection(newInController: newInController),
+
+                            // const SizedBox(height: 12),
+                            // Divider(
+                            //   color: Colors.grey[200],
+                            //   height: 1,
+                            //   thickness: 4.sp,
+                            // ),
+                            // const SizedBox(height: 12),
+
+                            // Shop by Category Section
+                            Obx(
+                              () {
+                                final gender =
+                                    homeController.homeGenderValue.value;
+                                final cats =
+                                    catalogController.catalogByGender[gender] ??
+                                        [];
+                                return catalogController.isCatalog.value
+                                    ? const DummyGridMostSearch(text: "")
+                                    : cats.isNotEmpty
+                                        ? _ShopByCategorySection(
+                                            catalogController:
+                                                catalogController,
+                                            analytics: analytics,
+                                            homeController: homeController,
+                                            onPressedViewAll: () =>
+                                                widget.onPressed?.call(2),
+                                          )
+                                        : const SizedBox.shrink();
+                              },
+                            ),
+
+                            const SizedBox(height: 12),
+                            Divider(
+                              color: Colors.grey[200],
+                              height: 1,
+                              thickness: 4.sp,
+                            ),
+                            const SizedBox(height: 12),
+
+                            Obx(() {
+                              // ✅ Watch brandController instead of homeController
+                              if (brandController.isBrand.value) {
+                                return const DummyHomeBrand();
+                              }
+
+                              // ✅ Get brands from brandController
+                              final brands = brandController.brandList
+                                  .where((b) =>
+                                      b.containsKey("id") &&
+                                      (b["name"]?.toString().isNotEmpty ??
+                                          false))
+                                  .toList();
+
+                              // ✅ If no brands, don't show anything (no empty space)
+                              if (brands.isEmpty) {
                                 return const SizedBox.shrink();
                               }
 
-                              return Column(
-                                children: [
-                                  ClipRRect(
-                                    // ✅ BORDER RADIUS
-                                    child: AspectRatio(
-                                      aspectRatio: 3 / 1,
-                                      child: PageView(
-                                        key: ValueKey(
-                                            'pageview_${homeController.homeGenderValue.value}'),
-                                        controller: _pageController,
-                                        onPageChanged: (index) {
-                                          if (index >= 0 &&
-                                              index < bannerWidgets.length) {
-                                            homeController.currentPage.value =
-                                                index;
-                                          }
-                                        },
-                                        children: bannerWidgets,
-                                      ),
-                                    ),
+                              // ✅ Show brands section
+                              return _FeaturedBrandsRow(
+                                homeController: homeController,
+                                brandController: brandController,
+                                analytics: analytics,
+                                onPressedViewAll: () =>
+                                    widget.onPressed?.call(1),
+                                brands: brands,
+                              );
+                            }),
+
+                            // Banner Section - moved below Featured Brands
+                            Obx(() {
+                              homeController.homeGenderValue.value;
+
+                              final banners = _currentBannerList();
+                              final isLoading = homeController.isBanner1.value;
+                              final currentValue =
+                                  productController.current.value;
+                              final showBanners =
+                                  banners.isNotEmpty && currentValue == 50;
+
+                              if (isLoading && banners.isEmpty) {
+                                return Container(
+                                  height: 210.sp,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.04),
                                   ),
-                                  banners.length == 1
-                                      ? const SizedBox.shrink()
-                                      : Center(
-                                          child: PageIndicator(
-                                            controller: _pageController,
-                                            count: banners.length,
-                                            size: 6.0.sp,
-                                            activeColor: Colors.black,
-                                            color: const Color(0xffE5E7EB),
-                                            layout: PageIndicatorLayout.WARM,
-                                            scale: 0.65,
-                                            space: 8.sp,
+                                  child: const Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.black,
+                                        ),
+                                        SizedBox(height: 12),
+                                        Text(
+                                          'Loading banners...',
+                                          style: TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 12,
+                                            fontFamily: "Clash Display Regular",
                                           ),
                                         ),
-                                ],
-                              );
-                            }
-
-                            print("🎬 Not showing anything (SizedBox.shrink)");
-                            return const SizedBox.shrink();
-                          }),
-                          // ✅ Consistent spacing
-                          // Marquee Banner - Dynamic from API with icons
-                          Obx(() {
-                            final announcements = homeController.announcements;
-
-                            if (announcements.isEmpty) {
-                              // Fallback to static text if no announcements
-                              return Container(
-                                height: 30.sp,
-                                color: const Color(0xff2D2D2E),
-                                width: MediaQuery.of(context).size.width,
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 5.sp),
-                                  child: Center(
-                                    child: Marquee(
-                                      text:
-                                          '|    More than 50+ Homegrown Brands   |    Fast and Reliable   |    Fashion for all occassions  |    Easy Returns & Exchanges   |    Secure Payments   ',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12.sp,
-                                        fontFamily: "Clash Display Regular",
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                      scrollAxis: Axis.horizontal,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      velocity: 100.0,
-                                      pauseAfterRound: Duration.zero,
-                                      accelerationCurve: Curves.linear,
-                                      decelerationCurve: Curves.easeOut,
+                                      ],
                                     ),
                                   ),
-                                ),
-                              );
-                            }
-
-                            // Show icons with text using custom marquee
-                            return _AnnouncementMarquee(
-                              announcements: announcements,
-                            );
-                          }),
-
-                          SizedBox(height: 12.sp), // ✅ Consistent spacing
-
-                          // Shop by Category Section
-                          Obx(
-                            () {
-                              final gender =
-                                  homeController.homeGenderValue.value;
-                              final cats =
-                                  catalogController.catalogByGender[gender] ??
-                                      [];
-                              return catalogController.isCatalog.value
-                                  ? const DummyGridMostSearch(text: "")
-                                  : cats.isNotEmpty
-                                      ? _ShopByCategorySection(
-                                          catalogController: catalogController,
-                                          analytics: analytics,
-                                          homeController: homeController,
-                                          onPressedViewAll: () =>
-                                              widget.onPressed?.call(2),
-                                        )
-                                      : const SizedBox.shrink();
-                            },
-                          ),
-
-                          Obx(() {
-                            // ✅ Watch brandController instead of homeController
-                            if (brandController.isBrand.value) {
-                              return const DummyHomeBrand();
-                            }
-
-                            // ✅ Get brands from brandController
-                            final brands = brandController.brandList
-                                .where((b) =>
-                                    b.containsKey("id") &&
-                                    (b["name"]?.toString().isNotEmpty ?? false))
-                                .toList();
-
-                            // ✅ If no brands, don't show anything (no empty space)
-                            if (brands.isEmpty) {
-                              return const SizedBox.shrink();
-                            }
-
-                            // ✅ Show brands section
-                            return _FeaturedBrandsRow(
-                              homeController: homeController,
-                              brandController: brandController,
-                              analytics: analytics,
-                              onPressedViewAll: () => widget.onPressed?.call(1),
-                              brands: brands,
-                            );
-                          }),
-
-                          // Product Collections
-                          // removed due to no incoming data
-                          Obx(() {
-                            final currentGender =
-                                homeController.homeGenderValue.value;
-
-                            // ✅ Show loader ONLY if actively loading AND list is empty
-                            // ✅ FIXED: Don't show skeleton if data already exists, even if loading flag is true
-                            if (productController.homeProductList.isEmpty &&
-                                (productController.isHomeProduct.value ||
-                                    !productController
-                                        .isHomeProductLoaded(currentGender))) {
-                              return DummyProductList(
-                                visibleSubtitle: true,
-                                text: (productController.tagname.value)
-                                    .toUpperCase(),
-                              );
-                            }
-
-                            // ✅ Collections are already filtered by the API to only include those with products
-                            // ✅ Extra safety check: Filter out any collections with empty products
-                            final allCollections = productController
-                                .homeProductList
-                                .where((c) => c.hasProducts)
-                                .toList();
-
-                            // ✅ PAGINATION: Only show a subset of collections
-                            final collectionsToShow =
-                                _currentCollectionPage * _collectionsPerPage;
-                            final collections =
-                                allCollections.take(collectionsToShow).toList();
-
-                            // Update hasMore flag
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              if (_hasMoreCollections !=
-                                  (collections.length <
-                                      allCollections.length)) {
-                                setState(() {
-                                  _hasMoreCollections = collections.length <
-                                      allCollections.length;
-                                });
+                                );
                               }
-                            });
 
-                            print(
-                                "📊 Showing ${collections.length}/${allCollections.length} collections (page $_currentCollectionPage)");
+                              if (showBanners) {
+                                final bannerWidgets = widgitBannerList();
+                                if (bannerWidgets.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
 
-                            if (collections.isEmpty) {
+                                return Column(
+                                  children: [
+                                    ClipRRect(
+                                      child: AspectRatio(
+                                        aspectRatio: 3 / 1,
+                                        child: PageView(
+                                          key: ValueKey(
+                                              'pageview_${homeController.homeGenderValue.value}'),
+                                          controller: _pageController,
+                                          onPageChanged: (index) {
+                                            if (index >= 0 &&
+                                                index < bannerWidgets.length) {
+                                              homeController.currentPage.value =
+                                                  index;
+                                            }
+                                          },
+                                          children: bannerWidgets,
+                                        ),
+                                      ),
+                                    ),
+                                    banners.length == 1
+                                        ? const SizedBox.shrink()
+                                        : Center(
+                                            child: PageIndicator(
+                                              controller: _pageController,
+                                              count: banners.length,
+                                              size: 6.0.sp,
+                                              activeColor: Colors.black,
+                                              color: const Color(0xffE5E7EB),
+                                              layout: PageIndicatorLayout.WARM,
+                                              scale: 0.65,
+                                              space: 8.sp,
+                                            ),
+                                          ),
+                                  ],
+                                );
+                              }
+
+                              return const SizedBox.shrink();
+                            }),
+
+                            // Product Collections
+                            // removed due to no incoming data
+                            Obx(() {
+                              final currentGender =
+                                  homeController.homeGenderValue.value;
+
+                              // ✅ Show loader ONLY if actively loading AND list is empty
+                              // ✅ FIXED: Don't show skeleton if data already exists, even if loading flag is true
+                              if (productController.homeProductList.isEmpty &&
+                                  (productController.isHomeProduct.value ||
+                                      !productController.isHomeProductLoaded(
+                                          currentGender))) {
+                                return DummyProductList(
+                                  visibleSubtitle: true,
+                                  text: (productController.tagname.value)
+                                      .toUpperCase(),
+                                );
+                              }
+
+                              // ✅ Collections are already filtered by the API to only include those with products
+                              // ✅ Extra safety check: Filter out any collections with empty products
+                              final allCollections = productController
+                                  .homeProductList
+                                  .where((c) => c.hasProducts)
+                                  .toList();
+
+                              // ✅ PAGINATION: Only show a subset of collections
+                              final collectionsToShow =
+                                  _currentCollectionPage * _collectionsPerPage;
+                              final collections = allCollections
+                                  .take(collectionsToShow)
+                                  .toList();
+
+                              // Update hasMore flag
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                if (_hasMoreCollections !=
+                                    (collections.length <
+                                        allCollections.length)) {
+                                  setState(() {
+                                    _hasMoreCollections = collections.length <
+                                        allCollections.length;
+                                  });
+                                }
+                              });
+
                               print(
-                                  "⚠️ No collections to display - showing empty space");
+                                  "📊 Showing ${collections.length}/${allCollections.length} collections (page $_currentCollectionPage)");
+
+                              if (collections.isEmpty) {
+                                print(
+                                    "⚠️ No collections to display - showing empty space");
+                                return Column(
+                                  children: [
+                                    SizedBox(
+                                        height: 24.sp), // ✅ Consistent spacing
+                                    const Center(
+                                      child: Text(
+                                        "No products available for this category",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                          fontFamily: "Clash Display Regular",
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                        height: 24.sp), // ✅ Consistent spacing
+                                  ],
+                                );
+                              }
+
                               return Column(
                                 children: [
-                                  SizedBox(
-                                      height: 24.sp), // ✅ Consistent spacing
-                                  const Center(
-                                    child: Text(
-                                      "No products available for this category",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey,
-                                        fontFamily: "Clash Display Regular",
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      height: 24.sp), // ✅ Consistent spacing
-                                ],
-                              );
-                            }
+                                  ListView.builder(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets
+                                        .zero, // ✅ Remove default ListView padding
+                                    itemCount: collections.length,
+                                    // ✅ No separator needed - each _CollectionSection has consistent bottom padding
+                                    itemBuilder: (context, index) {
+                                      final collection = collections[index];
+                                      final int collectionId = collection.id;
+                                      final String title = collection.name;
+                                      final String subtitle =
+                                          collection.desc ?? '';
 
-                            return Column(
-                              children: [
-                                ListView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets
-                                      .zero, // ✅ Remove default ListView padding
-                                  itemCount: collections.length,
-                                  // ✅ No separator needed - each _CollectionSection has consistent bottom padding
-                                  itemBuilder: (context, index) {
-                                    final collection = collections[index];
-                                    final int collectionId = collection.id;
-                                    final String title = collection.name;
-                                    final String subtitle =
-                                        collection.desc ?? '';
+                                      // ✅ Get banners for current gender from standalone banner API
+                                      final currentGender = homeController
+                                          .genderText.value
+                                          .toLowerCase();
+                                      final standaloneBanners =
+                                          productController
+                                              .getBannersForCollection(
+                                        collectionId,
+                                        currentGender,
+                                      );
 
-                                    // ✅ Get banners for current gender from standalone banner API
-                                    final currentGender = homeController
-                                        .genderText.value
-                                        .toLowerCase();
-                                    final standaloneBanners = productController
-                                        .getBannersForCollection(
-                                      collectionId,
-                                      currentGender,
-                                    );
+                                      // ✅ Convert products back to Map for existing widgets
+                                      final products = collection.products
+                                          .map((p) => p.toJson())
+                                          .toList();
 
-                                    // ✅ Convert products back to Map for existing widgets
-                                    final products = collection.products
-                                        .map((p) => p.toJson())
-                                        .toList();
+                                      // ✅ Safety check: Skip rendering if no products
+                                      if (products.isEmpty) {
+                                        return const SizedBox.shrink();
+                                      }
 
-                                    // ✅ Safety check: Skip rendering if no products
-                                    if (products.isEmpty) {
-                                      return const SizedBox.shrink();
-                                    }
+                                      final bool dark = index.isEven;
 
-                                    final bool dark = index.isEven;
+                                      return _CollectionSection(
+                                        collectionId: collectionId,
+                                        title: title,
+                                        subtitle: subtitle,
+                                        dark: dark,
+                                        products: products,
+                                        banners: standaloneBanners,
+                                        onProductTap: (productId) async {
+                                          Get.to(
+                                            ProductDetailsScreenV2(
+                                              productId: productId,
+                                              type: "add",
+                                              brandName: "",
+                                            ),
+                                          )?.then((_) {
+                                            setState(() {
+                                              SystemChrome
+                                                  .setSystemUIOverlayStyle(
+                                                const SystemUiOverlayStyle(
+                                                  statusBarColor: whiteColor,
+                                                  systemNavigationBarColor:
+                                                      whiteColor,
+                                                ),
+                                              );
+                                            });
+                                          });
 
-                                    return _CollectionSection(
-                                      collectionId: collectionId,
-                                      title: title,
-                                      subtitle: subtitle,
-                                      dark: dark,
-                                      products: products,
-                                      banners: standaloneBanners,
-                                      onProductTap: (productId) async {
-                                        Get.to(
-                                          ProductDetailsScreen(
-                                            productId: productId,
-                                            type: "add",
-                                            brandName: "",
-                                          ),
-                                        )?.then((_) {
-                                          setState(() {
+                                          await analytics.logEvent(
+                                            name: 'product_details_home_page',
+                                            parameters: <String, Object>{
+                                              'page_name':
+                                                  'product_details_home_page',
+                                              'collection_id': collectionId,
+                                              'collection_name': title,
+                                              'product_id':
+                                                  productId.toString(),
+                                            },
+                                          );
+                                        },
+                                        onTitleTap: () {
+                                          productController.collectionId.value =
+                                              collectionId;
+                                          productController
+                                              .productSortBy.value = "";
+                                          productController.filterProductEnable
+                                              .value = false;
+                                          productController
+                                                  .categoryFilter.value =
+                                              homeController
+                                                  .homeGenderValue.value;
+
+                                          Get.to(
+                                            ProductViewScreen(
+                                              title: title,
+                                              genderName: homeController
+                                                  .genderText.value,
+                                            ),
+                                          )?.then((_) {
                                             SystemChrome
                                                 .setSystemUIOverlayStyle(
                                               const SystemUiOverlayStyle(
@@ -1084,126 +1198,118 @@ class HomeScreenState extends State<HomeScreen>
                                               ),
                                             );
                                           });
-                                        });
+                                        },
+                                        onExploreAll: () async {
+                                          productController.collectionId.value =
+                                              collectionId;
+                                          productController
+                                              .productSortBy.value = "";
+                                          productController.filterProductEnable
+                                              .value = false;
+                                          productController
+                                                  .categoryFilter.value =
+                                              homeController
+                                                  .homeGenderValue.value;
 
-                                        await analytics.logEvent(
-                                          name: 'product_details_home_page',
-                                          parameters: <String, Object>{
-                                            'page_name':
-                                                'product_details_home_page',
-                                            'collection_id': collectionId,
-                                            'collection_name': title,
-                                            'product_id': productId.toString(),
-                                          },
-                                        );
-                                      },
-                                      onTitleTap: () {
-                                        productController.collectionId.value =
-                                            collectionId;
-                                        productController.productSortBy.value =
-                                            "";
-                                        productController
-                                            .filterProductEnable.value = false;
-                                        productController.categoryFilter.value =
-                                            homeController
-                                                .homeGenderValue.value;
-
-                                        Get.to(
-                                          ProductViewScreen(
-                                            title: title,
-                                            genderName:
-                                                homeController.genderText.value,
-                                          ),
-                                        )?.then((_) {
-                                          SystemChrome.setSystemUIOverlayStyle(
-                                            const SystemUiOverlayStyle(
-                                              statusBarColor: whiteColor,
-                                              systemNavigationBarColor:
-                                                  whiteColor,
+                                          Get.to(
+                                            ProductViewScreen(
+                                              title: title,
+                                              genderName: homeController
+                                                  .genderText.value,
                                             ),
+                                          )?.then((_) {
+                                            SystemChrome
+                                                .setSystemUIOverlayStyle(
+                                              const SystemUiOverlayStyle(
+                                                statusBarColor: whiteColor,
+                                                systemNavigationBarColor:
+                                                    whiteColor,
+                                              ),
+                                            );
+                                          });
+
+                                          await analytics.logEvent(
+                                            name: 'homepage_productExploreAll',
+                                            parameters: <String, Object>{
+                                              'page_name':
+                                                  'homepage_productExploreAll',
+                                              'collection_id': collectionId,
+                                              'collection_name': title,
+                                            },
                                           );
-                                        });
-                                      },
-                                      onExploreAll: () async {
-                                        productController.collectionId.value =
-                                            collectionId;
-                                        productController.productSortBy.value =
-                                            "";
-                                        productController
-                                            .filterProductEnable.value = false;
-                                        productController.categoryFilter.value =
-                                            homeController
-                                                .homeGenderValue.value;
+                                        },
+                                        seed: (productController
+                                                    .productsShuffleSeed ??
+                                                DateTime.now()
+                                                    .millisecondsSinceEpoch) +
+                                            collectionId,
+                                      );
+                                    },
+                                  ),
 
-                                        Get.to(
-                                          ProductViewScreen(
-                                            title: title,
-                                            genderName:
-                                                homeController.genderText.value,
-                                          ),
-                                        )?.then((_) {
-                                          SystemChrome.setSystemUIOverlayStyle(
-                                            const SystemUiOverlayStyle(
-                                              statusBarColor: whiteColor,
-                                              systemNavigationBarColor:
-                                                  whiteColor,
-                                            ),
-                                          );
-                                        });
-
-                                        await analytics.logEvent(
-                                          name: 'homepage_productExploreAll',
-                                          parameters: <String, Object>{
-                                            'page_name':
-                                                'homepage_productExploreAll',
-                                            'collection_id': collectionId,
-                                            'collection_name': title,
-                                          },
-                                        );
-                                      },
-                                      seed: (productController
-                                                  .productsShuffleSeed ??
-                                              DateTime.now()
-                                                  .millisecondsSinceEpoch) +
-                                          collectionId,
-                                    );
-                                  },
-                                ),
-
-                                // ✅ Loading indicator for pagination
-                                if (_isLoadingMoreCollections)
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical:
-                                            24.sp), // ✅ Consistent spacing
-                                    child: const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.black,
+                                  // ✅ Loading indicator for pagination
+                                  if (_isLoadingMoreCollections)
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical:
+                                              24.sp), // ✅ Consistent spacing
+                                      child: const Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.black,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                              ],
-                            );
-                          }),
-                          SizedBox(
-                            height: 10.sp,
-                          ),
-                          // Newsletter Section
-                          const NewsletterSection(
-                            title: "NEWS LETTERS",
-                          ),
-                        ],
+                                ],
+                              );
+                            }),
+                            SizedBox(
+                              height: 10.sp,
+                            ),
+                            // Newsletter Section
+                            const NewsletterSection(
+                              title: "LF NEWS LETTERS",
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Future<void> _initSectionVideoController(int genderId, String url) async {
+    try {
+      // Dispose any existing controller for this gender before re-initializing
+      // (prevents stale controllers lingering on hot restart)
+      final existing = _sectionVideoControllers[genderId];
+      if (existing != null) {
+        existing.pause();
+        existing.dispose();
+        _sectionVideoControllers.remove(genderId);
+      }
+
+      final controller = VideoPlayerController.networkUrl(Uri.parse(url));
+      await controller.initialize();
+      if (!mounted) {
+        controller.dispose();
+        return;
+      }
+      controller
+        ..setLooping(true)
+        ..setVolume(0.0)
+        ..play();
+      _sectionVideoControllers[genderId] = controller;
+      if (mounted) setState(() {});
+    } catch (e) {
+      debugPrint('❌ Section video init error for gender $genderId: $e');
+    }
   }
 
   Future<void> _changeGenderTab(int tabIndex) async {
@@ -1214,6 +1320,14 @@ class HomeScreenState extends State<HomeScreen>
         ? tab['id'] as int
         : int.tryParse(tab['id']?.toString() ?? '') ?? 0;
     final String genderName = tab['name']?.toString() ?? '';
+
+    // Clear stale products BEFORE updating homeGenderValue so the Obx
+    // doesn't briefly render old gender's data under the new gender label.
+    productController.homeProductList.clear();
+
+    // Clear NEW IN immediately so shimmer shows instead of stale products
+    newInController.products.clear();
+    newInController.isLoading.value = true;
 
     homeController.genderText.value = genderName;
     homeController.homeGenderValue.value = genderId;
@@ -1229,8 +1343,20 @@ class HomeScreenState extends State<HomeScreen>
       homeController.discountScreenController.jumpTo(0);
     }
 
-    // Force refresh data when switching tabs
-    await forceRefreshData();
+    // Always reload products for the new gender — uses cache when available.
+    // forceRefresh: false so cached data loads instantly without a network hit.
+    await productController.getHomeProduct(genderId, forceRefresh: false);
+
+    // ✅ Reload NEW IN products for the new gender (cache-friendly)
+    newInController.fetchProducts(genderId, forceRefresh: false);
+
+    if (!homeController.isGenderDataLoaded(genderId)) {
+      await homeController.initializeHomeData(genderId, forceRefresh: false);
+      await Future.wait([
+        catalogController.getCatalogData(genderId, forceRefresh: false),
+        brandController.getBrandData("featured", genderId),
+      ]);
+    }
   }
 }
 
@@ -1273,6 +1399,542 @@ String? firstImageUrlFromProduct(Map<String, dynamic> m) {
     if (v is String && v.trim().isNotEmpty) return v.trim();
   }
   return null;
+}
+
+class _NavCircleButton extends StatelessWidget {
+  final IconData icon;
+  final bool enabled;
+  final VoidCallback? onTap;
+
+  const _NavCircleButton({
+    required this.icon,
+    required this.enabled,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 28.sp,
+        height: 28.sp,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: enabled ? blackColor : const Color(0xFFE5E7EB),
+        ),
+        child: Icon(
+          icon,
+          size: 18.sp,
+          color: enabled ? Colors.white : const Color(0xFF9CA3AF),
+        ),
+      ),
+    );
+  }
+}
+
+// class _NewInSection extends StatelessWidget {
+//   final NewInController newInController;
+
+//   const _NewInSection({required this.newInController});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Obx(() {
+//       if (newInController.isLoading.value) {
+//         //NEW IN Shimmer
+//         return Padding(
+//           padding: EdgeInsets.symmetric(horizontal: 16.sp),
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               // Skeleton header row
+//               Padding(
+//                 padding: EdgeInsets.only(top: 10.sp, bottom: 8.sp),
+//                 child: Row(
+//                   children: [
+//                     Container(
+//                       height: 20.sp,
+//                       width: 70.sp,
+//                       decoration: BoxDecoration(
+//                         color: Colors.black.withOpacity(0.04),
+//                         borderRadius: BorderRadius.circular(4.sp),
+//                       ),
+//                     ),
+//                     const Spacer(),
+//                     Container(
+//                       height: 28.sp,
+//                       width: 90.sp,
+//                       decoration: BoxDecoration(
+//                         color: Colors.black.withOpacity(0.04),
+//                         borderRadius: BorderRadius.circular(20.sp),
+//                       ),
+//                     ),
+//                     SizedBox(width: 8.sp),
+//                     Container(
+//                       width: 28.sp,
+//                       height: 28.sp,
+//                       decoration: BoxDecoration(
+//                         shape: BoxShape.circle,
+//                         color: Colors.black.withOpacity(0.04),
+//                       ),
+//                     ),
+//                     SizedBox(width: 6.sp),
+//                     Container(
+//                       width: 28.sp,
+//                       height: 28.sp,
+//                       decoration: BoxDecoration(
+//                         shape: BoxShape.circle,
+//                         color: Colors.black.withOpacity(0.04),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               const DummyGridList(size: 4),
+//             ],
+//           ),
+//         );
+//       }
+//       if (newInController.products.isEmpty) {
+//         return const SizedBox.shrink();
+//       }
+
+//       final paged = newInController.pagedProducts;
+//       final totalPages = newInController.totalPages;
+//       final currentPage = newInController.currentPage.value;
+
+//       final canGoPrev = currentPage > 0;
+//       final canGoNext = currentPage < totalPages - 1;
+
+//       return Padding(
+//         padding: EdgeInsets.symmetric(horizontal: 16.sp),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             // Header row: NEW IN | Sort By button | prev/next arrows
+//             Row(
+//               children: [
+//                 AppText(
+//                   text: "NEW IN",
+//                   fontFamily: "Clash Display Semibold",
+//                   color: blackColor,
+//                   fontSize: 18,
+//                 ),
+//                 const Spacer(),
+//                 // Sort By pill button
+//                 GestureDetector(
+//                   onTap: () => _showSortSheet(context),
+//                   child: Container(
+//                     padding:
+//                         EdgeInsets.symmetric(horizontal: 10.sp, vertical: 6.sp),
+//                     decoration: BoxDecoration(
+//                       border: Border.all(color: const Color(0xFFD1D5DB)),
+//                       borderRadius: BorderRadius.circular(20.sp),
+//                     ),
+//                     child: Row(
+//                       mainAxisSize: MainAxisSize.min,
+//                       children: [
+//                         Text(
+//                           "Sort By",
+//                           style: TextStyle(
+//                             fontFamily: "Clash Display Regular",
+//                             fontSize: 12.sp,
+//                             color: blackColor,
+//                           ),
+//                         ),
+//                         SizedBox(width: 4.sp),
+//                         Icon(Icons.tune, size: 14.sp, color: blackColor),
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//                 SizedBox(width: 8.sp),
+//                 // Prev arrow in circle
+//                 _NavCircleButton(
+//                   icon: Icons.chevron_left,
+//                   enabled: canGoPrev,
+//                   onTap: canGoPrev ? newInController.prevPage : null,
+//                 ),
+//                 SizedBox(width: 6.sp),
+//                 // Next arrow in circle
+//                 _NavCircleButton(
+//                   icon: Icons.chevron_right,
+//                   enabled: canGoNext,
+//                   onTap: canGoNext ? newInController.nextPage : null,
+//                 ),
+//               ],
+//             ),
+//             SizedBox(height: 8.sp),
+//             // Product grid — 2 columns, 8 items max
+//             GridView.builder(
+//               shrinkWrap: true,
+//               physics: const NeverScrollableScrollPhysics(),
+//               padding: EdgeInsets.zero,
+//               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+//                 crossAxisCount: 2,
+//                 crossAxisSpacing: 8.sp,
+//                 mainAxisSpacing: 8.sp,
+//                 childAspectRatio: 0.62,
+//               ),
+//               itemCount: paged.length,
+//               itemBuilder: (context, index) {
+//                 final product = paged[index];
+//                 final imageUrl =
+//                     (product['imageUrls'] as List?)?.firstOrNull?.toString() ??
+//                         '';
+//                 final title = product['title'] as String? ?? '';
+//                 final brand =
+//                     (product['brand'] as Map?)?['name'] as String? ?? '';
+//                 final mrp = product['mrp'] as num? ?? 0;
+//                 final price =
+//                     (product['basePrice'] ?? product['mrp']) as num? ?? mrp;
+//                 final productId = product['id'];
+
+//                 return ProductGridCard(
+//                   imageUrl: imageUrl,
+//                   title: title,
+//                   brandName: brand,
+//                   price: price,
+//                   mrp: mrp,
+//                   onTap: () {
+//                     if (productId == null) return;
+//                     Get.to(() => ProductDetailsScreenV2(
+//                           productId: productId is int
+//                               ? productId
+//                               : int.tryParse(productId.toString()) ?? 0,
+//                           type: "add",
+//                           brandName: brand,
+//                         ));
+//                   },
+//                 );
+//               },
+//             ),
+//             SizedBox(height: 16.sp),
+//           ],
+//         ),
+//       );
+//     });
+//   }
+
+//   void _showSortSheet(BuildContext context) {
+//     showModalBottomSheet(
+//       context: context,
+//       shape: const RoundedRectangleBorder(
+//         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+//       ),
+//       builder: (_) => Obx(() {
+//         final current = newInController.sortMode.value;
+//         final options = [
+//           ('default', 'Default'),
+//           ('low_to_high', 'Price: Low to High'),
+//           ('high_to_low', 'Price: High to Low'),
+//           ('discount', 'Discount'),
+//         ];
+//         return SafeArea(
+//           child: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               Padding(
+//                 padding: EdgeInsets.symmetric(vertical: 12.sp),
+//                 child: AppText(
+//                   text: "Sort By",
+//                   fontFamily: "Clash Display Semibold",
+//                   color: blackColor,
+//                   fontSize: 16,
+//                 ),
+//               ),
+//               const Divider(height: 1),
+//               ...options.map((opt) {
+//                 final isActive = current == opt.$1;
+//                 return ListTile(
+//                   title: Text(
+//                     opt.$2,
+//                     style: TextStyle(
+//                       fontFamily: isActive
+//                           ? "Clash Display Semibold"
+//                           : "Clash Display Regular",
+//                       fontSize: 14.sp,
+//                       color: blackColor,
+//                     ),
+//                   ),
+//                   trailing: isActive
+//                       ? Icon(Icons.check, size: 18.sp, color: blackColor)
+//                       : null,
+//                   onTap: () {
+//                     newInController.applySort(opt.$1);
+//                     Navigator.pop(context);
+//                   },
+//                 );
+//               }),
+//               SizedBox(height: 8.sp),
+//             ],
+//           ),
+//         );
+//       }),
+//     );
+//   }
+// }
+
+class _NewInSection extends StatelessWidget {
+  final NewInController newInController;
+  const _NewInSection({required this.newInController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (newInController.isLoading.value) {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.sp),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 10.sp, bottom: 8.sp),
+                child: Row(
+                  children: [
+                    Container(
+                      height: 20.sp,
+                      width: 70.sp,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.04),
+                        borderRadius: BorderRadius.circular(4.sp),
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      height: 28.sp,
+                      width: 90.sp,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.04),
+                        borderRadius: BorderRadius.circular(20.sp),
+                      ),
+                    ),
+                    SizedBox(width: 8.sp),
+                    Container(
+                      width: 28.sp,
+                      height: 28.sp,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.black.withOpacity(0.04),
+                      ),
+                    ),
+                    SizedBox(width: 6.sp),
+                    Container(
+                      width: 28.sp,
+                      height: 28.sp,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.black.withOpacity(0.04),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const DummyGridList(size: 4),
+            ],
+          ),
+        );
+      }
+
+      if (newInController.products.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      final paged = newInController.pagedProducts;
+      final totalPages = newInController.totalPages;
+      final currentPage = newInController.currentPage.value;
+      final canGoPrev = currentPage > 0;
+      final canGoNext = currentPage < totalPages - 1;
+
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.sp),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header row: NEW IN | Sort By button | prev/next arrows
+            Row(
+              children: [
+                AppText(
+                  text: "NEW IN",
+                  fontFamily: "Clash Display Semibold",
+                  color: blackColor,
+                  fontSize: 18,
+                ),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () => _showSortSheet(context),
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.sp, vertical: 6.sp),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: const Color(0xFFD1D5DB)),
+                      borderRadius: BorderRadius.circular(20.sp),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Sort By",
+                          style: TextStyle(
+                            fontFamily: "Clash Display Regular",
+                            fontSize: 12.sp,
+                            color: blackColor,
+                          ),
+                        ),
+                        SizedBox(width: 4.sp),
+                        Icon(Icons.tune, size: 14.sp, color: blackColor),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8.sp),
+                _NavCircleButton(
+                  icon: Icons.chevron_left,
+                  enabled: canGoPrev,
+                  onTap: canGoPrev ? newInController.prevPage : null,
+                ),
+                SizedBox(width: 6.sp),
+                _NavCircleButton(
+                  icon: Icons.chevron_right,
+                  enabled: canGoNext,
+                  onTap: canGoNext ? newInController.nextPage : null,
+                ),
+              ],
+            ),
+            SizedBox(height: 8.sp),
+
+            // Swipeable product grid
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onHorizontalDragEnd: (details) {
+                const swipeThreshold = 100.0;
+                final velocity = details.primaryVelocity ?? 0;
+
+                if (velocity < -swipeThreshold) {
+                  // Swiped LEFT → go forward (wrap to page 0 at the end)
+                  if (canGoNext) {
+                    newInController.nextPage();
+                  } else {
+                    newInController.goToPage(0);
+                  }
+                } else if (velocity > swipeThreshold) {
+                  // Swiped RIGHT → go back (wrap to last page at the start)
+                  if (canGoPrev) {
+                    newInController.prevPage();
+                  } else {
+                    newInController.goToPage(totalPages - 1);
+                  }
+                }
+              },
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8.sp,
+                  mainAxisSpacing: 8.sp,
+                  childAspectRatio: 0.62,
+                ),
+                itemCount: paged.length,
+                itemBuilder: (context, index) {
+                  final product = paged[index];
+                  final imageUrl = (product['imageUrls'] as List?)
+                          ?.firstOrNull
+                          ?.toString() ??
+                      '';
+                  final title = product['title'] as String? ?? '';
+                  final brand =
+                      (product['brand'] as Map?)?['name'] as String? ?? '';
+                  final mrp = product['mrp'] as num? ?? 0;
+                  final price =
+                      (product['basePrice'] ?? product['mrp']) as num? ?? mrp;
+                  final productId = product['id'];
+                  return ProductGridCard(
+                    imageUrl: imageUrl,
+                    title: title,
+                    brandName: brand,
+                    price: price,
+                    mrp: mrp,
+                    onTap: () {
+                      if (productId == null) return;
+                      Get.to(() => ProductDetailsScreenV2(
+                            productId: productId is int
+                                ? productId
+                                : int.tryParse(productId.toString()) ?? 0,
+                            type: "add",
+                            brandName: brand,
+                          ));
+                    },
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 16.sp),
+          ],
+        ),
+      );
+    });
+  }
+
+  void _showSortSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => Obx(() {
+        final current = newInController.sortMode.value;
+        final options = [
+          ('default', 'Default'),
+          ('low_to_high', 'Price: Low to High'),
+          ('high_to_low', 'Price: High to Low'),
+          ('discount', 'Discount'),
+        ];
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 12.sp),
+                child: AppText(
+                  text: "Sort By",
+                  fontFamily: "Clash Display Semibold",
+                  color: blackColor,
+                  fontSize: 16,
+                ),
+              ),
+              const Divider(height: 1),
+              ...options.map((opt) {
+                final isActive = current == opt.$1;
+                return ListTile(
+                  title: Text(
+                    opt.$2,
+                    style: TextStyle(
+                      fontFamily: isActive
+                          ? "Clash Display Semibold"
+                          : "Clash Display Regular",
+                      fontSize: 14.sp,
+                      color: blackColor,
+                    ),
+                  ),
+                  trailing: isActive
+                      ? Icon(Icons.check, size: 18.sp, color: blackColor)
+                      : null,
+                  onTap: () {
+                    newInController.applySort(opt.$1);
+                    Navigator.pop(context);
+                  },
+                );
+              }),
+              SizedBox(height: 8.sp),
+            ],
+          ),
+        );
+      }),
+    );
+  }
 }
 
 class _SectionStrip extends StatelessWidget {
@@ -1647,6 +2309,130 @@ class _SectionStrip extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+// ─── Section Video Banner ────────────────────────────────────────────────────
+
+class _SectionVideoBanner extends StatefulWidget {
+  final VideoPlayerController? controller;
+
+  const _SectionVideoBanner({
+    required this.controller,
+  });
+
+  @override
+  State<_SectionVideoBanner> createState() => _SectionVideoBannerState();
+}
+
+class _SectionVideoBannerState extends State<_SectionVideoBanner>
+    with WidgetsBindingObserver, RouteAware {
+  bool _isRouteActive = true;
+  Worker? _tabListener;
+  late final HomeController _homeController;
+
+  @override
+  void initState() {
+    super.initState();
+    _homeController = Get.find<HomeController>();
+    WidgetsBinding.instance.addObserver(this);
+    _tabListener = ever(_homeController.isHomeTabActive, (bool isActive) {
+      if (widget.controller == null || !widget.controller!.value.isInitialized)
+        return;
+      if (isActive && _isRouteActive) {
+        widget.controller!.play();
+      } else {
+        widget.controller!.pause();
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant _SectionVideoBanner oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final ctrl = widget.controller;
+    if (ctrl != null &&
+        ctrl.value.isInitialized &&
+        _homeController.isHomeTabActive.value) {
+      if (oldWidget.controller == null) {
+        // First assignment: reset route state and play unconditionally.
+        // didPushNext may have fired during initial splash→home navigation
+        // before this widget existed, leaving _isRouteActive = false incorrectly.
+        _isRouteActive = true;
+        ctrl.play();
+      } else if (_isRouteActive && !ctrl.value.isPlaying) {
+        ctrl.play();
+      }
+    }
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller?.pause();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void didPushNext() {
+    _isRouteActive = false;
+    widget.controller?.pause();
+  }
+
+  @override
+  void didPopNext() {
+    _isRouteActive = true;
+    if (_homeController.isHomeTabActive.value) {
+      widget.controller?.play();
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (widget.controller == null || !widget.controller!.value.isInitialized)
+      return;
+    if (state == AppLifecycleState.paused) {
+      // Only pause when fully backgrounded, not on brief inactive states
+      // (inactive fires for system overlays, notifications, etc.)
+      widget.controller!.pause();
+    } else if (state == AppLifecycleState.resumed) {
+      // Always resume if home tab is active — _isRouteActive may be stale
+      // after hot restart so we don't gate on it here.
+      if (_homeController.isHomeTabActive.value) {
+        _isRouteActive = true;
+        widget.controller!.play();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabListener?.dispose();
+    routeObserver.unsubscribe(this);
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ctrl = widget.controller;
+    // Use AspectRatio 3:1 to match the image banner carousel sizing —
+    // consistent across all screen sizes, no fixed height pushing layout.
+    if (ctrl == null || !ctrl.value.isInitialized) {
+      return const AspectRatio(
+        aspectRatio: 16 / 9,
+        child: ColoredBox(color: Color(0xFFEEEEEE)),
+      );
+    }
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: VideoPlayer(ctrl),
     );
   }
 }
@@ -2029,7 +2815,7 @@ class BannerProductsScreen extends StatelessWidget {
                   onTap: () {
                     if (pid == 0) return;
                     Get.to(
-                      ProductDetailsScreen(
+                      ProductDetailsScreenV2(
                         brandName: brand.isEmpty ? title : brand,
                         expressValue: 0,
                         backgroundcolor: whiteColor,
@@ -2196,7 +2982,7 @@ class _ShopByCategorySection extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(
                 left: 16.sp, top: 12.sp, bottom: 12.sp), // ✅ Consistent spacing
-            child: AppText(
+            child: const AppText(
               text: "SHOP BY CATEGORY",
               fontFamily: "Clash Display Semibold",
               fontWeight: FontWeight.w400,
@@ -2301,7 +3087,7 @@ class _ShopByCategorySection extends StatelessWidget {
                                 .toString()
                                 .toUpperCase(),
                             color: blackColor,
-                            fontSize: 13,
+                            fontSize: 12.sp,
                             maxLines: 2,
                             textAlign: TextAlign.center,
                             fontFamily: "Clash Display",
@@ -2373,70 +3159,184 @@ class _ShopByCategorySection extends StatelessWidget {
   }
 }
 
-// ✅ Widget to display standalone collection banners with horizontal scroll
-class _StandaloneCollectionBanners extends StatelessWidget {
+/// Displays collection banners in a carousel.
+///
+/// Banners are sorted by [position] and grouped into "slides" based on [tile]:
+///   tile == 1 → one full-width banner per slide
+///   tile == 2 → two banners side-by-side per slide
+///   tile == 3 → three banners side-by-side per slide
+///
+/// Consecutive banners with the same tile value fill one slide; when the slide
+/// is full (or the tile value changes) a new slide begins.
+/// Multiple slides are shown in a swipeable PageView with dot indicators.
+class _StandaloneCollectionBanners extends StatefulWidget {
   final List<StandaloneCollectionBanner> banners;
-  final VoidCallback? onBannerTap;
+  final void Function(String redirectUrl)? onBannerTap;
+  final VoidCallback? onFallbackTap;
 
   const _StandaloneCollectionBanners({
     required this.banners,
     this.onBannerTap,
+    this.onFallbackTap,
   });
 
   @override
-  Widget build(BuildContext context) {
-    if (banners.isEmpty) return const SizedBox.shrink();
+  State<_StandaloneCollectionBanners> createState() =>
+      _StandaloneCollectionBannersState();
+}
 
-    print("🖼️ Rendering ${banners.length} banners");
-    for (var b in banners) {
-      print(
-          "  - Banner ${b.id}: isVideo=${b.isVideo()}, url=${b.getImageUrl(isMobile: true)}");
+class _StandaloneCollectionBannersState
+    extends State<_StandaloneCollectionBanners> {
+  late final PageController _pageController;
+  Timer? _timer;
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startTimer());
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    final slides = _buildSlides();
+    if (slides.length <= 1) return;
+    _timer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!mounted) return;
+      final next = (_currentPage + 1) % slides.length;
+      _pageController.animateToPage(
+        next,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  /// Groups sorted banners into carousel slides.
+  List<List<StandaloneCollectionBanner>> _buildSlides() {
+    final slides = <List<StandaloneCollectionBanner>>[];
+    if (widget.banners.isEmpty) return slides;
+
+    List<StandaloneCollectionBanner> current = [widget.banners.first];
+    for (int i = 1; i < widget.banners.length; i++) {
+      final b = widget.banners[i];
+      if (b.tile == current.first.tile && current.length < b.tile) {
+        current.add(b);
+      } else {
+        slides.add(current);
+        current = [b];
+      }
     }
+    slides.add(current);
+    return slides;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.banners.isEmpty) return const SizedBox.shrink();
+
+    final slides = _buildSlides();
+    final screenWidth = MediaQuery.of(context).size.width;
+    // Use the tile count of the first slide to determine height
+    final firstTile = slides.first.first.tile.clamp(1, 3);
+    final bannerHeight = firstTile == 1 ? 220.sp : 160.sp;
+    final showDots = slides.length > 1;
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.sp),
-      child: SizedBox(
-        height: 200.sp,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: 16.sp),
-          itemCount: banners.length,
-          itemBuilder: (context, index) {
-            final banner = banners[index];
-            final isVideo = banner.isVideo(isMobile: true);
-            final mediaUrl = banner.getImageUrl(isMobile: true);
-            final itemWidth = banners.length == 1
-                ? MediaQuery.of(context).size.width - 32.sp
-                : MediaQuery.of(context).size.width * 0.85;
+      padding: EdgeInsets.only(top: 8.sp, bottom: showDots ? 4.sp : 8.sp),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: bannerHeight,
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: slides.length,
+              onPageChanged: (i) => setState(() => _currentPage = i),
+              itemBuilder: (context, slideIndex) {
+                final slideBanners = slides[slideIndex];
+                final tileCount = slideBanners.first.tile.clamp(1, 3);
+                final gap = 6.sp;
+                final totalGap = gap * (tileCount - 1);
+                final itemWidth = (screenWidth - 32.sp - totalGap) / tileCount;
 
-            print("📌 Building banner $index: isVideo=$isVideo, url=$mediaUrl");
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                  child: Row(
+                    children: List.generate(slideBanners.length, (i) {
+                      final banner = slideBanners[i];
+                      final isVideo = banner.isVideo(isMobile: true);
+                      final mediaUrl = banner.getImageUrl(isMobile: true);
 
-            return Padding(
-              padding: EdgeInsets.only(
-                  right: index < banners.length - 1 ? 12.sp : 0),
-              child: GestureDetector(
-                onTap: onBannerTap,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12.sp),
-                  child: SizedBox(
-                    width: itemWidth,
-                    height: 200.sp,
-                    child: isVideo
-                        ? _VideoBannerItem(
-                            videoUrl: mediaUrl,
-                            height: 200.sp,
-                          )
-                        : _BannerItem(
-                            imageUrl: mediaUrl,
-                            height: 200.sp,
+                      return Padding(
+                        padding: EdgeInsets.only(
+                            right: i < slideBanners.length - 1 ? gap : 0),
+                        child: GestureDetector(
+                          onTap: () {
+                            final url = banner.redirectUrl.trim();
+                            if (url.isNotEmpty) {
+                              widget.onBannerTap?.call(url);
+                            } else {
+                              widget.onFallbackTap?.call();
+                            }
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10.sp),
+                            child: SizedBox(
+                              width: itemWidth,
+                              height: bannerHeight,
+                              child: isVideo
+                                  ? _VideoBannerItem(
+                                      videoUrl: mediaUrl,
+                                      height: bannerHeight,
+                                    )
+                                  : _BannerItem(
+                                      imageUrl: mediaUrl,
+                                      height: bannerHeight,
+                                    ),
+                            ),
                           ),
+                        ),
+                      );
+                    }),
                   ),
-                ),
-              ),
-            );
-          },
-        ),
+                );
+              },
+            ),
+          ),
+
+          // Dot indicators — only shown when there are multiple slides
+          if (showDots) ...[
+            SizedBox(height: 8.sp),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(slides.length, (i) {
+                final isActive = i == _currentPage;
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  margin: EdgeInsets.symmetric(horizontal: 3.sp),
+                  width: isActive ? 16.sp : 6.sp,
+                  height: 6.sp,
+                  decoration: BoxDecoration(
+                    color: isActive
+                        ? Colors.black
+                        : Colors.black.withOpacity(0.25),
+                    borderRadius: BorderRadius.circular(3.sp),
+                  ),
+                );
+              }),
+            ),
+            SizedBox(height: 4.sp),
+          ],
+        ],
       ),
     );
   }
@@ -2925,7 +3825,12 @@ class _CollectionSectionState extends State<_CollectionSection> {
           if (widget.banners.isNotEmpty)
             _StandaloneCollectionBanners(
               banners: widget.banners,
-              onBannerTap: widget.onTitleTap,
+              onBannerTap: (redirectUrl) {
+                // redirectUrl is non-empty — navigate to it via the product view
+                // For now open the collection view as a sensible default
+                widget.onTitleTap();
+              },
+              onFallbackTap: widget.onTitleTap,
             ),
 
           // Products
@@ -2948,26 +3853,73 @@ class _CollectionSectionState extends State<_CollectionSection> {
   }
 }
 
-class _FeaturedBrandsRow extends StatelessWidget {
+class _FeaturedBrandsRow extends StatefulWidget {
   final HomeController homeController;
   final BrandController brandController;
   final FirebaseAnalytics analytics;
   final VoidCallback onPressedViewAll;
-  final List<dynamic> brands; // ✅ ADD: Accept brands list
+  final List<dynamic> brands;
 
   const _FeaturedBrandsRow({
     required this.homeController,
     required this.brandController,
     required this.analytics,
     required this.onPressedViewAll,
-    required this.brands, // ✅ ADD: Required parameter
+    required this.brands,
   });
+
+  @override
+  State<_FeaturedBrandsRow> createState() => _FeaturedBrandsRowState();
+}
+
+class _FeaturedBrandsRowState extends State<_FeaturedBrandsRow> {
+  late final ScrollController _scrollController;
+  Timer? _autoScrollTimer;
+  bool _isForward = true;
+  bool _userScrolling = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _startAutoScroll();
+  }
+
+  void _startAutoScroll() {
+    _autoScrollTimer = Timer.periodic(const Duration(milliseconds: 30), (_) {
+      // if (!_scrollController.hasClients) return;
+      if (!_scrollController.hasClients || _userScrolling) return;
+
+      final max = _scrollController.position.maxScrollExtent;
+      final current = _scrollController.offset;
+
+      if (_isForward) {
+        if (current >= max) {
+          _isForward = false;
+        } else {
+          _scrollController.jumpTo(current + 1.5);
+        }
+      } else {
+        if (current <= 0) {
+          _isForward = true;
+        } else {
+          _scrollController.jumpTo(current - 1.5);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _autoScrollTimer?.cancel();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          EdgeInsets.only(top: 4.sp, bottom: 12.sp), // ✅ Minimal bottom padding
+      padding: EdgeInsets.only(top: 4.sp, bottom: 12.sp),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2984,8 +3936,8 @@ class _FeaturedBrandsRow extends StatelessWidget {
                 const Spacer(),
                 InkWell(
                   onTap: () async {
-                    onPressedViewAll();
-                    await analytics.logEvent(
+                    widget.onPressedViewAll();
+                    await widget.analytics.logEvent(
                       name: 'homepage_featurebrandviewAll',
                       parameters: {'page_name': 'homepage_featurebrandviewAll'},
                     );
@@ -3004,108 +3956,123 @@ class _FeaturedBrandsRow extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 12.sp), // ✅ Consistent spacing
+          SizedBox(height: 12.sp),
           SizedBox(
-            height: 86.sp, // ✅ Reduced from 90.sp to remove excess whitespace
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: brands.length,
-              physics: const BouncingScrollPhysics(),
-              itemBuilder: (ctx, index) {
-                final brand = brands[index];
-                final logo = (brand["logo"] ?? "").toString().trim();
-                final name = (brand["name"] ?? "").toString().trim();
-                final bgImage =
-                    (brand["background_image"] ?? "").toString().trim();
+            height: 86.sp,
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (notification is ScrollStartNotification &&
+                    notification.dragDetails != null) {
+                  _userScrolling = true;
+                } else if (notification is ScrollEndNotification) {
+                  Future.delayed(const Duration(seconds: 2), () {
+                    if (mounted) {
+                      _userScrolling = false;
+                    }
+                  });
+                }
+                return false;
+              },
+              child: ListView.builder(
+                controller: _scrollController,
+                scrollDirection: Axis.horizontal,
+                itemCount: widget.brands.length,
+                physics: const BouncingScrollPhysics(),
+                itemBuilder: (ctx, index) {
+                  final brand = widget.brands[index];
+                  final logo = (brand["logo"] ?? "").toString().trim();
+                  final name = (brand["name"] ?? "").toString().trim();
+                  final bgImage =
+                      (brand["background_image"] ?? "").toString().trim();
 
-                return GestureDetector(
-                  onTap: () async {
-                    brandController.brandbackground.value = bgImage;
-                    final id = brand["id"];
-                    final safeId = (id is int)
-                        ? id
-                        : int.tryParse(id?.toString() ?? '0') ?? 0;
+                  return GestureDetector(
+                    onTap: () async {
+                      widget.brandController.brandbackground.value = bgImage;
+                      final id = brand["id"];
+                      final safeId = (id is int)
+                          ? id
+                          : int.tryParse(id?.toString() ?? '0') ?? 0;
 
-                    Get.to(
-                      () => AllBrandScreen(
-                        id: safeId,
-                        screen: "home",
-                        slug: "",
-                      ),
-                    )?.then((_) {
-                      SystemChrome.setSystemUIOverlayStyle(
-                        const SystemUiOverlayStyle(
-                          statusBarColor: whiteColor,
-                          statusBarIconBrightness: Brightness.dark,
-                          systemNavigationBarColor: whiteColor,
+                      Get.to(
+                        () => AllBrandScreen(
+                          id: safeId,
+                          screen: "home",
+                          slug: "",
                         ),
-                      );
-                    });
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 16.sp),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          height: 64.sp,
-                          width: 64.sp,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color.fromARGB(255, 165, 165, 166),
-                              width: 1.sp,
-                            ),
+                      )?.then((_) {
+                        SystemChrome.setSystemUIOverlayStyle(
+                          const SystemUiOverlayStyle(
+                            statusBarColor: whiteColor,
+                            statusBarIconBrightness: Brightness.dark,
+                            systemNavigationBarColor: whiteColor,
                           ),
-                          child: ClipOval(
-                            child: logo.isNotEmpty
-                                ? CachedNetworkImage(
-                                    imageUrl: ImageHelper.toWebP(logo),
-                                    height: 64.sp,
-                                    width: 64.sp,
-                                    fit: BoxFit.fill,
-                                    // ✅ Add memory limits for brand logos
-                                    maxHeightDiskCache: 150,
-                                    maxWidthDiskCache: 150,
-                                    memCacheHeight: 150,
-                                    memCacheWidth: 150,
-                                    fadeInDuration:
-                                        const Duration(milliseconds: 300),
-                                    placeholder: (_, __) => Container(
-                                      color: Colors.black.withOpacity(0.05),
-                                    ),
-                                    errorWidget: (_, __, ___) => Image.asset(
-                                      downloadImage,
+                        );
+                      });
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 16.sp),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            height: 64.sp,
+                            width: 64.sp,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color.fromARGB(255, 165, 165, 166),
+                                width: 1.sp,
+                              ),
+                            ),
+                            child: ClipOval(
+                              child: logo.isNotEmpty
+                                  ? CachedNetworkImage(
+                                      imageUrl: ImageHelper.toWebP(logo),
+                                      height: 64.sp,
+                                      width: 64.sp,
+                                      fit: BoxFit.fill,
+                                      maxHeightDiskCache: 150,
+                                      maxWidthDiskCache: 150,
+                                      memCacheHeight: 150,
+                                      memCacheWidth: 150,
+                                      fadeInDuration:
+                                          const Duration(milliseconds: 300),
+                                      placeholder: (_, __) => Container(
+                                        color: Colors.black.withOpacity(0.05),
+                                      ),
+                                      errorWidget: (_, __, ___) => Image.asset(
+                                        downloadImage,
+                                        fit: BoxFit.fill,
+                                      ),
+                                    )
+                                  : Image.asset(
+                                      dummyWishlistImage,
                                       fit: BoxFit.fill,
                                     ),
-                                  )
-                                : Image.asset(
-                                    dummyWishlistImage,
-                                    fit: BoxFit.fill,
-                                  ),
-                          ),
-                        ),
-                        SizedBox(height: 6.sp),
-                        SizedBox(
-                          width: 64.sp,
-                          child: Text(
-                            name.isNotEmpty ? name : 'Unnamed',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: "Clash Display Regular",
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
                             ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 6.sp),
+                          SizedBox(
+                            width: 64.sp,
+                            child: Text(
+                              name.isNotEmpty ? name : 'Unnamed',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: "Clash Display Regular",
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ],

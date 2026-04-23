@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../common/widget/bottom_sheets/bottomfiltters.dart';
@@ -15,8 +15,10 @@ import '../../../common/widget/bottom_sheets/bottomwishlist.dart';
 import '../../../common/widget/button/doublebtn.dart';
 import '../../../common/widget/lists/dummy_grid_list.dart';
 import '../../../common/widget/other/common_widget.dart';
+import '../../../common/widget/other/filter_chips_row.dart';
 import '../../../common/widget/other/pounce_wrapper.dart';
 import '../../../common/widget/text/app_text.dart';
+import '../../../controllers/catalog_controller.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
@@ -40,6 +42,7 @@ class ProductHorizontalScreen extends StatefulWidget {
 class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
+  final catalogController = Get.find<CatalogController>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
@@ -59,6 +62,11 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
       productController.categoryProductController.addListener(() {
         productController.update();
       });
+      // Fetch chips for this category page
+      catalogController.fetchChipsForCategory(
+        catId: widget.categoryId,
+        superCatId: widget.genderType,
+      );
     });
     super.initState();
   }
@@ -97,6 +105,12 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  Obx(() => FilterChipsRow(
+                                        chips: catalogController.chips.toList(),
+                                        activeChipId:
+                                            catalogController.activeChipId.value,
+                                        onChipTap: catalogController.onChipTap,
+                                      )),
                                   Padding(
                                     padding: EdgeInsets.only(
                                         left: 16.sp,
@@ -124,7 +138,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                   .push(MaterialPageRoute(
                                                       builder: (BuildContext
                                                               context) =>
-                                                          ProductDetailsScreen(
+                                                          ProductDetailsScreenV2(
                                                               brandName: productController
                                                                           .productCategoryList[
                                                                       index]

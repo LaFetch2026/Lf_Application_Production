@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lafetch/screens/catalog/productlist/productdetailsscreen.dart';
+import 'package:lafetch/screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
@@ -14,10 +14,12 @@ import '../../../common/widget/bottom_sheets/bottomsortby.dart';
 import '../../../common/widget/bottom_sheets/bottomwishlist.dart';
 import '../../../common/widget/button/doublebtn.dart';
 import '../../../common/widget/lists/dummy_vertical_list.dart';
+import '../../../common/widget/other/filter_chips_row.dart';
 import '../../../common/widget/other/productvedio.dart';
 import '../../../common/widget/other/pounce_wrapper.dart';
 import '../../../common/widget/other/product_price_display.dart';
 import '../../../common/widget/text/app_text.dart';
+import '../../../controllers/catalog_controller.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
@@ -40,6 +42,7 @@ class ProductVerticalScreen extends StatefulWidget {
 class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   final productController = Get.put(ProductController());
   final wishlistController = Get.put(WishlistController());
+  final catalogController = Get.find<CatalogController>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late VideoPlayerController videoController;
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
@@ -49,7 +52,6 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   @override
   void initState() {
     productController.curr.value = 0;
-    //  productController.sortBy.value = "";
     productController.productCategoryList.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       productController.categoryProductHasnextpage.value = true;
@@ -64,6 +66,11 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
       productController.categoryProductController.addListener(() {
         productController.update();
       });
+      // Fetch chips for this category page
+      catalogController.fetchChipsForCategory(
+        catId: widget.categoryId,
+        superCatId: widget.genderType,
+      );
     });
     super.initState();
   }
@@ -213,6 +220,14 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                     SizedBox(
                                       height: 10.sp,
                                     ),
+                                    Obx(() => FilterChipsRow(
+                                          chips:
+                                              catalogController.chips.toList(),
+                                          activeChipId:
+                                              catalogController.activeChipId.value,
+                                          onChipTap:
+                                              catalogController.onChipTap,
+                                        )),
                                     Padding(
                                       padding: EdgeInsets.only(
                                           left: 16.sp,
@@ -236,7 +251,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                     .push(MaterialPageRoute(
                                                         builder: (BuildContext
                                                                 context) =>
-                                                            ProductDetailsScreen(
+                                                            ProductDetailsScreenV2(
                                                                 brandName: productController
                                                                             .productCategoryList[
                                                                         index][
@@ -479,7 +494,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                           height: 26.sp,
                                                           width: 80.sp,
                                                           child: Row(
-                                                            mainAxisSize: MainAxisSize.min,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
                                                             children: [
                                                               Padding(
                                                                 padding: EdgeInsets
@@ -535,7 +552,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                 child: AppText(
                                                                   text: productController
                                                                       .productCategoryList[
-                                                                          index][
+                                                                          index]
+                                                                          [
                                                                           "reviews_count"]
                                                                       .toString(),
                                                                   color:
@@ -695,7 +713,8 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                       fontSize: 14,
                                                       mrpFontSize: 11,
                                                       discountFontSize: 11,
-                                                      fontWeight: FontWeight.w400,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                       spacing: 5,
                                                     ),
                                                   ),

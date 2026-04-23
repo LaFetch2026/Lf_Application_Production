@@ -17,7 +17,7 @@ import '../../common/widget/text/app_text.dart';
 import '../../controllers/wishlist_controller.dart';
 import '../../core/constant/constants.dart';
 import '../../common/widget/other/pounce_wrapper.dart';
-import '../catalog/productlist/productdetailsscreen.dart';
+import '../catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 import 'createboardscreen.dart';
 import 'newboardscreen.dart';
 
@@ -69,10 +69,10 @@ class BoardScreenState extends State<BoardScreen> {
         onPressedShare: () async {
           // Capture render-box position before the sheet is dismissed,
           // so iOS has a valid non-zero sharePositionOrigin for the popover.
-          final box = scaffoldKey.currentContext?.findRenderObject() as RenderBox?;
-          final shareOrigin = box != null
-              ? box.localToGlobal(Offset.zero) & box.size
-              : null;
+          final box =
+              scaffoldKey.currentContext?.findRenderObject() as RenderBox?;
+          final shareOrigin =
+              box != null ? box.localToGlobal(Offset.zero) & box.size : null;
 
           _closeSheet();
           final link = await ShareLinkGenerator.generateBoardShareLink(
@@ -265,13 +265,12 @@ class BoardScreenState extends State<BoardScreen> {
               backgroundColor: isDrawer ? const Color(0xF2F7F7F5) : whiteColor,
               onPressedThreeDot: _openSheet,
               onPressedShare: () async {
-                final box = scaffoldKey.currentContext
-                    ?.findRenderObject() as RenderBox?;
+                final box = scaffoldKey.currentContext?.findRenderObject()
+                    as RenderBox?;
                 final shareOrigin = box != null
                     ? box.localToGlobal(Offset.zero) & box.size
                     : null;
-                final link =
-                    await ShareLinkGenerator.generateBoardShareLink(
+                final link = await ShareLinkGenerator.generateBoardShareLink(
                   boardId: widget.boardId,
                   boardName: widget.boardName,
                 );
@@ -373,14 +372,13 @@ class BoardScreenState extends State<BoardScreen> {
                                                               1) ==
                                                           0));
 
-                                              final rawBrand = product[
-                                                      'brand_name'] ??
-                                                  product['brand'];
+                                              final rawBrand =
+                                                  product['brand_name'] ??
+                                                      product['brand'];
                                               final brand = rawBrand is Map
                                                   ? (rawBrand['name'] ?? '')
                                                       .toString()
-                                                  : (rawBrand ?? '')
-                                                      .toString();
+                                                  : (rawBrand ?? '').toString();
                                               final name = (product['name'] ??
                                                       product['title'] ??
                                                       '')
@@ -409,7 +407,7 @@ class BoardScreenState extends State<BoardScreen> {
                                               return PounceWrapper(
                                                 onTap: () async {
                                                   Get.to(() =>
-                                                      ProductDetailsScreen(
+                                                      ProductDetailsScreenV2(
                                                         brandName: brand,
                                                         productId: pid,
                                                         type: "add",

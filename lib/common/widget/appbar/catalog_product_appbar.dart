@@ -26,12 +26,16 @@ class CatalogProductAppbar extends StatelessWidget {
       color: colorPrimary,
       child: Padding(
         padding: EdgeInsets.only(
-            left: 16.sp, top: statusBarHeight + 8.sp, right: 16.sp, bottom: 8.sp),
+            left: 16.sp,
+            top: statusBarHeight + 8.sp,
+            right: 16.sp,
+            bottom: 8.sp),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            InkWell(
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTap: () async {
                 Get.back();
                 final prefs = await SharedPreferences.getInstance();
