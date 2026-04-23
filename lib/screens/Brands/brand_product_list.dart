@@ -9,6 +9,7 @@ import 'package:lafetch/common/widget/other/pounce_wrapper.dart';
 import 'package:lafetch/common/widget/text/app_text.dart';
 import 'package:lafetch/controllers/product_controller.dart';
 import 'package:lafetch/core/constant/constants.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class BrandProductList extends StatelessWidget {
   final List list;
@@ -123,18 +124,11 @@ class BrandProductList extends StatelessWidget {
                                                             ["name"]
                                                         .toString(),
                                                     placeholder:
-                                                        (context, url) =>
+                                                    (context, url) =>
                                                             Container(
                                                       color: Colors.grey[200],
                                                       child: const Center(
-                                                        child:
-                                                            CircularProgressIndicator(
-                                                          strokeWidth: 2,
-                                                          valueColor:
-                                                              AlwaysStoppedAnimation<
-                                                                      Color>(
-                                                                  colorPrimary),
-                                                        ),
+                                                        child: LfLogoLoader(size: 32, showGlow: false),
                                                       ),
                                                     ),
                                                     errorWidget:

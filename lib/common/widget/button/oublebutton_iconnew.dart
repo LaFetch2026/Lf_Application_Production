@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 
 import '../../../controllers/base_controller.dart';
 import '../../../core/constant/constants.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class DoubleButtonIconNew extends StatelessWidget {
   final String firstText;
@@ -122,11 +123,10 @@ class DoubleButtonIconNew extends StatelessWidget {
                     : lightPurpleColor,
                 child: Obx(() => (controller.pageState == PageState.LOADING)
                     ? Center(
-                        child: Transform.scale(
-                          scale: 0.5.sp,
-                          child: const CircularProgressIndicator(
-                            color: whiteColor,
-                          ),
+                        child: const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: Center(child: LfLogoLoader(size: 12, showGlow: false)),
                         ),
                       )
                     : lineColor == dividerColor

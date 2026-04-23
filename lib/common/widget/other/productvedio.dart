@@ -4,6 +4,7 @@ import 'package:video_player/video_player.dart';
 
 import '../../../controllers/product_controller.dart';
 import '../../../core/constant/constants.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 
 
@@ -64,7 +65,7 @@ class _ProductVideoState extends State<ProductVideo> {
           );
         } else {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: LfLogoLoader(size: 32, showGlow: false),
           );
         }
       },

@@ -20,6 +20,7 @@ import '../controllers/cart_controller.dart';
 import '../controllers/order_controller.dart';
 import '../controllers/shipaddress_controller.dart';
 import '../core/constant/constants.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final String orderId;
@@ -124,7 +125,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
         backgroundColor: whiteColor,
         body: Obx(
           () => controller.isPayment.value
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: LfLoaderWidget(size: 54))
               : Column(
                   children: [
                     BackButtonAppbar(

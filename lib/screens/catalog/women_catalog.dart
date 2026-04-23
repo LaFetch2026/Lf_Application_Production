@@ -24,6 +24,7 @@ import '../../common/widget/appbar/home_appbar.dart';
 import '../../common/widget/lists/dummy_catalog_list.dart';
 import '../../common/widget/text/app_text.dart';
 import '../../core/constant/constants.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class WomenCatalogScreen extends StatefulWidget {
   const WomenCatalogScreen({super.key});
@@ -43,6 +44,8 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
 
   TabController? _genderTabController;
   static bool _isInitialized = false; // Static to persist across rebuilds
+  bool _isRefreshing = false;
+  double _pullOffset = 0;
 
   // Keep screen alive when switching tabs
   @override
@@ -160,6 +163,18 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
     }
   }
 
+  Future<void> _onRefresh() async {
+    setState(() => _isRefreshing = true);
+    try {
+      Haptic.light();
+      await catalogController.getCatalogData(
+        catalogController.selectCategoryGender.value,
+      );
+    } finally {
+      if (mounted) setState(() => _isRefreshing = false);
+    }
+  }
+
   @override
   void dispose() {
     _genderTabController?.dispose();
@@ -230,10 +245,7 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                     ? SizedBox(
                         height: 42.sp,
                         child: const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.black,
-                          ),
+                          child: LfLogoLoader(size: 20, showGlow: false),
                         ),
                       )
                     : SizedBox(
@@ -318,15 +330,27 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                       );
                     }
 
-                    return RefreshIndicator(
-                      color: homeAppBarColor,
-                      onRefresh: () async {
-                        Haptic.light();
-                        await catalogController.getCatalogData(
-                          catalogController.selectCategoryGender.value,
-                        );
+                    return NotificationListener<ScrollNotification>(
+                      onNotification: (notification) {
+                        if (notification is OverscrollNotification &&
+                            notification.overscroll < 0 &&
+                            !_isRefreshing) {
+                          final pull = (-notification.overscroll * 0.4).clamp(0.0, 80.0);
+                          if (_pullOffset != pull) setState(() => _pullOffset = pull);
+                        } else if ((notification is ScrollEndNotification ||
+                            notification is UserScrollNotification) && !_isRefreshing) {
+                          if (_pullOffset > 50) {
+                            setState(() => _pullOffset = 0);
+                            _onRefresh();
+                          } else if (_pullOffset > 0) {
+                            setState(() => _pullOffset = 0);
+                          }
+                        }
+                        return false;
                       },
-                      child: AnimationLimiter(
+                      child: Stack(
+                        children: [
+                          AnimationLimiter(
                         child: ListView.builder(
                           padding: EdgeInsets.symmetric(
                             horizontal: 16.sp,
@@ -526,7 +550,22 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
                           },
                         ),
                       ),
-                    );
+                      AnimatedOpacity(
+                        opacity: _isRefreshing
+                            ? 1.0
+                            : (_pullOffset / 80.0).clamp(0.0, 1.0),
+                        duration: const Duration(milliseconds: 150),
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: _isRefreshing ? 8 : (_pullOffset - 40).clamp(0.0, 8.0)),
+                            child: const LfLogoLoader(size: 28),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
                   }),
                 ),
               ),

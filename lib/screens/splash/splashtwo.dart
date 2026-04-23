@@ -15,6 +15,15 @@ class SplashTwoScreen extends StatefulWidget {
 
 class _SplashTwoScreenState extends State<SplashTwoScreen> {
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(
+      const AssetImage('assets/images/lafetch_logo.png'),
+      context,
+    );
+  }
+
+  @override
   void initState() {
     super.initState();
 

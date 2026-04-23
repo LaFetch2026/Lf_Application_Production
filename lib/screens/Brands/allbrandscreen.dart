@@ -1016,6 +1016,7 @@ import '../../controllers/home_controller.dart';
 import '../../controllers/product_controller.dart';
 import '../../core/constant/constants.dart';
 import '../cartscreen.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class AllBrandScreen extends StatefulWidget {
   final String screen;
@@ -1255,10 +1256,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
           width: double.infinity,
           color: cardBg,
           child: const Center(
-            child: CircularProgressIndicator(
-              color: Colors.white,
-              strokeWidth: 2.5,
-            ),
+            child: LfLogoLoader(size: 32, showGlow: false),
           ),
         ),
         errorWidget: (context, url, error) {
@@ -1296,7 +1294,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
       child: _isVideoInitialized
           ? null
           : const Center(
-              child: CircularProgressIndicator(color: Colors.white),
+              child: LfLogoLoader(size: 32, showGlow: false),
             ),
     );
   }
@@ -1534,10 +1532,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                               width: double.infinity,
                               color: cardBg,
                               child: const Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2.5,
-                                ),
+                                child: LfLogoLoader(size: 32, showGlow: false),
                               ),
                             ),
                             errorWidget: (context, url, error) {
@@ -1620,10 +1615,7 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                                       placeholder: (context, url) => Container(
                                         color: cardBg,
                                         child: const Center(
-                                          child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                            strokeWidth: 2.0,
-                                          ),
+                                          child: LfLogoLoader(size: 32, showGlow: false),
                                         ),
                                       ),
                                       errorWidget: (context, url, error) {

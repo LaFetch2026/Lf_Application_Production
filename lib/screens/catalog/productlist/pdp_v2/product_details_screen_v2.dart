@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/other/common_widget.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import 'package:lafetch/common/widget/other/product_price_display.dart';
 import 'package:lafetch/controllers/cart_controller.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
@@ -238,9 +239,13 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
     );
   }
 
-  void _showLoading() =>
-      Get.dialog(const Center(child: CircularProgressIndicator()),
-          barrierDismissible: false);
+  void _showLoading() => Get.dialog(
+      const Center(
+          child: LfLoaderWidget(
+        size: 32,
+        brandColor: Colors.grey,
+      )),
+      barrierDismissible: false);
   void _hideLoading() {
     if (Get.isDialogOpen ?? false) Get.back();
   }

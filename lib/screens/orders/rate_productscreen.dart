@@ -9,6 +9,7 @@ import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/core/constant/constants.dart';
 import 'package:lafetch/controllers/product_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class RateProductScreen extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -211,7 +212,11 @@ class _RateProductScreenState extends State<RateProductScreen> {
                       ),
                       child: Center(
                         child: _isSubmitting
-                            ? const CircularProgressIndicator(color: whiteColor)
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: Center(child: LfLogoLoader(size: 12, showGlow: false)),
+                              )
                             : const AppText(
                                 text: "SUBMIT",
                                 fontFamily: "Clash Display",

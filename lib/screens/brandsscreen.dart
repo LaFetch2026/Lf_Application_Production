@@ -26,6 +26,7 @@ import '../core/constant/constants.dart';
 import '../core/utils/image_helper.dart';
 import 'bottomnavscreen.dart';
 import 'cartscreen.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class BrandsScreen extends StatefulWidget {
   final String? screen;
@@ -57,6 +58,8 @@ class BrandsScreenState extends State<BrandsScreen>
   var brandProductDetailsList = <Map<String, dynamic>>[].obs;
   var brand_category_List = <int>[].obs;
   var isDetails = false.obs;
+  bool _isRefreshing = false;
+  double _pullOffset = 0;
 
   // Keep screen alive when switching tabs
   @override
@@ -105,17 +108,22 @@ class BrandsScreenState extends State<BrandsScreen>
 
 // ✅ Method to force refresh data (for pull-to-refresh)
   Future<void> forceRefreshData() async {
-    print("🔄 Force refresh triggered - Brands");
+    setState(() => _isRefreshing = true);
+    try {
+      print("🔄 Force refresh triggered - Brands");
 
-    // ✅ Clear loaded tracking so API call is not skipped
-    brandController.clearLoadedTracking();
-    brandController.queryText.value = "";
-    brandController.searchController.clear();
+      // ✅ Clear loaded tracking so API call is not skipped
+      brandController.clearLoadedTracking();
+      brandController.queryText.value = "";
+      brandController.searchController.clear();
 
-    await brandController.getBrandData("brand");
+      await brandController.getBrandData("brand");
 
-    if (mounted) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
+    } finally {
+      if (mounted) setState(() => _isRefreshing = false);
     }
   }
 
@@ -312,655 +320,676 @@ class BrandsScreenState extends State<BrandsScreen>
                 Expanded(
                   child: NotificationListener<ScrollNotification>(
                     onNotification: _handleScrollNotification,
-                    child: RefreshIndicator(
-                      // ✅ ADDED: Pull-to-refresh functionality
-                      onRefresh: forceRefreshData,
-                      child: SingleChildScrollView(
-                        controller: brandController.brandListController,
-                        physics:
-                            const AlwaysScrollableScrollPhysics(), // ✅ Enables pull-to-refresh even when content is short
-                        child: GestureDetector(
-                          onTap: () {
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            setState(() {});
-                          },
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              brandController.isBrand.value
-                                  ? const DummybrandList()
-                                  : brandController.brandList.isNotEmpty
-                                      ? Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: 10.sp, top: 4.sp),
-                                          child: GetBuilder<BrandController>(
-                                              builder: (val) {
-                                            // Group brands by alphabet
-                                            Map<String, List> groupedBrands =
-                                                {};
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (notification) {
+                        if (notification is OverscrollNotification &&
+                            notification.overscroll < 0 &&
+                            !_isRefreshing) {
+                          final pull = (-notification.overscroll * 0.4).clamp(0.0, 80.0);
+                          if (_pullOffset != pull) setState(() => _pullOffset = pull);
+                        } else if ((notification is ScrollEndNotification ||
+                            notification is UserScrollNotification) && !_isRefreshing) {
+                          if (_pullOffset > 50) {
+                            setState(() => _pullOffset = 0);
+                            forceRefreshData();
+                          } else if (_pullOffset > 0) {
+                            setState(() => _pullOffset = 0);
+                          }
+                        }
+                        return false;
+                      },
+                      child: Stack(
+                        children: [
+                          SingleChildScrollView(
+                            controller: brandController.brandListController,
+                            physics:
+                                const AlwaysScrollableScrollPhysics(), // ✅ Enables pull-to-refresh even when content is short
+                            child: GestureDetector(
+                              onTap: () {
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
+                                setState(() {});
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  brandController.isBrand.value
+                                      ? const DummybrandList()
+                                      : brandController.brandList.isNotEmpty
+                                          ? Padding(
+                                              padding: EdgeInsets.only(
+                                                  bottom: 10.sp, top: 4.sp),
+                                              child:
+                                                  GetBuilder<BrandController>(
+                                                      builder: (val) {
+                                                // Group brands by alphabet
+                                                Map<String, List>
+                                                    groupedBrands = {};
 
-                                            for (var brand in val.brandList) {
-                                              String brandName =
-                                                  brand['name'] ?? '';
-                                              if (brandName.isNotEmpty) {
-                                                String firstLetter =
-                                                    brandName[0].toUpperCase();
-                                                if (!groupedBrands
-                                                    .containsKey(firstLetter)) {
-                                                  groupedBrands[firstLetter] =
-                                                      [];
+                                                for (var brand
+                                                    in val.brandList) {
+                                                  String brandName =
+                                                      brand['name'] ?? '';
+                                                  if (brandName.isNotEmpty) {
+                                                    String firstLetter =
+                                                        brandName[0]
+                                                            .toUpperCase();
+                                                    if (!groupedBrands
+                                                        .containsKey(
+                                                            firstLetter)) {
+                                                      groupedBrands[
+                                                          firstLetter] = [];
+                                                    }
+                                                    groupedBrands[firstLetter]!
+                                                        .add(brand);
+                                                  }
                                                 }
-                                                groupedBrands[firstLetter]!
-                                                    .add(brand);
-                                              }
-                                            }
 
-                                            // Sort alphabets
-                                            List<String> sortedAlphabets =
-                                                groupedBrands.keys.toList()
-                                                  ..sort();
+                                                // Sort alphabets
+                                                List<String> sortedAlphabets =
+                                                    groupedBrands.keys.toList()
+                                                      ..sort();
 
-                                            return ListView.builder(
-                                                primary: false,
-                                                shrinkWrap: true,
-                                                controller:
-                                                    val.brandListController,
-                                                physics: const ScrollPhysics(),
-                                                itemCount:
-                                                    sortedAlphabets.length,
-                                                padding: EdgeInsets.zero,
-                                                scrollDirection: Axis.vertical,
-                                                addAutomaticKeepAlives: false,
-                                                addRepaintBoundaries: true,
-                                                cacheExtent: 500,
-                                                itemBuilder: (ctx, a) {
-                                                  String alphabet =
-                                                      sortedAlphabets[a];
-                                                  List brandsForAlphabet =
-                                                      groupedBrands[alphabet] ??
-                                                          [];
+                                                return ListView.builder(
+                                                    primary: false,
+                                                    shrinkWrap: true,
+                                                    controller:
+                                                        val.brandListController,
+                                                    physics:
+                                                        const ScrollPhysics(),
+                                                    itemCount:
+                                                        sortedAlphabets.length,
+                                                    padding: EdgeInsets.zero,
+                                                    scrollDirection:
+                                                        Axis.vertical,
+                                                    addAutomaticKeepAlives:
+                                                        false,
+                                                    addRepaintBoundaries: true,
+                                                    cacheExtent: 500,
+                                                    itemBuilder: (ctx, a) {
+                                                      String alphabet =
+                                                          sortedAlphabets[a];
+                                                      List brandsForAlphabet =
+                                                          groupedBrands[
+                                                                  alphabet] ??
+                                                              [];
 
-                                                  return Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      // Divider (except for first item)
-                                                      Visibility(
-                                                        visible: a != 0,
-                                                        child: Padding(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  vertical:
-                                                                      8.sp),
-                                                          child: Container(
-                                                            height: 1.sp,
-                                                            color: Colors
-                                                                .transparent,
+                                                      return Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          // Divider (except for first item)
+                                                          Visibility(
+                                                            visible: a != 0,
+                                                            child: Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      vertical:
+                                                                          8.sp),
+                                                              child: Container(
+                                                                height: 1.sp,
+                                                                color: Colors
+                                                                    .transparent,
+                                                              ),
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ),
 
-                                                      // Alphabet Header
-                                                      Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                          vertical: 8.sp,
-                                                          horizontal: 16.sp,
-                                                        ),
-                                                        child: AppText(
-                                                          text: alphabet,
-                                                          color: subtitleColor,
-                                                          fontSize: 14,
-                                                          fontFamily:
-                                                              "Clash Display Regular",
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                      ),
+                                                          // Alphabet Header
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                              vertical: 8.sp,
+                                                              horizontal: 16.sp,
+                                                            ),
+                                                            child: AppText(
+                                                              text: alphabet,
+                                                              color:
+                                                                  subtitleColor,
+                                                              fontSize: 14,
+                                                              fontFamily:
+                                                                  "Clash Display Regular",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            ),
+                                                          ),
 
-                                                      // Brands for this alphabet
-                                                      Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal:
-                                                                    16.sp),
-                                                        child: ListView.builder(
-                                                          primary: false,
-                                                          shrinkWrap: true,
-                                                          physics:
-                                                              const ScrollPhysics(),
-                                                          itemCount:
-                                                              brandsForAlphabet
-                                                                  .length,
-                                                          padding:
-                                                              EdgeInsets.zero,
-                                                          addAutomaticKeepAlives:
-                                                              false,
-                                                          addRepaintBoundaries:
-                                                              true,
-                                                          itemBuilder:
-                                                              (ctx, index) {
-                                                            final brand =
-                                                                brandsForAlphabet[
-                                                                    index];
-                                                            final isExpanded =
-                                                                val.selectIndex
+                                                          // Brands for this alphabet
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        16.sp),
+                                                            child: ListView
+                                                                .builder(
+                                                              primary: false,
+                                                              shrinkWrap: true,
+                                                              physics:
+                                                                  const ScrollPhysics(),
+                                                              itemCount:
+                                                                  brandsForAlphabet
+                                                                      .length,
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .zero,
+                                                              addAutomaticKeepAlives:
+                                                                  false,
+                                                              addRepaintBoundaries:
+                                                                  true,
+                                                              itemBuilder:
+                                                                  (ctx, index) {
+                                                                final brand =
+                                                                    brandsForAlphabet[
+                                                                        index];
+                                                                final isExpanded = val
+                                                                        .selectIndex
                                                                         .value ==
                                                                     brand["id"];
-                                                            // TODO: WORKAROUND - Using /view-brand API instead of /brand-products
-                                                            // Root cause: /brand-products API returns incomplete data (only id + title)
-                                                            // Impact: Fetching products from brandDetails["products"] when brand is expanded
-                                                            // Action needed: Switch to getBrandProducts() when backend fixes the endpoint
-                                                            final rawProducts = (isExpanded &&
-                                                                    val.selectIndex
-                                                                            .value ==
-                                                                        brand[
-                                                                            "id"])
-                                                                ? (brandController
-                                                                            .brandDetails["products"]
-                                                                        as List? ??
-                                                                    [])
-                                                                : [];
+                                                                // TODO: WORKAROUND - Using /view-brand API instead of /brand-products
+                                                                // Root cause: /brand-products API returns incomplete data (only id + title)
+                                                                // Impact: Fetching products from brandDetails["products"] when brand is expanded
+                                                                // Action needed: Switch to getBrandProducts() when backend fixes the endpoint
+                                                                final rawProducts = (isExpanded &&
+                                                                        val.selectIndex.value ==
+                                                                            brand[
+                                                                                "id"])
+                                                                    ? (brandController.brandDetails["products"]
+                                                                            as List? ??
+                                                                        [])
+                                                                    : [];
 
-                                                            // 🔍 DEBUG: Log brand and product data
-                                                            if (isExpanded) {
-                                                              print(
-                                                                  "📦 Brand expanded: ${brand["name"]} (ID: ${brand["id"]})");
-                                                              print(
-                                                                  "   Brand logo URL: ${brand["logo"]}");
-                                                              print(
-                                                                  "   Products count: ${rawProducts.length}");
-                                                              if (rawProducts
-                                                                  .isNotEmpty) {
-                                                                print(
-                                                                    "   First product: ${rawProducts.first}");
-                                                              }
-                                                            }
+                                                                // 🔍 DEBUG: Log brand and product data
+                                                                if (isExpanded) {
+                                                                  print(
+                                                                      "📦 Brand expanded: ${brand["name"]} (ID: ${brand["id"]})");
+                                                                  print(
+                                                                      "   Brand logo URL: ${brand["logo"]}");
+                                                                  print(
+                                                                      "   Products count: ${rawProducts.length}");
+                                                                  if (rawProducts
+                                                                      .isNotEmpty) {
+                                                                    print(
+                                                                        "   First product: ${rawProducts.first}");
+                                                                  }
+                                                                }
 
-                                                            // ✅ Show first 3 products in consistent order (by product ID)
-                                                            final sortedProducts = List
-                                                                .from(
-                                                                    rawProducts)
-                                                              ..sort((a, b) => (a[
-                                                                          "id"] ??
-                                                                      0)
-                                                                  .compareTo(
-                                                                      b["id"] ??
-                                                                          0));
-                                                            final products =
-                                                                sortedProducts
-                                                                    .take(3)
-                                                                    .toList();
+                                                                // ✅ Show first 3 products in consistent order (by product ID)
+                                                                final sortedProducts = List
+                                                                    .from(
+                                                                        rawProducts)
+                                                                  ..sort((a,
+                                                                          b) =>
+                                                                      (a["id"] ??
+                                                                              0)
+                                                                          .compareTo(b["id"] ??
+                                                                              0));
+                                                                final products =
+                                                                    sortedProducts
+                                                                        .take(3)
+                                                                        .toList();
 
-                                                            return Column(
-                                                              children: [
-                                                                GestureDetector(
-                                                                  onTap:
-                                                                      () async {
-                                                                    try {
-                                                                      brandController
+                                                                return Column(
+                                                                  children: [
+                                                                    GestureDetector(
+                                                                      onTap:
+                                                                          () async {
+                                                                        try {
+                                                                          brandController
                                                                               .brandlogo
-                                                                              .value =
-                                                                          brand[
-                                                                              "logo"];
-                                                                      brandController
-                                                                          .brandbackground
-                                                                          .value = brand[
-                                                                              "background_image"] ??
-                                                                          "";
-                                                                      brandController
+                                                                              .value = brand["logo"];
+                                                                          brandController
+                                                                              .brandbackground
+                                                                              .value = brand[
+                                                                                  "background_image"] ??
+                                                                              "";
+                                                                          brandController
                                                                               .brandName
-                                                                              .value =
-                                                                          brand[
-                                                                              "name"];
-                                                                      brandController
-                                                                          .showAllBrand
-                                                                          .value = true;
-                                                                      brandController
+                                                                              .value = brand["name"];
+                                                                          brandController
+                                                                              .showAllBrand
+                                                                              .value = true;
+                                                                          brandController
                                                                               .brandId
-                                                                              .value =
-                                                                          brand[
-                                                                              "id"];
+                                                                              .value = brand["id"];
 
-                                                                      await brandController.getBrandDetails(
-                                                                          brand[
-                                                                              "id"],
-                                                                          "");
+                                                                          await brandController.getBrandDetails(
+                                                                              brand["id"],
+                                                                              "");
 
-                                                                      await Get.to(
-                                                                          () =>
+                                                                          await Get.to(() =>
                                                                               AllBrandScreen(
                                                                                 id: brand["id"],
                                                                                 slug: "",
                                                                                 screen: widget.screen ?? "",
                                                                               ));
 
-                                                                      SystemChrome
-                                                                          .setSystemUIOverlayStyle(
+                                                                          SystemChrome.setSystemUIOverlayStyle(
                                                                               const SystemUiOverlayStyle(
-                                                                        statusBarColor:
-                                                                            whiteColor,
-                                                                        systemNavigationBarColor:
-                                                                            whiteColor,
-                                                                        statusBarIconBrightness:
-                                                                            Brightness.dark,
-                                                                        statusBarBrightness:
-                                                                            Brightness.light,
-                                                                      ));
+                                                                            statusBarColor:
+                                                                                whiteColor,
+                                                                            systemNavigationBarColor:
+                                                                                whiteColor,
+                                                                            statusBarIconBrightness:
+                                                                                Brightness.dark,
+                                                                            statusBarBrightness:
+                                                                                Brightness.light,
+                                                                          ));
 
-                                                                      await analytics
-                                                                          .logEvent(
-                                                                        name:
-                                                                            'brand_details',
-                                                                        parameters: {
-                                                                          'page_name':
-                                                                              'brand_details'
-                                                                        },
-                                                                      );
-                                                                    } catch (e) {
-                                                                      print(
-                                                                          "❌ Error navigating to brand details: $e");
-                                                                    }
-                                                                  },
-                                                                  child:
-                                                                      Container(
-                                                                    color:
-                                                                        statusBarColor,
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .only(
-                                                                      left:
-                                                                          10.sp,
-                                                                      right:
-                                                                          10.sp,
-                                                                      top:
-                                                                          10.sp,
-                                                                      bottom: isExpanded
-                                                                          ? 6.sp
-                                                                          : 10.sp,
-                                                                    ),
-                                                                    child: Row(
-                                                                      children: [
-                                                                        brand["logo"] !=
-                                                                                null
-                                                                            ? Container(
-                                                                                height: 48.sp,
-                                                                                width: 48.sp,
-                                                                                decoration: BoxDecoration(
-                                                                                  shape: BoxShape.circle,
-                                                                                  border: Border.all(
-                                                                                    width: 1.sp,
-                                                                                    color: lightgreyColor,
-                                                                                  ),
-                                                                                ),
-                                                                                child: ClipOval(
-                                                                                  child: CachedNetworkImage(
-                                                                                    cacheManager: CacheManager(
-                                                                                      Config(
-                                                                                        "brandLogosCache",
-                                                                                        stalePeriod: const Duration(days: 15),
-                                                                                        maxNrOfCacheObjects: 100,
+                                                                          await analytics
+                                                                              .logEvent(
+                                                                            name:
+                                                                                'brand_details',
+                                                                            parameters: {
+                                                                              'page_name': 'brand_details'
+                                                                            },
+                                                                          );
+                                                                        } catch (e) {
+                                                                          print(
+                                                                              "❌ Error navigating to brand details: $e");
+                                                                        }
+                                                                      },
+                                                                      child:
+                                                                          Container(
+                                                                        color:
+                                                                            statusBarColor,
+                                                                        padding:
+                                                                            EdgeInsets.only(
+                                                                          left:
+                                                                              10.sp,
+                                                                          right:
+                                                                              10.sp,
+                                                                          top: 10
+                                                                              .sp,
+                                                                          bottom: isExpanded
+                                                                              ? 6.sp
+                                                                              : 10.sp,
+                                                                        ),
+                                                                        child:
+                                                                            Row(
+                                                                          children: [
+                                                                            brand["logo"] != null
+                                                                                ? Container(
+                                                                                    height: 48.sp,
+                                                                                    width: 48.sp,
+                                                                                    decoration: BoxDecoration(
+                                                                                      shape: BoxShape.circle,
+                                                                                      border: Border.all(
+                                                                                        width: 1.sp,
+                                                                                        color: lightgreyColor,
                                                                                       ),
                                                                                     ),
-                                                                                    fit: BoxFit.fill,
-                                                                                    imageUrl: ImageHelper.toWebP(brand["logo"]),
-                                                                                    memCacheWidth: (48.sp * MediaQuery.of(context).devicePixelRatio).round(),
-                                                                                    memCacheHeight: (48.sp * MediaQuery.of(context).devicePixelRatio).round(),
-                                                                                    placeholder: (context, url) => Container(
-                                                                                      color: Colors.grey[200],
-                                                                                      child: const Icon(Icons.storefront, size: 24, color: Colors.grey),
-                                                                                    ),
-                                                                                    errorWidget: (context, url, error) {
-                                                                                      print("❌ [BrandsScreen] Brand logo load failed");
-                                                                                      print("   URL: $url");
-                                                                                      print("   Error: $error");
-                                                                                      return Container(
-                                                                                        color: Colors.grey[200],
-                                                                                        child: const Icon(Icons.storefront, size: 24, color: Colors.grey),
-                                                                                      );
-                                                                                    },
-                                                                                  ),
-                                                                                ),
-                                                                              )
-                                                                            : CircleAvatar(
-                                                                                child: Image.asset(dummyWishlistImage),
-                                                                              ),
-                                                                        SizedBox(
-                                                                            width:
-                                                                                12.sp),
-                                                                        Expanded(
-                                                                          child:
-                                                                              AppText(
-                                                                            text:
-                                                                                brand["name"] ?? "",
-                                                                            color:
-                                                                                colorPrimary,
-                                                                            fontSize:
-                                                                                16,
-                                                                            fontFamily:
-                                                                                "Clash Display Regular",
-                                                                            fontWeight:
-                                                                                FontWeight.w400,
-                                                                          ),
-                                                                        ),
-                                                                        InkWell(
-                                                                          onTap:
-                                                                              () async {
-                                                                            // Toggle expansion
-                                                                            if (isExpanded) {
-                                                                              val.selectIndex.value = 0;
-                                                                            } else {
-                                                                              try {
-                                                                                val.selectIndex.value = brand["id"];
-
-                                                                                // TODO: WORKAROUND - Fetch complete product data from /view-brand API
-                                                                                // because /brand-products only returns id and title
-                                                                                // Only fetch if we don't have products cached for this brand
-                                                                                final currentBrandDetails = brandController.brandDetails;
-                                                                                final needsToFetch = currentBrandDetails.isEmpty || currentBrandDetails["brandInfo"]?["id"] != brand["id"] || (currentBrandDetails["products"] as List?)?.isEmpty == true;
-
-                                                                                if (needsToFetch) {
-                                                                                  print("🔄 Fetching brand details for expanded brand: ${brand["name"]}");
-                                                                                  await brandController.getBrandDetails(brand["id"], "");
-                                                                                } else {
-                                                                                  print("✅ Using cached brand details for: ${brand["name"]}");
-                                                                                }
-                                                                              } catch (e) {
-                                                                                print("❌ Error fetching brand details on expand: $e");
-                                                                                // Collapse on error
-                                                                                val.selectIndex.value = 0;
-                                                                              }
-                                                                            }
-                                                                            val.update();
-                                                                          },
-                                                                          child:
-                                                                              Padding(
-                                                                            padding:
-                                                                                EdgeInsets.symmetric(horizontal: 12.sp),
-                                                                            child:
-                                                                                SvgPicture.asset(
-                                                                              isExpanded ? upDropDownSvgImage : dropdownSvgImage,
-                                                                              color: colorPrimary,
-                                                                              height: 7.sp,
-                                                                              width: 11.sp,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-
-                                                                // Expandable Product Grid
-                                                                isExpanded
-                                                                    ? (products
-                                                                            .isNotEmpty
-                                                                        ? Column(
-                                                                            children: [
-                                                                              // SizedBox(height: 8.sp),
-                                                                              Padding(
-                                                                                padding: EdgeInsets.symmetric(horizontal: 16.sp),
-                                                                                child: GridView.count(
-                                                                                  padding: EdgeInsets.zero,
-                                                                                  shrinkWrap: true,
-                                                                                  crossAxisCount: 3,
-                                                                                  childAspectRatio: 0.85,
-                                                                                  physics: const ScrollPhysics(),
-                                                                                  crossAxisSpacing: 10.sp,
-                                                                                  mainAxisSpacing: 10.sp,
-                                                                                  addAutomaticKeepAlives: false,
-                                                                                  addRepaintBoundaries: true,
-                                                                                  children: List.generate(products.length, (i) {
-                                                                                    final product = products[i];
-                                                                                    // Support both image formats: "images" array or "imageUrls" array
-                                                                                    String? imageUrl;
-                                                                                    if (product["images"] != null && product["images"] is List && product["images"].isNotEmpty && product["images"][0] != null && product["images"][0] is Map && product["images"][0]["name"] != null) {
-                                                                                      imageUrl = product["images"][0]["name"].toString();
-                                                                                    } else if (product["imageUrls"] != null && product["imageUrls"] is List && product["imageUrls"].isNotEmpty && product["imageUrls"][0] != null) {
-                                                                                      imageUrl = product["imageUrls"][0].toString();
-                                                                                    }
-
-                                                                                    return PounceWrapper(
-                                                                                      onTap: () async {
-                                                                                        try {
-                                                                                          // ✅ Get product ID from the product
-                                                                                          final productId = product["id"];
-                                                                                          if (productId == null) {
-                                                                                            print("⚠️ Product ID is null, cannot navigate");
-                                                                                            return;
-                                                                                          }
-
-                                                                                          // Show loading dialog
-                                                                                          Get.dialog(
-                                                                                            const Center(child: CircularProgressIndicator()),
-                                                                                            barrierDismissible: false,
+                                                                                    child: ClipOval(
+                                                                                      child: CachedNetworkImage(
+                                                                                        cacheManager: CacheManager(
+                                                                                          Config(
+                                                                                            "brandLogosCache",
+                                                                                            stalePeriod: const Duration(days: 15),
+                                                                                            maxNrOfCacheObjects: 100,
+                                                                                          ),
+                                                                                        ),
+                                                                                        fit: BoxFit.fill,
+                                                                                        imageUrl: ImageHelper.toWebP(brand["logo"]),
+                                                                                        memCacheWidth: (48.sp * MediaQuery.of(context).devicePixelRatio).round(),
+                                                                                        memCacheHeight: (48.sp * MediaQuery.of(context).devicePixelRatio).round(),
+                                                                                        placeholder: (context, url) => Container(
+                                                                                          color: Colors.grey[200],
+                                                                                          child: const Icon(Icons.storefront, size: 24, color: Colors.grey),
+                                                                                        ),
+                                                                                        errorWidget: (context, url, error) {
+                                                                                          print("❌ [BrandsScreen] Brand logo load failed");
+                                                                                          print("   URL: $url");
+                                                                                          print("   Error: $error");
+                                                                                          return Container(
+                                                                                            color: Colors.grey[200],
+                                                                                            child: const Icon(Icons.storefront, size: 24, color: Colors.grey),
                                                                                           );
+                                                                                        },
+                                                                                      ),
+                                                                                    ),
+                                                                                  )
+                                                                                : CircleAvatar(
+                                                                                    child: Image.asset(dummyWishlistImage),
+                                                                                  ),
+                                                                            SizedBox(width: 12.sp),
+                                                                            Expanded(
+                                                                              child: AppText(
+                                                                                text: brand["name"] ?? "",
+                                                                                color: colorPrimary,
+                                                                                fontSize: 16,
+                                                                                fontFamily: "Clash Display Regular",
+                                                                                fontWeight: FontWeight.w400,
+                                                                              ),
+                                                                            ),
+                                                                            InkWell(
+                                                                              onTap: () async {
+                                                                                // Toggle expansion
+                                                                                if (isExpanded) {
+                                                                                  val.selectIndex.value = 0;
+                                                                                } else {
+                                                                                  try {
+                                                                                    val.selectIndex.value = brand["id"];
 
-                                                                                          // ✅ Fetch product details
-                                                                                          await productController.getProductById(productId);
+                                                                                    // TODO: WORKAROUND - Fetch complete product data from /view-brand API
+                                                                                    // because /brand-products only returns id and title
+                                                                                    // Only fetch if we don't have products cached for this brand
+                                                                                    final currentBrandDetails = brandController.brandDetails;
+                                                                                    final needsToFetch = currentBrandDetails.isEmpty || currentBrandDetails["brandInfo"]?["id"] != brand["id"] || (currentBrandDetails["products"] as List?)?.isEmpty == true;
 
-                                                                                          // Close loading dialog
-                                                                                          if (Get.isDialogOpen ?? false) Get.back();
+                                                                                    if (needsToFetch) {
+                                                                                      print("🔄 Fetching brand details for expanded brand: ${brand["name"]}");
+                                                                                      await brandController.getBrandDetails(brand["id"], "");
+                                                                                    } else {
+                                                                                      print("✅ Using cached brand details for: ${brand["name"]}");
+                                                                                    }
+                                                                                  } catch (e) {
+                                                                                    print("❌ Error fetching brand details on expand: $e");
+                                                                                    // Collapse on error
+                                                                                    val.selectIndex.value = 0;
+                                                                                  }
+                                                                                }
+                                                                                val.update();
+                                                                              },
+                                                                              child: Padding(
+                                                                                padding: EdgeInsets.symmetric(horizontal: 12.sp),
+                                                                                child: SvgPicture.asset(
+                                                                                  isExpanded ? upDropDownSvgImage : dropdownSvgImage,
+                                                                                  color: colorPrimary,
+                                                                                  height: 7.sp,
+                                                                                  width: 11.sp,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
 
-                                                                                          // Check for errors
-                                                                                          final err = productController.errorMsg.value;
-                                                                                          if (err.isNotEmpty) {
-                                                                                            showAppSnackBar(err);
-                                                                                            return;
-                                                                                          }
+                                                                    // Expandable Product Grid
+                                                                    isExpanded
+                                                                        ? (products
+                                                                                .isNotEmpty
+                                                                            ? Column(
+                                                                                children: [
+                                                                                  // SizedBox(height: 8.sp),
+                                                                                  Padding(
+                                                                                    padding: EdgeInsets.symmetric(horizontal: 16.sp),
+                                                                                    child: GridView.count(
+                                                                                      padding: EdgeInsets.zero,
+                                                                                      shrinkWrap: true,
+                                                                                      crossAxisCount: 3,
+                                                                                      childAspectRatio: 0.85,
+                                                                                      physics: const ScrollPhysics(),
+                                                                                      crossAxisSpacing: 10.sp,
+                                                                                      mainAxisSpacing: 10.sp,
+                                                                                      addAutomaticKeepAlives: false,
+                                                                                      addRepaintBoundaries: true,
+                                                                                      children: List.generate(products.length, (i) {
+                                                                                        final product = products[i];
+                                                                                        // Support both image formats: "images" array or "imageUrls" array
+                                                                                        String? imageUrl;
+                                                                                        if (product["images"] != null && product["images"] is List && product["images"].isNotEmpty && product["images"][0] != null && product["images"][0] is Map && product["images"][0]["name"] != null) {
+                                                                                          imageUrl = product["images"][0]["name"].toString();
+                                                                                        } else if (product["imageUrls"] != null && product["imageUrls"] is List && product["imageUrls"].isNotEmpty && product["imageUrls"][0] != null) {
+                                                                                          imageUrl = product["imageUrls"][0].toString();
+                                                                                        }
 
-                                                                                          // ✅ Navigate to ProductDetailsScreen
-                                                                                          await Get.to(() => ProductDetailsScreenV2(
-                                                                                                expresshour: homeController.expressHour.value,
-                                                                                                backgroundcolor: whiteColor,
-                                                                                                brandName: brand["name"] ?? "",
-                                                                                                productId: productId,
-                                                                                                type: "add",
+                                                                                        return PounceWrapper(
+                                                                                          onTap: () async {
+                                                                                            try {
+                                                                                              // ✅ Get product ID from the product
+                                                                                              final productId = product["id"];
+                                                                                              if (productId == null) {
+                                                                                                print("⚠️ Product ID is null, cannot navigate");
+                                                                                                return;
+                                                                                              }
+
+                                                                                              // Show loading dialog
+                                                                                              Get.dialog(
+                                                                                                const Center(child: LfLogoLoader(size: 54)),
+                                                                                                barrierDismissible: false,
+                                                                                              );
+
+                                                                                              // ✅ Fetch product details
+                                                                                              await productController.getProductById(productId);
+
+                                                                                              // Close loading dialog
+                                                                                              if (Get.isDialogOpen ?? false) Get.back();
+
+                                                                                              // Check for errors
+                                                                                              final err = productController.errorMsg.value;
+                                                                                              if (err.isNotEmpty) {
+                                                                                                showAppSnackBar(err);
+                                                                                                return;
+                                                                                              }
+
+                                                                                              // ✅ Navigate to ProductDetailsScreen
+                                                                                              await Get.to(() => ProductDetailsScreenV2(
+                                                                                                    expresshour: homeController.expressHour.value,
+                                                                                                    backgroundcolor: whiteColor,
+                                                                                                    brandName: brand["name"] ?? "",
+                                                                                                    productId: productId,
+                                                                                                    type: "add",
+                                                                                                  ));
+
+                                                                                              SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+                                                                                                statusBarColor: whiteColor,
+                                                                                                systemNavigationBarColor: whiteColor,
+                                                                                                statusBarIconBrightness: Brightness.dark,
+                                                                                                statusBarBrightness: Brightness.light,
                                                                                               ));
 
-                                                                                          SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-                                                                                            statusBarColor: whiteColor,
-                                                                                            systemNavigationBarColor: whiteColor,
-                                                                                            statusBarIconBrightness: Brightness.dark,
-                                                                                            statusBarBrightness: Brightness.light,
-                                                                                          ));
-
-                                                                                          await analytics.logEvent(
-                                                                                            name: 'brandscreen_product_details',
-                                                                                            parameters: {
-                                                                                              'page_name': 'brandscreen_product_details'
-                                                                                            },
-                                                                                          );
-                                                                                        } catch (e) {
-                                                                                          print("❌ Error on product tap: $e");
-                                                                                          // Close dialog if still open
-                                                                                          if (Get.isDialogOpen ?? false) Get.back();
-                                                                                        }
-                                                                                      },
-                                                                                      child: Column(
-                                                                                        children: [
-                                                                                          imageUrl != null
-                                                                                              ? SizedBox(
-                                                                                                  height: 97.sp,
-                                                                                                  width: 97.sp,
-                                                                                                  child: CachedNetworkImage(
-                                                                                                    cacheManager: CacheManager(
-                                                                                                      Config(
-                                                                                                        "productThumbnailsCache",
-                                                                                                        stalePeriod: const Duration(days: 15),
-                                                                                                        maxNrOfCacheObjects: 150,
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                    fit: BoxFit.fill,
-                                                                                                    imageUrl: ImageHelper.toWebP(imageUrl),
-                                                                                                    memCacheWidth: (97.sp * MediaQuery.of(context).devicePixelRatio).round(),
-                                                                                                    memCacheHeight: (97.sp * MediaQuery.of(context).devicePixelRatio).round(),
-                                                                                                    placeholder: (context, url) => Container(
+                                                                                              await analytics.logEvent(
+                                                                                                name: 'brandscreen_product_details',
+                                                                                                parameters: {
+                                                                                                  'page_name': 'brandscreen_product_details'
+                                                                                                },
+                                                                                              );
+                                                                                            } catch (e) {
+                                                                                              print("❌ Error on product tap: $e");
+                                                                                              // Close dialog if still open
+                                                                                              if (Get.isDialogOpen ?? false) Get.back();
+                                                                                            }
+                                                                                          },
+                                                                                          child: Column(
+                                                                                            children: [
+                                                                                              imageUrl != null
+                                                                                                  ? SizedBox(
                                                                                                       height: 97.sp,
                                                                                                       width: 97.sp,
-                                                                                                      color: Colors.grey[200],
-                                                                                                      child: const Center(
-                                                                                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                                                                                      child: CachedNetworkImage(
+                                                                                                        cacheManager: CacheManager(
+                                                                                                          Config(
+                                                                                                            "productThumbnailsCache",
+                                                                                                            stalePeriod: const Duration(days: 15),
+                                                                                                            maxNrOfCacheObjects: 150,
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                        fit: BoxFit.fill,
+                                                                                                        imageUrl: ImageHelper.toWebP(imageUrl),
+                                                                                                        memCacheWidth: (97.sp * MediaQuery.of(context).devicePixelRatio).round(),
+                                                                                                        memCacheHeight: (97.sp * MediaQuery.of(context).devicePixelRatio).round(),
+                                                                                                        placeholder: (context, url) => Container(
+                                                                                                          height: 97.sp,
+                                                                                                          width: 97.sp,
+                                                                                                          color: Colors.grey[200],
+                                                                                                          child: const Center(
+                                                                                                            child: LfLogoLoader(size: 32, showGlow: false),
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                        errorWidget: (context, url, error) {
+                                                                                                          print("❌ [BrandsScreen] Product image load failed");
+                                                                                                          print("   URL: $url");
+                                                                                                          print("   Error: $error");
+                                                                                                          return Container(
+                                                                                                            height: 97.sp,
+                                                                                                            width: 97.sp,
+                                                                                                            color: Colors.grey[200],
+                                                                                                            child: const Icon(Icons.image_not_supported, size: 35, color: Colors.grey),
+                                                                                                          );
+                                                                                                        },
                                                                                                       ),
+                                                                                                    )
+                                                                                                  : Image.asset(
+                                                                                                      dummyWishlistImage,
+                                                                                                      height: 97.sp,
+                                                                                                      width: 97.sp,
                                                                                                     ),
-                                                                                                    errorWidget: (context, url, error) {
-                                                                                                      print("❌ [BrandsScreen] Product image load failed");
-                                                                                                      print("   URL: $url");
-                                                                                                      print("   Error: $error");
-                                                                                                      return Container(
-                                                                                                        height: 97.sp,
-                                                                                                        width: 97.sp,
-                                                                                                        color: Colors.grey[200],
-                                                                                                        child: const Icon(Icons.image_not_supported, size: 35, color: Colors.grey),
-                                                                                                      );
-                                                                                                    },
-                                                                                                  ),
-                                                                                                )
-                                                                                              : Image.asset(
-                                                                                                  dummyWishlistImage,
-                                                                                                  height: 97.sp,
-                                                                                                  width: 97.sp,
-                                                                                                ),
-                                                                                        ],
-                                                                                      ),
-                                                                                    );
-                                                                                  }),
-                                                                                ),
-                                                                              ),
-                                                                              InkWell(
-                                                                                onTap: () async {
-                                                                                  brandController.brandlogo.value = brand["logo"];
-                                                                                  brandController.brandbackground.value = brand["background_image"] ?? "";
-                                                                                  brandController.brandName.value = brand["name"];
-                                                                                  brandController.showAllBrand.value = true;
-                                                                                  brandController.brandId.value = brand["id"];
-                                                                                  brandController.brandProductDetailsList.clear();
-
-                                                                                  Get.to(AllBrandScreen(
-                                                                                    id: brand["id"],
-                                                                                    slug: "",
-                                                                                    screen: widget.screen!,
-                                                                                  ))?.then((value) {
-                                                                                    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-                                                                                      statusBarColor: whiteColor,
-                                                                                      systemNavigationBarColor: whiteColor,
-                                                                                      statusBarIconBrightness: Brightness.dark,
-                                                                                      statusBarBrightness: Brightness.light,
-                                                                                    ));
-                                                                                  });
-
-                                                                                  await analytics.logEvent(
-                                                                                    name: 'brand_details',
-                                                                                    parameters: {
-                                                                                      'page_name': 'brand_details'
-                                                                                    },
-                                                                                  );
-                                                                                },
-                                                                                child: Padding(
-                                                                                  padding: EdgeInsets.only(top: 4.sp, bottom: 4.sp),
-                                                                                  child: Container(
-                                                                                    height: 42.sp,
-                                                                                    color: homeAppBarColor,
-                                                                                    width: double.infinity,
-                                                                                    child: const Center(
-                                                                                      child: AppText(
-                                                                                        text: "EXPLORE BRAND",
-                                                                                        fontFamily: "Clash Display",
-                                                                                        fontWeight: FontWeight.w400,
-                                                                                        color: whiteColor,
-                                                                                        fontSize: 12,
-                                                                                      ),
+                                                                                            ],
+                                                                                          ),
+                                                                                        );
+                                                                                      }),
                                                                                     ),
                                                                                   ),
-                                                                                ),
+                                                                                  InkWell(
+                                                                                    onTap: () async {
+                                                                                      brandController.brandlogo.value = brand["logo"];
+                                                                                      brandController.brandbackground.value = brand["background_image"] ?? "";
+                                                                                      brandController.brandName.value = brand["name"];
+                                                                                      brandController.showAllBrand.value = true;
+                                                                                      brandController.brandId.value = brand["id"];
+                                                                                      brandController.brandProductDetailsList.clear();
+
+                                                                                      Get.to(AllBrandScreen(
+                                                                                        id: brand["id"],
+                                                                                        slug: "",
+                                                                                        screen: widget.screen!,
+                                                                                      ))?.then((value) {
+                                                                                        SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+                                                                                          statusBarColor: whiteColor,
+                                                                                          systemNavigationBarColor: whiteColor,
+                                                                                          statusBarIconBrightness: Brightness.dark,
+                                                                                          statusBarBrightness: Brightness.light,
+                                                                                        ));
+                                                                                      });
+
+                                                                                      await analytics.logEvent(
+                                                                                        name: 'brand_details',
+                                                                                        parameters: {
+                                                                                          'page_name': 'brand_details'
+                                                                                        },
+                                                                                      );
+                                                                                    },
+                                                                                    child: Padding(
+                                                                                      padding: EdgeInsets.only(top: 4.sp, bottom: 4.sp),
+                                                                                      child: Container(
+                                                                                        height: 42.sp,
+                                                                                        color: homeAppBarColor,
+                                                                                        width: double.infinity,
+                                                                                        child: const Center(
+                                                                                          child: AppText(
+                                                                                            text: "EXPLORE BRAND",
+                                                                                            fontFamily: "Clash Display",
+                                                                                            fontWeight: FontWeight.w400,
+                                                                                            color: whiteColor,
+                                                                                            fontSize: 12,
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  )
+                                                                                ],
                                                                               )
-                                                                            ],
-                                                                          )
-                                                                        : Padding(
-                                                                            padding:
-                                                                                EdgeInsets.all(12.sp),
-                                                                            child:
-                                                                                Text(
-                                                                              "No Product Found",
-                                                                              style: TextStyle(
-                                                                                fontSize: 14.sp,
-                                                                                fontFamily: "Clash Display Regular",
-                                                                              ),
-                                                                            ),
-                                                                          ))
-                                                                    : const SizedBox
-                                                                        .shrink(),
-                                                              ],
-                                                            );
-                                                          },
-                                                        ),
-                                                      )
-                                                    ],
-                                                  );
-                                                });
-                                          }),
-                                        )
-                                      : Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(top: 80.sp),
-                                              child: Center(
-                                                child: Image.asset(errorImage,
-                                                    height: 200.sp,
-                                                    width: 220.sp,
-                                                    fit: BoxFit.fill),
-                                              ),
+                                                                            : Padding(
+                                                                                padding: EdgeInsets.all(12.sp),
+                                                                                child: Text(
+                                                                                  "No Product Found",
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 14.sp,
+                                                                                    fontFamily: "Clash Display Regular",
+                                                                                  ),
+                                                                                ),
+                                                                              ))
+                                                                        : const SizedBox
+                                                                            .shrink(),
+                                                                  ],
+                                                                );
+                                                              },
+                                                            ),
+                                                          )
+                                                        ],
+                                                      );
+                                                    });
+                                              }),
+                                            )
+                                          : Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: 80.sp),
+                                                  child: Center(
+                                                    child: Image.asset(
+                                                        errorImage,
+                                                        height: 200.sp,
+                                                        width: 220.sp,
+                                                        fit: BoxFit.fill),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 6.sp,
+                                                        left: 20.sp,
+                                                        bottom: 20.sp,
+                                                        right: 20.sp),
+                                                    child: brandController
+                                                            .searchController
+                                                            .text
+                                                            .toString()
+                                                            .trim()
+                                                            .isNotEmpty
+                                                        ? Text(
+                                                            "No ${brandController.searchController.text.toString().trim()} found"
+                                                                .toUpperCase(),
+                                                            style: const TextStyle(
+                                                                fontSize: 12,
+                                                                color:
+                                                                    homeAppBarColor,
+                                                                fontFamily:
+                                                                    "Clash Display"))
+                                                        : const Text(
+                                                            "Coming Soon to Your Area",
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                                fontSize: 12,
+                                                                color:
+                                                                    homeAppBarColor,
+                                                                fontFamily:
+                                                                    "Clash Display"))),
+                                              ],
                                             ),
-                                            Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 6.sp,
-                                                    left: 20.sp,
-                                                    bottom: 20.sp,
-                                                    right: 20.sp),
-                                                child: brandController
-                                                        .searchController.text
-                                                        .toString()
-                                                        .trim()
-                                                        .isNotEmpty
-                                                    ? Text(
-                                                        "No ${brandController.searchController.text.toString().trim()} found"
-                                                            .toUpperCase(),
-                                                        style: const TextStyle(
-                                                            fontSize: 12,
-                                                            color:
-                                                                homeAppBarColor,
-                                                            fontFamily:
-                                                                "Clash Display"))
-                                                    : const Text(
-                                                        "Coming Soon to Your Area",
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                            fontSize: 12,
-                                                            color:
-                                                                homeAppBarColor,
-                                                            fontFamily:
-                                                                "Clash Display"))),
-                                          ],
+                                  brandController.loadMore.value
+                                      ? const DummybrandList()
+                                      : const SizedBox(
+                                          height: 0,
                                         ),
-                              brandController.loadMore.value
-                                  ? const DummybrandList()
-                                  : const SizedBox(
-                                      height: 0,
-                                    ),
-                            ],
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
+                          AnimatedOpacity(
+                            opacity: _isRefreshing
+                                ? 1.0
+                                : (_pullOffset / 80.0).clamp(0.0, 1.0),
+                            duration: const Duration(milliseconds: 150),
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Padding(
+                                padding: EdgeInsets.only(top: _isRefreshing ? 8 : (_pullOffset - 40).clamp(0.0, 8.0)),
+                                child: const LfLogoLoader(size: 28),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ),
+                )
               ],
             ),
           ),

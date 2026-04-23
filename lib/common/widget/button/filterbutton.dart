@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constant/constants.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class FilterButton extends StatefulWidget {
   final Function onPresedApply;
@@ -91,9 +92,7 @@ class _FilterButtonState extends State<FilterButton> {
                               height: 14.sp,
                               width: 14.sp,
                               child: Center(
-                                  child: CircularProgressIndicator(
-                                color: whiteColor,
-                              )),
+                                  child: LfLogoLoader(size: 9, showGlow: false)),
                             ),
                           )
                         : ElevatedButton(

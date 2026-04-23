@@ -11,6 +11,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/common/widget/other/error_shake.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import 'package:lafetch/common/widget/other/product_price_display.dart';
 import 'package:lafetch/controllers/cart_controller.dart';
 import 'package:lafetch/screens/Brands/allbrandscreen.dart';
@@ -603,10 +604,14 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 SizedBox(
                                   width: 20.sp,
                                   height: 20.sp,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        whiteColor),
+                                  // child: CircularProgressIndicator(
+                                  //   strokeWidth: 2,
+                                  //   valueColor: AlwaysStoppedAnimation<Color>(
+                                  //       whiteColor),
+                                  // ),
+                                  child: const LfLoaderWidget(
+                                    size: 48,
+                                    brandColor: Colors.grey,
                                   ),
                                 ),
                                 SizedBox(width: 12.sp),
@@ -844,7 +849,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
 // Add these if not already in your class
   void showLoading() {
     Get.dialog(
-      const Center(child: CircularProgressIndicator()),
+      const Center(child: LfLogoLoader(size: 54)),
       barrierDismissible: false,
     );
   }
@@ -2400,9 +2405,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                               ? const SizedBox(
                                                   height: 16,
                                                   width: 16,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                          strokeWidth: 2),
+                                                  child: Center(child: LfLogoLoader(size: 10, showGlow: false)),
                                                 )
                                               : Container(
                                                   padding: EdgeInsets.symmetric(
@@ -3108,7 +3111,7 @@ class ProductDetailsScreenState extends State<ProductDetailsScreen> {
       if (isLoading) {
         return Padding(
           padding: EdgeInsets.symmetric(vertical: 20.sp),
-          child: const Center(child: CircularProgressIndicator()),
+          child: const Center(child: LfLogoLoader(size: 32, showGlow: false)),
         );
       }
 

@@ -9,6 +9,7 @@ import 'package:lafetch/common/widget/other/common_widget.dart';
 import 'package:lafetch/core/constant/constants.dart';
 import 'package:lafetch/controllers/order_controller.dart';
 import 'package:lafetch/screens/orders/cancel_order.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class ConfirmOrderDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> order;
@@ -63,7 +64,7 @@ class _ConfirmOrderDetailsScreenState extends State<ConfirmOrderDetailsScreen> {
     if (isLoading) {
       return const Scaffold(
         backgroundColor: whiteColor,
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(child: LfLoaderWidget(size: 54)),
       );
     }
 

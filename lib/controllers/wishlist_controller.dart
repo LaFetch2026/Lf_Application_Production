@@ -313,7 +313,7 @@ class WishlistController extends BaseController {
       );
 
       if (resp.statusCode == 201 || resp.statusCode == 200) {
-        getSnackBar("✅ Board created.");
+        getSnackBar("Board created.");
         await fetchBoards();
       } else {
         getSnackBar(_serverMessage(resp, fallback: "Failed to create board."));
@@ -342,7 +342,7 @@ class WishlistController extends BaseController {
       );
 
       if (resp.statusCode == 200) {
-        getSnackBar("✅ Board renamed.");
+        getSnackBar("Board renamed.");
         await fetchBoards();
       } else {
         getSnackBar(_serverMessage(resp, fallback: "Failed to rename board."));
@@ -371,7 +371,7 @@ class WishlistController extends BaseController {
 
       final ok = resp.statusCode == 200 || resp.statusCode == 204;
       if (ok) {
-        getSnackBar("✅ Board deleted.");
+        getSnackBar("Board deleted.");
         // Do NOT fetch here automatically; caller usually handles navigation then refresh.
         return true;
       } else {
@@ -512,7 +512,7 @@ class WishlistController extends BaseController {
       );
 
       if (resp.statusCode == 200 || resp.statusCode == 201) {
-        getSnackBar("✅ Product added to board.");
+        getSnackBar("Product added to board.");
 
         // Update wishlist status
         isWishlisted.value = true;
@@ -576,7 +576,7 @@ class WishlistController extends BaseController {
         isWishlisted.value = false;
         wishListDetails["wishlisted"] = false;
 
-        // getSnackBar("✅ Product removed.");
+        // getSnackBar("Product removed.");
       } else {
         final msg = _serverMessage(res, fallback: "Failed to delete product.");
         print("❌ removeProductFromBoard ${res.statusCode} ${res.body}");

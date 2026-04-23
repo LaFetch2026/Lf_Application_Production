@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/other/common_widget.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/lists/dummy_container.dart';
@@ -113,7 +114,11 @@ class SearchScreenState extends State<SearchScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
+      builder: (_) => const Center(
+          child: LfLoaderWidget(
+        size: 48,
+        brandColor: Colors.grey,
+      )),
     );
 
     await controller.getSearchData();

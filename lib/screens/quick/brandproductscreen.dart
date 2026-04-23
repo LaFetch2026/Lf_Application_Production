@@ -12,6 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import '../../common/widget/lists/dummy_grid_black.dart';
 import '../../common/widget/other/common_widget.dart';
 import '../../common/widget/other/pounce_wrapper.dart';
@@ -1125,7 +1126,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                           onTap: () async {
                             // Fetch PDP data first
                             Get.dialog(
-                              const Center(child: CircularProgressIndicator()),
+                              const Center(child: LfLogoLoader(size: 54)),
                               barrierDismissible: false,
                             );
                             await productController.getProductById(pid);

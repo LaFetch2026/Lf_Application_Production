@@ -46,6 +46,7 @@ import '../controllers/wishlist_controller.dart';
 import '../core/constant/constants.dart';
 import '../common/widget/newsletter/newsletter_section.dart';
 import 'catalog/productlist/pdp_v2/product_details_screen_v2.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class CartScreen extends StatefulWidget {
   final Color backgroundcolor;
@@ -912,7 +913,7 @@ class CartScreenState extends State<CartScreen> {
                       height: MediaQuery.of(context).size.height,
                       width: MediaQuery.of(context).size.width,
                       color: whiteColor,
-                      child: const Center(child: CircularProgressIndicator()),
+                      child: const Center(child: LfLoaderWidget(size: 54)),
                     )
                   : Column(
                       children: [
@@ -2376,10 +2377,7 @@ class CartScreenState extends State<CartScreen> {
         return Padding(
           padding: EdgeInsets.symmetric(vertical: 20.sp),
           child: const Center(
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: Colors.black,
-            ),
+            child: LfLogoLoader(size: 32, showGlow: false),
           ),
         );
       }
@@ -2435,10 +2433,7 @@ class CartScreenState extends State<CartScreen> {
                         borderRadius: BorderRadius.circular(8.sp),
                       ),
                       child: const Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.black,
-                        ),
+                        child: LfLogoLoader(size: 32, showGlow: false),
                       ),
                     ),
                     errorWidget: (context, url, error) => Container(
@@ -2665,11 +2660,11 @@ class CartScreenState extends State<CartScreen> {
                     () => controller.isOrder.value
                         ? const SizedBox.shrink()
                         : (controller.pageState == PageState.LOADING)
-                            ? Center(
-                                child: Transform.scale(
-                                  scale: 0.5.sp,
-                                  child: const CircularProgressIndicator(
-                                      color: whiteColor),
+                            ? const Center(
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: Center(child: LfLogoLoader(size: 12, showGlow: false)),
                                 ),
                               )
                             : Text(

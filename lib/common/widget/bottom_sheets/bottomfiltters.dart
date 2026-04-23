@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lafetch/common/widget/button/filterbutton.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../controllers/product_controller.dart';
 import '../../../core/constant/constants.dart';
-
-import '../button/filterbutton.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import '../lists/dummy_container.dart';
 
 class BottomFilters extends StatefulWidget {
@@ -333,7 +333,8 @@ class BottomFiltersState extends State<BottomFilters> {
                                       height: 20.sp,
                                       width: 20.sp,
                                       child: Center(
-                                          child: CircularProgressIndicator()),
+                                          child: LfLogoLoader(
+                                              size: 12, showGlow: false)),
                                     )
                                   : Padding(
                                       padding:

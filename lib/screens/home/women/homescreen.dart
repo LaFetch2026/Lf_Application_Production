@@ -49,6 +49,7 @@ import '../../../common/widget/newsletter/newsletter_section.dart';
 import '../../../core/utils/image_helper.dart';
 import '../../../controllers/new_in_controller.dart';
 import '../../../common/widget/cards/product_card.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 // ✅ Global RouteObserver for video auto-pause on navigation
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -80,6 +81,8 @@ class HomeScreenState extends State<HomeScreen>
   bool isGuest = false;
   static bool _isInitialLoad = true;
   static bool _dataLoaded = false; // Static to persist across rebuilds
+  bool _isRefreshing = false;
+  double _pullOffset = 0;
 
   static const Map<int, String> _sectionVideoUrls = {
     1: "https://la-fetch.s3.ap-south-1.amazonaws.com/Application_Banners/Lafetch-Men's.mp4",
@@ -267,6 +270,8 @@ class HomeScreenState extends State<HomeScreen>
 
   // ✅ Method to force refresh data (call when pull-to-refresh or manual refresh)
   Future<void> forceRefreshData() async {
+    setState(() => _isRefreshing = true);
+    try {
     print("🔄 Force refresh triggered");
 
     final currentGender = homeController.homeGenderValue.value;
@@ -288,6 +293,9 @@ class HomeScreenState extends State<HomeScreen>
       homeController.getAnnouncements(forceRefresh: true),
       newInController.fetchProducts(currentGender, forceRefresh: true),
     ]);
+    } finally {
+      if (mounted) setState(() => _isRefreshing = false);
+    }
   }
 
   // ✅ Static method to clear all cached data (call on logout)
@@ -666,10 +674,30 @@ class HomeScreenState extends State<HomeScreen>
 
           return false;
         },
-        child: RefreshIndicator(
-          // ✅ ADDED: Pull-to-refresh functionality
-          onRefresh: forceRefreshData,
-          child: Column(
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (notification) {
+            if (notification is OverscrollNotification &&
+                notification.overscroll < 0 &&
+                !_isRefreshing) {
+              // Accumulate pull distance
+              final pull = (-notification.overscroll * 0.4).clamp(0.0, 80.0);
+              if (_pullOffset != pull) {
+                setState(() => _pullOffset = pull);
+              }
+            } else if (notification is ScrollEndNotification ||
+                notification is UserScrollNotification) {
+              if (_pullOffset > 50 && !_isRefreshing) {
+                setState(() => _pullOffset = 0);
+                forceRefreshData();
+              } else if (_pullOffset > 0 && !_isRefreshing) {
+                setState(() => _pullOffset = 0);
+              }
+            }
+            return false;
+          },
+          child: Stack(
+            children: [
+              Column(
             children: [
               HomeAppbar(
                 onPressedSearch: () async {
@@ -741,10 +769,7 @@ class HomeScreenState extends State<HomeScreen>
                     ? SizedBox(
                         height: 40.sp,
                         child: const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.black,
-                          ),
+                          child: LfLogoLoader(size: 20, showGlow: false),
                         ),
                       )
                     : homeController.genderTabs.isEmpty ||
@@ -954,10 +979,7 @@ class HomeScreenState extends State<HomeScreen>
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.black,
-                                        ),
+                                        LfLogoLoader(size: 32, showGlow: false),
                                         SizedBox(height: 12),
                                         Text(
                                           'Loading banners...',
@@ -1252,12 +1274,9 @@ class HomeScreenState extends State<HomeScreen>
                                     Padding(
                                       padding: EdgeInsets.symmetric(
                                           vertical:
-                                              24.sp), // ✅ Consistent spacing
+                                              24.sp),
                                       child: const Center(
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.black,
-                                        ),
+                                        child: LfLogoLoader(size: 32, showGlow: false),
                                       ),
                                     ),
                                 ],
@@ -1277,6 +1296,25 @@ class HomeScreenState extends State<HomeScreen>
                   ],
                 ),
               ),
+            ],
+          ),
+              // Pull-to-refresh logo — slides down from top, no blur
+              if (_pullOffset > 0 || _isRefreshing)
+                Positioned(
+                  top: MediaQuery.of(context).padding.top +
+                      (_isRefreshing ? 8 : (_pullOffset - 40).clamp(0.0, 8.0)),
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: AnimatedOpacity(
+                      opacity: _isRefreshing
+                          ? 1.0
+                          : (_pullOffset / 80.0).clamp(0.0, 1.0),
+                      duration: const Duration(milliseconds: 150),
+                      child: const LfLogoLoader(size: 28),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -2377,6 +2415,7 @@ class _SectionVideoBannerState extends State<_SectionVideoBanner>
     if (route is PageRoute) {
       routeObserver.subscribe(this, route);
     }
+    precacheImage(const AssetImage('assets/images/lafetch_logo.png'), context);
   }
 
   @override
@@ -2656,7 +2695,7 @@ class _BannerVideoPlayerState extends State<BannerVideoPlayer>
         width: widget.width,
         color: Colors.black.withOpacity(0.04),
         child: const Center(
-          child: CircularProgressIndicator(strokeWidth: 2),
+          child: LfLogoLoader(size: 32, showGlow: false),
         ),
       );
     }
@@ -3452,10 +3491,7 @@ class _VideoBannerItemState extends State<_VideoBannerItem>
       height: widget.height,
       color: Colors.black.withOpacity(0.04),
       child: const Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          color: Colors.black,
-        ),
+        child: LfLogoLoader(size: 32, showGlow: false),
       ),
     );
   }
@@ -3489,10 +3525,7 @@ class _BannerItem extends StatelessWidget {
               height: height,
               color: Colors.black.withOpacity(0.04),
               child: const Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.black,
-                ),
+                child: LfLogoLoader(size: 32, showGlow: false),
               ),
             ),
             errorWidget: (_, __, ___) => Container(

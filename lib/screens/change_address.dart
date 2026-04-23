@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:lafetch/screens/bottomnavscreen.dart';
 import 'package:lafetch/screens/mapscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 import '../common/widget/appbar/saveaddress_appbar.dart';
 import '../common/widget/lists/dummy_container.dart';
@@ -471,8 +472,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                             height: 16.sp,
                                                             width: 16.sp,
                                                             child: Center(
-                                                                child:
-                                                                    CircularProgressIndicator()),
+                                                                child: LfLogoLoader(size: 10, showGlow: false)),
                                                           ),
                                                         ),
                                                       )
@@ -873,8 +873,7 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                                         height: 16.sp,
                                                         width: 16.sp,
                                                         child: Center(
-                                                            child:
-                                                                CircularProgressIndicator()),
+                                                            child: LfLogoLoader(size: 10, showGlow: false)),
                                                       ),
                                                     ),
                                                   )
