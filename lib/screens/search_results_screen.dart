@@ -25,6 +25,7 @@ import '../controllers/product_controller.dart';
 import '../controllers/wishlist_controller.dart';
 import '../controllers/brand_controller.dart';
 import '../core/constant/constants.dart';
+import '../models/nudge_model.dart';
 import 'dart:async';
 
 class SearchResultsScreen extends StatefulWidget {
@@ -413,6 +414,11 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                               price: price,
                               mrp: mrp,
                               showExpress: express,
+                              nudges: (item['nudges'] as List<dynamic>?)
+                                      ?.map((e) => Nudge.fromJson(
+                                          e as Map<String, dynamic>))
+                                      .toList() ??
+                                  [],
                               onTap: () async {
                                 Get.to(
                                   ProductDetailsScreenV2(

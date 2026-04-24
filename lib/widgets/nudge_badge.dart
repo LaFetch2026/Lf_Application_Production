@@ -3,83 +3,101 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../models/nudge_model.dart';
 
-/// A pill-shaped badge widget that renders a single [Nudge] with a colour-coded
-/// background, an icon, and (in full mode) a text label.
-///
-/// Set [compact] to `true` to show only the icon (used on product cards).
-/// Set [compact] to `false` (the default) to show icon + label (used on PDP).
 class NudgeBadge extends StatelessWidget {
   final Nudge nudge;
-  final bool compact;
+  final bool showText;
 
   const NudgeBadge({
     super.key,
     required this.nudge,
-    this.compact = false,
+    this.showText = true,
   });
 
-  /// Maps a nudge [key] to its designated background colour.
-  /// Returns a grey fallback for unrecognised keys.
-  static Color _colorFor(String key) {
+  static _NudgeStyle _styleFor(String key) {
     switch (key) {
       case 'selling_fast':
-        return const Color(0xFFEF4444); // red
+        return const _NudgeStyle(
+          gradient:
+              LinearGradient(colors: [Color(0xFFFCA5A5), Color(0xFFEF4444)]),
+          icon: Icons.bolt,
+        );
       case 'trending':
-        return const Color(0xFF8B5CF6); // purple
+        return const _NudgeStyle(
+          gradient:
+              LinearGradient(colors: [Color(0xFFD8B4FE), Color(0xFFA855F7)]),
+          icon: Icons.trending_up,
+        );
       case 'new_in':
-        return const Color(0xFF10B981); // emerald
+        return const _NudgeStyle(
+          gradient:
+              LinearGradient(colors: [Color(0xFFBAE6FD), Color(0xFF38BDF8)]),
+          icon: Icons.flare,
+        );
       case 'back_in_stock':
-        return const Color(0xFF0EA5E9); // sky blue
+        return const _NudgeStyle(
+          gradient:
+              LinearGradient(colors: [Color(0xFFBFDBFE), Color(0xFF3B82F6)]),
+          icon: Icons.inventory_2,
+        );
       case 'bestseller':
-        return const Color(0xFFF59E0B); // amber
+        return const _NudgeStyle(
+          gradient:
+              LinearGradient(colors: [Color(0xFFFDE68A), Color(0xFFF59E0B)]),
+          icon: Icons.military_tech,
+        );
       default:
-        return const Color(0xFF9CA3AF); // grey fallback
-    }
-  }
-
-  /// Maps a nudge [key] to its designated icon.
-  /// Returns a generic label icon for unrecognised keys.
-  static IconData _iconFor(String key) {
-    switch (key) {
-      case 'selling_fast':
-        return Icons.local_fire_department;
-      case 'trending':
-        return Icons.trending_up;
-      case 'new_in':
-        return Icons.fiber_new;
-      case 'back_in_stock':
-        return Icons.replay;
-      case 'bestseller':
-        return Icons.workspace_premium;
-      default:
-        return Icons.label_outline;
+        return const _NudgeStyle(
+          gradient:
+              LinearGradient(colors: [Color(0xFFE5E7EB), Color(0xFF9CA3AF)]),
+          icon: Icons.sell,
+        );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final color = _colorFor(nudge.key);
-    final icon = _iconFor(nudge.key);
+    final style = _styleFor(nudge.key);
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 6.sp, vertical: 3.sp),
+      padding: EdgeInsets.symmetric(horizontal: 8.sp, vertical: 4.sp),
       decoration: BoxDecoration(
-        color: color,
+        gradient: style.gradient,
         borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: style.gradient.colors.first.withOpacity(0.35),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: compact
-          ? Icon(icon, size: 12.sp, color: Colors.white)
-          : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, size: 12.sp, color: Colors.white),
-                SizedBox(width: 3.sp),
-                Text(
-                  nudge.label,
-                  style: TextStyle(fontSize: 10.sp, color: Colors.white),
-                ),
-              ],
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(style.icon, size: showText ? 10.sp : 11.sp, color: Colors.white),
+          if (showText) ...[
+            SizedBox(width: 4.sp),
+            Text(
+              nudge.label.toUpperCase(),
+              style: TextStyle(
+                fontSize: 9.sp,
+                color: Colors.white,
+                fontFamily: 'ClashDisplay',
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
+                height: 1,
+              ),
             ),
+          ],
+        ],
+      ),
     );
   }
+}
+
+class _NudgeStyle {
+  final LinearGradient gradient;
+  final IconData icon;
+
+  const _NudgeStyle({required this.gradient, required this.icon});
 }

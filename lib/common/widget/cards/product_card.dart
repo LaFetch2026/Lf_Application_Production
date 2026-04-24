@@ -9,6 +9,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constant/constants.dart';
 import '../../../core/utils/image_helper.dart';
+import '../../../models/nudge_model.dart';
+import '../../../widgets/nudge_badge_row.dart';
 import '../other/pounce_wrapper.dart';
 import '../other/product_price_display.dart';
 
@@ -353,6 +355,9 @@ class ProductGridCard extends StatelessWidget {
   /// Image height - defaults to 160.sp for compact cards
   final double? imageHeight;
 
+  /// Optional nudge badges to display on the top-left of the product image
+  final List<Nudge> nudges;
+
   const ProductGridCard({
     super.key,
     required this.imageUrl,
@@ -364,6 +369,7 @@ class ProductGridCard extends StatelessWidget {
     this.onTap,
     this.backgroundColor = const Color(0xFFF3F1F1),
     this.imageHeight,
+    this.nudges = const [],
   });
 
   @override
@@ -375,92 +381,106 @@ class ProductGridCard extends StatelessWidget {
         HapticFeedback.lightImpact();
         onTap?.call();
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(6.sp),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(8.sp),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Product Image - fixed height for consistency
-              ClipRRect(
-                borderRadius: BorderRadius.circular(6.sp),
-                child: SizedBox(
-                  height: imgHeight,
-                  width: double.infinity,
-                  child: _buildImage(),
-                ),
-              ),
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.circular(6.sp),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(8.sp),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Product Image - fixed height for consistency
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(6.sp),
+                    child: SizedBox(
+                      height: imgHeight,
+                      width: double.infinity,
+                      child: _buildImage(),
+                    ),
+                  ),
 
-              SizedBox(height: 6.sp),
+                  SizedBox(height: 6.sp),
 
-              // Product Title
-              Text(
-                title.toUpperCase(),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontFamily: "Clash Display Semibold",
-                  fontSize: 11.sp,
-                  fontWeight: FontWeight.w700,
-                  color: blackColor,
-                ),
-              ),
-
-              // Brand Name
-              if (brandName.isNotEmpty)
-                Padding(
-                  padding: EdgeInsets.only(top: 2.sp),
-                  child: Text(
-                    brandName.toUpperCase(),
+                  // Product Title
+                  Text(
+                    title.toUpperCase(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontFamily: "Clash Display Regular",
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w400,
-                      color: const Color(0xFF6B7280),
+                      fontFamily: "Clash Display Semibold",
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w700,
+                      color: blackColor,
                     ),
                   ),
-                ),
 
-              // Price Row
-              Padding(
-                padding: EdgeInsets.only(top: 4.sp),
-                child: _buildPriceSection(),
-              ),
-
-              // Express Badge
-              if (showExpress)
-                Padding(
-                  padding: EdgeInsets.only(top: 3.sp),
-                  child: Row(
-                    children: [
-                      ImageIcon(
-                        AssetImage(truckImage),
-                        color: expressText,
-                        size: 12.sp,
-                      ),
-                      SizedBox(width: 4.sp),
-                      Text(
-                        "Express",
+                  // Brand Name
+                  if (brandName.isNotEmpty)
+                    Padding(
+                      padding: EdgeInsets.only(top: 2.sp),
+                      child: Text(
+                        brandName.toUpperCase(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: expressText,
-                          fontSize: 10.sp,
                           fontFamily: "Clash Display Regular",
+                          fontSize: 10.sp,
                           fontWeight: FontWeight.w400,
+                          color: const Color(0xFF6B7280),
                         ),
                       ),
-                    ],
+                    ),
+
+                  // Price Row
+                  Padding(
+                    padding: EdgeInsets.only(top: 4.sp),
+                    child: _buildPriceSection(),
                   ),
-                ),
-            ],
+
+                  // Express Badge
+                  if (showExpress)
+                    Padding(
+                      padding: EdgeInsets.only(top: 3.sp),
+                      child: Row(
+                        children: [
+                          ImageIcon(
+                            AssetImage(truckImage),
+                            color: expressText,
+                            size: 12.sp,
+                          ),
+                          SizedBox(width: 4.sp),
+                          Text(
+                            "Express",
+                            style: TextStyle(
+                              color: expressText,
+                              fontSize: 10.sp,
+                              fontFamily: "Clash Display Regular",
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
-        ),
+          if (nudges.isNotEmpty)
+            Positioned(
+              top: 6.sp,
+              left: 6.sp,
+              child: NudgeBadgeRow(
+                nudges: nudges,
+                maxVisible: 2,
+                compact: true,
+              ),
+            ),
+        ],
       ),
     );
   }

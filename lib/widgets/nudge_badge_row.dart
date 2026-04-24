@@ -34,7 +34,7 @@ class NudgeBadgeRow extends StatelessWidget {
             .map(
               (n) => Padding(
                 padding: EdgeInsets.only(right: 4.sp),
-                child: NudgeBadge(nudge: n, compact: compact),
+                child: NudgeBadge(nudge: n, showText: compact),
               ),
             )
             .toList(),

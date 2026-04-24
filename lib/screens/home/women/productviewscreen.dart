@@ -23,6 +23,7 @@ import '../../../controllers/brand_controller.dart';
 import '../../../controllers/catalog_controller.dart';
 import '../../../core/constant/constants.dart';
 import '../../../models/collection_model.dart';
+import '../../../models/nudge_model.dart';
 import 'dart:async';
 
 class ProductViewScreen extends StatefulWidget {
@@ -785,6 +786,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                       price: price,
                       mrp: mrp,
                       showExpress: express,
+                      nudges: (item['nudges'] as List<dynamic>?)
+                              ?.map((e) => Nudge.fromJson(
+                                  e as Map<String, dynamic>))
+                              .toList() ??
+                          [],
                       onTap: () async {
                         Get.to(
                           ProductDetailsScreenV2(

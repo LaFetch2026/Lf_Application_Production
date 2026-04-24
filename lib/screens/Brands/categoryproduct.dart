@@ -27,6 +27,7 @@ import '../../controllers/product_controller.dart';
 import '../../controllers/wishlist_controller.dart';
 import '../../controllers/brand_controller.dart';
 import '../../core/constant/constants.dart';
+import '../../models/nudge_model.dart';
 
 class CategoryProductScreen extends StatefulWidget {
   final String categoryName;
@@ -803,6 +804,11 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                             price: price,
                             mrp: mrp,
                             showExpress: widget.type == "express",
+                            nudges: (m['nudges'] as List<dynamic>?)
+                                    ?.map((e) => Nudge.fromJson(
+                                        e as Map<String, dynamic>))
+                                    .toList() ??
+                                [],
                             onTap: () async {
                               if (pid == 0) {
                                 getSnackBar("Product not available");
@@ -1023,6 +1029,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           m["mrp"] ??
           0,
       "displayMrp": m["displayMrp"] ?? m["mrp"] ?? m["original_price"] ?? 0,
+      "nudges": m["nudges"],
     };
   }
 

@@ -45,10 +45,12 @@ import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
 import '../../../models/collection_extensions.dart';
 import '../../../models/collection_banner_model.dart';
+import '../../../models/nudge_model.dart';
 import '../../../common/widget/newsletter/newsletter_section.dart';
 import '../../../core/utils/image_helper.dart';
 import '../../../controllers/new_in_controller.dart';
 import '../../../common/widget/cards/product_card.dart';
+import '../../../widgets/nudge_badge_row.dart';
 import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 // ✅ Global RouteObserver for video auto-pause on navigation
@@ -272,27 +274,27 @@ class HomeScreenState extends State<HomeScreen>
   Future<void> forceRefreshData() async {
     setState(() => _isRefreshing = true);
     try {
-    print("🔄 Force refresh triggered");
+      print("🔄 Force refresh triggered");
 
-    final currentGender = homeController.homeGenderValue.value;
+      final currentGender = homeController.homeGenderValue.value;
 
-    // ✅ Clear loaded tracking to allow fresh API calls
-    homeController.clearLoadedGenders();
-    productController.clearLoadedTracking();
-    catalogController.clearLoadedTracking();
-    brandController.clearLoadedTracking();
-    newInController.clearCache();
+      // ✅ Clear loaded tracking to allow fresh API calls
+      homeController.clearLoadedGenders();
+      productController.clearLoadedTracking();
+      catalogController.clearLoadedTracking();
+      brandController.clearLoadedTracking();
+      newInController.clearCache();
 
-    // ✅ UPDATED: Include brands, collection banners, and announcements in refresh
-    await Future.wait([
-      homeController.initializeHomeData(currentGender, forceRefresh: true),
-      catalogController.getCatalogData(currentGender, forceRefresh: true),
-      productController.getHomeProduct(currentGender, forceRefresh: true),
-      productController.getCollectionBanners(forceRefresh: true),
-      brandController.getBrandData("featured", currentGender),
-      homeController.getAnnouncements(forceRefresh: true),
-      newInController.fetchProducts(currentGender, forceRefresh: true),
-    ]);
+      // ✅ UPDATED: Include brands, collection banners, and announcements in refresh
+      await Future.wait([
+        homeController.initializeHomeData(currentGender, forceRefresh: true),
+        catalogController.getCatalogData(currentGender, forceRefresh: true),
+        productController.getHomeProduct(currentGender, forceRefresh: true),
+        productController.getCollectionBanners(forceRefresh: true),
+        brandController.getBrandData("featured", currentGender),
+        homeController.getAnnouncements(forceRefresh: true),
+        newInController.fetchProducts(currentGender, forceRefresh: true),
+      ]);
     } finally {
       if (mounted) setState(() => _isRefreshing = false);
     }
@@ -698,606 +700,629 @@ class HomeScreenState extends State<HomeScreen>
           child: Stack(
             children: [
               Column(
-            children: [
-              HomeAppbar(
-                onPressedSearch: () async {
-                  final searchQuery = searchController.searchController.text;
-                  await analytics.logEvent(
-                    name: 'search_page',
-                    parameters: {'search_string': searchQuery},
-                  );
-                  Get.to(const SearchScreen())?.then((value) {
-                    setState(() {
-                      productController.categoryFilter.value =
-                          homeController.homeGenderValue.value;
-                      SystemChrome.setSystemUIOverlayStyle(
-                          const SystemUiOverlayStyle(
-                        statusBarColor: whiteColor,
-                        systemNavigationBarColor: whiteColor,
-                      ));
-                    });
-                  });
-                },
-                onPressedHeart: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  final isGuest = prefs.getBool('skip') ?? false;
-
-                  if (isGuest) {
-                    getSnackBar("Please login to view your wishlist");
-                    Get.offAll(() => LoginScreen(
-                          initialTab: 0,
-                        ));
-                    return;
-                  }
-
-                  Get.to(const WishlistScreen())
-                      ?.then((_) => cartController.getCartData());
-                  await analytics.logEvent(
-                    name: "wishlist_page",
-                    parameters: {"page_name": "wishlist_page"},
-                  );
-                },
-                onPressedCart: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  final isGuest = prefs.getBool('skip') ?? false;
-
-                  if (isGuest) {
-                    getSnackBar("Please login to view your cart");
-                    Get.offAll(() => LoginScreen(
-                          initialTab: 0,
-                        ));
-                    return;
-                  }
-
-                  Get.to(CartScreen())
-                      ?.then((_) => cartController.getCartData());
-                  await analytics.logEvent(
-                    name: "cart_page",
-                    parameters: {"page_name": "cart_page"},
-                  );
-                },
-                onPressedDropDown: () {
-                  homeController.showGenderList.value =
-                      !homeController.showGenderList.value;
-                  setState(() {});
-                },
-              ),
-
-              // Gender tabs with animated indicator
-              Obx(
-                () => homeController.isLoadingTabs.value
-                    ? SizedBox(
-                        height: 40.sp,
-                        child: const Center(
-                          child: LfLogoLoader(size: 20, showGlow: false),
-                        ),
-                      )
-                    : homeController.genderTabs.isEmpty ||
-                            _genderTabController == null
-                        ? const SizedBox.shrink()
-                        : SizedBox(
-                            width: double.infinity,
-                            height: 40.sp,
-                            child: TabBar(
-                              controller: _genderTabController,
-                              isScrollable:
-                                  homeController.genderTabs.length > 3,
-                              tabAlignment: homeController.genderTabs.length > 3
-                                  ? TabAlignment.start
-                                  : TabAlignment.fill,
-                              indicatorColor: homeAppBarColor,
-                              indicatorWeight: 2.sp,
-                              indicatorSize: TabBarIndicatorSize.tab,
-                              labelColor: homeAppBarColor,
-                              unselectedLabelColor: searchTextColor,
-                              dividerColor: Colors.transparent,
-                              labelStyle: TextStyle(
-                                fontSize: 13.sp,
-                                fontFamily: "Clash Display Semibold",
-                                fontWeight: FontWeight.w500,
-                              ),
-                              unselectedLabelStyle: TextStyle(
-                                fontSize: 13.sp,
-                                fontFamily: "Clash Display",
-                                fontWeight: FontWeight.w500,
-                              ),
-
-                              /// 🔥 THIS IS THE KEY LINE - call _changeGenderTab to load ALL data
-                              onTap: (index) {
-                                // Let the TabController listener handle the change
-                                // to avoid race condition with onGenderChanged
-                              },
-
-                              tabs: homeController.genderTabs.map((tab) {
-                                final String genderName =
-                                    tab['name']?.toString() ?? '';
-                                return Tab(
-                                  text: genderName.toUpperCase(),
-                                );
-                              }).toList(),
-                            )),
-              ),
-
-              Expanded(
-                child: Stack(
-                  children: [
-                    NotificationListener<ScrollNotification>(
-                      onNotification: _handleScrollNotification,
-                      child: SingleChildScrollView(
-                        controller: homeController.discountScreenController,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Section video banner (cached controllers, no extra S3 requests on tab switch)
-                            Obx(() {
-                              final genderId =
-                                  homeController.homeGenderValue.value;
-                              final controller =
-                                  _sectionVideoControllers[genderId];
-                              return _SectionVideoBanner(
-                                controller: controller,
-                              );
-                            }),
-                            // ✅ Consistent spacing
-                            // Marquee Banner - Dynamic from API with icons
-                            Obx(() {
-                              final announcements =
-                                  homeController.announcements;
-
-                              if (announcements.isEmpty) {
-                                // Fallback to static text if no announcements
-                                return Container(
-                                  height: 30.sp,
-                                  color: const Color(0xff2D2D2E),
-                                  width: MediaQuery.of(context).size.width,
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 5.sp),
-                                    child: Center(
-                                      child: Marquee(
-                                        text:
-                                            '|    More than 50+ Homegrown Brands   |    Fast and Reliable   |    Fashion for all occassions  |    Easy Returns & Exchanges   |    Secure Payments   ',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12.sp,
-                                          fontFamily: "Clash Display Regular",
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                        scrollAxis: Axis.horizontal,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        velocity: 100.0,
-                                        pauseAfterRound: Duration.zero,
-                                        accelerationCurve: Curves.linear,
-                                        decelerationCurve: Curves.easeOut,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              // Show icons with text using custom marquee
-                              return _AnnouncementMarquee(
-                                announcements: announcements,
-                              );
-                            }),
-
-                            SizedBox(height: 12.sp), // ✅ Consistent spacing
-
-                            // ── NEW IN Section ──────────────────────────────
-                            _NewInSection(newInController: newInController),
-
-                            // const SizedBox(height: 12),
-                            // Divider(
-                            //   color: Colors.grey[200],
-                            //   height: 1,
-                            //   thickness: 4.sp,
-                            // ),
-                            // const SizedBox(height: 12),
-
-                            // Shop by Category Section
-                            Obx(
-                              () {
-                                final gender =
-                                    homeController.homeGenderValue.value;
-                                final cats =
-                                    catalogController.catalogByGender[gender] ??
-                                        [];
-                                return catalogController.isCatalog.value
-                                    ? const DummyGridMostSearch(text: "")
-                                    : cats.isNotEmpty
-                                        ? _ShopByCategorySection(
-                                            catalogController:
-                                                catalogController,
-                                            analytics: analytics,
-                                            homeController: homeController,
-                                            onPressedViewAll: () =>
-                                                widget.onPressed?.call(2),
-                                          )
-                                        : const SizedBox.shrink();
-                              },
-                            ),
-
-                            const SizedBox(height: 12),
-                            Divider(
-                              color: Colors.grey[200],
-                              height: 1,
-                              thickness: 4.sp,
-                            ),
-                            const SizedBox(height: 12),
-
-                            Obx(() {
-                              // ✅ Watch brandController instead of homeController
-                              if (brandController.isBrand.value) {
-                                return const DummyHomeBrand();
-                              }
-
-                              // ✅ Get brands from brandController
-                              final brands = brandController.brandList
-                                  .where((b) =>
-                                      b.containsKey("id") &&
-                                      (b["name"]?.toString().isNotEmpty ??
-                                          false))
-                                  .toList();
-
-                              // ✅ If no brands, don't show anything (no empty space)
-                              if (brands.isEmpty) {
-                                return const SizedBox.shrink();
-                              }
-
-                              // ✅ Show brands section
-                              return _FeaturedBrandsRow(
-                                homeController: homeController,
-                                brandController: brandController,
-                                analytics: analytics,
-                                onPressedViewAll: () =>
-                                    widget.onPressed?.call(1),
-                                brands: brands,
-                              );
-                            }),
-
-                            // Banner Section - moved below Featured Brands
-                            Obx(() {
+                children: [
+                  HomeAppbar(
+                    onPressedSearch: () async {
+                      final searchQuery =
+                          searchController.searchController.text;
+                      await analytics.logEvent(
+                        name: 'search_page',
+                        parameters: {'search_string': searchQuery},
+                      );
+                      Get.to(const SearchScreen())?.then((value) {
+                        setState(() {
+                          productController.categoryFilter.value =
                               homeController.homeGenderValue.value;
+                          SystemChrome.setSystemUIOverlayStyle(
+                              const SystemUiOverlayStyle(
+                            statusBarColor: whiteColor,
+                            systemNavigationBarColor: whiteColor,
+                          ));
+                        });
+                      });
+                    },
+                    onPressedHeart: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      final isGuest = prefs.getBool('skip') ?? false;
 
-                              final banners = _currentBannerList();
-                              final isLoading = homeController.isBanner1.value;
-                              final currentValue =
-                                  productController.current.value;
-                              final showBanners =
-                                  banners.isNotEmpty && currentValue == 50;
+                      if (isGuest) {
+                        getSnackBar("Please login to view your wishlist");
+                        Get.offAll(() => LoginScreen(
+                              initialTab: 0,
+                            ));
+                        return;
+                      }
 
-                              if (isLoading && banners.isEmpty) {
-                                return Container(
-                                  height: 210.sp,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.04),
+                      Get.to(const WishlistScreen())
+                          ?.then((_) => cartController.getCartData());
+                      await analytics.logEvent(
+                        name: "wishlist_page",
+                        parameters: {"page_name": "wishlist_page"},
+                      );
+                    },
+                    onPressedCart: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      final isGuest = prefs.getBool('skip') ?? false;
+
+                      if (isGuest) {
+                        getSnackBar("Please login to view your cart");
+                        Get.offAll(() => LoginScreen(
+                              initialTab: 0,
+                            ));
+                        return;
+                      }
+
+                      Get.to(CartScreen())
+                          ?.then((_) => cartController.getCartData());
+                      await analytics.logEvent(
+                        name: "cart_page",
+                        parameters: {"page_name": "cart_page"},
+                      );
+                    },
+                    onPressedDropDown: () {
+                      homeController.showGenderList.value =
+                          !homeController.showGenderList.value;
+                      setState(() {});
+                    },
+                  ),
+
+                  // Gender tabs with animated indicator
+                  Obx(
+                    () => homeController.isLoadingTabs.value
+                        ? SizedBox(
+                            height: 40.sp,
+                            child: const Center(
+                              child: LfLogoLoader(size: 20, showGlow: false),
+                            ),
+                          )
+                        : homeController.genderTabs.isEmpty ||
+                                _genderTabController == null
+                            ? const SizedBox.shrink()
+                            : SizedBox(
+                                width: double.infinity,
+                                height: 40.sp,
+                                child: TabBar(
+                                  controller: _genderTabController,
+                                  isScrollable:
+                                      homeController.genderTabs.length > 3,
+                                  tabAlignment:
+                                      homeController.genderTabs.length > 3
+                                          ? TabAlignment.start
+                                          : TabAlignment.fill,
+                                  indicatorColor: homeAppBarColor,
+                                  indicatorWeight: 2.sp,
+                                  indicatorSize: TabBarIndicatorSize.tab,
+                                  labelColor: homeAppBarColor,
+                                  unselectedLabelColor: searchTextColor,
+                                  dividerColor: Colors.transparent,
+                                  labelStyle: TextStyle(
+                                    fontSize: 13.sp,
+                                    fontFamily: "Clash Display Semibold",
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                  child: const Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        LfLogoLoader(size: 32, showGlow: false),
-                                        SizedBox(height: 12),
-                                        Text(
-                                          'Loading banners...',
-                                          style: TextStyle(
-                                            color: Colors.black54,
-                                            fontSize: 12,
-                                            fontFamily: "Clash Display Regular",
+                                  unselectedLabelStyle: TextStyle(
+                                    fontSize: 13.sp,
+                                    fontFamily: "Clash Display",
+                                    fontWeight: FontWeight.w500,
+                                  ),
+
+                                  /// 🔥 THIS IS THE KEY LINE - call _changeGenderTab to load ALL data
+                                  onTap: (index) {
+                                    // Let the TabController listener handle the change
+                                    // to avoid race condition with onGenderChanged
+                                  },
+
+                                  tabs: homeController.genderTabs.map((tab) {
+                                    final String genderName =
+                                        tab['name']?.toString() ?? '';
+                                    return Tab(
+                                      text: genderName.toUpperCase(),
+                                    );
+                                  }).toList(),
+                                )),
+                  ),
+
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        NotificationListener<ScrollNotification>(
+                          onNotification: _handleScrollNotification,
+                          child: SingleChildScrollView(
+                            controller: homeController.discountScreenController,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Section video banner (cached controllers, no extra S3 requests on tab switch)
+                                Obx(() {
+                                  final genderId =
+                                      homeController.homeGenderValue.value;
+                                  final controller =
+                                      _sectionVideoControllers[genderId];
+                                  return _SectionVideoBanner(
+                                    controller: controller,
+                                  );
+                                }),
+                                // ✅ Consistent spacing
+                                // Marquee Banner - Dynamic from API with icons
+                                Obx(() {
+                                  final announcements =
+                                      homeController.announcements;
+
+                                  if (announcements.isEmpty) {
+                                    // Fallback to static text if no announcements
+                                    return Container(
+                                      height: 30.sp,
+                                      color: const Color(0xff2D2D2E),
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 5.sp),
+                                        child: Center(
+                                          child: Marquee(
+                                            text:
+                                                '|    More than 50+ Homegrown Brands   |    Fast and Reliable   |    Fashion for all occassions  |    Easy Returns & Exchanges   |    Secure Payments   ',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12.sp,
+                                              fontFamily:
+                                                  "Clash Display Regular",
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                            scrollAxis: Axis.horizontal,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            velocity: 100.0,
+                                            pauseAfterRound: Duration.zero,
+                                            accelerationCurve: Curves.linear,
+                                            decelerationCurve: Curves.easeOut,
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              if (showBanners) {
-                                final bannerWidgets = widgitBannerList();
-                                if (bannerWidgets.isEmpty) {
-                                  return const SizedBox.shrink();
-                                }
-
-                                return Column(
-                                  children: [
-                                    ClipRRect(
-                                      child: AspectRatio(
-                                        aspectRatio: 3 / 1,
-                                        child: PageView(
-                                          key: ValueKey(
-                                              'pageview_${homeController.homeGenderValue.value}'),
-                                          controller: _pageController,
-                                          onPageChanged: (index) {
-                                            if (index >= 0 &&
-                                                index < bannerWidgets.length) {
-                                              homeController.currentPage.value =
-                                                  index;
-                                            }
-                                          },
-                                          children: bannerWidgets,
                                         ),
                                       ),
-                                    ),
-                                    banners.length == 1
-                                        ? const SizedBox.shrink()
-                                        : Center(
-                                            child: PageIndicator(
-                                              controller: _pageController,
-                                              count: banners.length,
-                                              size: 6.0.sp,
-                                              activeColor: Colors.black,
-                                              color: const Color(0xffE5E7EB),
-                                              layout: PageIndicatorLayout.WARM,
-                                              scale: 0.65,
-                                              space: 8.sp,
-                                            ),
-                                          ),
-                                  ],
-                                );
-                              }
+                                    );
+                                  }
 
-                              return const SizedBox.shrink();
-                            }),
+                                  // Show icons with text using custom marquee
+                                  return _AnnouncementMarquee(
+                                    announcements: announcements,
+                                  );
+                                }),
 
-                            // Product Collections
-                            // removed due to no incoming data
-                            Obx(() {
-                              final currentGender =
+                                SizedBox(height: 12.sp), // ✅ Consistent spacing
+
+                                // ── NEW IN Section ──────────────────────────────
+                                _NewInSection(newInController: newInController),
+
+                                // const SizedBox(height: 12),
+                                // Divider(
+                                //   color: Colors.grey[200],
+                                //   height: 1,
+                                //   thickness: 4.sp,
+                                // ),
+                                // const SizedBox(height: 12),
+
+                                // Shop by Category Section
+                                Obx(
+                                  () {
+                                    final gender =
+                                        homeController.homeGenderValue.value;
+                                    final cats = catalogController
+                                            .catalogByGender[gender] ??
+                                        [];
+                                    return catalogController.isCatalog.value
+                                        ? const DummyGridMostSearch(text: "")
+                                        : cats.isNotEmpty
+                                            ? _ShopByCategorySection(
+                                                catalogController:
+                                                    catalogController,
+                                                analytics: analytics,
+                                                homeController: homeController,
+                                                onPressedViewAll: () =>
+                                                    widget.onPressed?.call(2),
+                                              )
+                                            : const SizedBox.shrink();
+                                  },
+                                ),
+
+                                const SizedBox(height: 12),
+                                Divider(
+                                  color: Colors.grey[200],
+                                  height: 1,
+                                  thickness: 4.sp,
+                                ),
+                                const SizedBox(height: 12),
+
+                                Obx(() {
+                                  // ✅ Watch brandController instead of homeController
+                                  if (brandController.isBrand.value) {
+                                    return const DummyHomeBrand();
+                                  }
+
+                                  // ✅ Get brands from brandController
+                                  final brands = brandController.brandList
+                                      .where((b) =>
+                                          b.containsKey("id") &&
+                                          (b["name"]?.toString().isNotEmpty ??
+                                              false))
+                                      .toList();
+
+                                  // ✅ If no brands, don't show anything (no empty space)
+                                  if (brands.isEmpty) {
+                                    return const SizedBox.shrink();
+                                  }
+
+                                  // ✅ Show brands section
+                                  return _FeaturedBrandsRow(
+                                    homeController: homeController,
+                                    brandController: brandController,
+                                    analytics: analytics,
+                                    onPressedViewAll: () =>
+                                        widget.onPressed?.call(1),
+                                    brands: brands,
+                                  );
+                                }),
+
+                                // Banner Section - moved below Featured Brands
+                                Obx(() {
                                   homeController.homeGenderValue.value;
 
-                              // ✅ Show loader ONLY if actively loading AND list is empty
-                              // ✅ FIXED: Don't show skeleton if data already exists, even if loading flag is true
-                              if (productController.homeProductList.isEmpty &&
-                                  (productController.isHomeProduct.value ||
-                                      !productController.isHomeProductLoaded(
-                                          currentGender))) {
-                                return DummyProductList(
-                                  visibleSubtitle: true,
-                                  text: (productController.tagname.value)
-                                      .toUpperCase(),
-                                );
-                              }
+                                  final banners = _currentBannerList();
+                                  final isLoading =
+                                      homeController.isBanner1.value;
+                                  final currentValue =
+                                      productController.current.value;
+                                  final showBanners =
+                                      banners.isNotEmpty && currentValue == 50;
 
-                              // ✅ Collections are already filtered by the API to only include those with products
-                              // ✅ Extra safety check: Filter out any collections with empty products
-                              final allCollections = productController
-                                  .homeProductList
-                                  .where((c) => c.hasProducts)
-                                  .toList();
-
-                              // ✅ PAGINATION: Only show a subset of collections
-                              final collectionsToShow =
-                                  _currentCollectionPage * _collectionsPerPage;
-                              final collections = allCollections
-                                  .take(collectionsToShow)
-                                  .toList();
-
-                              // Update hasMore flag
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                if (_hasMoreCollections !=
-                                    (collections.length <
-                                        allCollections.length)) {
-                                  setState(() {
-                                    _hasMoreCollections = collections.length <
-                                        allCollections.length;
-                                  });
-                                }
-                              });
-
-                              print(
-                                  "📊 Showing ${collections.length}/${allCollections.length} collections (page $_currentCollectionPage)");
-
-                              if (collections.isEmpty) {
-                                print(
-                                    "⚠️ No collections to display - showing empty space");
-                                return Column(
-                                  children: [
-                                    SizedBox(
-                                        height: 24.sp), // ✅ Consistent spacing
-                                    const Center(
-                                      child: Text(
-                                        "No products available for this category",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey,
-                                          fontFamily: "Clash Display Regular",
+                                  if (isLoading && banners.isEmpty) {
+                                    return Container(
+                                      height: 210.sp,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.04),
+                                      ),
+                                      child: const Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            LfLogoLoader(
+                                                size: 32, showGlow: false),
+                                            SizedBox(height: 12),
+                                            Text(
+                                              'Loading banners...',
+                                              style: TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: 12,
+                                                fontFamily:
+                                                    "Clash Display Regular",
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                        height: 24.sp), // ✅ Consistent spacing
-                                  ],
-                                );
-                              }
+                                    );
+                                  }
 
-                              return Column(
-                                children: [
-                                  ListView.builder(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    padding: EdgeInsets
-                                        .zero, // ✅ Remove default ListView padding
-                                    itemCount: collections.length,
-                                    // ✅ No separator needed - each _CollectionSection has consistent bottom padding
-                                    itemBuilder: (context, index) {
-                                      final collection = collections[index];
-                                      final int collectionId = collection.id;
-                                      final String title = collection.name;
-                                      final String subtitle =
-                                          collection.desc ?? '';
+                                  if (showBanners) {
+                                    final bannerWidgets = widgitBannerList();
+                                    if (bannerWidgets.isEmpty) {
+                                      return const SizedBox.shrink();
+                                    }
 
-                                      // ✅ Get banners for current gender from standalone banner API
-                                      final currentGender = homeController
-                                          .genderText.value
-                                          .toLowerCase();
-                                      final standaloneBanners =
-                                          productController
-                                              .getBannersForCollection(
-                                        collectionId,
-                                        currentGender,
-                                      );
-
-                                      // ✅ Convert products back to Map for existing widgets
-                                      final products = collection.products
-                                          .map((p) => p.toJson())
-                                          .toList();
-
-                                      // ✅ Safety check: Skip rendering if no products
-                                      if (products.isEmpty) {
-                                        return const SizedBox.shrink();
-                                      }
-
-                                      final bool dark = index.isEven;
-
-                                      return _CollectionSection(
-                                        collectionId: collectionId,
-                                        title: title,
-                                        subtitle: subtitle,
-                                        dark: dark,
-                                        products: products,
-                                        banners: standaloneBanners,
-                                        onProductTap: (productId) async {
-                                          Get.to(
-                                            ProductDetailsScreenV2(
-                                              productId: productId,
-                                              type: "add",
-                                              brandName: "",
+                                    return Column(
+                                      children: [
+                                        ClipRRect(
+                                          child: AspectRatio(
+                                            aspectRatio: 3 / 1,
+                                            child: PageView(
+                                              key: ValueKey(
+                                                  'pageview_${homeController.homeGenderValue.value}'),
+                                              controller: _pageController,
+                                              onPageChanged: (index) {
+                                                if (index >= 0 &&
+                                                    index <
+                                                        bannerWidgets.length) {
+                                                  homeController.currentPage
+                                                      .value = index;
+                                                }
+                                              },
+                                              children: bannerWidgets,
                                             ),
-                                          )?.then((_) {
-                                            setState(() {
-                                              SystemChrome
-                                                  .setSystemUIOverlayStyle(
-                                                const SystemUiOverlayStyle(
-                                                  statusBarColor: whiteColor,
-                                                  systemNavigationBarColor:
-                                                      whiteColor,
+                                          ),
+                                        ),
+                                        banners.length == 1
+                                            ? const SizedBox.shrink()
+                                            : Center(
+                                                child: PageIndicator(
+                                                  controller: _pageController,
+                                                  count: banners.length,
+                                                  size: 6.0.sp,
+                                                  activeColor: Colors.black,
+                                                  color:
+                                                      const Color(0xffE5E7EB),
+                                                  layout:
+                                                      PageIndicatorLayout.WARM,
+                                                  scale: 0.65,
+                                                  space: 8.sp,
                                                 ),
-                                              );
-                                            });
-                                          });
-
-                                          await analytics.logEvent(
-                                            name: 'product_details_home_page',
-                                            parameters: <String, Object>{
-                                              'page_name':
-                                                  'product_details_home_page',
-                                              'collection_id': collectionId,
-                                              'collection_name': title,
-                                              'product_id':
-                                                  productId.toString(),
-                                            },
-                                          );
-                                        },
-                                        onTitleTap: () {
-                                          productController.collectionId.value =
-                                              collectionId;
-                                          productController
-                                              .productSortBy.value = "";
-                                          productController.filterProductEnable
-                                              .value = false;
-                                          productController
-                                                  .categoryFilter.value =
-                                              homeController
-                                                  .homeGenderValue.value;
-
-                                          Get.to(
-                                            ProductViewScreen(
-                                              title: title,
-                                              genderName: homeController
-                                                  .genderText.value,
-                                            ),
-                                          )?.then((_) {
-                                            SystemChrome
-                                                .setSystemUIOverlayStyle(
-                                              const SystemUiOverlayStyle(
-                                                statusBarColor: whiteColor,
-                                                systemNavigationBarColor:
-                                                    whiteColor,
                                               ),
-                                            );
-                                          });
-                                        },
-                                        onExploreAll: () async {
-                                          productController.collectionId.value =
-                                              collectionId;
-                                          productController
-                                              .productSortBy.value = "";
-                                          productController.filterProductEnable
-                                              .value = false;
-                                          productController
-                                                  .categoryFilter.value =
-                                              homeController
-                                                  .homeGenderValue.value;
+                                      ],
+                                    );
+                                  }
 
-                                          Get.to(
-                                            ProductViewScreen(
-                                              title: title,
-                                              genderName: homeController
-                                                  .genderText.value,
+                                  return const SizedBox.shrink();
+                                }),
+
+                                // Product Collections
+                                // removed due to no incoming data
+                                Obx(() {
+                                  final currentGender =
+                                      homeController.homeGenderValue.value;
+
+                                  // ✅ Show loader ONLY if actively loading AND list is empty
+                                  // ✅ FIXED: Don't show skeleton if data already exists, even if loading flag is true
+                                  if (productController
+                                          .homeProductList.isEmpty &&
+                                      (productController.isHomeProduct.value ||
+                                          !productController
+                                              .isHomeProductLoaded(
+                                                  currentGender))) {
+                                    return DummyProductList(
+                                      visibleSubtitle: true,
+                                      text: (productController.tagname.value)
+                                          .toUpperCase(),
+                                    );
+                                  }
+
+                                  // ✅ Collections are already filtered by the API to only include those with products
+                                  // ✅ Extra safety check: Filter out any collections with empty products
+                                  final allCollections = productController
+                                      .homeProductList
+                                      .where((c) => c.hasProducts)
+                                      .toList();
+
+                                  // ✅ PAGINATION: Only show a subset of collections
+                                  final collectionsToShow =
+                                      _currentCollectionPage *
+                                          _collectionsPerPage;
+                                  final collections = allCollections
+                                      .take(collectionsToShow)
+                                      .toList();
+
+                                  // Update hasMore flag
+                                  WidgetsBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    if (_hasMoreCollections !=
+                                        (collections.length <
+                                            allCollections.length)) {
+                                      setState(() {
+                                        _hasMoreCollections =
+                                            collections.length <
+                                                allCollections.length;
+                                      });
+                                    }
+                                  });
+
+                                  print(
+                                      "📊 Showing ${collections.length}/${allCollections.length} collections (page $_currentCollectionPage)");
+
+                                  if (collections.isEmpty) {
+                                    print(
+                                        "⚠️ No collections to display - showing empty space");
+                                    return Column(
+                                      children: [
+                                        SizedBox(
+                                            height:
+                                                24.sp), // ✅ Consistent spacing
+                                        const Center(
+                                          child: Text(
+                                            "No products available for this category",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey,
+                                              fontFamily:
+                                                  "Clash Display Regular",
                                             ),
-                                          )?.then((_) {
-                                            SystemChrome
-                                                .setSystemUIOverlayStyle(
-                                              const SystemUiOverlayStyle(
-                                                statusBarColor: whiteColor,
-                                                systemNavigationBarColor:
-                                                    whiteColor,
-                                              ),
-                                            );
-                                          });
+                                          ),
+                                        ),
+                                        SizedBox(
+                                            height:
+                                                24.sp), // ✅ Consistent spacing
+                                      ],
+                                    );
+                                  }
 
-                                          await analytics.logEvent(
-                                            name: 'homepage_productExploreAll',
-                                            parameters: <String, Object>{
-                                              'page_name':
-                                                  'homepage_productExploreAll',
-                                              'collection_id': collectionId,
-                                              'collection_name': title,
-                                            },
-                                          );
-                                        },
-                                        seed: (productController
-                                                    .productsShuffleSeed ??
-                                                DateTime.now()
-                                                    .millisecondsSinceEpoch) +
+                                  return Column(
+                                    children: [
+                                      ListView.builder(
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        padding: EdgeInsets
+                                            .zero, // ✅ Remove default ListView padding
+                                        itemCount: collections.length,
+                                        // ✅ No separator needed - each _CollectionSection has consistent bottom padding
+                                        itemBuilder: (context, index) {
+                                          final collection = collections[index];
+                                          final int collectionId =
+                                              collection.id;
+                                          final String title = collection.name;
+                                          final String subtitle =
+                                              collection.desc ?? '';
+
+                                          // ✅ Get banners for current gender from standalone banner API
+                                          final currentGender = homeController
+                                              .genderText.value
+                                              .toLowerCase();
+                                          final standaloneBanners =
+                                              productController
+                                                  .getBannersForCollection(
                                             collectionId,
-                                      );
-                                    },
-                                  ),
+                                            currentGender,
+                                          );
 
-                                  // ✅ Loading indicator for pagination
-                                  if (_isLoadingMoreCollections)
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical:
-                                              24.sp),
-                                      child: const Center(
-                                        child: LfLogoLoader(size: 32, showGlow: false),
+                                          // ✅ Convert products back to Map for existing widgets
+                                          final products = collection.products
+                                              .map((p) => p.toJson())
+                                              .toList();
+
+                                          // ✅ Safety check: Skip rendering if no products
+                                          if (products.isEmpty) {
+                                            return const SizedBox.shrink();
+                                          }
+
+                                          final bool dark = index.isEven;
+
+                                          return _CollectionSection(
+                                            collectionId: collectionId,
+                                            title: title,
+                                            subtitle: subtitle,
+                                            dark: dark,
+                                            products: products,
+                                            banners: standaloneBanners,
+                                            onProductTap: (productId) async {
+                                              Get.to(
+                                                ProductDetailsScreenV2(
+                                                  productId: productId,
+                                                  type: "add",
+                                                  brandName: "",
+                                                ),
+                                              )?.then((_) {
+                                                setState(() {
+                                                  SystemChrome
+                                                      .setSystemUIOverlayStyle(
+                                                    const SystemUiOverlayStyle(
+                                                      statusBarColor:
+                                                          whiteColor,
+                                                      systemNavigationBarColor:
+                                                          whiteColor,
+                                                    ),
+                                                  );
+                                                });
+                                              });
+
+                                              await analytics.logEvent(
+                                                name:
+                                                    'product_details_home_page',
+                                                parameters: <String, Object>{
+                                                  'page_name':
+                                                      'product_details_home_page',
+                                                  'collection_id': collectionId,
+                                                  'collection_name': title,
+                                                  'product_id':
+                                                      productId.toString(),
+                                                },
+                                              );
+                                            },
+                                            onTitleTap: () {
+                                              productController.collectionId
+                                                  .value = collectionId;
+                                              productController
+                                                  .productSortBy.value = "";
+                                              productController
+                                                  .filterProductEnable
+                                                  .value = false;
+                                              productController
+                                                      .categoryFilter.value =
+                                                  homeController
+                                                      .homeGenderValue.value;
+
+                                              Get.to(
+                                                ProductViewScreen(
+                                                  title: title,
+                                                  genderName: homeController
+                                                      .genderText.value,
+                                                ),
+                                              )?.then((_) {
+                                                SystemChrome
+                                                    .setSystemUIOverlayStyle(
+                                                  const SystemUiOverlayStyle(
+                                                    statusBarColor: whiteColor,
+                                                    systemNavigationBarColor:
+                                                        whiteColor,
+                                                  ),
+                                                );
+                                              });
+                                            },
+                                            onExploreAll: () async {
+                                              productController.collectionId
+                                                  .value = collectionId;
+                                              productController
+                                                  .productSortBy.value = "";
+                                              productController
+                                                  .filterProductEnable
+                                                  .value = false;
+                                              productController
+                                                      .categoryFilter.value =
+                                                  homeController
+                                                      .homeGenderValue.value;
+
+                                              Get.to(
+                                                ProductViewScreen(
+                                                  title: title,
+                                                  genderName: homeController
+                                                      .genderText.value,
+                                                ),
+                                              )?.then((_) {
+                                                SystemChrome
+                                                    .setSystemUIOverlayStyle(
+                                                  const SystemUiOverlayStyle(
+                                                    statusBarColor: whiteColor,
+                                                    systemNavigationBarColor:
+                                                        whiteColor,
+                                                  ),
+                                                );
+                                              });
+
+                                              await analytics.logEvent(
+                                                name:
+                                                    'homepage_productExploreAll',
+                                                parameters: <String, Object>{
+                                                  'page_name':
+                                                      'homepage_productExploreAll',
+                                                  'collection_id': collectionId,
+                                                  'collection_name': title,
+                                                },
+                                              );
+                                            },
+                                            seed: (productController
+                                                        .productsShuffleSeed ??
+                                                    DateTime.now()
+                                                        .millisecondsSinceEpoch) +
+                                                collectionId,
+                                          );
+                                        },
                                       ),
-                                    ),
-                                ],
-                              );
-                            }),
-                            SizedBox(
-                              height: 10.sp,
+
+                                      // ✅ Loading indicator for pagination
+                                      if (_isLoadingMoreCollections)
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 24.sp),
+                                          child: const Center(
+                                            child: LfLogoLoader(
+                                                size: 32, showGlow: false),
+                                          ),
+                                        ),
+                                    ],
+                                  );
+                                }),
+                                SizedBox(
+                                  height: 10.sp,
+                                ),
+                                // Newsletter Section
+                                const NewsletterSection(
+                                  title: "LF NEWS LETTERS",
+                                ),
+                              ],
                             ),
-                            // Newsletter Section
-                            const NewsletterSection(
-                              title: "LF NEWS LETTERS",
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
               // Pull-to-refresh logo — slides down from top, no blur
               if (_pullOffset > 0 || _isRefreshing)
                 Positioned(
@@ -1895,6 +1920,11 @@ class _NewInSection extends StatelessWidget {
                     brandName: brand,
                     price: price,
                     mrp: mrp,
+                    nudges: (product['nudges'] as List<dynamic>?)
+                            ?.map((e) =>
+                                Nudge.fromJson(e as Map<String, dynamic>))
+                            .toList() ??
+                        [],
                     onTap: () {
                       if (productId == null) return;
                       Get.to(() => ProductDetailsScreenV2(
@@ -2218,132 +2248,155 @@ class _SectionStrip extends StatelessWidget {
 
         return PounceWrapper(
           onTap: () => onProductTap(id),
-          child: Container(
-            decoration: BoxDecoration(
-              color: dark
-                  ? const Color.fromARGB(255, 47, 47, 47)
-                  : const Color.fromARGB(255, 243, 241, 241),
-              borderRadius: BorderRadius.circular(8.sp),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(padding),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ✅ Image section with flexible height
-                  Expanded(
-                    flex: 72,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8.sp),
-                      child: imageUrl.isNotEmpty
-                          ? CachedNetworkImage(
-                              imageUrl: ImageHelper.toWebP(imageUrl),
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              maxHeightDiskCache: 400,
-                              maxWidthDiskCache: 400,
-                              memCacheHeight: 400,
-                              memCacheWidth: 400,
-                              errorWidget: (context, url, error) => Container(
-                                width: double.infinity,
-                                color: Colors.black.withOpacity(0.06),
-                                child: Icon(
-                                  Icons.broken_image_outlined,
-                                  color: Colors.grey.withOpacity(0.5),
-                                  size: 40.sp,
-                                ),
-                              ),
-                            )
-                          : Container(
-                              width: double.infinity,
-                              color: Colors.black.withOpacity(0.06),
-                            ),
-                    ),
-                  ),
-                  SizedBox(height: 4.sp),
-                  // ✅ Content section with flexible height
-                  Expanded(
-                    flex: 28,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontFamily: "Clash Display Semibold",
-                            fontSize: 10.sp,
-                            color: dark ? Colors.white : Colors.black,
-                          ),
-                        ),
-                        if (brandName.isNotEmpty)
-                          Text(
-                            brandName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontFamily: "Clash Display",
-                              fontSize: 8.sp,
-                              color: dark
-                                  ? Colors.white.withOpacity(0.85)
-                                  : Colors.black.withOpacity(0.7),
-                            ),
-                          ),
-                        if (numPrice > 0)
-                          Flexible(
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              alignment: Alignment.centerLeft,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    "₹$numPrice",
-                                    style: TextStyle(
-                                      fontFamily: "Clash Display Semibold",
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w700,
-                                      color: dark ? Colors.white : Colors.black,
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: dark
+                      ? const Color.fromARGB(255, 47, 47, 47)
+                      : const Color.fromARGB(255, 243, 241, 241),
+                  borderRadius: BorderRadius.circular(8.sp),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(padding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // ✅ Image section with flexible height
+                      Expanded(
+                        flex: 72,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.sp),
+                          child: imageUrl.isNotEmpty
+                              ? CachedNetworkImage(
+                                  imageUrl: ImageHelper.toWebP(imageUrl),
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  fit: BoxFit.cover,
+                                  maxHeightDiskCache: 400,
+                                  maxWidthDiskCache: 400,
+                                  memCacheHeight: 400,
+                                  memCacheWidth: 400,
+                                  errorWidget: (context, url, error) =>
+                                      Container(
+                                    width: double.infinity,
+                                    color: Colors.black.withOpacity(0.06),
+                                    child: Icon(
+                                      Icons.broken_image_outlined,
+                                      color: Colors.grey.withOpacity(0.5),
+                                      size: 40.sp,
                                     ),
                                   ),
-                                  if (numMrp != null && numMrp > numPrice) ...[
-                                    SizedBox(width: 4.sp),
-                                    Text(
-                                      "₹$numMrp",
-                                      style: TextStyle(
-                                        color: const Color(0xFF9CA3AF),
-                                        fontSize: 10.sp,
-                                        decoration: TextDecoration.lineThrough,
-                                        decorationColor: const Color.fromARGB(
-                                            255, 118, 122, 128),
-                                        fontFamily: "Clash Display Regular",
-                                      ),
-                                    ),
-                                  ],
-                                  if (discount != null && discount > 0) ...[
-                                    SizedBox(width: 4.sp),
-                                    Text(
-                                      "$discount% OFF",
-                                      style: TextStyle(
-                                        fontSize: 8.sp,
-                                        fontFamily: "Clash Display",
-                                        fontWeight: FontWeight.w600,
-                                        color: lightPurpleColor,
-                                      ),
-                                    ),
-                                  ],
-                                ],
+                                )
+                              : Container(
+                                  width: double.infinity,
+                                  color: Colors.black.withOpacity(0.06),
+                                ),
+                        ),
+                      ),
+                      SizedBox(height: 4.sp),
+                      // ✅ Content section with flexible height
+                      Expanded(
+                        flex: 28,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: "Clash Display Semibold",
+                                fontSize: 10.sp,
+                                color: dark ? Colors.white : Colors.black,
                               ),
                             ),
-                          ),
-                      ],
-                    ),
+                            if (brandName.isNotEmpty)
+                              Text(
+                                brandName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontFamily: "Clash Display",
+                                  fontSize: 8.sp,
+                                  color: dark
+                                      ? Colors.white.withOpacity(0.85)
+                                      : Colors.black.withOpacity(0.7),
+                                ),
+                              ),
+                            if (numPrice > 0)
+                              Flexible(
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        "₹$numPrice",
+                                        style: TextStyle(
+                                          fontFamily: "Clash Display Semibold",
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w700,
+                                          color: dark
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                      if (numMrp != null &&
+                                          numMrp > numPrice) ...[
+                                        SizedBox(width: 4.sp),
+                                        Text(
+                                          "₹$numMrp",
+                                          style: TextStyle(
+                                            color: const Color(0xFF9CA3AF),
+                                            fontSize: 10.sp,
+                                            decoration:
+                                                TextDecoration.lineThrough,
+                                            decorationColor:
+                                                const Color.fromARGB(
+                                                    255, 118, 122, 128),
+                                            fontFamily: "Clash Display Regular",
+                                          ),
+                                        ),
+                                      ],
+                                      if (discount != null && discount > 0) ...[
+                                        SizedBox(width: 4.sp),
+                                        Text(
+                                          "$discount% OFF",
+                                          style: TextStyle(
+                                            fontSize: 8.sp,
+                                            fontFamily: "Clash Display",
+                                            fontWeight: FontWeight.w600,
+                                            color: lightPurpleColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              if ((p['nudges'] as List?)?.isNotEmpty == true)
+                Positioned(
+                  top: 8.sp,
+                  left: 8.sp,
+                  child: NudgeBadgeRow(
+                    nudges: (p['nudges'] as List<dynamic>)
+                        .map((e) => Nudge.fromJson(e as Map<String, dynamic>))
+                        .toList(),
+                    maxVisible: 2,
+                    compact: true,
+                  ),
+                ),
+            ],
           ),
         );
       },
