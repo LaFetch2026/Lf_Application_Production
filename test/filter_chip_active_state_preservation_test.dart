@@ -376,7 +376,7 @@ void main() {
             home: Scaffold(
               body: FilterChipsRow(
                 chips: [chip],
-                activeChipId: null, // no chip is active
+                selectedChipIds: const {}, // no chip is active
                 onChipTap: (_) {},
               ),
             ),
@@ -413,7 +413,7 @@ void main() {
             home: Scaffold(
               body: FilterChipsRow(
                 chips: chips,
-                activeChipId: null,
+                selectedChipIds: const {},
                 onChipTap: (_) {},
               ),
             ),
@@ -447,7 +447,7 @@ void main() {
             home: Scaffold(
               body: FilterChipsRow(
                 chips: [chip],
-                activeChipId: 99, // different chip is active
+                selectedChipIds: const {99}, // different chip is active
                 onChipTap: (_) {},
               ),
             ),
@@ -485,7 +485,6 @@ void main() {
             home: Scaffold(
               body: FilterChipsRow(
                 chips: const [],
-                activeChipId: null,
                 onChipTap: (_) {},
                 activeFilters: const [],
               ),
@@ -521,7 +520,6 @@ void main() {
             home: Scaffold(
               body: FilterChipsRow(
                 chips: const [],
-                activeChipId: null,
                 onChipTap: (_) {},
                 activeFilters: const [],
               ),
@@ -564,7 +562,7 @@ void main() {
             home: Scaffold(
               body: FilterChipsRow(
                 chips: [chip],
-                activeChipId: null,
+                selectedChipIds: const {},
                 onChipTap: (_) {},
               ),
             ),
@@ -590,10 +588,10 @@ void main() {
   // =========================================================================
   // Preservation 3.1 — Server order preserved when no chip is active
   // =========================================================================
-  group('Preservation 3.1 — Server order preserved when activeChipId is null', () {
+  group('Preservation 3.1 — Server order preserved when selectedChipIds is empty', () {
     test(
       'PRESERVATION: chips.assignAll(serverChips) stores chips in server order '
-      'when activeChipId is null',
+      'when selectedChipIds is empty',
       () {
         final controller = _TestCatalogController();
         Get.put<CatalogController>(controller);
@@ -602,8 +600,8 @@ void main() {
         final jeans = _chip(11, 'Jeans');
         final dresses = _chip(12, 'Dresses');
 
-        // activeChipId is null (default) — no chip is active.
-        expect(controller.activeChipId.value, isNull);
+        // selectedChipIds is empty (default) — no chip is active.
+        expect(controller.selectedChipIds, isEmpty);
 
         // Simulate an API response that returns chips in server order.
         controller.simulateApiResponseWithServerOrder([tops, jeans, dresses]);
@@ -633,7 +631,7 @@ void main() {
           _chip(5, 'E'),
         ];
 
-        expect(controller.activeChipId.value, isNull);
+        expect(controller.selectedChipIds, isEmpty);
 
         controller.simulateApiResponseWithServerOrder(serverOrder);
 
@@ -663,7 +661,7 @@ void main() {
         controller.serverChips = [tops, jeans, dresses];
 
         // No active chip.
-        expect(controller.activeChipId.value, isNull);
+        expect(controller.selectedChipIds, isEmpty);
 
         // Trigger a fetch (simulated — our mock calls chips.assignAll(serverChips)).
         await controller.getFilterAndSortProducts(page: 1);
@@ -687,7 +685,7 @@ void main() {
 
         final only = _chip(99, 'OnlyChip');
 
-        expect(controller.activeChipId.value, isNull);
+        expect(controller.selectedChipIds, isEmpty);
 
         controller.simulateApiResponseWithServerOrder([only]);
 

@@ -23,6 +23,8 @@ import '../../../controllers/catalog_controller.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
+import '../../../models/nudge_model.dart';
+import '../../../widgets/nudge_badge_row.dart';
 
 class ProductVerticalScreen extends StatefulWidget {
   final int categoryId;
@@ -79,12 +81,20 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   void dispose() {
     productController.isVideoPlaying.value = true;
     videoController.dispose();
+    catalogController.clearChipSelection();
     super.dispose();
   }
 
   bool isImage(String path) {
     print(path);
     return path.contains('product_photo');
+  }
+
+  List<Nudge> _nudgesFromMap(Map<String, dynamic> map) {
+    return (map['nudges'] as List<dynamic>?)
+            ?.map((e) => Nudge.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        [];
   }
 
   List<Widget> getListForPageView(int index) {
@@ -221,12 +231,10 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                       height: 10.sp,
                                     ),
                                     Obx(() => FilterChipsRow(
-                                          chips:
-                                              catalogController.chips.toList(),
-                                          activeChipId:
-                                              catalogController.activeChipId.value,
-                                          onChipTap:
-                                              catalogController.onChipTap,
+                                          chips: catalogController.chips.toList(),
+                                          selectedChipIds: catalogController.selectedChipIds,
+                                          selectedChips: catalogController.selectedChips.toList(),
+                                          onChipTap: catalogController.onChipTap,
                                         )),
                                     Padding(
                                       padding: EdgeInsets.only(
@@ -570,6 +578,18 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                           ),
                                                         ),
                                                       ),
+                                                      Positioned(
+                                                        top: 8.sp,
+                                                        left: 8.sp,
+                                                        child: NudgeBadgeRow(
+                                                          nudges: _nudgesFromMap(
+                                                              productController
+                                                                      .productCategoryList[
+                                                                  index]),
+                                                          maxVisible: 2,
+                                                          compact: true,
+                                                        ),
+                                                      ),
                                                     ],
                                                   ),
                                                   productController
@@ -760,7 +780,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                           //   ],
                                                           // ),
                                                         )
-                                                      : SizedBox(
+                                                      : const SizedBox(
                                                           height: 0,
                                                         )
                                                 ],

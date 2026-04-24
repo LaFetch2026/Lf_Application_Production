@@ -39,18 +39,30 @@ class SearchScreenController extends BaseController {
   /// Chips returned by the last fresh /filter-products call for this search.
   RxList<FilterChipItem> chips = <FilterChipItem>[].obs;
 
-  /// The id of the currently active chip (set by [onSearchChipTap]).
-  final Rx<int?> _activeChipId = Rx<int?>(null);
+  /// The set of IDs of currently selected chips (set by [onSearchChipTap]).
+  final RxSet<int> selectedChipIds = <int>{}.obs;
+
+  /// Cache of selected chip objects so they can be shown as pills.
+  final Map<int, FilterChipItem> _selectedChipObjects = {};
 
   /// The last chip list returned by the server (fetchChipsForSearch).
-  /// Used to restore server order when the active chip is deselected.
   List<FilterChipItem> _lastServerChips = [];
 
-  /// Returns the active chip id for use by FilterChipsRow.
-  int? get activeChipId => _activeChipId.value;
+  /// Returns the currently selected chip objects.
+  final RxList<FilterChipItem> selectedChips = <FilterChipItem>[].obs;
 
-  /// Reactive observable for use in Obx builders.
-  Rx<int?> get activeChipIdObs => _activeChipId;
+  void _syncSelectedChips() {
+    selectedChips.assignAll(
+      selectedChipIds.map((id) => _selectedChipObjects[id]).whereType<FilterChipItem>().toList(),
+    );
+  }
+
+  /// Clears all chip selections. Call this when the screen is disposed.
+  void clearChipSelection() {
+    selectedChipIds.clear();
+    _selectedChipObjects.clear();
+    selectedChips.clear();
+  }
 
   // Inactive brands cache (5-minute TTL)
   Set<String>? _inactiveBrandsCache;
@@ -453,19 +465,8 @@ class SearchScreenController extends BaseController {
             .whereType<Map<String, dynamic>>()
             .map((c) => FilterChipItem.fromJson(c))
             .toList();
-        // Always store the server-returned order so deselect can restore it.
         _lastServerChips = parsed;
-        final activeId = _activeChipId.value;
-        if (activeId != null) {
-          final active = parsed.firstWhereOrNull((c) => c.id == activeId);
-          if (active != null) {
-            chips.assignAll([active, ...parsed.where((c) => c.id != activeId)]);
-          } else {
-            chips.assignAll(parsed);
-          }
-        } else {
-          chips.assignAll(parsed);
-        }
+        chips.assignAll(parsed);
         print('[CHIPS] Assigned ${parsed.length} chips');
       } else {
         print('[CHIPS] Non-200 or non-JSON response, clearing chips');
@@ -480,24 +481,14 @@ class SearchScreenController extends BaseController {
   /// Called when the user taps a chip on the search results page.
   /// Resets pagination and re-runs the search with the chip's category context.
   void onSearchChipTap(FilterChipItem chip) {
-    // Deselect guard: tapping the already-active chip clears the selection,
-    // restores server order, and re-fetches without the chip filter.
-    if (_activeChipId.value == chip.id) {
-      _activeChipId.value = null;
-      chips.assignAll(_lastServerChips);
-      currentPage.value = 0;
-      hasMore.value = true;
-      searchList.clear();
-      ++_searchRequestId;
-      getSearchData();
-      return;
+    if (selectedChipIds.contains(chip.id)) {
+      selectedChipIds.remove(chip.id);
+      _selectedChipObjects.remove(chip.id);
+    } else {
+      selectedChipIds.add(chip.id);
+      _selectedChipObjects[chip.id] = chip;
     }
-
-    _activeChipId.value = chip.id;
-
-    // Pin the tapped chip at index 0 immediately (client-side reorder).
-    chips.assignAll([chip, ...chips.where((c) => c.id != chip.id)]);
-
+    _syncSelectedChips();
     currentPage.value = 0;
     hasMore.value = true;
     searchList.clear();

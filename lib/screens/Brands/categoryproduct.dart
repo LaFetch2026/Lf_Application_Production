@@ -669,6 +669,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   @override
   void dispose() {
     _debounceTimer?.cancel();
+    catalogController.clearChipSelection();
     super.dispose();
   }
 
@@ -1779,20 +1780,12 @@ class _FilterChipsSectionState extends State<_FilterChipsSection> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Reading these observables registers them with Obx so it rebuilds
-      // when chips or activeChipId change.
-      final chips = widget.catalogController.chips.toList();
-      final activeId = widget.catalogController.activeChipId.value;
-
-      // Also refresh pills here so a GetX-triggered rebuild picks up the
-      // latest filter state (e.g. after onChipTap clears a filter).
-      final pills = widget.buildPills();
-
       return FilterChipsRow(
-        chips: chips,
-        activeChipId: activeId,
+        chips: widget.catalogController.chips.toList(),
+        selectedChipIds: widget.catalogController.selectedChipIds,
+        selectedChips: widget.catalogController.selectedChips.toList(),
         onChipTap: widget.catalogController.onChipTap,
-        activeFilters: pills,
+        activeFilters: widget.buildPills(),
       );
     });
   }

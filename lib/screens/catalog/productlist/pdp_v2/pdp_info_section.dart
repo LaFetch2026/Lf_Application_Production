@@ -10,6 +10,12 @@ extension PdpInfoSection on _ProductDetailsScreenV2State {
                 left: 16.sp, right: 12.sp, top: 8.sp, bottom: 4.sp),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              NudgeBadgeRow(
+                nudges: _productNudges(),
+                maxVisible: 5,
+                compact: false,
+              ),
+              SizedBox(height: 4.sp),
               Text(_titleText(),
                   style: TextStyle(
                       fontFamily: "Clash Display",

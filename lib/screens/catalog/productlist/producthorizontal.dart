@@ -22,6 +22,8 @@ import '../../../controllers/catalog_controller.dart';
 import '../../../controllers/product_controller.dart';
 import '../../../controllers/wishlist_controller.dart';
 import '../../../core/constant/constants.dart';
+import '../../../models/nudge_model.dart';
+import '../../../widgets/nudge_badge_row.dart';
 
 class ProductHorizontalScreen extends StatefulWidget {
   final int categoryId;
@@ -47,6 +49,12 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
+  void dispose() {
+    catalogController.clearChipSelection();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     productController.productCategoryList.clear();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -69,6 +77,13 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
       );
     });
     super.initState();
+  }
+
+  List<Nudge> _nudgesFromMap(Map<String, dynamic> map) {
+    return (map['nudges'] as List<dynamic>?)
+            ?.map((e) => Nudge.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        [];
   }
 
   @override
@@ -107,8 +122,8 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                 children: [
                                   Obx(() => FilterChipsRow(
                                         chips: catalogController.chips.toList(),
-                                        activeChipId:
-                                            catalogController.activeChipId.value,
+                                        selectedChipIds: catalogController.selectedChipIds,
+                                        selectedChips: catalogController.selectedChips.toList(),
                                         onChipTap: catalogController.onChipTap,
                                       )),
                                   Padding(
@@ -445,6 +460,18 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                         ),
                                                       ),
                                                     ),
+                                                    Positioned(
+                                                      top: 8.sp,
+                                                      left: 8.sp,
+                                                      child: NudgeBadgeRow(
+                                                        nudges: _nudgesFromMap(
+                                                            productController
+                                                                    .productCategoryList[
+                                                                index]),
+                                                        maxVisible: 2,
+                                                        compact: true,
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
                                                 Padding(
@@ -569,7 +596,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                         //   ],
                                                         // ),
                                                       )
-                                                    : SizedBox(
+                                                    : const SizedBox(
                                                         height: 0,
                                                       )
                                               ],

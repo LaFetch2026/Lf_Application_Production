@@ -39,6 +39,8 @@ import '../../../../services/event_tracking_service.dart';
 import '../../../../common/widget/other/error_shake.dart';
 import '../../../../widgets/similar_products_carousel.dart';
 import '../../../../common/widget/newsletter/newsletter_section.dart';
+import '../../../../models/nudge_model.dart';
+import '../../../../widgets/nudge_badge_row.dart';
 import '../../../searchscreen.dart';
 import '../../../search_results_screen.dart';
 import '../../../bottomnavscreen.dart';
@@ -155,6 +157,13 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
   }
 
   // ── helpers ───────────────────────────────────────────────────────────────
+
+  List<Nudge> _productNudges() {
+    return (productController.productDetails['nudges'] as List<dynamic>?)
+            ?.map((e) => Nudge.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        [];
+  }
 
   bool _isImageUrl(String url) {
     final p = Uri.tryParse(url)?.path.toLowerCase() ?? url.toLowerCase();

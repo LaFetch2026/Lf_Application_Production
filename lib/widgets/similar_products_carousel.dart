@@ -11,6 +11,7 @@ import '../models/recommendation_event.dart';
 import '../screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
 import '../services/event_tracking_service.dart';
 import '../services/recommendation_service.dart';
+import 'nudge_badge_row.dart';
 
 class SimilarProductsCarousel extends StatefulWidget {
   final int productId;
@@ -351,6 +352,15 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
                     //       ),
                     //     ),
                     //   ),
+                    Positioned(
+                      top: 8.sp,
+                      left: 8.sp,
+                      child: NudgeBadgeRow(
+                        nudges: product.nudges,
+                        maxVisible: 2,
+                        compact: true,
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 6.sp),

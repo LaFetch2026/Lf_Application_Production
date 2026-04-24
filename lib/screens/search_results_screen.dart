@@ -167,6 +167,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 
   @override
   void dispose() {
+    Get.find<SearchScreenController>().clearChipSelection();
     super.dispose();
   }
 
@@ -1097,15 +1098,12 @@ class _SearchFilterChipsSectionState
   Widget build(BuildContext context) {
     final searchSc = Get.find<SearchScreenController>();
     return Obx(() {
-      final chips = searchSc.chips.toList();
-      final activeId = searchSc.activeChipIdObs.value;
-      final pills = widget.buildPills();
-
       return FilterChipsRow(
-        chips: chips,
-        activeChipId: activeId,
+        chips: searchSc.chips.toList(),
+        selectedChipIds: searchSc.selectedChipIds,
+        selectedChips: searchSc.selectedChips.toList(),
         onChipTap: searchSc.onSearchChipTap,
-        activeFilters: pills,
+        activeFilters: widget.buildPills(),
       );
     });
   }

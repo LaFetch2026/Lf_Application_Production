@@ -1,3 +1,5 @@
+import 'nudge_model.dart';
+
 class UserEvent {
   final String type;
   final int productId;
@@ -32,6 +34,7 @@ class RecommendationProduct {
   final String productName;
   final double sellingPrice;
   final String imageUrl;
+  final List<Nudge> nudges;
 
   const RecommendationProduct({
     required this.id,
@@ -40,6 +43,7 @@ class RecommendationProduct {
     required this.productName,
     required this.sellingPrice,
     required this.imageUrl,
+    this.nudges = const [],
   });
 
   factory RecommendationProduct.fromJson(Map<String, dynamic> json) {
@@ -87,6 +91,7 @@ class RecommendationProduct {
       brandName: brandName.toString(),
       productName: productName.toString(),
       sellingPrice: sellingPrice,      imageUrl: imageUrl,
+      nudges: (json['nudges'] as List<dynamic>?)?.map((e) => Nudge.fromJson(e as Map<String, dynamic>)).toList() ?? [],
     );
   }
 }
