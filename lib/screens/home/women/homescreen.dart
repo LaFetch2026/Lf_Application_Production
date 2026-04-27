@@ -29,7 +29,6 @@ import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import '../../../common/widget/appbar/home_appbar.dart';
-import '../../../common/widget/lists/dummy_grid_mostsearch.dart';
 import '../../../common/widget/lists/dummy_home_brand.dart';
 import '../../../common/widget/lists/dummy_grid_list.dart';
 import '../../../common/widget/other/common_widget.dart';
@@ -52,6 +51,7 @@ import '../../../controllers/new_in_controller.dart';
 import '../../../common/widget/cards/product_card.dart';
 import '../../../widgets/nudge_badge_row.dart';
 import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
+import 'package:shimmer/shimmer.dart';
 
 // ✅ Global RouteObserver for video auto-pause on navigation
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -903,27 +903,19 @@ class HomeScreenState extends State<HomeScreen>
                                 // Shop by Category Section
                                 Obx(
                                   () {
-                                    final gender =
-                                        homeController.homeGenderValue.value;
-                                    final cats = catalogController
-                                            .catalogByGender[gender] ??
-                                        [];
-                                    return catalogController.isCatalog.value
-                                        ? const DummyGridMostSearch(text: "")
-                                        : cats.isNotEmpty
-                                            ? _ShopByCategorySection(
-                                                catalogController:
-                                                    catalogController,
-                                                analytics: analytics,
-                                                homeController: homeController,
-                                                onPressedViewAll: () =>
-                                                    widget.onPressed?.call(2),
-                                              )
-                                            : const SizedBox.shrink();
+                                    // Touch both observables so Obx re-runs when either changes
+                                    homeController.homeGenderValue.value;
+                                    catalogController.catalogByGender.length;
+                                    catalogController.isCatalog.value;
+
+                                    return _ShopByCategorySection(
+                                      catalogController: catalogController,
+                                      homeController: homeController,
+                                      analytics: analytics,
+                                    );
                                   },
                                 ),
 
-                                const SizedBox(height: 12),
                                 Divider(
                                   color: Colors.grey[200],
                                   height: 1,
@@ -3063,26 +3055,38 @@ class _ShopByCategorySection extends StatelessWidget {
   final CatalogController catalogController;
   final FirebaseAnalytics analytics;
   final HomeController homeController;
-  final VoidCallback onPressedViewAll;
 
   const _ShopByCategorySection({
     required this.catalogController,
     required this.analytics,
     required this.homeController,
-    required this.onPressedViewAll,
   });
 
   @override
   Widget build(BuildContext context) {
+    final gender = homeController.homeGenderValue.value;
+    final cats = List<Map<String, dynamic>>.from(
+      catalogController.catalogByGender[gender] ?? [],
+    );
+
+    // Loading guard — show shimmer while catalog data is being fetched
+    if (catalogController.isCatalog.value == true) {
+      return const _ShopByCategoryShimmer();
+    }
+
+    // Empty guard — render nothing when there are no categories
+    if (cats.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Container(
       color: statusBarColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ✅ Left-aligned section heading
+          // Section heading
           Padding(
-            padding: EdgeInsets.only(
-                left: 16.sp, top: 12.sp, bottom: 12.sp), // ✅ Consistent spacing
+            padding: EdgeInsets.only(left: 16.sp, top: 12.sp, bottom: 12.sp),
             child: const AppText(
               text: "SHOP BY CATEGORY",
               fontFamily: "Clash Display Semibold",
@@ -3091,170 +3095,193 @@ class _ShopByCategorySection extends StatelessWidget {
               fontSize: 16,
             ),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.sp),
-            child: Center(
-              child: GridView.count(
-                shrinkWrap: true,
-                crossAxisCount: 3,
-                scrollDirection: Axis.vertical,
-                padding: EdgeInsets.all(8.sp), // ✅ Use .sp for consistency
-                childAspectRatio: 0.55,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 12.sp,
-                mainAxisSpacing: 2.sp,
-                children: List.generate(
-                  min(
-                      6,
-                      (catalogController.catalogByGender[
-                                  homeController.homeGenderValue.value] ??
-                              [])
-                          .length),
-                  (index) {
-                    final catalog = (catalogController.catalogByGender[
-                            homeController.homeGenderValue.value] ??
-                        [])[index];
-                    return GestureDetector(
-                      onTap: () async {
-                        final categoryId = catalog["id"];
-                        final catalogName = catalog["name"] ?? "Category";
-
-                        // ✅ Use sub-category-products API
-                        await catalogController.getSubCategoryProducts(
-                          categoryId,
-                        );
-
-                        Get.to(
-                          () => CategoryProductScreen(
-                            categoryName: catalogName,
-                            screen: "category",
-                            genderName: homeController.genderText.value,
-                            categoryId: categoryId,
-                            brandId: 0,
-                            genderType: homeController.homeGenderValue.value,
-                            categoryList: const [],
-                            collectionIds: const [],
-                            title: '',
-                          ),
-                        );
-                      },
-                      child: Column(
-                        children: [
-                          // 🟦 Category Image Container
-                          Container(
-                            width: 100.sp,
-                            height: 120.sp,
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 235, 233, 233),
-                              borderRadius: BorderRadius.circular(16.sp),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.04),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16.sp),
-                              child: (catalog["image"] != null &&
-                                      catalog["image"].toString().isNotEmpty)
-                                  ? CachedNetworkImage(
-                                      imageUrl:
-                                          ImageHelper.toWebP(catalog["image"]),
-                                      fit: BoxFit.cover,
-                                      // ✅ Add memory limits for category images
-                                      maxHeightDiskCache: 300,
-                                      maxWidthDiskCache: 300,
-                                      memCacheHeight: 300,
-                                      memCacheWidth: 300,
-                                      errorWidget: (_, __, ___) => Image.asset(
-                                        dummyWishlistImage,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
-                                  : Image.asset(
-                                      dummyWishlistImage,
-                                      fit: BoxFit.cover,
-                                    ),
-                            ),
-                          ),
-
-                          SizedBox(height: 8.sp),
-
-                          // 🏷 Category Name
-                          AppText(
-                            text: (catalog["name"] ?? "")
-                                .toString()
-                                .toUpperCase(),
-                            color: blackColor,
-                            fontSize: 12.sp,
-                            maxLines: 2,
-                            textAlign: TextAlign.center,
-                            fontFamily: "Clash Display",
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-
-          GestureDetector(
-            onTap: () async {
-              final g = homeController.homeGenderValue.value;
-              final gName = g == 1
-                  ? "Men"
-                  : g == 2
-                      ? "Women"
-                      : "Accessories";
-
-              catalogController.selectCategoryGender.value = g;
-              catalogController.categoryName.value = gName;
-
-              // ✅ UPDATED: Using the new API endpoint
-              await catalogController.getCatagoryData(g);
-
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setInt('selectedGender', g);
-
-              onPressedViewAll();
-              await analytics.logEvent(
-                name: 'home_page_btnviewall',
-                parameters: {'page_name': 'home_page_btnviewall'},
-              );
-            },
+          // Horizontal scrollable row of category cards — no scrollbar indicator
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.sp),
-              child: Container(
-                height: 54.sp,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(12.sp),
-                ),
-                width: double.infinity,
-                padding:
-                    EdgeInsets.symmetric(horizontal: 24.sp, vertical: 12.sp),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const AppText(
-                      text: "VIEW ALL",
-                      fontFamily: "Clash Display Semibold",
-                      fontWeight: FontWeight.w600,
-                      color: whiteColor,
-                      fontSize: 14,
-                    ),
-                  ],
-                ),
+              padding:
+                  EdgeInsets.only(left: 16.sp, right: 16.sp, bottom: 12.sp),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: cats
+                    .map((catalog) => _CategoryCard(
+                          catalog: catalog,
+                          homeController: homeController,
+                          catalogController: catalogController,
+                          analytics: analytics,
+                        ))
+                    .toList(),
               ),
             ),
           ),
-          SizedBox(height: 8.sp),
         ],
+      ),
+    );
+  }
+}
+
+/// A single tappable category card rendered inside [_ShopByCategorySection].
+///
+/// Displays the category image (via [CachedNetworkImage] with disk/memory
+/// cache limits) and the category name in uppercase below it.  Tapping the
+/// card calls [catalogController.getSubCategoryProducts] and then navigates
+/// to [CategoryProductScreen] with the correct gender context.
+class _CategoryCard extends StatelessWidget {
+  final Map<String, dynamic> catalog;
+  final HomeController homeController;
+  final CatalogController catalogController;
+  final FirebaseAnalytics analytics;
+
+  const _CategoryCard({
+    required this.catalog,
+    required this.homeController,
+    required this.catalogController,
+    required this.analytics,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final categoryId = catalog['id'];
+    final categoryName = (catalog['name'] ?? 'Category').toString();
+    final imageUrl = catalog['image']?.toString() ?? '';
+
+    return GestureDetector(
+      onTap: () async {
+        await catalogController.getSubCategoryProducts(categoryId);
+
+        Get.to(
+          () => CategoryProductScreen(
+            categoryName: categoryName,
+            screen: 'category',
+            genderName: homeController.genderText.value,
+            categoryId: categoryId,
+            brandId: 0,
+            genderType: homeController.homeGenderValue.value,
+            categoryList: const [],
+            collectionIds: const [],
+            title: '',
+          ),
+        );
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 6.sp),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Category image container
+            Container(
+              width: 100.sp,
+              height: 120.sp,
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 235, 233, 233),
+                borderRadius: BorderRadius.circular(16.sp),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16.sp),
+                child: imageUrl.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: ImageHelper.toWebP(imageUrl),
+                        fit: BoxFit.cover,
+                        maxWidthDiskCache: 300,
+                        maxHeightDiskCache: 300,
+                        memCacheWidth: 300,
+                        memCacheHeight: 300,
+                        errorWidget: (_, __, ___) => Image.asset(
+                          dummyWishlistImage,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : Image.asset(
+                        dummyWishlistImage,
+                        fit: BoxFit.cover,
+                      ),
+              ),
+            ),
+
+            SizedBox(height: 8.sp),
+
+            // Category name in uppercase
+            SizedBox(
+              width: 100.sp,
+              child: AppText(
+                text: (catalog['name'] ?? '').toString().toUpperCase(),
+                color: blackColor,
+                fontSize: 12.sp,
+                maxLines: 2,
+                textAlign: TextAlign.center,
+                fontFamily: 'Clash Display',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A shimmer placeholder that matches the height and card dimensions of the
+/// loaded [_ShopByCategorySection] row.
+///
+/// Shown while [CatalogController.isCatalog] is `true` (i.e. while the
+/// category list is being fetched from the network).
+class _ShopByCategoryShimmer extends StatelessWidget {
+  const _ShopByCategoryShimmer();
+
+  @override
+  Widget build(BuildContext context) {
+    // Total row height: image (120.sp) + gap (8.sp) + label area (~40.sp)
+    final double rowHeight = 168.sp;
+
+    return SizedBox(
+      height: rowHeight,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const NeverScrollableScrollPhysics(),
+        child: Padding(
+          padding: EdgeInsets.only(left: 16.sp),
+          child: Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Row(
+              children: List.generate(5, (index) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6.sp),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 100.sp,
+                        height: 120.sp,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16.sp),
+                        ),
+                      ),
+                      SizedBox(height: 8.sp),
+                      Container(
+                        width: 80.sp,
+                        height: 12.sp,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4.sp),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ),
+          ),
+        ),
       ),
     );
   }
