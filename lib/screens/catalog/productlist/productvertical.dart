@@ -14,6 +14,7 @@ import '../../../common/widget/bottom_sheets/bottomsortby.dart';
 import '../../../common/widget/bottom_sheets/bottomwishlist.dart';
 import '../../../common/widget/button/doublebtn.dart';
 import '../../../common/widget/lists/dummy_vertical_list.dart';
+import '../../../common/widget/other/chip_shimmer_row.dart';
 import '../../../common/widget/other/filter_chips_row.dart';
 import '../../../common/widget/other/productvedio.dart';
 import '../../../common/widget/other/pounce_wrapper.dart';
@@ -230,12 +231,17 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                     SizedBox(
                                       height: 10.sp,
                                     ),
-                                    Obx(() => FilterChipsRow(
-                                          chips: catalogController.chips.toList(),
-                                          selectedChipIds: catalogController.selectedChipIds,
-                                          selectedChips: catalogController.selectedChips.toList(),
-                                          onChipTap: catalogController.onChipTap,
-                                        )),
+                                    Obx(() {
+                                      if (catalogController.isCategory.value) {
+                                        return const ChipShimmerRow();
+                                      }
+                                      return FilterChipsRow(
+                                        chips: catalogController.chips.toList(),
+                                        selectedChipIds: catalogController.selectedChipIds,
+                                        selectedChips: catalogController.selectedChips.toList(),
+                                        onChipTap: catalogController.onChipTap,
+                                      );
+                                    }),
                                     Padding(
                                       padding: EdgeInsets.only(
                                           left: 16.sp,

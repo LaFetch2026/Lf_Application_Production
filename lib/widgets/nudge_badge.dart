@@ -18,37 +18,37 @@ class NudgeBadge extends StatelessWidget {
       case 'selling_fast':
         return const _NudgeStyle(
           gradient:
-              LinearGradient(colors: [Color(0xFFFCA5A5), Color(0xFFEF4444)]),
+              LinearGradient(colors: [Color(0xFFE88080), Color(0xFFD95656)]),
           icon: Icons.bolt,
         );
       case 'trending':
         return const _NudgeStyle(
           gradient:
-              LinearGradient(colors: [Color(0xFFD8B4FE), Color(0xFFA855F7)]),
+              LinearGradient(colors: [Color(0xFFB8B0FF), Color(0xFF988AFF)]),
           icon: Icons.trending_up,
         );
       case 'new_in':
         return const _NudgeStyle(
           gradient:
-              LinearGradient(colors: [Color(0xFFBAE6FD), Color(0xFF38BDF8)]),
+              LinearGradient(colors: [Color(0xFFD4D0FF), Color(0xFF7268BF)]),
           icon: Icons.flare,
         );
       case 'back_in_stock':
         return const _NudgeStyle(
           gradient:
-              LinearGradient(colors: [Color(0xFFBFDBFE), Color(0xFF3B82F6)]),
+              LinearGradient(colors: [Color(0xFF8B85C1), Color(0xFF404662)]),
           icon: Icons.inventory_2,
         );
       case 'bestseller':
         return const _NudgeStyle(
           gradient:
-              LinearGradient(colors: [Color(0xFFFDE68A), Color(0xFFF59E0B)]),
+              LinearGradient(colors: [Color(0xFFD4A843), Color(0xFF9A7209)]),
           icon: Icons.military_tech,
         );
       default:
         return const _NudgeStyle(
           gradient:
-              LinearGradient(colors: [Color(0xFFE5E7EB), Color(0xFF9CA3AF)]),
+              LinearGradient(colors: [Color(0xFFD6D4D0), Color(0xFF9CA3AF)]),
           icon: Icons.sell,
         );
     }
@@ -65,7 +65,7 @@ class NudgeBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: style.gradient.colors.first.withOpacity(0.35),
+            color: style.gradient.colors.first.withValues(alpha: 0.35),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),

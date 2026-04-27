@@ -24,7 +24,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class SearchScreenState extends State<SearchScreen> {
-  final controller = Get.put(SearchScreenController());
+  late SearchScreenController controller;
   final RxString _query = ''.obs;
   Timer? _debounceSuggest;
 
@@ -146,6 +146,12 @@ class SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
+    // Safe registration: reuse existing instance if still alive, otherwise create fresh.
+    if (Get.isRegistered<SearchScreenController>()) {
+      controller = Get.find<SearchScreenController>();
+    } else {
+      controller = Get.put(SearchScreenController());
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _loadRecent();
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -159,6 +165,9 @@ class SearchScreenState extends State<SearchScreen> {
   void dispose() {
     _debounceSuggest?.cancel();
     controller.resetFilters();
+    // Explicitly delete the controller so the next navigation cycle always
+    // starts with a fresh instance and never hits a stale/disposed state.
+    Get.delete<SearchScreenController>(force: true);
     super.dispose();
   }
 

@@ -14,7 +14,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import '../../common/widget/lists/dummy_grid_black.dart';
+import '../../common/widget/other/chip_shimmer_row.dart';
 import '../../common/widget/other/common_widget.dart';
+import '../../common/widget/other/filter_chips_row.dart';
 import '../../common/widget/other/pounce_wrapper.dart';
 import '../../common/widget/text/app_text.dart';
 import '../../controllers/brand_controller.dart';
@@ -688,6 +690,7 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
     _scrollController.dispose();
     _searchCtrl.dispose();
     _debounce?.cancel();
+    catalogController.clearChipSelection();
     super.dispose();
   }
 
@@ -1058,6 +1061,20 @@ class BrandViewProductScreenState extends State<BrandViewProductScreen> {
                 ),
               ),
             ),
+
+            // Chip row
+            Obx(() {
+              if (catalogController.isCategory.value) {
+                return const ChipShimmerRow();
+              }
+              return FilterChipsRow(
+                chips: catalogController.chips.toList(),
+                selectedChips: catalogController.selectedChips.toList(),
+                selectedChipIds: catalogController.selectedChipIds,
+                onChipTap: catalogController.onChipTap,
+              );
+            }),
+            const SizedBox(height: 8),
 
             // Body
             Expanded(

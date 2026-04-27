@@ -15,6 +15,7 @@ import '../../../common/widget/bottom_sheets/bottomwishlist.dart';
 import '../../../common/widget/button/doublebtn.dart';
 import '../../../common/widget/lists/dummy_grid_list.dart';
 import '../../../common/widget/other/common_widget.dart';
+import '../../../common/widget/other/chip_shimmer_row.dart';
 import '../../../common/widget/other/filter_chips_row.dart';
 import '../../../common/widget/other/pounce_wrapper.dart';
 import '../../../common/widget/text/app_text.dart';
@@ -120,12 +121,17 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Obx(() => FilterChipsRow(
-                                        chips: catalogController.chips.toList(),
-                                        selectedChipIds: catalogController.selectedChipIds,
-                                        selectedChips: catalogController.selectedChips.toList(),
-                                        onChipTap: catalogController.onChipTap,
-                                      )),
+                                  Obx(() {
+                                    if (catalogController.isCategory.value) {
+                                      return const ChipShimmerRow();
+                                    }
+                                    return FilterChipsRow(
+                                      chips: catalogController.chips.toList(),
+                                      selectedChipIds: catalogController.selectedChipIds,
+                                      selectedChips: catalogController.selectedChips.toList(),
+                                      onChipTap: catalogController.onChipTap,
+                                    );
+                                  }),
                                   Padding(
                                     padding: EdgeInsets.only(
                                         left: 16.sp,

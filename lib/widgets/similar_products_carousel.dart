@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../common/widget/other/pounce_wrapper.dart';
@@ -82,6 +83,15 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
     } catch (_) {
       if (mounted) setState(() => _loadingTrending = false);
     }
+  }
+
+  String _formatPrice(num value) {
+    final formatter = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: '₹',
+      decimalDigits: 0,
+    );
+    return formatter.format(value);
   }
 
   void _navigate(
@@ -398,7 +408,8 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4.sp),
                   child: Text(
-                    '₹${product.sellingPrice.toStringAsFixed(0)}',
+                    // '₹${product.sellingPrice.toStringAsFixed(0)}',
+                    _formatPrice(product.sellingPrice),
                     style: TextStyle(
                       fontFamily: 'Clash Display Semibold',
                       fontWeight: FontWeight.w600,

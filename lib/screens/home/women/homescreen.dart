@@ -2237,6 +2237,15 @@ class _SectionStrip extends StatelessWidget {
     final numMrp = pricing['mrp'] as num?;
     final discount = pricing['discountPercent'] as int?;
 
+    String _formatPrice(num value) {
+      final formatter = NumberFormat.currency(
+        locale: 'en_IN',
+        symbol: '₹',
+        decimalDigits: 0,
+      );
+      return formatter.format(value);
+    }
+
     String imageUrl = "";
     if (p['imageUrls'] is List && (p['imageUrls'] as List).isNotEmpty) {
       imageUrl = p['imageUrls'][0].toString();
@@ -2334,7 +2343,7 @@ class _SectionStrip extends StatelessWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        "₹$numPrice",
+                                        _formatPrice(numPrice), //idhar
                                         style: TextStyle(
                                           fontFamily: "Clash Display Semibold",
                                           fontSize: 12.sp,

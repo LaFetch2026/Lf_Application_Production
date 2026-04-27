@@ -363,7 +363,7 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                                             vertical: 16.sp),
                                         child: HorizontalCategoryList(
                                           onPressed: (p0, p1) async {
-                                            Get.to(ProductDetailsScreenV2(
+                                            Get.to(() => ProductDetailsScreenV2(
                                                     expresshour: "",
                                                     brandName: p1,
                                                     productId: p0,

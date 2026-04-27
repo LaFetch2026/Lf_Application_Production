@@ -20,6 +20,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../common/widget/appbar/productlist_appbar.dart';
 import '../../common/widget/cards/product_card.dart';
 import '../../common/widget/other/common_widget.dart';
+import '../../common/widget/other/chip_shimmer_row.dart';
 import '../../common/widget/other/filter_chips_row.dart';
 import '../../controllers/catalog_controller.dart';
 import '../../controllers/cart_controller.dart';
@@ -1787,6 +1788,9 @@ class _FilterChipsSectionState extends State<_FilterChipsSection> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      if (widget.catalogController.isCategory.value) {
+        return const ChipShimmerRow();
+      }
       return FilterChipsRow(
         chips: widget.catalogController.chips.toList(),
         selectedChipIds: widget.catalogController.selectedChipIds,

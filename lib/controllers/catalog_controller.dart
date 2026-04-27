@@ -54,6 +54,7 @@ class CatalogController extends BaseController {
 
   /// The last chip list returned by the server (page = 1).
   /// Used to restore server order when the active chip is deselected.
+  // ignore: unused_field
   List<FilterChipItem> _lastServerChips = [];
 
   /// Reactive list of currently selected chip objects (shown as pills).
@@ -91,11 +92,13 @@ class CatalogController extends BaseController {
   int? _lastSuperCatId;
   // ignore: unused_field
   int? _lastCatId;
+  // ignore: unused_field
   int? _lastSubCatId;
   // ignore: unused_field
   int? _lastBrandId;
   // ignore: unused_field
   int? _lastCollectionId;
+  // ignore: unused_field
   int? _lastContextualCategoryId;
   // ignore: unused_field
   String? _lastKey;

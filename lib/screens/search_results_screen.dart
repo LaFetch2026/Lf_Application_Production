@@ -18,6 +18,7 @@ import '../common/widget/appbar/productlist_appbar.dart';
 import '../common/widget/cards/product_card.dart';
 import '../common/widget/lists/dummy_grid_list.dart';
 import '../common/widget/other/common_widget.dart';
+import '../common/widget/other/chip_shimmer_row.dart';
 import '../common/widget/other/filter_chips_row.dart';
 import '../common/widget/text/app_text.dart';
 import '../controllers/cart_controller.dart';
@@ -78,7 +79,11 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       controller.getCartData();
 
       // Trigger chip fetch directly using the search query this screen was opened with
+      if (!Get.isRegistered<SearchScreenController>()) return;
       final searchSc = Get.find<SearchScreenController>();
+      // Reset pagination in case a prior cycle left hasMore=false / searchList empty
+      searchSc.currentPage.value = 0;
+      searchSc.hasMore.value = true;
       // Ensure the text is set in case the controller was re-created
       if (searchSc.searchController.text.trim().isEmpty) {
         searchSc.searchController.text = widget.searchQuery;
@@ -168,7 +173,11 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 
   @override
   void dispose() {
-    Get.find<SearchScreenController>().clearChipSelection();
+    // Guard: SearchScreen may have already deleted the controller before
+    // this dispose fires (e.g. during back-navigation animation).
+    if (Get.isRegistered<SearchScreenController>()) {
+      Get.find<SearchScreenController>().clearChipSelection();
+    }
     super.dispose();
   }
 
@@ -303,6 +312,10 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
           // Grid
           Expanded(
             child: Obx(() {
+              // Guard: controller may have been deleted during navigation
+              if (!Get.isRegistered<SearchScreenController>()) {
+                return const SizedBox.shrink();
+              }
               // Watch categoryProductList for reactivity (triggers rebuild when filters applied)
 
               final searchSc = Get.find<SearchScreenController>();
@@ -376,6 +389,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 
               return NotificationListener<ScrollNotification>(
                 onNotification: (n) {
+                  if (!Get.isRegistered<SearchScreenController>()) return false;
                   final searchController = Get.find<SearchScreenController>();
 
                   if (n.metrics.pixels >= n.metrics.maxScrollExtent - 200) {
@@ -421,7 +435,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                   [],
                               onTap: () async {
                                 Get.to(
-                                  ProductDetailsScreenV2(
+                                  () => ProductDetailsScreenV2(
                                     brandName: brand,
                                     productId: item["id"],
                                     type: "add",
@@ -1102,8 +1116,14 @@ class _SearchFilterChipsSectionState
 
   @override
   Widget build(BuildContext context) {
-    final searchSc = Get.find<SearchScreenController>();
+    final searchSc = Get.isRegistered<SearchScreenController>()
+        ? Get.find<SearchScreenController>()
+        : null;
+    if (searchSc == null) return const SizedBox.shrink();
     return Obx(() {
+      if (searchSc.isSearching.value) {
+        return const ChipShimmerRow();
+      }
       return FilterChipsRow(
         chips: searchSc.chips.toList(),
         selectedChipIds: searchSc.selectedChipIds,
