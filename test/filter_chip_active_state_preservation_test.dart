@@ -38,6 +38,8 @@ class _TestCatalogController extends CatalogController {
   List<String>? capturedSizes;
   String? capturedMinPrice;
   String? capturedMaxPrice;
+  String? capturedMinDiscount;
+  String? capturedMaxDiscount;
   String? capturedSortOption;
   int? capturedSubCatId;
   int? capturedContextualCategoryId;
@@ -52,6 +54,8 @@ class _TestCatalogController extends CatalogController {
     List<String>? sizes,
     String? minPrice,
     String? maxPrice,
+    String? minDiscount,
+    String? maxDiscount,
     String? sortOption,
     int? superCatId,
     int? catId,
@@ -72,6 +76,8 @@ class _TestCatalogController extends CatalogController {
     capturedSizes = sizes;
     capturedMinPrice = minPrice;
     capturedMaxPrice = maxPrice;
+    capturedMinDiscount = minDiscount;
+    capturedMaxDiscount = maxDiscount;
     capturedSortOption = sortOption;
     capturedSubCatId = subCatId;
     capturedContextualCategoryId = contextualCategoryId;

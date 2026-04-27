@@ -49,6 +49,9 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
+  int _appliedMinDiscount = 0;
+  int _appliedMaxDiscount = 100;
+
   @override
   void dispose() {
     catalogController.clearChipSelection();
@@ -127,8 +130,11 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                     }
                                     return FilterChipsRow(
                                       chips: catalogController.chips.toList(),
-                                      selectedChipIds: catalogController.selectedChipIds,
-                                      selectedChips: catalogController.selectedChips.toList(),
+                                      selectedChipIds:
+                                          catalogController.selectedChipIds,
+                                      selectedChips: catalogController
+                                          .selectedChips
+                                          .toList(),
                                       onChipTap: catalogController.onChipTap,
                                     );
                                   }),
@@ -475,7 +481,7 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                                                     .productCategoryList[
                                                                 index]),
                                                         maxVisible: 2,
-                                                        compact: true,
+                                                        isExpanded: true,
                                                       ),
                                                     ),
                                                   ],
@@ -693,11 +699,21 @@ class ProductHorizontalScreenState extends State<ProductHorizontalScreen> {
                                     prefs.remove("upper");
                                     prefs.remove("lower");
                                     prefs.remove("sortby");
+                                    prefs.remove("minDiscount");
+                                    prefs.remove("maxDiscount");
+                                    setState(() {
+                                      _appliedMinDiscount = 0;
+                                      _appliedMaxDiscount = 100;
+                                    });
                                   },
-                                  onClick: (p0, p1) {
+                                  onClick: (p0, p1, p2, p3) {
                                     productController.filterEnable.value = true;
                                     productController.lowPrice.value = p0;
                                     productController.highPrice.value = p1;
+                                    setState(() {
+                                      _appliedMinDiscount = p2;
+                                      _appliedMaxDiscount = p3;
+                                    });
                                   },
                                 );
                               },

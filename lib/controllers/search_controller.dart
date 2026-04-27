@@ -76,6 +76,8 @@ class SearchScreenController extends BaseController {
   final RxList<String> filterSizes = <String>[].obs;
   final RxString filterMinPrice = "300".obs;
   final RxString filterMaxPrice = "100000".obs;
+  final RxInt filterMinDiscount = 0.obs;
+  final RxInt filterMaxDiscount = 100.obs;
   final RxString sortOption = "recommended".obs;
 
   // ---- helpers --------------------------------------------------------------
@@ -151,6 +153,8 @@ class SearchScreenController extends BaseController {
     List<String> sizes = const [],
     String minPrice = "300",
     String maxPrice = "100000",
+    int minDiscount = 0,
+    int maxDiscount = 100,
     String sort = "recommended",
   }) {
     filterBrands.assignAll(brands);
@@ -158,6 +162,8 @@ class SearchScreenController extends BaseController {
     filterSizes.assignAll(sizes);
     filterMinPrice.value = minPrice;
     filterMaxPrice.value = maxPrice;
+    filterMinDiscount.value = minDiscount;
+    filterMaxDiscount.value = maxDiscount;
     sortOption.value = sort;
     currentPage.value = 0;
     hasMore.value = true;
@@ -172,6 +178,8 @@ class SearchScreenController extends BaseController {
     filterSizes.clear();
     filterMinPrice.value = "300";
     filterMaxPrice.value = "100000";
+    filterMinDiscount.value = 0;
+    filterMaxDiscount.value = 100;
     sortOption.value = "recommended";
     currentPage.value = 0;
     hasMore.value = true;
@@ -187,6 +195,8 @@ class SearchScreenController extends BaseController {
     filterSizes.clear();
     filterMinPrice.value = "300";
     filterMaxPrice.value = "100000";
+    filterMinDiscount.value = 0;
+    filterMaxDiscount.value = 100;
     sortOption.value = "recommended";
     currentPage.value = 0;
     hasMore.value = true;
@@ -251,17 +261,172 @@ class SearchScreenController extends BaseController {
     if (loadMore && (!hasMore.value || isSearching.value)) return;
     if (!loadMore && !hasMore.value) return;
 
-    // Claim this request's ID. If a newer request starts before this one
-    // finishes, thisId will be stale and we discard the response.
-    final thisId = ++_searchRequestId;
+    final minD = filterMinDiscount.value;
+    final maxD = filterMaxDiscount.value;
+    final hasDiscountFilter = minD > 0 || maxD < 100;
 
+    // When a discount filter is active, use the backend /filter-products API
+    // (same as the website: ?key=...&minDiscount=X&maxDiscount=Y).
+    // Algolia does not have a discountPercentage numeric attribute indexed.
+    if (hasDiscountFilter) {
+      await _getSearchDataFromBackend(loadMore: loadMore);
+      return;
+    }
+
+    await _getSearchDataFromAlgolia(loadMore: loadMore);
+  }
+
+  /// Backend /filter-products search — used when discount filter is active.
+  Future<void> _getSearchDataFromBackend({bool loadMore = false}) async {
+    final key = searchController.text.trim();
+    final thisId = ++_searchRequestId;
+    isSearching.value = true;
+
+    try {
+      final headers = await _headers();
+      final minD = filterMinDiscount.value;
+      final maxD = filterMaxDiscount.value;
+      final page = loadMore ? currentPage.value + 1 : 1;
+
+      final params = <String, String>{
+        'key': key,
+        'status': 'true',
+        'page': page.toString(),
+        'limit': '20',
+      };
+
+      if (minD > 0) params['minDiscount'] = minD.toString();
+      if (maxD < 100) params['maxDiscount'] = maxD.toString();
+
+      final minP = int.tryParse(filterMinPrice.value) ?? 300;
+      final maxP = int.tryParse(filterMaxPrice.value) ?? 100000;
+      if (minP > 300) params['minPrice'] = minP.toString();
+      if (maxP < 100000) params['maxPrice'] = maxP.toString();
+
+      if (filterBrands.isNotEmpty) params['brands'] = filterBrands.join(',');
+      if (filterColors.isNotEmpty) params['colors'] = filterColors.join(',');
+      if (filterSizes.isNotEmpty) params['sizes'] = filterSizes.join(',');
+
+      final uri = Uri.parse('${ApiConstants.baseUrl}/filter-products')
+          .replace(queryParameters: params);
+
+      print('[BACKEND SEARCH] $uri');
+
+      final response = await http
+          .get(uri, headers: headers)
+          .timeout(const Duration(seconds: 15));
+
+      if (thisId != _searchRequestId) return;
+
+      if (response.statusCode != 200 || !_isJson(response)) {
+        if (!loadMore) searchList.clear();
+        searchText.value = "No product found";
+        hasMore.value = false;
+        return;
+      }
+
+      final decoded = json.decode(response.body);
+      final data = decoded['data'];
+      final rawProducts =
+          data is Map ? (data['products'] as List?) ?? [] : <dynamic>[];
+
+      final inactiveBrands = await _getInactiveBrands();
+      if (thisId != _searchRequestId) return;
+
+      final items = rawProducts
+          .whereType<Map<String, dynamic>>()
+          .map((p) {
+            // Safely extract numeric price — backend may return a Map like
+            // {"amount": 500} or a plain num. Fall back to 0.
+            num _safeNum(dynamic v) {
+              if (v is num) return v;
+              if (v is Map) {
+                final amt = v['amount'] ?? v['value'] ?? v['price'];
+                if (amt is num) return amt;
+                return num.tryParse(amt?.toString() ?? '') ?? 0;
+              }
+              return num.tryParse(v?.toString() ?? '') ?? 0;
+            }
+
+            final rawPrice = p['displayPrice'] ?? p['price'] ?? p['basePrice'];
+            final rawMrp = p['displayMrp'] ?? p['mrp'] ?? rawPrice;
+            final price = _safeNum(rawPrice);
+            final mrp = _safeNum(rawMrp);
+
+            return <String, dynamic>{
+              // Spread raw fields first so our safe values below override them
+              ...Map<String, dynamic>.from(p),
+              'id': int.tryParse((p['id'] ?? '').toString()) ?? 0,
+              'product_name': p['title'],
+              'product_image': (p['imageUrls'] is List &&
+                      (p['imageUrls'] as List).isNotEmpty)
+                  ? (p['imageUrls'] as List).first.toString()
+                  : (p['image'] ?? ''),
+              // Always store as plain num so ProductGridCard never sees a Map
+              'price': price,
+              'mrp': mrp,
+              'displayPrice': price,
+              'displayMrp': mrp,
+              'imageUrls': p['imageUrls'] ?? [],
+              'slug': p['slug'],
+              'brand_name': p['brandName'] ??
+                  (p['brand'] is Map ? p['brand']['name'] : null) ??
+                  '',
+              'title': p['title'] ?? '',
+              'available': p['available'] ?? true,
+              'rating': p['rating'] ?? 0,
+              'nudges': p['nudges'],
+            };
+          })
+          .where((p) {
+            if (inactiveBrands.isEmpty) return true;
+            final brand =
+                (p['brand_name'] ?? '').toString().toLowerCase().trim();
+            return !inactiveBrands.contains(brand);
+          })
+          .toList();
+
+      if (loadMore) {
+        searchList.addAll(items);
+        if (items.isNotEmpty) currentPage.value = page;
+      } else {
+        searchList.assignAll(items);
+        currentPage.value = 1;
+      }
+
+      _applyLocalSort();
+
+      if (!loadMore) fetchChipsForSearch();
+
+      searchText.value =
+          searchList.isEmpty ? "No product found" : "Search for products";
+      hasMore.value = items.length >= 20;
+    } on TimeoutException {
+      if (thisId != _searchRequestId) return;
+      if (!loadMore) searchList.clear();
+      searchText.value = "No product found";
+      hasMore.value = false;
+    } catch (e) {
+      if (thisId != _searchRequestId) return;
+      print('[BACKEND SEARCH] error: $e');
+      if (!loadMore) searchList.clear();
+      searchText.value = "No product found";
+      hasMore.value = false;
+    } finally {
+      if (thisId == _searchRequestId) isSearching.value = false;
+    }
+  }
+
+  /// Algolia search — used for all queries without a discount filter.
+  Future<void> _getSearchDataFromAlgolia({bool loadMore = false}) async {
+    final key = searchController.text.trim();
+    final thisId = ++_searchRequestId;
     isSearching.value = true;
 
     try {
       await _initAlgolia();
       if (_client == null) throw Exception("Algolia not configured");
 
-      // Stale-check: a newer search was triggered while we were initialising
       if (thisId != _searchRequestId) return;
 
       List<String> filterParts = ['available:true'];
@@ -317,7 +482,7 @@ class SearchScreenController extends BaseController {
         return;
       }
 
-      final items = hits
+      final mappedItems = hits
           .map((p) => <String, dynamic>{
                 'id':
                     int.tryParse((p['objectID'] ?? p['id'] ?? '').toString()) ??
@@ -343,10 +508,12 @@ class SearchScreenController extends BaseController {
           })
           .toList();
 
+      // Client-side discount post-filter removed — discount now routes to
+      // _getSearchDataFromBackend which calls /filter-products directly.
       if (loadMore) {
-        searchList.addAll(items);
+        searchList.addAll(mappedItems);
       } else {
-        searchList.assignAll(items);
+        searchList.assignAll(mappedItems);
       }
 
       _applyLocalSort();
@@ -371,15 +538,12 @@ class SearchScreenController extends BaseController {
       hasMore.value = false;
     } catch (e) {
       if (thisId != _searchRequestId) return;
-      print('[SEARCH] error: $e');
+      print('[ALGOLIA] error: $e');
       if (!loadMore) searchList.clear();
       searchText.value = "No product found";
       hasMore.value = false;
     } finally {
-      // Only clear the loading flag if we're still the active request
-      if (thisId == _searchRequestId) {
-        isSearching.value = false;
-      }
+      if (thisId == _searchRequestId) isSearching.value = false;
     }
   }
 
@@ -441,6 +605,12 @@ class SearchScreenController extends BaseController {
       }
       if (filterSizes.isNotEmpty) {
         params['sizes'] = filterSizes.join(',');
+      }
+      if (filterMinDiscount.value > 0) {
+        params['minDiscount'] = filterMinDiscount.value.toString();
+      }
+      if (filterMaxDiscount.value < 100) {
+        params['maxDiscount'] = filterMaxDiscount.value.toString();
       }
 
       final uri = Uri.parse('${ApiConstants.baseUrl}/filter-products')

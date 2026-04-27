@@ -368,7 +368,7 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
                       child: NudgeBadgeRow(
                         nudges: product.nudges,
                         maxVisible: 2,
-                        compact: true,
+                        isExpanded: true,
                       ),
                     ),
                   ],

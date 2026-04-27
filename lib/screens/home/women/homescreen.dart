@@ -2394,7 +2394,7 @@ class _SectionStrip extends StatelessWidget {
                         .map((e) => Nudge.fromJson(e as Map<String, dynamic>))
                         .toList(),
                     maxVisible: 2,
-                    compact: true,
+                    isExpanded: true,
                   ),
                 ),
             ],

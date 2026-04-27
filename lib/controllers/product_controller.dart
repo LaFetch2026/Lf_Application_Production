@@ -184,6 +184,7 @@ class ProductController extends BaseController {
   List addressList = [].obs;
   List pricelist = [100, 5000].obs;
   RxBool isPrice = true.obs;
+  RxBool isDiscount = false.obs;
   RxInt category_id = 0.obs;
   RxInt totalReview = 0.obs;
   RxInt productImageindex = 0.obs;

@@ -57,7 +57,7 @@ void main() {
                       child: NudgeBadgeRow(
                         nudges: nudges,
                         maxVisible: 2,
-                        compact: true,
+                        isExpanded: true,
                       ),
                     ),
                   ],

@@ -60,6 +60,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
   List<String> _appliedSizes = [];
   String _appliedMinPrice = "300";
   String _appliedMaxPrice = "10000000";
+  int _appliedMinDiscount = 0;
+  int _appliedMaxDiscount = 100;
   String _appliedSortOption = "recommended";
   bool _hasActiveFilters = false;
   bool _isFilterMetadataLoaded = false;
@@ -123,7 +125,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
 
   // ✅ Generate hash for current filter state
   String _generateFilterHash() {
-    return '${_appliedBrandIds.join(',')}_${_appliedColors.join(',')}_${_appliedSizes.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_$_hasActiveFilters';
+    return '${_appliedBrandIds.join(',')}_${_appliedColors.join(',')}_${_appliedSizes.join(',')}_${_appliedMinPrice}_${_appliedMaxPrice}_${_appliedMinDiscount}_${_appliedMaxDiscount}_$_hasActiveFilters';
   }
 
   // ✅ Generate hash for current sort state
@@ -255,6 +257,8 @@ class ProductViewScreenState extends State<ProductViewScreen> {
     prefs.remove("lower");
     prefs.remove("sortby");
     prefs.remove("category");
+    prefs.remove("minDiscount");
+    prefs.remove("maxDiscount");
 
     print(
         "🔄 ProductViewScreen initialized for collection: ${productController.collectionId.value}, gender: ${widget.genderName}");
@@ -376,6 +380,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         print(
             "   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
+        print("   • discount range → $_appliedMinDiscount% - $_appliedMaxDiscount%");
         print(
             "   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
@@ -388,6 +393,12 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
           minPrice: _appliedMinPrice,
           maxPrice: _appliedMaxPrice,
+          minDiscount: (_appliedMinDiscount == 0 && _appliedMaxDiscount == 100)
+              ? null
+              : _appliedMinDiscount.toString(),
+          maxDiscount: (_appliedMinDiscount == 0 && _appliedMaxDiscount == 100)
+              ? null
+              : _appliedMaxDiscount.toString(),
           sortOption:
               _appliedSortOption != "recommended" ? _appliedSortOption : null,
           superCatId: productController
@@ -503,6 +514,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
         print(
             "   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
+        print("   • discount range → $_appliedMinDiscount% - $_appliedMaxDiscount%");
         print(
             "   • sortOption   → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
@@ -515,6 +527,12 @@ class ProductViewScreenState extends State<ProductViewScreen> {
           sizes: _appliedSizes.isNotEmpty ? _appliedSizes : null,
           minPrice: _appliedMinPrice,
           maxPrice: _appliedMaxPrice,
+          minDiscount: (_appliedMinDiscount == 0 && _appliedMaxDiscount == 100)
+              ? null
+              : _appliedMinDiscount.toString(),
+          maxDiscount: (_appliedMinDiscount == 0 && _appliedMaxDiscount == 100)
+              ? null
+              : _appliedMaxDiscount.toString(),
           sortOption:
               _appliedSortOption != "recommended" ? _appliedSortOption : null,
           superCatId: productController
@@ -969,6 +987,10 @@ class ProductViewScreenState extends State<ProductViewScreen> {
       double.parse(_appliedMinPrice),
       double.parse(_appliedMaxPrice),
     );
+    RangeValues discountRange = RangeValues(
+      _appliedMinDiscount.toDouble(),
+      _appliedMaxDiscount.toDouble(),
+    );
 
     // ✅ Ensure filter metadata is loaded
     await _loadFilterMetadataIfNeeded();
@@ -991,6 +1013,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
       "Price Range", // Always available
       if (colors.isNotEmpty) "Color",
       if (sizes.isNotEmpty) "Size",
+      "Discount", // Always available
     ];
 
     // Default to Price Range if no other filters available
@@ -1045,6 +1068,7 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                 selectedColors.clear();
                                 selectedSizes.clear();
                                 priceRange = const RangeValues(300, 100000);
+                                discountRange = const RangeValues(0, 100);
                               });
                             },
                             child: const Text("CLEAR ALL",
@@ -1271,7 +1295,59 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                                         );
                                                       },
                                                     )
-                                              : const SizedBox(),
+                                              : selectedFilter == "Discount"
+                                                  ? Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        const Text(
+                                                            "Select discount range",
+                                                            style: TextStyle(
+                                                                fontFamily:
+                                                                    "Clash Display",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize: 15)),
+                                                        const SizedBox(
+                                                            height: 8),
+                                                        RangeSlider(
+                                                          values: discountRange,
+                                                          min: 0,
+                                                          max: 100,
+                                                          divisions: 20,
+                                                          activeColor:
+                                                              appBarColor,
+                                                          onChanged: (v) =>
+                                                              setModalState(() {
+                                                            discountRange = v;
+                                                          }),
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                                "${discountRange.start.toInt()}%",
+                                                                style: const TextStyle(
+                                                                    fontFamily:
+                                                                        "Clash Display",
+                                                                    color: Colors
+                                                                        .grey)),
+                                                            Text(
+                                                                "${discountRange.end.toInt()}%",
+                                                                style: const TextStyle(
+                                                                    fontFamily:
+                                                                        "Clash Display",
+                                                                    color: Colors
+                                                                        .grey)),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : const SizedBox(),
                             ),
                           ),
                         ],
@@ -1351,12 +1427,16 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                     priceRange.start.toInt().toString();
                                 _appliedMaxPrice =
                                     priceRange.end.toInt().toString();
+                                _appliedMinDiscount = discountRange.start.toInt();
+                                _appliedMaxDiscount = discountRange.end.toInt();
                                 _appliedColors = List.from(selectedColors);
                                 _appliedSizes = List.from(selectedSizes);
                                 _hasActiveFilters =
                                     selectedBrandIds.isNotEmpty ||
                                         priceRange.start > 300 ||
                                         priceRange.end < 100000 ||
+                                        discountRange.start > 0 ||
+                                        discountRange.end < 100 ||
                                         selectedColors.isNotEmpty ||
                                         selectedSizes.isNotEmpty;
 
@@ -1376,6 +1456,11 @@ class ProductViewScreenState extends State<ProductViewScreen> {
                                     priceRange.end < 100000) {
                                   filterParts.add(
                                       "₹${priceRange.start.toInt()}–₹${priceRange.end.toInt()}");
+                                }
+                                if (discountRange.start > 0 ||
+                                    discountRange.end < 100) {
+                                  filterParts.add(
+                                      "${discountRange.start.toInt()}%–${discountRange.end.toInt()}%");
                                 }
                                 if (selectedColors.isNotEmpty) {
                                   filterParts

@@ -7,18 +7,18 @@ import 'nudge_badge.dart';
 /// A horizontally scrollable row of [NudgeBadge] widgets.
 ///
 /// Renders up to [maxVisible] badges from [nudges]. Returns [SizedBox.shrink]
-/// when [nudges] is empty. Pass [compact] to control whether each child badge
+/// when [nudges] is empty. Pass [isExpanded] to control whether each child badge
 /// shows icon-only (`true`) or icon + label (`false`).
 class NudgeBadgeRow extends StatelessWidget {
   final List<Nudge> nudges;
   final int maxVisible;
-  final bool compact;
+  final bool isExpanded;
 
   const NudgeBadgeRow({
     super.key,
     required this.nudges,
     this.maxVisible = 3,
-    this.compact = false,
+    this.isExpanded = false,
   });
 
   @override
@@ -34,7 +34,7 @@ class NudgeBadgeRow extends StatelessWidget {
             .map(
               (n) => Padding(
                 padding: EdgeInsets.only(right: 4.sp),
-                child: NudgeBadge(nudge: n, showText: compact),
+                child: NudgeBadge(nudge: n, showText: isExpanded),
               ),
             )
             .toList(),

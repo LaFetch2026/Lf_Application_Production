@@ -49,6 +49,8 @@ class _TestCatalogController extends CatalogController {
     List<String>? sizes,
     String? minPrice,
     String? maxPrice,
+    String? minDiscount,
+    String? maxDiscount,
     String? sortOption,
     int? superCatId,
     int? catId,

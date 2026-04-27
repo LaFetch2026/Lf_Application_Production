@@ -50,6 +50,9 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
   late VideoPlayerController videoController;
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
+  int _appliedMinDiscount = 0;
+  int _appliedMaxDiscount = 100;
+
   //late Future<void> _initializeVideoPlayerFuture;
 
   @override
@@ -237,8 +240,11 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                       }
                                       return FilterChipsRow(
                                         chips: catalogController.chips.toList(),
-                                        selectedChipIds: catalogController.selectedChipIds,
-                                        selectedChips: catalogController.selectedChips.toList(),
+                                        selectedChipIds:
+                                            catalogController.selectedChipIds,
+                                        selectedChips: catalogController
+                                            .selectedChips
+                                            .toList(),
                                         onChipTap: catalogController.onChipTap,
                                       );
                                     }),
@@ -593,7 +599,7 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                                                       .productCategoryList[
                                                                   index]),
                                                           maxVisible: 2,
-                                                          compact: true,
+                                                          isExpanded: true,
                                                         ),
                                                       ),
                                                     ],
@@ -878,12 +884,22 @@ class ProductVerticalScreenState extends State<ProductVerticalScreen> {
                                       prefs.remove("upper");
                                       prefs.remove("lower");
                                       prefs.remove("sortby");
+                                      prefs.remove("minDiscount");
+                                      prefs.remove("maxDiscount");
+                                      setState(() {
+                                        _appliedMinDiscount = 0;
+                                        _appliedMaxDiscount = 100;
+                                      });
                                     },
-                                    onClick: (p0, p1) {
+                                    onClick: (p0, p1, p2, p3) {
                                       productController.filterEnable.value =
                                           true;
                                       productController.lowPrice.value = p0;
                                       productController.highPrice.value = p1;
+                                      setState(() {
+                                        _appliedMinDiscount = p2;
+                                        _appliedMaxDiscount = p3;
+                                      });
                                     },
                                   );
                                 },

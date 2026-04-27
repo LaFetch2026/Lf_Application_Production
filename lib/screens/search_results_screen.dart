@@ -58,6 +58,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   List<String> _appliedSizes = [];
   String _appliedMinPrice = "300";
   String _appliedMaxPrice = "100000";
+  int _appliedMinDiscount = 0;
+  int _appliedMaxDiscount = 100;
   String _appliedSortOption = "recommended";
   bool _hasActiveFilters = false;
   bool _isFilterMetadataLoaded = false;
@@ -103,6 +105,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
     prefs.remove("lower");
     prefs.remove("sortby");
     prefs.remove("category");
+    prefs.remove("minDiscount");
+    prefs.remove("maxDiscount");
   }
 
   // Load filter metadata if needed
@@ -215,6 +219,13 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       ));
     }
 
+    if (_appliedMinDiscount > 0 || _appliedMaxDiscount < 100) {
+      pills.add(ActiveFilterPill(
+        label: '$_appliedMinDiscount%–$_appliedMaxDiscount%',
+        onRemove: () => _removeSearchFilter(resetDiscount: true),
+      ));
+    }
+
     if (_appliedSortOption != 'recommended') {
       final sortLabels = {
         'price_asc': 'Price ↑',
@@ -237,6 +248,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
     String? color,
     String? size,
     bool resetPrice = false,
+    bool resetDiscount = false,
     bool resetSort = false,
   }) {
     setState(() {
@@ -247,13 +259,19 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
         _appliedMinPrice = '300';
         _appliedMaxPrice = '100000';
       }
+      if (resetDiscount) {
+        _appliedMinDiscount = 0;
+        _appliedMaxDiscount = 100;
+      }
       if (resetSort) _appliedSortOption = 'recommended';
 
       _hasActiveFilters = _appliedBrands.isNotEmpty ||
           _appliedColors.isNotEmpty ||
           _appliedSizes.isNotEmpty ||
           (int.tryParse(_appliedMinPrice) ?? 300) > 300 ||
-          (int.tryParse(_appliedMaxPrice) ?? 100000) < 100000;
+          (int.tryParse(_appliedMaxPrice) ?? 100000) < 100000 ||
+          _appliedMinDiscount > 0 ||
+          _appliedMaxDiscount < 100;
     });
 
     final sc = Get.find<SearchScreenController>();
@@ -263,6 +281,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       sizes: _appliedSizes,
       minPrice: _appliedMinPrice,
       maxPrice: _appliedMaxPrice,
+      minDiscount: _appliedMinDiscount,
+      maxDiscount: _appliedMaxDiscount,
       sort: _appliedSortOption,
     );
   }
@@ -566,12 +586,17 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       double.parse(_appliedMinPrice),
       double.parse(_appliedMaxPrice),
     );
+    RangeValues discountRange = RangeValues(
+      _appliedMinDiscount.toDouble(),
+      _appliedMaxDiscount.toDouble(),
+    );
 
     final List<String> filterCategories = [
       "Brand",
       "Price Range",
       "Color",
-      "Size"
+      "Size",
+      "Discount",
     ];
 
     // Ensure filter metadata is loaded
@@ -632,6 +657,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                 selectedColors.clear();
                                 selectedSizes.clear();
                                 priceRange = const RangeValues(300, 100000);
+                                discountRange = const RangeValues(0, 100);
                               });
                             },
                             child: const Text("CLEAR ALL",
@@ -858,7 +884,62 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                                         );
                                                       },
                                                     )
-                                              : const SizedBox(),
+                                              : selectedFilter == "Discount"
+                                                  ? Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        const Text(
+                                                            "Select discount range",
+                                                            style: TextStyle(
+                                                                fontFamily:
+                                                                    "Clash Display",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize: 15)),
+                                                        const SizedBox(
+                                                            height: 8),
+                                                        RangeSlider(
+                                                          values: discountRange,
+                                                          min: 0,
+                                                          max: 100,
+                                                          divisions: 20,
+                                                          activeColor:
+                                                              appBarColor,
+                                                          inactiveColor:
+                                                              Colors.grey,
+                                                          onChanged: (v) =>
+                                                              setModalState(
+                                                                  () {
+                                                            discountRange = v;
+                                                          }),
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                                "${discountRange.start.toInt()}%",
+                                                                style: const TextStyle(
+                                                                    fontFamily:
+                                                                        "Clash Display",
+                                                                    color: Colors
+                                                                        .grey)),
+                                                            Text(
+                                                                "${discountRange.end.toInt()}%",
+                                                                style: const TextStyle(
+                                                                    fontFamily:
+                                                                        "Clash Display",
+                                                                    color: Colors
+                                                                        .grey)),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : const SizedBox(),
                             ),
                           ),
                         ],
@@ -909,11 +990,16 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                     priceRange.end.toInt().toString();
                                 _appliedColors = List.from(selectedColors);
                                 _appliedSizes = List.from(selectedSizes);
+                                _appliedMinDiscount =
+                                    discountRange.start.toInt();
+                                _appliedMaxDiscount = discountRange.end.toInt();
                                 _hasActiveFilters = selectedBrands.isNotEmpty ||
                                     priceRange.start > 300 ||
                                     priceRange.end < 100000 ||
                                     selectedColors.isNotEmpty ||
-                                    selectedSizes.isNotEmpty;
+                                    selectedSizes.isNotEmpty ||
+                                    discountRange.start > 0 ||
+                                    discountRange.end < 100;
                               });
 
                               // Schedule filter application after current frame
@@ -926,6 +1012,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                   sizes: selectedSizes,
                                   minPrice: priceRange.start.toInt().toString(),
                                   maxPrice: priceRange.end.toInt().toString(),
+                                  minDiscount: discountRange.start.toInt(),
+                                  maxDiscount: discountRange.end.toInt(),
                                   sort: _appliedSortOption,
                                 );
                               });
@@ -948,6 +1036,11 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                 if (selectedSizes.isNotEmpty) {
                                   filterParts
                                       .add("${selectedSizes.length} size(s)");
+                                }
+                                if (discountRange.start > 0 ||
+                                    discountRange.end < 100) {
+                                  filterParts.add(
+                                      "${discountRange.start.toInt()}%–${discountRange.end.toInt()}%");
                                 }
                                 getSnackBar(
                                     "Filtered by ${filterParts.join(', ')}");
@@ -1065,6 +1158,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                               sizes: _appliedSizes,
                               minPrice: _appliedMinPrice,
                               maxPrice: _appliedMaxPrice,
+                              minDiscount: _appliedMinDiscount,
+                              maxDiscount: _appliedMaxDiscount,
                               sort: selected,
                             );
                           });

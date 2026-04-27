@@ -13,7 +13,7 @@ extension PdpInfoSection on _ProductDetailsScreenV2State {
               NudgeBadgeRow(
                 nudges: _productNudges(),
                 maxVisible: 5,
-                compact: false,
+                isExpanded: true,
               ),
               SizedBox(height: 4.sp),
               Text(_titleText(),

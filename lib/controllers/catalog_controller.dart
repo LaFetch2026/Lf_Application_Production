@@ -87,6 +87,10 @@ class CatalogController extends BaseController {
   // ignore: unused_field
   String? _lastMaxPrice;
   // ignore: unused_field
+  String? _lastMinDiscount;
+  // ignore: unused_field
+  String? _lastMaxDiscount;
+  // ignore: unused_field
   String? _lastSortOption;
   // ignore: unused_field
   int? _lastSuperCatId;
@@ -487,6 +491,8 @@ class CatalogController extends BaseController {
     List<String>? sizes,
     String? minPrice,
     String? maxPrice,
+    String? minDiscount,
+    String? maxDiscount,
     String? sortOption,
     int? superCatId,
     int? catId,
@@ -509,6 +515,8 @@ class CatalogController extends BaseController {
       _lastSizes = sizes;
       _lastMinPrice = minPrice;
       _lastMaxPrice = maxPrice;
+      _lastMinDiscount = minDiscount;
+      _lastMaxDiscount = maxDiscount;
       _lastSortOption = sortOption;
       _lastSuperCatId = superCatId;
       _lastCatId = catId;
@@ -545,6 +553,28 @@ class CatalogController extends BaseController {
 
       if (maxPrice != null && maxPrice.isNotEmpty) {
         queryParams['maxPrice'] = maxPrice;
+      }
+
+      // Add discount params with defensive guard for invalid ranges
+      if (minDiscount != null && minDiscount.isNotEmpty &&
+          maxDiscount != null && maxDiscount.isNotEmpty) {
+        final minDiscountInt = int.tryParse(minDiscount);
+        final maxDiscountInt = int.tryParse(maxDiscount);
+        
+        // Only include if valid and minDiscount <= maxDiscount
+        if (minDiscountInt != null && maxDiscountInt != null &&
+            minDiscountInt <= maxDiscountInt) {
+          queryParams['minDiscount'] = minDiscount;
+          queryParams['maxDiscount'] = maxDiscount;
+        }
+      } else {
+        // Include individual params if only one is provided
+        if (minDiscount != null && minDiscount.isNotEmpty) {
+          queryParams['minDiscount'] = minDiscount;
+        }
+        if (maxDiscount != null && maxDiscount.isNotEmpty) {
+          queryParams['maxDiscount'] = maxDiscount;
+        }
       }
 
       if (key != null && key.isNotEmpty) {
@@ -791,7 +821,9 @@ class CatalogController extends BaseController {
 
       getFilterAndSortProducts(
         brandIds: _lastBrandIds, colors: _lastColors, sizes: _lastSizes,
-        minPrice: _lastMinPrice, maxPrice: _lastMaxPrice, sortOption: _lastSortOption,
+        minPrice: _lastMinPrice, maxPrice: _lastMaxPrice,
+        minDiscount: _lastMinDiscount, maxDiscount: _lastMaxDiscount,
+        sortOption: _lastSortOption,
         superCatId: _lastSuperCatId, catId: _lastCatId, subCatId: newSubCatId,
         brandId: _lastBrandId, collectionId: _lastCollectionId,
         contextualCategoryId: newContextualCategoryId,
@@ -815,7 +847,9 @@ class CatalogController extends BaseController {
 
     getFilterAndSortProducts(
       brandIds: _lastBrandIds, colors: _lastColors, sizes: _lastSizes,
-      minPrice: _lastMinPrice, maxPrice: _lastMaxPrice, sortOption: _lastSortOption,
+      minPrice: _lastMinPrice, maxPrice: _lastMaxPrice,
+      minDiscount: _lastMinDiscount, maxDiscount: _lastMaxDiscount,
+      sortOption: _lastSortOption,
       superCatId: _lastSuperCatId, catId: _lastCatId, subCatId: newSubCatId,
       brandId: _lastBrandId, collectionId: _lastCollectionId,
       contextualCategoryId: newContextualCategoryId,
@@ -834,6 +868,8 @@ class CatalogController extends BaseController {
     List<String>? sizes,
     String? minPrice,
     String? maxPrice,
+    String? minDiscount,
+    String? maxDiscount,
     String? sortOption,
     int? superCatId,
     int? catId,
@@ -849,6 +885,8 @@ class CatalogController extends BaseController {
     _lastSizes = sizes;
     _lastMinPrice = minPrice;
     _lastMaxPrice = maxPrice;
+    _lastMinDiscount = minDiscount;
+    _lastMaxDiscount = maxDiscount;
     _lastSortOption = sortOption;
     _lastSuperCatId = superCatId;
     _lastCatId = catId;
