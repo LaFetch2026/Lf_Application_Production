@@ -29,6 +29,8 @@ import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import '../../../common/widget/appbar/home_appbar.dart';
+import '../../../screens/accountscreen.dart';
+import '../../../screens/catalog/women_catalog.dart';
 import '../../../common/widget/lists/dummy_home_brand.dart';
 import '../../../common/widget/lists/dummy_grid_list.dart';
 import '../../../common/widget/other/common_widget.dart';
@@ -763,6 +765,19 @@ class HomeScreenState extends State<HomeScreen>
                       homeController.showGenderList.value =
                           !homeController.showGenderList.value;
                       setState(() {});
+                    },
+                    onPressedCategories: () {
+                      Get.to(() => WomenCatalogScreen());
+                    },
+                    onPressedProfile: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      final isGuest = prefs.getBool('skip') ?? false;
+                      if (isGuest) {
+                        getSnackBar("Please login to view your profile");
+                        Get.to(() => const LoginScreen(initialTab: 0));
+                      } else {
+                        Get.to(() => AccountScreen(onPressed: () {}));
+                      }
                     },
                   ),
 

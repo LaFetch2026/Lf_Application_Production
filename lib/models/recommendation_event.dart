@@ -33,6 +33,8 @@ class RecommendationProduct {
   final String brandName;
   final String productName;
   final double sellingPrice;
+  final double? mrp;
+  final bool isNew;
   final String imageUrl;
   final List<Nudge> nudges;
   final String category;
@@ -43,6 +45,8 @@ class RecommendationProduct {
     required this.brandName,
     required this.productName,
     required this.sellingPrice,
+    this.mrp,
+    this.isNew = false,
     required this.imageUrl,
     this.nudges = const [],
     this.category = '',
@@ -87,12 +91,28 @@ class RecommendationProduct {
       imageUrl = (json['imageUrls'] as List).first.toString();
     }
 
+    final rawMrp = json['mrp'] ?? json['compareAtPrice'];
+    final mrp = rawMrp is num
+        ? rawMrp.toDouble()
+        : rawMrp != null
+            ? double.tryParse(rawMrp.toString())
+            : null;
+
+    final isNew = json['isNew'] == true ||
+        json['is_new'] == true ||
+        (json['nudges'] is List &&
+            (json['nudges'] as List).any((n) =>
+                n is Map && n['key'] == 'new_in'));
+
     return RecommendationProduct(
       id: idInt,
       slug: json['slug']?.toString() ?? '',
       brandName: brandName.toString(),
       productName: productName.toString(),
-      sellingPrice: sellingPrice,      imageUrl: imageUrl,
+      sellingPrice: sellingPrice,
+      mrp: mrp,
+      isNew: isNew,
+      imageUrl: imageUrl,
       nudges: (json['nudges'] as List<dynamic>?)?.map((e) => Nudge.fromJson(e as Map<String, dynamic>)).toList() ?? [],
       category: json['category']?.toString() ?? '',
     );

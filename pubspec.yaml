@@ -78,6 +78,8 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
+  mockito: ^5.4.4
+  build_runner: ^2.4.9
 
 flutter_launcher_icons:
   ios: true

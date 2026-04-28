@@ -13,6 +13,8 @@ class HomeAppbar extends StatefulWidget {
   final Function? onPressedSearch;
   final Function? onPressedHeart;
   final Function? onPressedDropDown;
+  final Function? onPressedProfile;
+  final Function? onPressedCategories;
   final bool showSearch;
   final String title;
 
@@ -24,6 +26,8 @@ class HomeAppbar extends StatefulWidget {
     this.showSearch = true,
     this.title = "",
     this.onPressedDropDown,
+    this.onPressedProfile,
+    this.onPressedCategories,
   }) : super(key: key);
 
   @override
@@ -116,15 +120,28 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
 
             const Spacer(),
 
-            // ---- ICONS (Search / Wishlist / Cart) ----
+            // ---- ICONS ----
             Row(
               children: [
-                // ✅ Search - Available for everyone
+                // ✅ Profile icon - identity anchor, leftmost
+                if (widget.onPressedProfile != null)
+                  InkWell(
+                    onTap: () => widget.onPressedProfile?.call(),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 8.sp, vertical: 8.sp),
+                      child: Icon(
+                        Icons.person_outline,
+                        size: 20.sp,
+                      ),
+                    ),
+                  ),
+
+                // ✅ Search
                 if (widget.showSearch)
                   InkWell(
                     onTap: () async {
                       await widget.onPressedSearch?.call();
-                      // refresh count when returning from search (only for logged-in)
                       if (!isGuest) {
                         cartController.getCartData();
                       }
@@ -137,6 +154,20 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                         height: 18.sp,
                         width: 18.sp,
                         fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
+
+                // ✅ Categories icon - optional
+                if (widget.onPressedCategories != null)
+                  InkWell(
+                    onTap: () => widget.onPressedCategories?.call(),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 8.sp, vertical: 8.sp),
+                      child: Icon(
+                        Icons.grid_view_outlined,
+                        size: 20.sp,
                       ),
                     ),
                   ),
@@ -161,7 +192,7 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                   ),
                 ),
 
-                // ✅ Cart - Blocked for guests, no badge shown
+                // ✅ Cart - rightmost, primary CTA
                 InkWell(
                   onTap: () async {
                     await widget.onPressedCart?.call();
@@ -181,8 +212,6 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                           width: 20.sp,
                           fit: BoxFit.fill,
                         ),
-
-                        // ✅ Only show badge for logged-in users
                         if (!isGuest)
                           Positioned(
                             right: -5.sp,

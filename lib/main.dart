@@ -31,6 +31,7 @@ import 'screens/home/women/homescreen.dart' show routeObserver;
 import 'services/session_manager.dart';
 import 'services/recommendation_service.dart';
 import 'services/event_tracking_service.dart';
+import 'services/swipe_feed_service.dart';
 
 /// Background FCM handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -137,6 +138,10 @@ Future<void> main() async {
 
   if (!Get.isRegistered<EventTrackingService>()) {
     Get.put(EventTrackingService(), permanent: true);
+  }
+
+  if (!Get.isRegistered<SwipeFeedService>()) {
+    Get.put(SwipeFeedService(), permanent: true);
   }
 
   // ---------------- Firebase Init -----------------------

@@ -20,9 +20,11 @@ import '../screens/accountscreen.dart';
 import '../screens/brandsscreen.dart';
 import '../screens/cartscreen.dart';
 import '../screens/catalog/women_catalog.dart';
+import '../screens/swipe_feed_screen.dart';
 import '../screens/home/women/homescreen.dart';
 import '../screens/home/women/dynamic_homescreen.dart';
 import '../screens/quickscreen.dart';
+import '../screens/coming_soon_screen.dart';
 import '../screens/loginscreen.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -225,13 +227,13 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
         screen = const BrandsScreen(screen: "home");
         break;
       case 2:
-        screen = WomenCatalogScreen();
+        screen = const SwipeFeedScreen();
         break;
       case 3:
-        screen = AccountScreen(onPressed: () => _changeTab(2));
+        screen = const ComingSoonScreen();
         break;
       case 4:
-        screen = const QuickScreen();
+        screen = const ComingSoonScreen();
         break;
       default:
         screen = const SizedBox.shrink();
@@ -291,88 +293,6 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                         : const SizedBox.shrink(),
                   ],
                 ),
-          // bottomNavigationBar: Container(
-          //   padding: EdgeInsets.only(
-          //     bottom: MediaQuery.of(context).padding.bottom,
-          //   ),
-          //   decoration: BoxDecoration(
-          //     color: whiteColor,
-          //     boxShadow: [
-          //       BoxShadow(
-          //         color: Colors.black.withOpacity(0.1),
-          //         blurRadius: 8,
-          //         offset: const Offset(0, -2),
-          //       ),
-          //     ],
-          //   ),
-          //   height: 55.sp + MediaQuery.of(context).padding.bottom,
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //     children: [
-          // _navItem(
-          //   icon:
-          //       _currentIndex == 0 ? homeSelectedSvgImage : homeSvgImage,
-          //   label: "Home",
-          //   selected: _currentIndex == 0,
-          //   onTap: () {
-          //     HapticFeedback.lightImpact();
-          //     _changeTab(0);
-          //     analytics.logEvent(name: 'home_page');
-          //   },
-          // ),
-          // _navItem(
-          //   icon: _currentIndex == 1
-          //       ? brandSelectedSvgImage
-          //       : brandSvgImage,
-          //   label: "Brands",
-          //   selected: _currentIndex == 1,
-          //   onTap: () {
-          //     HapticFeedback.lightImpact();
-          //     _changeTab(1);
-          //     analytics.logEvent(name: 'brands_page');
-          //   },
-          // ),
-          // _navItem(
-          //   icon: _currentIndex == 4
-          //       ? quickSelectedSvgImage
-          //       : quickSvgImage,
-          //   label: "Quick",
-          //   selected: _currentIndex == 4,
-          //   iconSize: 24.sp,
-          //   fixedColor: lightPurpleColor,
-          //   onTap: () {
-          //     HapticFeedback.lightImpact();
-          //     // Show location choice dialog immediately
-          //     _showLocationChoiceDialog(context);
-          //   },
-          // ),
-          // _navItem(
-          //   icon: _currentIndex == 2
-          //       ? categorySelectedSvgImage
-          //       : categorySvgImage,
-          //   label: "Category",
-          //   selected: _currentIndex == 2,
-          //   onTap: () {
-          //     HapticFeedback.lightImpact();
-          //     _changeTab(2);
-          //     analytics.logEvent(name: 'category_page');
-          //   },
-          // ),
-          // _navItem(
-          //   icon: _currentIndex == 3
-          //       ? profileSelectedSvgImage
-          //       : profileSvgImage,
-          //   label: "Profile",
-          //   selected: _currentIndex == 3,
-          //   onTap: () => _handleProtectedNavigation(() {
-          //     HapticFeedback.lightImpact();
-          //     _changeTab(3);
-          //     analytics.logEvent(name: 'profile_page');
-          //   }),
-          // ),
-          //   ],
-          // ),
-          // ),
           bottomNavigationBar: Obx(() {
             final isVisible = homeController.isBottomNavVisible.value;
 
@@ -438,29 +358,27 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                           _showLocationChoiceDialog(context);
                         },
                       ),
-                      _navItem(
-                        icon: _currentIndex == 2
-                            ? categorySelectedSvgImage
-                            : categorySvgImage,
-                        label: "Category",
+                      _navItemMaterial(
+                        iconData: Icons.style_outlined,
+                        selectedIconData: Icons.style,
+                        label: "Swipe",
                         selected: _currentIndex == 2,
                         onTap: () {
                           HapticFeedback.lightImpact();
                           _changeTab(2);
-                          analytics.logEvent(name: 'category_page');
+                          analytics.logEvent(name: 'swipe_feed_page');
                         },
                       ),
-                      _navItem(
-                        icon: _currentIndex == 3
-                            ? profileSelectedSvgImage
-                            : profileSvgImage,
-                        label: "Profile",
+                      _navItemMaterial(
+                        iconData: Icons.movie_creation_outlined,
+                        selectedIconData: Icons.movie_creation,
+                        label: "Studio",
                         selected: _currentIndex == 3,
-                        onTap: () => _handleProtectedNavigation(() {
+                        onTap: () {
                           HapticFeedback.lightImpact();
                           _changeTab(3);
-                          analytics.logEvent(name: 'profile_page');
-                        }),
+                          analytics.logEvent(name: 'studio_page');
+                        },
                       ),
                     ],
                   ),
@@ -1013,6 +931,49 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
           ),
         );
       },
+    );
+  }
+
+  /// Reusable bottom nav item for Material icons
+  Widget _navItemMaterial({
+    required IconData iconData,
+    required IconData selectedIconData,
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+    double? iconSize,
+    Color? fixedColor,
+  }) {
+    final color =
+        fixedColor ?? (selected ? homeAppBarColor : const Color(0xFF9CA3AF));
+
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.only(top: 8.sp),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                selected ? selectedIconData : iconData,
+                size: iconSize ?? 19.sp,
+                color: color,
+              ),
+              SizedBox(height: 4.sp),
+              Text(
+                label.toUpperCase(),
+                style: TextStyle(
+                  color: color,
+                  fontSize: 10.sp,
+                  fontFamily: "Clash Display",
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

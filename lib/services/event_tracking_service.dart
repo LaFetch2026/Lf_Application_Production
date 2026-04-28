@@ -10,8 +10,19 @@ import '../core/constant/constants.dart';
 import '../models/recommendation_event.dart';
 import 'session_manager.dart';
 
+enum SwipeAction {
+  likeProduct,
+  dislikeProduct,
+  swipeUp,
+  swipeDown,
+}
+
 class EventTrackingService extends GetxService {
   static EventTrackingService get instance => Get.find();
+
+  final http.Client _client;
+
+  EventTrackingService({http.Client? client}) : _client = client ?? http.Client();
 
   final _queue = <UserEvent>[];
   final _impressedIds = <int>{};
@@ -70,7 +81,7 @@ class EventTrackingService extends GetxService {
         position: position,
         sessionId: _sessionId(),
       );
-      await http
+      await _client
           .post(
             Uri.parse('${ApiConstants.baseUrl}/recommendations/batch-track'),
             headers: {
@@ -95,7 +106,7 @@ class EventTrackingService extends GetxService {
         position: position,
         sessionId: _sessionId(),
       );
-      await http
+      await _client
           .post(
             Uri.parse('${ApiConstants.baseUrl}/recommendations/track'),
             headers: {
@@ -110,6 +121,41 @@ class EventTrackingService extends GetxService {
     }
   }
 
+  Future<void> trackSwipe(SwipeAction action, int productId) async {
+    const _actionMap = {
+      SwipeAction.likeProduct: ('LIKE_PRODUCT', 3),
+      SwipeAction.dislikeProduct: ('DISLIKE_PRODUCT', -6),
+      SwipeAction.swipeUp: ('SWIPE_UP', 8),
+      SwipeAction.swipeDown: ('SWIPE_DOWN', 4),
+    };
+
+    final (eventType, weight) = _actionMap[action]!;
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt('userId') ?? 0;
+      final token = prefs.getString('token')?.trim() ?? '';
+
+      await _client
+          .post(
+            Uri.parse('${ApiConstants.baseUrl}/events/track'),
+            headers: {
+              'Content-Type': 'application/json; charset=UTF-8',
+              if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode({
+              'userId': userId,
+              'productId': productId,
+              'eventType': eventType,
+              'weight': weight,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
+    } catch (e) {
+      debugPrint('[EventTrackingService] trackSwipe error: $e');
+    }
+  }
+
   Future<void> flushNow() async {
     if (_queue.isEmpty) return;
     final snapshot = List<UserEvent>.from(_queue);
@@ -117,7 +163,7 @@ class EventTrackingService extends GetxService {
 
     try {
       final token = await _token();
-      final response = await http
+      final response = await _client
           .post(
             Uri.parse('${ApiConstants.baseUrl}/events/batch-track'),
             headers: {
