@@ -123,20 +123,6 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
             // ---- ICONS ----
             Row(
               children: [
-                // ✅ Profile icon - identity anchor, leftmost
-                if (widget.onPressedProfile != null)
-                  InkWell(
-                    onTap: () => widget.onPressedProfile?.call(),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 8.sp, vertical: 8.sp),
-                      child: Icon(
-                        Icons.person_outline,
-                        size: 20.sp,
-                      ),
-                    ),
-                  ),
-
                 // ✅ Search
                 if (widget.showSearch)
                   InkWell(
@@ -246,6 +232,19 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                     ),
                   ),
                 ),
+                // ✅ Profile icon - identity anchor, leftmost
+                if (widget.onPressedProfile != null)
+                  InkWell(
+                    onTap: () => widget.onPressedProfile?.call(),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 4.sp, vertical: 8.sp),
+                      child: Icon(
+                        Icons.person_outline,
+                        size: 24.sp,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ],
