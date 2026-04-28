@@ -35,6 +35,7 @@ class RecommendationProduct {
   final double sellingPrice;
   final String imageUrl;
   final List<Nudge> nudges;
+  final String category;
 
   const RecommendationProduct({
     required this.id,
@@ -44,6 +45,7 @@ class RecommendationProduct {
     required this.sellingPrice,
     required this.imageUrl,
     this.nudges = const [],
+    this.category = '',
   });
 
   factory RecommendationProduct.fromJson(Map<String, dynamic> json) {
@@ -92,6 +94,7 @@ class RecommendationProduct {
       productName: productName.toString(),
       sellingPrice: sellingPrice,      imageUrl: imageUrl,
       nudges: (json['nudges'] as List<dynamic>?)?.map((e) => Nudge.fromJson(e as Map<String, dynamic>)).toList() ?? [],
+      category: json['category']?.toString() ?? '',
     );
   }
 }

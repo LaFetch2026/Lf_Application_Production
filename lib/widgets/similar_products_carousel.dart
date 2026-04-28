@@ -180,8 +180,7 @@ class _SimilarProductsCarouselState extends State<SimilarProductsCarousel> {
           if (_loadingSimilar)
             _buildShimmerRow('YOU MAY ALSO LIKE')
           else if (_similar.isNotEmpty) ...[
-            _buildSectionHeader('LAFETCH RECOMMENDATIONS',
-                subtitle: 'CURATED FOR YOU'),
+            _buildSectionHeader('TRENDING ON LAFETCH'),
             _buildRow(_similar, isTrending: false),
             SizedBox(height: 8.sp),
           ],

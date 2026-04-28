@@ -38,6 +38,7 @@ import '../../../wishlistscreen.dart';
 import '../../../../services/event_tracking_service.dart';
 import '../../../../common/widget/other/error_shake.dart';
 import '../../../../widgets/similar_products_carousel.dart';
+import '../../../../widgets/trending_now_section.dart';
 import '../../../../common/widget/newsletter/newsletter_section.dart';
 import '../../../../models/nudge_model.dart';
 import '../../../../widgets/nudge_badge_row.dart';
