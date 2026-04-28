@@ -1,3 +1,4 @@
+// ignore_for_file: deprecated_member_use
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -31,6 +32,7 @@ class _SwipeProductCardState extends State<SwipeProductCard>
     with TickerProviderStateMixin {
   Offset _dragOffset = Offset.zero;
   bool _isFlying = false;
+  int _currentImageIndex = 0;
 
   late final AnimationController _flyController;
   late Animation<Offset> _flyAnimation;
@@ -38,6 +40,12 @@ class _SwipeProductCardState extends State<SwipeProductCard>
   static const double _horizontalThreshold = 80.0;
   static const double _verticalThreshold = 60.0;
   static const Duration _flyDuration = Duration(milliseconds: 220);
+
+  // Lavender for like, matches lightPurpleColor
+  static const Color _likeColor = Color(0xFF988AFF);
+  static const Color _nopeColor = Color(0xFFF44336);
+  static const Color _saveColor = Color(0xFF988AFF);
+  static const Color _pdpColor = Color(0xFF374151);
 
   @override
   void initState() {
@@ -69,13 +77,14 @@ class _SwipeProductCardState extends State<SwipeProductCard>
     final absDx = dx.abs();
     final absDy = dy.abs();
 
-    // Direction priority: |dy| > |dx| → vertical, else horizontal
     if (absDy > absDx) {
       if (dy < -_verticalThreshold) {
         _triggerFlyOff(SwipeAction.swipeUp, const Offset(0, -700));
         return;
       } else if (dy > _verticalThreshold) {
-        _triggerFlyOff(SwipeAction.swipeDown, const Offset(0, 700));
+        // Swipe down → open PDP (no fly-off, just navigate)
+        setState(() => _dragOffset = Offset.zero);
+        widget.onSwiped(SwipeAction.swipeDown);
         return;
       }
     } else {
@@ -88,7 +97,6 @@ class _SwipeProductCardState extends State<SwipeProductCard>
       }
     }
 
-    // Sub-threshold: snap back
     setState(() => _dragOffset = Offset.zero);
   }
 
@@ -97,10 +105,7 @@ class _SwipeProductCardState extends State<SwipeProductCard>
     _flyAnimation = Tween<Offset>(
       begin: _dragOffset,
       end: exitOffset,
-    ).animate(CurvedAnimation(
-      parent: _flyController,
-      curve: Curves.easeOut,
-    ));
+    ).animate(CurvedAnimation(parent: _flyController, curve: Curves.easeOut));
 
     _flyController.forward(from: 0).then((_) {
       widget.onSwiped(action);
@@ -109,65 +114,34 @@ class _SwipeProductCardState extends State<SwipeProductCard>
 
   // ── Overlay helpers ──────────────────────────────────────────────────────
 
-  Offset get _effectiveDrag =>
-      _isFlying ? _flyAnimation.value : _dragOffset;
+  Offset get _effectiveDrag => _isFlying ? _flyAnimation.value : _dragOffset;
 
   double get _overlayOpacity {
     final dx = _effectiveDrag.dx;
     final dy = _effectiveDrag.dy;
-    final absDx = dx.abs();
-    final absDy = dy.abs();
-
-    if (absDy > absDx) {
-      return (absDy / _verticalThreshold).clamp(0.0, 1.0);
-    } else {
-      return (absDx / _horizontalThreshold).clamp(0.0, 1.0);
+    if (dy.abs() > dx.abs()) {
+      return (dy.abs() / _verticalThreshold).clamp(0.0, 1.0);
     }
+    return (dx.abs() / _horizontalThreshold).clamp(0.0, 1.0);
   }
 
   _OverlayInfo? get _activeOverlay {
     final dx = _effectiveDrag.dx;
     final dy = _effectiveDrag.dy;
-    final absDx = dx.abs();
-    final absDy = dy.abs();
-
-    if (absDy > absDx) {
-      if (dy < -30) {
-        return const _OverlayInfo(
-          color: Color(0xFF988AFF),
-          label: 'SAVE ⬆',
-        );
-      } else if (dy > 30) {
-        return const _OverlayInfo(
-          color: Color(0xFF9E9E9E),
-          label: 'SKIP ↓',
-        );
-      }
+    if (dy.abs() > dx.abs()) {
+      if (dy < -30) return const _OverlayInfo(color: Color(0xFF988AFF), label: '', icon: Icons.bookmark_add_outlined);
+      if (dy > 30) return const _OverlayInfo(color: Color(0xFF374151), label: '', icon: Icons.open_in_new);
     } else {
-      if (dx > 30) {
-        return const _OverlayInfo(
-          color: Color(0xFF4CAF50),
-          label: 'LIKE ❤️',
-        );
-      } else if (dx < -30) {
-        return const _OverlayInfo(
-          color: Color(0xFFF44336),
-          label: 'NOPE ✕',
-        );
-      }
+      if (dx > 30) return const _OverlayInfo(color: Color(0xFF988AFF), label: '', icon: Icons.favorite_outline);
+      if (dx < -30) return const _OverlayInfo(color: Color(0xFFF44336), label: '', icon: Icons.close);
     }
     return null;
   }
 
   // ── Price helpers ────────────────────────────────────────────────────────
 
-  String _formatPrice(double value) {
-    return NumberFormat.currency(
-      locale: 'en_IN',
-      symbol: '₹',
-      decimalDigits: 0,
-    ).format(value);
-  }
+  String _formatPrice(double value) => NumberFormat.currency(
+        locale: 'en_IN', symbol: '₹', decimalDigits: 0).format(value);
 
   int? get _discountPercent {
     final mrp = widget.product.mrp;
@@ -187,27 +161,14 @@ class _SwipeProductCardState extends State<SwipeProductCard>
 
     Widget card = _buildCard();
 
-    // Apply tilt rotation
-    card = Transform.rotate(
-      angle: rotationAngle,
-      child: card,
-    );
-
-    // Apply scale + vertical offset for stack depth
+    card = Transform.rotate(angle: rotationAngle, child: card);
     card = Transform.translate(
       offset: Offset(0, widget.verticalOffset),
-      child: Transform.scale(
-        scale: widget.scale,
-        child: card,
-      ),
+      child: Transform.scale(scale: widget.scale, child: card),
     );
 
-    // Apply drag translation (only for top card)
     if (widget.isTop) {
-      card = Transform.translate(
-        offset: drag,
-        child: card,
-      );
+      card = Transform.translate(offset: drag, child: card);
     }
 
     if (!widget.isTop) return card;
@@ -223,206 +184,280 @@ class _SwipeProductCardState extends State<SwipeProductCard>
     final overlay = _activeOverlay;
     final opacity = _overlayOpacity;
     final discount = _discountPercent;
+    final p = widget.product;
+    final images = p.imageUrls.isNotEmpty ? p.imageUrls : (p.imageUrl.isNotEmpty ? [p.imageUrl] : <String>[]);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16.sp),
-      child: Stack(
-        children: [
-          // ── Product image ──────────────────────────────────────────────
-          Positioned.fill(
-            child: CachedNetworkImage(
-              imageUrl: widget.product.imageUrl,
-              fit: BoxFit.cover,
-              placeholder: (_, __) => Container(color: colorSecondary),
-              errorWidget: (_, __, ___) => Container(
-                color: colorSecondary,
-                child: Icon(
-                  Icons.image_not_supported,
-                  color: Colors.grey,
-                  size: 48.sp,
+    return Container(
+      decoration: BoxDecoration(
+        // Grey bg for transparent/missing images
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(16.sp),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.12),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.sp),
+        child: Stack(
+          children: [
+            // ── Grey background (always present, shows through transparent images) ──
+            Positioned.fill(child: Container(color: Colors.grey[200])),
+
+            // ── Product image ──────────────────────────────────────────────
+            if (images.isNotEmpty)
+              Positioned.fill(
+                child: CachedNetworkImage(
+                  imageUrl: images[_currentImageIndex],
+                  fit: BoxFit.cover,
+                  placeholder: (_, __) => Container(color: Colors.grey[200]),
+                  errorWidget: (_, __, ___) => Container(color: Colors.grey[200]),
                 ),
               ),
-            ),
-          ),
 
-          // ── Bottom gradient overlay ────────────────────────────────────
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              height: 180.sp,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Color(0xDD000000),
-                    Colors.transparent,
+            // ── Multi-image tap zones (left/right thirds) ──────────────────
+            if (images.length > 1 && widget.isTop)
+              Positioned.fill(
+                child: Row(
+                  children: [
+                    // Left tap → previous image
+                    Expanded(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          if (_currentImageIndex > 0) {
+                            setState(() => _currentImageIndex--);
+                          }
+                        },
+                        child: const SizedBox.expand(),
+                      ),
+                    ),
+                    // Right tap → next image
+                    Expanded(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          if (_currentImageIndex < images.length - 1) {
+                            setState(() => _currentImageIndex++);
+                          }
+                        },
+                        child: const SizedBox.expand(),
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ),
-          ),
 
-          // ── Product info ───────────────────────────────────────────────
-          Positioned(
-            left: 16.sp,
-            right: 16.sp,
-            bottom: 20.sp,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Brand name
-                if (widget.product.brandName.isNotEmpty)
-                  Text(
-                    widget.product.brandName.toUpperCase(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: 'Clash Display Semibold',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 11.sp,
-                      color: Colors.white70,
-                      letterSpacing: 1.0,
-                    ),
-                  ),
-                SizedBox(height: 2.sp),
-                // Product name
-                Text(
-                  widget.product.productName,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: 'Clash Display',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 15.sp,
-                    color: Colors.white,
+            // ── Image dots indicator ───────────────────────────────────────
+            if (images.length > 1)
+              Positioned(
+                top: 10.sp,
+                left: 0,
+                right: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(images.length.clamp(0, 6), (i) {
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      margin: EdgeInsets.symmetric(horizontal: 2.sp),
+                      width: i == _currentImageIndex ? 16.sp : 5.sp,
+                      height: 4.sp,
+                      decoration: BoxDecoration(
+                        color: i == _currentImageIndex
+                            ? Colors.white
+                            : Colors.white.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(2.sp),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+
+            // ── Bottom gradient ────────────────────────────────────────────
+            Positioned(
+              left: 0, right: 0, bottom: 0,
+              child: Container(
+                height: 200.sp,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [Color(0xEE000000), Colors.transparent],
+                    stops: [0.0, 1.0],
                   ),
                 ),
-                SizedBox(height: 6.sp),
-                // Price row
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
+              ),
+            ),
+
+            // ── Product info ───────────────────────────────────────────────
+            Positioned(
+              left: 16.sp, right: 56.sp, bottom: 20.sp,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (p.brandName.isNotEmpty)
                     Text(
-                      _formatPrice(widget.product.sellingPrice),
+                      p.brandName.toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: 'Clash Display Semibold',
                         fontWeight: FontWeight.w600,
-                        fontSize: 16.sp,
-                        color: Colors.white,
+                        fontSize: 11.sp,
+                        color: Colors.white70,
+                        letterSpacing: 1.0,
                       ),
                     ),
-                    if (widget.product.mrp != null &&
-                        widget.product.mrp! > widget.product.sellingPrice) ...[
-                      SizedBox(width: 8.sp),
+                  SizedBox(height: 2.sp),
+                  Text(
+                    p.productName,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Clash Display',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15.sp,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 4.sp),
+                  // Price row
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
                       Text(
-                        _formatPrice(widget.product.mrp!),
-                        style: TextStyle(
-                          fontFamily: 'Clash Display',
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12.sp,
-                          color: Colors.white54,
-                          decoration: TextDecoration.lineThrough,
-                          decorationColor: Colors.white54,
-                        ),
-                      ),
-                      if (discount != null) ...[
-                        SizedBox(width: 6.sp),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 6.sp, vertical: 2.sp),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF4CAF50),
-                            borderRadius: BorderRadius.circular(4.sp),
-                          ),
-                          child: Text(
-                            '$discount% OFF',
-                            style: TextStyle(
-                              fontFamily: 'Clash Display Semibold',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 9.sp,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // ── NEW badge ──────────────────────────────────────────────────
-          if (widget.product.isNew)
-            Positioned(
-              top: 12.sp,
-              left: 12.sp,
-              child: Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 8.sp, vertical: 4.sp),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF988AFF),
-                  borderRadius: BorderRadius.circular(6.sp),
-                ),
-                child: Text(
-                  'NEW',
-                  style: TextStyle(
-                    fontFamily: 'Clash Display Semibold',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 10.sp,
-                    color: Colors.white,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-            ),
-
-          // ── Swipe direction overlay ────────────────────────────────────
-          if (overlay != null && widget.isTop)
-            Positioned.fill(
-              child: AnimatedOpacity(
-                opacity: opacity,
-                duration: Duration.zero,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: overlay.color.withValues(alpha: 0.45),
-                    borderRadius: BorderRadius.circular(16.sp),
-                  ),
-                  child: Center(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 20.sp, vertical: 10.sp),
-                      decoration: BoxDecoration(
-                        color: overlay.color,
-                        borderRadius: BorderRadius.circular(8.sp),
-                        boxShadow: [
-                          BoxShadow(
-                            color: overlay.color.withValues(alpha: 0.4),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        overlay.label,
+                        _formatPrice(p.sellingPrice),
                         style: TextStyle(
                           fontFamily: 'Clash Display Semibold',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.sp,
                           color: Colors.white,
-                          letterSpacing: 1.5,
                         ),
+                      ),
+                      if (p.mrp != null && p.mrp! > p.sellingPrice) ...[
+                        SizedBox(width: 6.sp),
+                        Text(
+                          _formatPrice(p.mrp!),
+                          style: TextStyle(
+                            fontFamily: 'Clash Display',
+                            fontSize: 12.sp,
+                            color: Colors.white54,
+                            decoration: TextDecoration.lineThrough,
+                            decorationColor: Colors.white54,
+                          ),
+                        ),
+                        if (discount != null) ...[
+                          SizedBox(width: 5.sp),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 5.sp, vertical: 2.sp),
+                            decoration: BoxDecoration(
+                              color: _likeColor,
+                              borderRadius: BorderRadius.circular(4.sp),
+                            ),
+                            child: Text(
+                              '$discount% OFF',
+                              style: TextStyle(
+                                fontFamily: 'Clash Display Semibold',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 9.sp,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ],
+                  ),
+                  // Category + rating row
+                  SizedBox(height: 4.sp),
+                  Row(
+                    children: [
+                      if (p.category.isNotEmpty)
+                        Text(
+                          p.category,
+                          style: TextStyle(
+                            fontFamily: 'Clash Display Regular',
+                            fontSize: 11.sp,
+                            color: Colors.white60,
+                          ),
+                        ),
+                      if (p.category.isNotEmpty && p.rating != null && p.rating! > 0)
+                        Text('  ·  ', style: TextStyle(color: Colors.white60, fontSize: 11.sp)),
+                      if (p.rating != null && p.rating! > 0) ...[
+                        Icon(Icons.star_rounded, color: Colors.amber, size: 13.sp),
+                        SizedBox(width: 2.sp),
+                        Text(
+                          p.rating!.toStringAsFixed(1),
+                          style: TextStyle(
+                            fontFamily: 'Clash Display Regular',
+                            fontSize: 11.sp,
+                            color: Colors.white70,
+                          ),
+                        ),
+                        if (p.numReviews != null && p.numReviews! > 0)
+                          Text(
+                            ' (${p.numReviews})',
+                            style: TextStyle(
+                              fontFamily: 'Clash Display Regular',
+                              fontSize: 10.sp,
+                              color: Colors.white54,
+                            ),
+                          ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // ── NEW badge ──────────────────────────────────────────────────
+            if (p.isNew)
+              Positioned(
+                top: images.length > 1 ? 22.sp : 12.sp,
+                left: 12.sp,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.sp, vertical: 4.sp),
+                  decoration: BoxDecoration(
+                    color: _likeColor,
+                    borderRadius: BorderRadius.circular(6.sp),
+                  ),
+                  child: Text(
+                    'NEW',
+                    style: TextStyle(
+                      fontFamily: 'Clash Display Semibold',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 10.sp,
+                      color: Colors.white,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ),
+
+            // ── Swipe direction overlay (color tint only, no label) ───────
+            if (overlay != null && widget.isTop)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: Opacity(
+                    opacity: opacity * 0.55,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        // swipe-up uses black tint, others use their color
+                        color: overlay.icon == Icons.bookmark_add_outlined
+                            ? Colors.black
+                            : overlay.color,
+                        borderRadius: BorderRadius.circular(16.sp),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -431,5 +466,6 @@ class _SwipeProductCardState extends State<SwipeProductCard>
 class _OverlayInfo {
   final Color color;
   final String label;
-  const _OverlayInfo({required this.color, required this.label});
+  final IconData icon;
+  const _OverlayInfo({required this.color, required this.label, required this.icon});
 }

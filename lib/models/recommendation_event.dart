@@ -36,8 +36,13 @@ class RecommendationProduct {
   final double? mrp;
   final bool isNew;
   final String imageUrl;
+  final List<String> imageUrls; // all product images
   final List<Nudge> nudges;
   final String category;
+  final double? rating;
+  final int? numReviews;
+  final List<String> sizes;
+  final List<String> tags;
 
   const RecommendationProduct({
     required this.id,
@@ -48,12 +53,16 @@ class RecommendationProduct {
     this.mrp,
     this.isNew = false,
     required this.imageUrl,
+    this.imageUrls = const [],
     this.nudges = const [],
     this.category = '',
+    this.rating,
+    this.numReviews,
+    this.sizes = const [],
+    this.tags = const [],
   });
 
   factory RecommendationProduct.fromJson(Map<String, dynamic> json) {
-    // Support both the guide's field names and the app's existing API field names
     final id = json['id'] ?? json['objectID'] ?? 0;
     final idInt = id is num ? id.toInt() : int.tryParse(id.toString()) ?? 0;
     final brandName = json['brandName'] ??
@@ -75,9 +84,20 @@ class RecommendationProduct {
         ? rawPrice.toDouble()
         : double.tryParse(rawPrice.toString()) ?? 0.0;
 
-    // Image: try multiple shapes
+    // All image URLs
+    List<String> imageUrls = [];
+    if (json['imageUrls'] is List) {
+      imageUrls = (json['imageUrls'] as List)
+          .map((e) => e?.toString() ?? '')
+          .where((s) => s.isNotEmpty)
+          .toList();
+    }
+
+    // Primary image
     String imageUrl = '';
-    if (json['imageUrl'] is String) {
+    if (imageUrls.isNotEmpty) {
+      imageUrl = imageUrls.first;
+    } else if (json['imageUrl'] is String) {
       imageUrl = json['imageUrl'];
     } else if (json['image'] is String) {
       imageUrl = json['image'];
@@ -86,9 +106,9 @@ class RecommendationProduct {
       imageUrl = first is Map
           ? (first['name'] ?? first['src'] ?? first['url'] ?? '').toString()
           : first.toString();
-    } else if (json['imageUrls'] is List &&
-        (json['imageUrls'] as List).isNotEmpty) {
-      imageUrl = (json['imageUrls'] as List).first.toString();
+    }
+    if (imageUrls.isEmpty && imageUrl.isNotEmpty) {
+      imageUrls = [imageUrl];
     }
 
     final rawMrp = json['mrp'] ?? json['compareAtPrice'];
@@ -104,6 +124,32 @@ class RecommendationProduct {
             (json['nudges'] as List).any((n) =>
                 n is Map && n['key'] == 'new_in'));
 
+    // Rating
+    final rawRating = json['rating'];
+    final rating = rawRating is num ? rawRating.toDouble() : null;
+
+    // numReviews
+    final rawReviews = json['numReviews'] ?? json['num_reviews'];
+    final numReviews = rawReviews is num ? rawReviews.toInt() : null;
+
+    // Sizes
+    List<String> sizes = [];
+    if (json['sizes'] is List) {
+      sizes = (json['sizes'] as List)
+          .map((e) => e?.toString() ?? '')
+          .where((s) => s.isNotEmpty)
+          .toList();
+    }
+
+    // Tags
+    List<String> tags = [];
+    if (json['tags'] is List) {
+      tags = (json['tags'] as List)
+          .map((e) => e?.toString() ?? '')
+          .where((s) => s.isNotEmpty)
+          .toList();
+    }
+
     return RecommendationProduct(
       id: idInt,
       slug: json['slug']?.toString() ?? '',
@@ -113,8 +159,13 @@ class RecommendationProduct {
       mrp: mrp,
       isNew: isNew,
       imageUrl: imageUrl,
+      imageUrls: imageUrls,
       nudges: (json['nudges'] as List<dynamic>?)?.map((e) => Nudge.fromJson(e as Map<String, dynamic>)).toList() ?? [],
       category: json['category']?.toString() ?? '',
+      rating: rating,
+      numReviews: numReviews,
+      sizes: sizes,
+      tags: tags,
     );
   }
 }

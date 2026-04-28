@@ -16,16 +16,23 @@ class SwipeFeedService extends GetxService {
   SwipeFeedService({http.Client? client}) : _client = client ?? http.Client();
 
   /// Fetches a batch of up to 15 swipe-feed products.
-  /// Returns [] on any non-200 response or exception.
-  Future<List<RecommendationProduct>> fetchBatch() async {
+  /// [genderFilter]: 0=All, 1=Men, 2=Women
+  Future<List<RecommendationProduct>> fetchBatch({int genderFilter = 0}) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getInt('userId') ?? 0;
       final token = prefs.getString('token')?.trim() ?? '';
 
-      final uri = Uri.parse(
-        '${ApiConstants.baseUrl}/recommendations?type=swipe&userId=$userId&limit=15',
-      );
+      final params = <String, String>{
+        'type': 'swipe',
+        'userId': '$userId',
+        'limit': '15',
+      };
+      if (genderFilter == 1) params['gender'] = 'men';
+      if (genderFilter == 2) params['gender'] = 'women';
+
+      final uri = Uri.parse('${ApiConstants.baseUrl}/recommendations')
+          .replace(queryParameters: params);
 
       final response = await _client.get(
         uri,
