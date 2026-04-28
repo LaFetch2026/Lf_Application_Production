@@ -766,9 +766,7 @@ class HomeScreenState extends State<HomeScreen>
                           !homeController.showGenderList.value;
                       setState(() {});
                     },
-                    onPressedCategories: () {
-                      Get.to(() => WomenCatalogScreen());
-                    },
+
                     onPressedProfile: () async {
                       final prefs = await SharedPreferences.getInstance();
                       final isGuest = prefs.getBool('skip') ?? false;

@@ -133,7 +133,11 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
         });
       }
     } catch (_) {
-      if (mounted) setState(() { _hasError = true; _isFetching = false; });
+      if (mounted)
+        setState(() {
+          _hasError = true;
+          _isFetching = false;
+        });
     }
   }
 
@@ -143,7 +147,8 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
 
   // ── Swipe actions ─────────────────────────────────────────────────────────
 
-  Future<void> _onCardSwiped(SwipeAction action, RecommendationProduct product) async {
+  Future<void> _onCardSwiped(
+      SwipeAction action, RecommendationProduct product) async {
     _lastSwiped = product;
     _lastAction = action;
 
@@ -152,7 +157,10 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
     switch (action) {
       case SwipeAction.likeProduct:
         // Like → add to "LF Swipes" wishlist board + lavender flash
-        setState(() { _showWishlistFlash = true; _cards.removeAt(0); });
+        setState(() {
+          _showWishlistFlash = true;
+          _cards.removeAt(0);
+        });
         Future.delayed(const Duration(milliseconds: 900), () {
           if (mounted) setState(() => _showWishlistFlash = false);
         });
@@ -166,7 +174,10 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
       case SwipeAction.swipeUp:
         // Swipe up → add to cart directly (navigate to PDP to pick size if needed)
         // Show black flash, remove card, open PDP for size selection → add to cart
-        setState(() { _showCartFlash = true; _cards.removeAt(0); });
+        setState(() {
+          _showCartFlash = true;
+          _cards.removeAt(0);
+        });
         _cartFlashController.forward(from: 0);
         // Open PDP so user can select size and add to cart
         _openPdp(product);
@@ -201,7 +212,9 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
 
       // Find or create "LF Swipes" board
       final existing = _wishlistCtrl.wishlistList.firstWhereOrNull(
-        (b) => (b['name'] as String?)?.toLowerCase() == _kSwipeBoardName.toLowerCase(),
+        (b) =>
+            (b['name'] as String?)?.toLowerCase() ==
+            _kSwipeBoardName.toLowerCase(),
       );
 
       int boardId;
@@ -212,7 +225,9 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
         await _wishlistCtrl.createBoard(_kSwipeBoardName);
         await _wishlistCtrl.fetchBoards();
         final created = _wishlistCtrl.wishlistList.firstWhereOrNull(
-          (b) => (b['name'] as String?)?.toLowerCase() == _kSwipeBoardName.toLowerCase(),
+          (b) =>
+              (b['name'] as String?)?.toLowerCase() ==
+              _kSwipeBoardName.toLowerCase(),
         );
         if (created == null) return;
         boardId = created['id'] as int;
@@ -275,14 +290,11 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
             ],
           ),
           // Cart flash overlay
-          if (_showCartFlash)
-            _CartFlashOverlay(animation: _cartFlashAnim),
+          if (_showCartFlash) _CartFlashOverlay(animation: _cartFlashAnim),
           // Wishlist flash overlay
-          if (_showWishlistFlash)
-            _WishlistFlashOverlay(),
+          if (_showWishlistFlash) _WishlistFlashOverlay(),
           // Tutorial overlay (on top of everything)
-          if (_showTutorial)
-            _TutorialOverlay(onDismiss: _dismissTutorial),
+          if (_showTutorial) _TutorialOverlay(onDismiss: _dismissTutorial),
         ],
       ),
       bottomNavigationBar: _buildHintBar(),
@@ -294,7 +306,8 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
       backgroundColor: Colors.white,
       elevation: 0,
       leading: IconButton(
-        icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18.sp, color: homeAppBarColor),
+        icon: Icon(Icons.arrow_back_ios_new_rounded,
+            size: 18.sp, color: homeAppBarColor),
         onPressed: () {
           // Pop back; if nothing in stack, go to BottomNavScreen (home)
           if (Get.previousRoute.isNotEmpty) {
@@ -305,7 +318,7 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
         },
       ),
       title: Text(
-        'For You',
+        'LF Swipe',
         style: TextStyle(
           fontFamily: 'Clash Display Semibold',
           fontWeight: FontWeight.w600,
@@ -315,13 +328,6 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
       ),
       centerTitle: true,
       actions: [
-        // Rewind button
-        if (_lastSwiped != null)
-          IconButton(
-            icon: Icon(Icons.replay_rounded, size: 20.sp, color: homeAppBarColor),
-            tooltip: 'Undo last swipe',
-            onPressed: _rewind,
-          ),
         // Wishlist
         Obx(() {
           final count = _wishlistCtrl.wishlistCount.value;
@@ -329,7 +335,8 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
             alignment: Alignment.center,
             children: [
               IconButton(
-                icon: Icon(Icons.favorite_border_rounded, size: 20.sp, color: homeAppBarColor),
+                icon: Icon(Icons.favorite_border_rounded,
+                    size: 20.sp, color: homeAppBarColor),
                 onPressed: () => Get.to(() => const WishlistScreen()),
               ),
               if (count > 0)
@@ -338,11 +345,16 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
                   top: 6.sp,
                   child: Container(
                     padding: EdgeInsets.all(2.sp),
-                    constraints: BoxConstraints(minWidth: 14.sp, minHeight: 14.sp),
-                    decoration: const BoxDecoration(color: lightPurpleColor, shape: BoxShape.circle),
+                    constraints:
+                        BoxConstraints(minWidth: 14.sp, minHeight: 14.sp),
+                    decoration: const BoxDecoration(
+                        color: lightPurpleColor, shape: BoxShape.circle),
                     child: Text(
                       '$count',
-                      style: TextStyle(fontSize: 8.sp, color: Colors.white, fontFamily: 'Clash Display Regular'),
+                      style: TextStyle(
+                          fontSize: 8.sp,
+                          color: Colors.white,
+                          fontFamily: 'Clash Display Regular'),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -357,8 +369,10 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
             alignment: Alignment.center,
             children: [
               IconButton(
-                icon: Icon(Icons.shopping_bag_outlined, size: 20.sp, color: homeAppBarColor),
-                onPressed: () => Get.to(() => CartScreen(backgroundcolor: homeAppBarColor)),
+                icon: Icon(Icons.shopping_bag_outlined,
+                    size: 20.sp, color: homeAppBarColor),
+                onPressed: () =>
+                    Get.to(() => CartScreen(backgroundcolor: homeAppBarColor)),
               ),
               if (count > 0)
                 Positioned(
@@ -366,11 +380,16 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
                   top: 6.sp,
                   child: Container(
                     padding: EdgeInsets.all(2.sp),
-                    constraints: BoxConstraints(minWidth: 14.sp, minHeight: 14.sp),
-                    decoration: const BoxDecoration(color: homeAppBarColor, shape: BoxShape.circle),
+                    constraints:
+                        BoxConstraints(minWidth: 14.sp, minHeight: 14.sp),
+                    decoration: const BoxDecoration(
+                        color: homeAppBarColor, shape: BoxShape.circle),
                     child: Text(
                       '$count',
-                      style: TextStyle(fontSize: 8.sp, color: Colors.white, fontFamily: 'Clash Display Regular'),
+                      style: TextStyle(
+                          fontSize: 8.sp,
+                          color: Colors.white,
+                          fontFamily: 'Clash Display Regular'),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -397,11 +416,13 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 margin: EdgeInsets.only(right: 8.sp),
-                padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 6.sp),
+                padding:
+                    EdgeInsets.symmetric(horizontal: 16.sp, vertical: 6.sp),
                 decoration: BoxDecoration(
                   color: selected ? homeAppBarColor : Colors.transparent,
                   borderRadius: BorderRadius.circular(20.sp),
-                  border: Border.all(color: selected ? homeAppBarColor : Colors.grey[300]!),
+                  border: Border.all(
+                      color: selected ? homeAppBarColor : Colors.grey[300]!),
                 ),
                 child: Text(
                   labels[i],
@@ -415,27 +436,61 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
               ),
             );
           }),
-          // Retry button lives here when there's an error
-          if (_hasError && _cards.isEmpty) ...[
+          // Rewind + Retry live on the right of the tabs row
+          if (_lastSwiped != null || (_hasError && _cards.isEmpty)) ...[
             const Spacer(),
-            GestureDetector(
-              onTap: _fetchBatch,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 6.sp),
-                decoration: BoxDecoration(
-                  color: homeAppBarColor,
-                  borderRadius: BorderRadius.circular(20.sp),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.refresh_rounded, color: Colors.white, size: 14.sp),
-                    SizedBox(width: 4.sp),
-                    Text('Retry', style: TextStyle(fontFamily: 'Clash Display', fontWeight: FontWeight.w600, fontSize: 12.sp, color: Colors.white)),
-                  ],
+            // Rewind (undo last swipe)
+            if (_lastSwiped != null)
+              GestureDetector(
+                onTap: _rewind,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 6.sp),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey[300]!),
+                    borderRadius: BorderRadius.circular(20.sp),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.replay_rounded, color: homeAppBarColor, size: 14.sp),
+                      SizedBox(width: 4.sp),
+                      Text('Undo',
+                          style: TextStyle(
+                              fontFamily: 'Clash Display',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12.sp,
+                              color: homeAppBarColor)),
+                    ],
+                  ),
                 ),
               ),
-            ),
+            // Retry (when error)
+            if (_hasError && _cards.isEmpty) ...[
+              if (_lastSwiped != null) SizedBox(width: 8.sp),
+              GestureDetector(
+                onTap: _fetchBatch,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 6.sp),
+                  decoration: BoxDecoration(
+                    color: homeAppBarColor,
+                    borderRadius: BorderRadius.circular(20.sp),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.refresh_rounded, color: Colors.white, size: 14.sp),
+                      SizedBox(width: 4.sp),
+                      Text('Retry',
+                          style: TextStyle(
+                              fontFamily: 'Clash Display',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12.sp,
+                              color: Colors.white)),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ],
         ],
       ),
@@ -445,7 +500,8 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
   Widget _buildBody() {
     if (_cards.isEmpty && _isFetching) {
       return Center(
-        child: LfLogoLoader(size: 48, brandColor: Colors.grey[200]!, showGlow: false),
+        child: LfLogoLoader(
+            size: 48, brandColor: Colors.grey[200]!, showGlow: false),
       );
     }
 
@@ -456,14 +512,22 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              LfLogoLoader(size: 48, brandColor: Colors.grey[200]!, showGlow: false),
+              LfLogoLoader(
+                  size: 48, brandColor: Colors.grey[200]!, showGlow: false),
               SizedBox(height: 20.sp),
               Text('Could not load feed',
-                  style: TextStyle(fontFamily: 'Clash Display Semibold', fontWeight: FontWeight.w600, fontSize: 16.sp, color: homeAppBarColor)),
+                  style: TextStyle(
+                      fontFamily: 'Clash Display Semibold',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16.sp,
+                      color: homeAppBarColor)),
               SizedBox(height: 6.sp),
               Text('Tap Retry above to try again',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontFamily: 'Clash Display Regular', fontSize: 13.sp, color: Colors.grey[500])),
+                  style: TextStyle(
+                      fontFamily: 'Clash Display Regular',
+                      fontSize: 13.sp,
+                      color: Colors.grey[500])),
             ],
           ),
         ),
@@ -478,11 +542,18 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text("You've seen it all! 🎉",
-                  style: TextStyle(fontFamily: 'Clash Display Semibold', fontWeight: FontWeight.w600, fontSize: 22.sp, color: homeAppBarColor),
+                  style: TextStyle(
+                      fontFamily: 'Clash Display Semibold',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 22.sp,
+                      color: homeAppBarColor),
                   textAlign: TextAlign.center),
               SizedBox(height: 8.sp),
               Text('Check back later for new arrivals',
-                  style: TextStyle(fontFamily: 'Clash Display Regular', fontSize: 14.sp, color: Colors.grey[500]),
+                  style: TextStyle(
+                      fontFamily: 'Clash Display Regular',
+                      fontSize: 14.sp,
+                      color: Colors.grey[500]),
                   textAlign: TextAlign.center),
               SizedBox(height: 28.sp),
               _PillButton(label: 'Refresh', onTap: _fetchBatch),
@@ -540,10 +611,26 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildHintIcon(icon: Icons.close_rounded, color: Colors.red, label: 'Nope', action: SwipeAction.dislikeProduct),
-          _buildHintIcon(icon: Icons.open_in_new_rounded, color: Colors.grey[600]!, label: 'View', action: SwipeAction.swipeDown),
-          _buildHintIcon(icon: Icons.bookmark_add_outlined, color: lightPurpleColor, label: 'Save', action: SwipeAction.swipeUp),
-          _buildHintIcon(icon: Icons.favorite_rounded, color: lightPurpleColor, label: 'Like', action: SwipeAction.likeProduct),
+          _buildHintIcon(
+              icon: Icons.close_rounded,
+              color: Colors.red,
+              label: 'Nope',
+              action: SwipeAction.dislikeProduct),
+          _buildHintIcon(
+              icon: Icons.open_in_new_rounded,
+              color: Colors.grey[600]!,
+              label: 'View',
+              action: SwipeAction.swipeDown),
+          _buildHintIcon(
+              icon: Icons.bookmark_add_outlined,
+              color: lightPurpleColor,
+              label: 'Save',
+              action: SwipeAction.swipeUp),
+          _buildHintIcon(
+              icon: Icons.favorite_rounded,
+              color: lightPurpleColor,
+              label: 'Like',
+              action: SwipeAction.likeProduct),
         ],
       ),
     );
@@ -564,7 +651,9 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
         children: [
           Icon(icon, color: color, size: 24.sp),
           SizedBox(height: 2.sp),
-          Text(label, style: TextStyle(fontSize: 10.sp, color: color, fontWeight: FontWeight.w500)),
+          Text(label,
+              style: TextStyle(
+                  fontSize: 10.sp, color: color, fontWeight: FontWeight.w500)),
         ],
       ),
     );
@@ -589,7 +678,11 @@ class _PillButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(30.sp),
         ),
         child: Text(label,
-            style: TextStyle(fontFamily: 'Clash Display', fontWeight: FontWeight.w700, fontSize: 14.sp, color: Colors.white)),
+            style: TextStyle(
+                fontFamily: 'Clash Display',
+                fontWeight: FontWeight.w700,
+                fontSize: 14.sp,
+                color: Colors.white)),
       ),
     );
   }
@@ -602,7 +695,11 @@ class _ActionButton extends StatelessWidget {
   final Color color;
   final Color bgColor;
   final VoidCallback onTap;
-  const _ActionButton({required this.icon, required this.color, required this.bgColor, required this.onTap});
+  const _ActionButton(
+      {required this.icon,
+      required this.color,
+      required this.bgColor,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -630,17 +727,22 @@ class _CartFlashOverlay extends StatelessWidget {
       child: AnimatedBuilder(
         animation: animation,
         builder: (_, __) => Opacity(
-          opacity: (animation.value * (1 - animation.value) * 4).clamp(0.0, 0.65),
+          opacity:
+              (animation.value * (1 - animation.value) * 4).clamp(0.0, 0.65),
           child: Container(
             color: Colors.black,
             child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.shopping_bag_rounded, color: Colors.white, size: 48.sp),
+                  Icon(Icons.shopping_bag_rounded,
+                      color: Colors.white, size: 48.sp),
                   SizedBox(height: 8.sp),
                   Text('Added to cart ✓',
-                      style: TextStyle(fontFamily: 'Clash Display Semibold', fontSize: 16.sp, color: Colors.white)),
+                      style: TextStyle(
+                          fontFamily: 'Clash Display Semibold',
+                          fontSize: 16.sp,
+                          color: Colors.white)),
                 ],
               ),
             ),
@@ -679,7 +781,10 @@ class _WishlistFlashOverlay extends StatelessWidget {
                 Icon(Icons.favorite_rounded, color: Colors.white, size: 20.sp),
                 SizedBox(width: 8.sp),
                 Text('Added to LF Swipes',
-                    style: TextStyle(fontFamily: 'Clash Display Semibold', fontSize: 14.sp, color: Colors.white)),
+                    style: TextStyle(
+                        fontFamily: 'Clash Display Semibold',
+                        fontSize: 14.sp,
+                        color: Colors.white)),
               ],
             ),
           ),
@@ -706,17 +811,38 @@ class _TutorialOverlayState extends State<_TutorialOverlay>
   int _step = 0;
 
   static const _steps = [
-    _TutorialStep(icon: Icons.swipe_right_rounded, color: Color(0xFF988AFF), label: 'Swipe right to Like', sub: 'Saves to your LF Swipes wishlist board'),
-    _TutorialStep(icon: Icons.swipe_left_rounded, color: Color(0xFFF44336), label: 'Swipe left to Nope', sub: 'Hides this style from your feed'),
-    _TutorialStep(icon: Icons.swipe_up_rounded, color: Color(0xFF171717), label: 'Swipe up to Add to Cart', sub: 'Opens the product so you can pick your size'),
-    _TutorialStep(icon: Icons.swipe_down_rounded, color: Color(0xFF374151), label: 'Swipe down to View', sub: 'Opens the full product page'),
-    _TutorialStep(icon: Icons.touch_app_rounded, color: Color(0xFF988AFF), label: 'Tap to cycle photos', sub: 'Tap left or right on the card to see more images'),
+    _TutorialStep(
+        icon: Icons.swipe_right_rounded,
+        color: Color(0xFF988AFF),
+        label: 'Swipe right to Like',
+        sub: 'Saves to your LF Swipes wishlist board'),
+    _TutorialStep(
+        icon: Icons.swipe_left_rounded,
+        color: Color(0xFFF44336),
+        label: 'Swipe left to Nope',
+        sub: 'Hides this style from your feed'),
+    _TutorialStep(
+        icon: Icons.swipe_up_rounded,
+        color: Color(0xFF171717),
+        label: 'Swipe up to Add to Cart',
+        sub: 'Opens the product so you can pick your size'),
+    _TutorialStep(
+        icon: Icons.swipe_down_rounded,
+        color: Color(0xFF374151),
+        label: 'Swipe down to View',
+        sub: 'Opens the full product page'),
+    _TutorialStep(
+        icon: Icons.touch_app_rounded,
+        color: Color(0xFF988AFF),
+        label: 'Tap to cycle photos',
+        sub: 'Tap left or right on the card to see more images'),
   ];
 
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _ctrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
     _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
     _ctrl.forward();
   }
@@ -753,7 +879,9 @@ class _TutorialOverlayState extends State<_TutorialOverlay>
                   key: ValueKey(_step),
                   tween: Tween(begin: 0.0, end: 1.0),
                   duration: const Duration(milliseconds: 400),
-                  builder: (_, v, child) => Transform.scale(scale: 0.7 + 0.3 * v, child: Opacity(opacity: v, child: child)),
+                  builder: (_, v, child) => Transform.scale(
+                      scale: 0.7 + 0.3 * v,
+                      child: Opacity(opacity: v, child: child)),
                   child: Container(
                     width: 100.sp,
                     height: 100.sp,
@@ -768,42 +896,56 @@ class _TutorialOverlayState extends State<_TutorialOverlay>
                 SizedBox(height: 28.sp),
                 Text(
                   step.label,
-                  style: TextStyle(fontFamily: 'Clash Display Semibold', fontWeight: FontWeight.w700, fontSize: 22.sp, color: Colors.white),
+                  style: TextStyle(
+                      fontFamily: 'Clash Display Semibold',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 22.sp,
+                      color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 10.sp),
                 Text(
                   step.sub,
-                  style: TextStyle(fontFamily: 'Clash Display Regular', fontSize: 15.sp, color: Colors.white70),
+                  style: TextStyle(
+                      fontFamily: 'Clash Display Regular',
+                      fontSize: 15.sp,
+                      color: Colors.white70),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 48.sp),
                 // Step dots
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(_steps.length, (i) => AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    margin: EdgeInsets.symmetric(horizontal: 4.sp),
-                    width: i == _step ? 20.sp : 6.sp,
-                    height: 6.sp,
-                    decoration: BoxDecoration(
-                      color: i == _step ? Colors.white : Colors.white38,
-                      borderRadius: BorderRadius.circular(3.sp),
-                    ),
-                  )),
+                  children: List.generate(
+                      _steps.length,
+                      (i) => AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            margin: EdgeInsets.symmetric(horizontal: 4.sp),
+                            width: i == _step ? 20.sp : 6.sp,
+                            height: 6.sp,
+                            decoration: BoxDecoration(
+                              color: i == _step ? Colors.white : Colors.white38,
+                              borderRadius: BorderRadius.circular(3.sp),
+                            ),
+                          )),
                 ),
                 SizedBox(height: 32.sp),
                 GestureDetector(
                   onTap: _next,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 40.sp, vertical: 14.sp),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 40.sp, vertical: 14.sp),
                     decoration: BoxDecoration(
                       color: step.color,
                       borderRadius: BorderRadius.circular(30.sp),
                     ),
                     child: Text(
                       _step < _steps.length - 1 ? 'Next' : 'Let\'s go!',
-                      style: TextStyle(fontFamily: 'Clash Display', fontWeight: FontWeight.w700, fontSize: 15.sp, color: Colors.white),
+                      style: TextStyle(
+                          fontFamily: 'Clash Display',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15.sp,
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -811,7 +953,10 @@ class _TutorialOverlayState extends State<_TutorialOverlay>
                 GestureDetector(
                   onTap: () => _ctrl.reverse().then((_) => widget.onDismiss()),
                   child: Text('Skip',
-                      style: TextStyle(fontFamily: 'Clash Display Regular', fontSize: 13.sp, color: Colors.white54)),
+                      style: TextStyle(
+                          fontFamily: 'Clash Display Regular',
+                          fontSize: 13.sp,
+                          color: Colors.white54)),
                 ),
               ],
             ),
@@ -827,5 +972,9 @@ class _TutorialStep {
   final Color color;
   final String label;
   final String sub;
-  const _TutorialStep({required this.icon, required this.color, required this.label, required this.sub});
+  const _TutorialStep(
+      {required this.icon,
+      required this.color,
+      required this.label,
+      required this.sub});
 }
