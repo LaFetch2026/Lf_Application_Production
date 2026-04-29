@@ -11,6 +11,7 @@ import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
 import '../core/services/meta_event_service.dart';
 import '../screens/loginscreen.dart';
+import '../services/netcore_service.dart';
 
 /// Endpoints used by the new wishlist API.
 class ApiEndpoints {
@@ -522,6 +523,13 @@ class WishlistController extends BaseController {
           contentId: productId.toString(),
           price: price,
         );
+
+        // ── Netcore CE: track wishlist add ─────────────────────────────────
+        try {
+          NetcoreService.instance.trackEvent('Add To Wishlist', {
+            'productId': productId,
+          });
+        } catch (_) {}
 
         // Refresh boards list
         await fetchBoards();

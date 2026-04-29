@@ -14,6 +14,7 @@ import '../common/widget/text/app_text.dart';
 import '../controllers/login_controller.dart';
 import '../controllers/profile_controller.dart';
 import '../core/constant/constants.dart';
+import '../services/netcore_service.dart';
 
 class UserDetailsScreen extends StatefulWidget {
   const UserDetailsScreen({super.key});
@@ -333,6 +334,14 @@ class UserDetailsScreenState extends State<UserDetailsScreen> {
                           name: 'user_detail_btnContinue',
                           parameters: {'page_name': 'user_detail_btnContinue'},
                         );
+
+                        // ── Netcore CE: track signup completion ────────────
+                        try {
+                          NetcoreService.instance.trackEvent('Signup', {
+                            'name': userController.nameController.text.trim(),
+                            'email': userController.emailController.text.trim(),
+                          });
+                        } catch (_) {}
                       }
                       // Errors (if any) show automatically via Obx watching nameError/emailError/genderError
                     },

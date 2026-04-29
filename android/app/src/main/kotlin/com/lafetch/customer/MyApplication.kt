@@ -11,6 +11,7 @@ class MyApplication : FlutterApplication() {
         super.onCreate()
         // ── Netcore CE SDK native initialisation ──────────────────────────────
         Smartech.getInstance(WeakReference(applicationContext)).initializeSdk(this)
+        Smartech.getInstance(WeakReference(applicationContext)).setDebugLevel(9) // remove before production
         Smartech.getInstance(WeakReference(applicationContext)).trackAppInstallUpdateBySmartech()
         SmartechBasePlugin.initializePlugin(this)
         SmartechPushPlugin.initializePlugin(this)
