@@ -711,7 +711,8 @@ class HomeScreenState extends State<HomeScreen>
                         name: 'search_page',
                         parameters: {'search_string': searchQuery},
                       );
-                      Get.to(const SearchScreen(), preventDuplicates: true)?.then((value) {
+                      Get.to(const SearchScreen(), preventDuplicates: true)
+                          ?.then((value) {
                         setState(() {
                           productController.categoryFilter.value =
                               homeController.homeGenderValue.value;
@@ -766,7 +767,6 @@ class HomeScreenState extends State<HomeScreen>
                           !homeController.showGenderList.value;
                       setState(() {});
                     },
-
                     onPressedProfile: () async {
                       final prefs = await SharedPreferences.getInstance();
                       final isGuest = prefs.getBool('skip') ?? false;
@@ -774,7 +774,8 @@ class HomeScreenState extends State<HomeScreen>
                         getSnackBar("Please login to view your profile");
                         Get.to(() => const LoginScreen(initialTab: 0));
                       } else {
-                        Get.to(() => AccountScreen(onPressed: () {}));
+                        Get.to(() => AccountScreen(onPressed: () {}),
+                            transition: Transition.rightToLeft);
                       }
                     },
                   ),

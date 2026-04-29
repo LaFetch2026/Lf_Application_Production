@@ -134,7 +134,7 @@ class _HomeAppbarState extends State<HomeAppbar> with WidgetsBindingObserver {
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 8.sp, vertical: 8.sp),
+                          horizontal: 4.sp, vertical: 8.sp),
                       child: SvgPicture.asset(
                         searchSvgImage,
                         height: 18.sp,

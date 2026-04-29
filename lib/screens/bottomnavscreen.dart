@@ -20,7 +20,7 @@ import '../screens/accountscreen.dart';
 import '../screens/brandsscreen.dart';
 import '../screens/cartscreen.dart';
 import '../screens/catalog/women_catalog.dart';
-import '../screens/swipe_feed_screen.dart';
+import '../lf_swipe/screens/swipe_feed_screen.dart';
 import '../screens/home/women/homescreen.dart';
 import '../screens/home/women/dynamic_homescreen.dart';
 import '../screens/quickscreen.dart';
