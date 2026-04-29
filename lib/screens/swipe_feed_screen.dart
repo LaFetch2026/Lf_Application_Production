@@ -292,7 +292,7 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
           // Cart flash overlay
           if (_showCartFlash) _CartFlashOverlay(animation: _cartFlashAnim),
           // Wishlist flash overlay
-          if (_showWishlistFlash) _WishlistFlashOverlay(),
+          if (_showWishlistFlash) const _WishlistFlashOverlay(),
           // Tutorial overlay (on top of everything)
           if (_showTutorial) _TutorialOverlay(onDismiss: _dismissTutorial),
         ],
@@ -372,7 +372,8 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
                 icon: Icon(Icons.shopping_bag_outlined,
                     size: 20.sp, color: homeAppBarColor),
                 onPressed: () =>
-                    Get.to(() => CartScreen(backgroundcolor: homeAppBarColor)),
+                    // Get.to(() => const CartScreen(backgroundcolor: homeAppBarColor)),
+                    Get.to(() => const CartScreen()),
               ),
               if (count > 0)
                 Positioned(
@@ -444,7 +445,8 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
               GestureDetector(
                 onTap: _rewind,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 6.sp),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 14.sp, vertical: 6.sp),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey[300]!),
                     borderRadius: BorderRadius.circular(20.sp),
@@ -452,7 +454,8 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.replay_rounded, color: homeAppBarColor, size: 14.sp),
+                      Icon(Icons.replay_rounded,
+                          color: homeAppBarColor, size: 14.sp),
                       SizedBox(width: 4.sp),
                       Text('Undo',
                           style: TextStyle(
@@ -470,7 +473,8 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
               GestureDetector(
                 onTap: _fetchBatch,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 14.sp, vertical: 6.sp),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 14.sp, vertical: 6.sp),
                   decoration: BoxDecoration(
                     color: homeAppBarColor,
                     borderRadius: BorderRadius.circular(20.sp),
@@ -478,7 +482,8 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.refresh_rounded, color: Colors.white, size: 14.sp),
+                      Icon(Icons.refresh_rounded,
+                          color: Colors.white, size: 14.sp),
                       SizedBox(width: 4.sp),
                       Text('Retry',
                           style: TextStyle(
@@ -499,9 +504,8 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
 
   Widget _buildBody() {
     if (_cards.isEmpty && _isFetching) {
-      return Center(
-        child: LfLogoLoader(
-            size: 48, brandColor: Colors.grey[200]!, showGlow: false),
+      return const Center(
+        child: LfLogoLoader(size: 48, brandColor: Colors.grey, showGlow: false),
       );
     }
 
@@ -512,8 +516,8 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              LfLogoLoader(
-                  size: 48, brandColor: Colors.grey[200]!, showGlow: false),
+              const LfLogoLoader(
+                  size: 48, brandColor: Colors.grey, showGlow: false),
               SizedBox(height: 20.sp),
               Text('Could not load feed',
                   style: TextStyle(

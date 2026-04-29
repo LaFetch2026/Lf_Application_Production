@@ -256,7 +256,7 @@ class ExpressShoppingScreenState extends State<ExpressShoppingScreen>
           children: [
             HomeAppbar(
               onPressedSearch: () async {
-                Get.to(SearchScreen());
+                Get.to(const SearchScreen(), preventDuplicates: true);
                 await analytics.logEvent(
                   name: 'search_page',
                   parameters: <String, Object>{

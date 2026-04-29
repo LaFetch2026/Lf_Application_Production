@@ -196,6 +196,11 @@ class SearchScreenState extends State<SearchScreen>
     } else {
       controller = Get.put(SearchScreenController());
     }
+    // Clear any stale text/state from a previous session so the field
+    // starts empty and the query observable matches.
+    controller.searchController.clear();
+    controller.suggestions.clear();
+    _query.value = '';
 
     // CatalogController lifecycle: reuse if registered, create otherwise.
     if (Get.isRegistered<CatalogController>()) {
@@ -265,10 +270,13 @@ class SearchScreenState extends State<SearchScreen>
   void dispose() {
     _debounceSuggest?.cancel();
     _categoryTabController.dispose();
+    // Reset state but do NOT delete the controller — deleting it disposes
+    // the TextEditingController inside it, which causes a "disposed
+    // TextEditingController" crash the next time SearchScreen opens and
+    // tries to reuse the same controller instance.
     controller.resetFilters();
-    // Explicitly delete the controller so the next navigation cycle always
-    // starts with a fresh instance and never hits a stale/disposed state.
-    Get.delete<SearchScreenController>(force: true);
+    controller.suggestions.clear();
+    _query.value = '';
     // Do NOT dispose CatalogController — cached data must persist.
     super.dispose();
   }

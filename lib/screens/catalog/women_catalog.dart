@@ -201,7 +201,7 @@ class _WomenCatalogScreenState extends State<WomenCatalogScreen>
             showSearch: true,
             title: 'Categories',
             onPressedSearch: () {
-              Get.to(() => const SearchScreen())?.then((_) {
+              Get.to(() => const SearchScreen(), preventDuplicates: true)?.then((_) {
                 SystemChrome.setSystemUIOverlayStyle(
                   const SystemUiOverlayStyle(
                     statusBarColor: whiteColor,

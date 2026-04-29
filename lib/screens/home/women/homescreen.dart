@@ -711,7 +711,7 @@ class HomeScreenState extends State<HomeScreen>
                         name: 'search_page',
                         parameters: {'search_string': searchQuery},
                       );
-                      Get.to(const SearchScreen())?.then((value) {
+                      Get.to(const SearchScreen(), preventDuplicates: true)?.then((value) {
                         setState(() {
                           productController.categoryFilter.value =
                               homeController.homeGenderValue.value;

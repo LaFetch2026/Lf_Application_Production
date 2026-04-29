@@ -31,7 +31,7 @@ extension PdpDialogs on _ProductDetailsScreenV2State {
         'title': 'Exchange Policy',
         'icon': Icons.swap_horiz_outlined,
         'isImage': true,
-        'image': 'assets/images/exchange_policy.png',
+        'image': 'assets/images/lf_promises.png',
       },
     };
 
