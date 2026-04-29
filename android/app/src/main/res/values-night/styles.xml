@@ -15,4 +15,16 @@
     <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
+
+    <!-- Required by Netcore CE smartech-push SDK -->
+    <style name="TransparentCompat" parent="@android:style/Theme.Translucent.NoTitleBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <!-- Required by Netcore CE smartech-push SDK notification layouts -->
+    <style name="NotificationTheme" parent="@android:style/Theme.DeviceDefault">
+        <item name="android:windowNoTitle">true</item>
+    </style>
 </resources>

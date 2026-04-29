@@ -19,6 +19,7 @@ import '../screens/userdetails.dart';
 import 'base_controller.dart';
 import 'cart_controller.dart';
 import 'home_controller.dart';
+import '../services/netcore_service.dart';
 
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
@@ -154,6 +155,10 @@ class LoginController extends BaseController {
       await clearTokenAndSession();
       // ✅ FIX: Sign out from Google to clear cached account (fixes Android auto-login issue)
       await signOutGoogle();
+      // ── Netcore CE: clear user identity on logout ──────────────────────────
+      try {
+        NetcoreService.instance.logoutUser();
+      } catch (_) {}
       getSnackBar("You have been logged out successfully.");
       Get.offAllNamed('/welcome');
     } catch (e) {
@@ -403,6 +408,34 @@ class LoginController extends BaseController {
 
           // Send pending FCM token to server
           await _sendPendingFcmToken();
+
+          // ── Netcore CE: identify user after OTP login ──────────────────────
+          try {
+            final netcoreUserId = (userData?['id'] ?? 0).toString();
+            if (netcoreUserId != '0') {
+              NetcoreService.instance.identifyUser(netcoreUserId);
+              NetcoreService.instance.loginUser(netcoreUserId);
+              // Update profile with available attributes
+              final profileMap = <String, dynamic>{};
+              final savedName = prefs.getString('name') ?? '';
+              if (savedName.isNotEmpty) {
+                final parts = savedName.trim().split(' ');
+                profileMap['first_name'] = parts.first;
+                if (parts.length > 1) {
+                  profileMap['last_name'] = parts.sublist(1).join(' ');
+                }
+              }
+              final savedEmail = prefs.getString('email') ?? '';
+              if (savedEmail.isNotEmpty) profileMap['email'] = savedEmail;
+              final savedPhone = prefs.getString('phonenumber') ?? '';
+              if (savedPhone.isNotEmpty) profileMap['phone'] = savedPhone;
+              if (profileMap.isNotEmpty) {
+                NetcoreService.instance.updateProfile(profileMap);
+              }
+            }
+          } catch (_) {
+            // Netcore identity errors must never affect the login flow
+          }
 
           Get.offAll(() => const BottomNavScreen());
         } else {
@@ -811,6 +844,33 @@ class LoginController extends BaseController {
 
         // Send pending FCM token to server
         await _sendPendingFcmToken();
+
+        // ── Netcore CE: identify user after social login ───────────────────
+        try {
+          final netcoreUserId = (userData?['id'] ?? userInfo?['id'] ?? 0).toString();
+          if (netcoreUserId != '0') {
+            NetcoreService.instance.identifyUser(netcoreUserId);
+            NetcoreService.instance.loginUser(netcoreUserId);
+            final profileMap = <String, dynamic>{};
+            final savedName = prefs.getString('name') ?? '';
+            if (savedName.isNotEmpty) {
+              final parts = savedName.trim().split(' ');
+              profileMap['first_name'] = parts.first;
+              if (parts.length > 1) {
+                profileMap['last_name'] = parts.sublist(1).join(' ');
+              }
+            }
+            final savedEmail = prefs.getString('email') ?? '';
+            if (savedEmail.isNotEmpty) profileMap['email'] = savedEmail;
+            final savedPhone = prefs.getString('phonenumber') ?? '';
+            if (savedPhone.isNotEmpty) profileMap['phone'] = savedPhone;
+            if (profileMap.isNotEmpty) {
+              NetcoreService.instance.updateProfile(profileMap);
+            }
+          }
+        } catch (_) {
+          // Netcore identity errors must never affect the login flow
+        }
 
         getSnackBar("Welcome, $userName!");
         return true;

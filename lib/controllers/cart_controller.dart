@@ -14,6 +14,7 @@ import '../screens/paymentcheckscreen.dart';
 import '../screens/paymentsuccessscreen.dart';
 import '../core/services/meta_event_service.dart';
 import '../services/cache_manager.dart';
+import '../services/netcore_service.dart';
 import 'auth_api_client.dart';
 import 'base_controller.dart';
 
@@ -485,6 +486,19 @@ class CartController extends BaseController {
         contentId: productId.toString(),
         price: price,
       );
+      // ── Netcore CE: track add to cart — additive, after existing tracking ──
+      try {
+        final productController = Get.isRegistered<ProductController>()
+            ? Get.find<ProductController>()
+            : null;
+        final productName = productController?.productDetails['title']?.toString() ?? '';
+        NetcoreService.instance.trackEvent('Add To Cart', {
+          'productId': productId,
+          'variantId': finalVariantId,
+          'productName': productName,
+          'price': price,
+        });
+      } catch (_) {}
       await CacheManager.invalidateCartCache(userId: userId);
       await getCartData(forceRefresh: true);
       return true;

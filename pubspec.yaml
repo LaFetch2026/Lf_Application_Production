@@ -70,6 +70,9 @@ dependencies:
   uuid: ^4.0.0
   shimmer: ^3.0.0
   sign_in_with_apple: ^7.0.1
+  smartech_base: ^3.5.5
+  smartech_push: ^3.5.3
+  smartech_appinbox: ^3.5.5
   url_launcher: ^6.1.11
   video_player: ^2.7.0
   webview_flutter: ^4.13.0

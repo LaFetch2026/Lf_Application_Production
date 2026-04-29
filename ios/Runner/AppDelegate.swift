@@ -4,6 +4,7 @@ import GoogleMaps
 import AppsFlyerLib
 import FirebaseMessaging
 import FirebaseCore
+import SmartPush
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -33,15 +34,20 @@ import FirebaseCore
     }
     application.registerForRemoteNotifications()
 
+    // ── Netcore CE: register for push notifications
+    SmartPush.sharedInstance().registerForPushNotificationWithDefaultAuthorizationOptions()
+
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
   // ── Firebase: pass APNS token manually (FirebaseAppDelegateProxyEnabled = false)
+  // ── Netcore CE: also forward APNS token to SmartPush
   override func application(
     _ application: UIApplication,
     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
   ) {
     Messaging.messaging().apnsToken = deviceToken
+    SmartPush.sharedInstance().didRegisterForRemoteNotifications(withDeviceToken: deviceToken)
     super.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
   }
 
@@ -50,6 +56,7 @@ import FirebaseCore
     didFailToRegisterForRemoteNotificationsWithError error: Error
   ) {
     print("❌ Failed to register for remote notifications: \(error.localizedDescription)")
+    SmartPush.sharedInstance().didFailToRegisterForRemoteNotificationsWithError(error)
   }
 
   // ── Custom URL scheme handler (lafetch://) — forward to AppsFlyer
@@ -72,6 +79,35 @@ import FirebaseCore
   ) -> Bool {
     AppsFlyerLib.shared().continue(userActivity, restorationHandler: nil)
     return super.application(application, continue: userActivity, restorationHandler: restorationHandler)
+  }
+
+  // ── UNUserNotificationCenterDelegate: foreground notification display
+  // ── Netcore CE: forward to SmartPush for in-app handling
+  override func userNotificationCenter(
+    _ center: UNUserNotificationCenter,
+    willPresent notification: UNNotification,
+    withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+  ) {
+    SmartPush.sharedInstance().willPresentForegroundNotification(notification)
+    completionHandler([.alert, .badge, .sound])
+  }
+
+  // ── UNUserNotificationCenterDelegate: notification tap response
+  // ── Netcore CE: forward to SmartPush for deeplink handling
+  override func userNotificationCenter(
+    _ center: UNUserNotificationCenter,
+    didReceive response: UNNotificationResponse,
+    withCompletionHandler completionHandler: @escaping () -> Void
+  ) {
+    SmartPush.sharedInstance().didReceive(response)
+    completionHandler()
+  }
+}
+
+// ── Netcore CE: deeplink delegate — forwards notification tap deeplinks to the Flutter layer
+extension AppDelegate: SMTDeeplinkDelegate {
+  func handleDeeplinkAction(withURLString urlString: String, andNotificationPayload payload: [AnyHashable: Any]) {
+    SmartechBasePlugin.handleDeeplinkAction(urlString, andCustomPayload: payload)
   }
 }
 

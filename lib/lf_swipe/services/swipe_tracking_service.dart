@@ -8,10 +8,10 @@ import '../../core/constant/constants.dart';
 
 /// The four swipe directions and their semantic meaning.
 enum SwipeAction {
-  likeProduct,    // right  → LIKE_PRODUCT    (+3)
-  dislikeProduct, // left   → DISLIKE_PRODUCT (-6)
-  swipeUp,        // up     → SWIPE_UP        (+8)
-  swipeDown,      // down   → SWIPE_DOWN      (+4)
+  likeProduct,
+  dislikeProduct,
+  swipeUp,
+  swipeDown,
 }
 
 /// Fires immediate (non-queued) swipe tracking events to the backend.
@@ -25,10 +25,10 @@ class SwipeTrackingService {
   static const _endpoint = '${ApiConstants.baseUrl}/events/track';
 
   static const _actionMap = {
-    SwipeAction.likeProduct:    ('LIKE_PRODUCT',    3),
+    SwipeAction.likeProduct: ('LIKE_PRODUCT', 3),
     SwipeAction.dislikeProduct: ('DISLIKE_PRODUCT', -6),
-    SwipeAction.swipeUp:        ('SWIPE_UP',        8),
-    SwipeAction.swipeDown:      ('SWIPE_DOWN',      4),
+    SwipeAction.swipeUp: ('SWIPE_UP', 8),
+    SwipeAction.swipeDown: ('SWIPE_DOWN', 4),
   };
 
   /// Fires a single swipe event immediately. Fire-and-forget — errors are
@@ -41,19 +41,21 @@ class SwipeTrackingService {
       final userId = prefs.getInt('userId') ?? 0;
       final token = prefs.getString('token')?.trim() ?? '';
 
-      await http.post(
-        Uri.parse(_endpoint),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({
-          'userId': userId,
-          'productId': productId,
-          'eventType': eventType,
-          'weight': weight,
-        }),
-      ).timeout(const Duration(seconds: 10));
+      await http
+          .post(
+            Uri.parse(_endpoint),
+            headers: {
+              'Content-Type': 'application/json; charset=UTF-8',
+              if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode({
+              'userId': userId,
+              'productId': productId,
+              'eventType': eventType,
+              'weight': weight,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
     } catch (e) {
       debugPrint('[SwipeTrackingService] track error: $e');
     }

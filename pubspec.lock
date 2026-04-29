@@ -1669,6 +1669,30 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  smartech_appinbox:
+    dependency: "direct main"
+    description:
+      name: smartech_appinbox
+      sha256: "0b1dc1dab098bc182494ee1902a608c94b322a6551c75e4554a7b5764d8db295"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.5.5"
+  smartech_base:
+    dependency: "direct main"
+    description:
+      name: smartech_base
+      sha256: "733f3f62abdf361c4ddcc9156ec1086e8a1b1373a1193739a5355baf056d9e4a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.5.5"
+  smartech_push:
+    dependency: "direct main"
+    description:
+      name: smartech_push
+      sha256: "2439fb7bda20bcb6f4739b92abe79f90e158aa1b982fd4cd4c7f9de4a8030fa6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.5.3"
   source_gen:
     dependency: transitive
     description:

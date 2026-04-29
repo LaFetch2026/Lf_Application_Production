@@ -16,6 +16,7 @@ import '../screens/loginscreen.dart';
 import '../services/cache_manager.dart';
 import 'base_controller.dart';
 import 'package:flutter/foundation.dart';
+import '../services/netcore_service.dart';
 
 class HomeController extends BaseController {
   Future<void> _redirectToLoginIfNotGuest() async {
@@ -107,6 +108,10 @@ class HomeController extends BaseController {
     super.onInit();
     // ✅ REMOVED premature API calls - now only loads saved gender preference
     _loadSavedGenderPreference();
+    // ── Netcore CE: track home screen view ────────────────────────────────
+    try {
+      NetcoreService.instance.trackEvent('Home Viewed', {});
+    } catch (_) {}
   }
 
   /// Load saved gender preference WITHOUT calling APIs

@@ -11,6 +11,7 @@ import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
 import '../screens/loginscreen.dart';
 import 'base_controller.dart';
+import '../services/netcore_service.dart';
 
 class OrderController extends BaseController {
   // ---------- UI / State ----------
@@ -291,6 +292,13 @@ class OrderController extends BaseController {
         await prefs.remove("orderId");
         await prefs.remove("checkoutSessionId");
         getSnackBar("Order placed successfully");
+        // ── Netcore CE: track purchase — additive, after existing logic ────
+        try {
+          NetcoreService.instance.trackEvent('Purchase', {
+            'orderId': providerOrderId,
+            'paymentId': providerPaymentId,
+          });
+        } catch (_) {}
         return true;
       } else {
         try {

@@ -54,6 +54,7 @@ android {
         targetSdk 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     signingConfigs {
@@ -84,4 +85,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.0"
     implementation 'com.facebook.android:facebook-login:latest.release'
     implementation 'com.facebook.android:facebook-android-sdk:16.0.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
 }
