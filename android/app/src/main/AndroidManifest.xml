@@ -38,10 +38,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCBFuMTFiBOwMOAbiCNJFInpiknSupbfEc" />
 
-        <!-- Netcore CE SDK App ID — replace YOUR_SMT_APP_ID with the value from the Netcore CE dashboard -->
+        <!-- Netcore CE SDK App ID -->
         <meta-data
             android:name="SMT_APP_ID"
-            android:value="YOUR_SMT_APP_ID" />
+            android:value="d07ff1c037673eaac1f62241450c3dc8" />
 
         <!-- Firebase Crashlytics -->
         <meta-data

@@ -74,6 +74,7 @@ dependencies:
   smartech_push: ^3.5.3
   smartech_appinbox: ^3.5.5
   url_launcher: ^6.1.11
+  audio_session: ^0.1.21
   video_player: ^2.7.0
   webview_flutter: ^4.13.0
 

@@ -1009,6 +1009,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import '../../common/widget/appbar/allbrand_appbar.dart';
+import '../../utils/audio_session_helper.dart';
 import '../../common/widget/other/common_widget.dart';
 import '../../common/widget/text/app_text.dart';
 import '../../controllers/brand_controller.dart';
@@ -1129,10 +1130,11 @@ class AllBrandScreenState extends State<AllBrandScreen> {
     try {
       if (!mounted) return;
 
+      await configureMusicAudioSession();
       _videoPlayerController = VideoPlayerController.networkUrl(
         Uri.parse(videoUrl),
         videoPlayerOptions: VideoPlayerOptions(
-          mixWithOthers: true,
+          mixWithOthers: false,
           allowBackgroundPlayback: false,
         ),
       );

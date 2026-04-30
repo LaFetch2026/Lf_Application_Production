@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 import '../common/widget/other/common_widget.dart';
+import '../utils/audio_session_helper.dart';
 import '../common/widget/text/app_text.dart';
 import '../controllers/login_controller.dart';
 import '../core/constant/constants.dart';
@@ -40,15 +41,7 @@ class WelcomeScreenState extends State<WelcomeScreen>
   void initState() {
     super.initState();
 
-    _videoController = VideoPlayerController.asset(videoOnboard);
-    _initializeVideo = _videoController.initialize().then((_) {
-      if (mounted) {
-        _videoController
-          ..setLooping(true)
-          ..play();
-        setState(() {});
-      }
-    });
+    _initializeVideo = _initVideoWithAmbientSession();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -56,6 +49,21 @@ class WelcomeScreenState extends State<WelcomeScreen>
         systemNavigationBarColor: Colors.transparent,
       ));
     });
+  }
+
+  Future<void> _initVideoWithAmbientSession() async {
+    await configureAmbientAudioSession();
+    _videoController = VideoPlayerController.asset(
+      videoOnboard,
+      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+    );
+    await _videoController.initialize();
+    if (mounted) {
+      _videoController
+        ..setLooping(true)
+        ..play();
+      setState(() {});
+    }
   }
 
   @override

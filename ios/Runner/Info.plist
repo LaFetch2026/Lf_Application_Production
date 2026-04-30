@@ -6,6 +6,8 @@
 	<string>6739497338</string>
 	<key>AppsFlyerDevKey</key>
 	<string>tzivSReYr7ZyuqVbEP6z6d</string>
+	<key>SMT_APP_ID</key>
+	<string>616446a1e438bc8a568179aa4d234607</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

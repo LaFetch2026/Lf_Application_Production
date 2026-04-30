@@ -25,6 +25,7 @@ import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../controllers/brand_controller.dart';
+import '../../../utils/audio_session_helper.dart';
 import '../../../controllers/catalog_controller.dart';
 import '../../../controllers/home_controller.dart';
 import '../../../controllers/menu_controller.dart' as mc;
@@ -138,7 +139,11 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen>
 
   Future<void> _initVideo(String slug, String url) async {
     try {
-      final ctrl = VideoPlayerController.networkUrl(Uri.parse(url));
+      await configureAmbientAudioSession();
+      final ctrl = VideoPlayerController.networkUrl(
+        Uri.parse(url),
+        videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+      );
       await ctrl.initialize();
       if (!mounted) {
         ctrl.dispose();

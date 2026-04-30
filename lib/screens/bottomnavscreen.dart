@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
+import '../utils/audio_session_helper.dart';
 import '../common/widget/other/common_widget.dart';
 import '../controllers/cart_controller.dart';
 import '../controllers/home_controller.dart';
@@ -158,21 +159,26 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   }
 
   // ✅ Initialize video player
-  void _initializeVideoPlayer(String videoUrl) {
+  void _initializeVideoPlayer(String videoUrl) async {
     print("🎬 Initializing video player with URL: $videoUrl");
-    _videoAdController = VideoPlayerController.networkUrl(Uri.parse(videoUrl))
-      ..initialize().then((_) {
-        print("🎬 Video initialized! Size: ${_videoAdController?.value.size}");
-        if (mounted && !_videoAdDismissed) {
-          setState(() => _showVideoAd = true);
-          print("🎬 _showVideoAd set to TRUE");
-          _videoAdController?.setLooping(true);
-          _videoAdController?.setVolume(0); // Muted by default
-          _videoAdController?.play();
-        }
-      }).catchError((e) {
-        print("⚠️ Video player init error: $e");
-      });
+    await configureAmbientAudioSession();
+    _videoAdController = VideoPlayerController.networkUrl(
+      Uri.parse(videoUrl),
+      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+    );
+    try {
+      await _videoAdController!.initialize();
+      print("🎬 Video initialized! Size: ${_videoAdController?.value.size}");
+      if (mounted && !_videoAdDismissed) {
+        setState(() => _showVideoAd = true);
+        print("🎬 _showVideoAd set to TRUE");
+        _videoAdController?.setLooping(true);
+        _videoAdController?.setVolume(0); // Muted by default
+        _videoAdController?.play();
+      }
+    } catch (e) {
+      print("⚠️ Video player init error: $e");
+    }
   }
 
   // ✅ Dismiss video ad

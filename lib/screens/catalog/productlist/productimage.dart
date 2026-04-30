@@ -8,6 +8,7 @@ import 'package:video_player/video_player.dart';
 
 import '../../../controllers/product_controller.dart';
 import '../../../core/constant/constants.dart';
+import '../../../utils/audio_session_helper.dart';
 import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class ProductImageScreen extends StatefulWidget {
@@ -55,13 +56,7 @@ class ProductImageScreenState extends State<ProductImageScreen> {
           ));
         } else {
           productController.isVideoPlaying.value = true;
-          videoController = VideoPlayerController.networkUrl(
-            Uri.parse(
-              widget.list[i]["name"],
-            ),
-          );
-
-          _initializeVideoPlayerFuture = videoController.initialize();
+          _initializeVideoPlayerFuture = _initVideoAmbient(widget.list[i]["name"]);
           videoController.setLooping(true);
 
           list.add(
@@ -111,6 +106,15 @@ class ProductImageScreenState extends State<ProductImageScreen> {
       list.add(Image.asset(dummyWishlistImage, fit: BoxFit.fitHeight));
     }
     return list;
+  }
+
+  Future<void> _initVideoAmbient(String url) async {
+    await configureAmbientAudioSession();
+    videoController = VideoPlayerController.networkUrl(
+      Uri.parse(url),
+      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+    );
+    await videoController.initialize();
   }
 
   bool isImage(String path) {

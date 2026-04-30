@@ -28,6 +28,7 @@ import 'package:marquee/marquee.dart';
 import 'package:page_indicator_plus/page_indicator_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
+import '../../../utils/audio_session_helper.dart';
 import '../../../common/widget/appbar/home_appbar.dart';
 import '../../../screens/accountscreen.dart';
 import '../../../screens/catalog/women_catalog.dart';
@@ -1364,7 +1365,11 @@ class HomeScreenState extends State<HomeScreen>
         _sectionVideoControllers.remove(genderId);
       }
 
-      final controller = VideoPlayerController.networkUrl(Uri.parse(url));
+      await configureAmbientAudioSession();
+      final controller = VideoPlayerController.networkUrl(
+        Uri.parse(url),
+        videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+      );
       await controller.initialize();
       if (!mounted) {
         controller.dispose();
@@ -2636,8 +2641,10 @@ class _BannerVideoPlayerState extends State<BannerVideoPlayer>
 
   Future<void> _initializeVideo() async {
     try {
+      await configureAmbientAudioSession();
       final controller = VideoPlayerController.networkUrl(
         Uri.parse(widget.videoUrl),
+        videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
       );
 
       await controller.initialize();
