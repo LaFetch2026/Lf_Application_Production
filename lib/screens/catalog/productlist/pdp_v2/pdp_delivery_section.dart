@@ -155,8 +155,14 @@ extension PdpDeliverySection on _ProductDetailsScreenV2State {
 
   Widget _buildActionButtons() => Obx(() {
         if (productController.isDetails.value) return const SizedBox();
+        final bottomInset = MediaQuery.of(context).padding.bottom;
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 8.sp),
+          padding: EdgeInsets.only(
+            left: 16.sp,
+            right: 16.sp,
+            top: 8.sp,
+            bottom: 8.sp + bottomInset,
+          ),
           child: Column(
             children: [
               SizedBox(

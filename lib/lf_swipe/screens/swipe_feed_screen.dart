@@ -373,8 +373,10 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
       scale: c.scale,
       verticalOffset: c.verticalOffset,
       onSwiped: (action) => _ctrl.onCardSwiped(action, product),
-      onSwipeUpFlyUp: isTopCard ? () => _topCardKey?.currentState?.triggerFlyUp() : null,
-      onSwipeUpReset: isTopCard ? () => _topCardKey?.currentState?.resetSwipeUp() : null,
+      onSwipeUpFlyUp:
+          isTopCard ? () => _topCardKey?.currentState?.triggerFlyUp() : null,
+      onSwipeUpReset:
+          isTopCard ? () => _topCardKey?.currentState?.resetSwipeUp() : null,
     );
   }
 }
@@ -520,12 +522,12 @@ class _ExhaustedView extends StatelessWidget {
             Container(
               width: 72.sp,
               height: 72.sp,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: homeAppBarColor,
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.auto_awesome_rounded,
+                Icons.style_rounded,
                 color: Colors.white,
                 size: 32.sp,
               ),

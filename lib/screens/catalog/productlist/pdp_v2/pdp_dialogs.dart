@@ -709,165 +709,183 @@ class _ReviewBottomSheetState extends State<_ReviewBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.85,
-      decoration: BoxDecoration(
-          color: whiteColor,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20.sp))),
-      child: Column(children: [
-        Container(
-            margin: EdgeInsets.only(top: 12.sp),
-            width: 40.sp,
-            height: 4.sp,
-            decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2.sp))),
-        Padding(
-            padding: EdgeInsets.all(16.sp),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('WRITE A REVIEW',
-                      style: TextStyle(
-                          fontFamily: "Clash Display",
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18.sp)),
-                  IconButton(
-                      icon: Icon(Icons.close, size: 24.sp),
-                      onPressed: () => Get.back()),
-                ])),
-        const Divider(color: colorSecondary, height: 1),
-        Expanded(
-            child: SingleChildScrollView(
-                padding: EdgeInsets.all(16.sp),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                          padding: EdgeInsets.all(12.sp),
-                          color: colorSecondary,
-                          child: Row(children: [
-                            ClipRRect(
-                                borderRadius: BorderRadius.circular(8.sp),
-                                child: widget.firstImg.isNotEmpty
-                                    ? CachedNetworkImage(
-                                        imageUrl: widget.firstImg,
-                                        width: 80.sp,
-                                        height: 80.sp,
-                                        fit: BoxFit.cover,
-                                        errorWidget: (_, __, ___) =>
-                                            Image.asset(dummyWishlistImage,
-                                                width: 80.sp,
-                                                height: 80.sp,
-                                                fit: BoxFit.cover))
-                                    : Image.asset(dummyWishlistImage,
-                                        width: 80.sp,
-                                        height: 80.sp,
-                                        fit: BoxFit.cover)),
-                            SizedBox(width: 12.sp),
-                            Expanded(
-                                child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                  Text(widget.brandText.toUpperCase(),
-                                      style: TextStyle(
-                                          fontFamily: "Clash Display",
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 12.sp,
-                                          color: blackColor)),
-                                  SizedBox(height: 4.sp),
-                                  Text(widget.titleText,
-                                      style: TextStyle(
-                                          fontFamily: "Clash Display Regular",
-                                          fontSize: 12.sp,
-                                          color: subtitleColor),
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis),
-                                ])),
-                          ])),
-                      SizedBox(height: 24.sp),
-                      Text('Rate this product',
-                          style: TextStyle(
-                              fontFamily: "Clash Display",
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14.sp)),
-                      SizedBox(height: 12.sp),
-                      Row(
-                          children: List.generate(
-                              5,
-                              (i) => GestureDetector(
-                                    onTap: () => _setRating(i + 1),
-                                    child: Padding(
-                                        padding: EdgeInsets.only(right: 8.sp),
-                                        child: Icon(
-                                            i < _rating
-                                                ? Icons.star
-                                                : Icons.star_border,
-                                            size: 36.sp,
-                                            color: const Color(0xFFFFB800))),
-                                  ))),
-                      SizedBox(height: 24.sp),
-                      Text('Write your review',
-                          style: TextStyle(
-                              fontFamily: "Clash Display",
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14.sp)),
-                      SizedBox(height: 12.sp),
-                      TextField(
-                          controller: _ctrl,
-                          maxLines: 6,
-                          maxLength: 500,
-                          decoration: InputDecoration(
-                            hintText: 'Share your thoughts...',
-                            counterText: "",
-                            filled: true,
-                            fillColor: colorSecondary,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8.sp),
-                                borderSide: BorderSide.none),
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8.sp),
-                                borderSide: BorderSide.none),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8.sp),
-                                borderSide: BorderSide(
-                                    color: lightPurpleColor, width: 1.sp)),
-                            contentPadding: EdgeInsets.all(12.sp),
-                          ),
-                          style: TextStyle(
-                              fontFamily: "Clash Display Regular",
-                              fontSize: 13.sp,
-                              color: blackColor)),
-                      SizedBox(height: 24.sp),
-                    ]))),
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(16.sp),
-          decoration: BoxDecoration(color: whiteColor, boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -2))
-          ]),
-          child: ElevatedButton(
-            onPressed: _submitting ? null : _submit,
-            style: ElevatedButton.styleFrom(
-                backgroundColor: _submitting ? Colors.grey : blackColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.sp)),
-                minimumSize: Size(double.infinity, 48.sp),
-                elevation: 0),
-            child: Text(_submitting ? 'SUBMITTING...' : 'SUBMIT REVIEW',
-                style: TextStyle(
-                    fontFamily: "Clash Display",
-                    fontWeight: FontWeight.w600,
-                    color: whiteColor,
-                    fontSize: 14.sp,
-                    letterSpacing: 0.5)),
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.85,
+        decoration: BoxDecoration(
+            color: whiteColor,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.sp))),
+        child: Column(children: [
+          Container(
+              margin: EdgeInsets.only(top: 12.sp),
+              width: 40.sp,
+              height: 4.sp,
+              decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2.sp))),
+          Padding(
+              padding: EdgeInsets.all(16.sp),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('WRITE A REVIEW',
+                        style: TextStyle(
+                            fontFamily: "Clash Display",
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18.sp)),
+                    IconButton(
+                        icon: Icon(Icons.close, size: 24.sp),
+                        onPressed: () => Get.back()),
+                  ])),
+          const Divider(color: colorSecondary, height: 1),
+          Expanded(
+              child: SingleChildScrollView(
+                  padding: EdgeInsets.only(
+                    left: 16.sp,
+                    right: 16.sp,
+                    top: 16.sp,
+                    bottom: 16.sp + keyboardHeight,
+                  ),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                            padding: EdgeInsets.all(12.sp),
+                            color: colorSecondary,
+                            child: Row(children: [
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.sp),
+                                  child: widget.firstImg.isNotEmpty
+                                      ? CachedNetworkImage(
+                                          imageUrl: widget.firstImg,
+                                          width: 80.sp,
+                                          height: 80.sp,
+                                          fit: BoxFit.cover,
+                                          errorWidget: (_, __, ___) =>
+                                              Image.asset(dummyWishlistImage,
+                                                  width: 80.sp,
+                                                  height: 80.sp,
+                                                  fit: BoxFit.cover))
+                                      : Image.asset(dummyWishlistImage,
+                                          width: 80.sp,
+                                          height: 80.sp,
+                                          fit: BoxFit.cover)),
+                              SizedBox(width: 12.sp),
+                              Expanded(
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                    Text(widget.brandText.toUpperCase(),
+                                        style: TextStyle(
+                                            fontFamily: "Clash Display",
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 12.sp,
+                                            color: blackColor)),
+                                    SizedBox(height: 4.sp),
+                                    Text(widget.titleText,
+                                        style: TextStyle(
+                                            fontFamily: "Clash Display Regular",
+                                            fontSize: 12.sp,
+                                            color: subtitleColor),
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis),
+                                  ])),
+                            ])),
+                        SizedBox(height: 24.sp),
+                        Text('Rate this product',
+                            style: TextStyle(
+                                fontFamily: "Clash Display",
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14.sp)),
+                        SizedBox(height: 12.sp),
+                        Row(
+                            children: List.generate(
+                                5,
+                                (i) => GestureDetector(
+                                      onTap: () => _setRating(i + 1),
+                                      child: Padding(
+                                          padding: EdgeInsets.only(right: 8.sp),
+                                          child: Icon(
+                                              i < _rating
+                                                  ? Icons.star
+                                                  : Icons.star_border,
+                                              size: 36.sp,
+                                              color: const Color(0xFFFFB800))),
+                                    ))),
+                        SizedBox(height: 24.sp),
+                        Text('Write your review',
+                            style: TextStyle(
+                                fontFamily: "Clash Display",
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14.sp)),
+                        SizedBox(height: 12.sp),
+                        TextField(
+                            controller: _ctrl,
+                            maxLines: 6,
+                            maxLength: 500,
+                            textInputAction: TextInputAction.done,
+                            onSubmitted: (_) =>
+                                FocusScope.of(context).unfocus(),
+                            decoration: InputDecoration(
+                              hintText: 'Share your thoughts...',
+                              counterText: "",
+                              filled: true,
+                              fillColor: colorSecondary,
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.sp),
+                                  borderSide: BorderSide.none),
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.sp),
+                                  borderSide: BorderSide.none),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.sp),
+                                  borderSide: BorderSide(
+                                      color: lightPurpleColor, width: 1.sp)),
+                              contentPadding: EdgeInsets.all(12.sp),
+                            ),
+                            style: TextStyle(
+                                fontFamily: "Clash Display Regular",
+                                fontSize: 13.sp,
+                                color: blackColor)),
+                        SizedBox(height: 24.sp),
+                      ]))),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.only(
+              left: 16.sp,
+              right: 16.sp,
+              top: 16.sp,
+              bottom: 16.sp + MediaQuery.of(context).padding.bottom,
+            ),
+            decoration: BoxDecoration(color: whiteColor, boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -2))
+            ]),
+            child: ElevatedButton(
+              onPressed: _submitting ? null : _submit,
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: _submitting ? Colors.grey : blackColor,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.sp)),
+                  minimumSize: Size(double.infinity, 48.sp),
+                  elevation: 0),
+              child: Text(_submitting ? 'SUBMITTING...' : 'SUBMIT REVIEW',
+                  style: TextStyle(
+                      fontFamily: "Clash Display",
+                      fontWeight: FontWeight.w600,
+                      color: whiteColor,
+                      fontSize: 14.sp,
+                      letterSpacing: 0.5)),
+            ),
           ),
-        ),
-      ]),
+        ]),
+      ),
     );
   }
 }
