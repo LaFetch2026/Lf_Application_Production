@@ -23,22 +23,29 @@ class SwipeFeedService extends GetxService {
   ///
   /// Response shape expected from backend:
   /// `{ success: true, data: { products: [...], ... } }`
-  Future<List<SwipeProduct>> fetchBatch({int genderFilter = 0}) async {
+  Future<List<SwipeProduct>> fetchBatch({int genderFilter = 0, bool skipSeenFilter = false}) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getInt('userId') ?? 0;
       final token = prefs.getString('token')?.trim() ?? '';
 
+      debugPrint('[SwipeFeedService] fetchBatch — userId=$userId, skipSeenFilter=$skipSeenFilter, token=${token.isNotEmpty ? "present" : "MISSING"}, baseUrl=${ApiConstants.baseUrl}');
+
       final params = <String, String>{
         'type': 'swipe',
-        'userId': '$userId',
         'limit': '15',
+        'skipCache': 'true',
       };
+      // Send userId for personalization, but omit it when skipSeenFilter=true
+      // so the backend skips the seen-product exclusion (feed reset mode).
+      if (userId > 0 && !skipSeenFilter) params['userId'] = '$userId';
       if (genderFilter == 1) params['gender'] = 'men';
       if (genderFilter == 2) params['gender'] = 'women';
 
       final uri = Uri.parse('${ApiConstants.baseUrl}/recommendations')
           .replace(queryParameters: params);
+
+      debugPrint('[SwipeFeedService] GET $uri');
 
       final response = await _client.get(
         uri,
@@ -48,11 +55,11 @@ class SwipeFeedService extends GetxService {
         },
       ).timeout(const Duration(seconds: 15));
 
+      debugPrint('[SwipeFeedService] response status: ${response.statusCode}');
+
       if (response.statusCode != 200) {
-        debugPrint(
-            '[SwipeFeedService] fetchBatch failed (${response.statusCode})');
-        throw Exception(
-            'Failed to fetch swipe feed (${response.statusCode})');
+        debugPrint('[SwipeFeedService] fetchBatch failed (${response.statusCode}): ${response.body}');
+        throw Exception('Failed to fetch swipe feed (${response.statusCode})');
       }
 
       final decoded = jsonDecode(response.body) as Map<String, dynamic>?;
@@ -66,14 +73,18 @@ class SwipeFeedService extends GetxService {
 
       if (data is Map) {
         items = data['products'] as List?;
+        items ??= data['items'] as List?;
+        items ??= data['data'] as List?;
       } else if (data is List) {
         items = data;
       } else if (decoded['products'] is List) {
         items = decoded['products'] as List;
       }
 
-      if (items == null) {
-        debugPrint('[SwipeFeedService] No products array in response');
+      debugPrint('[SwipeFeedService] parsed ${items?.length ?? 0} products from response');
+
+      if (items == null || items.isEmpty) {
+        debugPrint('[SwipeFeedService] No products in response.');
         return [];
       }
 
@@ -81,9 +92,10 @@ class SwipeFeedService extends GetxService {
           .whereType<Map<String, dynamic>>()
           .map(SwipeProduct.fromJson)
           .toList();
-    } catch (e) {
+    } catch (e, stack) {
       debugPrint('[SwipeFeedService] fetchBatch error: $e');
-      rethrow; // let the controller handle the error state
+      debugPrint('[SwipeFeedService] stack: $stack');
+      rethrow;
     }
   }
 }

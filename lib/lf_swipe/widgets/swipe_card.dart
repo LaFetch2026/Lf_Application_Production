@@ -17,6 +17,14 @@ class SwipeCard extends StatefulWidget {
   final double verticalOffset;
   final void Function(SwipeAction action) onSwiped;
 
+  /// Called by the controller when the swipe-up flow resolves with dismiss or
+  /// failure — animates the card back to center gracefully.
+  final VoidCallback? onSwipeUpReset;
+
+  /// Called by the controller immediately before removing the card on a
+  /// successful add-to-cart — animates the card upward off-screen.
+  final VoidCallback? onSwipeUpFlyUp;
+
   const SwipeCard({
     super.key,
     required this.product,
@@ -24,23 +32,34 @@ class SwipeCard extends StatefulWidget {
     required this.scale,
     required this.verticalOffset,
     required this.onSwiped,
+    this.onSwipeUpReset,
+    this.onSwipeUpFlyUp,
   });
 
   @override
-  State<SwipeCard> createState() => _SwipeCardState();
+  State<SwipeCard> createState() => SwipeCardState();
 }
 
-class _SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
+class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
   Offset _dragOffset = Offset.zero;
   bool _isFlying = false;
+  // When true, the swipe-up flow is in progress — gestures are suppressed and
+  // _dragOffset is held at its current value until the controller resolves.
+  bool _swipeUpLocked = false;
   int _currentImageIndex = 0;
 
   late final AnimationController _flyController;
-  late Animation<Offset> _flyAnimation;
+  Animation<Offset>? _flyAnimation; // nullable — only set when _flyOff() is called
+
+  // Used for the spring-back animation on dismiss/failure
+  late final AnimationController _resetController;
+  Animation<Offset>? _resetAnimation; // nullable — only set when resetSwipeUp() is called
 
   static const double _horizontalThreshold = 80.0;
   static const double _verticalThreshold = 60.0;
   static const Duration _flyDuration = Duration(milliseconds: 220);
+  static const Duration _flyUpDuration = Duration(milliseconds: 300);
+  static const Duration _resetDuration = Duration(milliseconds: 420);
 
   static const Color _likeColor = Color(0xFF988AFF);
   static const Color _nopeColor = Color(0xFFF44336);
@@ -52,29 +71,79 @@ class _SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
     _flyController.addListener(() {
       if (mounted) setState(() {});
     });
+
+    _resetController = AnimationController(vsync: this, duration: _resetDuration);
+    _resetController.addListener(() {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
   void dispose() {
     _flyController.dispose();
+    _resetController.dispose();
     super.dispose();
   }
 
-  // ── Gesture ───────────────────────────────────────────────────────────────
+  // ── Public API (called by SwipeFeedScreen via GlobalKey) ──────────────────
+
+  /// Animate the card upward off-screen (success path).
+  /// Called by the controller immediately before removing the card.
+  void triggerFlyUp() {
+    if (!mounted) return;
+    _swipeUpLocked = false;
+    final flyUpController = AnimationController(
+      vsync: this,
+      duration: _flyUpDuration,
+    );
+    final flyUpAnimation = Tween<Offset>(
+      begin: _dragOffset,
+      end: const Offset(0, -700),
+    ).animate(CurvedAnimation(parent: flyUpController, curve: Curves.easeInCubic));
+    flyUpController.addListener(() {
+      if (mounted) {
+        setState(() => _dragOffset = flyUpAnimation.value);
+      }
+    });
+    flyUpController.forward().then((_) => flyUpController.dispose());
+  }
+
+  /// Spring-animate the card back to center (dismiss/failure path).
+  /// Called by the controller when the size sheet is dismissed or cart add fails.
+  void resetSwipeUp() {
+    if (!mounted) return;
+    final startOffset = _dragOffset;
+    _resetAnimation = Tween<Offset>(
+      begin: startOffset,
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _resetController, curve: Curves.elasticOut));
+    _resetController.forward(from: 0).then((_) {
+      if (mounted) {
+        setState(() {
+          _dragOffset = Offset.zero;
+          _swipeUpLocked = false;
+        });
+      }
+    });
+  }
 
   void _onPanUpdate(DragUpdateDetails d) {
-    if (_isFlying) return;
+    if (_isFlying || _swipeUpLocked) return;
     setState(() => _dragOffset += d.delta);
   }
 
   void _onPanEnd(DragEndDetails _) {
-    if (_isFlying) return;
+    if (_isFlying || _swipeUpLocked) return;
     final dx = _dragOffset.dx;
     final dy = _dragOffset.dy;
 
     if (dy.abs() > dx.abs()) {
       if (dy < -_verticalThreshold) {
-        _flyOff(SwipeAction.swipeUp, const Offset(0, -700));
+        // Swipe up: hold the card at its dragged position while the async
+        // add-to-cart flow runs. The controller will call triggerFlyUp() on
+        // success or resetSwipeUp() on dismiss/failure.
+        setState(() => _swipeUpLocked = true);
+        widget.onSwiped(SwipeAction.swipeUp);
         return;
       } else if (dy > _verticalThreshold) {
         setState(() => _dragOffset = Offset.zero);
@@ -100,9 +169,11 @@ class _SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
     _flyController.forward(from: 0).then((_) => widget.onSwiped(action));
   }
 
-  // ── Overlay ───────────────────────────────────────────────────────────────
-
-  Offset get _drag => _isFlying ? _flyAnimation.value : _dragOffset;
+  Offset get _drag {
+    if (_isFlying && _flyAnimation != null) return _flyAnimation!.value;
+    if (_resetController.isAnimating && _resetAnimation != null) return _resetAnimation!.value;
+    return _dragOffset;
+  }
 
   double get _overlayOpacity {
     final d = _drag;

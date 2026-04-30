@@ -34,24 +34,43 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
   // Cart flash animation lives in the screen (needs vsync)
   late final AnimationController _cartFlashAnim;
 
+  // GlobalKey for the top card — keyed by product ID so Flutter creates a
+  // fresh SwipeCardState whenever the top product changes.
+  // This prevents stale _swipeUpLocked / _dragOffset from leaking into the
+  // next card after a successful swipe-up.
+  GlobalKey<SwipeCardState>? _topCardKey;
+  int? _topCardProductId;
+
   @override
   void initState() {
     super.initState();
-    // Register controller scoped to this screen; auto-deleted on dispose
+    // Force-delete any stale instance before creating a fresh one.
+    // This handles hot-reload and cases where dispose didn't run cleanly.
+    if (Get.isRegistered<SwipeFeedController>()) {
+      debugPrint('[SwipeFeedScreen] Deleting stale SwipeFeedController');
+      Get.delete<SwipeFeedController>(force: true);
+    }
     _ctrl = Get.put(SwipeFeedController());
+    debugPrint('[SwipeFeedScreen] SwipeFeedController created');
     _wishlistCtrl = Get.find<WishlistController>();
     _cartCtrl = Get.find<CartController>();
 
     _cartFlashAnim = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 500),
     );
 
     ever(_ctrl.cartFlash, (bool active) {
       if (active) {
-        _cartFlashAnim.forward(from: 0).then((_) => _cartFlashAnim.reverse());
+        _cartFlashAnim.forward(from: 0);
       }
     });
+
+    // Wire the top-card callbacks into the controller so it can trigger
+    // the fly-up and spring-back animations at the right moment.
+    // These are updated each time a new top card is built — see _buildCard.
+    _ctrl.onSwipeUpFlyUp = null;
+    _ctrl.onSwipeUpReset = null;
   }
 
   @override
@@ -181,6 +200,7 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
     return Obx(() {
       final hasUndo = _ctrl.lastSwiped.value != null;
       final hasError = _ctrl.hasError.value && _ctrl.cards.isEmpty;
+      final isExhausted = _ctrl.isExhausted.value && _ctrl.cards.isEmpty;
 
       return Container(
         color: Colors.white,
@@ -190,7 +210,7 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
             // Gender tabs
             ..._genderTabs(),
             // Right-side actions
-            if (hasUndo || hasError) ...[
+            if (hasUndo || hasError || isExhausted) ...[
               const Spacer(),
               if (hasUndo)
                 _TabChip(
@@ -199,13 +219,13 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
                   filled: false,
                   onTap: _ctrl.rewind,
                 ),
-              if (hasError) ...[
+              if (hasError || isExhausted) ...[
                 if (hasUndo) SizedBox(width: 8.sp),
                 _TabChip(
                   label: 'Retry',
                   icon: Icons.refresh_rounded,
                   filled: true,
-                  onTap: _ctrl.fetchBatch,
+                  onTap: _ctrl.retryFetch,
                 ),
               ],
             ],
@@ -299,38 +319,7 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
 
       // Exhausted
       if (cards.isEmpty && !fetching && !error) {
-        return Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32.sp),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "You've seen it all! 🎉",
-                  style: TextStyle(
-                    fontFamily: 'Clash Display Semibold',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 22.sp,
-                    color: homeAppBarColor,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 8.sp),
-                Text(
-                  'Check back later for new arrivals',
-                  style: TextStyle(
-                    fontFamily: 'Clash Display Regular',
-                    fontSize: 14.sp,
-                    color: Colors.grey[500],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 28.sp),
-                _PillButton(label: 'Refresh', onTap: _ctrl.fetchBatch),
-              ],
-            ),
-          ),
-        );
+        return const _ExhaustedView();
       }
 
       // Card stack
@@ -364,13 +353,28 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
       (scale: 0.92, verticalOffset: 20.0, isTop: false),
     ];
     final c = configs[index];
+    final isTopCard = index == 0;
+
+    // Create a fresh GlobalKey whenever the top product changes.
+    // This guarantees a brand-new SwipeCardState with clean _swipeUpLocked=false
+    // and _dragOffset=zero — no stale state leaks from the previous card.
+    if (isTopCard && _topCardProductId != product.id) {
+      _topCardKey = GlobalKey<SwipeCardState>();
+      _topCardProductId = product.id;
+      // Re-wire controller callbacks to the new key
+      _ctrl.onSwipeUpFlyUp = () => _topCardKey?.currentState?.triggerFlyUp();
+      _ctrl.onSwipeUpReset = () => _topCardKey?.currentState?.resetSwipeUp();
+    }
+
     return SwipeCard(
-      key: ValueKey(product.id),
+      key: isTopCard ? _topCardKey : ValueKey(product.id),
       product: product,
       isTop: c.isTop,
       scale: c.scale,
       verticalOffset: c.verticalOffset,
       onSwiped: (action) => _ctrl.onCardSwiped(action, product),
+      onSwipeUpFlyUp: isTopCard ? () => _topCardKey?.currentState?.triggerFlyUp() : null,
+      onSwipeUpReset: isTopCard ? () => _topCardKey?.currentState?.resetSwipeUp() : null,
     );
   }
 }
@@ -494,6 +498,80 @@ class _CircleButton extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: Icon(icon, color: Colors.white, size: 18.sp),
+      ),
+    );
+  }
+}
+
+// ── Exhausted state ───────────────────────────────────────────────────────────
+
+class _ExhaustedView extends StatelessWidget {
+  const _ExhaustedView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 36.sp),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Icon
+            Container(
+              width: 72.sp,
+              height: 72.sp,
+              decoration: BoxDecoration(
+                color: homeAppBarColor,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.auto_awesome_rounded,
+                color: Colors.white,
+                size: 32.sp,
+              ),
+            ),
+            SizedBox(height: 24.sp),
+            Text(
+              'You\'re ahead of the curve.',
+              style: TextStyle(
+                fontFamily: 'Clash Display Semibold',
+                fontWeight: FontWeight.w700,
+                fontSize: 20.sp,
+                color: homeAppBarColor,
+                height: 1.2,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 10.sp),
+            Text(
+              'You\'ve seen everything curated for you right now. New arrivals drop regularly — check back soon.',
+              style: TextStyle(
+                fontFamily: 'Clash Display Regular',
+                fontSize: 13.sp,
+                color: Colors.grey[500],
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 28.sp),
+            // Subtle divider line
+            Container(
+              width: 40.sp,
+              height: 1,
+              color: Colors.grey[200],
+            ),
+            SizedBox(height: 20.sp),
+            Text(
+              'LF SWIPE',
+              style: TextStyle(
+                fontFamily: 'Clash Display Semibold',
+                fontSize: 10.sp,
+                color: Colors.grey[400],
+                letterSpacing: 3,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -9,13 +9,28 @@ class CartFlashOverlay extends StatelessWidget {
   final Animation<double> animation;
   const CartFlashOverlay({super.key, required this.animation});
 
+  // Single-pass TweenSequence: fast fade-in (0→0.3) then smooth fade-out (0.3→1.0).
+  // Peaks at 30% of the animation range — no double-fade, no jank.
+  static final _opacitySequence = TweenSequence<double>([
+    TweenSequenceItem(
+      tween: Tween(begin: 0.0, end: 0.65)
+          .chain(CurveTween(curve: Curves.easeOut)),
+      weight: 3, // 30% of the animation
+    ),
+    TweenSequenceItem(
+      tween: Tween(begin: 0.65, end: 0.0)
+          .chain(CurveTween(curve: Curves.easeIn)),
+      weight: 7, // 70% of the animation
+    ),
+  ]);
+
   @override
   Widget build(BuildContext context) {
     return IgnorePointer(
       child: AnimatedBuilder(
         animation: animation,
         builder: (_, __) => Opacity(
-          opacity: (animation.value * (1 - animation.value) * 4).clamp(0.0, 0.65),
+          opacity: _opacitySequence.evaluate(animation),
           child: Container(
             color: Colors.black,
             child: Center(
