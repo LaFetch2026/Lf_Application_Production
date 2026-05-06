@@ -40,6 +40,7 @@ class CategoryProductScreen extends StatefulWidget {
   final String genderName;
   final String screen;
   final String type;
+  final String? segment; // ✅ NEW: segment parameter for LUXE filter
 
   const CategoryProductScreen({
     super.key,
@@ -53,6 +54,7 @@ class CategoryProductScreen extends StatefulWidget {
     this.screen = "",
     required this.categoryList,
     required String title,
+    this.segment, // ✅ NEW: segment parameter
   });
 
   @override
@@ -323,14 +325,51 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     try {
       print("🔄 Starting initial load...");
 
-      // Load all data in parallel for faster loading
-      await Future.wait([
-        _loadWishlistIfNeeded(),
-        _loadCartIfNeeded(),
-        _clearPref(),
-        _loadFilterMetadataIfNeeded(),
-        _loadCategoryProductsIfNeeded(),
-      ]);
+      // ✅ Check if this is a LUXE view (by type or segment parameter)
+      final isLuxeView = widget.type == 'luxe' || widget.segment == 'luxury';
+
+      if (isLuxeView) {
+        // For LUXE view, fetch ALL luxury products using segment=luxury filter
+        print("🎯 Loading LUXE products (segment=luxury, all)...");
+        await productController.fetchAllLuxeProducts();
+
+        // If API returns nothing, try client-side filtering from collections
+        if (productController.allLuxeList.isEmpty) {
+          print("⚠️ No LUXE products from API, trying client-side filtering...");
+          
+          // Collect all products from all collections
+          List<dynamic> allCollectionProducts = [];
+          for (final collection in productController.homeProductList) {
+            allCollectionProducts.addAll(
+              collection.products.map((p) => p.toJson()).toList()
+            );
+          }
+          
+          if (allCollectionProducts.isNotEmpty) {
+            final filteredLuxe = productController
+                .filterLuxeProductsFromCollection(allCollectionProducts);
+            productController.allLuxeList.assignAll(filteredLuxe);
+            print("✅ Loaded ${productController.allLuxeList.length} LUXE products from collections");
+          }
+        }
+
+        // Populate category product list with LUXE products
+        catalogController.categoryProductList.assignAll(
+          productController.allLuxeList,
+        );
+
+        print(
+            "✅ LUXE products loaded: ${productController.allLuxeList.length}");
+      } else {
+        // Load all data in parallel for faster loading
+        await Future.wait([
+          _loadWishlistIfNeeded(),
+          _loadCartIfNeeded(),
+          _clearPref(),
+          _loadFilterMetadataIfNeeded(),
+          _loadCategoryProductsIfNeeded(),
+        ]);
+      }
 
       print("✅ Initial load complete");
     } catch (e) {
@@ -447,7 +486,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         print(
             "   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • discount range → $_appliedMinDiscount% - $_appliedMaxDiscount%");
+        print(
+            "   • discount range → $_appliedMinDiscount% - $_appliedMaxDiscount%");
         print("   • sortChanged  → $sortChanged");
         print(
             "   • Passing sortOption → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
@@ -565,7 +605,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
         print(
             "   • sizes        → ${_appliedSizes.isNotEmpty ? _appliedSizes : 'all sizes'}");
         print("   • price range  → ₹$_appliedMinPrice - ₹$_appliedMaxPrice");
-        print("   • discount range → $_appliedMinDiscount% - $_appliedMaxDiscount%");
+        print(
+            "   • discount range → $_appliedMinDiscount% - $_appliedMaxDiscount%");
         print(
             "   • Passing sortOption → ${_appliedSortOption != "recommended" ? _appliedSortOption : null}");
 
@@ -683,9 +724,12 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
     _performInitialLoad();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: statusBarColor,
-        statusBarIconBrightness: Brightness.dark,
+      // ✅ Determine if this is a LUXE view
+      final isLuxeView = widget.type == 'luxe' || widget.segment == 'luxury';
+      
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: isLuxeView ? const Color(0xFF000000) : statusBarColor,
+        statusBarIconBrightness: isLuxeView ? Brightness.light : Brightness.dark,
         systemNavigationBarColor: statusBarColor,
         systemNavigationBarIconBrightness: Brightness.dark,
       ));
@@ -696,14 +740,27 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
   void dispose() {
     _debounceTimer?.cancel();
     catalogController.clearChipSelection();
+    
+    // ✅ Restore default status bar colors when navigating away
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: statusBarColor,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: statusBarColor,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ));
+    
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // ✅ Determine background color based on LUXE type or segment parameter
+    final isLuxeView = widget.type == 'luxe' || widget.segment == 'luxury';
+    final backgroundColor = isLuxeView ? const Color(0xFF000000) : whiteColor;
+
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: whiteColor,
+      backgroundColor: backgroundColor,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -711,6 +768,7 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
             text: widget.categoryName.toUpperCase(),
             isCart: widget.type != "coupon" && widget.type != "express",
             isHandPicked: widget.screen.isNotEmpty,
+            backColor: backgroundColor,
             onPressedSearch: () async {
               Get.off(() => const SearchScreen());
               await analytics.logEvent(
@@ -757,6 +815,37 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
           ),
 
           SizedBox(height: 8.sp),
+
+          // Category Title and Description for LUXE
+          if (isLuxeView)
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'LUXE',
+                    style: TextStyle(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      decoration: TextDecoration.underline,
+                      decorationColor: const Color(0xFF9C27B0),
+                      decorationThickness: 2.0,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    'Discover our most exclusive luxury collection',
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
           // Filter Chips Row
           // Uses a StatefulBuilder so both setState (filter pills) and
@@ -1567,7 +1656,8 @@ class CategoryProductScreenState extends State<CategoryProductScreen> {
                                     priceRange.start.toInt().toString();
                                 _appliedMaxPrice =
                                     priceRange.end.toInt().toString();
-                                _appliedMinDiscount = discountRange.start.toInt();
+                                _appliedMinDiscount =
+                                    discountRange.start.toInt();
                                 _appliedMaxDiscount = discountRange.end.toInt();
                                 _hasActiveFilters =
                                     selectedBrandIds.isNotEmpty ||

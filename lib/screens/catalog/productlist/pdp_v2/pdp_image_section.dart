@@ -138,25 +138,25 @@ extension PdpImageSection on _ProductDetailsScreenV2State {
                     },
                     child: Hero(
                         tag: imgs[i],
-                        child: CachedNetworkImage(
-                          cacheManager: CacheManager(Config("customCacheKey",
-                              stalePeriod: const Duration(days: 15),
-                              maxNrOfCacheObjects: 100)),
-                          fit: BoxFit.cover,
+                        // ✅ Phase 3.5: Wrap with GreyscaleImageWrapper for out-of-stock effect
+                        child: GreyscaleImageWrapper(
                           imageUrl: imgs[i],
-                          width: double.infinity,
+                          isOutOfStock: productController.isOutOfStock.value,
+                          opacity: 0.6,
+                          fit: BoxFit.cover,
                           height: double.infinity,
-                          progressIndicatorBuilder: (_, __, ___) =>
-                              DummyContainer(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.54,
-                                  width: MediaQuery.of(context).size.width),
-                          errorWidget: (_, __, ___) =>
-                              Image.asset(downloadImage, fit: BoxFit.cover),
+                          width: double.infinity,
                         )),
                   ),
                 ),
               ),
+              // ✅ Phase 3.6: Add ComingBackSoonTag to product image
+              Obx(() => productController.isOutOfStock.value
+                  ? ComingBackSoonTag(
+                      position: const Offset(12, 12),
+                      isVisible: true,
+                    )
+                  : const SizedBox.shrink()),
               // Wishlist overlay — bottom right
               Positioned(
                 bottom: 12,

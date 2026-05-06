@@ -7,6 +7,7 @@ class UserEvent {
   final String? orderId;
   final String sessionId;
   final DateTime timestamp;
+  final Map<String, dynamic>? metadata;
 
   UserEvent({
     required this.type,
@@ -15,6 +16,7 @@ class UserEvent {
     this.orderId,
     required this.sessionId,
     DateTime? timestamp,
+    this.metadata,
   }) : timestamp = timestamp ?? DateTime.now();
 
   Map<String, dynamic> toJson() => {
@@ -24,6 +26,7 @@ class UserEvent {
         if (orderId != null) 'orderId': orderId,
         'sessionId': sessionId,
         'timestamp': timestamp.toIso8601String(),
+        if (metadata != null) 'metadata': metadata,
       };
 }
 

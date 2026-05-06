@@ -26,7 +26,7 @@ class NewInController extends BaseController {
   RxString sortMode = 'default'.obs;
   RxInt currentPage = 0.obs;
 
-  static const int pageSize = 8;
+  static const int pageSize = 4;
 
   /// Prevents concurrent duplicate requests
   bool _isFetchInProgress = false;

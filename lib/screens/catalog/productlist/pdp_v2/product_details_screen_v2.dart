@@ -46,6 +46,10 @@ import '../../../searchscreen.dart';
 import '../../../search_results_screen.dart';
 import '../../../bottomnavscreen.dart';
 import '../../../../controllers/search_controller.dart';
+// ✅ Phase 3: Import new out-of-stock components
+import 'greyscale_image_wrapper.dart';
+import 'coming_back_soon_tag.dart';
+import 'out_of_stock_button_state.dart';
 
 part 'pdp_zoomable_image.dart';
 part 'pdp_image_section.dart';
@@ -141,6 +145,11 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
         MetaEventService.instance
             .logViewContent(contentId: productId.toString());
         EventTrackingService.instance.trackView(productId);
+        
+        // ✅ Phase 3.4: Fetch fresh stock status and start polling
+        print("📱 Product Detail Page opened - syncing stock status for product $productId");
+        productController.syncStockStatus(productId);
+        productController.startStockStatusPolling(productId);
       });
     });
   }
@@ -154,6 +163,11 @@ class _ProductDetailsScreenV2State extends State<ProductDetailsScreenV2> {
     _pincodeFocusNode.dispose();
     _pageController.dispose();
     _scrollController.dispose();
+    
+    // ✅ Phase 3.9: Stop polling when leaving detail page
+    print("📱 Product Detail Page closed - stopping stock status polling");
+    productController.stopStockStatusPolling();
+    
     super.dispose();
   }
 

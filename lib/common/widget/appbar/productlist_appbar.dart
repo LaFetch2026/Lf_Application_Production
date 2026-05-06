@@ -18,6 +18,7 @@ class ProductAppbar extends StatefulWidget {
   final bool isCart;
   final String text;
   final Color backColor;
+  final Color? textColor; // ✅ NEW: text color parameter
 
   const ProductAppbar(
       {Key? key,
@@ -28,7 +29,8 @@ class ProductAppbar extends StatefulWidget {
       this.onPressedHeart,
       this.backColor = statusBarColor,
       this.text = "",
-      this.isHandPicked = false})
+      this.isHandPicked = false,
+      this.textColor}) // ✅ NEW: text color parameter
       : super(key: key);
 
   @override
@@ -40,6 +42,10 @@ class _ProductAppbarState extends State<ProductAppbar> {
   @override
   Widget build(BuildContext context) {
     final statusBarHeight = MediaQuery.of(context).padding.top;
+    // Use white icons/logo when background is black (LUXE mode)
+    final isLuxeMode = widget.backColor == Colors.black ||
+        widget.backColor == const Color(0xFF000000);
+    final iconColor = isLuxeMode ? Colors.white : homeAppBarColor;
     return Container(
       width: MediaQuery.of(context).size.width,
       color: widget.backColor,
@@ -66,6 +72,9 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   height: 15.sp,
                   width: 15.sp,
                   fit: BoxFit.fill,
+                  colorFilter: isLuxeMode
+                      ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
+                      : null,
                 ),
               ),
             ),
@@ -79,7 +88,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   padding: EdgeInsets.only(left: 0),
                   child: AppText(
                     text: widget.text,
-                    color: homeAppBarColor,
+                    color: iconColor,
                     fontSize: 16,
                     fontFamily: "Clash Display Semibold",
                     textAlign: TextAlign.center,
@@ -99,7 +108,7 @@ class _ProductAppbarState extends State<ProductAppbar> {
                 padding: EdgeInsets.only(left: 76.sp),
                 child: Image.asset(
                   lafetchLogoImage,
-                  color: homeAppBarColor,
+                  color: iconColor,
                   height: 25.sp,
                   width: 20.sp,
                 ),
@@ -117,7 +126,12 @@ class _ProductAppbarState extends State<ProductAppbar> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
                 child: SvgPicture.asset(searchSvgImage,
-                    height: 18.sp, width: 18.sp, fit: BoxFit.fill),
+                    height: 18.sp,
+                    width: 18.sp,
+                    fit: BoxFit.fill,
+                    colorFilter: isLuxeMode
+                        ? const ColorFilter.mode(Colors.white, BlendMode.srcIn)
+                        : null),
               ),
             ),
             Visibility(
@@ -130,7 +144,13 @@ class _ProductAppbarState extends State<ProductAppbar> {
                   padding:
                       EdgeInsets.symmetric(horizontal: 8.sp, vertical: 8.sp),
                   child: SvgPicture.asset(heartSvgImage,
-                      height: 18.sp, width: 18.sp, fit: BoxFit.fill),
+                      height: 18.sp,
+                      width: 18.sp,
+                      fit: BoxFit.fill,
+                      colorFilter: isLuxeMode
+                          ? const ColorFilter.mode(
+                              Colors.white, BlendMode.srcIn)
+                          : null),
                 ),
               ),
             ),
@@ -148,7 +168,13 @@ class _ProductAppbarState extends State<ProductAppbar> {
                       Padding(
                         padding: EdgeInsets.only(bottom: 3.sp),
                         child: SvgPicture.asset(cartSvgImage,
-                            height: 18.sp, width: 18.sp, fit: BoxFit.fill),
+                            height: 18.sp,
+                            width: 18.sp,
+                            fit: BoxFit.fill,
+                            colorFilter: isLuxeMode
+                                ? const ColorFilter.mode(
+                                    Colors.white, BlendMode.srcIn)
+                                : null),
                       ),
                       Obx(() => controller.cartTotalValue.value != 0
                           ? Positioned(

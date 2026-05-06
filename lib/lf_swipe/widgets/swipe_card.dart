@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
-import '../../core/constant/constants.dart';
+import '../managers/swipe_overlay_manager.dart';
 import '../models/swipe_product.dart';
 import '../services/swipe_tracking_service.dart';
 
@@ -55,6 +55,15 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
   late final AnimationController _resetController;
   Animation<Offset>? _resetAnimation; // nullable — only set when resetSwipeUp() is called
 
+  // Overlay animation controller (NEW)
+  late final AnimationController _overlayController;
+
+  // Overlay configuration (NEW)
+  OverlayConfig? _overlayConfig;
+
+  // Current overlay type to render (NEW)
+  OverlayType? _currentOverlayType;
+
   static const double _horizontalThreshold = 80.0;
   static const double _verticalThreshold = 60.0;
   static const Duration _flyDuration = Duration(milliseconds: 220);
@@ -76,11 +85,18 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
     _resetController.addListener(() {
       if (mounted) setState(() {});
     });
+
+    // Initialize overlay controller (NEW)
+    _overlayController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    );
   }
 
   @override
   void dispose() {
     print("🗑️ SwipeCardState.dispose() — cleaning up animation controllers");
+    _overlayController.dispose();
     _flyController.dispose();
     _resetController.dispose();
     super.dispose();
@@ -130,6 +146,24 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
         setState(() {
           _dragOffset = Offset.zero;
           _swipeUpLocked = false;
+        });
+      }
+    });
+  }
+
+  /// Display overlay with animation (NEW)
+  /// Called by the controller to show text or icon overlay after a swipe action.
+  void showOverlay(OverlayType type, OverlayConfig config) {
+    if (!mounted) return;
+    
+    _currentOverlayType = type;
+    _overlayConfig = config;
+    _overlayController.duration = config.duration;
+    _overlayController.forward(from: 0).then((_) {
+      if (mounted) {
+        setState(() {
+          _overlayConfig = null;
+          _currentOverlayType = null;
         });
       }
     });
@@ -216,6 +250,74 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
       return ((mrp - price) / mrp * 100).round();
     }
     return null;
+  }
+
+  /// Build the appropriate overlay widget based on type (NEW)
+  Widget _buildOverlay() {
+    if (_overlayConfig == null || _currentOverlayType == null) {
+      return const SizedBox.shrink();
+    }
+
+    return switch (_currentOverlayType!) {
+      OverlayType.textFull => _buildTextOverlay(),
+      OverlayType.iconOnly => _buildIconOverlay(),
+    };
+  }
+
+  /// Build text overlay widget with fade animation (NEW)
+  Widget _buildTextOverlay() {
+    return AnimatedBuilder(
+      animation: _overlayController,
+      builder: (context, child) {
+        final progress = _overlayController.value;
+        // Fade in for first 50%, fade out for second 50%
+        final opacity = progress < 0.5 ? progress * 2 : (1 - progress) * 2;
+
+        return Opacity(
+          opacity: opacity.clamp(0, 1),
+          child: Center(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 24.sp, vertical: 14.sp),
+              decoration: BoxDecoration(
+                color: const Color(0xFF988AFF),
+                borderRadius: BorderRadius.circular(30.sp),
+              ),
+              child: Text(
+                'Added to Cart',
+                style: TextStyle(
+                  fontFamily: 'Clash Display Semibold',
+                  fontSize: 14.sp,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Build icon overlay widget with fade animation (NEW)
+  Widget _buildIconOverlay() {
+    return AnimatedBuilder(
+      animation: _overlayController,
+      builder: (context, child) {
+        final progress = _overlayController.value;
+        // Fade in for first 50%, fade out for second 50%
+        final opacity = progress < 0.5 ? progress * 2 : (1 - progress) * 2;
+
+        return Opacity(
+          opacity: opacity.clamp(0, 1),
+          child: Center(
+            child: Icon(
+              Icons.shopping_bag_rounded,
+              color: Colors.white,
+              size: 50.sp,
+            ),
+          ),
+        );
+      },
+    );
   }
 
   // ── Build ─────────────────────────────────────────────────────────────────
@@ -372,6 +474,14 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
+                ),
+              ),
+
+            // Text/Icon overlay (NEW)
+            if (_overlayConfig != null && widget.isTop)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: _buildOverlay(),
                 ),
               ),
           ],

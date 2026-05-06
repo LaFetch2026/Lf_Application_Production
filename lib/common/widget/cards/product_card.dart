@@ -13,6 +13,7 @@ import '../../../models/nudge_model.dart';
 import '../../../widgets/nudge_badge_row.dart';
 import '../other/pounce_wrapper.dart';
 import '../other/product_price_display.dart';
+import './out_of_stock_overlay.dart';
 
 /// A reusable product card widget that displays product image, title, brand, and price
 /// in a consistent frame across all screens.
@@ -58,6 +59,15 @@ class ProductCard extends StatelessWidget {
   /// Card padding
   final EdgeInsets padding;
 
+  /// Whether the product is out of stock
+  final bool isOutOfStock;
+
+  /// Callback when out of stock overlay is tapped
+  final VoidCallback? onOutOfStockTap;
+
+  /// Custom overlay widget for out of stock state
+  final Widget? outOfStockOverlay;
+
   const ProductCard({
     super.key,
     required this.imageUrl,
@@ -78,6 +88,9 @@ class ProductCard extends StatelessWidget {
     this.borderColor = const Color(0xFFE5E7EB),
     this.imageAspectRatio = 0.75,
     this.padding = const EdgeInsets.all(8.0),
+    this.isOutOfStock = false,
+    this.onOutOfStockTap,
+    this.outOfStockOverlay,
   });
 
   /// Factory constructor for dark themed cards (used in home screen collections)
@@ -89,6 +102,9 @@ class ProductCard extends StatelessWidget {
     num? mrp,
     bool showExpress = false,
     VoidCallback? onTap,
+    bool isOutOfStock = false,
+    VoidCallback? onOutOfStockTap,
+    Widget? outOfStockOverlay,
   }) {
     return ProductCard(
       imageUrl: imageUrl,
@@ -104,6 +120,9 @@ class ProductCard extends StatelessWidget {
       priceColor: Colors.white,
       mrpColor: const Color(0xFF9CA3AF),
       discountColor: lightPurpleColor,
+      isOutOfStock: isOutOfStock,
+      onOutOfStockTap: onOutOfStockTap,
+      outOfStockOverlay: outOfStockOverlay,
     );
   }
 
@@ -116,6 +135,9 @@ class ProductCard extends StatelessWidget {
     num? mrp,
     bool showExpress = false,
     VoidCallback? onTap,
+    bool isOutOfStock = false,
+    VoidCallback? onOutOfStockTap,
+    Widget? outOfStockOverlay,
   }) {
     return ProductCard(
       imageUrl: imageUrl,
@@ -131,6 +153,9 @@ class ProductCard extends StatelessWidget {
       priceColor: blackColor,
       mrpColor: const Color(0xFF9CA3AF),
       discountColor: const Color(0xFF9575CD),
+      isOutOfStock: isOutOfStock,
+      onOutOfStockTap: onOutOfStockTap,
+      outOfStockOverlay: outOfStockOverlay,
     );
   }
 
@@ -157,7 +182,16 @@ class ProductCard extends StatelessWidget {
                 flex: 7,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(borderRadius.sp),
-                  child: _buildImage(),
+                  child: Stack(
+                    children: [
+                      _buildImage(),
+                      if (isOutOfStock)
+                        outOfStockOverlay ??
+                            OutOfStockOverlay(
+                              onTap: onOutOfStockTap,
+                            ),
+                    ],
+                  ),
                 ),
               ),
 
@@ -449,7 +483,7 @@ class ProductGridCard extends StatelessWidget {
                       child: Row(
                         children: [
                           ImageIcon(
-                            AssetImage(truckImage),
+                            const AssetImage(truckImage),
                             color: expressText,
                             size: 12.sp,
                           ),

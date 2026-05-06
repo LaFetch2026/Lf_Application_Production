@@ -156,6 +156,15 @@ extension PdpDeliverySection on _ProductDetailsScreenV2State {
   Widget _buildActionButtons() => Obx(() {
         if (productController.isDetails.value) return const SizedBox();
         final bottomInset = MediaQuery.of(context).padding.bottom;
+        
+        // ✅ Phase 3.7 & 3.8: Get button states based on stock status
+        final addToBagState = OutOfStockButtonState.addToCart(
+          isOutOfStock: productController.isOutOfStock.value,
+        );
+        final buyNowState = OutOfStockButtonState.buyNow(
+          isOutOfStock: productController.isOutOfStock.value,
+        );
+        
         return Padding(
           padding: EdgeInsets.only(
             left: 16.sp,
@@ -169,7 +178,7 @@ extension PdpDeliverySection on _ProductDetailsScreenV2State {
                 width: double.infinity,
                 height: 48.sp,
                 child: ElevatedButton(
-                  onPressed: () async {
+                  onPressed: addToBagState.isDisabled ? null : () async {
                     if (!productController.checkDetailsValidation()) return;
                     final variant = productController.getSelectedVariant();
                     if (variant == null) {
@@ -204,48 +213,62 @@ extension PdpDeliverySection on _ProductDetailsScreenV2State {
                         productController.getProductById(widget.productId));
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: whiteColor,
-                    side: BorderSide(color: blackColor, width: 2.sp),
+                    backgroundColor: addToBagState.backgroundColor,
+                    side: BorderSide(
+                      color: addToBagState.borderColor ?? blackColor,
+                      width: 2.sp,
+                    ),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(40.sp)),
                     elevation: 0,
                   ),
-                  child: Text('ADD TO BAG',
-                      style: TextStyle(
-                          fontFamily: "Clash Display",
-                          fontWeight: FontWeight.w600,
-                          color: blackColor,
-                          fontSize: 13.sp)),
+                  child: Opacity(
+                    opacity: addToBagState.opacity,
+                    child: Text(addToBagState.label,
+                        style: TextStyle(
+                            fontFamily: "Clash Display",
+                            fontWeight: FontWeight.w600,
+                            color: addToBagState.textColor,
+                            fontSize: 13.sp)),
+                  ),
                 ),
               ),
               SizedBox(height: 12.sp),
-              Row(
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 48.sp,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          await _onBuyNow(isCartFlow: false);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: blackColor,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40.sp),
-                              side: BorderSide(color: blackColor, width: 2.sp)),
-                          elevation: 0,
+              // ✅ Phase 3.8: Hide Buy Now button when out of stock
+              if (buyNowState.isVisible)
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 48.sp,
+                        child: ElevatedButton(
+                          onPressed: buyNowState.isDisabled ? null : () async {
+                            await _onBuyNow(isCartFlow: false);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: buyNowState.backgroundColor,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40.sp),
+                                side: BorderSide(
+                                  color: buyNowState.borderColor ?? blackColor,
+                                  width: 2.sp,
+                                )),
+                            elevation: 0,
+                          ),
+                          child: Opacity(
+                            opacity: buyNowState.opacity,
+                            child: Text(buyNowState.label,
+                                style: TextStyle(
+                                    fontFamily: "Clash Display",
+                                    fontWeight: FontWeight.w600,
+                                    color: buyNowState.textColor,
+                                    fontSize: 13.sp)),
+                          ),
                         ),
-                        child: Text('BUY NOW',
-                            style: TextStyle(
-                                fontFamily: "Clash Display",
-                                fontWeight: FontWeight.w600,
-                                color: whiteColor,
-                                fontSize: 13.sp)),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
             ],
           ),
         );

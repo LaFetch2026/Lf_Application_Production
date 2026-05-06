@@ -315,6 +315,99 @@ class ApiService extends GetxService {
     return cached.response;
   }
 
+  // ✅ Phase 4.1: Implement backend API integration for stock status
+  /// Fetch stock status for a single product from backend
+  /// 
+  /// **Validates: Requirements 7.3**
+  /// 
+  /// Endpoint: `GET /api/products/{id}/stock`
+  /// Response: `{product_id, stock_status, stock_quantity, last_updated}`
+  Future<Map<String, dynamic>?> getProductStockStatus(int productId) async {
+    try {
+      final url = 'https://api.lafetch.com/api/products/$productId/stock';
+      print('📡 Fetching stock status for product $productId from $url');
+      
+      final response = await get(url, useCache: true, showErrorSnackbar: false);
+      
+      if (response == null) {
+        print('❌ Stock status fetch failed: null response');
+        return null;
+      }
+      
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        print('✅ Stock status fetched successfully: $data');
+        return data;
+      } else {
+        print('❌ Stock status fetch failed with status ${response.statusCode}');
+        return null;
+      }
+    } catch (e, stack) {
+      print('❌ Stock status fetch error: $e');
+      print(stack);
+      return null;
+    }
+  }
+
+  // ✅ Phase 4.3: Implement batch stock status fetching
+  /// Fetch stock status for multiple products in a single batch request
+  /// 
+  /// **Validates: Requirements 7.3**
+  /// 
+  /// Batches up to 10 products per API request
+  /// Endpoint: `POST /api/products/stock/batch`
+  /// Request: `{product_ids: [1, 2, 3, ...]}`
+  /// Response: `{products: [{product_id, stock_status, stock_quantity}, ...]}`
+  Future<Map<int, Map<String, dynamic>>?> getMultipleProductsStockStatus(
+    List<int> productIds,
+  ) async {
+    if (productIds.isEmpty) return {};
+    
+    try {
+      final result = <int, Map<String, dynamic>>{};
+      
+      // Batch up to 10 products per request
+      for (int i = 0; i < productIds.length; i += 10) {
+        final batch = productIds.sublist(
+          i,
+          i + 10 > productIds.length ? productIds.length : i + 10,
+        );
+        
+        final url = 'https://api.lafetch.com/api/products/stock/batch';
+        print('📡 Fetching stock status for batch of ${batch.length} products');
+        
+        final response = await post(
+          url,
+          body: {'product_ids': batch},
+          showErrorSnackbar: false,
+        );
+        
+        if (response == null || response.statusCode != 200) {
+          print('❌ Batch stock status fetch failed');
+          continue;
+        }
+        
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        final products = data['products'] as List<dynamic>? ?? [];
+        
+        for (final product in products) {
+          final productData = product as Map<String, dynamic>;
+          final productId = productData['product_id'] as int?;
+          if (productId != null) {
+            result[productId] = productData;
+          }
+        }
+      }
+      
+      print('✅ Batch stock status fetched: ${result.length} products');
+      return result;
+    } catch (e, stack) {
+      print('❌ Batch stock status fetch error: $e');
+      print(stack);
+      return null;
+    }
+  }
+
   /// Clear all caches
   void clearCache() {
     _responseCache.clear();

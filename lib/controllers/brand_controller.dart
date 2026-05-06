@@ -27,6 +27,13 @@ class BrandController extends BaseController {
   /// ✅ Reactive list of brands
   RxList<Map<String, dynamic>> brandList = <Map<String, dynamic>>[].obs;
 
+  /// ✅ Newly Launched Brands state
+  RxList<Map<String, dynamic>> newlyLaunchedBrands = <Map<String, dynamic>>[].obs;
+  RxBool isLoadingNewlyLaunched = false.obs;
+  RxInt newlyLaunchedPage = 1.obs;
+  RxInt newlyLaunchedTotalPages = 1.obs;
+  RxBool hasMoreNewlyLaunched = true.obs;
+
   RxString brandName = "".obs;
   RxString brandlogo = "".obs;
   RxString brandbackground = "".obs;
@@ -446,6 +453,167 @@ class BrandController extends BaseController {
       if (showLoader) {
         isProductBrand.value = false;
       }
+    }
+  }
+
+  /// ================================================================
+  /// ✅ Fetch Newly Launched Brands (with pagination)
+  /// ================================================================
+  Future<void> getNewlyLaunchedBrands(
+      {int page = 1, int limit = 20, int? gender, bool showLoader = true}) async {
+    if (showLoader) {
+      isLoadingNewlyLaunched.value = true;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+
+    try {
+      final base = ApiConstants.baseUrl;
+      final baseUri = Uri.parse(base);
+
+      // ✅ Build query parameters: sort=new for newly launched, with pagination
+      final queryParams = <String, String>{
+        'status': 'true', // Only active brands
+        'sort': 'new', // Sort by newly launched
+        'page': page.toString(),
+        'limit': limit.toString(),
+      };
+
+      // ✅ Add gender parameter if provided
+      if (gender != null) {
+        queryParams["gender"] = gender.toString();
+      }
+
+      final uri = baseUri.replace(
+        path: baseUri.path.endsWith('/')
+            ? '${baseUri.path}brands'
+            : '${baseUri.path}/brands',
+        queryParameters: queryParams,
+      );
+
+      final headers = {
+        'Accept': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer ${prefs.getString('token') ?? ''}',
+      };
+
+      print("➡️ Newly Launched Brands API URL: $uri");
+      final response = await http
+          .get(uri, headers: headers)
+          .timeout(const Duration(seconds: 20));
+
+      print("⬅️ Status Code: ${response.statusCode}");
+
+      // Handle expired session
+      if (response.statusCode == 401) {
+        showAppSnackBar("Session expired. Please log in again.",
+            type: SnackBarType.error);
+        Get.offAll(() => const LoginScreen(initialTab: 0));
+        return;
+      }
+
+      if (response.statusCode != 200) {
+        String msg =
+            "Failed to fetch newly launched brands (${response.statusCode}).";
+        try {
+          final err = json.decode(response.body);
+          if (err is Map && err["message"] is String) {
+            msg = err["message"];
+          }
+        } catch (_) {}
+        print("⚠️ $msg");
+        return;
+      }
+
+      // Ensure JSON
+      final contentType =
+          (response.headers['content-type'] ?? '').toLowerCase();
+      if (!contentType.contains('application/json')) {
+        print("⚠️ Unexpected response format for newly launched brands.");
+        return;
+      }
+
+      final decoded = json.decode(response.body);
+      final List<dynamic> brandsRaw =
+          (decoded is Map && decoded['data'] is List)
+              ? decoded['data'] as List
+              : const [];
+
+      // ✅ Map and validate brands
+      final brandsMapped = brandsRaw
+          .whereType<Map>()
+          .map((b) => b.map((k, v) => MapEntry(k.toString(), v)))
+          .toList();
+
+      // ✅ Extract pagination info from response
+      final paginationData = decoded is Map ? decoded['pagination'] : null;
+      if (paginationData is Map) {
+        newlyLaunchedTotalPages.value =
+            ((paginationData['totalPages'] ?? 1) as num).toInt();
+        hasMoreNewlyLaunched.value =
+            ((paginationData['hasNextPage'] ?? false) as bool);
+      } else {
+        // Fallback: assume pagination based on returned items
+        newlyLaunchedTotalPages.value =
+            (brandsMapped.length >= limit) ? page + 1 : page;
+        hasMoreNewlyLaunched.value = brandsMapped.length >= limit;
+      }
+
+      // ✅ Update state
+      if (page == 1) {
+        // First page: replace all data
+        newlyLaunchedBrands.clear();
+        newlyLaunchedBrands.addAll(brandsMapped);
+      } else {
+        // Subsequent pages: append data
+        newlyLaunchedBrands.addAll(brandsMapped);
+      }
+
+      newlyLaunchedPage.value = page;
+
+      print(
+          "✅ Newly launched brands loaded: ${brandsMapped.length} brands (page $page of ${newlyLaunchedTotalPages.value})");
+      print(
+          "🪪 Brand names: ${brandsMapped.map((b) => b['name']).take(5).toList()}${brandsMapped.length > 5 ? '...' : ''}");
+    } on TimeoutException {
+      print("⚠️ Newly launched brands fetch timed out.");
+      showAppSnackBar("Request timed out. Please try again.",
+          type: SnackBarType.error);
+    } on SocketException {
+      print("⚠️ No internet connection.");
+      showAppSnackBar("No internet connection. Please check your network.",
+          type: SnackBarType.error);
+    } catch (e) {
+      print("❌ Error fetching newly launched brands: $e");
+      showAppSnackBar("Something went wrong while fetching brands.",
+          type: SnackBarType.error);
+    } finally {
+      if (showLoader) {
+        isLoadingNewlyLaunched.value = false;
+      }
+    }
+  }
+
+  /// ================================================================
+  /// ✅ Navigate to next page of newly launched brands
+  /// ================================================================
+  Future<void> nextNewlyLaunchedPage() async {
+    if (newlyLaunchedPage.value < newlyLaunchedTotalPages.value) {
+      await getNewlyLaunchedBrands(
+        page: newlyLaunchedPage.value + 1,
+        showLoader: false,
+      );
+    }
+  }
+
+  /// ================================================================
+  /// ✅ Navigate to previous page of newly launched brands
+  /// ================================================================
+  Future<void> prevNewlyLaunchedPage() async {
+    if (newlyLaunchedPage.value > 1) {
+      await getNewlyLaunchedBrands(
+        page: newlyLaunchedPage.value - 1,
+        showLoader: false,
+      );
     }
   }
 

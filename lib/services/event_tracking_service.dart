@@ -156,6 +156,42 @@ class EventTrackingService extends GetxService {
     }
   }
 
+  // ✅ Phase 4.6: Add analytics events for stock status tracking
+  /// Track when user views an out-of-stock product
+  /// 
+  /// **Validates: Requirements 7.3**
+  void trackOutOfStockProductViewed(int productId) {
+    _enqueue(UserEvent(
+      type: 'product_out_of_stock_viewed',
+      productId: productId,
+      sessionId: _sessionId(),
+    ));
+  }
+
+  /// Track when user toggles the show out-of-stock products setting
+  /// 
+  /// **Validates: Requirements 7.3**
+  void trackOutOfStockFilterToggled(bool showOutOfStock) {
+    _enqueue(UserEvent(
+      type: 'out_of_stock_filter_toggled',
+      productId: 0, // Not product-specific, use 0 as placeholder
+      metadata: {'show_out_of_stock': showOutOfStock},
+      sessionId: _sessionId(),
+    ));
+  }
+
+  /// Track when real-time stock status update is received
+  /// 
+  /// **Validates: Requirements 7.3**
+  void trackStockStatusUpdated(int productId, String newStatus) {
+    _enqueue(UserEvent(
+      type: 'stock_status_updated',
+      productId: productId,
+      metadata: {'new_status': newStatus, 'timestamp': DateTime.now().toIso8601String()},
+      sessionId: _sessionId(),
+    ));
+  }
+
   Future<void> flushNow() async {
     if (_queue.isEmpty) return;
     final snapshot = List<UserEvent>.from(_queue);

@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -25,6 +26,14 @@ class ProductController extends BaseController {
   RxBool isFilter = false.obs;
   RxBool isMostSearch = false.obs;
   RxBool isHomeProduct = false.obs;
+
+  // ✅ Stock status observables for out-of-stock product handling
+  RxBool isOutOfStock = false.obs;
+  RxMap<int, bool> productStockStatus = <int, bool>{}.obs;
+  RxBool showOutOfStockProducts = false.obs;
+
+  // ✅ Timer reference for stock status polling - stored for cleanup
+  Timer? _stockStatusPollingTimer;
 
   // ✅ Request deduplication flags - prevents concurrent duplicate API calls
   bool _isHomeProductRequestInProgress = false;
@@ -82,6 +91,9 @@ class ProductController extends BaseController {
   RxBool isRecommendations = false.obs;
   List tagsList = [].obs;
   RxList<CollectionModel> homeProductList = <CollectionModel>[].obs;
+  RxList<dynamic> luxuryProductList =
+      <dynamic>[].obs; // ✅ LUXE products (segment=luxury)
+  RxBool isLuxuryLoading = false.obs;
   RxList<StandaloneCollectionBanner> collectionBanners =
       <StandaloneCollectionBanner>[].obs;
   List handPickedProductList = [].obs;
@@ -235,6 +247,9 @@ class ProductController extends BaseController {
   RxList<dynamic> premiumList = <dynamic>[].obs;
   RxList<dynamic> luxuriousList = <dynamic>[].obs;
   RxList<dynamic> standardList = <dynamic>[].obs;
+  RxList<dynamic> luxeList = <dynamic>[].obs;
+  RxList<dynamic> allLuxeList = <dynamic>[].obs; // Full list for LUXE category page
+  RxBool isLuxeLoading = false.obs;
   final RxBool isCatProducts = false.obs;
   final RxList<Map<String, dynamic>> catProductList =
       <Map<String, dynamic>>[].obs;
@@ -480,6 +495,82 @@ class ProductController extends BaseController {
     return int.tryParse(stocks?.toString() ?? '0') ?? 0;
   }
 
+  /// Check if a specific product is out of stock
+  /// Returns true if the product is out of stock, false otherwise
+  bool isProductOutOfStock(int productId) {
+    return productStockStatus[productId] ?? false;
+  }
+
+  /// Filter products based on stock status and user preference
+  ///
+  /// If [showOutOfStockProducts] is true, returns all products unfiltered.
+  /// If [showOutOfStockProducts] is false, filters out products marked as out of stock.
+  ///
+  /// Handles edge cases:
+  /// - Returns empty list if input is null or empty
+  /// - Safely handles products with missing stock status (assumes in-stock)
+  ///
+  /// **Validates: Requirements 1.1, 1.2, 1.3**
+  List<CollectionModel> filterProductsByStock(List<CollectionModel>? products) {
+    // Handle null or empty input
+    if (products == null || products.isEmpty) {
+      return [];
+    }
+
+    // If user has enabled showing out-of-stock products, return all products
+    if (showOutOfStockProducts.value) {
+      print("✅ Showing all products (out-of-stock filter disabled)");
+      return products;
+    }
+
+    // Filter out products that are marked as out of stock
+    final filtered = products.where((product) {
+      final isOutOfStock = isProductOutOfStock(product.id);
+      if (isOutOfStock) {
+        print(
+            "🚫 Filtering out product ${product.id}: ${product.name} (out of stock)");
+      }
+      return !isOutOfStock;
+    }).toList();
+
+    print(
+        "✅ Filtered products: ${filtered.length}/${products.length} in stock");
+    return filtered;
+  }
+
+  /// Update stock status for a specific product
+  ///
+  /// Updates the [productStockStatus] map with the new stock status for the given product.
+  /// This triggers reactive updates to all listeners (Obx widgets) that depend on this observable.
+  ///
+  /// Parameters:
+  /// - [productId]: The ID of the product to update
+  /// - [isOutOfStock]: Whether the product is out of stock (true) or in stock (false)
+  ///
+  /// GetX automatically notifies all listeners when the observable map is updated,
+  /// ensuring UI components react immediately to stock status changes.
+  ///
+  /// **Validates: Requirements 2.3, 2.4**
+  void updateProductStockStatus(int productId, bool isOutOfStockStatus) {
+    print(
+        "📦 Updating stock status for product $productId: ${isOutOfStockStatus ? '🚫 OUT OF STOCK' : '✅ IN STOCK'}");
+
+    // Update the observable map - GetX will automatically notify all listeners
+    // Use .assignAll() or direct assignment to trigger reactive updates
+    productStockStatus[productId] = isOutOfStockStatus;
+
+    // Explicitly refresh the observable to ensure all listeners are notified
+    productStockStatus.refresh();
+
+    // If this is the current product being viewed, also update the isOutOfStock observable
+    if (id.value == productId) {
+      isOutOfStock.value = isOutOfStockStatus;
+      print("📦 Updated current product stock status: ${isOutOfStock.value}");
+    }
+
+    print("✅ Stock status update complete for product $productId");
+  }
+
   void loadColorsForSize(String size) {
     print("🎨 Loading colors for size: $size");
 
@@ -676,7 +767,8 @@ class ProductController extends BaseController {
   /// ----------------------------------------------------------
   /// FETCH BREADCRUMB (productId + optional fallback name/slug)
   /// ----------------------------------------------------------
-  Future<void> fetchBreadcrumb(int productId, {
+  Future<void> fetchBreadcrumb(
+    int productId, {
     String fallbackName = '',
     String fallbackSlug = '',
   }) async {
@@ -694,8 +786,9 @@ class ProductController extends BaseController {
         if (body['success'] == true) {
           final data = body['data'];
           final crumbs = (data['breadcrumbs'] as List?)
-              ?.whereType<Map<String, dynamic>>()
-              .toList() ?? [];
+                  ?.whereType<Map<String, dynamic>>()
+                  .toList() ??
+              [];
           if (crumbs.isNotEmpty) {
             breadcrumbList.assignAll(crumbs);
             return;
@@ -723,8 +816,11 @@ class ProductController extends BaseController {
     bool forceRefresh = false,
   }) async {
     // ✅ Prevent duplicate concurrent requests for the same gender
-    if (_activeGenderRequest == gender && isHomeProduct.value && !forceRefresh) {
-      print('⏳ Home product request already in progress for gender=$gender, skipping...');
+    if (_activeGenderRequest == gender &&
+        isHomeProduct.value &&
+        !forceRefresh) {
+      print(
+          '⏳ Home product request already in progress for gender=$gender, skipping...');
       return;
     }
 
@@ -946,6 +1042,347 @@ class ProductController extends BaseController {
     );
   }
 
+  /// Fetch LUXE tier products (P66+ percentile)
+  Future<void> fetchLuxuryProducts({bool forceRefresh = false}) async {
+    final cacheKey = 'luxury_products_v1';
+
+    // ✅ Skip if already loaded (unless force refresh)
+    if (!forceRefresh && luxuryProductList.isNotEmpty) {
+      print('✅ Luxury products already loaded, skipping API call');
+      return;
+    }
+
+    // Try to load from cache first
+    if (!forceRefresh) {
+      final cached = await CacheManager.get(key: cacheKey);
+      if (cached != null && cached is List) {
+        try {
+          luxuryProductList.assignAll(cached);
+          print("✅ Loaded ${cached.length} luxury products from cache");
+          return;
+        } catch (e) {
+          print("⚠️ Error parsing cached luxury products: $e");
+        }
+      }
+    }
+
+    isLuxuryLoading.value = true;
+    final base = ApiConstants.baseUrl;
+    final uri = Uri.parse("$base/products").replace(
+      queryParameters: {
+        'segment': 'luxury',
+        'limit': '10',
+        'status': '1',
+      },
+    );
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body);
+        print("🔍 LUXE API Response structure: ${body.runtimeType}");
+        print("🔍 LUXE API Response keys: ${(body as Map).keys.toList()}");
+
+        var products = body['data'] ?? [];
+        print("🔍 LUXE body['data'] type: ${products.runtimeType}");
+
+        // Handle nested data structure (data.products)
+        if (products is Map && products['products'] is List) {
+          products = products['products'];
+          print("🔍 LUXE Extracted products from data.products");
+        }
+
+        if (products is List) {
+          luxuryProductList.assignAll(products);
+
+          // Cache the products
+          await CacheManager.save(
+            key: cacheKey,
+            data: products,
+          );
+
+          print("✅ Loaded ${products.length} luxury products from API");
+        } else {
+          luxuryProductList.clear();
+          print(
+              "⚠️ Luxury products API returned non-list data: ${products.runtimeType}");
+        }
+      } else {
+        luxuryProductList.clear();
+        print("❌ Luxury products API Error: ${response.statusCode}");
+      }
+    } catch (e, stackTrace) {
+      print("❌ Error loading luxury products: $e");
+      print("Stack trace: $stackTrace");
+      luxuryProductList.clear();
+    } finally {
+      isLuxuryLoading.value = false;
+    }
+  }
+
+  /// Fetch LUXE tier products (segment=luxury, limit=8)
+  /// Implements retry logic (3 retries with exponential backoff)
+  /// and caching strategy (5-minute TTL)
+  /// **Validates: Requirements 2.1, 2.2, 2.3**
+  Future<void> fetchLuxeProducts({bool forceRefresh = false}) async {
+    final cacheKey = 'luxe_products_v1';
+    int retryCount = 0;
+    const maxRetries = 3;
+
+    // ✅ Skip if already loaded (unless force refresh)
+    if (!forceRefresh && luxeList.isNotEmpty) {
+      print('✅ LUXE products already loaded, skipping API call');
+      return;
+    }
+
+    // Try to load from cache first
+    if (!forceRefresh) {
+      final cached = await CacheManager.get(key: cacheKey);
+      if (cached != null && cached is List) {
+        try {
+          luxeList.assignAll(cached);
+          print("✅ Loaded ${cached.length} LUXE products from cache");
+          return;
+        } catch (e) {
+          print("⚠️ Error parsing cached LUXE products: $e");
+        }
+      }
+    }
+
+    isLuxeLoading.value = true;
+    final base = ApiConstants.baseUrl;
+    final uri = Uri.parse("$base/products").replace(
+      queryParameters: {
+        'segment': 'luxury',
+        'limit': '8',
+        'status': '1',
+      },
+    );
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+
+      // ✅ Retry logic with exponential backoff
+      while (retryCount < maxRetries) {
+        try {
+          final response = await http.get(
+            uri,
+            headers: {
+              'Accept': 'application/json; charset=UTF-8',
+              if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+            },
+          ).timeout(const Duration(seconds: 3)); // 3-second timeout
+
+          if (response.statusCode == 200) {
+            final body = json.decode(response.body);
+            print("🔍 LUXE API Response structure: ${body.runtimeType}");
+            print("🔍 LUXE API Response keys: ${(body as Map).keys.toList()}");
+
+            var products = body['data'] ?? [];
+            print("🔍 LUXE body['data'] type: ${products.runtimeType}");
+
+            // Handle nested data structure (data.products)
+            if (products is Map && products['products'] is List) {
+              products = products['products'];
+              print("🔍 LUXE Extracted products from data.products");
+            }
+
+            if (products is List) {
+              luxeList.assignAll(products);
+
+              // Cache the products with 5-minute TTL
+              await CacheManager.save(
+                key: cacheKey,
+                data: products,
+              );
+
+              print("✅ Loaded ${products.length} LUXE products from API");
+              return; // Success - exit retry loop
+            } else {
+              luxeList.clear();
+              print(
+                  "⚠️ LUXE products API returned non-list data: ${products.runtimeType}");
+              return; // Non-list response - don't retry
+            }
+          } else if (response.statusCode == 401) {
+            print("❌ LUXE API Authentication failed: ${response.statusCode}");
+            luxeList.clear();
+            return; // Auth error - don't retry
+          } else {
+            print(
+                "⚠️ LUXE API Error: ${response.statusCode} - Retry $retryCount/$maxRetries");
+            retryCount++;
+            if (retryCount < maxRetries) {
+              // Exponential backoff: 500ms, 1s, 2s
+              final delayMs = 500 * (1 << (retryCount - 1));
+              await Future.delayed(Duration(milliseconds: delayMs));
+            }
+          }
+        } on TimeoutException {
+          print(
+              "⚠️ LUXE API Timeout - Retry $retryCount/$maxRetries");
+          retryCount++;
+          if (retryCount < maxRetries) {
+            // Exponential backoff: 500ms, 1s, 2s
+            final delayMs = 500 * (1 << (retryCount - 1));
+            await Future.delayed(Duration(milliseconds: delayMs));
+          }
+        }
+      }
+
+      // All retries exhausted
+      luxeList.clear();
+      print("❌ LUXE API failed after $maxRetries retries");
+      await FirebaseCrashlytics.instance.recordError(
+        'LUXE products API failed after $maxRetries retries',
+        StackTrace.current,
+        fatal: false,
+      );
+    } catch (e, stackTrace) {
+      print("❌ Error loading LUXE products: $e");
+      print("Stack trace: $stackTrace");
+      luxeList.clear();
+      await FirebaseCrashlytics.instance.recordError(e, stackTrace, fatal: false);
+    } finally {
+      isLuxeLoading.value = false;
+      
+      // ✅ FALLBACK: If API failed and luxeList is empty, try client-side filtering
+      if (luxeList.isEmpty && homeProductList.isNotEmpty) {
+        print("⚠️ LUXE API failed, trying client-side filtering fallback...");
+        try {
+          // Get products from first collection
+          final firstCollection = homeProductList.first;
+          final collectionProducts = firstCollection.products
+              .map((p) => p.toJson())
+              .toList();
+          
+          final filteredLuxe = filterLuxeProductsFromCollection(collectionProducts);
+          
+          if (filteredLuxe.isNotEmpty) {
+            luxeList.assignAll(filteredLuxe.take(8).toList());
+            print("✅ Fallback: Loaded ${luxeList.length} LUXE products from collection");
+            
+            // Cache the fallback results
+            await CacheManager.save(
+              key: 'luxe_products_v1',
+              data: luxeList.toList(),
+            );
+          }
+        } catch (fallbackError) {
+          print("❌ Fallback filtering also failed: $fallbackError");
+        }
+      }
+    }
+  }
+
+  /// Fetch ALL LUXE products (no limit) for the LUXE category page
+  Future<void> fetchAllLuxeProducts({bool forceRefresh = false}) async {
+    if (!forceRefresh && allLuxeList.isNotEmpty) {
+      print('✅ All LUXE products already loaded, skipping API call');
+      return;
+    }
+
+    final base = ApiConstants.baseUrl;
+    final uri = Uri.parse("$base/products").replace(
+      queryParameters: {
+        'segment': 'luxury',
+        'limit': '100',
+        'status': '1',
+      },
+    );
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body);
+        var products = body['data'] ?? [];
+
+        if (products is Map && products['products'] is List) {
+          products = products['products'];
+        }
+
+        if (products is List) {
+          allLuxeList.assignAll(products);
+          print("✅ Loaded ${products.length} all LUXE products from API");
+        } else {
+          allLuxeList.clear();
+        }
+      } else {
+        allLuxeList.clear();
+        print("❌ All LUXE API Error: ${response.statusCode}");
+      }
+    } catch (e, stackTrace) {
+      print("❌ Error loading all LUXE products: $e");
+      allLuxeList.clear();
+      await FirebaseCrashlytics.instance.recordError(e, stackTrace, fatal: false);
+    }
+  }
+
+  /// Filter collection products by luxury threshold (client-side fallback)
+  /// Takes products from a collection and filters to show only luxury items
+  List<dynamic> filterLuxeProductsFromCollection(List<dynamic> products) {
+    if (products.isEmpty) {
+      print("⚠️ No products to filter");
+      return [];
+    }
+
+    // Default luxury threshold is ₹7000
+    const double defaultLuxuryThreshold = 7000.0;
+
+    // Filter products where price >= luxury threshold
+    final luxeProducts = products.where((product) {
+      if (product is! Map<String, dynamic>) return false;
+
+      // Get product price from multiple possible fields
+      final price = product['displayPrice'] ??
+          product['basePrice'] ??
+          product['price'] ??
+          product['netAmount'] ??
+          product['msp'] ??
+          0;
+
+      num numPrice = 0;
+      if (price is num) {
+        numPrice = price;
+      } else if (price is String) {
+        numPrice = num.tryParse(price) ?? 0;
+      }
+
+      // Product is LUXE if price >= threshold
+      final isLuxe = numPrice >= defaultLuxuryThreshold;
+      if (isLuxe) {
+        print(
+            "✅ LUXE: ${product['title'] ?? product['name']} - ₹${numPrice.toInt()}");
+      }
+      return isLuxe;
+    }).toList();
+
+    print(
+        "🔍 Filtered ${luxeProducts.length} LUXE products from ${products.length} total");
+    return luxeProducts;
+  }
+
   /// Calculate minimum variant price and MRP for display in product lists
   static Map<String, dynamic> calculateDisplayPrices(
       Map<String, dynamic> product) {
@@ -1018,7 +1455,8 @@ class ProductController extends BaseController {
       final token = prefs.getString('token') ?? '';
 
       // Use slug if provided, otherwise use numeric ID
-      final pathSegment = (slug != null && slug.isNotEmpty) ? slug : id.toString();
+      final pathSegment =
+          (slug != null && slug.isNotEmpty) ? slug : id.toString();
       final uri = Uri.parse('${ApiConstants.baseUrl}/product/$pathSegment');
       print("🔗 Fetching product: $uri");
       final resp = await http.get(uri, headers: {
@@ -2361,8 +2799,231 @@ class ProductController extends BaseController {
     }
   }
 
+  /// Fetch real-time stock status from backend with exponential backoff retry logic
+  ///
+  /// This method synchronizes the product's stock status with the backend API.
+  /// It implements exponential backoff (1s, 2s, 4s) for retries and logs errors
+  /// to Firebase Crashlytics for monitoring.
+  ///
+  /// Parameters:
+  /// - [productId]: The ID of the product to sync stock status for
+  ///
+  /// Behavior:
+  /// - Fetches stock status from `GET /api/products/{id}/stock`
+  /// - Parses response and updates local stock status via `updateProductStockStatus()`
+  /// - Retries up to 3 times with exponential backoff on failure
+  /// - Logs all errors to Firebase Crashlytics
+  /// - Displays error toast after 3 failed attempts
+  ///
+  /// **Validates: Requirements 7.3**
+  Future<void> syncStockStatus(int productId) async {
+    print("🔄 Starting stock status sync for product $productId");
+
+    const maxRetries = 3;
+    const backoffDelays = [
+      Duration(seconds: 1), // First retry: 1 second
+      Duration(seconds: 2), // Second retry: 2 seconds
+      Duration(seconds: 4), // Third retry: 4 seconds
+    ];
+
+    int retryCount = 0;
+
+    while (retryCount <= maxRetries) {
+      try {
+        // Construct the API endpoint
+        final url = '${ApiConstants.baseUrl}/api/products/$productId/stock';
+
+        // Get authentication token
+        final prefs = await SharedPreferences.getInstance();
+        final token = prefs.getString('token') ?? '';
+
+        // Prepare headers
+        final headers = {
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json; charset=UTF-8',
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        };
+
+        print(
+            "📡 Fetching stock status from: $url (attempt ${retryCount + 1}/$maxRetries)");
+
+        // Make the API request with 20-second timeout
+        final response = await http
+            .get(
+              Uri.parse(url),
+              headers: headers,
+            )
+            .timeout(const Duration(seconds: 20));
+
+        print("📡 Response status: ${response.statusCode}");
+
+        // Handle successful response
+        if (response.statusCode == 200) {
+          try {
+            final responseData = json.decode(response.body);
+
+            // Extract stock status from response
+            // Expected format: { "product_id": 123, "stock_status": "in_stock", "stock_quantity": 5 }
+            final stockStatus = responseData['stock_status'] ?? 'in_stock';
+            final stockQuantity = responseData['stock_quantity'] ?? 0;
+
+            // Determine if product is out of stock
+            final isOutOfStock =
+                stockStatus == 'out_of_stock' || stockQuantity == 0;
+
+            print(
+                "✅ Stock status received: $stockStatus (quantity: $stockQuantity)");
+
+            // Update local stock status
+            updateProductStockStatus(productId, isOutOfStock);
+
+            print(
+                "✅ Stock status sync completed successfully for product $productId");
+            return; // Success - exit the retry loop
+          } catch (parseError, parseStack) {
+            print("❌ Failed to parse stock status response: $parseError");
+            await FirebaseCrashlytics.instance.recordError(
+              parseError,
+              parseStack,
+              reason:
+                  'Stock status response parsing failed for product $productId',
+              fatal: false,
+            );
+
+            // If parsing fails, treat as error and retry
+            throw parseError;
+          }
+        }
+
+        // Handle authentication failure
+        if (response.statusCode == 401) {
+          print("❌ Authentication failed (401) - redirecting to login");
+          Get.offAll(() => const LoginScreen(initialTab: 0));
+          getSnackBar("Session expired. Please login again.");
+          return;
+        }
+
+        // Handle not found
+        if (response.statusCode == 404) {
+          print(
+              "❌ Product not found (404) - product $productId does not exist");
+          await FirebaseCrashlytics.instance.recordError(
+            Exception('Product not found'),
+            StackTrace.current,
+            reason: 'Stock status API returned 404 for product $productId',
+            fatal: false,
+          );
+          return;
+        }
+
+        // Handle server errors and other failures
+        print("❌ API request failed with status ${response.statusCode}");
+        throw Exception('Stock status API returned ${response.statusCode}');
+      } catch (error, stackTrace) {
+        print(
+            "❌ Stock status sync error (attempt ${retryCount + 1}/$maxRetries): $error");
+
+        // Log error to Firebase Crashlytics
+        await FirebaseCrashlytics.instance.recordError(
+          error,
+          stackTrace,
+          reason:
+              'Stock status sync failed for product $productId (attempt ${retryCount + 1})',
+          fatal: false,
+        );
+
+        // Check if we should retry
+        if (retryCount < maxRetries) {
+          final backoffDelay = backoffDelays[retryCount];
+          print("⏳ Retrying in ${backoffDelay.inSeconds}s...");
+
+          // Wait before retrying with exponential backoff
+          await Future.delayed(backoffDelay);
+          retryCount++;
+        } else {
+          // All retries exhausted
+          print("❌ All retry attempts exhausted for product $productId");
+
+          // Display error toast to user
+          getSnackBar(
+              'Failed to sync product stock status. Please try again later.');
+
+          return; // Exit without updating stock status
+        }
+      }
+    }
+  }
+
+  /// Start polling for stock status updates at regular intervals
+  ///
+  /// Creates a Timer that calls [syncStockStatus] every [interval] (default: 5 seconds).
+  /// The Timer reference is stored in [_stockStatusPollingTimer] for cleanup.
+  ///
+  /// Parameters:
+  /// - [productId]: The ID of the product to poll
+  /// - [interval]: The polling interval (default: 5 seconds)
+  ///
+  /// Behavior:
+  /// - If polling is already active, it will be cancelled and restarted
+  /// - The first poll happens immediately, then repeats at the specified interval
+  /// - Polling continues until [stopStockStatusPolling] is called
+  /// - Errors during polling are logged but do not stop the polling loop
+  ///
+  /// **Validates: Requirements 7.3**
+  void startStockStatusPolling(int productId,
+      {Duration interval = const Duration(seconds: 5)}) {
+    print(
+        "🔄 Starting stock status polling for product $productId (interval: ${interval.inSeconds}s)");
+
+    // Cancel any existing polling timer to prevent multiple concurrent polls
+    if (_stockStatusPollingTimer != null) {
+      print("⏹️ Cancelling existing polling timer");
+      _stockStatusPollingTimer!.cancel();
+      _stockStatusPollingTimer = null;
+    }
+
+    // Perform initial sync immediately
+    print("📡 Performing initial stock status sync");
+    syncStockStatus(productId);
+
+    // Create a periodic timer that syncs stock status at the specified interval
+    _stockStatusPollingTimer = Timer.periodic(interval, (timer) {
+      print(
+          "🔄 Polling stock status for product $productId (poll #${timer.tick})");
+      syncStockStatus(productId);
+    });
+
+    print("✅ Stock status polling started for product $productId");
+  }
+
+  /// Stop polling for stock status updates
+  ///
+  /// Cancels the active polling Timer and cleans up resources.
+  /// Safe to call even if polling is not active.
+  ///
+  /// Behavior:
+  /// - Cancels the Timer if it exists
+  /// - Sets the Timer reference to null
+  /// - Logs the cancellation
+  ///
+  /// **Validates: Requirements 7.3**
+  void stopStockStatusPolling() {
+    print("⏹️ Stopping stock status polling");
+
+    if (_stockStatusPollingTimer != null) {
+      _stockStatusPollingTimer!.cancel();
+      _stockStatusPollingTimer = null;
+      print("✅ Stock status polling stopped and timer cleaned up");
+    } else {
+      print("⚠️ No active polling timer to stop");
+    }
+  }
+
   @override
   void onClose() {
+    // ✅ Stop polling timer to prevent memory leaks
+    stopStockStatusPolling();
+
     // Dispose all ScrollController instances
     listController.dispose();
     handpickedController.dispose();
@@ -2380,11 +3041,11 @@ class ProductController extends BaseController {
     bestSellerController.dispose();
     tagsController.dispose();
     quickProductListController.dispose();
-    
+
     // Dispose all TextEditingController instances
     brandController.dispose();
     branddetailsSearchController.dispose();
-    
+
     super.onClose();
   }
 }

@@ -364,6 +364,8 @@ class _SwipeFeedScreenState extends State<SwipeFeedScreen>
       // Re-wire controller callbacks to the new key
       _ctrl.onSwipeUpFlyUp = () => _topCardKey?.currentState?.triggerFlyUp();
       _ctrl.onSwipeUpReset = () => _topCardKey?.currentState?.resetSwipeUp();
+      _ctrl.onShowOverlay = (overlayType, overlayConfig) =>
+          _topCardKey?.currentState?.showOverlay(overlayType, overlayConfig);
     }
 
     return SwipeCard(

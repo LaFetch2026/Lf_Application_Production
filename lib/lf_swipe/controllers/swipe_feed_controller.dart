@@ -9,6 +9,8 @@ import '../../controllers/cart_controller.dart';
 import '../../controllers/wishlist_controller.dart';
 import '../../core/utils/share_link_generator.dart';
 import '../../screens/catalog/productlist/pdp_v2/product_details_screen_v2.dart';
+import '../managers/swipe_overlay_manager.dart';
+import '../managers/undo_history_manager.dart';
 import '../models/swipe_product.dart';
 import '../services/swipe_cart_service.dart';
 import '../services/swipe_feed_service.dart';
@@ -24,6 +26,8 @@ class SwipeFeedController extends GetxController {
 
   // ── Dependencies ──────────────────────────────────────────────────────────
   late final WishlistController _wishlistCtrl;
+  late final SwipeOverlayManager _overlayManager;
+  late final UndoHistoryManager _undoManager;
 
   // ── Feed state ────────────────────────────────────────────────────────────
   final cards = <SwipeProduct>[].obs;
@@ -39,6 +43,9 @@ class SwipeFeedController extends GetxController {
   // ── Undo / rewind ─────────────────────────────────────────────────────────
   /// The last swiped product — used for local rewind (re-insert at top).
   final Rx<SwipeProduct?> lastSwiped = Rx(null);
+  
+  /// Observable for undo button visibility (true when history is not empty)
+  final canUndo = false.obs;
 
   // ── Tutorial ──────────────────────────────────────────────────────────────
   final showTutorial = false.obs;
@@ -50,12 +57,18 @@ class SwipeFeedController extends GetxController {
   // ── Swipe-up card animation callbacks (set by SwipeFeedScreen) ───────────
   VoidCallback? onSwipeUpFlyUp;
   VoidCallback? onSwipeUpReset;
+  
+  /// Callback to display overlay on the top card (set by SwipeFeedScreen)
+  void Function(OverlayType, OverlayConfig)? onShowOverlay;
 
   @override
   void onInit() {
     super.onInit();
     debugPrint('[SwipeFeedController] onInit — starting fetch');
     _wishlistCtrl = Get.find<WishlistController>();
+    _overlayManager = SwipeOverlayManager();
+    _overlayManager.resetSession();
+    _undoManager = UndoHistoryManager();
     fetchBatch();
     _checkTutorial();
   }
@@ -153,6 +166,15 @@ class SwipeFeedController extends GetxController {
   Future<void> onCardSwiped(SwipeAction action, SwipeProduct product) async {
     switch (action) {
       case SwipeAction.likeProduct:
+        // Get overlay type and config
+        final overlayType = _overlayManager.getOverlayType(action);
+        final overlayConfig = _overlayManager.getOverlayConfig(overlayType);
+        onShowOverlay?.call(overlayType, overlayConfig);
+        
+        // Add to undo history
+        _undoManager.addToHistory(product);
+        canUndo.value = _undoManager.canUndo;
+        
         // Instant removal — don't wait for API
         lastSwiped.value = product;
         _removeTopCard(product);
@@ -167,6 +189,15 @@ class SwipeFeedController extends GetxController {
         break;
 
       case SwipeAction.dislikeProduct:
+        // Get overlay type and config
+        final overlayType = _overlayManager.getOverlayType(action);
+        final overlayConfig = _overlayManager.getOverlayConfig(overlayType);
+        onShowOverlay?.call(overlayType, overlayConfig);
+        
+        // Add to undo history
+        _undoManager.addToHistory(product);
+        canUndo.value = _undoManager.canUndo;
+        
         // Instant removal
         lastSwiped.value = product;
         _removeTopCard(product);
@@ -183,6 +214,15 @@ class SwipeFeedController extends GetxController {
         return;
 
       case SwipeAction.swipeDown:
+        // Get overlay type and config
+        final overlayType = _overlayManager.getOverlayType(action);
+        final overlayConfig = _overlayManager.getOverlayConfig(overlayType);
+        onShowOverlay?.call(overlayType, overlayConfig);
+        
+        // Add to undo history
+        _undoManager.addToHistory(product);
+        canUndo.value = _undoManager.canUndo;
+        
         // OPEN_PDP — fire event, navigate, card stays
         SwipeCartService.swipeAction(
           productId: product.id,
@@ -208,6 +248,15 @@ class SwipeFeedController extends GetxController {
 
     if (actionResult.success) {
       // No variant needed — added directly
+      // Get overlay type and config
+      final overlayType = _overlayManager.getOverlayType(SwipeAction.swipeUp);
+      final overlayConfig = _overlayManager.getOverlayConfig(overlayType);
+      onShowOverlay?.call(overlayType, overlayConfig);
+      
+      // Add to undo history
+      _undoManager.addToHistory(product);
+      canUndo.value = _undoManager.canUndo;
+      
       lastSwiped.value = product;
       onSwipeUpFlyUp?.call();
       _triggerCartFlash();
@@ -234,6 +283,15 @@ class SwipeFeedController extends GetxController {
       switch (result) {
         case SwipeSizeResult.added:
           // confirmVariant was called inside the sheet and succeeded
+          // Get overlay type and config
+          final overlayType = _overlayManager.getOverlayType(SwipeAction.swipeUp);
+          final overlayConfig = _overlayManager.getOverlayConfig(overlayType);
+          onShowOverlay?.call(overlayType, overlayConfig);
+          
+          // Add to undo history
+          _undoManager.addToHistory(product);
+          canUndo.value = _undoManager.canUndo;
+          
           lastSwiped.value = product;
           onSwipeUpFlyUp?.call();
           _triggerCartFlash();
@@ -244,6 +302,15 @@ class SwipeFeedController extends GetxController {
 
         case SwipeSizeResult.wishlisted:
           // User added to wishlist from the out-of-stock sheet — remove card
+          // Get overlay type and config
+          final overlayType = _overlayManager.getOverlayType(SwipeAction.likeProduct);
+          final overlayConfig = _overlayManager.getOverlayConfig(overlayType);
+          onShowOverlay?.call(overlayType, overlayConfig);
+          
+          // Add to undo history
+          _undoManager.addToHistory(product);
+          canUndo.value = _undoManager.canUndo;
+          
           lastSwiped.value = product;
           onSwipeUpFlyUp?.call();
           _triggerWishlistFlash();
@@ -264,6 +331,30 @@ class SwipeFeedController extends GetxController {
     // No message needed; the product just disappears like a dislike.
     if (actionResult.isOutOfStock) {
       onSwipeUpFlyUp?.call();
+      _removeTopCard(product);
+      maybePrefetch();
+      return;
+    }
+
+    // Single-size product or auto-added product
+    // If success is false but needsVariantPick and isOutOfStock are also false,
+    // this is likely a single-size product that was successfully added
+    if (!actionResult.success && !actionResult.needsVariantPick && !actionResult.isOutOfStock) {
+      debugPrint('[SwipeFeedController] Single-size product added to cart (no variant needed)');
+      
+      // Treat as success
+      final overlayType = _overlayManager.getOverlayType(SwipeAction.swipeUp);
+      final overlayConfig = _overlayManager.getOverlayConfig(overlayType);
+      onShowOverlay?.call(overlayType, overlayConfig);
+      
+      // Add to undo history
+      _undoManager.addToHistory(product);
+      canUndo.value = _undoManager.canUndo;
+      
+      lastSwiped.value = product;
+      onSwipeUpFlyUp?.call();
+      _triggerCartFlash();
+      try { Get.find<CartController>().getCartData(forceRefresh: true); } catch (_) {}
       _removeTopCard(product);
       maybePrefetch();
       return;
@@ -295,15 +386,21 @@ class SwipeFeedController extends GetxController {
   Future<void> rewind() async {
     HapticFeedback.lightImpact();
 
-    // Optimistically re-insert the last swiped card
-    final prev = lastSwiped.value;
-    if (prev != null) {
-      cards.insert(0, prev);
-      lastSwiped.value = null;
+    // Get the most recent product from undo history
+    final product = _undoManager.restoreProduct();
+    if (product != null) {
+      // Re-insert at top of cards list
+      cards.insert(0, product);
+      
+      // Update undo button visibility
+      canUndo.value = _undoManager.canUndo;
+      
+      // Update lastSwiped for consistency
+      lastSwiped.value = product;
     }
 
-    // Tell the backend
-    await SwipeCartService.undoLastSwipe();
+    // DO NOT call SwipeCartService.undoLastSwipe()
+    // Product stays in cart/wishlist if it was added
   }
 
   // ── Share ─────────────────────────────────────────────────────────────────
@@ -364,5 +461,12 @@ class SwipeFeedController extends GetxController {
     Future.delayed(const Duration(milliseconds: 700), () {
       cartFlash.value = false;
     });
+  }
+
+  @override
+  void onClose() {
+    _overlayManager.resetSession();
+    _undoManager.clearHistory();
+    super.onClose();
   }
 }
