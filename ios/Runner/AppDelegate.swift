@@ -5,6 +5,8 @@ import AppsFlyerLib
 import FirebaseMessaging
 import FirebaseCore
 import SmartPush
+import Smartech 
+import smartech_base 
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -104,12 +106,12 @@ import SmartPush
   }
 }
 
-// ── Netcore CE: deeplink delegate — forwards notification tap deeplinks to the Flutter layer
-extension AppDelegate: SMTDeeplinkDelegate {
-  func handleDeeplinkAction(withURLString urlString: String, andNotificationPayload payload: [AnyHashable: Any]) {
-    SmartechBasePlugin.handleDeeplinkAction(urlString, andCustomPayload: payload)
-  }
-}
+// // ── Netcore CE: deeplink delegate — forwards notification tap deeplinks to the Flutter layer
+// extension AppDelegate: SMTDeeplinkDelegate {
+//   func handleDeeplinkAction(withURLString urlString: String, andNotificationPayload payload: [AnyHashable: Any]) {
+//     SmartechBasePlugin.handleDeeplinkAction(urlString, andCustomPayload: payload)
+//   }
+// }
 
 // Required when FirebaseAppDelegateProxyEnabled = false
 // Handles FCM token refresh at the native level

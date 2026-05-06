@@ -27,6 +27,9 @@ class SwipeProduct {
   final List<String> sizes;
   final List<String> tags;
 
+  /// Gender tags from Algolia — e.g. ["men"], ["women"], [] for unisex.
+  final List<String> gender;
+
   const SwipeProduct({
     required this.id,
     required this.slug,
@@ -43,6 +46,7 @@ class SwipeProduct {
     this.numReviews,
     this.sizes = const [],
     this.tags = const [],
+    this.gender = const [],
   });
 
   factory SwipeProduct.fromJson(Map<String, dynamic> json) {
@@ -144,6 +148,15 @@ class SwipeProduct {
             .toList()
         : <String>[];
 
+    // ── Gender ────────────────────────────────────────────────────────────────
+    // Algolia stores gender as an array: ["men"], ["women"], or []
+    final gender = json['gender'] is List
+        ? (json['gender'] as List)
+            .map((e) => e?.toString().toLowerCase() ?? '')
+            .where((s) => s.isNotEmpty)
+            .toList()
+        : <String>[];
+
     // ── Nudges ────────────────────────────────────────────────────────────────
     final nudges = (json['nudges'] as List<dynamic>?)
             ?.whereType<Map<String, dynamic>>()
@@ -167,6 +180,7 @@ class SwipeProduct {
       numReviews: numReviews,
       sizes: sizes,
       tags: tags,
+      gender: gender,
     );
   }
 }

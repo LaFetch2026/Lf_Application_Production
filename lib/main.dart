@@ -96,6 +96,13 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
 
+  // ── Image cache budget ────────────────────────────────────────────────────
+  // Flutter's default cache is unbounded in practice; cap it to prevent OOM
+  // on low-to-mid-range devices. LRU eviction keeps the most-recently-used
+  // images in memory and silently drops the rest — fully transparent to the UI.
+  PaintingBinding.instance.imageCache.maximumSize = 100;          // max 100 decoded images
+  PaintingBinding.instance.imageCache.maximumSizeBytes = 50 << 20; // 50 MB hard cap
+
   // -------------------------------------------------------
   // CLEAN UP GetX on hot restart/reload
   // -------------------------------------------------------

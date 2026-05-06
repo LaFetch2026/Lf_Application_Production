@@ -15,6 +15,7 @@ enum SwipeSizeResult {
   noSizes,
   dismissed,
   error,
+  wishlisted, // user tapped "Add to Wishlist" from the out-of-stock sheet
 }
 
 /// Shows a size-picker bottom sheet pre-populated with variants from the

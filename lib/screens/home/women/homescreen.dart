@@ -1829,7 +1829,7 @@ class _NewInSection extends StatelessWidget {
             // Header row: NEW IN | Sort By button | prev/next arrows
             Row(
               children: [
-                AppText(
+                const AppText(
                   text: "NEW IN",
                   fontFamily: "Clash Display Semibold",
                   color: blackColor,

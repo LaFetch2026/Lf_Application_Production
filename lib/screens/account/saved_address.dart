@@ -193,7 +193,9 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                             addressId: 0,
                                             cartId: 0,
                                           )))
-                                  .then((value) => setState(() {
+                                  .then((value) {
+                                    if (mounted) {
+                                      setState(() {
                                         controller.getAddressData();
                                         shipController.dailogSelected.clear();
                                         shipController.dailogSelected =
@@ -204,7 +206,9 @@ class SavedAddressScreenState extends State<SavedAddressScreen> {
                                           systemNavigationBarColor:
                                               statusBarColor,
                                         ));
-                                      }));
+                                      });
+                                    }
+                                  });
                               await analytics.logEvent(
                                 name: 'map_page',
                                 parameters: <String, Object>{

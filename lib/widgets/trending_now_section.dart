@@ -319,21 +319,21 @@ class _TrendingNowSectionState extends State<TrendingNowSection> {
                   Container(height: 2, width: 40.sp, color: blackColor),
                 ],
               ),
-              if (showViewAll)
-                GestureDetector(
-                  onTap: _navigateToListing,
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 2.sp),
-                    child: Text(
-                      'view all',
-                      style: TextStyle(
-                        fontFamily: 'Clash Display Regular',
-                        fontSize: 11.sp,
-                        color: Colors.grey.shade500,
-                      ),
-                    ),
-                  ),
-                ),
+              // if (showViewAll)
+              //   GestureDetector(
+              //     onTap: _navigateToListing,
+              //     child: Padding(
+              //       padding: EdgeInsets.only(bottom: 2.sp),
+              //       child: Text(
+              //         'view all',
+              //         style: TextStyle(
+              //           fontFamily: 'Clash Display Regular',
+              //           fontSize: 11.sp,
+              //           color: Colors.grey.shade500,
+              //         ),
+              //       ),
+              //     ),
+              //   ),
             ],
           ),
 

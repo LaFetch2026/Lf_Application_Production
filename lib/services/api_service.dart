@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../common/widget/other/common_widget.dart';
+import '../models/session_expired_exception.dart';
 import '../screens/loginscreen.dart';
 import 'network_service.dart';
 
@@ -183,6 +184,17 @@ class ApiService extends GetxService {
           showErrorSnackbar: showErrorSnackbar,
           retryCount: retryCount + 1,
         );
+      } else if (response.statusCode == 410) {
+        // Session hard-expired — distinct from 400/500, never retried
+        String expiredMsg =
+            'Your session has expired. Please start checkout again.';
+        try {
+          final decoded = jsonDecode(response.body);
+          if (decoded is Map && decoded['message'] != null) {
+            expiredMsg = decoded['message'].toString();
+          }
+        } catch (_) {}
+        throw SessionExpiredException(expiredMsg);
       } else if (response.statusCode >= 500 && retryCount < maxRetries) {
         // Retry on server errors
         print('⚠️ Server error (${response.statusCode}) - Retry ${retryCount + 1}/$maxRetries');

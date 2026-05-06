@@ -307,17 +307,25 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
             },
             isHandPicked: true,
             onPressedHeart: () async {
-              Get.to(const BottomNavScreen(index: 2))?.then((_) => setState(() {
+              Get.to(const BottomNavScreen(index: 2))?.then((_) {
+                if (mounted) {
+                  setState(() {
                     controller.getCartData();
-                  }));
+                  });
+                }
+              });
               analytics.logEvent(
                   name: "wishlist_page",
                   parameters: {"page_name": "wishlist_page"});
             },
             onPressedCart: () async {
-              Get.to(CartScreen())?.then((_) => setState(() {
+              Get.to(CartScreen())?.then((_) {
+                if (mounted) {
+                  setState(() {
                     controller.getCartData();
-                  }));
+                  });
+                }
+              });
               analytics.logEvent(
                   name: "cart_page", parameters: {"page_name": "cart_page"});
             },

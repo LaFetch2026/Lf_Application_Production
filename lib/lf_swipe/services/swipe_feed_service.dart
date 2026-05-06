@@ -88,10 +88,28 @@ class SwipeFeedService extends GetxService {
         return [];
       }
 
-      return items
+      var parsed = items
           .whereType<Map<String, dynamic>>()
           .map(SwipeProduct.fromJson)
           .toList();
+
+      // Client-side gender filter — backend ignores the gender param,
+      // so we filter here. Products with empty gender[] are unisex and
+      // always included.
+      if (genderFilter == 1) {
+        // Men: keep products tagged "men" or untagged (unisex)
+        parsed = parsed.where((p) =>
+          p.gender.isEmpty || p.gender.any((g) => g == 'men')
+        ).toList();
+      } else if (genderFilter == 2) {
+        // Women: keep products tagged "women" or untagged (unisex)
+        parsed = parsed.where((p) =>
+          p.gender.isEmpty || p.gender.any((g) => g == 'women')
+        ).toList();
+      }
+
+      debugPrint('[SwipeFeedService] after gender filter ($genderFilter): ${parsed.length} products');
+      return parsed;
     } catch (e, stack) {
       debugPrint('[SwipeFeedService] fetchBatch error: $e');
       debugPrint('[SwipeFeedService] stack: $stack');

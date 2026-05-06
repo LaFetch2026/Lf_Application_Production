@@ -97,6 +97,9 @@ class HomeController extends BaseController {
   bool _isCategoryRequestInProgress = false;
   bool _isAnnouncementsRequestInProgress = false;
 
+  // ✅ In-flight guard for initializeHomeData — prevents concurrent calls for the same gender
+  bool _isInitializingHomeData = false;
+
   // ✅ When true, getGenderTabs() skips the /category-hierarchy API call
   // because tabs have already been injected from the dynamic menu (/menu-v2).
   bool menuTabsInjected = false;
@@ -146,6 +149,12 @@ class HomeController extends BaseController {
   /// Initialize home data - Call this from HomeScreen after user is authenticated/skipped
   Future<void> initializeHomeData(int gender,
       {bool forceRefresh = false}) async {
+    // ✅ Prevent concurrent duplicate calls
+    if (_isInitializingHomeData && !forceRefresh) {
+      print('⏳ Home data initialization already in progress, skipping...');
+      return;
+    }
+
     // ✅ Skip API calls if data already loaded for this gender (unless force refresh)
     if (!forceRefresh && isGenderDataLoaded(gender)) {
       print('✅ Data already loaded for gender: $gender, skipping API calls');
@@ -156,20 +165,25 @@ class HomeController extends BaseController {
       return;
     }
 
+    _isInitializingHomeData = true;
     print('🔄 Initializing home data for gender: $gender');
 
-    // Load data with caching - each method handles its own caching
-    await Future.wait([
-      getBannerData(gender, forceRefresh: forceRefresh),
-      getBrandData("featured", gender, forceRefresh: forceRefresh),
-      getCategoryData(gender, forceRefresh: forceRefresh),
-      getAnnouncements(forceRefresh: forceRefresh),
-    ]);
+    try {
+      // Load data with caching - each method handles its own caching
+      await Future.wait([
+        getBannerData(gender, forceRefresh: forceRefresh),
+        getBrandData("featured", gender, forceRefresh: forceRefresh),
+        getCategoryData(gender, forceRefresh: forceRefresh),
+        getAnnouncements(forceRefresh: forceRefresh),
+      ]);
 
-    // ✅ Mark this gender as loaded
-    markGenderLoaded(gender);
-    isInitialDataLoaded.value = true;
-    print('✅ Home data initialization complete for gender: $gender');
+      // ✅ Mark this gender as loaded
+      markGenderLoaded(gender);
+      isInitialDataLoaded.value = true;
+      print('✅ Home data initialization complete for gender: $gender');
+    } finally {
+      _isInitializingHomeData = false;
+    }
   }
 
   void getDeviceName() async {

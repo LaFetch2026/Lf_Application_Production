@@ -87,9 +87,13 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
               backColor: statusBarColor,
               text: widget.title.toUpperCase(),
               onPressedSearch: () async {
-                Get.off(() => SearchScreen())?.then((value) => setState(
+                Get.off(() => SearchScreen())?.then((value) {
+                  if (mounted) {
+                    setState(
                       () {},
-                    ));
+                    );
+                  }
+                });
                 analytics
                     .logEvent(name: "search_page", parameters: <String, Object>{
                   "page_name": "search_page",
@@ -97,11 +101,15 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
               },
               isHandPicked: true,
               onPressedHeart: () async {
-                Get.to(const WishlistScreen())?.then((value) => setState(
+                Get.to(const WishlistScreen())?.then((value) {
+                  if (mounted) {
+                    setState(
                       () {
                         cartController.getCartData();
                       },
-                    ));
+                    );
+                  }
+                });
                 analytics.logEvent(
                     name: "wishlist_page",
                     parameters: <String, Object>{
@@ -109,11 +117,15 @@ class CatalogDetailsScreenState extends State<CatalogDetailsScreen> {
                     });
               },
               onPressedCart: () async {
-                Get.to(CartScreen())?.then((value) => setState(
+                Get.to(CartScreen())?.then((value) {
+                  if (mounted) {
+                    setState(
                       () {
                         cartController.getCartData();
                       },
-                    ));
+                    );
+                  }
+                });
                 analytics
                     .logEvent(name: "cart_page", parameters: <String, Object>{
                   "page_name": "cart_page",

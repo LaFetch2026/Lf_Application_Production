@@ -78,15 +78,15 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
   Future<void> _loadOrderHistory() async {
     setState(() => _isRefreshing = true);
     try {
-    final prefs = await SharedPreferences.getInstance();
-    final int? userId = prefs.getInt('userId') ?? prefs.getInt('user_id');
+      final prefs = await SharedPreferences.getInstance();
+      final int? userId = prefs.getInt('userId') ?? prefs.getInt('user_id');
 
-    if (userId == null) {
-      showAppSnackBar("Please login again", type: SnackBarType.error);
-      return;
-    }
+      if (userId == null) {
+        showAppSnackBar("Please login again", type: SnackBarType.error);
+        return;
+      }
 
-    await orderController.getOrderHistoryByUser(userId);
+      await orderController.getOrderHistoryByUser(userId);
     } finally {
       if (mounted) setState(() => _isRefreshing = false);
     }
@@ -101,7 +101,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
         elevation: 0,
         leading: IconButton(
           icon: SvgPicture.asset(arrowBack, height: 18, width: 18),
-          onPressed: () => Get.offAll(() => const BottomNavScreen(index: 3)),
+          onPressed: () => Get.offAll(() => const BottomNavScreen(index: 0)),
         ),
         centerTitle: true,
         title: const AppText(
@@ -172,22 +172,22 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> with RouteAware {
           child: Stack(
             children: [
               Column(
-            children: [
-              _buildFilterBar(),
-              Expanded(
-                child: ListView.separated(
-                  padding: EdgeInsets.symmetric(vertical: 8.sp),
-                  itemCount: filteredOrders.length,
-                  separatorBuilder: (_, __) => Divider(
-                    color: const Color(0xFFE5E7EB),
-                    thickness: 1,
+                children: [
+                  _buildFilterBar(),
+                  Expanded(
+                    child: ListView.separated(
+                      padding: EdgeInsets.symmetric(vertical: 8.sp),
+                      itemCount: filteredOrders.length,
+                      separatorBuilder: (_, __) => Divider(
+                        color: const Color(0xFFE5E7EB),
+                        thickness: 1,
+                      ),
+                      itemBuilder: (_, index) =>
+                          _buildOrderItem(filteredOrders[index]),
+                    ),
                   ),
-                  itemBuilder: (_, index) =>
-                      _buildOrderItem(filteredOrders[index]),
-                ),
+                ],
               ),
-            ],
-          ),
               AnimatedOpacity(
                 opacity: _isRefreshing ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 200),

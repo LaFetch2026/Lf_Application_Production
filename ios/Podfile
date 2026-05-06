@@ -33,6 +33,7 @@ target 'Runner' do
 
   # Netcore CE push notification SDK
   pod 'SmartPush-iOS-SDK'
+  pod 'Smartech-iOS-SDK' 
 end
 
 post_install do |installer|

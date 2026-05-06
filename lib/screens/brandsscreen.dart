@@ -670,6 +670,11 @@ class BrandsScreenState extends State<BrandsScreen>
                                                                                 if (isExpanded) {
                                                                                   val.selectIndex.value = 0;
                                                                                 } else {
+                                                                                  // ✅ B3 call-site guard — prevent duplicate concurrent fetches
+                                                                                  if (brandController.isFetchingBrandDetails.value) {
+                                                                                    print("⏳ Already fetching brand details, ignoring duplicate tap");
+                                                                                    return;
+                                                                                  }
                                                                                   try {
                                                                                     val.selectIndex.value = brand["id"];
 

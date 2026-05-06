@@ -105,21 +105,29 @@ class ProductListScreenState extends State<ProductListScreen> {
                 "page_name": "search_page",
               });
             }, onPressedHeart: () async {
-              Get.to(WishlistScreen())?.then((value) => setState(
+              Get.to(WishlistScreen())?.then((value) {
+                if (mounted) {
+                  setState(
                     () {
                       cartController.getCartData();
                     },
-                  ));
+                  );
+                }
+              });
               analytics
                   .logEvent(name: "wishlist_page", parameters: <String, Object>{
                 "page_name": "wishlist_page",
               });
             }, onPressedCart: () async {
-              Get.to(CartScreen())?.then((value) => setState(
+              Get.to(CartScreen())?.then((value) {
+                if (mounted) {
+                  setState(
                     () {
                       cartController.getCartData();
                     },
-                  ));
+                  );
+                }
+              });
               analytics
                   .logEvent(name: "cart_page", parameters: <String, Object>{
                 "page_name": "cart_page",

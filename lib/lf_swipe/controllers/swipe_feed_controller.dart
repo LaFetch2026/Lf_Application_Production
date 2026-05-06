@@ -158,11 +158,12 @@ class SwipeFeedController extends GetxController {
         _removeTopCard(product);
         _triggerWishlistFlash();
         maybePrefetch();
-        // Fire API in background
+        // Fire API + local wishlist board update in background
         SwipeCartService.swipeAction(
           productId: product.id,
           action: action.apiValue,
         );
+        _addToSwipesBoard(product);
         break;
 
       case SwipeAction.dislikeProduct:
@@ -241,6 +242,15 @@ class SwipeFeedController extends GetxController {
           maybePrefetch();
           break;
 
+        case SwipeSizeResult.wishlisted:
+          // User added to wishlist from the out-of-stock sheet — remove card
+          lastSwiped.value = product;
+          onSwipeUpFlyUp?.call();
+          _triggerWishlistFlash();
+          _removeTopCard(product);
+          maybePrefetch();
+          break;
+
         case SwipeSizeResult.dismissed:
         case SwipeSizeResult.error:
         case SwipeSizeResult.noSizes:
@@ -250,7 +260,16 @@ class SwipeFeedController extends GetxController {
       return;
     }
 
-    // API returned failure (not SELECT_VARIANT) — spring back
+    // OUT_OF_STOCK or any other failure — silently fly the card off and remove it.
+    // No message needed; the product just disappears like a dislike.
+    if (actionResult.isOutOfStock) {
+      onSwipeUpFlyUp?.call();
+      _removeTopCard(product);
+      maybePrefetch();
+      return;
+    }
+
+    // Any other API failure — spring back
     onSwipeUpReset?.call();
   }
 

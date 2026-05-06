@@ -10,6 +10,7 @@ import 'package:lafetch/screens/change_address.dart';
 import 'package:lafetch/screens/mapscreen.dart';
 import 'package:lafetch/screens/paymentsuccessscreen.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/appbar/backbutton_appbar.dart';
 import '../common/widget/lists/dummy_estimatedelivery.dart';
@@ -20,7 +21,9 @@ import '../controllers/cart_controller.dart';
 import '../controllers/order_controller.dart';
 import '../controllers/shipaddress_controller.dart';
 import '../core/constant/constants.dart';
+import '../models/session_expired_exception.dart';
 import '../services/serviceability_service.dart';
+import '../widgets/checkout_timer_widget.dart';
 import 'package:lafetch/common/widget/other/lf_loader_widget.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -66,6 +69,9 @@ class CheckoutScreenState extends State<CheckoutScreen> {
   final Razorpay razorpay = Razorpay();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
+  /// Loaded from SharedPreferences after initiatePayment stores it.
+  String? _checkoutSessionId;
+
   @override
   void initState() {
     if (widget.addressId != 0) {
@@ -77,19 +83,78 @@ class CheckoutScreenState extends State<CheckoutScreen> {
       shipController.addressDetails = "";
     }
 
+    // Load the checkout session ID stored by initiatePayment
+    _loadCheckoutSessionId();
+
     razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
     razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
     razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
     super.initState();
   }
 
-  void handlePaymentSuccess(PaymentSuccessResponse response) {
+  Future<void> _loadCheckoutSessionId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final sessionId = prefs.getString('checkoutSessionId');
+    if (mounted && sessionId != null) {
+      setState(() {
+        _checkoutSessionId = sessionId;
+      });
+    }
+  }
+
+  void _handleSessionExpired() {
+    getSnackBar('Your session has expired. Please start checkout again.');
+    Get.until((route) => route.isFirst);
+  }
+
+  void handlePaymentSuccess(PaymentSuccessResponse response) async {
     print("order id ${response.orderId}");
     print("payment id ${response.paymentId}");
-    print("singature ${response.signature}");
+    print("signature ${response.signature}");
     print("data ${response.data}");
 
-    // Do something when payment succeeds
+    final orderController = Get.find<OrderController>();
+
+    final providerOrderId = orderController.razorpayOrderId.value;
+    final providerPaymentId = response.paymentId ?? '';
+    final providerSignature = response.signature ?? '';
+
+    // Req 2.4 — validate all three fields before calling confirm
+    final missingFields = <String>[
+      if (providerOrderId.isEmpty) 'providerOrderId',
+      if (providerPaymentId.isEmpty) 'providerPaymentId',
+      if (providerSignature.isEmpty) 'providerSignature',
+    ];
+
+    if (missingFields.isNotEmpty) {
+      print('❌ handlePaymentSuccess: missing fields: ${missingFields.join(', ')}');
+      getSnackBar('Payment confirmation failed. Missing: ${missingFields.join(', ')}');
+      return;
+    }
+
+    try {
+      final success = await orderController.confirmPlaceOrder(
+        providerOrderId: providerOrderId,
+        providerPaymentId: providerPaymentId,
+        providerSignature: providerSignature,
+      );
+
+      if (success) {
+        Get.offAll(() => const PaymentSuccessScreen(
+              text1: 'Order Placed!',
+              text2: 'Thank you for your purchase.',
+              orderId: 0,
+              image: orderSucessImage,
+            ));
+      }
+    } on SessionExpiredException catch (e) {
+      getSnackBar(e.message);
+      // Navigate back to cart, removing all checkout screens from the stack
+      Get.until((route) => route.isFirst);
+    } catch (e) {
+      print('❌ confirmPlaceOrder error: $e');
+      getSnackBar('Something went wrong confirming your order. Please try again.');
+    }
   }
 
   void handlePaymentError(PaymentFailureResponse response) {
@@ -468,6 +533,13 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                       height: 1,
                     ),
                   ), */
+                            // Session countdown timer — shown between address and delivery estimates
+                            if (_checkoutSessionId != null &&
+                                _checkoutSessionId!.isNotEmpty)
+                              CheckoutTimerWidget(
+                                checkoutSessionId: _checkoutSessionId!,
+                                onExpired: _handleSessionExpired,
+                              ),
                             Obx(() => shipController.isDelivery.value
                                 ? const DummyEstimateDelivery()
                                 : shipController.estimateDeliveryList.isNotEmpty
@@ -1204,20 +1276,39 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                                 'checkoutPage_btnpaynow',
                                           },
                                         );
-                                        var options = {
-                                          'key': ApiConstants.razorPayKey,
-                                          'amount':
-                                              double.parse(widget.amount) * 100,
-                                          'name': 'Lafetch',
-                                          'order_id': widget.orderId,
-                                          'description': 'Lafetch Customer',
-                                          'timeout': 60,
-                                          'theme': {
-                                            'color': '#070707',
-                                          },
-                                          'fullscreen': true,
-                                        };
-                                        razorpay.open(options);
+
+                                        final orderController =
+                                            Get.find<OrderController>();
+                                        final razorpayOrderId =
+                                            orderController.razorpayOrderId.value;
+
+                                        // Req 1.2, 1.5 — use razorpayOrderId from controller, not widget.orderId
+                                        if (razorpayOrderId.isEmpty) {
+                                          getSnackBar(
+                                              'Payment order not ready. Please try again.');
+                                          return;
+                                        }
+
+                                        try {
+                                          var options = {
+                                            'key': ApiConstants.razorPayKey,
+                                            'amount':
+                                                double.parse(widget.amount) *
+                                                    100,
+                                            'name': 'Lafetch',
+                                            'order_id': razorpayOrderId,
+                                            'description': 'Lafetch Customer',
+                                            'timeout': 60,
+                                            'theme': {
+                                              'color': '#070707',
+                                            },
+                                            'fullscreen': true,
+                                          };
+                                          razorpay.open(options);
+                                        } on SessionExpiredException catch (e) {
+                                          getSnackBar(e.message);
+                                          Get.until((route) => route.isFirst);
+                                        }
                                       },
                                       borderColor: colorPrimary),
                                 ),

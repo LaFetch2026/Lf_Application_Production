@@ -722,6 +722,12 @@ class ProductController extends BaseController {
     bool withLimit = true,
     bool forceRefresh = false,
   }) async {
+    // ✅ Prevent duplicate concurrent requests for the same gender
+    if (_activeGenderRequest == gender && isHomeProduct.value && !forceRefresh) {
+      print('⏳ Home product request already in progress for gender=$gender, skipping...');
+      return;
+    }
+
     _activeGenderRequest = gender; // ✅ mark latest request
 
     final displayFor = gender == 1

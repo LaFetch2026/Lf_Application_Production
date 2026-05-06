@@ -80,6 +80,7 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    print("🗑️ SwipeCardState.dispose() — cleaning up animation controllers");
     _flyController.dispose();
     _resetController.dispose();
     super.dispose();
@@ -105,7 +106,14 @@ class SwipeCardState extends State<SwipeCard> with TickerProviderStateMixin {
         setState(() => _dragOffset = flyUpAnimation.value);
       }
     });
-    flyUpController.forward().then((_) => flyUpController.dispose());
+    flyUpController.forward().then((_) {
+      if (mounted) {
+        flyUpController.dispose();
+      } else {
+        // Widget was removed before animation completed — dispose immediately
+        flyUpController.dispose();
+      }
+    });
   }
 
   /// Spring-animate the card back to center (dismiss/failure path).

@@ -276,11 +276,15 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                       addressId: 0,
                                       cartId: widget.cartId,
                                     )))
-                            .then((value) => setState(
+                            .then((value) {
+                              if (mounted) {
+                                setState(
                                   () {
                                     controller.getAddressData();
                                   },
-                                ));
+                                );
+                              }
+                            });
                       },
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -322,14 +326,18 @@ class ChangeAddressScreenState extends State<ChangeAddressScreen> {
                                       addressId: 0,
                                       cartId: widget.cartId,
                                     )))
-                            .then((value) => setState(
+                            .then((value) {
+                              if (mounted) {
+                                setState(
                                   () {
                                     controller.getAddressData();
                                     shipController.dailogSelected.clear();
                                     shipController.dailogSelected =
                                         List.generate(50, (i) => false);
                                   },
-                                ));
+                                );
+                              }
+                            });
                         await analytics.logEvent(
                           name: 'map_page',
                           parameters: <String, Object>{

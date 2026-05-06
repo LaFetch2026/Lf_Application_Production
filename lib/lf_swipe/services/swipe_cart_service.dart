@@ -67,6 +67,7 @@ class SwipeVariant {
 class SwipeActionResult {
   final bool success;
   final bool needsVariantPick;
+  final String? reason; // e.g. "OUT_OF_STOCK", "NO_VARIANTS", "CART_ERROR"
   final int? productId;
   final Map<String, List<String>>? options;
   final List<SwipeVariant>? variants;
@@ -75,17 +76,21 @@ class SwipeActionResult {
   const SwipeActionResult({
     required this.success,
     this.needsVariantPick = false,
+    this.reason,
     this.productId,
     this.options,
     this.variants,
     this.cartItemId,
   });
 
+  bool get isOutOfStock => reason == 'OUT_OF_STOCK';
+
   factory SwipeActionResult.fromJson(Map<String, dynamic> data) {
     final needsPick = data['action'] == 'SELECT_VARIANT';
     return SwipeActionResult(
       success: !needsPick && (data['success'] as bool? ?? false),
       needsVariantPick: needsPick,
+      reason: data['reason'] as String?,
       productId: data['productId'] as int?,
       options: needsPick
           ? (data['options'] as Map<String, dynamic>?)?.map(

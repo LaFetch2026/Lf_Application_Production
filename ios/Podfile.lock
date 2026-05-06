@@ -21,6 +21,8 @@ PODS:
   - AppsFlyerFramework (6.17.8):
     - AppsFlyerFramework/Main (= 6.17.8)
   - AppsFlyerFramework/Main (6.17.8)
+  - audio_session (0.0.1):
+    - Flutter
   - device_info_plus (0.0.1):
     - Flutter
   - facebook_app_events (0.24.0):
@@ -297,6 +299,7 @@ DEPENDENCIES:
   - app_links (from `.symlinks/plugins/app_links/ios`)
   - app_tracking_transparency (from `.symlinks/plugins/app_tracking_transparency/ios`)
   - appsflyer_sdk (from `.symlinks/plugins/appsflyer_sdk/ios`)
+  - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - facebook_app_events (from `.symlinks/plugins/facebook_app_events/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
@@ -320,6 +323,7 @@ DEPENDENCIES:
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
+  - Smartech-iOS-SDK
   - smartech_appinbox (from `.symlinks/plugins/smartech_appinbox/ios`)
   - smartech_base (from `.symlinks/plugins/smartech_base/ios`)
   - smartech_push (from `.symlinks/plugins/smartech_push/ios`)
@@ -376,6 +380,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/app_tracking_transparency/ios"
   appsflyer_sdk:
     :path: ".symlinks/plugins/appsflyer_sdk/ios"
+  audio_session:
+    :path: ".symlinks/plugins/audio_session/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
   facebook_app_events:
@@ -444,6 +450,7 @@ SPEC CHECKSUMS:
   AppCheckCore: cc8fd0a3a230ddd401f326489c99990b013f0c4f
   appsflyer_sdk: 219a6c5cb0343de60c7f259ecdb202084274359e
   AppsFlyerFramework: 63577b60d6b9fcdab60135289979e7d1c9ec79b9
+  audio_session: 9bb7f6c970f21241b19f5a3658097ae459681ba0
   device_info_plus: 335f3ce08d2e174b9fdc3db3db0f4e3b1f66bd89
   facebook_app_events: 58a1b62fd50f6009907bd167fc26b3d043e97197
   FBAEMKit: 2a6b529993713c185b02bc36f8c91129bf78dfb0
@@ -509,6 +516,6 @@ SPEC CHECKSUMS:
   video_player_avfoundation: dd410b52df6d2466a42d28550e33e4146928280a
   webview_flutter_wkwebview: 8ebf4fded22593026f7dbff1fbff31ea98573c8d
 
-PODFILE CHECKSUM: 554ff64f07127e98caa1816959269f7dd91e51a2
+PODFILE CHECKSUM: 9e9197fe9fade40c9b835e0d702ad4cea3c7bc18
 
 COCOAPODS: 1.16.2

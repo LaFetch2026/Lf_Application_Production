@@ -1251,6 +1251,9 @@ class AllBrandScreenState extends State<AllBrandScreen> {
         height: 211.sp,
         width: double.infinity,
         fit: BoxFit.cover,
+        memCacheWidth: (MediaQuery.of(context).size.width *
+                MediaQuery.of(context).devicePixelRatio)
+            .round(),
         memCacheHeight:
             (211.sp * MediaQuery.of(context).devicePixelRatio).round(),
         placeholder: (context, url) => Container(
@@ -1526,6 +1529,9 @@ class AllBrandScreenState extends State<AllBrandScreen> {
                             height: 211.sp,
                             width: double.infinity,
                             fit: BoxFit.cover,
+                            memCacheWidth: (MediaQuery.of(context).size.width *
+                                    MediaQuery.of(context).devicePixelRatio)
+                                .round(),
                             memCacheHeight: (211.sp *
                                     MediaQuery.of(context).devicePixelRatio)
                                 .round(),

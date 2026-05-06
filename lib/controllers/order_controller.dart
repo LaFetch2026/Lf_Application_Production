@@ -9,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/widget/other/common_widget.dart';
 import '../core/constant/constants.dart';
+import '../models/checkout_session.dart';
+import '../models/session_expired_exception.dart';
 import '../screens/loginscreen.dart';
 import 'base_controller.dart';
 import '../services/netcore_service.dart';
@@ -29,6 +31,14 @@ class OrderController extends BaseController {
   RxString estimatedDate = "".obs;
   RxString estimatedDays = "".obs;
   RxString courierName = "".obs;
+
+  // ---------- Checkout Session State ----------
+  /// The canonical Razorpay order ID returned by POST /checkout/address.
+  /// Cleared at the start of each new initiatePayment call.
+  RxString razorpayOrderId = ''.obs;
+
+  /// Current lifecycle state of the checkout session.
+  Rx<CheckoutStatus> checkoutStatus = CheckoutStatus.pending.obs;
   // Lists & details
   // List orderHistory = [].obs; // from /order-history/{userId}
   RxList orderHistory = [].obs;
@@ -88,6 +98,10 @@ class OrderController extends BaseController {
     final prefs = await SharedPreferences.getInstance();
 
     try {
+      // Clear checkout state for this new initiation (Req 1.4)
+      razorpayOrderId.value = '';
+      checkoutStatus.value = CheckoutStatus.pending;
+
       // ── STEP 1: Initiate Checkout Session ──────────────────────
       final initiateUri =
           Uri.parse("${ApiConstants.baseUrl}/checkout/initiate");
@@ -186,11 +200,17 @@ class OrderController extends BaseController {
 
       print("✅ Razorpay order created: $providerOrderId");
 
+      // Store canonical Razorpay order ID in reactive state (Req 1.1, 3.3)
+      razorpayOrderId.value = providerOrderId;
+      checkoutStatus.value = CheckoutStatus.paymentInitiated;
+
       return {
         "providerOrderId": providerOrderId,
         "checkoutSessionId": checkoutSessionId,
       };
     } catch (e) {
+      // Re-throw SessionExpiredException so callers can handle 410 (Req 5.1)
+      if (e is SessionExpiredException) rethrow;
       apiError.value = "Network error: ${e.toString()}";
       print("🔥 initiatePayment error: $e");
       getSnackBar("Network error. Please check your internet connection.");

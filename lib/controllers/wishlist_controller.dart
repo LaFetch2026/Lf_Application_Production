@@ -513,7 +513,8 @@ class WishlistController extends BaseController {
       );
 
       if (resp.statusCode == 200 || resp.statusCode == 201) {
-        getSnackBar("Product added to board.");
+        // getSnackBar("Product added to board.");
+        print("Product added to board.");
 
         // Update wishlist status
         isWishlisted.value = true;
